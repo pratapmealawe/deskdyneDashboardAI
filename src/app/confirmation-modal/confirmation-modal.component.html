@@ -1,0 +1,13 @@
+<div *ngIf="showDialog" class="dialog-wrapper">
+    <div class="dialog-content">
+      <div>
+        <div class="dialogHeader">Confirmation</div>
+        <div class="dialogbody"><p>{{modalObj.msg}}</p></div>
+        <div class="dialogfooter">
+          <button class="btn btn-danger" (click)="cancel()">No</button>
+          <button class="btn btn-primary" (click)="confirm()">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  

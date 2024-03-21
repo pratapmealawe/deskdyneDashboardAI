@@ -1,0 +1,61 @@
+.toasterPosition {
+    position: fixed;
+    z-index: 30001;
+    top: -5%;
+    padding-top: 5%;
+    width: 50%;
+    left: 25%;
+}
+
+.toasterCard {
+    margin: 2%;
+    padding: 14px 10px 14px 10px;
+    border-radius: 5px;
+    color: white;
+}
+
+.error {
+    background: #e62841;
+}
+
+.warning {
+    background: #ffb300;
+    color: black;
+}
+
+.success {
+    background: #15a292;
+}
+
+.info {
+    background: #a4a4a4;
+    color: black;
+}
+
+.alarm {
+    background: #e62841;
+}
+
+.textPostion {
+    width: 80%;
+    vertical-align: top;
+}
+
+.inline-toaster {
+    display: inline-block;
+}
+
+.toaster-icon {
+    padding: 0px 10px;
+    font-size: 30px;
+}
+
+@media only screen and (min-width:480px) and (max-width:600px) {
+    .toasterPosition {
+        position: fixed;
+        z-index: 30001;
+        top: -2%;
+        padding-top: 5%;
+        width: 100%;
+    }
+}

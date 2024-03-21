@@ -1,0 +1,19 @@
+import { environment } from './../../environments/environment';
+import { Injectable } from '@angular/core';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ApiConfigService {
+  private baseUrl: string = environment.serverUrl;
+
+  apiEndPointObj: any;
+  constructor() {
+    this.init();
+  }
+  private init() {
+    this.apiEndPointObj = {      
+      
+   };
+  }
+}

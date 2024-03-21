@@ -1,0 +1,54 @@
+.dialog-wrapper{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top:0;
+    left:0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 10000;
+}
+.dialog-content{
+    text-align: center;
+    background: white;
+    width: 350px;
+    margin: 10% auto;
+    border-radius: 12px;
+}
+.dialogHeader{
+    -webkit-box-align: start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -webkit-box-pack: justify;
+    -ms-flex-pack: justify;
+    justify-content: space-between;
+    padding: 1rem;
+    border-bottom: 1px solid #e9ecef;
+    font-weight: bold;
+}
+
+.dialogbody{
+    position: relative;
+    -webkit-box-flex: 1;
+    -ms-flex: 1 1 auto;
+    flex: 1 1 auto;
+    padding: 1rem;
+}
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.dialogfooter {
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+    padding: 1rem;
+    border-top: 1px solid #e9ecef;
+    .btn{
+        margin: 0px 8%;
+        width: 90px;
+    }
+}
