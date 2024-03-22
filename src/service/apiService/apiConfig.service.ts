@@ -13,7 +13,8 @@ export class ApiConfigService {
   }
   private init() {
     this.apiEndPointObj = {      
-      
+      fetchAllOutlets: {url: `${this.baseUrl}/api/fetchAllOutlets`, method: 'GET'},
+      getOrgList: {url: `${this.baseUrl}/api/getOrgList`, method: 'GET'},
    };
   }
 }

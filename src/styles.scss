@@ -417,6 +417,50 @@ body {
     // }
 }
 
+.addBtn {
+    background: #f0344d;
+    padding: 0px 5px;
+    color: white;
+    /* line-height: 25px; */
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.accordion-button:not(.collapsed) {
+    background-color: transparent !important;
+    color: inherit;
+    padding-top: 0;
+}
+
+button.accordion-button:focus {
+    box-shadow: inherit;
+}
+
+.accordion {
+    border-bottom: none !important;
+    --bs-accordion-border-color: white !important;
+    --bs-accordion-btn-icon-width: 10px !important;
+
+    .accordion-button {
+        --bs-accordion-btn-padding-y: 0;
+        --bs-accordion-btn-padding-x: 0;
+    }
+
+    .accordion-header {
+        margin-bottom: 13px !important;
+    }
+
+    .accordion-button {
+        font-size: 15px !important;
+    }
+
+    .accordion-body {
+        font-size: 13px;
+        --bs-accordion-body-padding-y: 0.5rem;
+    }
+}
+
 @media only screen and (max-width:600px) {
     .offcanvas {
         width: 75% !important

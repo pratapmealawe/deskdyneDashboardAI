@@ -1,0 +1,202 @@
+<div class="bgsidepadding1">
+    <div [formGroup]="form">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="labelText">Outlet Name</div>
+                <input type="text" class="form-control" placeholder="Org Name" formControlName="outletName">
+                <div class="error-text" *ngIf="form.controls.outletName.errors?.required && showError">*Outlet name
+                    is required</div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <div class="labelText">Outlet Type</div>
+                <select class="custom-select" name="role" formControlName="outletType">
+                    <option disabled selected value> -- select type -- </option>
+                    <option value="Veg">Veg</option>
+                    <option value="NonVeg">Non Veg</option>
+                </select>
+                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-6">
+                <div class="labelText">Outlet Description</div>
+                <input type="text" class="form-control" placeholder="Org Name" formControlName="outletDescription">
+                <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">*Outlet description
+                    is required</div>
+            </div>
+        </div>
+        <div class="row" formGroupName="ownerDetails">
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Owner Name</label>
+                <input type="text" class="form-control" placeholder="Owner Name" formControlName="owner_name">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Owner PhoneNo</label>
+                <input type="Number" class="form-control" placeholder="Owner PhoneNo" formControlName="owner_phoneNo">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Owner EmailID</label>
+                <input type="text" class="form-control" placeholder="Owner EmailID" formControlName="owner_emailId">
+            </div>
+        </div>
+        <div class="row" formGroupName="cashierDetails">
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Cashier Name</label>
+                <input type="text" class="form-control" placeholder="Cashier Name" formControlName="cashier_name">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Cashier PhoneNo</label>
+                <input type="Number" class="form-control" placeholder="Cashier PhoneNo" formControlName="cashier_phoneNo">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Cashier EmailID</label>
+                <input type="text" class="form-control" placeholder="Cashier EmailID" formControlName="cashier_emailId">
+            </div>
+        </div>
+        <div class="row" formGroupName="managerDetails">
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Manager Name</label>
+                <input type="text" class="form-control" placeholder="Manager Name" formControlName="manager_name">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Manager PhoneNo</label>
+                <input type="Number" class="form-control" placeholder="Manager PhoneNo" formControlName="manager_phoneNo">
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <label class="labelText form-label">Manager EmailID</label>
+                <input type="text" class="form-control" placeholder="Manager EmailID" formControlName="manager_emailId">
+            </div>
+        </div>
+        <div class="row">
+            <div class="header6" *ngIf="menuList.length > 0">View {{menuList.length}} Menu Items Added</div>
+            <div><button class="btn btn-success btn-sm mt-1" (click)="openMenuList()">Add Menu Item</button></div>
+        </div>
+        <ng-template #menuItem let-modal>
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal-basic-title">Add Menu Items</h4>
+                <div class="ms-2 addBtn" (click)="addMenuItem()">+</div>
+                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div formArrayName="menuList">
+                    <ng-container *ngFor="let control of menuList.controls; let i = index">
+                        <div class="row" [formGroupName]="i">
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="labelText form-label">Tax Group</label>
+                                <select class="custom-select" name="role" formControlName="taxGroup">
+                                    <option disabled selected value> -- select type -- </option>
+                                    <option value="GST Included">GST Included</option>
+                                </select>
+                                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="labelText form-label">Category</label>
+                                <select class="custom-select" name="role" formControlName="category">
+                                    <option disabled selected value> -- select category -- </option>
+                                    <option value="Desserts">Desserts</option>
+                                    <option value="Kulfi">Kulfi</option>
+                                </select>
+                                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="labelText form-label">Sub Category</label>
+                                <select class="custom-select" name="role" formControlName="subCategory">
+                                    <option disabled selected value> -- select sub category -- </option>
+                                    <option value="Desserts">Rabdi</option>
+                                    <option value="Kulfi">Sundae</option>
+                                </select>
+                                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <label class="labelText form-label">Name</label>
+                                <input type="text" class="form-control" placeholder="Name" formControlName="itemName">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label class="labelText form-label">Price</label>
+                                <input type="number" class="form-control" placeholder="Price" formControlName="price">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label class="labelText form-label">Transfer Price</label>
+                                <input type="number" class="form-control" placeholder="Transfer Price" formControlName="transferPrice">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label class="labelText form-label">Display Order No</label>
+                                <input type="number" class="form-control" placeholder="Display Order No" formControlName="priority">
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-2">
+                                <label class="labelText form-label">Code</label>
+                                <input type="text" class="form-control" placeholder="Code" formControlName="code">
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-2">
+                                <input class="me-1" type="checkbox" id="recommended" formControlName="recommended">
+                                <label class="labelText form-label" for="recommended">Recommended</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-2">
+                                <input class="me-1" type="checkbox" id="isSpicy" formControlName="isSpicy">
+                                <label class="labelText form-label" for="isSpicy">Is Spicy</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-2">
+                                <input class="me-1" type="checkbox" id="isVeg" formControlName="isVeg">
+                                <label class="labelText form-label" for="isVeg">Vegetarian</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-2">
+                                <input class="me-1" type="checkbox" id="isActive" formControlName="isActive">
+                                <label class="labelText form-label" for="isActive">Active</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-2">
+                                <input class="me-1" type="checkbox" id="mealVoucherApplicable" formControlName="mealVoucherApplicable">
+                                <label class="labelText form-label" for="mealVoucherApplicable">Meal Voucher Applicable</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-2">
+                                <input class="me-1" type="checkbox" id="isPrePrepared" formControlName="isPrePrepared">
+                                <label class="labelText form-label" for="isPrePrepared">Is Pre Prepared</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <input class="me-1" type="checkbox" id="priceIncludesTax" formControlName="priceIncludesTax">
+                                <label class="labelText form-label" for="priceIncludesTax">Is Price Includes tax?</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <input class="me-1" type="checkbox" id="hideItemPrice" formControlName="hideItemPrice">
+                                <label class="labelText form-label" for="hideItemPrice">Hide Item Price</label>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <label class="labelText form-label" for="mrp">MRP/Non-MRP</label>
+                                <select class="custom-select" id="mrp" name="role" formControlName="mrp">
+                                    <option disabled selected value> -- select any -- </option>
+                                    <option value="MRP">MRP</option>
+                                    <option value="nonMRP">Non-MRP</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-6">
+                                <label class="labelText form-label" for="description">Description</label>
+                                <input class="form-control me-1" type="text" id="description" formControlName="description">
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-6">
+                                <label class="labelText form-label" for="calories">Calories</label>
+                                <input class="form-control me-1" type="text" id="calories" formControlName="calories">
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <label class="labelText form-label" for="parcelChargeType">Parcel Charge Type</label>
+                                <select class="custom-select" id="parcelChargeType" name="role" formControlName="parcelChargeType">
+                                    <option disabled selected value> -- select any -- </option>
+                                    <option value="Flat">Flat</option>
+                                    <option value="Percentage">Percentage</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-12 col-md-4 col-lg-4">
+                                <label class="labelText form-label" for="parcelChargeValue">Parcel Charge Value</label>
+                                <input class="form-control me-1" type="text" id="parcelChargeValue" formControlName="parcelChargeValue">
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="inline bgpadding1">
+                    <button type="button" class="btn btn-primary" (click)="modal.close('add')">Add</button>
+                </div>
+            </div>
+        </ng-template>
+    </div>
+    <div class="btn btn-primary btn-sm mt-2" (click)="submit()">Submit</div>
+</div>

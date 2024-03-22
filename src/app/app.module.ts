@@ -12,6 +12,7 @@ import { ConfirmationModalComponent } from './confirmation-modal/confirmation-mo
 import { MainLoaderComponent } from './main-loader/main-loader.component';
 import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { ImageCropperComponent } from './image-cropper/image-cropper.component';
     MainLoaderComponent,
     ConfirmationModalComponent,
     ImageCropperComponent,
+    HeaderComponent,
   ],
   imports: [
     BrowserModule,
