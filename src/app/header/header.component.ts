@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
   imageUrl = environment.imageUrl;
   opened = true;
   navOptions:any = [
-    { name: 'Outlet', showParent:true, children: [{ label: 'Outlet Overview', route: 'outlet' }] },
+    { name: 'Outlet', showParent:true, children: [{ label: 'Outlet Overview', route: 'outlet' },{ label: 'Outlet Add', route: 'outlet/add-outlet' }] },
     { name: 'Vendor', showParent:true, children: [{ label: 'Search User', route: 'searchUser' }, { label: 'Coupon User', route: 'couponUser' }] },
   ]
   breadCrumbText: any = 'Home';

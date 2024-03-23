@@ -1,4 +1,4 @@
-<div class="bgsidepadding1">
+<div class="bgsidepadding1" *ngIf="showSearchSection">
     <div class="right addBtn addOutlet" (click)="addOutlet()">+</div>
     <div class="row">
         <div class="col-12 col-md-4 col-lg-6">
@@ -39,16 +39,16 @@
             </div>
         </div>
 
-        <div class="mt-3" *ngIf="outletList && outletList.length > 0">
-            <!-- <div *ngFor="let org of orgList" class="cardDesign">
-                <app-organization-card [organization]="org" (view)="viewOrg($event)"></app-organization-card>
-            </div> -->
+        <div class="mt-3" *ngIf="outletList && outletList.length > 0 && showSearchSection">
+            <div *ngFor="let outlet of outletList" class="cardDesign">
+                <app-outlet-card [outlet]="outlet" (view)="viewOutlet($event)"></app-outlet-card>
+            </div>
         </div>
     </div>
 </div>
-<!-- <div class="bgsidepadding2" *ngIf="!showSearchSection && orgList.length > 0">
-    <app-organization-view [organization]="selectedOrg" (back)="toggleShowOrder($event)"></app-organization-view>
-</div> -->
+<div class="bgsidepadding2" *ngIf="!showSearchSection && outletList.length > 0">
+    <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
+</div>
 <div class="center mt-5" *ngIf="outletList.length === 0">
     No Records Found
 </div>

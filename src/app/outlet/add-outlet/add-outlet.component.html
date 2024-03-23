@@ -1,13 +1,13 @@
 <div class="bgsidepadding1">
     <div [formGroup]="form">
         <div class="row">
-            <div class="col-12 col-md-6 col-lg-3">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="labelText">Outlet Name</div>
-                <input type="text" class="form-control" placeholder="Org Name" formControlName="outletName">
+                <input type="text" class="form-control" placeholder="Outlet Name" formControlName="outletName">
                 <div class="error-text" *ngIf="form.controls.outletName.errors?.required && showError">*Outlet name
                     is required</div>
             </div>
-            <div class="col-12 col-md-6 col-lg-3">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="labelText">Outlet Type</div>
                 <select class="custom-select" name="role" formControlName="outletType">
                     <option disabled selected value> -- select type -- </option>
@@ -16,9 +16,9 @@
                 </select>
                 <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
             </div>
-            <div class="col-12 col-md-6 col-lg-6">
+            <div class="col-12 col-md-6 col-lg-4">
                 <div class="labelText">Outlet Description</div>
-                <input type="text" class="form-control" placeholder="Org Name" formControlName="outletDescription">
+                <input type="text" class="form-control" placeholder="Org Description" formControlName="outletDescription">
                 <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">*Outlet description
                     is required</div>
             </div>
@@ -66,10 +66,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="header6" *ngIf="menuList.length > 0">View {{menuList.length}} Menu Items Added</div>
-            <div><button class="btn btn-success btn-sm mt-1" (click)="openMenuList()">Add Menu Item</button></div>
+            <!-- <div class="header6" *ngIf="menuList.length > 0">View {{menuList.length}} Menu Items Added</div> -->
+            <!-- <div><button class="btn btn-success btn-sm mt-1" (click)="openMenuList()">Add Menu Item</button></div> -->
+            <div><button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">Select Org</button></div>
         </div>
-        <ng-template #menuItem let-modal>
+        <!-- <ng-template #menuItem let-modal>
             <div class="modal-header">
                 <h4 class="modal-title" id="modal-basic-title">Add Menu Items</h4>
                 <div class="ms-2 addBtn" (click)="addMenuItem()">+</div>
@@ -80,6 +81,7 @@
             <div class="modal-body">
                 <div formArrayName="menuList">
                     <ng-container *ngFor="let control of menuList.controls; let i = index">
+                        <button class="btn btn-danger btn-sm right" (click)="removeItem(i)">Remove</button>
                         <div class="row" [formGroupName]="i">
                             <div class="col-12 col-md-6 col-lg-4">
                                 <label class="labelText form-label">Tax Group</label>
@@ -196,7 +198,35 @@
                     <button type="button" class="btn btn-primary" (click)="modal.close('add')">Add</button>
                 </div>
             </div>
-        </ng-template>
+        </ng-template> -->
     </div>
     <div class="btn btn-primary btn-sm mt-2" (click)="submit()">Submit</div>
 </div>
+<ng-template #contentOrg let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Select Org</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <ul class="list-group">
+            <li class="list-group-item" *ngFor="let org of orgList">
+                <div class="row" *ngFor="let cafe of org.cafeteriaList;let i = index">
+                    <div class="col-12 col-md-12 col-lg-12">
+                        <input type="radio" (change)="selectOrg(org,cafe)" name="selectOrg" >
+                        {{org.organization_name}}-{{cafe.cafeteria_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
+                    </div>
+                    <!-- <div class="col-sm-12 col-md-10 col-lg-6">
+                        {{org.organization_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
+                    </div> -->
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <div class="inline bgpadding1">
+            <button type="button" class="btn btn-primary" (click)="modal.close('add')">Add</button>
+        </div>
+    </div>
+</ng-template>

@@ -15,6 +15,7 @@ export class ApiConfigService {
     this.apiEndPointObj = {      
       fetchAllOutlets: {url: `${this.baseUrl}/api/fetchAllOutlets`, method: 'GET'},
       getOrgList: {url: `${this.baseUrl}/api/getOrgList`, method: 'GET'},
+      saveOutlet: {url: `${this.baseUrl}/api/saveOutlet`, method: 'POST'},
    };
   }
 }

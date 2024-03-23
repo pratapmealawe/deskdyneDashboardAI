@@ -8,7 +8,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
   styleUrls: ['./outlet.component.scss']
 })
 export class OutletComponent implements OnInit {
-
+  showSearchSection:boolean = true;
   searchObj: any = {
     outletName: '',
     emailID:'',
@@ -16,6 +16,7 @@ export class OutletComponent implements OnInit {
   };
   page:any = 0;
   outletList: any = [];
+  selectedOutlet:any;
 
   constructor(private apiMainService:ApiMainService, private router:Router){
 
@@ -45,8 +46,18 @@ export class OutletComponent implements OnInit {
     };
   }
 
+  viewOutlet(val:any){
+    this.showSearchSection = false;
+    this.selectedOutlet = val;
+    console.log(val)
+  }
+
   addOutlet(){
     this.router.navigate(['/outlet/add-outlet'])
+  }
+
+  toggleShowOrder(val: any) {
+    this.showSearchSection = val
   }
 
 }

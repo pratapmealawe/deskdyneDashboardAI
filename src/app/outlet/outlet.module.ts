@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { OutletRoutingModule } from './outlet-routing.module';
 import { OutletComponent } from './outlet.component';
 import { FormsModule } from '@angular/forms';
+import { OutletCardModule } from './outlet-card/outlet-card.module';
+import { OutletViewModule } from './outlet-view/outlet-view.module';
 
 
 @NgModule({
@@ -13,7 +15,9 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     OutletRoutingModule,
-    FormsModule
+    FormsModule,
+    OutletCardModule,
+    OutletViewModule
   ]
 })
 export class OutletModule { }

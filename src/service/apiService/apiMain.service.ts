@@ -46,4 +46,10 @@ export class ApiMainService {
     return this.apiHttpService
     .REQUEST({url: urlObj.url, method: urlObj.method});
   }
+
+  saveOutlet(payload:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.saveOutlet;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
+  }
 }
