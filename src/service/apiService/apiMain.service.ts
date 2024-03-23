@@ -34,4 +34,22 @@ export class ApiMainService {
     today.setHours(0, 0, 0, 0);
     return today.toISOString();
   }
+
+  fetchAllOutlets(){
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchAllOutlets;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method});
+  }
+
+  getOrgList(){
+    const urlObj = this.apiConfigService.apiEndPointObj.getOrgList;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method});
+  }
+
+  saveOutlet(payload:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.saveOutlet;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
+  }
 }

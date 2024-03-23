@@ -1,0 +1,72 @@
+<nav class="navbar fixed-top navbar-dark bg-dark mb-5">
+    <div class="container-fluid">
+        <span class="navbar-brand mb-0 h1"><img src="/assets/images/menu-burger.svg" class="menu-burger" alt=""
+                (click)="openEnd()"><span class="company-name">MealAwe</span></span>
+        <span style="color:white">{{breadCrumbText}}</span>
+        <span>
+            <span class="name">{{adminProfile.name}}</span>
+            <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
+                [src]="adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile">
+            <span [ngbPopover]="popOverBody" popoverTitle="Admin Profile" *ngIf="!adminProfile.imageUrl"
+                class="img-span pointer"><i class="bi bi-person"></i></span>
+        </span>
+    </div>
+</nav>
+<!-- <div class="outlet-wrapper">
+    <router-outlet></router-outlet>
+</div> -->
+
+<ng-template class="offcanvas" #content let-offcanvas>
+    <div class="offcanvas-header">
+        <button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="accordion accordion-flush" id="accordionExample">
+            <div class="accordion-item" *ngFor="let link of navOptions; let i = index">
+                <ng-container>
+                <!-- <ng-container> -->
+                    <h2 class="accordion-header" id="headingOne">
+                        <button class="accordion-button shadow-none" type="button" data-bs-toggle="collapse"
+                            [attr.data-bs-target]="'#collapseOne'+i" aria-expanded="true" aria-controls="collapseOne">
+                            {{link.name}}
+                        </button>
+                    </h2>
+                </ng-container>
+                <div [attr.id]="'collapseOne'+i" class="accordion-collapse collapse pointer"
+                    aria-labelledby="headingOne">
+                    <div class="accordion-body" *ngFor="let item of link.children" [routerLink]="item.route"
+                        (click)="closeSidebar(link.children)">
+                        <ng-container>
+                        <!-- <ng-container> -->
+                            {{item.label}}
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #popOverBody>
+    <div class="popover-wrapper">
+        <div class="">
+            <span class="bold">Admin Name: </span>
+            <span class="grey">{{adminProfile.name}}</span>
+        </div>
+        <div class="mt-2">
+            <span class="bold">Admin ID: </span>
+            <span class="grey">{{adminProfile.loginId}}</span>
+        </div>
+        <div class="mt-2">
+            <span class="bold">phoneNo: </span>
+            <span class="grey">{{adminProfile.phoneNo}}</span>
+        </div>
+        <div class="mt-2">
+            <span class="bold">Email: </span>
+            <span class="grey">{{adminProfile.email}}</span>
+        </div>
+        <div class="mt-2">
+            <button class="btn btn-primary" (click)="logout()">logout</button>
+        </div>
+    </div>
+</ng-template>

@@ -1,0 +1,64 @@
+.navbar{
+    padding-left:0;
+}
+
+.name{
+    color:white;
+    padding-right:10px
+}
+
+.profileImg {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.menu-burger{
+    height:25px;
+    margin-right:5px;
+    cursor:pointer;
+    padding-bottom:4px;
+}
+
+.img-span {
+    text-align: center;
+    display: inline-block;
+    border: 1px solid grey;
+    height: 32px;
+    width: 32px;
+    border-radius: 50%;
+    background-color: rgba(97, 82, 82, 0.5882352941);
+
+    i {
+        font-size: 25px;
+        color: white;
+        line-height: 30px;
+    }
+}
+
+.popover-wrapper{
+    padding:5px;
+
+    .btn-primary{
+        background-color:#6571ff;
+        width:100%;
+    }
+}
+
+.logout:hover{
+    background-color:#f9fafb;
+}
+
+.accordion-body{
+    padding-left:45px;
+    padding-top:0;
+}
+
+.accordion-button{
+    padding-bottom:0
+}
+
+.outlet-wrapper{
+    margin-top:55px;
+}
