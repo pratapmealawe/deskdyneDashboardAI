@@ -3,6 +3,7 @@ import { FormArray, FormBuilder } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -11,161 +12,131 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 })
 export class OutletMenuComponent implements OnInit {
   @Input() outletObj: any;
-  categorySelected:boolean = false;
+  categorySelected: boolean = false;
   form: any;
-  selectedCategory:any;
-  subcategoryList:any = [];
-  uploadedMenuImages:any = {};
-  menuImages:any = {};
-  imageUrl:any
+  selectedCategory: any;
+  subcategoryList: any = [];
+  uploadedImageFile: any;
+  imageUrl: any;
+  displayImgUrl = environment.imageUrl;
+  showCard:any = false;
+  menuList:any = [];
+  menuIndex: any = 0;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private apiMainService:ApiMainService) { }
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private apiMainService: ApiMainService) { }
 
   ngOnInit(): void {
+    this.init();
     this.createForm();
     this.patchFormValue();
   }
 
-  patchFormValue() {
-    if (this.outletObj.menuList && this.outletObj.menuList.length > 0) {
-      this.categorySelected = true;
-      this.outletObj.menuList.forEach((item: any, index: any) => {
-        this.subcategoryList.push(item.subCategory)
-        this.addMenuItem();
-        this.form.controls.menuList.at(index).patchValue({
-          taxGroup: item.taxGroup,
-          itemName: item.itemName,
-          price: item.price,
-          priority: item.priority,
-          transferPrice: item.transferPrice,
-          category: item.category,
-          subCategory: item.subCategory,
-          code: item.code,
-          recommended: item.recommended,
-          isSpicy: item.isSpicy,
-          isVeg: item.isVeg,
-          isActive: item.isActive,
-          mealVoucherApplicable: item.mealVoucherApplicable,
-          isPrePrepared: item.isPrePrepared,
-          priceIncludesTax: item.priceIncludesTax,
-          hideItemPrice: item.hideItemPrice,
-          mrp: item.mrp,
-          description: item.description,
-          calories: item.calories,
-          parcelChargeType: item.parcelChargeType,
-          parcelChargeValue: item.parcelChargeValue,
-        })
-      })
+  init(){
+    if(this.outletObj.menuList && this.outletObj.menuList.length > 0){
+      this.showCard = true;
     }
+  }
+
+  addMenuItem(){
+    this.showCard = !this.showCard
+  }
+
+  patchFormValue() {
+    
   }
 
   createForm() {
     this.form = this.fb.group({
-      menuList: this.fb.array([])
-    })
-  }
-
-  addMenuItem() {
-    this.menuList.push(this.createMenuItem())
-  }
-
-  createMenuItem(){
-    return this.fb.group({  
-      taxGroup:[''],
-      itemName:[''],
-      price:[''],
-      priority:[''],
-      transferPrice:[''],
-      category:[''],
-      subCategory:[''],
-      code:[''],
-      recommended:[false],
-      isSpicy:[false],
-      isVeg:[false],
-      isActive:[false],
-      mealVoucherApplicable:[false],
-      isPrePrepared:[false],
-      priceIncludesTax:[false],
-      hideItemPrice:[false],
-      mrp:[''],
-      description:[''],
-      calories:[''],
-      parcelChargeType:[''],
-      parcelChargeValue:[''],
+      taxGroup: [''],
+      itemName: [''],
+      price: [''],
+      priority: [''],
+      transferPrice: [''],
+      category: [''],
+      subCategory: [''],
+      code: [''],
+      recommended: [false],
+      isSpicy: [false],
+      isVeg: [false],
+      isActive: [false],
+      mealVoucherApplicable: [false],
+      isPrePrepared: [false],
+      priceIncludesTax: [false],
+      hideItemPrice: [false],
+      mrp: [''],
+      description: [''],
+      calories: [''],
+      parcelChargeType: [''],
+      parcelChargeValue: [''],
       // isEnabledInventory:[''],
       // reorderQuantity:[''],
       // availableStock:[''],
     })
   }
 
-  get menuList():FormArray{
-    return this.form.controls.menuList as FormArray;
-  }
-
-  removeMenuItem(index:any){
-    this.menuList.removeAt(index);
-  }
-
-  setCategory(event:any, index:any){
+  setCategory(event: any) {
     this.selectedCategory = event.target.value;
     this.categorySelected = true;
     this.setSubCategoryList();
   }
 
-  setSubCategoryList(){
-    this.outletObj.category.forEach((el:any)=>{
-      if(el.name === this.selectedCategory){
+  setSubCategoryList() {
+    this.outletObj.category.forEach((el: any) => {
+      if (el.name === this.selectedCategory) {
         this.subcategoryList = el.subCategories
       }
     })
   }
 
-  handleFileInput($event: any,filename:string, index:any) {
-    console.log(index)
-    // const fileToUpload = files.item(0);
-    if($event && $event.target && $event.target.files){
-      const file:File = $event.target.files[0];
+  handleFileInput($event: any) {
+    if ($event && $event.target && $event.target.files) {
+      const file: File = $event.target.files[0];
       if (file) {
-        // this.uploadedCompliance = file;
         const fileName = file.name;
         console.log(fileName);
         const reader = new FileReader();
-        reader.readAsDataURL(file); 
-        reader.onload =async (_event) => { 
-          const imageUrl = reader.result; 
-          try{  
-            const modalRef: NgbModalRef  = this.modalService.open(ImageCropperComponent, 
-              {ariaLabelledBy: 'modal-basic-title', size: 'xl', backdrop: 'static',
-              centered: true});
-            modalRef.result.then((result:any) => {
-              console.log('Closed with:',result);
-                  if (result && result.croppedImages){
-                    console.log('croppedImages ', result.croppedImages);
-                    this.uploadedMenuImages[filename] = result.croppedImages.file;
-                    // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];  
-                    this.menuImages[filename] = result.croppedImages.resizeDataUrl;
-                }
-            }, (reason:any) => {
-              console.log( `Model Dismissed`);
-            });  
-            modalRef.componentInstance.uploadedImageUrl = imageUrl; 
+        reader.readAsDataURL(file);
+        reader.onload = async (_event) => {
+          const imageUrl = reader.result;
+          try {
+            const modalRef: NgbModalRef = this.modalService.open(ImageCropperComponent,
+              {
+                ariaLabelledBy: 'modal-basic-title', size: 'xl', backdrop: 'static',
+                centered: true
+              });
+            modalRef.result.then((result: any) => {
+              console.log('Closed with:', result);
+              if (result && result.croppedImages) {
+                console.log('croppedImages ', result.croppedImages);
+                this.uploadedImageFile = result.croppedImages.file;
+                this.imageUrl = result.croppedImages.resizeDataUrl;
+              }
+            }, (reason: any) => {
+              console.log(`Model Dismissed`);
+            });
+            modalRef.componentInstance.uploadedImageUrl = imageUrl;
             modalRef.componentInstance.imageWidth = 150;
-            modalRef.componentInstance.imageHeight = 150; 
-            modalRef.componentInstance.aspectRatio = 1; 
-          }catch(error){
-            console.log('error while changes kitchen opened status ',error);
-          } 
-        }       
+            modalRef.componentInstance.imageHeight = 150;
+            modalRef.componentInstance.aspectRatio = 1;
+          } catch (e) {
+            console.log('error while changes kitchen opened status ', e);
+          }
+        }
       }
-    }    
+    }
   }
 
-  async submit(){
+  async submit() {
     try {
-      const finalObj = {...this.outletObj,...this.form.value};
+      this.menuList = [];
+      this.menuList.push(this.form.value);
+      const finalObj = { ...this.outletObj, menuList:this.menuList };
       const formData = this.objectToFormData(finalObj);
-      console.log(finalObj)
-      const res = await this.apiMainService.updateOutlet(this.outletObj._id,formData);
+      if(this.uploadedImageFile){
+        formData.append('image',this.uploadedImageFile)
+      }
+      console.log(formData)
+      const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,this.menuIndex);
     } catch (error) {
       console.log(error);
     }
