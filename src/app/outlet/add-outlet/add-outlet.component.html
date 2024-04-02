@@ -1,6 +1,12 @@
 <div class="bgsidepadding1">
     <div [formGroup]="form">
         <div class="row">
+            <div class="col-12 col-md-2 col-lg-2 image-div">
+                <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+                    (change)="handleFileInput($event)">
+                <img (click)="f.click()" [src]="imageUrl?imageUrl:'assets/images/dummyUpload.png'" class="uploadedImage" />
+                <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
+            </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="labelText">Outlet Name</div>
                 <input type="text" class="form-control" placeholder="Outlet Name" formControlName="outletName">
@@ -214,7 +220,7 @@
             <li class="list-group-item" *ngFor="let org of orgList">
                 <div class="row" *ngFor="let cafe of org.cafeteriaList;let i = index">
                     <div class="col-12 col-md-12 col-lg-12">
-                        <input type="radio" (change)="selectOrg(org,cafe)" name="selectOrg" >
+                        <input type="radio" (change)="selectOrg(org,cafe)" name="selectOrg">
                         {{org.organization_name}}-{{cafe.cafeteria_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
                     </div>
                     <!-- <div class="col-sm-12 col-md-10 col-lg-6">

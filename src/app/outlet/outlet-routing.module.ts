@@ -8,6 +8,9 @@ const routes: Routes = [
   },
   {
     path:'add-outlet', loadChildren:()=>import ('./add-outlet/add-outlet.module').then(m=>m.AddOutletModule)
+  },
+  {
+    path:'master-categories', loadChildren:()=>import ('./master-categories/master-categories.module').then(m=>m.MasterCategoriesModule)
   }
 ];
 

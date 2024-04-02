@@ -1,0 +1,18 @@
+<div class="row bgsidepadding3">
+    <div class="col-12">
+        <div class="form-group">
+            <label for="categories">Enter Categories(comma separated)</label>
+            <input type="text" class="form-control" id="categories" placeholder="Enter Categories" [(ngModel)]="categoryValues">
+        </div>
+    </div>
+    
+    <div class="col-12">
+        <div class="form-group">
+            <label for="subcategories">Enter Sub Categories(comma separated)</label>
+            <input type="text" class="form-control" id="subcategories" placeholder="Enter Sub Categories" [(ngModel)]="subCategoryValues">
+        </div>
+    </div>
+    <div class="col-3">
+        <button class="btn btn-primary btn-sm" (click)="saveCategories()">Submit</button>
+    </div>
+</div>
