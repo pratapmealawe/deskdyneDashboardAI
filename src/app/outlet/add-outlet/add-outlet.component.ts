@@ -3,6 +3,7 @@ import { FormArray, FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
@@ -23,6 +24,8 @@ export class AddOutletComponent implements OnInit {
   selectedCafe: any = {};
   imageUrl: any;
   uploadedImageFile: any;
+  showUpdate:any = false;
+  selectedOutlet:any;
 
   constructor(private apiMainService: ApiMainService, private router: Router, private runtimeStorageService: RuntimeStorageService, private modalService: NgbModal, private fb: FormBuilder) {
   }
@@ -35,26 +38,31 @@ export class AddOutletComponent implements OnInit {
 
   updateOutlet() {
     const outlet = this.runtimeStorageService.getCacheData('OUTLET_EDIT');
+    this.showUpdate = true;
     if (outlet && outlet._id) {
       console.log(outlet)
+      this.imageUrl = environment.imageUrl + outlet.imageUrl
+      this.selectedOutlet = outlet;
+      this.selectedOrg = outlet.companyDetails;
+      this.selectedCafe = outlet.cafeteriaDetails;
       this.form.patchValue({
         outletName: outlet.outletName,
         outletDescription: outlet.outletDescription,
         outletType: outlet.outletType,
         ownerDetails: this.form.controls.ownerDetails.patchValue({
-          owner_name: outlet.ownerDetails.owner_name,
-          owner_phoneNo: outlet.ownerDetails.owner_phoneNo,
-          owner_emailId: outlet.ownerDetails.owner_emailId
+          owner_name: outlet.ownerDetails.owner_name || '',
+          owner_phoneNo: outlet.ownerDetails.owner_phoneNo || '',
+          owner_emailId: outlet.ownerDetails.owner_emailId || ''
         }),
         managerDetails: this.form.controls.managerDetails.patchValue({
-          manager_name: outlet.managerDetails.manager_name,
-          manager_phoneNo: outlet.managerDetails.manager_phoneNo,
-          manager_emailId: outlet.managerDetails.manager_emailId
+          manager_name: outlet.managerDetails.manager_name || '',
+          manager_phoneNo: outlet.managerDetails.manager_phoneNo || '',
+          manager_emailId: outlet.managerDetails.manager_emailId || ''
         }),
         cashierDetails: this.form.controls.cashierDetails.patchValue({
-          cashier_name: outlet.cashierDetails.cashier_name,
-          cashier_phoneNo: outlet.cashierDetails.cashier_phoneNo,
-          cashier_emailId: outlet.cashierDetails.cashier_emailId
+          cashier_name: outlet.cashierDetails.cashier_name || '',
+          cashier_phoneNo: outlet.cashierDetails.cashier_phoneNo || '',
+          cashier_emailId: outlet.cashierDetails.cashier_emailId || ''
         }),
       })
     }
@@ -163,15 +171,16 @@ export class AddOutletComponent implements OnInit {
     }
   }
 
-  async submit() {
+  async submit(type?:any) {
     try {
-      console.log(this.form.value);
       const finalObj = { companyDetails: this.selectedOrg, cafeteriaDetails: this.selectedCafe, ...this.form.value };
       console.log(finalObj)
       const formData = this.objectToFormData(finalObj);
-      formData.append('image', this.uploadedImageFile);
-      const res = await this.apiMainService.saveOutlet(formData);
-      this.router.navigate(['/outlet'])
+      if(this.uploadedImageFile){
+        formData.append('image', this.uploadedImageFile);
+      }
+      const res = type === 'update' ? await this.apiMainService.updateOutlet(this.selectedOutlet._id,formData): await this.apiMainService.saveOutlet(formData);
+      this.router.navigate(['/outlet']);
     } catch (error) {
       console.log(error)
     }

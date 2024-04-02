@@ -59,10 +59,10 @@ export class ApiMainService {
     .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
   }
 
-  updateOutlet(payload:any){
+  updateOutlet(id:any,payload:any){
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutlet;
     return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
+    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, payload);
   }
 
   fetchCategories(){

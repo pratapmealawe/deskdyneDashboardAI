@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
@@ -9,6 +10,7 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 })
 export class OutletDetailsComponent implements OnInit {
   @Input() outletObj:any;
+  imageUrl:any = environment.imageUrl;
 
   constructor(private router:Router, private runtimeStorageService:RuntimeStorageService){
 

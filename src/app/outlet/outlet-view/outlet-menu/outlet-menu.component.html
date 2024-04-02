@@ -4,6 +4,12 @@
     <div [formGroup]="form">
         <div formArrayName="menuList">
             <div class="row" [formGroupName]="i" *ngFor="let control of menuList.controls; let i = index">
+                <div class="col-12 col-md-6 col-lg-12">
+                    <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+                        (change)="handleFileInput($event,'menuItemImg', i)">
+                    <img class="uploadedImage" [src]="imageUrl?imageUrl:'assets/images/dummyUpload.png'">
+                    <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
+                </div>
                 <div class="col-12 col-md-6 col-lg-4">
                     <label class="labelText form-label">Tax Group</label>
                     <select class="custom-select" name="role" formControlName="taxGroup">
