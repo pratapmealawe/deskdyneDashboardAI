@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 })
 export class OutletMenuComponent implements OnInit {
   @Input() outletObj: any;
+  @ViewChild("content") content: any;
   categorySelected: boolean = false;
   form: any;
   selectedCategory: any;
@@ -22,13 +23,14 @@ export class OutletMenuComponent implements OnInit {
   showCard:any = false;
   menuList:any = [];
   menuIndex: any = 0;
+  showUpdateBtn:any = false;
+  imageReplaced:any = false;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private apiMainService: ApiMainService) { }
 
   ngOnInit(): void {
     this.init();
     this.createForm();
-    this.patchFormValue();
   }
 
   init(){
@@ -37,12 +39,30 @@ export class OutletMenuComponent implements OnInit {
     }
   }
 
-  addMenuItem(){
-    this.showCard = !this.showCard
-  }
-
-  patchFormValue() {
-    
+  patchFormValue(item:any) {
+    this.form.patchValue({
+      taxGroup: item.taxGroup,
+      itemName: item.itemName,
+      price: item.price,
+      priority: item.priority,
+      transferPrice: item.transferPrice,
+      category: item.category,
+      subCategory: item.subCategory,
+      code: item.code,
+      recommended: item.recommended,
+      isSpicy: item.isSpicy,
+      isVeg: item.isVeg,
+      isActive: item.isActive,
+      mealVoucherApplicable: item.mealVoucherApplicable,
+      isPrePrepared: item.isPrePrepared,
+      priceIncludesTax: item.priceIncludesTax,
+      hideItemPrice: item.hideItemPrice,
+      mrp: item.mrp,
+      description: item.description,
+      calories: item.calories,
+      parcelChargeType: item.parcelChargeType,
+      parcelChargeValue: item.parcelChargeValue,
+    })
   }
 
   createForm() {
@@ -110,6 +130,7 @@ export class OutletMenuComponent implements OnInit {
                 console.log('croppedImages ', result.croppedImages);
                 this.uploadedImageFile = result.croppedImages.file;
                 this.imageUrl = result.croppedImages.resizeDataUrl;
+                this.imageReplaced = true;
               }
             }, (reason: any) => {
               console.log(`Model Dismissed`);
@@ -126,17 +147,55 @@ export class OutletMenuComponent implements OnInit {
     }
   }
 
+  async edit(item:any, index:any){
+    this.imageUrl = item.imageUrl;
+    this.showUpdateBtn = true;
+    this.menuIndex = index;
+    this.patchFormValue(item);
+    this.open();
+  }
+
+  async updateMenu(index:any){
+    try {
+      this.outletObj.menuList.splice(index,1,this.form.value);
+      const formData = this.objectToFormData(this.outletObj);
+      if(this.uploadedImageFile){
+        formData.append('image',this.uploadedImageFile)
+      }
+      const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,index);
+      this.outletObj = res;
+      this.resetValues();
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  resetValues(){
+    this.form.reset();
+    this.menuIndex = 0;
+    this.imageUrl = '';
+    this.uploadedImageFile = '';
+    this.showUpdateBtn = false;
+    this.imageReplaced = false;
+  }
+
   async submit() {
     try {
       this.menuList = [];
+      this.menuList = this.outletObj.menuList;
       this.menuList.push(this.form.value);
+      this.menuIndex = this.outletObj.menuList.length - 1;
       const finalObj = { ...this.outletObj, menuList:this.menuList };
       const formData = this.objectToFormData(finalObj);
       if(this.uploadedImageFile){
         formData.append('image',this.uploadedImageFile)
       }
-      console.log(formData)
       const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,this.menuIndex);
+      if(res && res._id){
+        this.outletObj = res;
+        this.showCard = true;
+      }
+      this.resetValues()
     } catch (error) {
       console.log(error);
     }
@@ -162,6 +221,21 @@ export class OutletMenuComponent implements OnInit {
       }
     }
     return formData;
+  }
+
+  open() {
+    this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
+      .result.then((result) => {
+        console.log(`Closed with: ${result}`);
+        if (result === 'add') {
+          this.submit();
+        }
+        else if(result === 'update'){
+          this.updateMenu(this.menuIndex);
+        }
+      }, (reason) => {
+        console.log(`Model Dismissed`);
+      });
   }
 
 }

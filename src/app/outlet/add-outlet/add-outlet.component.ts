@@ -179,7 +179,7 @@ export class AddOutletComponent implements OnInit {
       if(this.uploadedImageFile){
         formData.append('image', this.uploadedImageFile);
       }
-      const res = type === 'update' ? await this.apiMainService.updateOutlet(this.selectedOutlet._id,formData): await this.apiMainService.saveOutlet(formData);
+      const res = type === 'update' ? await this.apiMainService.updateOutlet(this.selectedOutlet._id,formData, null): await this.apiMainService.saveOutlet(formData);
       this.router.navigate(['/outlet']);
     } catch (error) {
       console.log(error)
@@ -224,6 +224,10 @@ export class AddOutletComponent implements OnInit {
       location: cafe.location
     }
     console.log(org, cafe)
+  }
+
+  back(){
+    this.router.navigate(['/outlet'])
   }
 
 }

@@ -36,7 +36,7 @@
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="labelText form-label">Owner PhoneNo</label>
-                <input type="Number" class="form-control" placeholder="Owner PhoneNo" formControlName="owner_phoneNo">
+                <input type="text" class="form-control" placeholder="Owner PhoneNo" formControlName="owner_phoneNo">
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="labelText form-label">Owner EmailID</label>
@@ -50,7 +50,7 @@
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="labelText form-label">Cashier PhoneNo</label>
-                <input type="Number" class="form-control" placeholder="Cashier PhoneNo" formControlName="cashier_phoneNo">
+                <input type="text" class="form-control" placeholder="Cashier PhoneNo" formControlName="cashier_phoneNo">
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="labelText form-label">Cashier EmailID</label>
@@ -64,7 +64,7 @@
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="labelText form-label">Manager PhoneNo</label>
-                <input type="Number" class="form-control" placeholder="Manager PhoneNo" formControlName="manager_phoneNo">
+                <input type="text" class="form-control" placeholder="Manager PhoneNo" formControlName="manager_phoneNo">
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <label class="labelText form-label">Manager EmailID</label>
@@ -77,8 +77,9 @@
             <div><button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">Select Org</button></div>
         </div>
     </div>
-    <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
-    <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
+    <div class="btn btn-primary btn-sm mt-2 me-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
+    <div class="btn btn-success btn-sm mt-2 me-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
+    <div class="btn btn-danger btn-sm mt-2" (click)="back()">Back</div>
 </div>
 <ng-template #contentOrg let-modal>
     <div class="modal-header">
