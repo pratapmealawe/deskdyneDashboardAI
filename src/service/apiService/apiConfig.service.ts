@@ -18,6 +18,7 @@ export class ApiConfigService {
       saveOutlet: {url: `${this.baseUrl}/api/saveOutlet`, method: 'POST'},
       updateCategories: {url: `${this.baseUrl}/api/updateCategories`, method: 'POST'},
       updateOutlet: {url: `${this.baseUrl}/api/updateOutlet`, method: 'POST'},
+      updateOutletNoImages: {url: `${this.baseUrl}/api/updateOutletNoImages`, method: 'POST'},
       fetchCategories: {url: `${this.baseUrl}/api/fetchCategories`, method: 'GET'},
       saveCategories: {url: `${this.baseUrl}/api/saveCategories`, method: 'POST'},
    };

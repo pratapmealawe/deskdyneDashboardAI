@@ -25,6 +25,7 @@ export class OutletMenuComponent implements OnInit {
   menuIndex: any = 0;
   showUpdateBtn:any = false;
   imageReplaced:any = false;
+  noImages:boolean = false;
 
   constructor(private fb: FormBuilder, private modalService: NgbModal, private apiMainService: ApiMainService) { }
 
@@ -157,12 +158,19 @@ export class OutletMenuComponent implements OnInit {
 
   async updateMenu(index:any){
     try {
+      const oldMenuItem = this.outletObj.menuList[index];
       this.outletObj.menuList.splice(index,1,this.form.value);
+      this.outletObj.menuList[index].imageUrl = oldMenuItem.imageUrl;
       const formData = this.objectToFormData(this.outletObj);
+      console.log(this.uploadedImageFile)
       if(this.uploadedImageFile){
-        formData.append('image',this.uploadedImageFile)
+        formData.append('image',this.uploadedImageFile);
       }
-      const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,index);
+      else{
+        this.noImages = true;
+        index = null;
+      }
+      const res = this.noImages ? await this.apiMainService.updateOutletNoImages(this.outletObj._id, this.outletObj) : await this.apiMainService.updateOutlet(this.outletObj._id, formData,index);
       this.outletObj = res;
       this.resetValues();
     } catch (error) {
@@ -177,6 +185,7 @@ export class OutletMenuComponent implements OnInit {
     this.uploadedImageFile = '';
     this.showUpdateBtn = false;
     this.imageReplaced = false;
+    this.noImages = false;
   }
 
   async submit() {
@@ -187,14 +196,18 @@ export class OutletMenuComponent implements OnInit {
       this.menuIndex = this.outletObj.menuList.length - 1;
       const finalObj = { ...this.outletObj, menuList:this.menuList };
       const formData = this.objectToFormData(finalObj);
+      console.log(this.uploadedImageFile)
       if(this.uploadedImageFile){
         formData.append('image',this.uploadedImageFile)
       }
-      const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,this.menuIndex);
-      if(res && res._id){
-        this.outletObj = res;
-        this.showCard = true;
+      else{
+        this.menuIndex = null;
       }
+      // const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,this.menuIndex);
+      // if(res && res._id){
+      //   this.outletObj = res;
+      //   this.showCard = true;
+      // }
       this.resetValues()
     } catch (error) {
       console.log(error);
