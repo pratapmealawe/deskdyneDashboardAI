@@ -52,4 +52,29 @@ export class ApiMainService {
     return this.apiHttpService
     .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
   }
+
+  updateCategories(payload:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateCategories;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
+  }
+
+  updateOutlet(id:any,payload:any,imgIndex?:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOutlet;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${imgIndex}` + `/${id}`, method: urlObj.method}, payload);
+  }
+
+  fetchCategories(){
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchCategories;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method});
+  }
+
+  saveCategories(payload:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.saveCategories;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
+  }
+
 }

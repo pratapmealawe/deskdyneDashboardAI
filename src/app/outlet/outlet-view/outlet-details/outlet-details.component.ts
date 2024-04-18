@@ -1,5 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
   selector: 'app-outlet-details',
@@ -8,8 +10,9 @@ import { Router } from '@angular/router';
 })
 export class OutletDetailsComponent implements OnInit {
   @Input() outletObj:any;
+  imageUrl:any = environment.imageUrl;
 
-  constructor(private router:Router){
+  constructor(private router:Router, private runtimeStorageService:RuntimeStorageService){
 
   }
 
@@ -18,7 +21,8 @@ export class OutletDetailsComponent implements OnInit {
   }
 
   editOrg(){
-    this.router.navigate(['/outlet-add']);
+    this.runtimeStorageService.setCacheData('OUTLET_EDIT',this.outletObj);
+    this.router.navigate(['/outlet/add-outlet']);
   }
 
 }

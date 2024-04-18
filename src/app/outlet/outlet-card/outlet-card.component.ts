@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-outlet-card',
@@ -8,6 +9,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 export class OutletCardComponent implements OnInit {
   @Input() outlet: any;
   @Output() view:EventEmitter<any> = new EventEmitter<any>();
+  imageUrl:any = environment.imageUrl;
 
   ngOnInit(): void {
   }

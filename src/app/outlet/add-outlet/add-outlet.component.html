@@ -1,6 +1,12 @@
 <div class="bgsidepadding1">
     <div [formGroup]="form">
         <div class="row">
+            <div class="col-12 col-md-2 col-lg-2 image-div">
+                <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+                    (change)="handleFileInput($event)">
+                <img (click)="f.click()" [src]="imageUrl?imageUrl:'assets/images/dummyUpload.png'" class="uploadedImage" />
+                <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
+            </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="labelText">Outlet Name</div>
                 <input type="text" class="form-control" placeholder="Outlet Name" formControlName="outletName">
@@ -70,137 +76,9 @@
             <!-- <div><button class="btn btn-success btn-sm mt-1" (click)="openMenuList()">Add Menu Item</button></div> -->
             <div><button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">Select Org</button></div>
         </div>
-        <!-- <ng-template #menuItem let-modal>
-            <div class="modal-header">
-                <h4 class="modal-title" id="modal-basic-title">Add Menu Items</h4>
-                <div class="ms-2 addBtn" (click)="addMenuItem()">+</div>
-                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div formArrayName="menuList">
-                    <ng-container *ngFor="let control of menuList.controls; let i = index">
-                        <button class="btn btn-danger btn-sm right" (click)="removeItem(i)">Remove</button>
-                        <div class="row" [formGroupName]="i">
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <label class="labelText form-label">Tax Group</label>
-                                <select class="custom-select" name="role" formControlName="taxGroup">
-                                    <option disabled selected value> -- select type -- </option>
-                                    <option value="GST Included">GST Included</option>
-                                </select>
-                                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <label class="labelText form-label">Category</label>
-                                <select class="custom-select" name="role" formControlName="category">
-                                    <option disabled selected value> -- select category -- </option>
-                                    <option value="Desserts">Desserts</option>
-                                    <option value="Kulfi">Kulfi</option>
-                                </select>
-                                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <label class="labelText form-label">Sub Category</label>
-                                <select class="custom-select" name="role" formControlName="subCategory">
-                                    <option disabled selected value> -- select sub category -- </option>
-                                    <option value="Desserts">Rabdi</option>
-                                    <option value="Kulfi">Sundae</option>
-                                </select>
-                                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-4">
-                                <label class="labelText form-label">Name</label>
-                                <input type="text" class="form-control" placeholder="Name" formControlName="itemName">
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-2">
-                                <label class="labelText form-label">Price</label>
-                                <input type="number" class="form-control" placeholder="Price" formControlName="price">
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-2">
-                                <label class="labelText form-label">Transfer Price</label>
-                                <input type="number" class="form-control" placeholder="Transfer Price" formControlName="transferPrice">
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-2">
-                                <label class="labelText form-label">Display Order No</label>
-                                <input type="number" class="form-control" placeholder="Display Order No" formControlName="priority">
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-2">
-                                <label class="labelText form-label">Code</label>
-                                <input type="text" class="form-control" placeholder="Code" formControlName="code">
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-2">
-                                <input class="me-1" type="checkbox" id="recommended" formControlName="recommended">
-                                <label class="labelText form-label" for="recommended">Recommended</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-2">
-                                <input class="me-1" type="checkbox" id="isSpicy" formControlName="isSpicy">
-                                <label class="labelText form-label" for="isSpicy">Is Spicy</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-2">
-                                <input class="me-1" type="checkbox" id="isVeg" formControlName="isVeg">
-                                <label class="labelText form-label" for="isVeg">Vegetarian</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-2">
-                                <input class="me-1" type="checkbox" id="isActive" formControlName="isActive">
-                                <label class="labelText form-label" for="isActive">Active</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-2">
-                                <input class="me-1" type="checkbox" id="mealVoucherApplicable" formControlName="mealVoucherApplicable">
-                                <label class="labelText form-label" for="mealVoucherApplicable">Meal Voucher Applicable</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-2">
-                                <input class="me-1" type="checkbox" id="isPrePrepared" formControlName="isPrePrepared">
-                                <label class="labelText form-label" for="isPrePrepared">Is Pre Prepared</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <input class="me-1" type="checkbox" id="priceIncludesTax" formControlName="priceIncludesTax">
-                                <label class="labelText form-label" for="priceIncludesTax">Is Price Includes tax?</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <input class="me-1" type="checkbox" id="hideItemPrice" formControlName="hideItemPrice">
-                                <label class="labelText form-label" for="hideItemPrice">Hide Item Price</label>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <label class="labelText form-label" for="mrp">MRP/Non-MRP</label>
-                                <select class="custom-select" id="mrp" name="role" formControlName="mrp">
-                                    <option disabled selected value> -- select any -- </option>
-                                    <option value="MRP">MRP</option>
-                                    <option value="nonMRP">Non-MRP</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-6">
-                                <label class="labelText form-label" for="description">Description</label>
-                                <input class="form-control me-1" type="text" id="description" formControlName="description">
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-6">
-                                <label class="labelText form-label" for="calories">Calories</label>
-                                <input class="form-control me-1" type="text" id="calories" formControlName="calories">
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <label class="labelText form-label" for="parcelChargeType">Parcel Charge Type</label>
-                                <select class="custom-select" id="parcelChargeType" name="role" formControlName="parcelChargeType">
-                                    <option disabled selected value> -- select any -- </option>
-                                    <option value="Flat">Flat</option>
-                                    <option value="Percentage">Percentage</option>
-                                </select>
-                            </div>
-                            <div class="col-sm-12 col-md-4 col-lg-4">
-                                <label class="labelText form-label" for="parcelChargeValue">Parcel Charge Value</label>
-                                <input class="form-control me-1" type="text" id="parcelChargeValue" formControlName="parcelChargeValue">
-                            </div>
-                        </div>
-                    </ng-container>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="inline bgpadding1">
-                    <button type="button" class="btn btn-primary" (click)="modal.close('add')">Add</button>
-                </div>
-            </div>
-        </ng-template> -->
     </div>
-    <div class="btn btn-primary btn-sm mt-2" (click)="submit()">Submit</div>
+    <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
+    <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
 </div>
 <ng-template #contentOrg let-modal>
     <div class="modal-header">
@@ -214,7 +92,7 @@
             <li class="list-group-item" *ngFor="let org of orgList">
                 <div class="row" *ngFor="let cafe of org.cafeteriaList;let i = index">
                     <div class="col-12 col-md-12 col-lg-12">
-                        <input type="radio" (change)="selectOrg(org,cafe)" name="selectOrg" >
+                        <input type="radio" (change)="selectOrg(org,cafe)" name="selectOrg">
                         {{org.organization_name}}-{{cafe.cafeteria_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
                     </div>
                     <!-- <div class="col-sm-12 col-md-10 col-lg-6">

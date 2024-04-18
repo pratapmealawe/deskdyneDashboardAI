@@ -1,1 +1,26 @@
-<p>outlet-categories works!</p>
+<div class="row">
+    <form [formGroup]="categoryForm">
+        <div formArrayName="categories">
+          <div *ngFor="let category of categoryForm.get('categories').controls; let i=index" [formGroupName]="i">
+            <div class="form-group">
+              <label for="name{{i}}">Category Name</label>
+              <input type="text" formControlName="name" class="form-control" id="name{{i}}" placeholder="Enter Category Name">
+            </div>
+            <div formArrayName="subCategories" class="row">
+              <div *ngFor="let value of category.get('subCategories').controls; let j=index" class="form-group col-2">
+                <label for="value{{i}}-{{j}}">Value</label>
+                <div class="input-group">
+                  <input type="text" [formControlName]="j" class="form-control" id="value{{i}}-{{j}}" placeholder="Enter Value">
+                  <div class="input-group-append">
+                    <button type="button" class="btn-sm btn btn-danger" (click)="removeValue(category, j)">Remove</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn-sm btn btn-primary" (click)="addValue(category)">Add SubCategories</button>
+          </div>
+        </div>
+        <button type="button" class="btn-sm mt-1 me-2 btn btn-primary" (click)="addCategory()">Add Category</button>
+        <button type="submit" class="btn-sm mt-1 btn btn-success" (click)="onSubmit()">Submit</button>
+      </form>
+</div>
