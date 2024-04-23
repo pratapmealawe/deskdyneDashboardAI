@@ -6,6 +6,7 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { DataFormatService } from 'src/service/data-format.service';
 
 @Component({
   selector: 'app-add-outlet',
@@ -26,20 +27,23 @@ export class AddOutletComponent implements OnInit {
   uploadedImageFile: any;
   showUpdate:any = false;
   selectedOutlet:any;
+  formattedOrgList:any;
+  selectedOrgCafeteria:any;
+  seletedCafetria:any;
 
-  constructor(private apiMainService: ApiMainService, private router: Router, private runtimeStorageService: RuntimeStorageService, private modalService: NgbModal, private fb: FormBuilder) {
+  constructor(private apiMainService: ApiMainService, private router: Router, private runtimeStorageService: RuntimeStorageService, private modalService: NgbModal, private fb: FormBuilder, private dataFormatService:DataFormatService) {
+
   }
 
   ngOnInit(): void {
     this.createForm();
-    this.updateOutlet();
-    this.getOrgList();
+    this.updateOutlet();    
   }
 
   updateOutlet() {
-    const outlet = this.runtimeStorageService.getCacheData('OUTLET_EDIT');
-    this.showUpdate = true;
+    const outlet = this.runtimeStorageService.getCacheData('OUTLET_EDIT');  
     if (outlet && outlet._id) {
+      this.showUpdate = true;
       console.log(outlet)
       this.imageUrl = environment.imageUrl + outlet.imageUrl
       this.selectedOutlet = outlet;
@@ -48,22 +52,7 @@ export class AddOutletComponent implements OnInit {
       this.form.patchValue({
         outletName: outlet.outletName,
         outletDescription: outlet.outletDescription,
-        outletType: outlet.outletType,
-        ownerDetails: this.form.controls.ownerDetails.patchValue({
-          owner_name: outlet.ownerDetails.owner_name || '',
-          owner_phoneNo: outlet.ownerDetails.owner_phoneNo || '',
-          owner_emailId: outlet.ownerDetails.owner_emailId || ''
-        }),
-        managerDetails: this.form.controls.managerDetails.patchValue({
-          manager_name: outlet.managerDetails.manager_name || '',
-          manager_phoneNo: outlet.managerDetails.manager_phoneNo || '',
-          manager_emailId: outlet.managerDetails.manager_emailId || ''
-        }),
-        cashierDetails: this.form.controls.cashierDetails.patchValue({
-          cashier_name: outlet.cashierDetails.cashier_name || '',
-          cashier_phoneNo: outlet.cashierDetails.cashier_phoneNo || '',
-          cashier_emailId: outlet.cashierDetails.cashier_emailId || ''
-        }),
+        outletType: outlet.outletType
       })
     }
   }
@@ -72,23 +61,7 @@ export class AddOutletComponent implements OnInit {
     this.form = this.fb.group({
       outletName: [''],
       outletDescription: [''],
-      outletType: [''],
-      // menuList:this.fb.array([]),
-      ownerDetails: this.fb.group({
-        owner_name: [''],
-        owner_phoneNo: [''],
-        owner_emailId: ['']
-      }),
-      managerDetails: this.fb.group({
-        manager_name: [''],
-        manager_phoneNo: [''],
-        manager_emailId: ['']
-      }),
-      cashierDetails: this.fb.group({
-        cashier_name: [''],
-        cashier_phoneNo: [''],
-        cashier_emailId: ['']
-      })
+      outletType: ['']
     })
   }
 
@@ -98,9 +71,11 @@ export class AddOutletComponent implements OnInit {
 
   async getOrgList() {
     try {
-      const res = await this.apiMainService.getOrgList();
-      if (res && res.length > 0) {
-        this.orgList = res;
+      const orgList = await this.apiMainService.getOrgList();
+      if (orgList && orgList.length > 0) {
+        const formattedOrgList=this.dataFormatService.getformattedOrgList(orgList);
+        console.log(formattedOrgList);
+        this.formattedOrgList = formattedOrgList;
       }
     } catch (error) {
       console.log(error)
@@ -121,11 +96,20 @@ export class AddOutletComponent implements OnInit {
   // }
 
   openOrgList() {
+    this.selectedOrgCafeteria = undefined;
+    this.getOrgList();
+    console.log(this.formattedOrgList);
     const modalRef = this.modalService.open(this.contentOrg, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
     modalRef.result.then((result) => {
       console.log(`Closed with: ${result}`);
       if (result === 'add') {
-
+        console.log('this.formattedOrgList',this.formattedOrgList);
+        this.formattedOrgList.forEach((org:any) => {
+          if(org.key === this.selectedOrgCafeteria){
+            this.seletedCafetria = {...org}
+          }
+        });
+        console.log('seletedCafetria',this.seletedCafetria)
       }
     }, (reason) => {
       console.log(`Model Dismissed`);
@@ -173,13 +157,16 @@ export class AddOutletComponent implements OnInit {
 
   async submit(type?:any) {
     try {
-      const finalObj = { companyDetails: this.selectedOrg, cafeteriaDetails: this.selectedCafe, ...this.form.value };
+      const finalObj = { 
+        cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
+        organizationDetails: this.seletedCafetria.organizationDetails,
+         ...this.form.value };
       console.log(finalObj)
       const formData = this.objectToFormData(finalObj);
       if(this.uploadedImageFile){
         formData.append('image', this.uploadedImageFile);
       }
-      const res = type === 'update' ? await this.apiMainService.updateOutlet(this.selectedOutlet._id,formData): await this.apiMainService.saveOutlet(formData);
+      const res = (type === 'update') ? await this.apiMainService.updateOutlet(this.selectedOutlet._id,formData): await this.apiMainService.saveOutlet(formData);
       this.router.navigate(['/outlet']);
     } catch (error) {
       console.log(error)
@@ -208,22 +195,9 @@ export class AddOutletComponent implements OnInit {
     return formData;
   }
 
-  selectOrg(org: any, cafe: any) {
-    this.selectedOrg = {
-      organization_name: org.organization_name,
-      city: org.city,
-      location: org.location
-    }
-    this.selectedCafe = {
-      cafeteria_name: cafe.cafeteria_name,
-      cafeteria_city: cafe.cafeteria_city,
-      cafeteria_location: cafe.cafeteria_location,
-      address1: cafe.address1,
-      address2: cafe.address2,
-      landmark: cafe.landmark,
-      location: cafe.location
-    }
-    console.log(org, cafe)
+  selectOrg(selected:any) {
+  console.log(selected);
+
   }
 
 }
