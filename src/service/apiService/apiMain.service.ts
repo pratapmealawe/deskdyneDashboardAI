@@ -76,5 +76,23 @@ export class ApiMainService {
     return this.apiHttpService
     .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
   }
+  saveVendor(payload:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.saveVendor;
+    return this.apiHttpService
+    .REQUEST({url:urlObj.url,method:urlObj.method},payload)
+  }
+  getAllVendors(){
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllVendors
+    return this.apiHttpService
+    .REQUEST({url:urlObj.url,method:urlObj.method})
+  }
+  getOutletByCafeteria(cafeteriaName:any,cafeteriaCity:any,organization:any){
+    console.log('api main service')
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletByCafeteria
+    // console.log(urlObj);
+    console.log({url:urlObj.url+`/${cafeteriaName}/${cafeteriaCity}/${organization}`,method:urlObj.method})
+    return this.apiHttpService
+    .REQUEST({url:urlObj.url+`/${cafeteriaName}/${cafeteriaCity}/${organization}`,method:urlObj.method},)
+  }
 
 }

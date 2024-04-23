@@ -21,7 +21,7 @@ export class HeaderComponent implements OnInit {
   opened = true;
   navOptions:any = [
     { name: 'Outlet', showParent:true, children: [{ label: 'Outlet Overview', route: 'outlet' },{ label: 'Outlet Add', route: 'outlet/add-outlet' }] },
-    { name: 'Vendor', showParent:true, children: [{ label: 'Search User', route: 'searchUser' }, { label: 'Coupon User', route: 'couponUser' }] },
+    { name: 'Vendor', showParent:true, children: [{ label: 'Search vendor', route: 'vendor/search-vendor' }, { label: 'Add Vendor', route: 'vendor/add-vendor' }] },
   ]
   breadCrumbText: any = 'Home';
   currentRoute: string = 'currentOrder';

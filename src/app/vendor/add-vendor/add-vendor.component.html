@@ -1,0 +1,131 @@
+<div class="bgsidepadding1">
+   
+    <div [formGroup]="form">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="labelText">Vendor Name</div>
+                <input type="text" class="form-control" placeholder="Vendor Name" formControlName="vendorName">
+                <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">*Vendor name
+                    is required</div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="labelText">Vendor Phone No</div>
+                <input type="text" class="form-control" placeholder="Vendor Phone No" formControlName="vendorPhoneNo">
+                <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">*Vendor phone no
+                    is required</div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="labelText">Vendor email</div>
+                <input type="text" class="form-control" placeholder="Vendor Email" formControlName="vendorEmail">
+                <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">*Vendor email
+                    is required</div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="labelText">Vendor Role</div>
+                <!-- <input type="text" class="form-control" placeholder="Vendor Role" formControlName="vendorRole"> -->
+                <select class="inline" formControlName="vendorRole">
+                    <ng-container *ngFor="let role of vendorRole">
+                    <option value={{role}}>{{role}}</option> 
+                </ng-container>   
+                     
+                </select>
+
+                <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">*Vendor role
+                    is required</div>
+            </div>
+        </div>
+    </div>
+    <!-- <div>Outlet List</div> -->
+    <div class="btn btn-primary btn-sm mt-2" (click)="addOutlet()">Add Outlet</div>
+    <br>
+    <div class="cardDesign" *ngIf="showAddedOutlet">
+        <div class="row card-wrapper" >
+            <ng-container *ngFor="let outlet of selectedOutletsList">
+            <div class="col-lg-12 col-md-10 col-9">
+                <div class="row" >
+                    <div class="col-12 col-md-4 col-lg-12">
+                        <div class="row" >
+                            <input mdbCheckbox class="form-check-input" (change)="onCheckboxChange($event,outlet)" type="checkbox" id="inlineCheckbox2" value=""/>
+                            <div class="col-6 col-md-5 col-lg-3">   
+                                <div class="labelText">outlet Name</div>
+                                <div class="labelData">{{outlet.outletName}}</div>
+                            </div>
+                            <div class="col-6 col-md-7 col-lg-3">
+                                <div class="labelText">outlet type</div>
+                                <div class="labelData">{{outlet.outletType}}</div>
+                            </div>
+                            <div class="col-6 col-md-7 col-lg-6">
+                                <div class="labelText">description</div>
+                                <div class="labelData">{{outlet.outletDescription}}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </ng-container>
+        </div>    
+    </div>
+    <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
+    <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
+</div>
+
+<ng-template #outletModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Outlet List</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <select class="inline" [(ngModel)]="orgName" (change)="getOrgName($event)">
+            <option *ngFor="let org of orgList" value={{org.organization_name}}><span>{{org.organization_name}}</span></option>
+          </select>
+
+          
+             <select class="inline" (change)="selectCafeteria($event)">
+                <ng-container *ngFor="let org of orgList">
+                    <ng-container *ngIf="orgName==org.organization_name">  
+                        <ng-container *ngFor="let cafeteria of org.cafeteriaList">
+                         <!-- <option [ngValue]="{ orgName: org.organization_name, cafeteriaName: cafeteria.cafeteria_name }">{{cafeteria.cafeteria_name}}-{{cafeteria.cafeteria_city}}</option> -->
+                         <option value="{{cafeteria.cafeteria_name}},{{cafeteria.cafeteria_city}},{{org.organization_name}}">{{cafeteria.cafeteria_name}}-{{cafeteria.cafeteria_city}}</option>
+                        </ng-container>
+                </ng-container>
+            </ng-container>
+            </select>
+
+           
+           
+            <div class="cardDesign" *ngIf="showOutletList">
+            <div class="row card-wrapper" >
+                <ng-container *ngFor="let outlet of outletByCafeteriaList">
+                <div class="col-lg-12 col-md-10 col-9">
+                    <div class="row" >
+                        <div class="col-12 col-md-4 col-lg-12">
+                            <div class="row" >
+                                <input mdbCheckbox class="form-check-input" (change)="onCheckboxChange($event,outlet)" type="checkbox" id="inlineCheckbox2" value=""/>
+                                <div class="col-6 col-md-5 col-lg-3">   
+                                    <div class="labelText">outlet Name</div>
+                                    <div class="labelData">{{outlet.outletName}}</div>
+                                </div>
+                                <div class="col-6 col-md-7 col-lg-3">
+                                    <div class="labelText">outlet type</div>
+                                    <div class="labelData">{{outlet.outletType}}</div>
+                                </div>
+                                <div class="col-6 col-md-7 col-lg-6">
+                                    <div class="labelText">description</div>
+                                    <div class="labelData">{{outlet.outletDescription}}</div>
+                                </div>
+                                <!-- <div class="col-6 col-md-7 col-lg-6">
+                                    <div class="labelText">vendor Role</div>
+                                    <div class="labelData">{{vendor.vendorRole}}</div>
+                                </div> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </ng-container>
+            </div>    
+        </div>  
+        <div class="btn btn-primary btn-sm mt-2" (click)="getSelectedOutlets(outlet)" *ngIf="showAddbutton">Add</div>
+    </div>
+</ng-template>

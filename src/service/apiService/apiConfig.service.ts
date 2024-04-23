@@ -20,6 +20,9 @@ export class ApiConfigService {
       updateOutlet: {url: `${this.baseUrl}/api/updateOutlet`, method: 'POST'},
       fetchCategories: {url: `${this.baseUrl}/api/fetchCategories`, method: 'GET'},
       saveCategories: {url: `${this.baseUrl}/api/saveCategories`, method: 'POST'},
+      saveVendor: {url: `${this.baseUrl}/api/saveVendor`, method:'POST'},
+      getAllVendors:{url:`${this.baseUrl}/api/getAllVendors`,method:'GET'},
+      getOutletByCafeteria:{url:`${this.baseUrl}/api/getOutletByCafeteria`,method:'GET'}
    };
   }
 }

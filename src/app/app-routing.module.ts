@@ -13,6 +13,9 @@ const routes: Routes = [
     path: 'outlet', loadChildren: () => import('./outlet/outlet.module').then(m => m.OutletModule) 
   },
   {
+    path: 'vendor', loadChildren:()=>import('./vendor/vendor.module').then(m=>m.VendorModule)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
