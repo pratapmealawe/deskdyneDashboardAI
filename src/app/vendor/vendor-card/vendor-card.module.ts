@@ -5,7 +5,7 @@ import {VendorCardComponent} from './vendor-card.component'
 
 @NgModule({
     declarations:[VendorCardComponent],
-    imports:[],
+    imports:[CommonModule],
     exports:[VendorCardComponent]
 })
 export class VendorCardModule{}
