@@ -87,12 +87,23 @@ export class ApiMainService {
     .REQUEST({url:urlObj.url,method:urlObj.method})
   }
   getOutletByCafeteria(cafeteriaName:any,cafeteriaCity:any,organization:any){
-    console.log('api main service')
-    const urlObj = this.apiConfigService.apiEndPointObj.getOutletByCafeteria
-    // console.log(urlObj);
-    console.log({url:urlObj.url+`/${cafeteriaName}/${cafeteriaCity}/${organization}`,method:urlObj.method})
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletByCafeteria;
     return this.apiHttpService
     .REQUEST({url:urlObj.url+`/${cafeteriaName}/${cafeteriaCity}/${organization}`,method:urlObj.method},)
   }
-
+  deleteVendor(id:any){
+   const urlObj = this.apiConfigService.apiEndPointObj.deleteVendor;
+   return this.apiHttpService
+   .REQUEST({url:urlObj.url+`/${id}`,method:urlObj.method})
+  }
+searchVendor(searchObj:any){
+ const urlObj = this.apiConfigService.apiEndPointObj.searchVendor;
+ return this.apiHttpService
+ .REQUEST({url:urlObj.url,method:'POST'},searchObj)
+}
+updateVendor(id:any,vendor:any){
+  const urlObj = this.apiConfigService.apiEndPointObj.updateVendor;
+  return this.apiHttpService
+  .REQUEST({url:urlObj.url+`/${id}`,method:'POST'},vendor)
+}
 }

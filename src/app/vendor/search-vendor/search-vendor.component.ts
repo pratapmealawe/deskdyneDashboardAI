@@ -10,7 +10,11 @@ import { ApiMainService } from "src/service/apiService/apiMain.service";
 })
 
 export class SearchVendorComponent{
-  searchObj:any;
+  searchObj:any = {
+    vendorName:'',
+    vendorPhoneNo:'',
+    vendorEmail:''
+  };
   vendorList:any;
   orgName:any;
      constructor(private apiMainService:ApiMainService){
@@ -21,14 +25,21 @@ export class SearchVendorComponent{
      async getAllVendors(){
         try{
      this.vendorList= await this.apiMainService.getAllVendors()
+     console.log(this.vendorList);
      
     }catch(error){
-      console.log(error,'getAllVendor')
+      console.log('getAllVendor',error)
     }
      }
 
-     searchVendor(){
-      
+    async  searchVendor(){
+      try{
+        this.vendorList = await this.apiMainService.searchVendor(this.searchObj);
+        console.log('searched vendor',this.vendorList);
+      }catch(error){
+        console.log('searchVendor',error)
+      }
+     
      }
      resetForm(){
 

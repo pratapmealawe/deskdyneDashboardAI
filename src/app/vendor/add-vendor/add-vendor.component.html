@@ -1,4 +1,5 @@
-<div class="bgsidepadding1">
+<button class="btn btn-primary btn-sm" (click)="goBack()">Back</button>  
+<div class="bgsidepadding1">  
    
     <div [formGroup]="form">
         <div class="row">
@@ -26,8 +27,7 @@
                 <select class="inline" formControlName="vendorRole">
                     <ng-container *ngFor="let role of vendorRole">
                     <option value={{role}}>{{role}}</option> 
-                </ng-container>   
-                     
+                </ng-container>         
                 </select>
 
                 <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">*Vendor role
@@ -38,37 +38,48 @@
     <!-- <div>Outlet List</div> -->
     <div class="btn btn-primary btn-sm mt-2" (click)="addOutlet()">Add Outlet</div>
     <br>
-    <div class="cardDesign" *ngIf="showAddedOutlet">
+    <ng-container>
+    <div class="cardDesign" *ngFor="let outlet of selectedOutletsList; index as i">
         <div class="row card-wrapper" >
-            <ng-container *ngFor="let outlet of selectedOutletsList">
-            <div class="col-lg-12 col-md-10 col-9">
+            <div class="col-lg-10">
                 <div class="row" >
                     <div class="col-12 col-md-4 col-lg-12">
-                        <div class="row" >
-                            <input mdbCheckbox class="form-check-input" (change)="onCheckboxChange($event,outlet)" type="checkbox" id="inlineCheckbox2" value=""/>
-                            <div class="col-6 col-md-5 col-lg-3">   
-                                <div class="labelText">outlet Name</div>
+                        <div class="row">
+                            <div class="col-lg-3">   
+                                <div class="labelText">Outlet Name</div>
                                 <div class="labelData">{{outlet.outletName}}</div>
                             </div>
-                            <div class="col-6 col-md-7 col-lg-3">
-                                <div class="labelText">outlet type</div>
+                            <div class="col-lg-3">
+                                <div class="labelText">Outlet Type</div>
                                 <div class="labelData">{{outlet.outletType}}</div>
                             </div>
-                            <div class="col-6 col-md-7 col-lg-6">
-                                <div class="labelText">description</div>
+                            <div class="col-lg-3">
+                                <div class="labelText">Description</div>
                                 <div class="labelData">{{outlet.outletDescription}}</div>
                             </div>
+                            <div class="col-lg-3">
+                                <div class="labelText">Organization</div>
+                                <div class="labelData">{{outlet.organizationDetails.organization_name}}</div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="labelText">Cafeteria Name</div>
+                                <div class="labelData">{{outlet.cafeteriaDetails.cafeteria_name}}</div>
+                            </div>
+                            
                         </div>
                     </div>
-                </div>
+                </div>    
             </div>
-            </ng-container>
+            
+            <div class="col-lg-2">
+                <i class="bi bi-trash" (click)="deleteOutlet(i)"></i>
+            </div>
         </div>    
     </div>
+</ng-container>
     <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
     <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
 </div>
-
 <ng-template #outletModal let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">Outlet List</h4>
@@ -77,32 +88,32 @@
         </button>
     </div>
     <div class="modal-body">
-        <select class="inline" [(ngModel)]="orgName" (change)="getOrgName($event)">
-            <option *ngFor="let org of orgList" value={{org.organization_name}}><span>{{org.organization_name}}</span></option>
+        <select class="inline" (change)="getOrgName($event)">
+            <option>select organization</option>
+            <option *ngFor="let org of orgList" value="{{org.organization_name}}">{{org.organization_name}}</option>
           </select>
-
-          
-             <select class="inline" (change)="selectCafeteria($event)">
+             <select class="inline" (change)="selectCafeteria($event)" *ngIf="showCafeteria" >
+                <option>Select Cafetereria</option>
                 <ng-container *ngFor="let org of orgList">
                     <ng-container *ngIf="orgName==org.organization_name">  
                         <ng-container *ngFor="let cafeteria of org.cafeteriaList">
                          <!-- <option [ngValue]="{ orgName: org.organization_name, cafeteriaName: cafeteria.cafeteria_name }">{{cafeteria.cafeteria_name}}-{{cafeteria.cafeteria_city}}</option> -->
+                       
                          <option value="{{cafeteria.cafeteria_name}},{{cafeteria.cafeteria_city}},{{org.organization_name}}">{{cafeteria.cafeteria_name}}-{{cafeteria.cafeteria_city}}</option>
                         </ng-container>
                 </ng-container>
             </ng-container>
             </select>
-
-           
-           
-            <div class="cardDesign" *ngIf="showOutletList">
-            <div class="row card-wrapper" >
-                <ng-container *ngFor="let outlet of outletByCafeteriaList">
-                <div class="col-lg-12 col-md-10 col-9">
-                    <div class="row" >
+            <div class="mt-3" *ngIf="showModalOutletList">
+               <div *ngFor="let outlet of outletByCafeteriaList" class="cardDesign">
+                  <div class="row card-wrapper" >
+                    <div class="col-lg-12 col-md-10 col-9">
+                       <div class="row" >
                         <div class="col-12 col-md-4 col-lg-12">
                             <div class="row" >
-                                <input mdbCheckbox class="form-check-input" (change)="onCheckboxChange($event,outlet)" type="checkbox" id="inlineCheckbox2" value=""/>
+                                <div class="col-6 col-md-5 col-lg-2"> 
+                                        <input mdbCheckbox class="" [(ngModel)]="outlet.isChecked" type="checkbox">
+                                    </div>
                                 <div class="col-6 col-md-5 col-lg-3">   
                                     <div class="labelText">outlet Name</div>
                                     <div class="labelData">{{outlet.outletName}}</div>
@@ -111,7 +122,7 @@
                                     <div class="labelText">outlet type</div>
                                     <div class="labelData">{{outlet.outletType}}</div>
                                 </div>
-                                <div class="col-6 col-md-7 col-lg-6">
+                                <div class="col-6 col-md-7 col-lg-4">
                                     <div class="labelText">description</div>
                                     <div class="labelData">{{outlet.outletDescription}}</div>
                                 </div>
@@ -123,9 +134,9 @@
                         </div>
                     </div>
                 </div>
-                </ng-container>
             </div>    
-        </div>  
-        <div class="btn btn-primary btn-sm mt-2" (click)="getSelectedOutlets(outlet)" *ngIf="showAddbutton">Add</div>
+               </div>  
+            </div>
+        <div class="btn btn-primary btn-sm mt-2" (click)="getSelectedOutlets()" >Add</div>
     </div>
 </ng-template>
