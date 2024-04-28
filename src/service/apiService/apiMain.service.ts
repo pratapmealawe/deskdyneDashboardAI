@@ -35,6 +35,16 @@ export class ApiMainService {
     return today.toISOString();
   }
 
+  loginAdmin(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.loginAdmin, data);
+  } 
+  verifyOTP(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.verifyOTP, data);
+  }
+  logout(){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.logout);
+  }
+
   fetchAllOutlets(){
     const urlObj = this.apiConfigService.apiEndPointObj.fetchAllOutlets;
     return this.apiHttpService
