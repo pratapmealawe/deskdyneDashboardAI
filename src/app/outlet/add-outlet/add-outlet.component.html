@@ -28,58 +28,48 @@
                 <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">*Outlet description
                     is required</div>
             </div>
-        </div>
-        <div class="row" formGroupName="ownerDetails">
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Owner Name</label>
-                <input type="text" class="form-control" placeholder="Owner Name" formControlName="owner_name">
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Owner PhoneNo</label>
-                <input type="text" class="form-control" placeholder="Owner PhoneNo" formControlName="owner_phoneNo">
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Owner EmailID</label>
-                <input type="text" class="form-control" placeholder="Owner EmailID" formControlName="owner_emailId">
-            </div>
-        </div>
-        <div class="row" formGroupName="cashierDetails">
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Cashier Name</label>
-                <input type="text" class="form-control" placeholder="Cashier Name" formControlName="cashier_name">
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Cashier PhoneNo</label>
-                <input type="text" class="form-control" placeholder="Cashier PhoneNo" formControlName="cashier_phoneNo">
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Cashier EmailID</label>
-                <input type="text" class="form-control" placeholder="Cashier EmailID" formControlName="cashier_emailId">
-            </div>
-        </div>
-        <div class="row" formGroupName="managerDetails">
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Manager Name</label>
-                <input type="text" class="form-control" placeholder="Manager Name" formControlName="manager_name">
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Manager PhoneNo</label>
-                <input type="text" class="form-control" placeholder="Manager PhoneNo" formControlName="manager_phoneNo">
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <label class="labelText form-label">Manager EmailID</label>
-                <input type="text" class="form-control" placeholder="Manager EmailID" formControlName="manager_emailId">
-            </div>
-        </div>
+        </div>  
         <div class="row">
-            <!-- <div class="header6" *ngIf="menuList.length > 0">View {{menuList.length}} Menu Items Added</div> -->
-            <!-- <div><button class="btn btn-success btn-sm mt-1" (click)="openMenuList()">Add Menu Item</button></div> -->
             <div><button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">Select Org</button></div>
         </div>
-    </div>
-    <div class="btn btn-primary btn-sm mt-2 me-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
-    <div class="btn btn-success btn-sm mt-2 me-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
-    <div class="btn btn-danger btn-sm mt-2" (click)="back()">Back</div>
+      
+            <!-- <div>{{seletedCafetria.organizationDetails.organization_name}}</div> -->
+            <div class="cardDesign" *ngIf="seletedCafetria">
+                <div class="row card-wrapper" >
+                    <div class="col-lg-12 col-md-10 col-9">
+                        <div class="row" >
+                            <div class="col-12 col-md-4 col-lg-12">
+                                <div class="row" >    
+                                    <div class="col-6 col-md-5 col-lg-3">   
+                                        <div class="labelText">Organization Name</div>
+                                        <div class="labelData">{{seletedCafetria.organizationDetails.organization_name}}</div>
+                                    </div>
+                                    <div class="col-6 col-md-5 col-lg-3">   
+                                        <div class="labelText">Organization City</div>
+                                        <div class="labelData">{{seletedCafetria.organizationDetails.city}}</div>
+                                    </div>
+                                    <div class="col-6 col-md-5 col-lg-3">   
+                                        <div class="labelText">Cafeteria Name</div>
+                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
+                                    </div>
+                                    <div class="col-6 col-md-5 col-lg-3">   
+                                        <div class="labelText">Cafeteria Name</div>
+                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
+                                    </div>
+                                    <!-- <div class="col-6 col-md-5 col-lg-3">   
+                                        <div class="labelText">Cafeteria Location</div>
+                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails. cafeteria_location}}</div>
+                                    </div> -->
+                                   
+                                   </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+             </div>
+          </div>
+    <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
+    <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
 </div>
 <ng-template #contentOrg let-modal>
     <div class="modal-header">
@@ -90,16 +80,16 @@
     </div>
     <div class="modal-body">
         <ul class="list-group">
-            <li class="list-group-item" *ngFor="let org of orgList">
-                <div class="row" *ngFor="let cafe of org.cafeteriaList;let i = index">
+            <li class="list-group-item" *ngFor="let org of formattedOrgList">
+               
                     <div class="col-12 col-md-12 col-lg-12">
-                        <input type="radio" (change)="selectOrg(org,cafe)" name="selectOrg">
-                        {{org.organization_name}}-{{cafe.cafeteria_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
+                        <input type="radio" [(ngModel)]="selectedOrgCafeteria" name="selectOrg" [value]="org.key">
+                       {{org.key}}
                     </div>
                     <!-- <div class="col-sm-12 col-md-10 col-lg-6">
                         {{org.organization_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
                     </div> -->
-                </div>
+       
             </li>
         </ul>
     </div>

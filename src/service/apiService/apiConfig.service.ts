@@ -21,6 +21,12 @@ export class ApiConfigService {
       updateOutletNoImages: {url: `${this.baseUrl}/api/updateOutletNoImages`, method: 'POST'},
       fetchCategories: {url: `${this.baseUrl}/api/fetchCategories`, method: 'GET'},
       saveCategories: {url: `${this.baseUrl}/api/saveCategories`, method: 'POST'},
+      saveVendor: {url: `${this.baseUrl}/api/saveVendor`, method:'POST'},
+      getAllVendors:{url:`${this.baseUrl}/api/getAllVendors`,method:'GET'},
+      getOutletByCafeteria:{url:`${this.baseUrl}/api/getOutletByCafeteria`,method:'GET'},
+      deleteVendor:{url:`${this.baseUrl}/api/deleteVendor`,method:'DELETE'},
+      searchVendor:{url:`${this.baseUrl}/api/searchVendor`,method:'POST'},
+      updateVendor:{url:`${this.baseUrl}/api/updateVendor`,method:'POST'}
    };
   }
 }

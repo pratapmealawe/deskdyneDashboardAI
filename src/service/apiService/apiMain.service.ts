@@ -35,6 +35,16 @@ export class ApiMainService {
     return today.toISOString();
   }
 
+  loginAdmin(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.loginAdmin, data);
+  } 
+  verifyOTP(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.verifyOTP, data);
+  }
+  logout(){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.logout);
+  }
+
   fetchAllOutlets(){
     const urlObj = this.apiConfigService.apiEndPointObj.fetchAllOutlets;
     return this.apiHttpService
@@ -82,5 +92,34 @@ export class ApiMainService {
     return this.apiHttpService
     .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
   }
-
+  saveVendor(payload:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.saveVendor;
+    return this.apiHttpService
+    .REQUEST({url:urlObj.url,method:urlObj.method},payload)
+  }
+  getAllVendors(){
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllVendors
+    return this.apiHttpService
+    .REQUEST({url:urlObj.url,method:urlObj.method})
+  }
+  getOutletByCafeteria(cafeteriaName:any,cafeteriaCity:any,organization:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletByCafeteria;
+    return this.apiHttpService
+    .REQUEST({url:urlObj.url+`/${cafeteriaName}/${cafeteriaCity}/${organization}`,method:urlObj.method},)
+  }
+  deleteVendor(id:any){
+   const urlObj = this.apiConfigService.apiEndPointObj.deleteVendor;
+   return this.apiHttpService
+   .REQUEST({url:urlObj.url+`/${id}`,method:urlObj.method})
+  }
+searchVendor(searchObj:any){
+ const urlObj = this.apiConfigService.apiEndPointObj.searchVendor;
+ return this.apiHttpService
+ .REQUEST({url:urlObj.url,method:'POST'},searchObj)
+}
+updateVendor(id:any,vendor:any){
+  const urlObj = this.apiConfigService.apiEndPointObj.updateVendor;
+  return this.apiHttpService
+  .REQUEST({url:urlObj.url+`/${id}`,method:'POST'},vendor)
+}
 }
