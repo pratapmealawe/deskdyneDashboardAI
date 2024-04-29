@@ -106,4 +106,9 @@ updateVendor(id:any,vendor:any){
   return this.apiHttpService
   .REQUEST({url:urlObj.url+`/${id}`,method:'POST'},vendor)
 }
+searchOutlet(searchObj:any){
+  const urlObj = this.apiConfigService.apiEndPointObj.searchOutlet;
+  return this.apiHttpService
+  .REQUEST({url:urlObj.url,method:'POST'},searchObj)
+}
 }

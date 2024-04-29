@@ -28,13 +28,14 @@ export class OutletComponent implements OnInit {
 
   async searchOutlet(){
     try {
-      const res = await this.apiMainService.fetchAllOutlets();
-      if(res && res.length>0){
-        this.outletList = res;
-      }
-      console.log(res)
+        this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
+     
+      // if(res && res.length>0){
+      //   this.outletList = res;
+      // }
+      // console.log(res)
     } catch (error) {
-      
+      console.log('seachOutlet',error)
     }
   }
 

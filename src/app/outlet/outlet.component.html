@@ -46,9 +46,9 @@
         </div>
     </div>
 </div>
-<div class="bgsidepadding2" *ngIf="!showSearchSection && outletList.length > 0">
-    <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
-</div>
 <div class="center mt-5" *ngIf="outletList.length === 0">
     No Records Found
+</div>
+<div class="bgsidepadding2" *ngIf="!showSearchSection && outletList.length > 0">
+    <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view> 
 </div>

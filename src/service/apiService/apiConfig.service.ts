@@ -25,7 +25,8 @@ export class ApiConfigService {
       getOutletByCafeteria:{url:`${this.baseUrl}/api/getOutletByCafeteria`,method:'GET'},
       deleteVendor:{url:`${this.baseUrl}/api/deleteVendor`,method:'DELETE'},
       searchVendor:{url:`${this.baseUrl}/api/searchVendor`,method:'POST'},
-      updateVendor:{url:`${this.baseUrl}/api/updateVendor`,method:'POST'}
+      updateVendor:{url:`${this.baseUrl}/api/updateVendor`,method:'POST'},
+      searchOutlet:{url:`${this.baseUrl}/api/searchOutlet`,method:'POST'}
    };
   }
 }
