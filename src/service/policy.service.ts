@@ -10,7 +10,8 @@ export class PolicyService {
 
   getCurrentButtonPolicy(){
     const policy = this.localStorageService.getCacheData('ADMIN_PROFILE');
-    return policy.policy[0].button_policies;
+    // return policy.policy[0].button_policies;
+    return true;
   }
   
 }

@@ -16,6 +16,12 @@ const routes: Routes = [
     path: 'vendor', loadChildren:()=>import('./vendor/vendor.module').then(m=>m.VendorModule)
   },
   {
+    path:'add-admin',loadChildren:()=>import('./add-admin/add-admin.module').then(m=>m.AddAdminModule)
+  },
+  {
+    path:'admin',loadChildren:()=>import('./admin/admin.module').then(m=>m.AdminModule)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
