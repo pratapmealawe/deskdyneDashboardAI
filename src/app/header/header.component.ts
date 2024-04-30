@@ -22,6 +22,7 @@ export class HeaderComponent implements OnInit {
   navOptions:any = [
     { name: 'Outlet', showParent:true, children: [{ label: 'Outlet Overview', route: 'outlet' },{ label: 'Outlet Add', route: 'outlet/add-outlet' }] },
     { name: 'Vendor', showParent:true, children: [{ label: 'Search vendor', route: 'vendor/search-vendor' }, { label: 'Add Vendor', route: 'vendor/add-vendor' }] },
+    { name: 'Admin', showParent:true, children: [{ label: 'Admin', route: 'admin' }, { label: 'Add Admin', route: 'add-admin' }] },
   ]
   breadCrumbText: any = 'Home';
   currentRoute: string = 'currentOrder';
@@ -55,7 +56,7 @@ export class HeaderComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+    this.getAdminProfile();
   }
 
   checkRoute() {
@@ -94,15 +95,27 @@ export class HeaderComponent implements OnInit {
     this.offcanvasService.open(this.content, { position: 'start' });
   }
   
+    async getAdminProfile(){
+    const adminId = this.localStorageService.getCacheData('ADMIN_ID');
+    try{
+      const adminProfile = await this.apiMainService.getadminprofile(adminId);
+      if(adminProfile && adminProfile._id){
+        this.adminProfile = adminProfile;
+        this.localStorageService.setCacheData('ADMIN_PROFILE',adminProfile);
+      }
+    }catch(error){
+      console.log('error while logging out ', error)
+    }
+  }
   async logout() {
-    // try {
-    //   await this.apiMainService.logout();
-    //   this.localStorageService.resetAllCacheData();
-    //   this.runtimeStorageService.resetAllCacheData();
-    //   this.router.navigate(['/login']);
-    // } catch (error) {
-    //   console.log('error while logging out ', error)
-    // }
+    try {
+      await this.apiMainService.logout();
+      this.localStorageService.resetAllCacheData();
+      this.runtimeStorageService.resetAllCacheData();
+      this.router.navigate(['/login']);
+    } catch (error) {
+      console.log('error while logging out ', error)
+    }
   }
 
 }

@@ -44,7 +44,7 @@ export class ApiMainService {
   logout(){
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.logout);
   }
-
+  
   fetchAllOutlets(){
     const urlObj = this.apiConfigService.apiEndPointObj.fetchAllOutlets;
     return this.apiHttpService
@@ -116,4 +116,42 @@ updateVendor(id:any,vendor:any){
   return this.apiHttpService
   .REQUEST({url:urlObj.url+`/${id}`,method:'POST'},vendor)
 }
+searchOutlet(searchObj:any){
+  const urlObj = this.apiConfigService.apiEndPointObj.searchOutlet;
+  return this.apiHttpService
+  .REQUEST({url:urlObj.url,method:'POST'},searchObj)
+}
+getAllPolicy(){    
+  const urlObj = this.apiConfigService.apiEndPointObj.getAllPolicy;
+  // return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method});
+  return this.runTimeCacheInterceptor('POLICIES',{url: urlObj.url, method: urlObj.method});
+}
+
+adminProfile(payload:any){
+  const urlObj = this.apiConfigService.apiEndPointObj.adminProfile;
+  return this.apiHttpService
+  .REQUEST({url:urlObj.url,method:'POST'},payload)
+}
+saveAdminProfile(data: any){
+  return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.adminProfile, data);
+} 
+updateadminprofile(id: string, data: any){
+  const urlObj = this.apiConfigService.apiEndPointObj.updateadminprofile;
+  return this.apiHttpService
+  .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, data);
+}
+searchAdmin(data:any) {
+  return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.searchAdmin, data);
+}
+getAdminProfileList(){
+  const urlObj = this.apiConfigService.apiEndPointObj.getAdminProfileList
+  return this.apiHttpService
+  .REQUEST({url:urlObj.url,method:'GET'})
+}
+getadminprofile(loginId: string){
+  const urlObj = this.apiConfigService.apiEndPointObj.getadminprofile;
+  return this.apiHttpService
+  .REQUEST({url: urlObj.url + `/${loginId}`, method: urlObj.method});
+}
+
 }

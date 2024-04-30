@@ -16,7 +16,7 @@ export class LoginComponent implements OnInit {
   constructor(private localStorageService:LocalStorageService, private router:Router, private apiMainService:ApiMainService){}
 
   ngOnInit(): void {
-    // this.checkIfTokenPresent();
+    this.checkIfTokenPresent();
   }
 
   checkIfTokenPresent(){
@@ -28,9 +28,9 @@ export class LoginComponent implements OnInit {
   }
   async login(){
     try{
-      if(this.adminId === 'admin'){
-        // this.adminId = this.adminId.toUpperCase();
-        // await this.apiMainService.loginAdmin({adminId:this.adminId});
+      if(this.adminId){
+        this.adminId = this.adminId.toUpperCase();
+        await this.apiMainService.loginAdmin({adminId:this.adminId});
         this.showOTP = true;
       }        
     }catch(error){
@@ -40,16 +40,10 @@ export class LoginComponent implements OnInit {
 
   async verifyOTP(){
     try{
-      // const loginObj = await this.apiMainService.verifyOTP({adminId:this.adminId, password: this.password});
-      // this.localStorageService.setCacheData('ADMIN_ID', this.adminId);
-      // this.localStorageService.setCacheData('ADMIN_TOKEN', loginObj.token);
-      // if(loginObj.ddToken){
-      //   this.localStorageService.setCacheData('DD_ADMIN_TOKEN', loginObj.ddToken);
-      // }
-      console.log(this.password)
-      if(this.password == 123){
-        this.router.navigate(['/home']);
-      }
+      const loginObj = await this.apiMainService.verifyOTP({adminId:this.adminId, password: this.password});
+      this.localStorageService.setCacheData('ADMIN_ID', this.adminId);
+      this.localStorageService.setCacheData('ADMIN_TOKEN', loginObj.token);    
+      this.router.navigate(['/home']);
     }catch(error){
       console.log('error while verifying otp ',error);
     }

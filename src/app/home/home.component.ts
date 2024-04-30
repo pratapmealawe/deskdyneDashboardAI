@@ -78,18 +78,7 @@ export class HomeComponent implements OnInit {
   //   this.selectedTab = navObj.name;
   //   // this.router.navigate([navObj.route])
   // }
-  // async getAdminProfile(){
-  //   const adminId = this.localStorageService.getCacheData('ADMIN_ID');
-  //   try{
-  //     const adminProfile = await this.apiMainService.getadminprofile(adminId);
-  //     if(adminProfile && adminProfile._id){
-  //       this.adminProfile = adminProfile;
-  //       this.localStorageService.setCacheData('ADMIN_PROFILE',adminProfile);
-  //     }
-  //   }catch(error){
-  //     console.log('error while logging out ', error)
-  //   }
-  // }
+
 
   // openEnd() {
 	// 	this.offcanvasService.open(this.content, { position: 'start' });
