@@ -21,9 +21,10 @@ export class AddVendorCommponent {
     outletByCafeteriaList: any;
     showModalOutletList = false;
     selectedOutletsList: any = [];
+    defaultRole:any = 'Cashier'
     // selectedOutlet: any;
 
-    showAddbutton=false;
+    showAddbutton:any=false;
     vendorRole=['Owner', 'Manager', 'Cashier'];
     showCafeteria=false;
     showSelectCafeteriaOption=true

@@ -4,47 +4,45 @@ import { ApiMainService } from "src/service/apiService/apiMain.service";
 
 
 @Component({
-    selector:'app-search-vendor',
-    templateUrl:'search-vendor.component.html',
-    styleUrls:['search-vendor.component.html']
+  selector: 'app-search-vendor',
+  templateUrl: 'search-vendor.component.html',
+  styleUrls: ['search-vendor.component.html']
 })
 
-export class SearchVendorComponent{
-  searchObj:any = {
-    vendorName:'',
-    vendorPhoneNo:'',
-    vendorEmail:''
+export class SearchVendorComponent {
+  searchObj: any = {
+    vendorName: '',
+    vendorPhoneNo: '',
+    vendorEmail: ''
   };
-  vendorList:any;
-  orgName:any;
-     constructor(private apiMainService:ApiMainService){
-        this.getAllVendors()
-       // console.log(this.vendorList)
-     }
-     
-     async getAllVendors(){
-        try{
-     this.vendorList= await this.apiMainService.getAllVendors()
-     console.log(this.vendorList);
-     
-    }catch(error){
-      console.log('getAllVendor',error)
+  vendorList: any;
+  orgName: any;
+  constructor(private apiMainService: ApiMainService) {
+  }
+
+  async getAllVendors() {
+    try {
+      this.vendorList = await this.apiMainService.getAllVendors()
+      console.log(this.vendorList);
+
+    } catch (error) {
+      console.log('getAllVendor', error)
     }
-     }
+  }
 
-    async  searchVendor(){
-      try{
-        this.vendorList = await this.apiMainService.searchVendor(this.searchObj);
-        console.log('searched vendor',this.vendorList);
-      }catch(error){
-        console.log('searchVendor',error)
-      }
-     
-     }
-     resetForm(){
+  async searchVendor() {
+    try {
+      this.vendorList = await this.apiMainService.searchVendor(this.searchObj);
+      console.log('searched vendor', this.vendorList);
+    } catch (error) {
+      console.log('searchVendor', error)
+    }
 
-     }
-     addVendor(){
+  }
+  resetForm() {
 
-     }
+  }
+  addVendor() {
+
+  }
 }

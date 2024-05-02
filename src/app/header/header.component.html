@@ -6,15 +6,12 @@
         <span>
             <span class="name">{{adminProfile.name}}</span>
             <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
-                [src]="adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile">
+                [src]="imageUrl+adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile">
             <span [ngbPopover]="popOverBody" popoverTitle="Admin Profile" *ngIf="!adminProfile.imageUrl"
                 class="img-span pointer"><i class="bi bi-person"></i></span>
         </span>
     </div>
 </nav>
-<!-- <div class="outlet-wrapper">
-    <router-outlet></router-outlet>
-</div> -->
 
 <ng-template class="offcanvas" #content let-offcanvas>
     <div class="offcanvas-header">
