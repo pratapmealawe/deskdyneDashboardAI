@@ -75,6 +75,12 @@ export class ApiMainService {
     .REQUEST({url: urlObj.url + `/${imgIndex}` + `/${id}`, method: urlObj.method}, payload);
   }
 
+  updateOutletNoImages(id:any,payload:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOutletNoImages;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, payload);
+  }
+
   fetchCategories(){
     const urlObj = this.apiConfigService.apiEndPointObj.fetchCategories;
     return this.apiHttpService

@@ -195,9 +195,26 @@ export class AddOutletComponent implements OnInit {
     return formData;
   }
 
-  selectOrg(selected:any) {
-  console.log(selected);
+  selectOrg(org: any, cafe: any) {
+    this.selectedOrg = {
+      organization_name: org.organization_name,
+      city: org.city,
+      location: org.location
+    }
+    this.selectedCafe = {
+      cafeteria_name: cafe.cafeteria_name,
+      cafeteria_city: cafe.cafeteria_city,
+      cafeteria_location: cafe.cafeteria_location,
+      address1: cafe.address1,
+      address2: cafe.address2,
+      landmark: cafe.landmark,
+      location: cafe.location
+    }
+    console.log(org, cafe)
+  }
 
+  back(){
+    this.router.navigate(['/outlet'])
   }
 
 }

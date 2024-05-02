@@ -15,7 +15,7 @@
             </div>
         </div>
     </div>
-    <div class="col-12 col-md-4 col-lg-12">
+    <div class="col-12 col-md-4 col-lg-12 mt-2">
         <div class="row">
             <div class="col-6 col-md-5 col-lg-12">
                 <div class="labelText">Outlet Description</div>
@@ -26,7 +26,7 @@
     <div class="col-12 col-md-4 col-lg-12">
         <div class="row">
             <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Company Name</div>
+                <div class="labelText">Organization Name</div>
                 <div class="labelData">{{outletObj.organizationDetails.organization_name}}</div>
             </div>
             <div class="col-6 col-md-7 col-lg-4">
@@ -64,54 +64,6 @@
             <div class="col-6 col-md-7 col-lg-4">
                 <div class="labelText">Location</div>
                 <div class="labelData">{{outletObj.cafeteriaDetails.address2}}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-4 col-lg-12" *ngIf="outletObj.ownerDetails.owner_name">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Owner Name</div>
-                <div class="labelData">{{outletObj.ownerDetails.owner_name}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Owner PhNo</div>
-                <div class="labelData">{{outletObj.ownerDetails.owner_phoneNo}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Owner EmailId</div>
-                <div class="labelData">{{outletObj.ownerDetails.owner_emailId}}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-4 col-lg-12" *ngIf="outletObj.managerDetails.manager_name">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Manager Name</div>
-                <div class="labelData">{{outletObj.managerDetails.manager_name}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Manager phoneNo</div>
-                <div class="labelData">{{outletObj.managerDetails.manager_phoneNo}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Manager EmailId</div>
-                <div class="labelData">{{outletObj.managerDetails.manager_emailId}}</div>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 col-md-4 col-lg-12" *ngIf="outletObj.cashierDetails.cashier_name">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Company Name</div>
-                <div class="labelData">{{outletObj.cashierDetails.cashier_name}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">City</div>
-                <div class="labelData">{{outletObj.cashierDetails.cashier_phoneNo}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Location</div>
-                <div class="labelData">{{outletObj.cashierDetails.cashier_emailId}}</div>
             </div>
         </div>
     </div>

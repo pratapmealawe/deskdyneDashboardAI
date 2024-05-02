@@ -6,8 +6,8 @@
     top: 100px;
 }
 .uploadedImage{
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
     cursor: pointer;
 }
 .uploadInput{
@@ -21,8 +21,13 @@
     color: white;
     position: relative;
     top: -15px;
-    left: 8px;
+    left: 34px;
     font-size: 13px;
     padding: 4px 0px;
     cursor: pointer;
+}
+.addBtn{
+    position:relative;
+    top:5px;
+    right:7px;
 }
