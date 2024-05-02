@@ -22,6 +22,7 @@ import { HeaderComponent } from './header/header.component';
     ConfirmationModalComponent,
     ImageCropperComponent,
     HeaderComponent,
+    ImageCropperComponent
   ],
   imports: [
     BrowserModule,

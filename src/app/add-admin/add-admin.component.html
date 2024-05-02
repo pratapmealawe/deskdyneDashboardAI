@@ -1,0 +1,60 @@
+<div class="container-fluid adminForm">
+    <div class="labelText">Add Admin</div>
+    <div class="row">
+        <div class="col-12 col-md-2 col-lg-2 image-div">
+            <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+                (change)="handleFileInput($event)">
+            <img (click)="f.click()" [src]="imageUrl?imageUrl:'assets/images/dummyUpload.png'" class="uploadedImage" />
+            <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
+        </div>
+        <div class="col-12 col-md-10 col-lg-10">
+            <div class="row">
+                <div class="col-12 col-md-4 col-lg-3 bgpadding1">
+                    <label class="labelText" for="adminName">User Name</label>
+                    <input type="text" class="form-control" id="adminName" [(ngModel)]="adminObj.name"
+                        placeholder="Enter User Name">
+                </div>
+                <div class="col-12 col-md-4 col-lg-3 bgpadding1">
+                    <label class="labelText" for="phoneNo">Phone No</label>
+                    <input type="number" class="form-control" id="phoneNo" [(ngModel)]="adminObj.phoneNo"
+                        placeholder="Enter User Phone No">
+                </div>
+                <div class="col-12 col-md-4 col-lg-3 bgpadding1">
+                    <label class="labelText" for="email">Email</label>
+                    <input type="text" class="form-control" id="email" [(ngModel)]="adminObj.email"
+                        placeholder="User Email">
+                </div>
+                <div class="col-12 col-md-4 col-lg-3 bgpadding1">
+                    <label for="role" class="labelText">User Role</label>
+                    <div>
+                        <select class="pointer" name="role" [(ngModel)]="adminObj.role">
+                            <option disabled selected value> -- select role -- </option>
+                            <option [value]="item.value" *ngFor="let item of roleArr">{{item.text}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-12 col-md-3 col-lg-3 bgpadding1">
+                    <label for="reference" class="labelText">User Policy</label>
+                    <select class="pointer" name="reference" [(ngModel)]="adminObj.policy">
+                        <option disabled selected value> -- select policy -- </option>
+                        <option [value]="item.policy_name" *ngFor="let item of policyArr">{{item.policy_name}}
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="inline me-2 mt-2" *ngIf="!editMode">
+            <button type="button" class="btn btn-primary btn-sm" (click)="addAdmin(adminObj)"
+                >Submit</button>
+        </div>
+        <div class="inline me-2" *ngIf="editMode">
+            <button type="button" class="btn btn-primary btn-sm" (click)="updateAdmin(adminObj)">Update</button>
+        </div>
+        <div class="inline me-2">
+            <button type="button" class="btn btn-danger btn-sm" (click)="cancel()">Cancel</button>
+        </div>
+    </div>
+</div>
