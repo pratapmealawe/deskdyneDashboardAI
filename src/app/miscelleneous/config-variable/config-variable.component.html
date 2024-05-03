@@ -1,0 +1,85 @@
+<div class="bgpadding1">
+    <span class="addBtn" (click)="addVariable()">+</span>
+
+    <div *ngIf="editMode" class="bgpadding1">
+        <div class="labelText" *ngIf="addnewVariable">Add New Config Variable</div>
+        <div class="labelText" *ngIf="!addnewVariable">Update Config Variable</div>
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <label class="labelData" for="variableName">Variable Name</label>
+                <input type="text" class="form-control" id="variableName" [(ngModel)]="variableObj.configName"
+                    placeholder="name">
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <label class="labelData" for="variableValue">Variable Type</label>
+                <div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="radio1" value="String"
+                            [(ngModel)]="variableType" name="addonType">
+                        <label class="form-check-label labelData" for="radio1">String</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="radio2" value="Number"
+                            [(ngModel)]="variableType" name="addonType">
+                        <label class="form-check-label labelData" for="radio2">Number</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="radio3" value="Time" [(ngModel)]="variableType"
+                            name="addonType">
+                        <label class="form-check-label labelData" for="radio3">Time</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="radio4" value="Date" [(ngModel)]="variableType"
+                            name="addonType">
+                        <label class="form-check-label labelData" for="radio4">Date</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <label class="labelData" for="variableValue">Variable Value</label>
+                <input type="text" class="form-control" id="variableValue" *ngIf="variableType === 'String' "
+                    [(ngModel)]="variableObj.configData" placeholder="value">
+                <input type="number" class="form-control" id="variableValue" *ngIf="variableType === 'Number' "
+                    [(ngModel)]="variableObj.configData" placeholder="value">
+                <input type="time" class="inline" [(ngModel)]="variableObj.configData" *ngIf="variableType === 'Time' "
+                    placeholder="00:00">
+                <input type="date" class="form-control" id="variableValue" *ngIf="variableType === 'Date' "
+                    [(ngModel)]="variableObj.configData">
+            </div>
+            <div class="col-sm-12 col-md-6 col-lg-3">
+                <label class="labelData" for="variableIndex">Variable Index</label>
+                <input type="text" class="form-control" id="variableIndex" [(ngModel)]="variableObj.configIndex"
+                    placeholder="index">
+            </div>
+        </div>
+        <div class="mt-2">
+            <div class="inline" *ngIf="addnewVariable">
+                <button type="button" class="btn btn-primary btn-sm me-2" (click)="submitnewVariable(variableObj)">Submit</button>
+            </div>
+            <div class="inline" *ngIf="!addnewVariable">
+                <button type="button" class="btn btn-primary btn-sm me-2" (click)="updateVariable(variableObj)">Update</button>
+            </div>
+            <div class="inline">
+                <button type="button" class="btn btn-danger btn-sm me-2" (click)="cancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="!editMode" class="bgpadding1">
+        <div *ngFor="let variable of allVariables" class="cardDesign">
+            <div class="row">
+                <div class="col-2 col-md-2 col-lg-2 labelData">{{variable.configIndex}}</div>
+                <div class="col-4 col-md-4 col-lg-4 labelData">{{variable.configName}}</div>
+                <div class="col-3 col-md-4 col-lg-4 labelData">{{variable.configData}}</div>
+                <div class="col-3 col-md-2 col-lg-2 alignRight">
+                    <i class="bi bi-pencil-square bgsidepadding5 pointer" (click)="editVariable(variable)"></i>
+                    <i class="bi bi-trash-fill bgsidepadding5 pointer" (click)="showPopup(variable)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center" *ngIf="!editMode && allVariables.length === 0">
+        No Records Found
+    </div>
+</div>

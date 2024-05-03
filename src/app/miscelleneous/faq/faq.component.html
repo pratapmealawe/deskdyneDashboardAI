@@ -1,0 +1,71 @@
+<div class="bgpadding1">
+    <!-- <div class="row mb-3">
+        <div class="labelText">Application</div>
+        <div class="col-6 col-md-4 col-lg-3 mt-2">
+            <span class="me-2" [ngClass]="{tileSelected: server === 'ML'}" (click)="server = 'ML';getAllFAQs('ML')">
+                <span class="tileLabel header4 countTile">MealAwe</span>
+            </span>
+        </div>
+    </div> -->
+    <span class="addBtn mt-2" (click)="addFAQ()" *ngIf="(!addnewFAQ)">+</span>
+
+    <div class="mt-2" *ngIf="editMode">
+        <!-- <div class="labelText" *ngIf="addnewFAQ">Add New FAQ</div> -->
+        <div class="labelText" *ngIf="!addnewFAQ">Update FAQ</div>
+        <div>
+            <div>
+                <label class="labelText" for="variableName">Question</label>
+                <input type="text" class="form-control" id="variableName" [(ngModel)]="faqObj.question"
+                    placeholder="name">
+            </div>
+            <div>
+                <label class="labelText" for="variableValue">Answer</label>
+                <input type="text" class="form-control" id="variableValue" [(ngModel)]="faqObj.answer"
+                    placeholder="value">
+            </div>
+            <div>
+                <div class="labelText mt-2">FAQ for</div>
+                <div class="mt-2">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" id="DDVendor" value="DDVendor" [(ngModel)]="faqObj.faqFor"
+                            name="itemType">
+                        <label class="form-check-label labelText" for="DDVendor">DDVendor</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-2">
+            <span class="inline me-2" *ngIf="addnewFAQ">
+                <button type="button" class="btn btn-primary btn-sm" (click)="submitnewFAQ(faqObj)">Submit</button>
+            </span>
+            <span class="inline me-2" *ngIf="!addnewFAQ">
+                <button type="button" class="btn btn-primary btn-sm" (click)="updateFAQ(faqObj)">Update</button>
+            </span>
+            <span class="inline me-2">
+                <button type="button" class="btn btn-danger btn-sm" (click)="cancel()">Cancel</button>
+            </span>
+        </div>
+    </div>
+
+    <div class="mt-2" *ngIf="!editMode">
+        <div *ngFor="let faq of allFAQs" class="cardDesign">
+            <div class="row">
+                <div class="col-10 col-md-10 col-lg-11">
+                    <div class="labelText">{{faq.question}}</div>
+                    <div class="labelData">{{faq.answer}}</div>
+                    <div class="labelData">FAQ For: {{faq.faqFor}}</div>
+                </div>
+                <div class="col-2 col-md-2 col-lg-1 alignRight">
+                    <i class="bi bi-pencil-square bgsidepadding5 pointer" (click)="editFAQ(faq)"
+                        ></i>
+                    <i class="bi bi-trash-fill bgsidepadding5 pointer" (click)="showPopup(faq)"
+                        ></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center" *ngIf="!editMode && allFAQs.length === 0">
+        No Records Found
+    </div>
+</div> 
