@@ -1,0 +1,46 @@
+<div class="container-fluid mt-2 policy-wrapper">
+    <div class="labelText">Policy Add</div>
+    <div class="row mt-2">
+        <div class="col-sm-12 col-md-4 col-lg-3">
+            <label for="name" class="labelData">Policy Name</label>
+            <input type="text" class="form-control shadow-none" name="name" placeholder="Policy Name"
+                [(ngModel)]="policyObj.policy_name">
+        </div>
+        <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="policyArr?.length>0">
+            <label for="reference" class="labelData">Reference Policy</label>
+            <select class="pointer" name="reference" (change)="showReferencePolicy($event)">
+                <option disabled selected value> -- select an option -- </option>
+                <option [value]="item._id" *ngFor="let item of policyArr">{{item.policy_name}}
+                </option>
+            </select>
+        </div>
+        <div class="col-sm-6 col-md-6 col-lg-6">
+            <label for="description" class="labelData">Policy Description</label>
+            <input type="text" class="form-control shadow-none" name="description" placeholder="Policy Description" [(ngModel)]="policyObj.policy_description">
+        </div>
+    </div>
+    <div class="row inline button-wrapper">
+        <label class="labelText">Route Access<span class="tileLabel selectAll header4" (click)="selectAllRoutes()">Select All</span></label>
+        <div class="col-12 inline">
+            <span class="me-2 inline" *ngFor="let item of routeKeys"
+                [ngClass]="{tileSelected: policyObj.route_policies[item]}">
+                <span class="tileLabel header4 countTile"
+                    (click)="policyObj.route_policies[item] = !policyObj.route_policies[item]">{{item}}</span>
+            </span>
+        </div>
+    </div>
+    <div class="row inline button-wrapper">
+        <label class="labelText">Button Access<span class="tileLabel selectAll header4" (click)="selectAllPolicy()">Select All</span></label>
+        <div class="col-12 inline">
+            <span class="me-2 inline" *ngFor="let item of buttonKeys"
+                [ngClass]="{tileSelected: policyObj.button_policies[item]}">
+                <span class="tileLabel header4 countTile"
+                    (click)="policyObj.button_policies[item] = !policyObj.button_policies[item]">{{item}}</span>
+            </span>
+        </div>
+    </div>
+    <button class="btn btn-primary btn-sm me-1" (click)="addPolicy()" *ngIf="!editMode">Save</button>
+    <button class="btn btn-success btn-sm me-1" (click)="updatePolicy()" *ngIf="editMode">Update</button>
+    <button class="btn btn-danger btn-sm me-1" (click)="cancelPolicy()">Cancel</button>
+    <div style="color:red;" *ngIf="showErrorMsg">Please Enter Policy Name and Description</div>
+</div>

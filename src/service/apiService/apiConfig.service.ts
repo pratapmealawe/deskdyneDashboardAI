@@ -28,6 +28,9 @@ export class ApiConfigService {
       getAllVendors:{url:`${this.baseUrl}/api/getAllVendors`,method:'GET'},
       getOutletByCafeteria:{url:`${this.baseUrl}/api/getOutletByCafeteria`,method:'GET'},
       getAllPolicy: {url: `${this.baseUrl}/api/getAllPolicy`, method: 'GET'},
+      addPolicy: {url: `${this.baseUrl}/api/addPolicy`, method: 'POST'},
+      updatePolicy: {url: `${this.baseUrl}/api/updatePolicy`, method: 'POST'},
+      deletePolicy: {url: `${this.baseUrl}/api/deletePolicy`, method: 'DELETE'},
       deleteVendor:{url:`${this.baseUrl}/api/deleteVendor`,method:'DELETE'},
       searchVendor:{url:`${this.baseUrl}/api/searchVendor`,method:'POST'},
       searchAdmin: {url: `${this.baseUrl}/api/searchAdmin`, method: 'POST'},
@@ -37,6 +40,17 @@ export class ApiConfigService {
       getAdminProfileList:{url:`${this.baseUrl}/api/getAdminProfileList`,method:'GET'},
       getadminprofile: {url: `${this.baseUrl}/api/getadminprofile`, method: 'GET'},
       updateadminprofile: {url: `${this.baseUrl}/api/updateadminprofile`, method: 'POST'},
+      getAllFAQs: {url: `${this.baseUrl}/api/getAllFAQs`, method: 'GET'},
+      saveFAQ: {url: `${this.baseUrl}/api/saveFAQ`, method: 'POST'},
+      updateFAQ: {url: `${this.baseUrl}/api/updateFAQ`, method: 'POST'},
+      deleteFAQ: {url: `${this.baseUrl}/api/deleteFAQ`, method: 'DELETE'},
+      getAllVariables: {url: `${this.baseUrl}/api/getAllVariables`, method: 'GET'},
+      saveVariable: {url: `${this.baseUrl}/api/saveVariable`, method: 'POST'},
+      updateVariable: {url: `${this.baseUrl}/api/updateVariable`, method: 'POST'},
+      deleteVariable: {url: `${this.baseUrl}/api/deleteVariable`, method: 'DELETE'},
+      getAllAppVersionList: {url: `${this.baseUrl}/api/getAllAppVersionList`, method: 'GET'},
+      saveAppVersion: {url: `${this.baseUrl}/api/saveAppVersion`, method: 'POST'},
+      updateAppVersion: {url: `${this.baseUrl}/api/updateAppVersion`, method: 'POST'},
    };
   }
 }

@@ -203,11 +203,11 @@ export class OutletMenuComponent implements OnInit {
       else{
         this.menuIndex = null;
       }
-      // const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,this.menuIndex);
-      // if(res && res._id){
-      //   this.outletObj = res;
-      //   this.showCard = true;
-      // }
+      const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,this.menuIndex);
+      if(res && res._id){
+        this.outletObj = res;
+        this.showCard = true;
+      }
       this.resetValues()
     } catch (error) {
       console.log(error);
