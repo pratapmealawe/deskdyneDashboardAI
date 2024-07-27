@@ -42,43 +42,29 @@ export class OutletMenuComponent implements OnInit {
 
   patchFormValue(item:any) {
     this.form.patchValue({
-      taxGroup: item.taxGroup,
       itemName: item.itemName,
       price: item.price,
-      priority: item.priority,
-      transferPrice: item.transferPrice,
+      subcidyAmt: item.subcidyAmt,
       category: item.category,
       subCategory: item.subCategory,
-      code: item.code,
-      recommended: item.recommended,
-      isSpicy: item.isSpicy,
-      isVeg: item.isVeg,
+      itemType: item.itemType,
       isActive: item.isActive,
-      mealVoucherApplicable: item.mealVoucherApplicable,
-      isPrePrepared: item.isPrePrepared,
-      priceIncludesTax: item.priceIncludesTax,
-      hideItemPrice: item.hideItemPrice,
-      mrp: item.mrp,
-      description: item.description,
-      calories: item.calories,
-      parcelChargeType: item.parcelChargeType,
-      parcelChargeValue: item.parcelChargeValue,
+      description: item.description
     })
   }
 
   createForm() {
     this.form = this.fb.group({
-      taxGroup: [''],
       itemName: [''],
       price: [''],
-      priority: [''],
-      transferPrice: [''],
+      priority: ['1'],
+      subcidyAmt: [''],
       category: [''],
       subCategory: [''],
       code: [''],
       recommended: [false],
       isSpicy: [false],
-      isVeg: [false],
+      itemType: ['Veg'],
       isActive: [false],
       mealVoucherApplicable: [false],
       isPrePrepared: [false],

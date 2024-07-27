@@ -91,7 +91,7 @@ export class AddVendorCommponent {
         if(vendor && vendor._id){
             this.selectedVendor = vendor;
             this.showUpdate=true;
-          
+            this.defaultRole = vendor.vendorRole;
             this.selectedOutletsList=vendor.outletList;
             this.form.patchValue({
                 vendorName: vendor.vendorName,

@@ -10,13 +10,13 @@
                 <div class="row">
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
-                            <div class="col-6 col-md-5 col-lg-5">
+                            <div class="col-6 col-md-8 col-lg-8">
                                 <div class="labelText">ItemName</div>
                                 <div class="labelData">{{item.itemName}}</div>
                             </div>
-                            <div class="col-6 col-md-7 col-lg-7">
-                                <div class="labelText">Tax Group</div>
-                                <div class="labelData">{{item.taxGroup}}</div>
+                            <div class="col-6 col-md-4 col-lg-4">
+                                <div *ngIf="item.itemType==='Veg'" class="vegIcon typeIcon inline"></div>
+                                <div *ngIf="item.itemType==='NonVeg'" class="nonvegIcon typeIcon inline"></div>
                             </div>
                         </div>
                     </div>
@@ -27,23 +27,19 @@
                                 <div class="labelText">Price</div>
                                 <div class="labelData">{{item.price}}</div>
                             </div>
-                            <div class="col-6 col-md-7 col-lg-4">
+                            <!-- <div class="col-6 col-md-7 col-lg-4">
                                 <div class="labelText">Priority</div>
                                 <div class="labelData">{{item.priority}}</div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
                             <div class="col-6 col-md-5 col-lg-5">
-                                <div class="labelText">Transfer Price</div>
-                                <div class="labelData">{{item.transferPrice}}</div>
-                            </div>
-                            <div class="col-6 col-md-7 col-lg-5">
-                                <div class="labelText">Category</div>
-                                <div class="labelData">{{item.category}}</div>
-                            </div>
+                                <div class="labelText">Subcidy Amt</div>
+                                <div class="labelData">{{item.subcidyAmt}}</div>
+                            </div>                           
                             <div class="col-6 col-md-7 col-lg-2">
                                 <i class="bi bi-pencil-square" (click)="edit(item,i)"></i>
                             </div>
@@ -52,18 +48,22 @@
 
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
+                            <div class="col-6 col-md-7 col-lg-5">
+                                <div class="labelText">Category</div>
+                                <div class="labelData">{{item.category}}</div>
+                            </div>
                             <div class="col-6 col-md-5 col-lg-8">
                                 <div class="labelText">Sub Category</div>
                                 <div class="labelData">{{item.subCategory}}</div>
                             </div>
-                            <div class="col-6 col-md-7 col-lg-4">
+                            <!-- <div class="col-6 col-md-7 col-lg-4">
                                 <div class="labelText">Category</div>
                                 <div class="labelData">{{item.code}}</div>
-                            </div>
+                            </div> -->
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-4 col-lg-4">
+                    <!-- <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
                             <div class="col-6 col-md-5 col-lg-8">
                                 <div class="labelText">Recommended</div>
@@ -74,14 +74,14 @@
                                 <div class="labelData">{{item.isSpicy}}</div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
-                            <div class="col-6 col-md-5 col-lg-8">
+                            <!-- <div class="col-6 col-md-5 col-lg-8">
                                 <div class="labelText">Is Veg</div>
-                                <div class="labelData">{{item.isVeg}}</div>
-                            </div>
+                                <div class="labelData">{{item.itemType}}</div>
+                            </div> -->
                             <div class="col-6 col-md-7 col-lg-4">
                                 <div class="labelText">Is Active</div>
                                 <div class="labelData">{{item.isActive}}</div>
@@ -89,7 +89,7 @@
                         </div>
                     </div>
 
-                    <div class="col-12 col-md-4 col-lg-4">
+                    <!-- <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
                             <div class="col-6 col-md-5 col-lg-8">
                                 <div class="labelText">Voucher Applicable</div>
@@ -113,9 +113,9 @@
                                 <div class="labelData">{{item.hideItemPrice}}</div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
 
-                    <div class="col-12 col-md-4 col-lg-4">
+                    <!-- <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
                             <div class="col-6 col-md-5 col-lg-4">
                                 <div class="labelText">MRP</div>
@@ -139,7 +139,7 @@
                                 <div class="labelData">{{item.parcelChargeType}}</div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
                             <div class="col-6 col-md-7 col-lg-12">
@@ -172,13 +172,13 @@
                         <img class="uploadedImage" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'" *ngIf="imageReplaced">
                         <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-4">
+                    <!-- <div class="col-12 col-md-6 col-lg-4">
                         <label class="labelText form-label">Tax Group</label>
                         <select class="custom-select" name="role" formControlName="taxGroup">
                             <option disabled selected value> -- select type -- </option>
                             <option value="GST Included">GST Included</option>
                         </select>
-                    </div>
+                    </div> -->
                     <div class="col-12 col-md-6 col-lg-4">
                         <!-- <pre>{{outletObj.category|json}}</pre> -->
                         <label class="labelText form-label">Category</label>
@@ -200,15 +200,24 @@
                         <label class="labelText form-label">Name</label>
                         <input type="text" class="form-control" placeholder="Name" formControlName="itemName">
                     </div>
+                    <div class="col-sm-12 col-md-6 col-lg-2">
+                        <label class="labelText">Item Type</label>
+                        <div>
+                            <input class="me-1" type="radio" id="itemTypeVeg" formControlName="itemType" value="Veg">
+                            <label class="labelText form-label" for="itemTypeVeg">Veg</label>
+                            <input class="me-1" type="radio" id="itemTypeNonVeg" formControlName="itemType" value="NonVeg">
+                            <label class="labelText form-label" for="itemTypeNonVeg">NonVeg</label>
+                        </div>
+                    </div>
                     <div class="col-12 col-md-6 col-lg-2">
                         <label class="labelText form-label">Price</label>
                         <input type="number" class="form-control" placeholder="Price" formControlName="price">
                     </div>
                     <div class="col-12 col-md-6 col-lg-2">
-                        <label class="labelText form-label">Transfer Price</label>
-                        <input type="number" class="form-control" placeholder="Transfer Price" formControlName="transferPrice">
+                        <label class="labelText form-label">Subcidy Amount</label>
+                        <input type="number" class="form-control" placeholder="Transfer Price" formControlName="subcidyAmt">
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2">
+                    <!-- <div class="col-12 col-md-6 col-lg-2">
                         <label class="labelText form-label">Display Order No</label>
                         <input type="number" class="form-control" placeholder="Display Order No" formControlName="priority">
                     </div>
@@ -225,14 +234,14 @@
                         <label class="labelText form-label" for="isSpicy">Is Spicy</label>
                     </div>
                     <div class="col-sm-12 col-md-4 col-lg-2">
-                        <input class="me-1" type="checkbox" id="isVeg" formControlName="isVeg">
-                        <label class="labelText form-label" for="isVeg">Vegetarian</label>
-                    </div>
+                        <input class="me-1" type="checkbox" id="itemType" formControlName="itemType">
+                        <label class="labelText form-label" for="itemType">Vegetarian</label>
+                    </div> -->
                     <div class="col-sm-12 col-md-4 col-lg-2">
                         <input class="me-1" type="checkbox" id="isActive" formControlName="isActive">
                         <label class="labelText form-label" for="isActive">Active</label>
                     </div>
-                    <div class="col-sm-12 col-md-4 col-lg-2">
+                    <!-- <div class="col-sm-12 col-md-4 col-lg-2">
                         <input class="me-1" type="checkbox" id="mealVoucherApplicable" formControlName="mealVoucherApplicable">
                         <label class="labelText form-label" for="mealVoucherApplicable">Meal Voucher Applicable</label>
                     </div>
@@ -247,20 +256,20 @@
                     <div class="col-sm-12 col-md-4 col-lg-4">
                         <input class="me-1" type="checkbox" id="hideItemPrice" formControlName="hideItemPrice">
                         <label class="labelText form-label" for="hideItemPrice">Hide Item Price</label>
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-4">
+                    </div> -->
+                    <!-- <div class="col-sm-12 col-md-4 col-lg-4">
                         <label class="labelText form-label" for="mrp">MRP/Non-MRP</label>
                         <select class="custom-select" id="mrp" name="role" formControlName="mrp">
                             <option disabled selected value> -- select any -- </option>
                             <option value="MRP">MRP</option>
                             <option value="nonMRP">Non-MRP</option>
                         </select>
-                    </div>
+                    </div> -->
                     <div class="col-sm-12 col-md-4 col-lg-6">
                         <label class="labelText form-label" for="description">Description</label>
                         <input class="form-control me-1" type="text" id="description" formControlName="description">
                     </div>
-                    <div class="col-sm-12 col-md-4 col-lg-6">
+                    <!-- <div class="col-sm-12 col-md-4 col-lg-6">
                         <label class="labelText form-label" for="calories">Calories</label>
                         <input class="form-control me-1" type="text" id="calories" formControlName="calories">
                     </div>
@@ -275,7 +284,7 @@
                     <div class="col-sm-12 col-md-4 col-lg-4">
                         <label class="labelText form-label" for="parcelChargeValue">Parcel Charge Value</label>
                         <input class="form-control me-1" type="number" id="parcelChargeValue" formControlName="parcelChargeValue">
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>

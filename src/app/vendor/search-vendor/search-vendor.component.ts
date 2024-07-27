@@ -1,4 +1,5 @@
 import { Component } from "@angular/core";
+import { Router } from "@angular/router";
 import { ApiMainService } from "src/service/apiService/apiMain.service";
 
 
@@ -17,7 +18,7 @@ export class SearchVendorComponent {
   };
   vendorList: any;
   orgName: any;
-  constructor(private apiMainService: ApiMainService) {
+  constructor(private apiMainService: ApiMainService,private router: Router) {
   }
 
   async getAllVendors() {
@@ -43,6 +44,7 @@ export class SearchVendorComponent {
 
   }
   addVendor() {
-
+    this.router.navigate(['/vendor/add-vendor']);
+    
   }
 }
