@@ -89,7 +89,8 @@ declare interface google {
                 if(!this.google){
                     await this.getGoogle();
                 }
-                const geoFencinglist:any = await this.apiMainService.getGeoFencingList();
+                // const geoFencinglist:any = await this.apiMainService.getGeoFencingList();
+                const geoFencinglist:any = [];
                 const mappedClusterList:any = []
                 if(geoFencinglist && geoFencinglist.length > 0){
                     if(!this.google){

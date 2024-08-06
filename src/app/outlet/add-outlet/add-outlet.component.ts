@@ -49,10 +49,14 @@ export class AddOutletComponent implements OnInit {
       this.selectedOutlet = outlet;
       this.selectedOrg = outlet.companyDetails;
       this.selectedCafe = outlet.cafeteriaDetails;
+      this.seletedCafetria = {organizationDetails: outlet.organizationDetails,cafeteriaDetails: outlet.cafeteriaDetails};
+      this.selectedOrg = outlet.companyDetails;
+      this.selectedCafe = outlet.cafeteriaDetails;
       this.form.patchValue({
         outletName: outlet.outletName,
         outletDescription: outlet.outletDescription,
-        outletType: outlet.outletType
+        outletType: outlet.outletType,
+        outletOpened: outlet.outletOpened
       })
     }
   }
@@ -61,7 +65,8 @@ export class AddOutletComponent implements OnInit {
     this.form = this.fb.group({
       outletName: [''],
       outletDescription: [''],
-      outletType: ['']
+      outletType: [''],
+      outletOpened: [false]
     })
   }
 

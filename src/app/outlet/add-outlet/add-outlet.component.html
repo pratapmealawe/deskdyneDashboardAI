@@ -1,4 +1,5 @@
 <div class="bgsidepadding1">
+    <div (click)="back()" class="pointer">BACK</div>
     <div [formGroup]="form">
         <div class="row">
             <div class="col-12 col-md-2 col-lg-2 image-div">
@@ -28,8 +29,12 @@
                 <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">*Outlet description
                     is required</div>
             </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <input class="me-1" type="checkbox" id="isSpicy" formControlName="outletOpened">
+                <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
+            </div>
         </div>  
-        <div class="row">
+        <div class="row" *ngIf="!seletedCafetria">
             <div><button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">Select Org</button></div>
         </div>
       

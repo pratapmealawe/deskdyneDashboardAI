@@ -37,6 +37,8 @@ const routes: Routes = [
   {
     path:'addPolicy',loadChildren:()=>import('./policy/add-policy/add-policy.module').then(m=>m.AddPolicyModule)
   },
+  { path: 'currentOrder', loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule) },
+  { path: 'searchOrder', loadChildren: () => import('./search-order/search-order.module').then(m => m.SearchOrderModule) },
   {
     path: '',
     redirectTo: 'login',

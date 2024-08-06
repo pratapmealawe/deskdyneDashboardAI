@@ -216,4 +216,21 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateAppVersion, data);
   }
 
+  searchOutletOrderList(data: any,page:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.searchOutletOrderList;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${[page]}`, method: urlObj.method},data);
+  }
+  getCurrentOutletOrdersCount(){
+    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentOutletOrdersCount;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url, method: urlObj.method});
+  }
+
+  getCurrentOutletOrdersList(status:any,page:any,limit:number){
+    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentOutletOrdersList;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method});
+  }
+
 }

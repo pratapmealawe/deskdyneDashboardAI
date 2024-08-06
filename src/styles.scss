@@ -500,6 +500,20 @@ button.accordion-button:focus {
     }
 }
 
+.groupSelected {
+    background-color: #504f4f !important;
+    color: white !important;
+}
+.tileBtn {
+    background-color: #efefef !important;
+    color: black !important;
+    border: none;
+    border-radius: 25px;
+    font-size: 12px;
+    padding: 0px 10px;
+    height: 30px;
+}
+
 @media only screen and (max-width:600px) {
     .offcanvas {
         width: 75% !important

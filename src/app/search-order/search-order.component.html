@@ -1,0 +1,58 @@
+<div class="bgpadding1 status-wrapper">
+  <div class="bgpadding1">
+ 
+    <div class="row mt-2">
+      <div class="bold">Order Status</div>
+      <div class="col-6 col-md-4 col-lg-3 mt-1" *ngFor="let status of statusList">
+        <input class="form-check-input pointer" type="checkbox" [id]="status.value" [(ngModel)]="status.selected"
+          name="itemType">
+        <label [for]="status.value">{{status.name}}</label>
+      </div>
+    </div>
+    <div class="row mt-2">
+      <div class="col-sm-12 col-md-4 col-lg-3">
+        <div class="bold">Order No.</div>
+        <input type="text" class="form-control" placeholder="Order No" [(ngModel)]="searchObj.orderNo">
+      </div>
+      <div class="col-sm-12 col-md-4 col-lg-3">
+        <div class="bold">Outlet Name</div>
+        <input type="text" class="form-control" placeholder="Order No" [(ngModel)]="searchObj.outletName">
+      </div>
+      <div class="col-sm-12 col-md-4 col-lg-3">
+        <div class="bold">Customer PhoneNo</div>
+        <input type="text" class="form-control" placeholder="Order No" [(ngModel)]="searchObj.customerPhoneNo">
+      </div>
+      <div class="col-sm-12 col-md-4 col-lg-3">
+        <div class="bold">Customer Name</div>
+        <input type="text" class="form-control" placeholder="Customer Name" [(ngModel)]="searchObj.customerName">
+      </div>      
+      <div class="col-sm-12 col-md-4 col-lg-3">
+        <div class="bold">Select From Date</div>
+        <input type="date" class="form-control searchDate" placeholder="From" [(ngModel)]="fromDate">
+      </div>
+      <div class="col-sm-12 col-md-4 col-lg-3">
+        <div class="bold">Select To Date</div>
+        <input type="date" class="form-control searchDate" placeholder="To" [(ngModel)]="toDate">
+      </div>
+      <div class="col-sm-12 col-md-4 col-lg-3 mt-4">
+        <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchOrder()">Search</button>
+        <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="orderList.length > 0">
+    <!-- <div *ngFor="let order of orderList" class="cardDesign"> -->
+    <ul *ngFor="let order of orderList" class="list-group">
+      <li class="list-group-item">
+       <app-order-card [order]="order"></app-order-card>
+      </li>
+    </ul>
+    <!-- </div>   -->
+    <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm mt-2" (click)="getMore()">Load
+      More</button>
+  </div>
+  <div class="center mt-5" *ngIf="orderList.length === 0">
+    No Records Found
+  </div>
+</div>
