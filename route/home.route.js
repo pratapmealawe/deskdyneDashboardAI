@@ -13,14 +13,4 @@ router.get('/*',async (req, res)=>{
     }
 });
 
-router.get('/server',async (req, res)=>{
-    try{
-        console.log('server path called');
-        res.jsonp({status:'yes'});
-    }catch(e){
-        console.log(e);
-        res.status(500).send({ error: 'Please retry after some time!' });    
-    }
-});
-
 module.exports = router;
