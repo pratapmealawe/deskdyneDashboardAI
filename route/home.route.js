@@ -4,7 +4,7 @@ const path = require('path');
 
 router.get('/*',async (req, res)=>{
     try{
-        res.render(path.join(__dirname, '../dist/dashboard-admin/index'));
+        res.render(path.join(__dirname, '../dist/dashboard-deskdyne/index'));
 
     }catch(e){
         console.log(e);
