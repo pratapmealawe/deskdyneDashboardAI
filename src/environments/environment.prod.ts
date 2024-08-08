@@ -1,6 +1,4 @@
-// const domainUrl:string = 'mealaweLBprod-527069479.ap-southeast-1.elb.amazonaws.com:5000';
-// const domainUrl:string = 'mealaweserverprod.el.r.appspot.com';
-const domainUrl:string = 'localhost:7000';
+const domainUrl:string = 'api.deskdyne.com';
 export const environment = {
   production: true,
   withCredentials: false,
