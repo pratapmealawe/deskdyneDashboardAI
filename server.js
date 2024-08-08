@@ -7,7 +7,7 @@ const routeConfig = require('./config/routeConfig');
 const compression = require('compression');
 const responseTime = require('response-time');
 
-const PORT = process.env.PORT || 9000
+const PORT = process.env.PORT || 6000
 
 const clusterWorkerSize = os.cpus().length
 console.log('environment ', process.env.NODE_ENV, PORT, clusterWorkerSize);
