@@ -39,7 +39,7 @@ module.exports = (app) => {
             sameSite: true
         }
     }
-    app.use(express.static('dist/dashboard-admin'));
+    app.use(express.static('dist/dashboard-deskdyne'));
 
     app.use('/', homeRouter); 
     
