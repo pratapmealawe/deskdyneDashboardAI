@@ -110,8 +110,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
     try {
       this.page = page;
       let orderList: any = [];
-      orderList = this.apiMainService.getCurrentOutletOrdersList(status, this.page, this.pageLimit)
-      // console.log('orderList',orderList)
+      orderList = await this.apiMainService.getCurrentOutletOrdersList(status, this.page, this.pageLimit)
+      console.log('orderList',orderList)
       if (orderList && orderList.length > 0) {
         this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
         this.pageLastEntry = this.pageFirstEntry + orderList.length - 1;
