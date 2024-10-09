@@ -53,7 +53,11 @@ export class ApiConfigService {
       updateAppVersion: {url: `${this.baseUrl}/api/updateAppVersion`, method: 'POST'},
       searchOutletOrderList: {url: `${this.baseUrl}/api/searchOutletOrderList`, method: 'POST'},
       getCurrentOutletOrdersCount: {url: `${this.baseUrl}/api/getCurrentOutletOrdersCount`, method: 'GET'},
-      getCurrentOutletOrdersList: {url: `${this.baseUrl}/api/getCurrentOutletOrdersList`, method: 'GET'}
+      getCurrentOutletOrdersList: {url: `${this.baseUrl}/api/getCurrentOutletOrdersList`, method: 'GET'},
+      serverlogs: {url: `${this.baseUrl}/public/serverlogs`, method: 'GET'},
+      getDayRangeBasedLogs:{url:`${this.baseUrl}/utility/getDayRangeBasedLogs`,method:'GET'},
+      getTimeBasedLogs:{url:`${this.baseUrl}/utility/getTimeBasedLogs`,method:'GET'},
+      getLineBasedLogs:{url:`${this.baseUrl}/utility/getLineBasedLogs`,method:'GET'}
    };
   }
 }
