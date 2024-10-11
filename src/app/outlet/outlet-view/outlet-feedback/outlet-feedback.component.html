@@ -1,0 +1,74 @@
+<div class="bgsidepadding1">
+    <div class="mt-2" *ngIf="feedbackList.length>0">
+        <div class="row cardDesign" *ngFor="let feedback of feedbackList; let i = index">
+            <div class="col-sm-12 col-md-10 col-lg-10">
+                <div class="row">
+                    <div class="orderNo">Order No: {{feedback.feedbackOrderNo}}</div>
+                    <ng-container *ngIf="feedback.feedback_orderType =='outletOrder'">
+                        <ng-container *ngFor="let item of feedback.itemlist;index as k">
+                            <ng-container *ngIf="item.itemContains.length>0">
+                                <div class="feedbackCard" style="border: 1px solid;padding-bottom: 10px;">
+                                    <div>Menu Name: <div>{{item.itemName}}</div>
+                                    </div>
+                                    <ng-container *ngFor="let itemContent of item.itemContains; index as ic">
+                                        <div style="border: 0.5px solid;" class="col-sm-12 col-md-10 col-lg-10">
+                                            <div class="row">
+                                                <div class="col-4 col-md-4 col-lg-4">
+                                                    <div>Menu Name: <div>
+                                                            {{itemContent.name}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-4 col-md-4 col-lg-4">
+                                                    <div>Ratings: <div>
+                                                            {{itemContent.starRatingKitchen}}</div>
+                                                    </div>
+                                                </div>
+                                                <ng-container *ngIf="itemContent.kitchenFeedback">
+                                                    <div class="col-4 col-md-4 col-lg-4">
+                                                        <div>FeedBack: <div>
+                                                                {{itemContent.kitchenFeedback}}</div>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="item.itemContains.length==0">
+                                <div class="feedbackCard" style="border: 1px solid;">
+                                    <div class="col-sm-12 col-md-10 col-lg-10">
+                                        <div class="row">
+                                            <div class="col-4 col-md-4 col-lg-4">
+                                                <div>Menu Name: <div>{{item.itemName}}</div>
+                                                </div>
+                                            </div>
+                                            <div class="col-4 col-md-4 col-lg-4">
+                                                <div>Ratings: <div>{{item.starRatingKitchen}}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <ng-container *ngIf="item.kitchenFeedback">
+                                                <div class="col-4 col-md-4 col-lg-4">
+                                                    <div>Ratings: <div>{{item.kitchenFeedback}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm mt-2 me-2" (click)="getMore()">Load
+            More</button>
+    </div>
+    <div class="center labelText mt-2" *ngIf="feedbackList.length==0">
+        No Feedback found
+    </div>
+</div>
