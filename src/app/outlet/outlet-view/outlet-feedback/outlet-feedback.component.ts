@@ -10,6 +10,7 @@ export class OutletFeedbackComponent implements OnInit {
   feedbackList:any=Array();
   pageNo=1;
   nextOn=true;
+  showDetails: boolean = false;
   constructor( private apiMainService: ApiMainService) { }
 
   ngOnInit(): void {
