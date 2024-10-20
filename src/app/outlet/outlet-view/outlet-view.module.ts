@@ -5,6 +5,7 @@ import { OutletDetailsComponent } from './outlet-details/outlet-details.componen
 import { OutletCategoriesComponent } from './outlet-categories/outlet-categories.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OutletMenuComponent } from './outlet-menu/outlet-menu.component';
+import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.component';
 
 
 
@@ -13,7 +14,8 @@ import { OutletMenuComponent } from './outlet-menu/outlet-menu.component';
     OutletViewComponent,
     OutletDetailsComponent,
     OutletCategoriesComponent,
-    OutletMenuComponent
+    OutletMenuComponent,
+    OutletFeedbackComponent
   ],
   imports: [
     CommonModule,

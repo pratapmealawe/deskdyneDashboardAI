@@ -209,6 +209,10 @@ export class ApiMainService {
   getAllAppVersionList(){
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllAppVersionList);
   }
+  gettfeedbacklist(pageNumber: number,filter:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.gettfeedbacklist;
+    return this.apiHttpService.REQUEST({url:urlObj.url+`/${filter.orgId}/${filter.outletId}/${pageNumber}`, method:urlObj.method})
+  }
   saveAppVersion(data: any){
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveAppVersion, data);
   }

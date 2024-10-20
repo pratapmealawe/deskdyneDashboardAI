@@ -451,6 +451,23 @@ body {
         background: #e0dddd;
     }
 }
+.cardDesignfeddback {
+    margin: 2px 0px;
+    padding: 10px;
+    border-radius: 11px;
+
+    // box-shadow: 1px 2px 3px;
+    // &:nth-child(even) {
+    //     background: #e0ddddc4
+    // }
+    &:nth-child(even) {
+        background: #1206142b;
+    }
+
+    &:nth-child(odd) {
+        background: #1206142b;
+    }
+}
 
 .editDeltesaveIcon{
     cursor:pointer;

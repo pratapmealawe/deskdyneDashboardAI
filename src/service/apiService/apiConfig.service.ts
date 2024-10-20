@@ -53,7 +53,8 @@ export class ApiConfigService {
       updateAppVersion: {url: `${this.baseUrl}/api/updateAppVersion`, method: 'POST'},
       searchOutletOrderList: {url: `${this.baseUrl}/api/searchOutletOrderList`, method: 'POST'},
       getCurrentOutletOrdersCount: {url: `${this.baseUrl}/api/getCurrentOutletOrdersCount`, method: 'GET'},
-      getCurrentOutletOrdersList: {url: `${this.baseUrl}/api/getCurrentOutletOrdersList`, method: 'GET'}
+      getCurrentOutletOrdersList: {url: `${this.baseUrl}/api/getCurrentOutletOrdersList`, method: 'GET'},
+      gettfeedbacklist:{url:`${this.baseUrl}/api/getFeedbackListOutletById`,method:'GET'},
    };
   }
 }
