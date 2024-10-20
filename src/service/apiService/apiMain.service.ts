@@ -236,5 +236,25 @@ export class ApiMainService {
     return this.apiHttpService
     .REQUEST({url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method});
   }
+  getServerLogs(fileName:string){
+    const urlObj = this.apiConfigService.apiEndPointObj.serverlogs;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${fileName}`, method: urlObj.method},null,{Accept:'text/html'},true);
+  }
+  getDayRangeBasedLogs(startDate:any,endDate:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.getDayRangeBasedLogs;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url+`/${startDate}`+`/${endDate}`, method: urlObj.method}); 
+  }
+  getTimeBasedLogs(hour:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.getTimeBasedLogs;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url+`/${hour}`, method: urlObj.method});
+  }
+  getLineBasedLogs(lineLimit:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.getLineBasedLogs;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url+`/${lineLimit}`, method: urlObj.method});
+  }
 
 }
