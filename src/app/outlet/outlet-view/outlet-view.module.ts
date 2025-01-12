@@ -6,6 +6,9 @@ import { OutletCategoriesComponent } from './outlet-categories/outlet-categories
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OutletMenuComponent } from './outlet-menu/outlet-menu.component';
 import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.component';
+import { OutletComplianceComponent} from './outlet-compliance/outlet-compliance.component';
+// import { PdfuploadComponent} from '../../pdfupload/pdfupload.component';
+import { CustomPipeModule } from 'src/pipes/pipe.module';
 
 
 
@@ -15,12 +18,14 @@ import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.compo
     OutletDetailsComponent,
     OutletCategoriesComponent,
     OutletMenuComponent,
-    OutletFeedbackComponent
+    OutletFeedbackComponent,
+    OutletComplianceComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CustomPipeModule
   ],
   exports:[
     OutletViewComponent

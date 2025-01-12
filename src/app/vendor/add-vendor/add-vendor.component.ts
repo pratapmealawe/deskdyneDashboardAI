@@ -34,6 +34,7 @@ export class AddVendorCommponent {
     showEditModalOutletList=false;
     
     @ViewChild('outletModal') outlet: any
+    @ViewChild('complianceModal') compliance: any
     constructor(private fb: FormBuilder, private apiMainService: ApiMainService, public modalService: NgbModal,
         private runtimeStorageService:RuntimeStorageService, private router:Router) {
         this.getOrgList();
@@ -143,6 +144,11 @@ export class AddVendorCommponent {
     }
     addOutlet() {
         this.modalService.open(this.outlet,{ ariaLabelledBy: 'modal-basic-title', size: 'xl' })
+    }
+
+
+    addComplience() {
+        this.modalService.open(this.compliance,{ ariaLabelledBy: 'modal-basic-title', size: 'xl' })
     }
 
     async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {

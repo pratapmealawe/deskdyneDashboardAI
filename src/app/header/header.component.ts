@@ -26,6 +26,7 @@ export class HeaderComponent implements OnInit {
     { name: 'Miscelleneous', showParent:true, children: [{ label: 'FAQ', route: 'faq' }, { label: 'Config Variables', route: 'configVariable' }, { label: 'App Version Control', route: 'appVersionControl' }, { label: 'Server Logs', route: 'vendor/add-vendor' }] },
     { name: 'Admin', showParent:true, children: [{ label: 'Admin', route: 'admin' }, { label: 'Add Admin', route: 'add-admin' }] },
     { name: 'Policy', showParent:true, children: [{ label: 'Policy', route: 'policy' }, { label: 'Add Policy', route: 'addPolicy' }] },
+    { name: 'Dashboard', showParent:true,  children: [{ label: 'Dashboard', route: 'dashboard' }, { label: 'Search Organization', route: 'B2B_search_org' }, { label: 'Add Organization', route: 'B2B_add_org' }]  },
   ]
   breadCrumbText: any = 'Home';
   currentRoute: string = 'currentOrder';

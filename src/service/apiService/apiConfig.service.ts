@@ -55,6 +55,18 @@ export class ApiConfigService {
       getCurrentOutletOrdersCount: {url: `${this.baseUrl}/api/getCurrentOutletOrdersCount`, method: 'GET'},
       getCurrentOutletOrdersList: {url: `${this.baseUrl}/api/getCurrentOutletOrdersList`, method: 'GET'},
       gettfeedbacklist:{url:`${this.baseUrl}/api/getFeedbackListOutletById`,method:'GET'},
+      deleteOutletMenu: {url: `${this.baseUrl}/api/deleteOutletMenu`, method: 'DELETE'},
+      updateComplianceByAdmin: {url: `${this.baseUrl}/api/updateComplianceByAdmin`, method: 'POST'},
+      updateProfileApproval: {url: `${this.baseUrl}/api/updateProfileApproval`, method: 'POST'},
+      createPdf: {url: `${this.baseUrl}/api/pdfs/createPdf`, method: 'POST'},
+      updatevenderComplianceByAdmin: {url: `${this.baseUrl}/api/updatevenderComplianceByAdmin`, method: 'POST'},
+      B2B_addOrg: { url: `${this.baseUrl}/api/b2b_organization`, method: 'POST' },
+      B2B_org_update: { url: `${this.baseUrl}/api/b2b_org_update`, method: 'POST' },
+      B2B_fetchFilteredAllOrgs: { url: `${this.baseUrl}/api/B2B_fetchFilteredAllOrgs`, method: 'POST' },
+      updateOrgComplianceByAdmin: {url: `${this.baseUrl}/api/updateOrgComplianceByAdmin`, method: 'POST'},
+      searchVendorByOrgId:{url:`${this.baseUrl}/api/searchVendorByOrgId`,method:'POST'},
+      searchOutletByOrgId:{url:`${this.baseUrl}/api/searchOutletByOrgId`,method:'POST'},
+      lastsevendaysorderdaywisecount:{url:`${this.baseUrl}/api/lastsevendaysorderdaywisecount`,method:'POST'},
    };
   }
 }

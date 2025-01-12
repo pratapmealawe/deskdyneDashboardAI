@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output,EventEmitter } from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -12,6 +13,7 @@ import { environment } from 'src/environments/environment';
 })
 export class OutletMenuComponent implements OnInit {
   @Input() outletObj: any;
+  @Output() back: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild("content") content: any;
   categorySelected: boolean = false;
   form: any;
@@ -26,8 +28,9 @@ export class OutletMenuComponent implements OnInit {
   showUpdateBtn:any = false;
   imageReplaced:any = false;
   noImages:boolean = false;
+  foodItem:any;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private apiMainService: ApiMainService) { }
+  constructor(private fb: FormBuilder, private modalService: NgbModal, private apiMainService: ApiMainService,private confirmationModalService: ConfirmationModalService) { }
 
   ngOnInit(): void {
     this.init();
@@ -236,5 +239,23 @@ export class OutletMenuComponent implements OnInit {
         console.log(`Model Dismissed`);
       });
   }
-
+  showPopup(item:any,i:any) {
+    this.foodItem=item;
+    this.menuIndex=i
+    this.confirmationModalService.modal(`Are you sure, you want to delete ${item.itemName}`,
+      this.deleteFoodItem, this);
+  }
+  async deleteFoodItem() {
+    console.log(this.foodItem);
+    const res:any = await this.apiMainService.deleteOutletMenu(this.outletObj._id, this.foodItem._id);
+    console.log(res,"res")
+      if(res && res._id){
+        this.outletObj = res;
+        this.showCard = true;
+      }
+      this.resetValues()
+      this.back.emit(true)
+    } catch (error:any) {
+      console.log(error);
+    }
 }
