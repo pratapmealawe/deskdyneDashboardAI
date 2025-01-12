@@ -1,0 +1,26 @@
+<div class="upload-box" (dragover)="onDragOver($event)" (drop)="onDrop($event)" (dragleave)="onDragLeave($event)"
+    [class.dragover]="isDragging">
+    <div class="d-flex">
+    <div class="col-6">
+        <h6>Upload PDF</h6>
+        <p *ngIf="!selectedFile">Drag and drop your PDF here</p>
+        <label [for]="inputId" class="file-label">Choose File</label>
+        <input [id]="inputId" type="file" (change)="onFileSelected($event)" accept="application/pdf" />
+
+        <div class="buttons">
+            <button class="upload-btn" (click)="uploadFile()" [disabled]="!selectedFile">Upload</button>
+            <button class="cancel-btn" *ngIf="selectedFile" (click)="cancelSelection()">Cancel</button>
+        </div>
+        <p *ngIf="selectedFile" class="selected-file">Selected File: {{ selectedFile.name }}</p>
+    </div>
+
+    <!-- PDF Preview -->
+    <div class="col-6">
+        <div *ngIf="selectedFileURL" class="pdf-preview">
+            <iframe [src]="selectedFileURL" type="application/pdf"></iframe>
+        </div>
+    </div>
+</div>
+
+    <!-- <p *ngIf="selectedFile" class="selected-file">Selected File: {{ selectedFile.name }}</p> -->
+</div>

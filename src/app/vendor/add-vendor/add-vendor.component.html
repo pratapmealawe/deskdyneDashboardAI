@@ -33,6 +33,7 @@
     </div>
     <!-- <div>Outlet List</div> -->
     <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">Add Outlet</div>
+    <div class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">Complience</div>
     <br>
     <div class="cardDesign mt-1" *ngFor="let outlet of selectedOutletsList; index as i">
         <div class="row card-wrapper">
@@ -123,5 +124,17 @@
             </div>
         </div>
         <div class="btn btn-primary btn-sm mt-2" (click)="getSelectedOutlets()">Add</div>
+    </div>
+</ng-template>
+
+<ng-template #complianceModal let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Complience</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+       <app-vendor-compliance [venderDetails]="selectedVendor"></app-vendor-compliance>
     </div>
 </ng-template>

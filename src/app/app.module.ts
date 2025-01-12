@@ -13,6 +13,8 @@ import { MainLoaderComponent } from './main-loader/main-loader.component';
 import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
 import { HeaderComponent } from './header/header.component';
+//import { PdfuploadComponent} from './pdfupload/pdfupload.component';
+// import { VendorComplianceComponent} from './vendor/add-vendor/vendor-compliance/vendor-compliance.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,7 @@ import { HeaderComponent } from './header/header.component';
     ConfirmationModalComponent,
     ImageCropperComponent,
     HeaderComponent,
-    ImageCropperComponent
+    ImageCropperComponent,
   ],
   imports: [
     BrowserModule,

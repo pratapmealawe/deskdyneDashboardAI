@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { DataFormatService } from 'src/service/data-format.service';
+import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
   selector: 'app-add-outlet',
@@ -31,7 +32,8 @@ export class AddOutletComponent implements OnInit {
   selectedOrgCafeteria:any;
   seletedCafetria:any;
 
-  constructor(private apiMainService: ApiMainService, private router: Router, private runtimeStorageService: RuntimeStorageService, private modalService: NgbModal, private fb: FormBuilder, private dataFormatService:DataFormatService) {
+  constructor(private apiMainService: ApiMainService, private router: Router, private runtimeStorageService: RuntimeStorageService, 
+  private modalService: NgbModal, private fb: FormBuilder, private dataFormatService:DataFormatService,private sendDataToComponent: SendDataToComponent) {
 
   }
 

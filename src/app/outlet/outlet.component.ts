@@ -1,13 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
   selector: 'app-outlet',
   templateUrl: './outlet.component.html',
   styleUrls: ['./outlet.component.scss']
 })
-export class OutletComponent implements OnInit {
+export class OutletComponent implements OnInit{
   showSearchSection:boolean = true;
   searchObj: any = {
     outletName: '',
@@ -18,12 +19,11 @@ export class OutletComponent implements OnInit {
   outletList: any = [];
   selectedOutlet:any;
 
-  constructor(private apiMainService:ApiMainService, private router:Router){
-
+  constructor(private apiMainService:ApiMainService, private router:Router, private sendDataToComponent: SendDataToComponent,){
   }
 
   ngOnInit(): void {
-    
+    this.searchOutlet();
   }
 
   async searchOutlet(){
@@ -59,6 +59,15 @@ export class OutletComponent implements OnInit {
 
   toggleShowOrder(val: any) {
     this.showSearchSection = val
+    if(val.val){
+       this.showSearchSection = val.val;
+      }else{
+         this.showSearchSection = val;
+      }
+      console.log(val)
+      if(val.updateval){
+        this.searchOutlet();
+      }
   }
 
 }

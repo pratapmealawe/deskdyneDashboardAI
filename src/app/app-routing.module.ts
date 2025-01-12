@@ -39,6 +39,9 @@ const routes: Routes = [
   },
   { path: 'currentOrder', loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule) },
   { path: 'searchOrder', loadChildren: () => import('./search-order/search-order.module').then(m => m.SearchOrderModule) },
+  { path: 'B2B_add_org',  loadChildren: () => import('./add-organization/add-organization.module').then(m => m.AddOrganizationModule) },
+  { path: 'B2B_search_org',  loadChildren: () => import('./search-organization/search-organization.module').then(m => m.SearchOrganizationModule) },
+  { path: 'dashboard',  loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
   { path: 'serverlogs', loadChildren: () => import('./server-logs/server-logs.module').then(m => m.ServerLogsModule) },
   {
     path: '',

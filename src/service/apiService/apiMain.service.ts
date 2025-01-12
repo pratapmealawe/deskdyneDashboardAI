@@ -236,6 +236,68 @@ export class ApiMainService {
     return this.apiHttpService
     .REQUEST({url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method});
   }
+  deleteOutletMenu(utletid: any, menuId: any,) {
+    console.log(menuId,"menuId")
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteOutletMenu;
+    return this.apiHttpService
+      .REQUEST({ url: urlObj.url + `/${utletid}/${menuId}`, method: urlObj.method });
+  }
+  updateComplianceByAdmin(id:string,data:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateComplianceByAdmin;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, data);
+  }
+
+  updateProfileApproval(id: string, status: any, data: any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateProfileApproval;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${id}/${status}`, method: urlObj.method},data);
+  }
+  createPdf(data: any){
+    console.log(data);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createPdf, data);
+  }
+  updateVenderComplianceByAdmin(id:string,data:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updatevenderComplianceByAdmin;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, data);
+  }
+
+  B2B_addOrg(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_addOrg;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload,null,false,true);
+  }
+
+  B2B_org_update(payload: any,id:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_update;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, payload,null,false,true);
+  }
+
+  B2B_fetchFilteredAllOrgs(data:any,page:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchFilteredAllOrgs;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}`, method: urlObj.method },data,null,false,true);
+  }
+  updateOrgComplianceByAdmin(id:string,data:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOrgComplianceByAdmin;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, data);
+  }
+  searchVendorByOrgId(searchObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.searchVendorByOrgId;
+    return this.apiHttpService
+      .REQUEST({ url: urlObj.url, method: 'POST' }, searchObj)
+  }
+  searchOutletByOrgId(searchObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.searchOutletByOrgId;
+    return this.apiHttpService
+      .REQUEST({ url: urlObj.url, method: 'POST' }, searchObj)
+  }
+
+  lastsevendaysorderdaywisecount(searchObj: any){
+    const urlObj = this.apiConfigService.apiEndPointObj.lastsevendaysorderdaywisecount;
+    return this.apiHttpService
+      .REQUEST({ url: urlObj.url, method: 'POST' }, searchObj)
+  }
   getServerLogs(fileName:string){
     const urlObj = this.apiConfigService.apiEndPointObj.serverlogs;
     return this.apiHttpService
