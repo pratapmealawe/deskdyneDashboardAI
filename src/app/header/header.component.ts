@@ -23,7 +23,7 @@ export class HeaderComponent implements OnInit {
     { name: 'Outlet', showParent:true, children: [{ label: 'Outlet Overview', route: 'outlet' },{ label: 'Outlet Add', route: 'outlet/add-outlet' }] },
     { name: 'Vendor', showParent:true, children: [{ label: 'Search vendor', route: 'vendor/search-vendor' }, { label: 'Add Vendor', route: 'vendor/add-vendor' }] },
     { name: 'Orders', showParent:false, children: [{ label: 'Current', route: 'currentOrder' }, { label: "Search", route: 'searchOrder' }] },
-    { name: 'Miscelleneous', showParent:true, children: [{ label: 'FAQ', route: 'faq' }, { label: 'Config Variables', route: 'configVariable' }, { label: 'App Version Control', route: 'appVersionControl' }, { label: 'Server Logs', route: 'vendor/add-vendor' }] },
+    { name: 'Miscelleneous', showParent:true, children: [{ label: 'FAQ', route: 'faq' }, { label: 'Config Variables', route: 'configVariable' }, { label: 'App Version Control', route: 'appVersionControl' }, { label: 'Server Logs', route: 'serverlogs' }] },
     { name: 'Admin', showParent:true, children: [{ label: 'Admin', route: 'admin' }, { label: 'Add Admin', route: 'add-admin' }] },
     { name: 'Policy', showParent:true, children: [{ label: 'Policy', route: 'policy' }, { label: 'Add Policy', route: 'addPolicy' }] },
     { name: 'Dashboard', showParent:true,  children: [{ label: 'Dashboard', route: 'dashboard' }, { label: 'Search Organization', route: 'B2B_search_org' }, { label: 'Add Organization', route: 'B2B_add_org' }]  },

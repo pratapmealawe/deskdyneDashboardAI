@@ -67,6 +67,10 @@ export class ApiConfigService {
       searchVendorByOrgId:{url:`${this.baseUrl}/api/searchVendorByOrgId`,method:'POST'},
       searchOutletByOrgId:{url:`${this.baseUrl}/api/searchOutletByOrgId`,method:'POST'},
       lastsevendaysorderdaywisecount:{url:`${this.baseUrl}/api/lastsevendaysorderdaywisecount`,method:'POST'},
+      serverlogs: {url: `${this.baseUrl}/public/serverlogs`, method: 'GET'},
+      getDayRangeBasedLogs:{url:`${this.baseUrl}/utility/getDayRangeBasedLogs`,method:'GET'},
+      getTimeBasedLogs:{url:`${this.baseUrl}/utility/getTimeBasedLogs`,method:'GET'},
+      getLineBasedLogs:{url:`${this.baseUrl}/utility/getLineBasedLogs`,method:'GET'}
    };
   }
 }
