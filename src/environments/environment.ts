@@ -5,8 +5,9 @@ export const environment = {
   production: false,
   withCredentials: false,
   webSocketUrl: 'wss://'+domainUrl,
-  serverUrl : 'https://'+domainUrl,
-  imageUrl : 'https://'+domainUrl + '/images/',
+  serverUrl : 'http://'+domainUrl,
+  imageUrl : 'http://'+domainUrl + '/images/',
+  fileUrl: 'http://'+domainUrl + '/files/',
   googleAPIkey: 'AIzaSyCtIAU1RAa32Y9at1VnmL-fa79AP0NPreQ',
   envName: 'Devlopment'
 };
