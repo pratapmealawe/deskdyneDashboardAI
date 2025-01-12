@@ -5,6 +5,7 @@ export const environment = {
   webSocketUrl: 'ws://'+domainUrl,
   serverUrl : 'http://'+domainUrl,
   imageUrl : 'http://'+domainUrl + '/images/',
+  fileUrl: 'http://'+domainUrl + '/files/',
   googleAPIkey: 'AIzaSyCtIAU1RAa32Y9at1VnmL-fa79AP0NPreQ',
   envName: 'Staging'
 };
