@@ -15,8 +15,10 @@ export class OutletViewComponent implements OnInit {
   { name: 'Categories', path: 'outlet-categories' },
   { name: 'Menu', path: 'outlet-menu' },
   { name: 'Feedback', path: 'outlet-feedback' },
+ // { name: 'Complience', path: 'outlet-compliance' },
   ];
   selectedTab = 'outlet-details';
+  updateval:any=false;
 
   constructor(private router: Router) { }
 
@@ -29,7 +31,9 @@ export class OutletViewComponent implements OnInit {
   }
 
   goBack() {
-    this.back.emit(true);
+    this.back.emit({val:true,updateval:this.updateval});
   }
-
+  updateOutlet(val: any) {
+    this.updateval = val
+  }
 }
