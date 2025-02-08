@@ -1,67 +1,178 @@
-<!-- <nav class="navbar fixed-top navbar-dark bg-dark mb-5">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1"><img src="/assets/images/menu-burger.svg" class="menu-burger" alt="" (click)="openEnd()">MealAwe</span>
-        <span style="color:white">{{breadCrumbText}}</span>
-        <span>
-            <span class="name">{{adminProfile.name}}</span>
-            <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
-                [src]="adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile">
-            <span [ngbPopover]="popOverBody" popoverTitle="Admin Profile" *ngIf="!adminProfile.imageUrl"
-                class="img-span pointer"><i class="bi bi-person"></i></span>
-        </span>
+<div class="col-12 card-wrapper">
+    <marquee>Welcome</marquee>
+</div>
+<!-- <div class="container-fluid mb-3 mt-5">
+    <div class="col-sm-12 col-md-12 col-lg-10 col-xl-10 offset-lg-1 offset-xl-1"
+        style="justify-content: space-between;">
+        <div class="dropdown inline dateTimecal mr-2">
+            <button class="btn btn-outline-secondary no-hover d-flex align-items-center justify-content-between"
+                style="border-radius: 20px;width: 110px;" (click)="fromDatePicker.open()">
+                <span id="fromDateid">
+                    <span *ngIf="!fromDate">Date</span>
+                    <span *ngIf="fromDate">{{ fromDate | date: 'mediumDate' }}</span>
+                </span>
+                <i class="bi bi-calendar ms-2"></i>
+            </button>
+            <input matInput [matDatepicker]="fromDatePicker" [(ngModel)]="fromDate" hidden>
+            <mat-datepicker #fromDatePicker [touchUi]="true" [panelClass]="'custom-datepicker'">
+            </mat-datepicker>
+        </div>
+
+        <div class="dropdown inline dateTimecal mr-2">
+            <button class="btn btn-outline-secondary no-hover d-flex align-items-center justify-content-between"
+                style="border-radius: 20px;width: 110px;" (click)="fromDatePicker.open()">
+                <span id="fromDateid">
+                    <span *ngIf="!fromDate">City</span>
+                    <span *ngIf="fromDate">{{ fromDate | date: 'mediumDate' }}</span>
+                </span>
+                <i class="bi bi-calendar ms-2"></i>
+            </button>
+            <input matInput [matDatepicker]="fromDatePicker" [(ngModel)]="fromDate" hidden>
+            <mat-datepicker #fromDatePicker [touchUi]="true" [panelClass]="'custom-datepicker'">
+            </mat-datepicker>
+        </div>
+
+        <div class="dropdown inline dateTimecal mr-2">
+            <button class="btn btn-outline-secondary no-hover d-flex align-items-center justify-content-between"
+                style="border-radius: 20px;width: 110px;" (click)="fromDatePicker.open()">
+                <span id="fromDateid">
+                    <span *ngIf="!fromDate">Vendor</span>
+                    <span *ngIf="fromDate">{{ fromDate | date: 'mediumDate' }}</span>
+                </span>
+                <i class="bi bi-calendar ms-2"></i>
+            </button>
+            <input matInput [matDatepicker]="fromDatePicker" [(ngModel)]="fromDate" hidden>
+            <mat-datepicker #fromDatePicker [touchUi]="true" [panelClass]="'custom-datepicker'">
+            </mat-datepicker>
+        </div>
+
+        <div class="dropdown inline dateTimecal mr-2">
+            <button class="btn btn-outline-secondary no-hover d-flex align-items-center justify-content-between"
+                style="border-radius: 20px;width: 110px;" (click)="fromDatePicker.open()">
+                <span id="fromDateid">
+                    <span *ngIf="!fromDate">Company</span>
+                    <span *ngIf="fromDate">{{ fromDate | date: 'mediumDate' }}</span>
+                </span>
+                <i class="bi bi-calendar ms-2"></i>
+            </button>
+            <input matInput [matDatepicker]="fromDatePicker" [(ngModel)]="fromDate" hidden>
+            <mat-datepicker #fromDatePicker [touchUi]="true" [panelClass]="'custom-datepicker'">
+            </mat-datepicker>
+        </div>
     </div>
-</nav> -->
-<!-- <div class="outlet-wrapper">
-    <router-outlet></router-outlet>
+</div>
+
+<div class="container-fluid mb-3 mt-4">
+    <div class="row col-sm-12 col-md-12 col-lg-10 col-xl-10 offset-lg-1 offset-xl-1"
+        style="justify-content: space-between;">
+        <div class="card col-sm-12 col-md-12 col-lg-4 col-xl-4 mb-1"
+            style="background-color: #ffca22;border: 4px solid #fff;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #fff;text-align: center;">TOTAL SALES</h5>
+                <div style="display: flex;" class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;text-align: center;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">With GST: {{withgstsales}}</div>
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;text-align: center;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">GST Amount:{{gstamtsales}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="card col-sm-12 col-md-12 col-lg-4 col-xl-4 mb-1"
+            style="background-color: #0e49b5;border: 4px solid #fff;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #fff;text-align: center;">TOTAL ORDERS</h5>
+                <div style="display: flex;" class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;text-align: center;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">With GST: {{withgstsales}}</div>
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;text-align: center;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">GST Amount:{{gstamtsales}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="card col-sm-12 col-md-12 col-lg-4 col-xl-4 mb-1"
+            style="background-color: #f94e4e;border: 4px solid #fff;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #fff;text-align: center;">CANCELLED AMOUNT</h5>
+                <div style="display: flex;" class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;text-align: center;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">With GST: {{withgstsales}}</div>
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;text-align: center;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">GST Amount:{{gstamtsales}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-4">
+    <div class="row col-sm-12 col-md-12 col-lg-10 col-xl-10 offset-lg-1 offset-xl-1"
+        style="justify-content: space-between;">
+        <div class="card col-sm-12 col-md-12 col-lg-5 col-xl-3 mb-2"
+            style="background-color: #3962c9;border: 2px solid #fff;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #fff;text-align: center;">TOTAL ORDERS</h5>
+                <div style="display: flex;" class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">With GST: {{withgstsales}}</div>
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">GST Amount:{{gstamtsales}}</div>
+                </div>
+            </div>
+        </div>
+        <div class="card col-sm-12 col-md-12 col-lg-5 col-xl-3 mb-2"
+            style="background-color: #4c80e5;border: 2px solid #fff;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #fff;text-align: center;">TOTAL ORDERS</h5>
+                <div style="display: flex;" class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">With GST: {{withgstsales}}</div>
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">GST Amount:{{gstamtsales}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card col-sm-12 col-md-12 col-lg-5 col-xl-3 mb-2"
+            style="background-color: #6fa0ef;border: 2px solid #fff;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #fff;text-align: center;">TOTAL ORDERS</h5>
+                <div style="display: flex;" class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">With GST: {{withgstsales}}</div>
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">GST Amount:{{gstamtsales}}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card col-sm-12 col-md-12 col-lg-5 col-xl-3 mb-2"
+            style="background-color: #3962c9;border: 2px solid #fff;">
+            <div class="card-body">
+                <h5 class="card-title" style="color: #fff;text-align: center;">TOTAL ORDERS</h5>
+                <div style="display: flex;" class="col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">With GST: {{withgstsales}}</div>
+                    <div style="border: 1px solid #fff;padding: 5px;color: #fff;"
+                        class="col-sm-12 col-md-6 col-lg-6 col-xl-6">GST Amount:{{gstamtsales}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid mt-5">
+    <div class="row col-sm-12 col-md-12 col-lg-10 col-xl-10 offset-lg-1 offset-xl-1"
+        style="justify-content: space-between;">
+        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 mb-3">
+            <highcharts-chart *ngIf="showChart1" [Highcharts]="highcharts" [options]="chartOptions1"
+                style="width: 100%; height: 400px; display: block;background-color: rgb(162, 162, 162);">
+            </highcharts-chart>
+        </div>
+
+        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+            <highcharts-chart *ngIf="showChart1" [Highcharts]="highcharts" [options]="chartOptions1"
+                style="width: 100%; height: 400px; display: block;">
+            </highcharts-chart>
+        </div>
+    </div>
 </div> -->
-
-<!-- <ng-template class="offcanvas" #content let-offcanvas>
-	<div class="offcanvas-header">
-		<button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
-	</div>
-	<div class="offcanvas-body">
-		<div class="accordion accordion-flush" id="accordionExample">
-      <div class="accordion-item" *ngFor="let link of navOptions; let i = index">
-        <h2 class="accordion-header" id="headingOne">
-          <button class="accordion-button shadow-none" type="button" data-bs-toggle="collapse" [attr.data-bs-target]="'#collapseOne'+i" aria-expanded="true" aria-controls="collapseOne">
-            {{link.name}}
-          </button>
-        </h2>
-        <div [attr.id]="'collapseOne'+i" class="accordion-collapse collapse pointer" aria-labelledby="headingOne">
-          <div class="accordion-body" *ngFor="let item of link.children" [routerLink]="item.route" (click)="closeSidebar(link.children);setBreadcrumb(link.name,item.label)">
-            {{item.label}}
-          </div>
-        </div>
-      </div>
-    </div>
-	</div>
-</ng-template>
-
-<ng-template #popOverBody>
-    <div class="popover-wrapper">
-        <div class="">
-            <span class="bold">Admin Name: </span>
-            <span class="grey">{{adminProfile.name}}</span>
-        </div>
-        <div class="mt-2">
-            <span class="bold">Admin ID: </span>
-            <span class="grey">{{adminProfile.loginId}}</span>
-        </div>
-        <div class="mt-2">
-            <span class="bold">phoneNo: </span>
-            <span class="grey">{{adminProfile.phoneNo}}</span>
-        </div>
-        <div class="mt-2">
-            <span class="bold">Email: </span>
-            <span class="grey">{{adminProfile.email}}</span>
-        </div>
-        <div class="mt-2">
-            <button class="btn btn-primary" (click)="logout()">logout</button>
-        </div>
-    </div>
-</ng-template> -->
-<!-- <div class="row w-100 mx-0 auth-page"> -->
-    <div class="col-12 card-wrapper">
-        <marquee>Welcome</marquee>
-    </div>
-<!-- </div> -->

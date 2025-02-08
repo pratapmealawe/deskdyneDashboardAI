@@ -14,7 +14,21 @@ export class AddPolicyComponent {
     policy_name: '',
     policy_description: '',
     route_policies: {
-      
+      orgDashboard:false,
+      orgmenuitems:false,
+      orgorders:false,
+      orgpreorders:false,
+      orgsubscription:false,
+      orgreviews:false,
+      orgreports:false,
+      orgvendor:false,
+      orgoutlet:false,
+      orgincidentmanagement:false,
+      orgcheckList:false,
+      orgemployeelist:false,
+      orgbulkorderhistory:false,
+      orgbilling:false,
+      orgmanualorders:false,
     },
     button_policies: {
       
@@ -71,6 +85,7 @@ export class AddPolicyComponent {
     // }
     try {
       const policyArr:any = await this.apiMainService.getAllPolicy();
+      console.log(policyArr,"policyArr");
       if (policyArr && policyArr.length > 0) {
         this.policyArr = policyArr;
         if(id){

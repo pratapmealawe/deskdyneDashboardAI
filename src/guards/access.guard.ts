@@ -3,6 +3,7 @@ import { CanActivateFn, Router } from '@angular/router';
 import { ToasterService } from 'src/app/toaster/toaster.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -17,6 +18,7 @@ export class PermissionsService {
   canActivate(route: any, state: any): boolean {
     let res: boolean
     const profile = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    console.log(profile,'ADMIN_PROFILE');
     // const keys = ;
     if (profile && profile.policy[0].route_policies) {
       const url = state.url.replace('/', '');
@@ -30,7 +32,11 @@ export class PermissionsService {
     }
     if (res === false) {
       this.localStorageService.resetAllCacheData();
-      this.router.navigate(['/login']);
+      if(profile.policy_name==="orgAdmin"){
+      this.router.navigate(['/orgdashboard']);
+      }else{
+        this.router.navigate(['/dashboard']);
+      }
       this.toasterService.error(122);
     }
     return res;

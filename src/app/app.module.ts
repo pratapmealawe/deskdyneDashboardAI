@@ -13,6 +13,7 @@ import { MainLoaderComponent } from './main-loader/main-loader.component';
 import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
 import { HeaderComponent } from './header/header.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 //import { PdfuploadComponent} from './pdfupload/pdfupload.component';
 // import { VendorComplianceComponent} from './vendor/add-vendor/vendor-compliance/vendor-compliance.component';
 
@@ -32,7 +33,8 @@ import { HeaderComponent } from './header/header.component';
     HttpClientModule,
     FormsModule,
     NgbModule,
-    BrowserAnimationsModule 
+    BrowserAnimationsModule,
+    MatDatepickerModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

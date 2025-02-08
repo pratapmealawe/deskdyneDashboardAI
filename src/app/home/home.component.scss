@@ -62,3 +62,35 @@
 .outlet-wrapper{
     margin-top:55px;
 }
+
+.custom-datepicker {
+    margin-top: 8px; /* Adjusts the distance from the button */
+    transform: translateY(0px) !important; /* Ensures the picker stays in the desired position */
+  }
+  
+  .dateTimecal {
+    position: relative;
+  }
+  
+  .mat-datepicker-popup {
+    position: absolute !important;
+    top: auto !important; /* Ensures it does not go to the top */
+  }
+
+  .no-hover {
+    background-color: transparent; /* No background change */
+    border-color: #6c757d; /* Default border color */
+    color: #6c757d; /* Default text color */
+    transition: none; /* Remove hover transition */
+  }
+  
+  .no-hover:hover,
+  .no-hover:focus {
+    background-color: transparent !important; /* Prevent hover color */
+    border-color: #6c757d !important; /* Keep border color consistent */
+    color: #6c757d !important; /* Keep text color consistent */
+    box-shadow: none !important; /* Prevent shadow on focus */
+  }
+  
+  
+  

@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import * as Highcharts from 'highcharts';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -32,6 +33,105 @@ export class HomeComponent implements OnInit {
     // {name: 'Test User',children:[{label:'Test User', route:'/home/testUser'}]}
   ]
   breadCrumbText: any = 'Dashboard';
+
+  withgstsales:any=23759;
+  gstamtsales:any=0;
+  fromDate:any;
+  highcharts = Highcharts;
+  showChart1=true;
+
+  orderData = [
+    { date: "2025-01-02", count: 10 },
+    { date: "2025-01-03", count: 15 },
+    { date: "2025-01-04", count: 8 },
+    { date: "2025-01-05", count: 10 },
+    { date: "2025-01-06", count: 15 },
+    { date: "2025-01-07", count: 8 },
+    { date: "2025-01-08", count: 8 },
+    // ...
+  ];
+  chartOptions1: any = {
+    chart: {
+      type: "column",
+      backgroundColor: '#e4e9ef',
+    },
+    title: {
+      text: "Order Count (Last 7 Days)"
+    },
+    xAxis: {
+      categories: [], // Days of the week or dates
+      title: {
+        text: "Days"
+      }
+    },
+    yAxis: {
+      title: {
+        text: "Order Count"
+      },
+      stackLabels: {
+        enabled: true,
+        style: {
+          fontWeight: 'bold'
+        }
+      }
+    },
+    plotOptions: {
+      column: {
+        stacking: 'normal',
+        dataLabels: {
+          enabled: true
+        }
+      }
+    },
+    series: [
+      { name: 'Orders', data: [] } // Populate this with order counts
+    ],
+    accessibility: {
+      enabled: false // Disable accessibility module
+    }
+  };
+
+  chartOptions2: any = {
+    chart: {
+      type: "column",
+      backgroundColor: '#e4e9ef',
+    },
+    title: {
+      text: "Order Count (Last 7 Days)"
+    },
+    xAxis: {
+      categories: [], // Days of the week or dates
+      title: {
+        text: "Days"
+      }
+    },
+    yAxis: {
+      title: {
+        text: "Order Count"
+      },
+      stackLabels: {
+        enabled: true,
+        style: {
+          fontWeight: 'bold'
+        }
+      }
+    },
+    plotOptions: {
+      column: {
+        stacking: 'normal',
+        dataLabels: {
+          enabled: true
+        }
+      }
+    },
+    series: [
+      { name: 'Orders', data: [] } // Populate this with order counts
+    ],
+    accessibility: {
+      enabled: false // Disable accessibility module
+    }
+  };
+
   
   constructor(private router: Router, private apiMainService: ApiMainService, private localStorageService: LocalStorageService,
     private runtimeStorageService: RuntimeStorageService, private utilityService: UtilityService, private offcanvasService: NgbOffcanvas){}
@@ -42,6 +142,7 @@ export class HomeComponent implements OnInit {
     // this.utilityService.getCurrentOrdersCount(false)
     // this.mockCredSet();
     // this.router.navigate(['//home/dashboard'])
+    // this.lastsevendaysorder();
   }
 
   // mockCredSet(){
@@ -94,5 +195,11 @@ export class HomeComponent implements OnInit {
   //     console.log('error while logging out ', error)
   //   }
   // }
+
+  onDateSelect(event: Event): void {
+    const selectedDate = (event.target as HTMLInputElement).value;
+    console.log('Selected Date:', selectedDate);
+    // Handle the selected date here
+  }
 
 }
