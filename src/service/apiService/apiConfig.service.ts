@@ -70,7 +70,8 @@ export class ApiConfigService {
       serverlogs: {url: `${this.baseUrl}/public/serverlogs`, method: 'GET'},
       getDayRangeBasedLogs:{url:`${this.baseUrl}/utility/getDayRangeBasedLogs`,method:'GET'},
       getTimeBasedLogs:{url:`${this.baseUrl}/utility/getTimeBasedLogs`,method:'GET'},
-      getLineBasedLogs:{url:`${this.baseUrl}/utility/getLineBasedLogs`,method:'GET'}
+      getLineBasedLogs:{url:`${this.baseUrl}/utility/getLineBasedLogs`,method:'GET'},
+      getEmployeeListByOrgId:{url:`${this.baseUrl}/api/getEmployeeListByOrgId`,method:'GET'}
    };
   }
 }

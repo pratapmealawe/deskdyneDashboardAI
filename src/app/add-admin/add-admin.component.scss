@@ -72,3 +72,13 @@
         width:75px;
     }
 }
+input, select {
+    font-size: 16px;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  input:focus, select:focus {
+    outline: none;
+    border-color: #f47c22; /* Your brand color */
+  }

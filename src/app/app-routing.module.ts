@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { FaqModule } from './miscelleneous/faq/faq.module';
+import { accessGuard } from 'src/guards/access.guard';
 
 const routes: Routes = [
   {
@@ -43,6 +44,49 @@ const routes: Routes = [
   { path: 'B2B_search_org',  loadChildren: () => import('./search-organization/search-organization.module').then(m => m.SearchOrganizationModule) },
   { path: 'dashboard',  loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
   { path: 'serverlogs', loadChildren: () => import('./server-logs/server-logs.module').then(m => m.ServerLogsModule) },
+
+  //orgAdmin routes start
+  { 
+    path: 'orgDashboard',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-dashboard/org-dashboard.module').then(m => m.OrgDashboardModule) 
+  },
+  { 
+    path: 'orgmenuitems',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/orgorders/orgorders.module').then(m => m.OrgordersModule) 
+  },
+  { 
+    path: 'orgorders',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/orgorders/orgorders.module').then(m => m.OrgordersModule) 
+  },
+  { 
+    path: 'orgpreorders',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/orgorders/orgorders.module').then(m => m.OrgordersModule) 
+  },
+  { 
+    path: 'orgsubscription',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-subscription/org-subscription.module').then(m => m.OrgordersModule) 
+  },
+  { 
+    path: 'orgreviews',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-reviews/org-reviews.module').then(m => m.OrgReviewsModule) 
+  },
+  { 
+    path: 'orgreports',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-reports/org-reports.module').then(m => m.OrgReportsModule) 
+  },
+  { 
+    path: 'orgincidentmanagement',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-incident-management/org-incident-management.module').then(m => m.OrgIncidentManagementModule) 
+  },
+  { 
+    path: 'orgcheckList',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-checklist/org-checklist.module').then(m => m.OrgReportsModule) 
+  },
+  { 
+    path: 'orgemployeelist',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-employee-list/org-employee-list.module').then(m => m.OrgEmployeeListModule) 
+  },
+  { 
+    path: 'orgbulkorderhistory',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-bulk-order-history/org-bulk-order-history.module').then(m => m.OrgBulkOrderHistoryModule) 
+  },
+  { 
+    path: 'orgbilling',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-billing/org-billing.module').then(m => m.OrgBillingModule) 
+  },
+  { 
+    path: 'orgmanualorders',canActivate: [accessGuard], loadChildren: () => import('./orgComponents/org-manual-orders/org-manual-orders.module').then(m => m.OrgManualOrdersModule) 
+  },
+
+  //orgAdmin routes End
   {
     path: '',
     redirectTo: 'login',

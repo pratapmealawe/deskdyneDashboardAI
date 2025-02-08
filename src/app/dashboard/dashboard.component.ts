@@ -68,6 +68,9 @@ export class DashboardComponent implements OnInit, OnChanges {
   };
   vendorList:any=[];
   outletList:any=[];
+  countData=[
+    
+  ]
 
   constructor(private apiMainService: ApiMainService,private router:Router) {
     this.getorganizationCount();

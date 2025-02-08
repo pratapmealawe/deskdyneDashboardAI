@@ -16,20 +16,26 @@ export class AddAdminComponent {
   editMode = false;
   imageUrl: any;
   uploadedImageFile: any;
-  adminObj: any = { name: '', phoneNo: '', email: '', id: '', role:'', policy:'' };
-  roleArr = [{text:'Admin', value:'ADMIN'}, {text:'Developer', value:'DEVELOPER'}, {text:'Support', value:'SUPPORT'}, {text:'Sales', value:'SALES'}, {text:'Operations', value:'OPERATIONS'}, {text:'Advisor', value:'ADVISOR'}]
-  access:any;
-  policyArr:any;
+  adminObj: any = { name: '', phoneNo: '', email: '', id: '', role: '', policy: '' };
+  roleArr = [{ text: 'Admin', value: 'ADMIN' }, { text: 'Developer', value: 'DEVELOPER' },
+  { text: 'Support', value: 'SUPPORT' }, { text: 'Sales', value: 'SALES' },
+  { text: 'Operations', value: 'OPERATIONS' }, { text: 'Advisor', value: 'ADVISOR' }, { text: 'OrgAdmin', value: 'ORGADMIN' }]
+  orglist:any = [];
+  filteredOptions = [...this.orglist];
+  access: any;
+  policyArr: any;
+  searchQuery: string = '';
+  selectedValue: string = '';
+  orgDetails:any={};
   constructor(private apiMainService: ApiMainService,
     public router: Router,
     private runtimeStorageService: RuntimeStorageService,
-    private modalService: NgbModal, private policyService:PolicyService) {
-       this.access = this.policyService.getCurrentButtonPolicy();
-      
+    private modalService: NgbModal, private policyService: PolicyService) {
+    this.access = this.policyService.getCurrentButtonPolicy();
   }
   ngOnInit(): void {
     const cacheAdmin = this.runtimeStorageService.getCacheData('VIEW_ADMIN');
-    console.log('catche admin',cacheAdmin)
+    console.log('catche admin', cacheAdmin)
     this.getAllPolicy();
     console.log('cacheAdmin ', cacheAdmin);
     if (cacheAdmin) {
@@ -42,11 +48,20 @@ export class AddAdminComponent {
       this.adminObj.id = cacheAdmin._id;
       this.imageUrl = environment.imageUrl + cacheAdmin.imageUrl;
     }
+    this.getOrgList();
   }
   cancel() {
     this.runtimeStorageService.resetCacheData('VIEW_ADMIN');
     this.router.navigate(['admin']);
   }
+
+  filterOptions() {
+    this.filteredOptions = this.orglist.filter((option:any) =>
+      option.organization_name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
+
+
   handleFileInput($event: any) {
     if ($event && $event.target && $event.target.files) {
       const file: File = $event.target.files[0];
@@ -86,7 +101,7 @@ export class AddAdminComponent {
   }
   async getAllPolicy() {
     try {
-      const policyArr:any = await this.apiMainService.getAllPolicy();
+      const policyArr: any = await this.apiMainService.getAllPolicy();
       if (policyArr && policyArr.length > 0) {
         this.policyArr = policyArr;
         console.log(this.policyArr);
@@ -96,25 +111,37 @@ export class AddAdminComponent {
     }
   }
   async addAdmin(adminObj: any) {
-    console.log('addAdmin',adminObj)
+    if(adminObj.role=='ORGADMIN'){
+      this.setOrgDetails();
+      console.log(this.orgDetails);
+    }
     const formData = new FormData();
     if (this.uploadedImageFile) {
       formData.append('image', this.uploadedImageFile);
-    } 
+    }
+    if(adminObj.role=='ORGADMIN'){
+      this.setOrgDetails();
+      console.log(this.orgDetails);
+      formData.append('OrgDetails', JSON.stringify(this.orgDetails));
+    }
     formData.append('name', adminObj.name);
     formData.append('phoneNo', adminObj.phoneNo);
     formData.append('email', adminObj.email);
     formData.append('role', adminObj.role);
     formData.append('policy_name', adminObj.policy);
-    console.log('form data',formData,adminObj)
+    console.log('form data', formData, adminObj)
     try {
       await this.apiMainService.saveAdminProfile(formData);
       this.router.navigate(['admin']);
     } catch (e) {
-      console.log('Error while saving kitchen partner ', e)
+      console.log('Error while saving kitchen partner ', e);
     }
   }
   async updateAdmin(adminObj: any) {
+    if(adminObj.role=='ORGADMIN'){
+      this.setOrgDetails();
+      console.log(this.orgDetails);
+    }
     const formData = new FormData();
     if (this.uploadedImageFile) {
       formData.append('image', this.uploadedImageFile);
@@ -125,11 +152,36 @@ export class AddAdminComponent {
       formData.append('role', adminObj.role);
       formData.append('policy', adminObj.policy);
     }
+    if(adminObj.role=='ORGADMIN'){
+      formData.append('OrgDetails', JSON.stringify(this.orgDetails));
+    }
     try {
       await this.apiMainService.updateadminprofile(adminObj.id, formData);
       this.router.navigate(['admin']);
     } catch (e) {
       console.log('Error while saving kitchen partner ', e)
     }
+  }
+
+async getOrgList(){
+      try {
+      this.orglist = [];
+      let page = 1;
+      let searchObj = {
+        countOnly: false
+      }
+      let result = await this.apiMainService.B2B_fetchFilteredAllOrgs(searchObj, page);
+      this.orglist = result;
+      this.filteredOptions = [...this.orglist];
+      console.log(this.filteredOptions)
+      // console.log(this.orglist);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  setOrgDetails(){
+    this.orgDetails=this.orglist.find((org:any)=>{
+      return org._id==this.selectedValue;
+    })
   }
 }

@@ -1,0 +1,26 @@
+<div>
+    <div *ngFor="let employee of employeeList; index as i">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-3 mt-2">
+                <div class="labelText">Employee Name</div>
+                <input type="text" class="form-control" placeholder="Employee Name"
+                    [(ngModel)]="employee.employeeName">
+            </div>
+            <div class="col-12 col-md-6 col-lg-3 mt-2">
+                <div class="labelText">Employee ID</div>
+                <input type="text" class="form-control" placeholder="Employee ID" [(ngModel)]="employee.employeeId">
+            </div>
+
+            <div class="col-12 col-md-6 col-lg-3 mt-2">
+                <div class="labelText">Employee Phone No</div>
+                <input type="number" class="form-control" placeholder="Employee Phone No"
+                    [(ngModel)]="employee.employeePhoneNo">
+            </div>
+            <div class="col-12 col-md-6 col-lg-3 mt-2">
+                <div class="labelText">Employee Email</div>
+                <input type="email" class="form-control" placeholder="Employee Email"
+                    [(ngModel)]="employee.employeeEmail">
+            </div>
+        </div>
+    </div>
+</div>

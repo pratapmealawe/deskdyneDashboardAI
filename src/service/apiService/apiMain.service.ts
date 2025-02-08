@@ -319,4 +319,8 @@ export class ApiMainService {
     .REQUEST({url: urlObj.url+`/${lineLimit}`, method: urlObj.method});
   }
 
+  getEmployeeListByOrgId(orgId:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeListByOrgId;
+    return this.apiHttpService.REQUEST({url:urlObj.url+`/${orgId}`,method:urlObj.method})
+  }
 }

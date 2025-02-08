@@ -69,4 +69,29 @@
     margin: 5px 10px;
     border-radius: 16px;
 }
+
+.transparent-bg {
+  position: relative; /* Required for layering content */
+  // background-image: url('path-to-your-image.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  opacity: 0.8; /* Customize transparency */
+  z-index: 1; /* Ensure layering */
+  padding: 20px;
+}
+
+.transparent-bg label,
+.transparent-bg select {
+  position: relative;
+  z-index: 2; /* Ensure text is above the background */
+}
+
+.my-card
+{
+    position:absolute;
+    left:25%;
+    top:-30px;
+    border-radius:100%;
+}
   
