@@ -29,13 +29,11 @@
             </ng-container>
         </h1>
     </div>
-    <div class="offcanvas-body" style="padding-left:0%;padding-right: 0%;">
-        <div class="accordion accordion-flush" id="accordionExample" style="margin-left: 5%;margin-right: 5%">
+    <div class="offcanvas-body">
+        <!-- <div class="accordion accordion-flush" id="accordionExample" style="margin-left: 5%;margin-right: 5%">
             <ng-container *ngIf="!isOrgAdmin && showOld">
                 <div *ngFor="let link of navOptions; let i = index">
                     <ng-container>
-                        <!-- <ng-container> -->
-                        <!-- <h2 class="accordion-header" id="headingOne"> -->
                         <button class="shadow-none orgbutton" type="button" data-bs-toggle="collapse"
                             [attr.data-bs-target]="'#collapseOne'+i" aria-expanded="true"
                             [ngClass]="{ 'active-link': selectedIndexpar === i }" aria-controls="collapseOne"
@@ -43,13 +41,9 @@
                             (click)="selectParent(i);">
                             {{link.name}}
                         </button>
-                        <!-- </h2> -->
                     </ng-container>
                     <div [attr.id]="'collapseOne'+i" class="accordion-collapse collapse pointer"
                         aria-labelledby="headingOne">
-                        <!-- <div class="orgbutton" *ngFor="let item of link.children;let j = index"
-                            [routerLink]="item.route" [ngClass]="{ 'active-link': selectedIndex === j }"
-                            (click)="closeSidebar(link.children)"> -->
                         <ng-container *ngFor="let item of link.children;let K = index">
                             <button class="orgbuttonchild" type="button" [routerLink]="item.route"
                                 style="border-bottom: 0.5px solid gray;padding-left: 30%;"
@@ -57,18 +51,15 @@
                                 (click)="selectchild(i,K);closeSidebar(link.children);">
                                 {{item.label}}
                             </button>
-                            <!-- <ng-container> -->
-                            <!-- class="accordion-body" -->
                         </ng-container>
-                        <!-- </div> -->
                     </div>
                 </div>
             </ng-container>
-
-            <ng-container *ngIf="!isOrgAdmin && !showOld">
+        </div>     -->
+            <!-- <ng-container *ngIf="!isOrgAdmin && !showOld">
                 <div *ngFor="let link of DeskdyneOptions; let j = index"
                     [ngClass]="{ 'active-link': selectedIndex === j }"
-                    (click)="selectLink(j)"
+                    (click)="selectLink(link,j)"
                     style="display: flex; align-items: center;">
                   <button class="orgbutton" type="button" [routerLink]="link.route"
                       style="border-bottom: 0.5px solid gray; padding: 7px 0; display: flex; align-items: center;"
@@ -83,30 +74,38 @@
                          style="margin-right: 10px; width: 20px; height: 20px;"/>
                     {{ link.name }}
                   </button>
-                </div>
-              </ng-container>  
+                  <div *ngIf="">
 
-            <ng-container *ngIf="isOrgAdmin">
-                <div *ngFor="let link of parentNavOptions; let j = index"
-                    [ngClass]="{ 'active-link': selectedIndex === j }"
-                    (click)="selectLink(j)"
-                    style="display: flex; align-items: center;">
-                  <button class="orgbutton" type="button" [routerLink]="link.route"
-                      style="border-bottom: 0.5px solid gray; padding: 7px 0; display: flex; align-items: center;"
-                      [ngClass]="{ 'active-link': selectedIndex === j }">
-                    <img *ngIf="selectedIndex === j" 
-                         [src]="'assets/images/' + link.imageblue + '.svg'" 
-                         alt="Active Icon" 
-                         style="margin-right: 10px; width: 20px; height: 20px;"/>
-                    <img *ngIf="selectedIndex !== j" 
-                         [src]="'assets/images/' + link.image + '.svg'" 
-                         alt="Inactive Icon" 
-                         style="margin-right: 10px; width: 20px; height: 20px;"/>
-                    {{ link.name }}
-                  </button>
+                  </div>
                 </div>
-              </ng-container>              
-        </div>
+              </ng-container>   -->
+
+        <ng-container>
+            <div *ngFor="let link of finalNavOption; let i = index">
+                <div *ngIf="link.showParent">
+                <div class="orgbutton" [ngClass]="{ 'active-link': selectedIndex === i}"                 
+                (click)="selectLink(link,i)">
+                    <img *ngIf="selectedIndex === i" 
+                        [src]="'assets/images/' + link.imageblue + '.svg'" 
+                        alt="Active Icon" 
+                        style="margin-right: 10px; width: 20px; height: 20px;"/>
+                    <img *ngIf="selectedIndex !== i" 
+                        [src]="'assets/images/' + link.image + '.svg'" 
+                        alt="Inactive Icon" 
+                        style="margin-right: 10px; width: 20px; height: 20px;"/>
+                    {{ link.name }}
+                </div>
+                <div *ngIf="link.children && openChildSectionIndex === i">
+                    <div *ngFor="let childLink of link.children; let j = index">
+                        <div *ngIf="childLink.showChild" class="childMenuStyle" type="button" (click)="selectChildLink(childLink.route,i,j)"
+                        [ngClass]="{ 'active-link': openChildSectionIndex === i && childSelectedIndex === j }">
+                        {{ childLink.name }}
+                    </div>
+                    </div>
+                </div>
+            </div>  
+            </div>             
+        </ng-container>  
     </div>
 </ng-template>
 
