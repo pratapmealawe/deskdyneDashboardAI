@@ -45,51 +45,25 @@ const routes: Routes = [
   { path: 'dashboard',  loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
   { path: 'serverlogs', loadChildren: () => import('./server-logs/server-logs.module').then(m => m.ServerLogsModule) },
 
-  //orgAdmin routes start
-  { 
-    path: 'orgDashboard', loadChildren: () => import('./orgComponents/org-dashboard/org-dashboard.module').then(m => m.OrgDashboardModule) 
-  },
-  { 
-    path: 'orgmenuitems', loadChildren: () => import('./orgComponents/orgorders/orgorders.module').then(m => m.OrgordersModule) 
-  },
-  { 
-    path: 'orgorders', loadChildren: () => import('./orgComponents/orgorders/orgorders.module').then(m => m.OrgordersModule) 
-  },
-  { 
-    path: 'orgpreorders', loadChildren: () => import('./orgComponents/orgorders/orgorders.module').then(m => m.OrgordersModule) 
-  },
-  { 
-    path: 'orgsubscription', loadChildren: () => import('./orgComponents/org-subscription/org-subscription.module').then(m => m.OrgordersModule) 
-  },
-  { 
-    path: 'orgreviews', loadChildren: () => import('./orgComponents/org-reviews/org-reviews.module').then(m => m.OrgReviewsModule) 
-  },
-  { 
-    path: 'orgreports', loadChildren: () => import('./orgComponents/org-reports/org-reports.module').then(m => m.OrgReportsModule) 
-  },
-  { 
-    path: 'orgincidentmanagement', loadChildren: () => import('./orgComponents/org-incident-management/org-incident-management.module').then(m => m.OrgIncidentManagementModule) 
-  },
-  { 
-    path: 'orgcheckList', loadChildren: () => import('./orgComponents/org-checklist/org-checklist.module').then(m => m.OrgReportsModule) 
-  },
-  { 
-    path: 'orgemployeelist', loadChildren: () => import('./orgComponents/org-employee-list/org-employee-list.module').then(m => m.OrgEmployeeListModule) 
-  },
-  { 
-    path: 'orgbulkorderhistory', loadChildren: () => import('./orgComponents/org-bulk-order-history/org-bulk-order-history.module').then(m => m.OrgBulkOrderHistoryModule) 
-  },
-  { 
-    path: 'orgbilling', loadChildren: () => import('./orgComponents/org-billing/org-billing.module').then(m => m.OrgBillingModule) 
-  },
-  { 
-    path: 'orgmanualorders', loadChildren: () => import('./orgComponents/org-manual-orders/org-manual-orders.module').then(m => m.OrgManualOrdersModule) 
-  },
-  { 
-    path: 'orgVendorInfo', loadChildren: () => import('./orgComponents/org-vender-info/org-vender-info.module').then(m => m.OrgVendorInfoModule) 
-  },
-  
-  //orgAdmin routes End
+  //orgAdmin routes
+  {path: "org-dashboard", loadChildren: () => import("./org-components/org-dashboard/org-dashboard.module").then(m => m.OrgDashboardModule)},
+  {path: "org-menu-items", loadChildren: () => import("./org-components/org-menu-items/org-menu-items.module").then(m => m.OrgMenuItemsModule)},
+  {path: "org-orders", loadChildren: () => import("./org-components/org-orders/org-orders.module").then(m => m.OrgOrdersModule)},
+  {path: "org-pre-orders", loadChildren: () => import("./org-components/org-pre-orders/org-pre-orders.module").then(m => m.OrgPreOrdersModule)},
+  {path: "org-subcription", loadChildren: () => import("./org-components/org-subscription/org-subscription.module").then(m => m.OrgSubscriptionModule)},
+  {path: "org-reviews", loadChildren: () => import("./org-components/org-reviews/org-reviews.module").then(m => m.OrgReviewsModule)},
+  {path: "org-reports", loadChildren: () => import("./org-components/org-reports/org-reports.module").then(m => m.OrgReportsModule)},
+  {path: "org-vendor-info", loadChildren: () => import("./org-components/org-vendor-info/org-vendor-info.module").then(m => m.OrgVendorInfoModule)},
+  {path: "org-menu-counters", loadChildren: () => import("./org-components/org-menu-counters/org-menu-counters.module").then(m => m.OrgMenuCountersModule)},
+  {path: "org-incident-management", loadChildren: () => import("./org-components/org-incident-management/org-incident-management.module").then(m => m.OrgIncidentManagementModule)},
+  {path: "org-checklist", loadChildren: () => import("./org-components/org-checklist/org-checklist.module").then(m => m.OrgChecklistModule)},
+  {path: "org-employee-list", loadChildren: () => import("./org-components/org-employee-list/org-employee-list.module").then(m => m.OrgEmployeeListModule)},
+  {path: "org-bulk-order-history", loadChildren: () => import("./org-components/org-bulk-order-history/org-bulk-order-history.module").then(m => m.OrgBulkOrderHistoryModule)},
+  {path: "org-manual-orders", loadChildren: () => import("./org-components/org-manual-orders/org-manual-orders.module").then(m => m.OrgManualOrdersModule)},
+  {path: "org-billing", loadChildren: () => import("./org-components/org-billing/org-billing.module").then(m => m.OrgBillingModule)},
+
+  //deskdine routes
+ 
   {
     path: '',
     redirectTo: 'login',
