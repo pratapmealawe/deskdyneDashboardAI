@@ -323,4 +323,10 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeListByOrgId;
     return this.apiHttpService.REQUEST({url:urlObj.url+`/${orgId}`,method:urlObj.method})
   }
+
+  getFeedbackListByOrgId(orgId:any, page:number){
+    const urlObj = this.apiConfigService.apiEndPointObj.getFeedbackListByOrgId;
+    return this.apiHttpService.REQUEST({url:urlObj.url+`/${orgId}/${page}`,method:urlObj.method})
+  }
+
 }
