@@ -1,64 +1,90 @@
-<div class="px-4 py-3">
-    <h2>Orders</h2>
+<div class="container">
+  <h2>Orders</h2>
 
-    <div class="my-4  d-flex flex-column flex-md-row align-items-end gap-3">
-        <div class="row w-100">
-            <div class="col-lg-4">
-                <label for="exampleFormControlInput1" class="form-label">From Date</label>
-                <input type="date" [(ngModel)]="searchObj.fromDate" class="form-control" id="exampleFormControlInput1">
+  <div class="my-4 d-flex flex-column flex-md-row align-items-end gap-3">
+    <div class="row w-100">
+      <div class="col-lg-4">
+        <label for="exampleFormControlInput1" class="form-label"
+          >From Date</label
+        >
+        <input
+          type="date"
+          [(ngModel)]="searchObj.fromDate"
+          class="form-control"
+          id="exampleFormControlInput1"
+        />
+      </div>
+      <div class="col-lg-4">
+        <label for="exampleFormControlInput2" class="form-label">To Date</label>
+        <input
+          type="date"
+          [(ngModel)]="searchObj.toDate"
+          class="form-control"
+          id="exampleFormControlInput2"
+        />
+      </div>
+      <div class="col-lg-4"></div>
+    </div>
+    <div class="d-flex flex-row gap-4 align-items-center">
+      <button type="button" (click)="getOrders()" class="btn btn-primary">
+        Search
+      </button>
+      <button
+        type="button"
+        (click)="clearFilter()"
+        class="btn btn-outline-danger"
+      >
+        Clear
+      </button>
+    </div>
+  </div>
+  <div *ngIf="orderList.length > 0">
+    <div *ngFor="let order of orderList" class="cardDesign my-1">
+      <div class="row">
+        <div
+          class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-full"
+        >
+          <div class="">
+            <div class="labelText">Order Id</div>
+            <div class="labelData">{{ order?.order_id }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Customer Id</div>
+            <div class="labelData">{{ order?.customerId }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Customer Name</div>
+            <div class="labelData">{{ order?.customerName }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Date</div>
+            <div class="labelData">
+              {{ order?.orderDate | date : "dd/mm/yyyy" }}
             </div>
-            <div class="col-lg-4">
-                <label for="exampleFormControlInput2" class="form-label">To Date</label>
-                <input type="date" [(ngModel)]="searchObj.toDate" class="form-control" id="exampleFormControlInput2">
-            </div>
-            <div class="col-lg-4"></div>
+          </div>
+          <div class="">
+            <div class="labelText">Type</div>
+            <div class="labelData">{{ order?.orderType }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Price</div>
+            <div class="labelData">{{ order?.amount }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Status</div>
+            <div class="labelData">{{ order?.orderstatus }}</div>
+          </div>
         </div>
-        <div class="d-flex flex-row gap-4 align-items-center">
-        <button type="button" (click)="getOrders()" class="btn btn-primary ">Search</button>
-        <button type="button" (click)="clearFilter()" class="btn btn-outline-danger ">Clear</button>
+      </div>
     </div>
+    <button
+      type="button"
+      class="btn btn-primary btn-sm mt-2"
+      (click)="getMore()"
+    >
+      Load More
+    </button>
+  </div>
 
-    </div>
-    <div *ngIf="orderList.length > 0">
-        <div *ngFor="let order of orderList" class="cardDesign my-1">
-            <div class="row">
-                <div class="d-flex flex-column flex-md-row  justify-content-md-between align-items-md-center w-full">
-                    <div class="">
-                        <div class="labelText">Order Id</div>
-                        <div class="labelData">{{order?.order_id}}</div>
-                    </div>
-                    <div class="">
-                        <div class="labelText">Customer Id</div>
-                        <div class="labelData">{{order?.customerId}}</div>
-                    </div>
-                    <div class="">
-                        <div class="labelText">Customer Name</div>
-                        <div class="labelData">{{order?.customerName}}</div>
-                    </div>
-                    <div class="">
-                        <div class="labelText">Date</div>
-                        <div class="labelData">{{order?.orderDate | date:"dd/mm/yyyy"}}</div>
-                    </div>
-                    <div class="">
-                        <div class="labelText">Type</div>
-                        <div class="labelData">{{order?.orderType}}</div>
-                    </div>
-                    <div class="">
-                        <div class="labelText">Price</div>
-                        <div class="labelData">{{order?.amount}}</div>
-                    </div>
-                    <div class="">
-                        <div class="labelText">Status</div>
-                        <div class="labelData">{{order?.orderstatus}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <button type="button" class="btn btn-primary btn-sm mt-2" (click)="getMore()">Load
-            More</button>
-    </div>
-
-    <div class="center" *ngIf="orderList.length === 0">
-        No Records Found
-    </div>
+  <div class="center" *ngIf="orderList.length === 0">No Records Found</div>
 </div>

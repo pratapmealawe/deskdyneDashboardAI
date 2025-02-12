@@ -1,1 +1,58 @@
-<p>org-employee-list works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8">
+      <h2>Employee List</h2>
+    </div>
+
+    <div class="col-lg-4">
+      <input
+        type="text"
+        (input)="searchFilter($event)"
+        class="form-control"
+        placeholder="Search"
+        aria-label="Search Filter"
+        aria-describedby="basic-addon2"
+      />
+    </div>
+  </div>
+  <div *ngIf="filteredEmployeeList.length > 0">
+    <div *ngFor="let employee of filteredEmployeeList" class="cardDesign my-1">
+      <div class="row">
+        <div
+          class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center w-full"
+        >
+          <div class="">
+            <div class="labelText">Employee Id</div>
+            <div class="labelData">{{ employee?.employeeId }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Employee Name</div>
+            <div class="labelData">{{ employee?.employeeName }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Employee Phone No</div>
+            <div class="labelData">{{ employee?.employeePhoneNo }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Employee Email</div>
+            <div class="labelData">{{ employee?.employeeEmail }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Cafeterion Id</div>
+            <div class="labelData">{{ employee?.cafeteria_id }}</div>
+          </div>
+          <div class="">
+            <div class="labelText">Cafeterion Name</div>
+            <div class="labelData">{{ employee?.cafeteria_name }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- <button type="button" class="btn btn-primary btn-sm mt-2" (click)="getMore()">Load
+            More</button> -->
+  </div>
+
+  <div class="center" *ngIf="filteredEmployeeList.length === 0">
+    No Records Found
+  </div>
+</div>

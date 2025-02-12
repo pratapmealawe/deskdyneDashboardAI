@@ -4,45 +4,52 @@ import { OrgAdminDataService } from 'src/service/org-admin-data.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 interface filter {
-  fromDate: string,
-  toDate: string,
+  fromDate: string;
+  toDate: string;
 }
 
 @Component({
   selector: 'app-org-orders',
   templateUrl: './org-orders.component.html',
   styleUrls: ['./org-orders.component.scss'],
-
 })
 export class OrgOrdersComponent implements OnInit {
-  ogorderList: any[] = []
-  orderList: any[] = []
+  ogorderList: any[] = [];
+  orderList: any[] = [];
   orderStatusMapper: any = orderStatusMapper;
   nextOn = false;
   page: number = 1;
   searchObj: filter = {
-    fromDate: "",
-    toDate: "",
-  }
-  constructor(private orgAdminData: OrgAdminDataService, private sendDataToComponent: SendDataToComponent) { }
+    fromDate: '',
+    toDate: '',
+  };
+  constructor(
+    private orgAdminData: OrgAdminDataService,
+    private sendDataToComponent: SendDataToComponent
+  ) {}
 
   ngOnInit(): void {
-    this.setInitialDate()
-    this.getOrders()
+    this.setInitialDate();
+    this.getOrders();
   }
 
   setInitialDate() {
-    const today = new Date()
+    const today = new Date();
     this.searchObj.fromDate = today.toISOString().split('T')[0];
     this.searchObj.toDate = today.toISOString().split('T')[0];
   }
 
-
   async getOrders() {
-    await this.orgAdminData.getFilteredOrders(this.searchObj, this.page).then((data) => {
-      this.orderList = data
-      this.ogorderList = data
-    })
+    try {
+      let data = await this.orgAdminData.getFilteredOrders(
+        this.searchObj,
+        this.page
+      );
+      this.orderList = data;
+      this.ogorderList = data;
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+    }
   }
 
   getMore() {
@@ -51,7 +58,6 @@ export class OrgOrdersComponent implements OnInit {
   }
 
   clearFilter() {
-    this.orderList = this.ogorderList
+    this.orderList = this.ogorderList;
   }
 }
-
