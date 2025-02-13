@@ -4,7 +4,7 @@
   <div class="my-4 d-flex flex-column flex-md-row align-items-end gap-3">
     <div class="row w-100">
       <div class="col-lg-4">
-        <label for="exampleFormControlInput1" class="form-label"
+        <label for="exampleFormControlInput1" class="labelText d-block"
           >From Date</label
         >
         <input
@@ -16,7 +16,9 @@
         />
       </div>
       <div class="col-lg-4">
-        <label for="exampleFormControlInput2" class="form-label">To Date</label>
+        <label for="exampleFormControlInput2" class="labelText d-block"
+          >To Date</label
+        >
         <input
           type="date"
           [(ngModel)]="searchObj.toDate"

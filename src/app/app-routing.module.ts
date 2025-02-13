@@ -183,8 +183,8 @@ const routes: Routes = [
   {
     path: 'org-checklist',
     loadChildren: () =>
-      import('./org-components/org-checklist/org-checklist.module').then(
-        (m) => m.OrgChecklistModule
+      import('./checklist-history/checklist-history.module').then(
+        (m) => m.ChecklistHistoryModule
       ),
   },
   {
