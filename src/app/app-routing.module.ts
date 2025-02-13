@@ -61,7 +61,9 @@ const routes: Routes = [
   {path: "org-bulk-order-history", loadChildren: () => import("./org-components/org-bulk-order-history/org-bulk-order-history.module").then(m => m.OrgBulkOrderHistoryModule)},
   {path: "org-manual-orders", loadChildren: () => import("./org-components/org-manual-orders/org-manual-orders.module").then(m => m.OrgManualOrdersModule)},
   {path: "org-billing", loadChildren: () => import("./org-components/org-billing/org-billing.module").then(m => m.OrgBillingModule)},
-
+  {path: "view-checklist-question", loadChildren: () => import("./checklist-question/checklist-question.module").then(m => m.ChecklistQuestionModule)},
+  {path: "submit-checklist", loadChildren: () => import("./org-components/submit-checklist/submit-checklist.module").then(m => m.SubmitChecklistModule)},
+  {path: "checklistHistory", loadChildren: () => import("./checklist-history/checklist-history.module").then(m => m.ChecklistHistoryModule)},
   //deskdine routes
  
   {
