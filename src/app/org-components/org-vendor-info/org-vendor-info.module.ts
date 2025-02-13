@@ -2,13 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { OrgVendorInfoRoutingModule } from './org-vendor-info-routing.module';
-
+import { OrgVendorInfoComponent } from './org-vendor-info.component';
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    OrgVendorInfoRoutingModule
-  ]
+  declarations: [OrgVendorInfoComponent],
+  imports: [CommonModule, OrgVendorInfoRoutingModule],
 })
-export class OrgVendorInfoModule { }
+export class OrgVendorInfoModule {}
