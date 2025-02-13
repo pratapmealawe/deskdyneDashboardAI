@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { OrgAdminDataService } from 'src/service/org-admin-data.service';
+import { SearchFilterService } from 'src/service/search-filter.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 interface filter {
@@ -14,8 +15,8 @@ interface filter {
   styleUrls: ['./org-orders.component.scss'],
 })
 export class OrgOrdersComponent implements OnInit {
-  ogorderList: any[] = [];
   orderList: any[] = [];
+  filteredOrderList: any[] = [];
   orderStatusMapper: any = orderStatusMapper;
   nextOn = false;
   page: number = 1;
@@ -25,7 +26,8 @@ export class OrgOrdersComponent implements OnInit {
   };
   constructor(
     private orgAdminData: OrgAdminDataService,
-    private sendDataToComponent: SendDataToComponent
+    private sendDataToComponent: SendDataToComponent,
+    private searchService: SearchFilterService
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class OrgOrdersComponent implements OnInit {
         this.page
       );
       this.orderList = data;
-      this.ogorderList = data;
+      this.filteredOrderList = data;
     } catch (err) {
       console.error('Error fetching orders:', err);
     }
@@ -57,7 +59,17 @@ export class OrgOrdersComponent implements OnInit {
     this.getOrders();
   }
 
-  clearFilter() {
-    this.orderList = this.ogorderList;
+  searchFilter(e: any) {
+    const searchText = e.target.value;
+
+    const config = {
+      keys: ['order_id', 'customerId', 'customerName'],
+    };
+
+    this.filteredOrderList = this.searchService.searchData(
+      this.orderList,
+      config,
+      searchText
+    );
   }
 }
