@@ -4,41 +4,56 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
 import { PolicyService } from 'src/service/policy.service';
+import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 
 @Component({
   selector: 'app-add-admin',
   templateUrl: './add-admin.component.html',
-  styleUrls: ['./add-admin.component.scss']
+  styleUrls: ['./add-admin.component.scss'],
 })
 export class AddAdminComponent {
   editMode = false;
   imageUrl: any;
   uploadedImageFile: any;
-  adminObj: any = { name: '', phoneNo: '', email: '', id: '', role: '', policy: '' };
-  roleArr = [{ text: 'Admin', value: 'ADMIN' }, { text: 'Developer', value: 'DEVELOPER' },
-  { text: 'Support', value: 'SUPPORT' }, { text: 'Sales', value: 'SALES' },
-  { text: 'Operations', value: 'OPERATIONS' }, { text: 'Advisor', value: 'ADVISOR' }, { text: 'OrgAdmin', value: 'ORGADMIN' }]
-  orglist:any = [];
+  adminObj: any = {
+    name: '',
+    phoneNo: '',
+    email: '',
+    id: '',
+    role: '',
+    policy: '',
+  };
+  roleArr = [
+    { text: 'Admin', value: 'ADMIN' },
+    { text: 'Developer', value: 'DEVELOPER' },
+    { text: 'Support', value: 'SUPPORT' },
+    { text: 'Sales', value: 'SALES' },
+    { text: 'Operations', value: 'OPERATIONS' },
+    { text: 'Advisor', value: 'ADVISOR' },
+    { text: 'OrgAdmin', value: 'ORGADMIN' },
+  ];
+  orglist: any = [];
   filteredOptions = [...this.orglist];
   access: any;
   policyArr: any;
   searchQuery: string = '';
   selectedValue: string = '';
-  selectedCafeId:string = '';
-  orgDetails:any=null;
-  cafeDetails:any=null;
+  selectedCafeId: string = '';
+  orgDetails: any = null;
+  cafeDetails: any = null;
   constructor(
     private apiMainService: ApiMainService,
     public router: Router,
     private runtimeStorageService: RuntimeStorageService,
-    private modalService: NgbModal, private policyService: PolicyService) {
+    private modalService: NgbModal,
+    private policyService: PolicyService
+  ) {
     this.access = this.policyService.getCurrentButtonPolicy();
   }
   ngOnInit(): void {
     const cacheAdmin = this.runtimeStorageService.getCacheData('VIEW_ADMIN');
-    console.log('catche admin', cacheAdmin)
+    console.log('catche admin', cacheAdmin);
     this.getAllPolicy();
     console.log('cacheAdmin ', cacheAdmin);
     if (cacheAdmin) {
@@ -59,11 +74,12 @@ export class AddAdminComponent {
   }
 
   filterOptions() {
-    this.filteredOptions = this.orglist.filter((option:any) =>
-      option.organization_name.toLowerCase().includes(this.searchQuery.toLowerCase())
+    this.filteredOptions = this.orglist.filter((option: any) =>
+      option.organization_name
+        .toLowerCase()
+        .includes(this.searchQuery.toLowerCase())
     );
   }
-
 
   handleFileInput($event: any) {
     if ($event && $event.target && $event.target.files) {
@@ -76,21 +92,28 @@ export class AddAdminComponent {
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef: NgbModalRef = this.modalService.open(ImageCropperComponent,
+            const modalRef: NgbModalRef = this.modalService.open(
+              ImageCropperComponent,
               {
-                ariaLabelledBy: 'modal-basic-title', size: 'xl', backdrop: 'static',
-                centered: true
-              });
-            modalRef.result.then((result: any) => {
-              console.log('Closed with:', result);
-              if (result && result.croppedImages) {
-                console.log('croppedImages ', result.croppedImages);
-                this.uploadedImageFile = result.croppedImages.file;
-                this.imageUrl = result.croppedImages.resizeDataUrl;
+                ariaLabelledBy: 'modal-basic-title',
+                size: 'xl',
+                backdrop: 'static',
+                centered: true,
               }
-            }, (reason: any) => {
-              console.log(`Model Dismissed`);
-            });
+            );
+            modalRef.result.then(
+              (result: any) => {
+                console.log('Closed with:', result);
+                if (result && result.croppedImages) {
+                  console.log('croppedImages ', result.croppedImages);
+                  this.uploadedImageFile = result.croppedImages.file;
+                  this.imageUrl = result.croppedImages.resizeDataUrl;
+                }
+              },
+              (reason: any) => {
+                console.log(`Model Dismissed`);
+              }
+            );
             modalRef.componentInstance.uploadedImageUrl = imageUrl;
             modalRef.componentInstance.imageWidth = 150;
             modalRef.componentInstance.imageHeight = 150;
@@ -98,7 +121,7 @@ export class AddAdminComponent {
           } catch (e) {
             console.log('error while changes kitchen opened status ', e);
           }
-        }
+        };
       }
     }
   }
@@ -110,7 +133,7 @@ export class AddAdminComponent {
         console.log(this.policyArr);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
   async addAdmin(adminObj: any) {
@@ -122,12 +145,12 @@ export class AddAdminComponent {
     if (this.uploadedImageFile) {
       formData.append('image', this.uploadedImageFile);
     }
-    if(adminObj.role=='ORGADMIN'){
+    if (adminObj.role == 'ORGADMIN') {
       // this.setOrgDetails();
       console.log(this.orgDetails);
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
     }
-    if(adminObj.policy=='cafeteria Manager'){
+    if (adminObj.policy == 'cafeteria Manager') {
       // this.setOrgDetails();
       console.log(this.orgDetails);
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
@@ -137,7 +160,7 @@ export class AddAdminComponent {
     formData.append('email', adminObj.email);
     formData.append('role', adminObj.role);
     formData.append('policy_name', adminObj.policy);
-    console.log('form data', formData, adminObj)
+    console.log('form data', formData, adminObj);
     try {
       await this.apiMainService.saveAdminProfile(formData);
       this.router.navigate(['admin']);
@@ -160,10 +183,10 @@ export class AddAdminComponent {
       formData.append('role', adminObj.role);
       formData.append('policy', adminObj.policy);
     }
-    if(adminObj.role=='ORGADMIN'){
+    if (adminObj.role == 'ORGADMIN') {
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
     }
-    if(adminObj.policy=='cafeteria Manager'){
+    if (adminObj.policy == 'cafeteria Manager') {
       // this.setOrgDetails();
       console.log(this.orgDetails);
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
@@ -172,38 +195,40 @@ export class AddAdminComponent {
       await this.apiMainService.updateadminprofile(adminObj.id, formData);
       this.router.navigate(['admin']);
     } catch (e) {
-      console.log('Error while saving kitchen partner ', e)
+      console.log('Error while saving kitchen partner ', e);
     }
   }
 
-async getOrgList(){
-      try {
+  async getOrgList() {
+    try {
       this.orglist = [];
       let page = 1;
       let searchObj = {
-        countOnly: false
-      }
-      let result = await this.apiMainService.B2B_fetchFilteredAllOrgs(searchObj, page);
+        countOnly: false,
+      };
+      let result = await this.apiMainService.B2B_fetchFilteredAllOrgs(
+        searchObj,
+        page
+      );
       this.orglist = result;
       this.filteredOptions = [...this.orglist];
-      console.log(this.filteredOptions)
+      console.log(this.filteredOptions);
       // console.log(this.orglist);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-  setOrgDetails(e:any){
-    console.log(e.target.value,'this.orgDetails');
-    this.orgDetails=this.orglist.find((org:any)=>{
-      return org._id==this.selectedValue;
+  setOrgDetails(e: any) {
+    console.log(e.target.value, 'this.orgDetails');
+    this.orgDetails = this.orglist.find((org: any) => {
+      return org._id == this.selectedValue;
     });
     console.log(this.orgDetails);
   }
-  setCafeDetails(e:any){
-    console.log(e.target.value,'this.orgDetails');
-    this.cafeDetails=this.orgDetails.cafeteriaList.find((org:any)=>{
-      return org._id==this.selectedCafeId;
+  setCafeDetails(e: any) {
+    console.log(e.target.value, 'this.orgDetails');
+    this.cafeDetails = this.orgDetails.cafeteriaList.find((org: any) => {
+      return org._id == this.selectedCafeId;
     });
-
   }
 }
