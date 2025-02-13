@@ -195,6 +195,9 @@ export class ApiMainService {
   getAllVariables(){
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllVariables);
   }
+  getAllChecklistQuestions(){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllChecklistQuestions)
+  }
   saveVariable(data: any){
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveVariable, data);
   }
@@ -322,5 +325,35 @@ export class ApiMainService {
   getEmployeeListByOrgId(orgId:any){
     const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeListByOrgId;
     return this.apiHttpService.REQUEST({url:urlObj.url+`/${orgId}`,method:urlObj.method})
+  }
+  saveQuestion(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveQuestion, data);
+  }
+  updateChecklistQuestions(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateChecklistQuestions, data);
+  }
+  deletechecklistQuestion(id: string){
+    const urlObj = this.apiConfigService.apiEndPointObj.deletechecklistQuestion;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method});
+  }
+
+  saveChecklistReport(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveChecklistReport, data);
+  }
+
+  getAllChecklistReports(){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllChecklistReports);
+  }
+  updateChecklistReports(data: any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateChecklistReports, data);
+  }
+  deletechecklistReport(id: string){
+    const urlObj = this.apiConfigService.apiEndPointObj.deletechecklistReport;
+    return this.apiHttpService
+    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method});
+  }
+  getReportHistoryByfilter(data:any){
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getReportHistoryByfilter, data);
   }
 }

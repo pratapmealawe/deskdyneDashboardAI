@@ -50,9 +50,24 @@
                             style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc;" />
 
                         <!-- Dropdown -->
-                        <select style="width: 100%; padding: 8px;" [(ngModel)]="selectedValue">
+                        <select style="width: 100%; padding: 8px;" [(ngModel)]="selectedValue" (change)="setOrgDetails($event)">
                             <option *ngFor="let option of filteredOptions" [value]="option._id">
                                 {{ option.organization_name }}
+                            </option>
+                        </select>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="adminObj.role=='ORGADMIN' && adminObj.policy=='cafeteria Manager' && orgDetails">
+                    <div style="width: 300px; margin: 0 auto;" class="col-12 col-md-3 col-lg-3 bgpadding1">
+                        <label for="reference" class="labelText">Select Cafeteria</label>
+                        <!-- Search Box -->
+                        <input type="text" placeholder="Search..." [(ngModel)]="searchQuery" (input)="filterOptions()"
+                            style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc;" />
+
+                        <!-- Dropdown -->
+                        <select style="width: 100%; padding: 8px;" [(ngModel)]="selectedCafeId"(change)="setCafeDetails($event)">
+                            <option *ngFor="let option of orgDetails.cafeteriaList" [value]="option._id">
+                                {{ option.cafeteria_name }}
                             </option>
                         </select>
                     </div>

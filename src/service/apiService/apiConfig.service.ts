@@ -71,7 +71,16 @@ export class ApiConfigService {
       getDayRangeBasedLogs:{url:`${this.baseUrl}/utility/getDayRangeBasedLogs`,method:'GET'},
       getTimeBasedLogs:{url:`${this.baseUrl}/utility/getTimeBasedLogs`,method:'GET'},
       getLineBasedLogs:{url:`${this.baseUrl}/utility/getLineBasedLogs`,method:'GET'},
-      getEmployeeListByOrgId:{url:`${this.baseUrl}/api/getEmployeeListByOrgId`,method:'GET'}
+      getEmployeeListByOrgId:{url:`${this.baseUrl}/api/getEmployeeListByOrgId`,method:'GET'},
+      getAllChecklistQuestions: {url: `${this.baseUrl}/api/getAllChecklistQuestions`, method: 'GET'},
+      saveQuestion: {url: `${this.baseUrl}/api/saveChecklistQuestion`, method: 'POST'},
+      updateChecklistQuestions: {url: `${this.baseUrl}/api/updateChecklistQuestions`, method: 'POST'},
+      deletechecklistQuestion:{url: `${this.baseUrl}/api/deletechecklistQuestion`, method: 'DELETE'},
+      saveChecklistReport: { url: `${this.baseUrl}/api/saveChecklistReport`, method: 'POST' },
+      getAllChecklistReports: {url: `${this.baseUrl}/api/getAllChecklistReports`, method: 'GET'},
+      updateChecklistReports: {url: `${this.baseUrl}/api/updateChecklistQuestions`, method: 'POST'},
+      deletechecklistReport: {url: `${this.baseUrl}/api/deleteOutletMenu`, method: 'DELETE'},
+      getReportHistoryByfilter: {url: `${this.baseUrl}/api/getReportHistoryByfilter`, method: 'POST'},
    };
   }
 }

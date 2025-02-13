@@ -1,0 +1,43 @@
+<div class="bgpadding1">
+    <span class="addBtn" (click)="addQuestion()">+</span>
+
+    <div *ngIf="editMode" class="bgpadding1">
+        <div class="labelText" *ngIf="addnewQuestion">Add New Checklist Question</div>
+        <div class="labelText" *ngIf="!addnewQuestion">Update Checklist Question</div>
+        <div class="col-lg-12">
+            <label class="labelData">Checklist Question</label>
+        </div>
+        <div class="col-lg-12">
+            <input type="text" placeholder="Question" class="w-100" [(ngModel)]="QuestionObj.checklistQuestion">
+        </div>
+        <div class="mt-2">
+            <div class="inline" *ngIf="addnewQuestion">
+                <button type="button" class="btn btn-primary btn-sm me-2"
+                    (click)="submitnewQuestion(QuestionObj)">Submit</button>
+            </div>
+            <div class="inline" *ngIf="!addnewQuestion">
+                <button type="button" class="btn btn-primary btn-sm me-2"
+                    (click)="updateChecklistQuestions(QuestionObj)">Update</button>
+            </div>
+            <div class="inline">
+                <button type="button" class="btn btn-danger btn-sm me-2" (click)="cancel()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
+    <div *ngIf="!editMode" class="bgpadding1">
+        <div *ngFor="let Question of allChecklistQuestions" class="cardDesign">
+            <div class="row">
+                <div class="col-10 col-md-10 col-lg-10 labelData">{{Question.checklistQuestion}}</div>
+                <div class="col-3 col-md-2 col-lg-2 alignRight">
+                    <i class="bi bi-pencil-square bgsidepadding5 pointer" (click)="editQuestion(Question)"></i>
+                    <i class="bi bi-trash-fill bgsidepadding5 pointer" (click)="showPopup(Question)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="center" *ngIf="!editMode && allChecklistQuestions.length === 0">
+        No Records Found
+    </div>
+</div>

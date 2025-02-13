@@ -19,21 +19,21 @@ export class HeaderComponent implements OnInit {
   adminProfile: any = {};
   imageUrl = environment.imageUrl;
   opened = true;
-  isOrgAdmin:boolean=false;
-  showOld:boolean=false;
-  orgDetails:any={};
-  navOptions:any = [
-    { name: 'Outlet', showParent:true, children: [{ label: 'Outlet Overview', route: 'outlet' },{ label: 'Outlet Add', route: 'outlet/add-outlet' }] },
-    { name: 'Vendor', showParent:true, children: [{ label: 'Search vendor', route: 'vendor/search-vendor' }, { label: 'Add Vendor', route: 'vendor/add-vendor' }] },
-    { name: 'Orders', showParent:false, children: [{ label: 'Current', route: 'currentOrder' }, { label: "Search", route: 'searchOrder' }] },
-    { name: 'Miscelleneous', showParent:true, children: [{ label: 'FAQ', route: 'faq' }, { label: 'Config Variables', route: 'configVariable' }, { label: 'App Version Control', route: 'appVersionControl' }, { label: 'Server Logs', route: 'serverlogs' }] },
-    { name: 'Admin', showParent:true, children: [{ label: 'Admin', route: 'admin' }, { label: 'Add Admin', route: 'add-admin' }] },
-    { name: 'Policy', showParent:true, children: [{ label: 'Policy', route: 'policy' }, { label: 'Add Policy', route: 'addPolicy' }] },
+  isOrgAdmin: boolean = false;
+  showOld: boolean = true;
+  orgDetails: any = {};
+  navOptions: any = [
+    { name: 'Outlet', showParent: true, children: [{ label: 'Outlet Overview', route: 'outlet' }, { label: 'Outlet Add', route: 'outlet/add-outlet' }] },
+    { name: 'Vendor', showParent: true, children: [{ label: 'Search vendor', route: 'vendor/search-vendor' }, { label: 'Add Vendor', route: 'vendor/add-vendor' }] },
+    { name: 'Orders', showParent: false, children: [{ label: 'Current', route: 'currentOrder' }, { label: "Search", route: 'searchOrder' }] },
+    { name: 'Miscelleneous', showParent: true, children: [{ label: 'FAQ', route: 'faq' }, { label: 'Config Variables', route: 'configVariable' }, { label: 'App Version Control', route: 'appVersionControl' }, { label: 'Server Logs', route: 'serverlogs' }] },
+    { name: 'Admin', showParent: true, children: [{ label: 'Admin', route: 'admin' }, { label: 'Add Admin', route: 'add-admin' }] },
+    { name: 'Policy', showParent: true, children: [{ label: 'Policy', route: 'policy' }, { label: 'Add Policy', route: 'addPolicy' }] },
     // { name: 'Dashboard', route: 'dashboard'}
     // children: [{ label: 'Dashboard', route: 'dashboard' }, { label: 'Search Organization', route: 'B2B_search_org' }, { label: 'Add Organization', route: 'B2B_add_org' }]
   ];
 
-  finalNavOption:any = [];
+  finalNavOption: any = [];
 
   // parentNavOptions:any = [
   //   { name: 'Dashboard',showParent:true,  route: 'orgDashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
@@ -82,47 +82,94 @@ export class HeaderComponent implements OnInit {
   // ];
 
   deskDineOptions: any = [
-    { name: 'Dashboard', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Menu Items', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Pre Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Subscription', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Reviews', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Reports', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Vendor Info', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Menu Counters', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Incident Management', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Checklist', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Employee List', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Bulk Order History', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Manual Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Billing', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    {
+      name: 'Outlet', showParent: true, image: 'Outlet', imageblue: 'Outlets_Blue',
+      children: [{ name: 'Outlet Overview', route: 'outlet', showChild: true },
+      { name: 'Outlet Add', route: 'outlet/add-outlet', showChild: true }]
+    },
+    {
+      name: 'Vendor', showParent: true, image: 'Vendor_Info_white', imageblue: 'Vendor_Info_blue',
+      children: [{ name: 'Search vendor', route: 'vendor/search-vendor', showChild: true },
+      { name: 'Add Vendor', route: 'vendor/add-vendor', showChild: true }]
+    },
+    {
+      name: 'Orders', showParent: true, image: 'B2BOrders', imageblue: 'B2BOrders_Blue',
+      children: [{ name: 'Current', route: 'currentOrder', showChild: true },
+      { name: 'Search', route: 'searchOrder', showChild: true }]
+    },
+    {
+      name: 'Policy', showParent: true, image: 'Company_Dashboard', imageblue: 'Company_Dashbaord_Blue',
+      children: [{ name: 'Policy', route: 'policy', showChild: true },
+      { name: 'Add Policy', route: 'addPolicy', showChild: true }]
+    },
+    {
+      name: 'Admin', showParent: true, image: 'Company_Dashboard', imageblue: 'Company_Dashbaord_Blue',
+      children: [{ name: 'Admin', route: 'admin', showChild: true },
+      { name: 'Add Admin', route: 'add-admin', showChild: true }]
+    },
+    {
+      name: 'Miscelleneous', showParent: true, image: 'Company_Dashboard', imageblue: 'Company_Dashbaord_Blue',
+      children: [{ name: 'FAQ', route: 'faq', showChild: true },
+      { name: 'Config Variables', route: 'configVariable', showChild: true },
+      { name: 'App Version Control', route: 'appVersionControl', showChild: true },
+      { name: 'Server Logs', route: 'serverlogs', showChild: true }]
+    },
+    {
+      name: 'CheckList', showParent: true, image: 'Checklist_white', imageblue: 'Checklist_blue',
+      children: [
+      { name: 'View Checklist', route: 'view-checklist-question', showChild: true },
+      { name: 'Checklist History', route: 'checklistHistory', showChild: true },
+      ]
+    },
+    { name: 'Enquiries', showParent:true, route: 'dashboard',image:'Enquiry',imageblue:'Enquiries_Blue',
+      children: [{ name: 'View Enquiries', route: 'viewEnquiries', showChild: true },]
+    },
+      { name: 'Feedback', showParent:true, route: 'dashboard',image:'Feedback',imageblue:'Feedback_Blue'},
+      { name: 'Incident Reporting', showParent:true, route: 'dashboard',image:'Incident_Reporting',imageblue:'Incident_Reporting_Blue'},
+     
+
+    // { name: 'Dashboard', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Menu Items', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Pre Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Subscription', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Reviews', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Reports', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Vendor Info', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Menu Counters', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Incident Management', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Checklist', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Employee List', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Bulk Order History', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Manual Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
+    // { name: 'Billing', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
   ]
 
   orgOptions: any = [
-    { name: 'Dashboard', showParent:true, route: 'org-dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Menu Items', showParent:true, route: 'org-menu-items',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Orders', showParent:true, route: 'org-orders',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Pre Orders', showParent:true, route: 'org-pre-orders',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Subscription', showParent:true, route: 'org-subcription',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Reviews', showParent:true, route: 'org-reviews',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Reports', showParent:true, route: 'org-reports',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Vendor Info', showParent:true, route: 'org-vendor-info',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Menu Counters', showParent:true, route: 'org-menu-counters',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Incident Management', showParent:true, route: 'org-incident-management',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Checklist', showParent:true, route: 'org-checklist',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Employee List', showParent:true, route: 'org-employee-list',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Bulk Order History', showParent:true, route: 'org-bulk-order-history',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Manual Orders', showParent:true, route: 'org-manual-orders',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    { name: 'Billing', showParent:true, route: 'org-billing',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-
+    { name: 'Dashboard', showParent: true, route: 'org-dashboard', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Menu Items', showParent: true, route: 'org-menu-items', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Orders', showParent: true, route: 'org-orders', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Pre Orders', showParent: true, route: 'org-pre-orders', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Subscription', showParent: true, route: 'org-subcription', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Reviews', showParent: true, route: 'org-reviews', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Reports', showParent: true, route: 'org-reports', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Vendor Info', showParent: true, route: 'org-vendor-info', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Menu Counters', showParent: true, route: 'org-menu-counters', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Incident Management', showParent: true, route: 'org-incident-management', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Checklist', showParent: true, route: 'org-checklist', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Employee List', showParent: true, route: 'org-employee-list', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Bulk Order History', showParent: true, route: 'org-bulk-order-history', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Manual Orders', showParent: true, route: 'org-manual-orders', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    { name: 'Billing', showParent: true, route: 'org-billing', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    
+    {name: 'Submit CheckList', route: 'submit-checklist', showParent: true, image: 'Checklist_white', imageblue: 'Checklist_blue'},
   ]
 
   breadCrumbText: any = 'Home';
   currentRoute: string = 'currentOrder';
-  policyArr:any;
-  routeMapper:any = routeMapper;
-  routePolicies:any;
+  policyArr: any;
+  routeMapper: any = routeMapper;
+  routePolicies: any;
   selectedIndex: number = 0; // Default selected index
   childSelectedIndex = -1;
   openChildSectionIndex = -1;
@@ -157,16 +204,16 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.getAdminProfile();
   }
-  
 
-  selectLink(nav:any, index: number): void {
-    if(nav.children && nav.children.length>0){
-      if(this.openChildSectionIndex === index){
+
+  selectLink(nav: any, index: number): void {
+    if (nav.children && nav.children.length > 0) {
+      if (this.openChildSectionIndex === index) {
         this.openChildSectionIndex = -1;
-      }else{
+      } else {
         this.openChildSectionIndex = index;
       }
-    }else{
+    } else {
       this.selectedIndex = index;
       this.openChildSectionIndex = -1;
       this.closeSidebar();
@@ -174,7 +221,7 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  selectChildLink(route:any, parentIndex:number, childIndex:number){
+  selectChildLink(route: any, parentIndex: number, childIndex: number) {
     this.router.navigate([route]);
     this.openChildSectionIndex = parentIndex;
     this.childSelectedIndex = childIndex;
@@ -216,27 +263,28 @@ export class HeaderComponent implements OnInit {
   openEnd() {
     this.offcanvasService.open(this.content, { position: 'start' });
   }
-  
-    async getAdminProfile(){
+
+  async getAdminProfile() {
+    console.log("admin")
     const adminId = this.localStorageService.getCacheData('ADMIN_ID');
-    try{
+    try {
       const adminProfile = await this.apiMainService.getadminprofile(adminId);
       this.getAllPolicy();
-      if(adminProfile && adminProfile._id){
+      if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
-        console.log(this.adminProfile,"this.adminProfile");
-        if (this.adminProfile.role=="ORGADMIN"){
-          this.isOrgAdmin=true;
-          this.orgDetails=JSON.parse(JSON.stringify(this.adminProfile.orgDetails));
+        console.log(this.adminProfile, "this.adminProfile");
+        if (this.adminProfile.role == "ORGADMIN") {
+          this.isOrgAdmin = true;
+          this.orgDetails = JSON.parse(JSON.stringify(this.adminProfile.orgDetails));
           this.finalNavOption = this.orgOptions;
           this.router.navigate(['/org-dashboard']);
-        }else{
+        } else {
           this.finalNavOption = this.deskDineOptions;
-          this.isOrgAdmin=false;
+          this.isOrgAdmin = false;
         }
-        this.localStorageService.setCacheData('ADMIN_PROFILE',adminProfile);
+        this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
       }
-    }catch(error){
+    } catch (error) {
       console.log('error while logging out ', error)
     }
   }
@@ -251,9 +299,9 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  selectchild(num1:number,num: number) {
+  selectchild(num1: number, num: number) {
     console.log(num);
-    this.selectedIndexchild = num1+num;
+    this.selectedIndexchild = num1 + num;
   }
   selectParent(num: number) {
     console.log(num);
@@ -261,21 +309,21 @@ export class HeaderComponent implements OnInit {
   }
   async getAllPolicy() {
     try {
-      const policyArr:any = await this.apiMainService.getAllPolicy();
+      const policyArr: any = await this.apiMainService.getAllPolicy();
       if (policyArr && policyArr.length > 0) {
-        this.localStorageService.setCacheData('POLICIES',policyArr)
+        this.localStorageService.setCacheData('POLICIES', policyArr)
         this.policyArr = policyArr;
-        const adminPolicy = this.policyArr.filter((el:any)=>el.policy_name === this.adminProfile.policy_name);
-        if(adminPolicy && adminPolicy.length>0){
+        const adminPolicy = this.policyArr.filter((el: any) => el.policy_name === this.adminProfile.policy_name);
+        if (adminPolicy && adminPolicy.length > 0) {
           this.adminProfile.policy = adminPolicy;
           const routePolicies = this.adminProfile.policy[0].route_policies;
-          this.navOptions.forEach((el:any)=>{
-            el.children.forEach((childEl:any)=>{
-              if(routePolicies[childEl.route] == true){
+          this.navOptions.forEach((el: any) => {
+            el.children.forEach((childEl: any) => {
+              if (routePolicies && routePolicies[childEl.route] == true) {
                 childEl.showRoute = true;
                 el.showParent = true;
               }
-              else{
+              else {
                 childEl.showRoute = false;
               }
             })
