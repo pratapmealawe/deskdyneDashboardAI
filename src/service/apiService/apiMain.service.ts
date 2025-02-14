@@ -562,4 +562,10 @@ export class ApiMainService {
       data
     );
   }
+  employeeAdd(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.employeeAdd,
+      data
+    );
+  }
 }

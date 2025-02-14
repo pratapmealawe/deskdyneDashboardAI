@@ -25,6 +25,16 @@ export class OrgEmployeeListComponent implements OnInit {
     this.getEmployeeListByOrgId();
   }
 
+  async saveEmployee() {
+    try {
+      let res = await this.apiMainService.employeeAdd({});
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  gotoAdd() {}
+
   async getEmployeeListByOrgId() {
     try {
       let data = await this.apiMainService.getEmployeeListByOrgId(

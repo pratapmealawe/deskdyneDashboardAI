@@ -27,7 +27,7 @@
         *ngFor="let outlet of filteredOutletList; let i = index"
       >
         <div
-          class="card customCard shadow-sm"
+          class="card customCard backColor shadow-sm"
           (click)="showOutletDetails(outlet)"
         >
           <img
@@ -100,7 +100,7 @@
 
     <!-- Selected Outlet Details -->
     <div *ngIf="selectedOutlet">
-      <div class="card customCard mb-5 p-4">
+      <div class="card customCard backColor mb-5 p-4">
         <h4 class="mb-2">Cafeteria Details</h4>
         <p>
           <strong>Name:</strong>
@@ -115,7 +115,7 @@
 
       <div class="row">
         <div class="col-lg-4 mb-3" *ngFor="let menu of filteredMenuList">
-          <div class="card customCard p-4">
+          <div class="card customCard backColor p-4">
             <div class="d-flex align-items-center gap-3">
               <img
                 class="menu-img"

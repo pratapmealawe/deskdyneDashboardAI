@@ -93,6 +93,7 @@ export class ChecklistHistoryComponent implements OnInit {
   // Clear the list and fetch fresh data
   clearList() {
     this.reportHistory = [];
+    this.filterObj.page = 1;
     this.getReportHistoryByfilter();
   }
 
@@ -110,7 +111,7 @@ export class ChecklistHistoryComponent implements OnInit {
       const data = await this.apiMainService.getReportHistoryByfilter(
         this.filterObj
       );
-      this.nextOn = data > 0;
+      this.nextOn = data.length > 0;
       this.reportHistory = [...this.reportHistory, ...data];
       this.filteredReportHistory = [...this.reportHistory];
       this.expandedItems = new Array(this.reportHistory.length).fill(true);
