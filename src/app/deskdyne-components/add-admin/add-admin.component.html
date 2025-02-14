@@ -50,7 +50,7 @@
                             style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc;" />
 
                         <!-- Dropdown -->
-                        <select style="width: 100%; padding: 8px;" [(ngModel)]="selectedValue" (change)="setOrgDetails($event)">
+                        <select style="width: 100%; padding: 8px;" [(ngModel)]="selectedValue" (change)="setOrgDetails()">
                             <option *ngFor="let option of filteredOptions" [value]="option._id">
                                 {{ option.organization_name }}
                             </option>
@@ -65,7 +65,7 @@
                             style="width: 100%; padding: 8px; margin-bottom: 8px; border: 1px solid #ccc;" />
 
                         <!-- Dropdown -->
-                        <select style="width: 100%; padding: 8px;" [(ngModel)]="selectedCafeId"(change)="setCafeDetails($event)">
+                        <select style="width: 100%; padding: 8px;" [(ngModel)]="selectedCafeId"(change)="setCafeDetails()">
                             <option *ngFor="let option of orgDetails.cafeteriaList" [value]="option._id">
                                 {{ option.cafeteria_name }}
                             </option>
