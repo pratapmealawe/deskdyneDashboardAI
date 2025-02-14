@@ -556,4 +556,10 @@ export class ApiMainService {
       data
     );
   }
+  getfeedbacklistByfilter(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.getfeedbacklistByfilter,
+      data
+    );
+  }
 }

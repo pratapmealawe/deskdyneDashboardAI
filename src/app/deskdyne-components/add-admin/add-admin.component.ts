@@ -52,6 +52,7 @@ export class AddAdminComponent {
     this.access = this.policyService.getCurrentButtonPolicy();
   }
   ngOnInit(): void {
+    this.getOrgList();
     const cacheAdmin = this.runtimeStorageService.getCacheData('VIEW_ADMIN');
     console.log('catche admin', cacheAdmin);
     this.getAllPolicy();
@@ -65,8 +66,15 @@ export class AddAdminComponent {
       this.adminObj.policy = cacheAdmin.policy_name;
       this.adminObj.id = cacheAdmin._id;
       this.imageUrl = environment.imageUrl + cacheAdmin.imageUrl;
+      if (this.adminObj.policy == 'cafeteria Manager') {
+        this.selectedCafeId = cacheAdmin.cafeDetails._id;
+      }
+      if (this.adminObj.role == 'ORGADMIN') {
+        this.selectedValue = cacheAdmin.orgDetails._id;
+        this.setOrgDetails();
+      }
     }
-    this.getOrgList();
+    
   }
   cancel() {
     this.runtimeStorageService.resetCacheData('VIEW_ADMIN');
@@ -212,21 +220,24 @@ export class AddAdminComponent {
       );
       this.orglist = result;
       this.filteredOptions = [...this.orglist];
-      console.log(this.filteredOptions);
+      if (this.adminObj.role == 'ORGADMIN') {
+        this.setOrgDetails();
+      }
       // console.log(this.orglist);
     } catch (error) {
       console.log(error);
     }
   }
-  setOrgDetails(e: any) {
-    console.log(e.target.value, 'this.orgDetails');
+  setOrgDetails() {
+    console.log(this.orglist,"this.orglist");
     this.orgDetails = this.orglist.find((org: any) => {
       return org._id == this.selectedValue;
     });
-    console.log(this.orgDetails);
+    if (this.adminObj.policy == 'cafeteria Manager') {
+      this.setCafeDetails();
+    }
   }
-  setCafeDetails(e: any) {
-    console.log(e.target.value, 'this.orgDetails');
+  setCafeDetails() {
     this.cafeDetails = this.orgDetails.cafeteriaList.find((org: any) => {
       return org._id == this.selectedCafeId;
     });

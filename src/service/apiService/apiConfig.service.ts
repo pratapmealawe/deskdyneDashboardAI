@@ -226,6 +226,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getReportHistoryByfilter`,
         method: 'POST',
       },
+      getfeedbacklistByfilter: {
+        url: `${this.baseUrl}/api/getfeedbacklistByfilter`,
+        method: 'POST',
+      },
     };
   }
 }

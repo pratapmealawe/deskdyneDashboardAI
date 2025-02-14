@@ -124,7 +124,9 @@ export class HeaderComponent implements OnInit {
     { name: 'Enquiries', showParent:true, route: 'dashboard',image:'Enquiry',imageblue:'Enquiries_Blue',
       children: [{ name: 'View Enquiries', route: 'viewEnquiries', showChild: true },]
     },
-      { name: 'Feedback', showParent:true, route: 'dashboard',image:'Feedback',imageblue:'Feedback_Blue'},
+      { name: 'Feedback', showParent:true, route: 'dashboard',image:'Feedback',imageblue:'Feedback_Blue',
+        children: [{ name: 'View Feedbacks', route: 'org-reviews', showChild: true },]
+      },
       { name: 'Incident Reporting', showParent:true, route: 'dashboard',image:'Incident_Reporting',imageblue:'Incident_Reporting_Blue'},
      
 
