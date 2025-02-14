@@ -24,7 +24,7 @@
         [disabled]="!orgDetails"
         class="form-select"
         [(ngModel)]="filterObj.cafeId"
-        (change)="getReportHistoryByfilter()"
+        (change)="clearList()"
       >
         <option selected disabled value="">Select Cafeteria</option>
         <option
@@ -55,13 +55,28 @@
         (change)="getReportHistoryByfilter()"
       />
     </div>
+
+    <div class="col-12 col-md-3">
+      <label for="exampleFormControlInput2" class="labelText d-block"
+        >Search</label
+      >
+
+      <input
+        type="text"
+        (input)="searchFilter($event)"
+        class="form-control"
+        placeholder="Search"
+        aria-label="Search Filter"
+        aria-describedby="basic-addon2"
+      />
+    </div>
   </div>
 
   <div>
-    <div class="container mt-2" *ngIf="reportHistory.length > 0">
+    <div class="container mt-2" *ngIf="filteredReportHistory.length > 0">
       <div
         class="row cardDesign list-group"
-        *ngFor="let Report of reportHistory; let i = index"
+        *ngFor="let Report of filteredReportHistory; let i = index"
       >
         <div class="list-group-item">
           <div class="row">
@@ -112,8 +127,19 @@
           </div>
         </div>
       </div>
+      <button
+        type="button"
+        *ngIf="nextOn"
+        class="btn btn-primary btn-sm mt-2"
+        (click)="getMore()"
+      >
+        Load More
+      </button>
     </div>
-    <div class="center labelText mt-2" *ngIf="reportHistory.length == 0">
+    <div
+      class="center labelText mt-2"
+      *ngIf="filteredReportHistory.length == 0"
+    >
       No History found
     </div>
   </div>

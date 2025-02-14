@@ -4,7 +4,7 @@ import { OrgAdminDataService } from 'src/service/org-admin-data.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
-interface filter {
+interface Filter {
   fromDate: string;
   toDate: string;
 }
@@ -20,10 +20,11 @@ export class OrgOrdersComponent implements OnInit {
   orderStatusMapper: any = orderStatusMapper;
   nextOn = false;
   page: number = 1;
-  searchObj: filter = {
+  searchObj: Filter = {
     fromDate: '',
     toDate: '',
   };
+
   constructor(
     private orgAdminData: OrgAdminDataService,
     private sendDataToComponent: SendDataToComponent,
@@ -43,12 +44,13 @@ export class OrgOrdersComponent implements OnInit {
 
   async getOrders() {
     try {
-      let data = await this.orgAdminData.getFilteredOrders(
+      const data = await this.orgAdminData.getFilteredOrders(
         this.searchObj,
         this.page
       );
-      this.orderList = data;
-      this.filteredOrderList = data;
+      this.nextOn = data.length > 0;
+      this.orderList = [...this.orderList, ...data];
+      this.filteredOrderList = [...this.orderList];
     } catch (err) {
       console.error('Error fetching orders:', err);
     }
