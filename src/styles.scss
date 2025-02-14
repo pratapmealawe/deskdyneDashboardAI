@@ -1,14 +1,13 @@
 /* You can add global styles to this file, and also import other style files */
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
-
 $primary-color1: #e62841;
 $primary-color2: #b9041c;
 $primary-color3: #fe8e9c;
 $primary-offset-color1: #ffffff;
 $primary-offset-color2: #a4a4a4;
 $primary-offset-color3: #f3f3f3;
-$primary-offset-color4: #EFEFEF;
+$primary-offset-color4: #efefef;
 $secondary-color1: #88e5db;
 $secondary-color2: #60c8bc;
 $secondary-color3: #15a292;
@@ -18,533 +17,547 @@ $secondary-offset-color3: #ffb300;
 $card-odd: #dee2e6;
 
 html {
-    font-family: 'Poppins-regular,' 'Lato' !important;
-    // --ion-font-family: 'Lato' !important;
+  font-family: "Poppins-regular," "Lato" !important;
+  // --ion-font-family: 'Lato' !important;
 }
 
 @font-face {
-    font-family: 'Poppins-regular';
-    src: url('assets/fonts/Poppins-Regular.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+  font-family: "Poppins-regular";
+  src: url("assets/fonts/Poppins-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Poppins-bold';
-    src: url('assets/fonts/Poppins-Bold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+  font-family: "Poppins-bold";
+  src: url("assets/fonts/Poppins-Bold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'Poppins-semiBold';
-    src: url('assets/fonts/Poppins-SemiBold.ttf') format('truetype');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
+  font-family: "Poppins-semiBold";
+  src: url("assets/fonts/Poppins-SemiBold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
-    font-family: 'PoetsenOne-Regular';
-    src: url('assets/fonts/PoetsenOne-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
+  font-family: "PoetsenOne-Regular";
+  src: url("assets/fonts/PoetsenOne-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 .paddingAll-5 {
-    padding: 5px;
+  padding: 5px;
 }
 
 .padding-0 {
-    padding: 0px;
+  padding: 0px;
 }
 
 .padding-5 {
-    padding-top: 5px;
-    padding-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .padding-10 {
-    padding-top: 10px;
-    padding-bottom: 10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .fullheight {
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 
 .fullwidth {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 .inputStyle1 {
-    border: 2px solid $secondary-offset-color1;
-    border-radius: 9px;
-    box-shadow: 3px 3px 3px #d250619c;
-    width: 230px;
+  border: 2px solid $secondary-offset-color1;
+  border-radius: 9px;
+  box-shadow: 3px 3px 3px #d250619c;
+  width: 230px;
 }
 
 .buttonstyle1 {
-    width: 130px;
-    --background: $primary-color2;
-    --border-radius: 9px;
-    background: $primary-color2;
-    border-radius: 9px;
-    box-shadow: 3px 3px 3px #695457c4;
+  width: 130px;
+  --background: $primary-color2;
+  --border-radius: 9px;
+  background: $primary-color2;
+  border-radius: 9px;
+  box-shadow: 3px 3px 3px #695457c4;
 }
 
 .buttonStyle {
-    height: 40px;
-    width: 180px;
-    border-radius: 10px;
-    box-shadow: 3px 3px 3px #695457c4;
-    background: $secondary-color3;
+  height: 40px;
+  width: 180px;
+  border-radius: 10px;
+  box-shadow: 3px 3px 3px #695457c4;
+  background: $secondary-color3;
 }
 
 .buttonfonts {
-    color: white;
-    font-size: 14px;
-    font-weight: bold;
-    letter-spacing: 1px;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  letter-spacing: 1px;
 }
 
 .inputFont1 {
-    font-size: 18px;
-    color: $primary-offset-color1;
+  font-size: 18px;
+  color: $primary-offset-color1;
 }
 
 .white {
-    color: $primary-offset-color1;
+  color: $primary-offset-color1;
 }
 
 .black {
-    color: $primary-offset-color3;
+  color: $primary-offset-color3;
 }
 
 .grey {
-    color: $primary-offset-color2;
+  color: $primary-offset-color2;
 }
 
 .primary2 {
-    color: $primary-color2;
+  color: $primary-color2;
 }
 
 .secondary-offset-color3 {
-    color: $secondary-offset-color3
+  color: $secondary-offset-color3;
 }
 
 .primary2BG {
-    background: $primary-color2;
+  background: $primary-color2;
 }
 
 .secondary-color3BG {
-    background: $secondary-color3
+  background: $secondary-color3;
 }
 
 .secondary-offset-color3BG {
-    background: $secondary-offset-color3
+  background: $secondary-offset-color3;
 }
 
 .bold {
-    font-weight: 500;
+  font-weight: 500;
 }
 
 .header1 {
-    font-size: 23px;
+  font-size: 23px;
 }
 
 .header2 {
-    font-size: 17px;
+  font-size: 17px;
 }
 
 .header3 {
-    font-size: 14px;
+  font-size: 14px;
 }
 
 .header4 {
-    font-size: 12px;
+  font-size: 12px;
 }
 
 .header5 {
-    font-size: 10px;
+  font-size: 10px;
 }
 
 .bgpadding {
-    padding: 10%;
+  padding: 10%;
 }
 
 .bgpadding5 {
-    padding: 5%;
+  padding: 5%;
 }
 
 .bgpadding4 {
-    padding: 4%;
+  padding: 4%;
 }
 
 .bgpadding3 {
-    padding: 3%;
+  padding: 3%;
 }
 
 .bgpadding2 {
-    padding: 2%;
+  padding: 2%;
 }
 
 .bgpadding1 {
-    padding: 1%;
+  padding: 1%;
 }
 
 .bgsidepadding5 {
-    padding: 0 5%;
+  padding: 0 5%;
 }
 
 .bgsidepadding4 {
-    padding: 0 4%;
+  padding: 0 4%;
 }
 
 .bgsidepadding3 {
-    padding: 0 3%;
+  padding: 0 3%;
 }
 
 .bgsidepadding2 {
-    padding: 0 2%;
+  padding: 0 2%;
 }
 
 .bgsidepadding1 {
-    padding: 0 1%;
+  padding: 0 1%;
 }
 
 .bgsidemargin5 {
-    margin: 0 5%;
+  margin: 0 5%;
 }
 
 .bgsidemargin4 {
-    margin: 0 4%;
+  margin: 0 4%;
 }
 
 .bgsidemargin3 {
-    margin: 0 3%;
+  margin: 0 3%;
 }
 
 .bgsidemargin2 {
-    margin: 0 2%;
+  margin: 0 2%;
 }
 
 .bgsidemargin1 {
-    margin: 0 1%;
+  margin: 0 1%;
 }
 
 .topMargin1 {
-    margin: 1% 0;
+  margin: 1% 0;
 }
 
 .topMargin2 {
-    margin: 2% 0;
+  margin: 2% 0;
 }
 
 .bgTopDownpadding5 {
-    padding: 5% 0;
+  padding: 5% 0;
 }
 
 .bgTopDownpadding4 {
-    padding: 4% 0;
+  padding: 4% 0;
 }
 
 .bgTopDownpadding3 {
-    padding: 3% 0;
+  padding: 3% 0;
 }
 
 .bgTopDownpadding2 {
-    padding: 2% 0;
+  padding: 2% 0;
 }
 
 .bgTopDownpadding1 {
-    padding: 0.5% 0;
+  padding: 0.5% 0;
 }
 
 .bgToppadding5 {
-    padding-top: 5%;
+  padding-top: 5%;
 }
 
 .bgToppadding4 {
-    padding-top: 4%;
+  padding-top: 4%;
 }
 
 .bgToppadding3 {
-    padding-top: 3%;
+  padding-top: 3%;
 }
 
 .bgToppadding2 {
-    padding-top: 2%;
+  padding-top: 2%;
 }
 
 .bgToppadding1 {
-    padding-top: 1%;
+  padding-top: 1%;
 }
 
 .center {
-    text-align: center;
+  text-align: center;
 }
 
 .alignRight {
-    text-align: right;
+  text-align: right;
 }
 
 .right {
-    float: right;
+  float: right;
 }
 
 .left {
-    float: left;
+  float: left;
 }
 
 .inline {
-    display: inline-block;
+  display: inline-block;
 }
 
 .typeIcon {
-    height: 10px;
-    width: 10px;
-    background-size: cover !important;
-    background-repeat: no-repeat !important;
-    margin-right: 2px;
+  height: 10px;
+  width: 10px;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  margin-right: 2px;
 }
 
 .vegIcon {
-    background: url('~/src/assets/icon/veg.png');
+  background: url("~/src/assets/icon/veg.png");
 }
 
 .nonvegIcon {
-    background: url('~/src/assets/icon/nonveg.png');
+  background: url("~/src/assets/icon/nonveg.png");
 }
 
 .row {
-    div {
-        word-break: break-word;
-    }
+  div {
+    word-break: break-word;
+  }
 }
 
 html,
 body {
-    font-family: 'Poppins-regular';
-    height: 100%;
-    margin: 0;
+  font-family: "Poppins-regular";
+  height: 100%;
+  margin: 0;
 }
 
 .customInput {
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
 }
 
-.error-text{
-    font-size:10px;
-    color:red;
+.error-text {
+  font-size: 10px;
+  color: red;
 }
 
 .labelText {
-    font-weight: 500;
-    font-size: 14px;
+  font-weight: 500;
+  font-size: 14px;
 }
 
 .labelData {
-    font-size: 13px;
+  font-size: 13px;
 }
 
 .green {
-    font-weight: 600;
-    color: #4BDF10;
+  font-weight: 600;
+  color: #4bdf10;
 }
 .orange {
-    font-weight: 600;
-    color: #F47C22;
+  font-weight: 600;
+  color: #f47c22;
 }
 
 .red {
-    font-weight: 600;
-    color: red;
+  font-weight: 600;
+  color: red;
 }
 
 .yellow {
-    font-weight: 600;
-    color: #FFCD01;
+  font-weight: 600;
+  color: #ffcd01;
 }
 
 .pointer {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .custom-select {
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    width: 100%;
-    height: 37.5px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  width: 100%;
+  height: 37.5px;
 }
 
 .offcanvas {
-    width: 15% !important;
-    border-radius: 0px 30px 30px 0px;
-    background-color: #192754 !important;
+  width: 15% !important;
+  border-radius: 0px 30px 30px 0px;
+  background-color: #192754 !important;
 
-    .offcanvas-header {
-        padding-left: 10px;
-    }
+  .offcanvas-header {
+    padding-left: 10px;
+  }
 }
 
 .offcanvas-backdrop.show {
-    opacity: 0.5 !important;
+  opacity: 0.5 !important;
 }
 
 .pac-container {
-    background-color: white;
-    border-radius: 2px;
-    z-index: 9999 !important;
-    // width:270px !important;
+  background-color: white;
+  border-radius: 2px;
+  z-index: 9999 !important;
+  // width:270px !important;
 
-    // .pac-item {
-    //     color: $primary-color3;
-    // }
+  // .pac-item {
+  //     color: $primary-color3;
+  // }
 
-    // .pac-icon {
-    //     background-repeat: no-repeat;
-    //     background-size: 10px;
-    //     background-position: 1px 1px;
-    //     background-image: url('~/src/assets/icon/location_red.svg');
-    // }
+  // .pac-icon {
+  //     background-repeat: no-repeat;
+  //     background-size: 10px;
+  //     background-position: 1px 1px;
+  //     background-image: url('~/src/assets/icon/location_red.svg');
+  // }
 
-    // .pac-item-query {
-    //     color: $primary-color3;
-    // }
+  // .pac-item-query {
+  //     color: $primary-color3;
+  // }
 }
 
 .tileSelected {
-    .tileLabel {
-        background-color: #504f4f !important;
-        color: white !important;
-    }
+  .tileLabel {
+    background-color: #504f4f !important;
+    color: white !important;
+  }
 }
 
 .countTile {
-    cursor: pointer;
-    background-color: $primary-offset-color4;
-    // margin:10px 0;
-    padding: 8px 8px;
-    border-radius: 25px;
+  cursor: pointer;
+  background-color: $primary-offset-color4;
+  // margin:10px 0;
+  padding: 8px 8px;
+  border-radius: 25px;
 }
 
 .tileLabel {
-    font-weight: 500;
-    text-align: center;
+  font-weight: 500;
+  text-align: center;
 }
 
 .cardDesign {
-    margin: 2px 0px;
-    padding: 10px;
-    border-radius: 11px;
+  margin: 2px 0px;
+  padding: 10px;
+  border-radius: 11px;
 
-    // box-shadow: 1px 2px 3px;
-    &:nth-child(odd) {
-        background: $primary-offset-color4;
-    }
+  // box-shadow: 1px 2px 3px;
+  &:nth-child(odd) {
+    background: $primary-offset-color4;
+  }
 
-    &:nth-child(even) {
-        background: #e0dddd;
-    }
+  &:nth-child(even) {
+    background: #e0dddd;
+  }
 }
 .cardDesignfeddback {
-    margin: 2px 0px;
-    padding: 10px;
-    border-radius: 11px;
+  margin: 2px 0px;
+  padding: 10px;
+  border-radius: 11px;
 
-    // box-shadow: 1px 2px 3px;
-    // &:nth-child(even) {
-    //     background: #e0ddddc4
-    // }
-    &:nth-child(even) {
-        background: #1206142b;
-    }
+  // box-shadow: 1px 2px 3px;
+  // &:nth-child(even) {
+  //     background: #e0ddddc4
+  // }
+  &:nth-child(even) {
+    background: #1206142b;
+  }
 
-    &:nth-child(odd) {
-        background: #1206142b;
-    }
+  &:nth-child(odd) {
+    background: #1206142b;
+  }
 }
 
-.editDeltesaveIcon{
-    cursor:pointer;
+.editDeltesaveIcon {
+  cursor: pointer;
 }
 
 .addBtn {
-    background: #f0344d;
-    padding: 0px 5px;
-    color: white;
-    /* line-height: 25px; */
-    border-radius: 6px;
-    font-size: 20px;
-    cursor: pointer;
+  background: #f0344d;
+  padding: 0px 5px;
+  color: white;
+  /* line-height: 25px; */
+  border-radius: 6px;
+  font-size: 20px;
+  cursor: pointer;
 }
 
 .accordion-button:not(.collapsed) {
-    background-color: transparent !important;
-    color: inherit;
-    padding-top: 0;
+  background-color: transparent !important;
+  color: inherit;
+  padding-top: 0;
 }
 
 button.accordion-button:focus {
-    box-shadow: inherit;
+  box-shadow: inherit;
 }
 
 .accordion {
-    border-bottom: none !important;
-    --bs-accordion-border-color: white !important;
-    --bs-accordion-btn-icon-width: 10px !important;
+  border-bottom: none !important;
+  --bs-accordion-border-color: white !important;
+  --bs-accordion-btn-icon-width: 10px !important;
 
-    .accordion-button {
-        --bs-accordion-btn-padding-y: 0;
-        --bs-accordion-btn-padding-x: 0;
-    }
+  .accordion-button {
+    --bs-accordion-btn-padding-y: 0;
+    --bs-accordion-btn-padding-x: 0;
+  }
 
-    .accordion-header {
-        margin-bottom: 13px !important;
-    }
+  .accordion-header {
+    margin-bottom: 13px !important;
+  }
 
-    .accordion-button {
-        font-size: 15px !important;
-    }
+  .accordion-button {
+    font-size: 15px !important;
+  }
 
-    .accordion-body {
-        font-size: 13px;
-        --bs-accordion-body-padding-y: 0.5rem;
-    }
+  .accordion-body {
+    font-size: 13px;
+    --bs-accordion-body-padding-y: 0.5rem;
+  }
 }
 
 .groupSelected {
-    background-color: #504f4f !important;
-    color: white !important;
+  background-color: #504f4f !important;
+  color: white !important;
 }
 .tileBtn {
-    background-color: #efefef !important;
-    color: black !important;
-    border: none;
-    border-radius: 25px;
-    font-size: 12px;
-    padding: 0px 10px;
-    height: 30px;
+  background-color: #efefef !important;
+  color: black !important;
+  border: none;
+  border-radius: 25px;
+  font-size: 12px;
+  padding: 0px 10px;
+  height: 30px;
 }
 
-@media only screen and (max-width:600px) {
-    .offcanvas {
-        width: 75% !important
-    }
+@media only screen and (max-width: 600px) {
+  .offcanvas {
+    width: 75% !important;
+  }
 
-    .labelText {
-        font-weight: bold;
-    }
+  .labelText {
+    font-weight: bold;
+  }
 }
 
-@media only screen and (min-width:600px) and (max-width:820px) {
-    .offcanvas {
-        width: 75% !important
-    }
+@media only screen and (min-width: 600px) and (max-width: 820px) {
+  .offcanvas {
+    width: 75% !important;
+  }
+}
+
+.customCard {
+  border: none;
+  border-radius: 16px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.customCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
 }

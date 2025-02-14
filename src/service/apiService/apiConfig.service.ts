@@ -186,6 +186,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getEmployeeListByOrgId`,
         method: 'GET',
       },
+      employeeAdd: {
+        url: `${this.baseUrl}/api/employeeAdd`,
+        method: 'POST',
+      },
       getFeedbackListByOrgId: {
         url: `${this.baseUrl}/api/getFeedbackListByOrgId`,
         method: 'GET',
