@@ -9,5 +9,6 @@ export const environment = {
   imageUrl : 'http://'+domainUrl + '/images/',
   fileUrl: 'http://'+domainUrl + '/files/',
   googleAPIkey: 'AIzaSyCtIAU1RAa32Y9at1VnmL-fa79AP0NPreQ',
-  envName: 'Devlopment'
+  envName: 'Devlopment',
+  api_secret_key: 'fFwzsLH3ynmfXqSSY2KPlTdv0WjzZlFm'
 };
