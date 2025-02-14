@@ -1,0 +1,88 @@
+.customCard {
+  border: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  background: #faf9f6;
+}
+
+.customCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+}
+
+.outlet-image {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  height: 14rem;
+  object-fit: cover;
+}
+
+.menu-img {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 100%;
+}
+
+.card-body {
+  padding: 1rem;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-text {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.center {
+  text-align: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #888;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  margin: 5px 0;
+}
+
+.star-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 3px;
+}
+
+.read-more {
+  color: #007bff;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.8rem;
+  margin-left: 5px;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.backBtn {
+  font-size: 1.9rem;
+  background: none;
+  border: none;
+}
+
+.icon-small {
+  width: 15px;
+  height: 15px;
+}

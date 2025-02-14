@@ -2,13 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { OrgMenuCountersRoutingModule } from './org-menu-counters-routing.module';
-
+import { OrgMenuCountersComponent } from './org-menu-counters.component';
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    OrgMenuCountersRoutingModule
-  ]
+  declarations: [OrgMenuCountersComponent],
+  imports: [CommonModule, OrgMenuCountersRoutingModule],
 })
-export class OrgMenuCountersModule { }
+export class OrgMenuCountersModule {}
