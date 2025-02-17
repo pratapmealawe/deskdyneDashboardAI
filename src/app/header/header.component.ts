@@ -84,52 +84,6 @@ export class HeaderComponent implements OnInit {
 
   finalNavOption: any = [];
 
-  // parentNavOptions:any = [
-  //   { name: 'Dashboard',showParent:true,  route: 'orgDashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-  //   { name: 'Menu Items',showParent:true,  route: 'orgmenuitems',image:'FoodItem',imageblue:'FoodItem_Blue'},
-  //   { name: 'Orders',showParent:true,  route: 'orgorders',image:'B2BOrders',imageblue:'B2BOrders_Blue'},
-  //   { name: 'Pre Orders',showParent:true,  route: 'orgpreorders',image:'Pre_order_white',imageblue:'Pre_Order_blue'},
-  //   { name: 'Subscription',showParent:true,  route: 'orgsubscription',image:'Subscription_white',imageblue:'Subscription_blue'},
-  //   { name: 'Reviews',showParent:true,  route: 'orgreviews',image:'Reviews_white',imageblue:'Reviews_blue'},
-  //   { name: 'Reports', showParent:true, route: 'orgreports',image:'Reports_white',imageblue:'Reports_blue'},
-  //   { name: 'Vendor Info',showParent:true,  route: 'orgvendor',image:'Vendor_Info_white',imageblue:'Vendor_Info_blue'},
-  //   { name: 'Menu Counters',showParent:true,  route: 'orgoutlet',image:'Outlet',imageblue:'Outlets_Blue'},
-  //   { name: 'Incident Management',showParent:true,  route: 'orgincidentmanagement',image:'Incident_Reporting',imageblue:'Incident_Reporting_Blue'},
-  //   { name: 'CheckList',showParent:true,  route: 'orgcheckList',image:'Checklist_white',imageblue:'Checklist_blue'},
-  //   { name: 'Employee List',showParent:true,  route: 'orgemployeelist',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Bulk Order History',showParent:true,  route: 'orgbulkorderhistory',image:'Bulk_history_white',imageblue:'Bulk_history_blue'},
-  //   { name: 'Billing',showParent:true,  route: 'orgbilling',image:'Billing_white',imageblue:'Billing_Blue'},
-  //   { name: 'Manual Orders',showParent:true, route: 'orgmanualorders',image:'Manual_Orders_white',imageblue:'Manual_orders_blue'},
-  //   { name: 'Policy', showParent:true,image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue',
-  //     children: [{ name: 'Policy', route: 'policy', showChild:true },
-  //               { name: 'Add Policy', route: 'addPolicy', showChild:true }]
-  //   },
-  //   { name: 'Admin', showParent:true,image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue',
-  //     children: [{ name: 'Admin', route: 'admin', showChild:true  },
-  //               { name: 'Add Admin', route: 'add-admin', showChild:true  }] },
-  //   { name: 'Miscelleneous', showParent:true, image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue',
-  //     children: [{ name: 'FAQ', route: 'faq', showChild:true  },
-  //               { name: 'Config Variables', route: 'configVariable' , showChild:true },
-  //               { name: 'App Version Control', route: 'appVersionControl', showChild:true  },
-  //               { name: 'Server Logs', route: 'serverlogs' , showChild:true }] },
-  // ];
-  // deskdyneOptions:any = [
-  //   { name: 'DeskDyne Dashboard', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-  //   { name: 'B2B Orders', showParent:true, route: 'orders',image:'B2BOrders',imageblue:'B2BOrders_Blue'},
-  //   { name: 'Company Dashboard', showParent:true, route: 'orders',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Search Organization', showParent:true, route: 'preorders',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Add Organization', showParent:true, route: 'subscription',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Cafeteria Orders', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Food Item', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Billing', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Order History', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Outlets', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Vendors Info', showParent:true, route: 'orgVendorInfo',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Enquiries', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Feedback', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  //   { name: 'Incident Reporting', showParent:true, route: 'dashboard',image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue'},
-  // ];
-
   deskDineOptions: any = [
     {
       name: 'Outlet',
@@ -235,6 +189,9 @@ export class HeaderComponent implements OnInit {
       route: 'dashboard',
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
+      children: [
+        { name: 'View Feedbacks', route: 'org-reviews', showChild: true },
+      ],
     },
     {
       name: 'Incident Reporting',
@@ -243,22 +200,6 @@ export class HeaderComponent implements OnInit {
       image: 'Incident_Reporting',
       imageblue: 'Incident_Reporting_Blue',
     },
-
-    // { name: 'Dashboard', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Menu Items', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Pre Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Subscription', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Reviews', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Reports', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Vendor Info', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Menu Counters', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Incident Management', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Checklist', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Employee List', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Bulk Order History', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Manual Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-    // { name: 'Billing', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
   ];
 
   orgOptions: any = [

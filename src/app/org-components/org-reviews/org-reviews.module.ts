@@ -11,6 +11,7 @@ import { OrgReviewsComponent } from './org-reviews.component';
   imports: [
     CommonModule,
     OrgReviewsRoutingModule,
+    FormsModule
   ]
 })
 export class OrgReviewsModule { }

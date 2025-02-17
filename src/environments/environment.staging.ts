@@ -7,5 +7,6 @@ export const environment = {
   imageUrl : 'http://'+domainUrl + '/images/',
   fileUrl: 'http://'+domainUrl + '/files/',
   googleAPIkey: 'AIzaSyCtIAU1RAa32Y9at1VnmL-fa79AP0NPreQ',
-  envName: 'Staging'
+  envName: 'Staging',
+  api_secret_key: 'fFwzsLH3ynmfXqSSY2KPlTdv0WjzZlFm'
 };

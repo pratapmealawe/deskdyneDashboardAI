@@ -254,6 +254,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/deleteIncident`,
         method: 'DELETE',
       },
+      getfeedbacklistByfilter: {
+        url: `${this.baseUrl}/api/getfeedbacklistByfilter`,
+        method: 'POST',
+      },
     };
   }
 }

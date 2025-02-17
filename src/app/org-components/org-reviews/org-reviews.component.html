@@ -3,6 +3,62 @@
     <div class="col-lg-8">
       <h2>Reviews</h2>
     </div>
+    <div class="row mb-4">
+      <!-- Organization Selection -->
+      <div class="col-12 col-md-3">
+        <label for="organization" class="labelText d-block">Organization</label>
+        <select
+          class="form-select"
+          [(ngModel)]="filterObj.orgId"
+          [disabled]="this.orgAdmin.role === 'ORGADMIN'"
+          (change)="setOrgDetails()"
+        >
+          <option selected disabled value="">Select Organization</option>
+          <option *ngFor="let option of orglist" [value]="option._id">
+            {{ option.organization_name }}
+          </option>
+        </select>
+      </div>
+  
+      <!-- Cafeteria Selection -->
+      <div class="col-12 col-md-3">
+        <label for="cafeteria" class="labelText d-block">Cafeteria</label>
+        <select
+          [disabled]="!orgDetails"
+          class="form-select"
+          [(ngModel)]="filterObj.cafeId"
+          (change)="onCafeChange();getfeedbacklistByfilter()"
+        >
+          <option selected disabled value="">Select Cafeteria</option>
+          <option
+            *ngFor="let option of orgDetails?.cafeteriaList"
+            [value]="option._id"
+          >
+            {{ option.cafeteria_name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-12 col-md-3">
+        <label for="fromDate" class="labelText d-block">From Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filterObj.fromDate"
+          class="form-control"
+          (change)="getfeedbacklistByfilter()"
+        />
+      </div>
+  
+      <!-- To Date -->
+      <div class="col-12 col-md-3">
+        <label for="toDate" class="labelText d-block">To Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filterObj.toDate"
+          class="form-control"
+          (change)="getfeedbacklistByfilter()"
+        />
+      </div>
+    </div>
 
     <div class="col-lg-4">
       <input
