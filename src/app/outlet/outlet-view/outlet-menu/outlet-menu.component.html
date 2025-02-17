@@ -20,7 +20,7 @@
                             </div>
                         </div>
                     </div>
-        
+
                     <div class="col-12 col-md-4 col-lg-4">
                         <div class="row">
                             <div class="col-6 col-md-5 col-lg-8">
@@ -39,9 +39,15 @@
                             <div class="col-6 col-md-5 col-lg-5">
                                 <div class="labelText">Subcidy Amt</div>
                                 <div class="labelData">{{item.subcidyAmt}}</div>
-                            </div>                           
-                            <div class="col-6 col-md-7 col-lg-2">
+                            </div>
+                            <div class="col-6 col-md-7 col-lg-6 d-flex justify-content-between">
                                 <i class="bi bi-pencil-square" (click)="edit(item,i)"></i>
+                                <i class="bi bi-trash editDeltesaveIcon" (click)="showPopup(item,i)"></i>
+                                <div>
+                                    <input class="me-1" type="checkbox" id="isActive" [checked]="item.isActive"
+                                        (change)="changeMenuActivation(item,$event)">
+                                    <label class="labelText form-label" for="isActive">Active</label>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,8 +174,11 @@
                     <div class="col-12 col-md-6 col-lg-12">
                         <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
                             (change)="handleFileInput($event)">
-                        <img class="uploadedImage" [src]="showUpdateBtn ? displayImgUrl + imageUrl : imageUrl ? imageUrl : 'assets/images/dummyUpload.png'" *ngIf="!imageReplaced">
-                        <img class="uploadedImage" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'" *ngIf="imageReplaced">
+                        <img class="uploadedImage"
+                            [src]="showUpdateBtn ? displayImgUrl + imageUrl : imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
+                            *ngIf="!imageReplaced">
+                        <img class="uploadedImage" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
+                            *ngIf="imageReplaced">
                         <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
                     </div>
                     <!-- <div class="col-12 col-md-6 col-lg-4">
@@ -182,7 +191,8 @@
                     <div class="col-12 col-md-6 col-lg-4">
                         <!-- <pre>{{outletObj.category|json}}</pre> -->
                         <label class="labelText form-label">Category</label>
-                        <select class="custom-select" name="role" formControlName="category" (change)="setCategory($event)">
+                        <select class="custom-select" name="role" formControlName="category"
+                            (change)="setCategory($event)">
                             <option disabled selected value> -- select category -- </option>
                             <option [value]="cat.name" *ngFor="let cat of outletObj.category">{{cat.name}}</option>
                             <!-- <option value="Kulfi">Kulfi</option> -->
@@ -205,7 +215,8 @@
                         <div>
                             <input class="me-1" type="radio" id="itemTypeVeg" formControlName="itemType" value="Veg">
                             <label class="labelText form-label" for="itemTypeVeg">Veg</label>
-                            <input class="me-1" type="radio" id="itemTypeNonVeg" formControlName="itemType" value="NonVeg">
+                            <input class="me-1" type="radio" id="itemTypeNonVeg" formControlName="itemType"
+                                value="NonVeg">
                             <label class="labelText form-label" for="itemTypeNonVeg">NonVeg</label>
                         </div>
                     </div>
@@ -215,7 +226,8 @@
                     </div>
                     <div class="col-12 col-md-6 col-lg-2">
                         <label class="labelText form-label">Subcidy Amount</label>
-                        <input type="number" class="form-control" placeholder="Subcidy Amount" formControlName="subcidyAmt">
+                        <input type="number" class="form-control" placeholder="Subcidy Amount"
+                            formControlName="subcidyAmt">
                     </div>
                     <!-- <div class="col-12 col-md-6 col-lg-2">
                         <label class="labelText form-label">Display Order No</label>
@@ -290,8 +302,10 @@
         </div>
         <div class="modal-footer">
             <div class="inline bgpadding1">
-                <button class="btn-primary btn-sm btn me-2 mt-2" (click)="modal.close('add')" *ngIf="!showUpdateBtn">Submit</button>
-                <button class="btn-success btn-sm btn me-2 mt-2" (click)="modal.close('update')" *ngIf="showUpdateBtn">Update</button>
+                <button class="btn-primary btn-sm btn me-2 mt-2" (click)="modal.close('add')"
+                    *ngIf="!showUpdateBtn">Submit</button>
+                <button class="btn-success btn-sm btn me-2 mt-2" (click)="modal.close('update')"
+                    *ngIf="showUpdateBtn">Update</button>
             </div>
         </div>
     </ng-template>

@@ -258,4 +258,12 @@ export class OutletMenuComponent implements OnInit {
     } catch (error:any) {
       console.log(error);
     }
+    async changeMenuActivation(menu:any,event:any){
+      console.log(event);
+      menu.isActive=event.target.checked;
+      const formData = new FormData();
+      formData.append('isActive',event.target.checked);
+      let outletmenu = await this.apiMainService.updateOutletMenu(this.outletObj._id,menu._id,formData);
+      console.log(outletmenu);
+  }
 }
