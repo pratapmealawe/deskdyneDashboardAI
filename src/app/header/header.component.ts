@@ -1,5 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+import {
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+} from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
 import { routeMapper } from 'src/config/route.mapping.config';
 import { environment } from 'src/environments/environment';
@@ -11,7 +16,7 @@ import { UtilityService } from 'src/service/utility.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.scss']
+  styleUrls: ['./header.component.scss'],
 })
 export class HeaderComponent implements OnInit {
   @ViewChild('content') content: any;
@@ -23,12 +28,56 @@ export class HeaderComponent implements OnInit {
   showOld: boolean = true;
   orgDetails: any = {};
   navOptions: any = [
-    { name: 'Outlet', showParent: true, children: [{ label: 'Outlet Overview', route: 'outlet' }, { label: 'Outlet Add', route: 'outlet/add-outlet' }] },
-    { name: 'Vendor', showParent: true, children: [{ label: 'Search vendor', route: 'vendor/search-vendor' }, { label: 'Add Vendor', route: 'vendor/add-vendor' }] },
-    { name: 'Orders', showParent: false, children: [{ label: 'Current', route: 'currentOrder' }, { label: "Search", route: 'searchOrder' }] },
-    { name: 'Miscelleneous', showParent: true, children: [{ label: 'FAQ', route: 'faq' }, { label: 'Config Variables', route: 'configVariable' }, { label: 'App Version Control', route: 'appVersionControl' }, { label: 'Server Logs', route: 'serverlogs' }] },
-    { name: 'Admin', showParent: true, children: [{ label: 'Admin', route: 'admin' }, { label: 'Add Admin', route: 'add-admin' }] },
-    { name: 'Policy', showParent: true, children: [{ label: 'Policy', route: 'policy' }, { label: 'Add Policy', route: 'addPolicy' }] },
+    {
+      name: 'Outlet',
+      showParent: true,
+      children: [
+        { label: 'Outlet Overview', route: 'outlet' },
+        { label: 'Outlet Add', route: 'outlet/add-outlet' },
+      ],
+    },
+    {
+      name: 'Vendor',
+      showParent: true,
+      children: [
+        { label: 'Search vendor', route: 'vendor/search-vendor' },
+        { label: 'Add Vendor', route: 'vendor/add-vendor' },
+      ],
+    },
+    {
+      name: 'Orders',
+      showParent: false,
+      children: [
+        { label: 'Current', route: 'currentOrder' },
+        { label: 'Search', route: 'searchOrder' },
+      ],
+    },
+    {
+      name: 'Miscelleneous',
+      showParent: true,
+      children: [
+        { label: 'FAQ', route: 'faq' },
+        { label: 'Config Variables', route: 'configVariable' },
+        { label: 'App Version Control', route: 'appVersionControl' },
+        { label: 'Server Logs', route: 'serverlogs' },
+      ],
+    },
+    {
+      name: 'Admin',
+      showParent: true,
+      children: [
+        { label: 'Admin', route: 'admin' },
+        { label: 'Add Admin', route: 'add-admin' },
+      ],
+    },
+    {
+      name: 'Policy',
+      showParent: true,
+      children: [
+        { label: 'Policy', route: 'policy' },
+        { label: 'Add Policy', route: 'addPolicy' },
+      ],
+    },
     // { name: 'Dashboard', route: 'dashboard'}
     // children: [{ label: 'Dashboard', route: 'dashboard' }, { label: 'Search Organization', route: 'B2B_search_org' }, { label: 'Add Organization', route: 'B2B_add_org' }]
   ];
@@ -52,13 +101,13 @@ export class HeaderComponent implements OnInit {
   //   { name: 'Billing',showParent:true,  route: 'orgbilling',image:'Billing_white',imageblue:'Billing_Blue'},
   //   { name: 'Manual Orders',showParent:true, route: 'orgmanualorders',image:'Manual_Orders_white',imageblue:'Manual_orders_blue'},
   //   { name: 'Policy', showParent:true,image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue',
-  //     children: [{ name: 'Policy', route: 'policy', showChild:true }, 
+  //     children: [{ name: 'Policy', route: 'policy', showChild:true },
   //               { name: 'Add Policy', route: 'addPolicy', showChild:true }]
   //   },
   //   { name: 'Admin', showParent:true,image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue',
-  //     children: [{ name: 'Admin', route: 'admin', showChild:true  }, 
+  //     children: [{ name: 'Admin', route: 'admin', showChild:true  },
   //               { name: 'Add Admin', route: 'add-admin', showChild:true  }] },
-  //   { name: 'Miscelleneous', showParent:true, image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue', 
+  //   { name: 'Miscelleneous', showParent:true, image:'Company_Dashboard',imageblue:'Company_Dashbaord_Blue',
   //     children: [{ name: 'FAQ', route: 'faq', showChild:true  },
   //               { name: 'Config Variables', route: 'configVariable' , showChild:true },
   //               { name: 'App Version Control', route: 'appVersionControl', showChild:true  },
@@ -83,50 +132,117 @@ export class HeaderComponent implements OnInit {
 
   deskDineOptions: any = [
     {
-      name: 'Outlet', showParent: true, image: 'Outlet', imageblue: 'Outlets_Blue',
-      children: [{ name: 'Outlet Overview', route: 'outlet', showChild: true },
-      { name: 'Outlet Add', route: 'outlet/add-outlet', showChild: true }]
-    },
-    {
-      name: 'Vendor', showParent: true, image: 'Vendor_Info_white', imageblue: 'Vendor_Info_blue',
-      children: [{ name: 'Search vendor', route: 'vendor/search-vendor', showChild: true },
-      { name: 'Add Vendor', route: 'vendor/add-vendor', showChild: true }]
-    },
-    {
-      name: 'Orders', showParent: true, image: 'B2BOrders', imageblue: 'B2BOrders_Blue',
-      children: [{ name: 'Current', route: 'currentOrder', showChild: true },
-      { name: 'Search', route: 'searchOrder', showChild: true }]
-    },
-    {
-      name: 'Policy', showParent: true, image: 'Company_Dashboard', imageblue: 'Company_Dashbaord_Blue',
-      children: [{ name: 'Policy', route: 'policy', showChild: true },
-      { name: 'Add Policy', route: 'addPolicy', showChild: true }]
-    },
-    {
-      name: 'Admin', showParent: true, image: 'Company_Dashboard', imageblue: 'Company_Dashbaord_Blue',
-      children: [{ name: 'Admin', route: 'admin', showChild: true },
-      { name: 'Add Admin', route: 'add-admin', showChild: true }]
-    },
-    {
-      name: 'Miscelleneous', showParent: true, image: 'Company_Dashboard', imageblue: 'Company_Dashbaord_Blue',
-      children: [{ name: 'FAQ', route: 'faq', showChild: true },
-      { name: 'Config Variables', route: 'configVariable', showChild: true },
-      { name: 'App Version Control', route: 'appVersionControl', showChild: true },
-      { name: 'Server Logs', route: 'serverlogs', showChild: true }]
-    },
-    {
-      name: 'CheckList', showParent: true, image: 'Checklist_white', imageblue: 'Checklist_blue',
+      name: 'Outlet',
+      showParent: true,
+      image: 'Outlet',
+      imageblue: 'Outlets_Blue',
       children: [
-      { name: 'View Checklist', route: 'view-checklist-question', showChild: true },
-      { name: 'Checklist History', route: 'checklistHistory', showChild: true },
-      ]
+        { name: 'Outlet Overview', route: 'outlet', showChild: true },
+        { name: 'Outlet Add', route: 'outlet/add-outlet', showChild: true },
+      ],
     },
-    { name: 'Enquiries', showParent:true, route: 'dashboard',image:'Enquiry',imageblue:'Enquiries_Blue',
-      children: [{ name: 'View Enquiries', route: 'viewEnquiries', showChild: true },]
+    {
+      name: 'Vendor',
+      showParent: true,
+      image: 'Vendor_Info_white',
+      imageblue: 'Vendor_Info_blue',
+      children: [
+        {
+          name: 'Search vendor',
+          route: 'vendor/search-vendor',
+          showChild: true,
+        },
+        { name: 'Add Vendor', route: 'vendor/add-vendor', showChild: true },
+      ],
     },
-      { name: 'Feedback', showParent:true, route: 'dashboard',image:'Feedback',imageblue:'Feedback_Blue'},
-      { name: 'Incident Reporting', showParent:true, route: 'dashboard',image:'Incident_Reporting',imageblue:'Incident_Reporting_Blue'},
-     
+    {
+      name: 'Orders',
+      showParent: true,
+      image: 'B2BOrders',
+      imageblue: 'B2BOrders_Blue',
+      children: [
+        { name: 'Current', route: 'currentOrder', showChild: true },
+        { name: 'Search', route: 'searchOrder', showChild: true },
+      ],
+    },
+    {
+      name: 'Policy',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'Policy', route: 'policy', showChild: true },
+        { name: 'Add Policy', route: 'addPolicy', showChild: true },
+      ],
+    },
+    {
+      name: 'Admin',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'Admin', route: 'admin', showChild: true },
+        { name: 'Add Admin', route: 'add-admin', showChild: true },
+      ],
+    },
+    {
+      name: 'Miscelleneous',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'FAQ', route: 'faq', showChild: true },
+        { name: 'Config Variables', route: 'configVariable', showChild: true },
+        {
+          name: 'App Version Control',
+          route: 'appVersionControl',
+          showChild: true,
+        },
+        { name: 'Server Logs', route: 'serverlogs', showChild: true },
+      ],
+    },
+    {
+      name: 'CheckList',
+      showParent: true,
+      image: 'Checklist_white',
+      imageblue: 'Checklist_blue',
+      children: [
+        {
+          name: 'View Checklist',
+          route: 'view-checklist-question',
+          showChild: true,
+        },
+        {
+          name: 'Checklist History',
+          route: 'checklistHistory',
+          showChild: true,
+        },
+      ],
+    },
+    {
+      name: 'Enquiries',
+      showParent: true,
+      route: 'dashboard',
+      image: 'Enquiry',
+      imageblue: 'Enquiries_Blue',
+      children: [
+        { name: 'View Enquiries', route: 'viewEnquiries', showChild: true },
+      ],
+    },
+    {
+      name: 'Feedback',
+      showParent: true,
+      route: 'dashboard',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
+    },
+    {
+      name: 'Incident Reporting',
+      showParent: true,
+      route: 'dashboard',
+      image: 'Incident_Reporting',
+      imageblue: 'Incident_Reporting_Blue',
+    },
 
     // { name: 'Dashboard', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
     // { name: 'Menu Items', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
@@ -143,27 +259,104 @@ export class HeaderComponent implements OnInit {
     // { name: 'Bulk Order History', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
     // { name: 'Manual Orders', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
     // { name: 'Billing', showParent:true, route: 'dashboard',image:'DDDashboard',imageblue:'DDDashboard_Blue'},
-  ]
+  ];
 
   orgOptions: any = [
-    { name: 'Dashboard', showParent: true, route: 'org-dashboard', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Menu Items', showParent: true, route: 'org-menu-items', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Orders', showParent: true, route: 'org-orders', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Pre Orders', showParent: true, route: 'org-pre-orders', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Subscription', showParent: true, route: 'org-subcription', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Reviews', showParent: true, route: 'org-reviews', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Reports', showParent: true, route: 'org-reports', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Vendor Info', showParent: true, route: 'org-vendor-info', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Menu Counters', showParent: true, route: 'org-menu-counters', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Incident Management', showParent: true, route: 'org-incident-management', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Checklist', showParent: true, route: 'org-checklist', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Employee List', showParent: true, route: 'org-employee-list', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Bulk Order History', showParent: true, route: 'org-bulk-order-history', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Manual Orders', showParent: true, route: 'org-manual-orders', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    { name: 'Billing', showParent: true, route: 'org-billing', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
-    
-    {name: 'Submit CheckList', route: 'submit-checklist', showParent: true, image: 'Checklist_white', imageblue: 'Checklist_blue'},
-  ]
+    {
+      name: 'Dashboard',
+      showParent: true,
+      route: 'org-dashboard',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Menu Items',
+      showParent: true,
+      route: 'org-menu-items',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Orders',
+      showParent: true,
+      route: 'org-orders',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    // {
+    //   name: 'Pre Orders',
+    //   showParent: true,
+    //   route: 'org-pre-orders',
+    //   image: 'DDDashboard',
+    //   imageblue: 'DDDashboard_Blue',
+    // },
+    // {
+    //   name: 'Subscription',
+    //   showParent: true,
+    //   route: 'org-subcription',
+    //   image: 'DDDashboard',
+    //   imageblue: 'DDDashboard_Blue',
+    // },
+    {
+      name: 'Reviews',
+      showParent: true,
+      route: 'org-reviews',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Reports',
+      showParent: true,
+      route: 'org-reports',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Vendor Info',
+      showParent: true,
+      route: 'org-vendor-info',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Menu Counters',
+      showParent: true,
+      route: 'org-menu-counters',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Incident Management',
+      showParent: true,
+      route: 'org-incident-management',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Checklist',
+      showParent: true,
+      route: 'org-checklist',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Employee List',
+      showParent: true,
+      route: 'org-employee-list',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    // { name: 'Bulk Order History', showParent: true, route: 'org-bulk-order-history', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    // { name: 'Manual Orders', showParent: true, route: 'org-manual-orders', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    // { name: 'Billing', showParent: true, route: 'org-billing', image: 'DDDashboard', imageblue: 'DDDashboard_Blue' },
+    {
+      name: 'Submit CheckList',
+      route: 'submit-checklist',
+      showParent: true,
+      image: 'Checklist_white',
+      imageblue: 'Checklist_blue',
+    },
+  ];
 
   breadCrumbText: any = 'Home';
   currentRoute: string = 'currentOrder';
@@ -176,8 +369,14 @@ export class HeaderComponent implements OnInit {
   selectedIndexpar: number = 0;
   selectedIndexchild: number = 0;
 
-  constructor(private router: Router, private apiMainService: ApiMainService, private localStorageService: LocalStorageService,
-    private runtimeStorageService: RuntimeStorageService, private utilityService: UtilityService, private offcanvasService: NgbOffcanvas) {
+  constructor(
+    private router: Router,
+    private apiMainService: ApiMainService,
+    private localStorageService: LocalStorageService,
+    private runtimeStorageService: RuntimeStorageService,
+    private utilityService: UtilityService,
+    private offcanvasService: NgbOffcanvas
+  ) {
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
         // Show loading indicator
@@ -197,14 +396,12 @@ export class HeaderComponent implements OnInit {
         // Present error to user
         console.log(event.error);
       }
-    })
-
+    });
   }
 
   ngOnInit(): void {
     this.getAdminProfile();
   }
-
 
   selectLink(nav: any, index: number): void {
     if (nav.children && nav.children.length > 0) {
@@ -246,7 +443,7 @@ export class HeaderComponent implements OnInit {
   }
 
   closeSidebar() {
-    this.offcanvasService.dismiss()
+    this.offcanvasService.dismiss();
   }
 
   setBreadcrumb(child: any) {
@@ -265,17 +462,19 @@ export class HeaderComponent implements OnInit {
   }
 
   async getAdminProfile() {
-    console.log("admin")
+    console.log('admin');
     const adminId = this.localStorageService.getCacheData('ADMIN_ID');
     try {
       const adminProfile = await this.apiMainService.getadminprofile(adminId);
       this.getAllPolicy();
       if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
-        console.log(this.adminProfile, "this.adminProfile");
-        if (this.adminProfile.role == "ORGADMIN") {
+        console.log(this.adminProfile, 'this.adminProfile');
+        if (this.adminProfile.role == 'ORGADMIN') {
           this.isOrgAdmin = true;
-          this.orgDetails = JSON.parse(JSON.stringify(this.adminProfile.orgDetails));
+          this.orgDetails = JSON.parse(
+            JSON.stringify(this.adminProfile.orgDetails)
+          );
           this.finalNavOption = this.orgOptions;
           this.router.navigate(['/org-dashboard']);
         } else {
@@ -285,7 +484,7 @@ export class HeaderComponent implements OnInit {
         this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
       }
     } catch (error) {
-      console.log('error while logging out ', error)
+      console.log('error while logging out ', error);
     }
   }
   async logout() {
@@ -295,7 +494,7 @@ export class HeaderComponent implements OnInit {
       this.runtimeStorageService.resetAllCacheData();
       this.router.navigate(['/login']);
     } catch (error) {
-      console.log('error while logging out ', error)
+      console.log('error while logging out ', error);
     }
   }
 
@@ -311,9 +510,11 @@ export class HeaderComponent implements OnInit {
     try {
       const policyArr: any = await this.apiMainService.getAllPolicy();
       if (policyArr && policyArr.length > 0) {
-        this.localStorageService.setCacheData('POLICIES', policyArr)
+        this.localStorageService.setCacheData('POLICIES', policyArr);
         this.policyArr = policyArr;
-        const adminPolicy = this.policyArr.filter((el: any) => el.policy_name === this.adminProfile.policy_name);
+        const adminPolicy = this.policyArr.filter(
+          (el: any) => el.policy_name === this.adminProfile.policy_name
+        );
         if (adminPolicy && adminPolicy.length > 0) {
           this.adminProfile.policy = adminPolicy;
           const routePolicies = this.adminProfile.policy[0].route_policies;
@@ -322,18 +523,19 @@ export class HeaderComponent implements OnInit {
               if (routePolicies && routePolicies[childEl.route] == true) {
                 childEl.showRoute = true;
                 el.showParent = true;
-              }
-              else {
+              } else {
                 childEl.showRoute = false;
               }
-            })
-          })
+            });
+          });
         }
-        this.localStorageService.setCacheData('ADMIN_PROFILE', this.adminProfile);
+        this.localStorageService.setCacheData(
+          'ADMIN_PROFILE',
+          this.adminProfile
+        );
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
 }

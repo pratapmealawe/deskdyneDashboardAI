@@ -9,7 +9,7 @@ import { SearchFilterService } from 'src/service/search-filter.service';
   styleUrls: ['./org-employee-list.component.scss'],
 })
 export class OrgEmployeeListComponent implements OnInit {
-  orgDetails: any;
+  orgAdmin: any;
   employeeList: any[] = [];
   filteredEmployeeList: any[] = [];
 
@@ -20,25 +20,14 @@ export class OrgEmployeeListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.orgDetails =
-      this.localStorageService.getCacheData('ADMIN_PROFILE')?.orgDetails;
+    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.getEmployeeListByOrgId();
   }
-
-  async saveEmployee() {
-    try {
-      let res = await this.apiMainService.employeeAdd({});
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  gotoAdd() {}
 
   async getEmployeeListByOrgId() {
     try {
       let data = await this.apiMainService.getEmployeeListByOrgId(
-        this.orgDetails?._id
+        this.orgAdmin?.orgDetails?._id
       );
       this.employeeList = data;
       this.filteredEmployeeList = data.length === 0 ? [] : data;

@@ -230,6 +230,30 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getReportHistoryByfilter`,
         method: 'POST',
       },
+      createIncident: {
+        url: `${this.baseUrl}/api/createIncident`,
+        method: 'POST',
+      },
+      getAllIncidents: {
+        url: `${this.baseUrl}/api/getAllIncidents`,
+        method: 'GET',
+      },
+      getIncidentsByDateAndFilters: {
+        url: `${this.baseUrl}/api/getIncidentsByDateAndFilters`,
+        method: 'POST',
+      },
+      getIncidentById: {
+        url: `${this.baseUrl}/api/getIncidentById`,
+        method: 'GET',
+      },
+      updateIncident: {
+        url: `${this.baseUrl}/api/updateIncident`,
+        method: 'PUT',
+      },
+      deleteIncident: {
+        url: `${this.baseUrl}/api/deleteIncident`,
+        method: 'DELETE',
+      },
     };
   }
 }
