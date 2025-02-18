@@ -9,6 +9,7 @@ import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.compo
 import { OutletComplianceComponent} from './outlet-compliance/outlet-compliance.component';
 // import { PdfuploadComponent} from '../../pdfupload/pdfupload.component';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
+import { ComboPopupComponent } from './combo-popup/combo-popup.component';
 
 
 
@@ -20,6 +21,7 @@ import { CustomPipeModule } from 'src/pipes/pipe.module';
     OutletMenuComponent,
     OutletFeedbackComponent,
     OutletComplianceComponent,
+    ComboPopupComponent,
   ],
   imports: [
     CommonModule,

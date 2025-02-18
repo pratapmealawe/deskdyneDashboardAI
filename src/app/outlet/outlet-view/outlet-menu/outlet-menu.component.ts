@@ -15,6 +15,7 @@ export class OutletMenuComponent implements OnInit {
   @Input() outletObj: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild("content") content: any;
+  @ViewChild("comboContent") comboContent: any;
   categorySelected: boolean = false;
   form: any;
   selectedCategory: any;
@@ -47,7 +48,7 @@ export class OutletMenuComponent implements OnInit {
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
-      subcidyAmt: item.subcidyAmt,
+      subcidyAmt: item.subcidyAmt? item.subcidyAmt:0,
       category: item.category,
       subCategory: item.subCategory,
       itemType: item.itemType,
@@ -61,7 +62,7 @@ export class OutletMenuComponent implements OnInit {
       itemName: [''],
       price: [''],
       priority: ['1'],
-      subcidyAmt: [''],
+      subcidyAmt: 0,
       category: [''],
       subCategory: [''],
       code: [''],
@@ -230,9 +231,11 @@ export class OutletMenuComponent implements OnInit {
       .result.then((result) => {
         console.log(`Closed with: ${result}`);
         if (result === 'add') {
+          console.log("newadd")
           this.submit();
         }
         else if(result === 'update'){
+          console.log("update")
           this.updateMenu(this.menuIndex);
         }
       }, (reason) => {
@@ -265,5 +268,87 @@ export class OutletMenuComponent implements OnInit {
       formData.append('isActive',event.target.checked);
       let outletmenu = await this.apiMainService.updateOutletMenu(this.outletObj._id,menu._id,formData);
       console.log(outletmenu);
+  }
+  defineDescription(){
+    this.modalService.open(this.comboContent, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
+    .result.then((result) => {})
+  }
+  comboout(event:any){
+    console.log(event);
+    if (event){
+      console.log('data.comboItem',event);
+      this.createComboDescription(event);
+    }
+  }
+
+  createComboDescription(comboItem:any){
+    let description = '';
+    let comboType = '';
+    let descriptionArr =[];
+    let itemContains = [];
+    if(comboItem.vegCurry.selected){
+      comboItem.vegCurry.curryList.forEach((curry:any) =>{
+        descriptionArr.push(`${curry.size} ${curry.curryName}`);
+        itemContains.push({
+          name: curry.curryName,   
+          quantity: curry.size,
+          contentType: 'VegCurry'
+        });
+      });        
+    }
+    if(comboItem.nonVegCurry.selected){
+      comboItem.nonVegCurry.curryList.forEach((curry:any) =>{
+        descriptionArr.push(`${curry.size} ${curry.curryName}`);
+        itemContains.push({
+          name: curry.curryName,   
+          quantity: curry.size,
+          contentType: 'NonVegCurry'
+        });
+      });
+    }
+    if(comboItem.rice.selected){
+      descriptionArr.push(comboItem.rice.size+' Rice');
+      itemContains.push({
+        name: 'Rice',   
+        quantity: comboItem.rice.size,
+        contentType: 'Rice'
+      });
+    }
+    if(comboItem.chapati.selected){
+      descriptionArr.push(comboItem.chapati.count+` ${comboItem.chapati.chapatiName}`);
+      itemContains.push({
+        name: comboItem.chapati.chapatiName,   
+        quantity: comboItem.chapati.count,
+        contentType: 'Chapati'
+      });
+    }
+    if(comboItem.dal.selected){
+      descriptionArr.push(comboItem.dal.size+' Dal');
+      itemContains.push({
+        name: 'Dal',   
+        quantity: comboItem.dal.size,
+        contentType: 'Dal'
+      });
+    }
+    if(comboItem.sweet.selected){
+      descriptionArr.push('Sweet');
+      itemContains.push({
+        name: 'Sweet',   
+        quantity: undefined,
+        contentType: 'Sweet'
+      });
+    }
+    if(comboItem.salad.selected){
+      descriptionArr.push('Salad');
+      itemContains.push({
+        name: 'Salad',   
+        quantity: undefined,
+        contentType: 'Salad'
+      });
+    }     
+    const finalDescription = descriptionArr.join(', ');
+    this.form.patchValue({description : finalDescription});
+    this.form.patchValue({itemContains : itemContains});
+    console.log('description ',description);
   }
 }
