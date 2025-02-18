@@ -568,4 +568,8 @@ export class ApiMainService {
       data
     );
   }
+  updateOutletMenu(outletId:any,menuId:any,menuObj:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOutletMenu;
+    return this.apiHttpService.REQUEST({url:urlObj.url+`/${outletId}`+`/${menuId}`,method:urlObj.method},menuObj)
+  }
 }

@@ -234,6 +234,7 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getfeedbacklistByfilter`,
         method: 'POST',
       },
+      updateOutletMenu:{url:`${this.baseUrl}/api/updateOutletMenu`,method:'POST'},
     };
   }
 }
