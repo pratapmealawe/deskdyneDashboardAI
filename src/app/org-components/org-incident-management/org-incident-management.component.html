@@ -1,1 +1,179 @@
-<p>org-incident-management works!</p>
+<div class="container">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Incident Management</h2>
+    </div>
+    <div class="col-md-6 text-md-end">
+      <button
+        class="btn btn-outline-primary"
+        type="button"
+        data-bs-toggle="modal"
+        data-bs-target="#incidentModal"
+      >
+        Add Incident
+      </button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row mb-4 mt-2 p-3 bg-light rounded">
+      <div class="col-md-3">
+        <label class="form-label">Organization</label>
+        <select
+          class="form-select"
+          [(ngModel)]="filterObj.orgId"
+          [disabled]="this.orgAdmin.role === 'ORGADMIN'"
+          (change)="setOrgDetails()"
+        >
+          <option selected disabled value="">Select Organization</option>
+          <option *ngFor="let option of orglist" [value]="option._id">
+            {{ option.organization_name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Cafeteria</label>
+        <select
+          class="form-select"
+          [(ngModel)]="filterObj.cafeId"
+          (change)="getIncidentListByFilter()"
+          [disabled]="!orgDetails"
+        >
+          <option selected disabled value="">Select Cafeteria</option>
+          <option
+            *ngFor="let option of orgDetails?.cafeteriaList"
+            [value]="option._id"
+          >
+            {{ option.cafeteria_name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">From Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filterObj.fromDate"
+          (change)="getIncidentListByFilter()"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">To Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filterObj.toDate"
+          (change)="getIncidentListByFilter()"
+          class="form-control"
+        />
+      </div>
+
+      <div class="col-md-3 mt-2">
+        <label class="form-label">Search</label>
+        <input
+          type="text"
+          class="form-control"
+          (input)="searchFilter($event)"
+          placeholder="Search"
+        />
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredIncidentList.length > 0">
+    <div *ngFor="let incident of filteredIncidentList" class="cardDesign my-1">
+      <div class="row">
+        <div class="col-md-3">
+          <div class="labelText">Incident Type</div>
+          <div class="labelData">{{ incident?.incidentType }}</div>
+        </div>
+        <div class="col-md-3">
+          <div class="labelText">Subject</div>
+          <div class="labelData">{{ incident?.incidentSubject }}</div>
+        </div>
+        <div class="col-md-3">
+          <div class="labelText">Description</div>
+          <div class="labelData">{{ incident?.incidentDescription }}</div>
+        </div>
+        <div class="col-md-3">
+          <div class="labelText">Date</div>
+          <div class="labelData">
+            {{ incident?.createdAt | date : "dd/MM/yyyy" }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="filteredIncidentList.length === 0" class="text-center">
+    No Records Found
+  </div>
+</div>
+
+<!-- Modal -->
+<div
+  class="modal fade"
+  id="incidentModal"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+  tabindex="-1"
+  aria-labelledby="incidentModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add Incident</h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form (submit)="saveIncident()" [formGroup]="incidentForm" novalidate>
+          <div class="mb-3">
+            <label class="form-label">Incident Type</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="incidentObj.incidentType"
+              formControlName="incidentType"
+              placeholder="Enter Type"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Incident Subject</label>
+            <input
+              type="text"
+              class="form-control"
+              [(ngModel)]="incidentObj.incidentSubject"
+              formControlName="incidentSubject"
+              placeholder="Enter Subject"
+            />
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Incident Description</label>
+            <textarea
+              class="form-control"
+              formControlName="incidentDescription"
+              [(ngModel)]="incidentObj.incidentDescription"
+              rows="3"
+              placeholder="Enter Description"
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="incidentForm.invalid"
+          >
+            Submit
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

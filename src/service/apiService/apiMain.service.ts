@@ -568,4 +568,32 @@ export class ApiMainService {
       data
     );
   }
+  createIncident(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.createIncident,
+      data
+    );
+  }
+  getAllIncidents() {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.getAllIncidents
+    );
+  }
+  getIncidentsByDateAndFilters(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.getIncidentsByDateAndFilters,
+      data
+    );
+  }
+  updateIncident(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.updateIncident,
+      data
+    );
+  }
+  deleteIncident() {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.deleteIncident
+    );
+  }
 }
