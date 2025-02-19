@@ -1,134 +1,130 @@
 <nav class="navbar fixed-top navbar-dark bg-dark mb-5">
-    <div class="container-fluid">
-        <span class="navbar-brand mb-0 h1"><img src="/assets/images/menu-burger.svg" class="menu-burger" alt=""
-                (click)="openEnd()"><span class="company-name"> <ng-container *ngIf="!isOrgAdmin">
-                    <img src="assets/images/deskdyneLogo.png" alt="deskdyneLogo" style="width: 15%;height: 15%;">
-                </ng-container>
-                <ng-container *ngIf="isOrgAdmin">
-                    {{orgDetails.organization_name}}
-                </ng-container></span></span>
-        <span style="color:white">{{breadCrumbText}}</span>
-        <span>
-            <span class="name">{{adminProfile.name}}</span>
-            <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
-                [src]="imageUrl+adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile">
-            <span [ngbPopover]="popOverBody" popoverTitle="Admin Profile" *ngIf="!adminProfile.imageUrl"
-                class="img-span pointer"><i class="bi bi-person"></i></span>
-        </span>
-    </div>
+  <div class="container-fluid">
+    <span class="navbar-brand mb-0 h1" style="flex: 1">
+      <img
+        src="/assets/images/menu-burger.svg"
+        class="menu-burger"
+        alt=""
+        (click)="openEnd()"
+      />
+      <span class="company-name">
+        <ng-container *ngIf="!isOrgAdmin">
+          <img
+            src="assets/images/deskdyneLogo.png"
+            alt="deskdyneLogo"
+            style="width: 15%; height: 15%"
+          />
+        </ng-container>
+        <ng-container *ngIf="isOrgAdmin">
+          {{ orgDetails.organization_name }}
+        </ng-container>
+      </span>
+    </span>
+    <span style="color: white; flex: 1">{{ breadCrumbText }}</span>
+    <span>
+      <span class="name">{{ adminProfile.name }}</span>
+      <img
+        placement="bottom-right"
+        class="profileImg pointer mr-2"
+        *ngIf="adminProfile.imageUrl"
+        [src]="imageUrl + adminProfile.imageUrl"
+        [ngbPopover]="popOverBody"
+        popoverTitle="Admin Profile"
+      />
+      <span
+        [ngbPopover]="popOverBody"
+        popoverTitle="Admin Profile"
+        *ngIf="!adminProfile.imageUrl"
+        class="img-span pointer"
+        ><i class="bi bi-person"></i
+      ></span>
+    </span>
+  </div>
 </nav>
 
 <ng-template class="offcanvas" #content let-offcanvas>
-    <div class="offcanvas-header">
-        <h1 class="offcanvas-title">
-            <ng-container *ngIf="!isOrgAdmin">
-                <img src="assets/images/deskdyneLogo.png" alt="deskdyneLogo" style="width: 50%;height: 50%;">
-            </ng-container>
-            <ng-container *ngIf="isOrgAdmin">
-                {{orgDetails.organization_name}}
-            </ng-container>
-        </h1>
-    </div>
-    <div class="offcanvas-body">
-        <!-- <div class="accordion accordion-flush" id="accordionExample" style="margin-left: 5%;margin-right: 5%">
-            <ng-container *ngIf="!isOrgAdmin && showOld">
-                <div *ngFor="let link of navOptions; let i = index">
-                    <ng-container>
-                        <button class="shadow-none orgbutton" type="button" data-bs-toggle="collapse"
-                            [attr.data-bs-target]="'#collapseOne'+i" aria-expanded="true"
-                            [ngClass]="{ 'active-link': selectedIndexpar === i }" aria-controls="collapseOne"
-                            style="border-bottom: 0.5px solid gray;padding-top: 5px;padding-bottom: 5px;"
-                            (click)="selectParent(i);">
-                            {{link.name}}
-                        </button>
-                    </ng-container>
-                    <div [attr.id]="'collapseOne'+i" class="accordion-collapse collapse pointer"
-                        aria-labelledby="headingOne">
-                        <ng-container *ngFor="let item of link.children;let K = index">
-                            <button class="orgbuttonchild" type="button" [routerLink]="item.route"
-                                style="border-bottom: 0.5px solid gray;padding-left: 30%;"
-                                [ngClass]="{ 'active-link': selectedIndexchild === i+K }"
-                                (click)="selectchild(i,K);closeSidebar(link.children);">
-                                {{item.label}}
-                            </button>
-                        </ng-container>
-                    </div>
-                </div>
-            </ng-container>
-        </div>     -->
-            <!-- <ng-container *ngIf="!isOrgAdmin && !showOld">
-                <div *ngFor="let link of DeskdyneOptions; let j = index"
-                    [ngClass]="{ 'active-link': selectedIndex === j }"
-                    (click)="selectLink(link,j)"
-                    style="display: flex; align-items: center;">
-                  <button class="orgbutton" type="button" [routerLink]="link.route"
-                      style="border-bottom: 0.5px solid gray; padding: 7px 0; display: flex; align-items: center;"
-                      [ngClass]="{ 'active-link': selectedIndex === j }">
-                    <img *ngIf="selectedIndex === j" 
-                         [src]="'assets/images/' + link.imageblue + '.svg'" 
-                         alt="Active Icon" 
-                         style="margin-right: 10px; width: 20px; height: 20px;"/>
-                    <img *ngIf="selectedIndex !== j" 
-                         [src]="'assets/images/' + link.image + '.svg'" 
-                         alt="Inactive Icon" 
-                         style="margin-right: 10px; width: 20px; height: 20px;"/>
-                    {{ link.name }}
-                  </button>
-                  <div *ngIf="">
-
-                  </div>
-                </div>
-              </ng-container>   -->
-
-        <ng-container>
-            <div *ngFor="let link of finalNavOption; let i = index">
-                <div *ngIf="link.showParent">
-                <div class="orgbutton" [ngClass]="{ 'active-link': selectedIndex === i}"                 
-                (click)="selectLink(link,i)">
-                    <img *ngIf="selectedIndex === i" 
-                        [src]="'assets/images/' + link.imageblue + '.svg'" 
-                        alt="Active Icon" 
-                        style="margin-right: 10px; width: 20px; height: 20px;"/>
-                    <img *ngIf="selectedIndex !== i" 
-                        [src]="'assets/images/' + link.image + '.svg'" 
-                        alt="Inactive Icon" 
-                        style="margin-right: 10px; width: 20px; height: 20px;"/>
-                    {{ link.name }}
-                </div>
-                <div *ngIf="link.children && openChildSectionIndex === i">
-                    <div *ngFor="let childLink of link.children; let j = index">
-                        <div *ngIf="childLink.showChild" class="childMenuStyle" type="button" (click)="selectChildLink(childLink.route,i,j)"
-                        [ngClass]="{ 'active-link': openChildSectionIndex === i && childSelectedIndex === j }">
-                        {{ childLink.name }}
-                    </div>
-                    </div>
-                </div>
-            </div>  
-            </div>             
-        </ng-container>  
-    </div>
+  <div class="offcanvas-header">
+    <h1 class="offcanvas-title">
+      <ng-container *ngIf="!isOrgAdmin">
+        <img
+          src="assets/images/deskdyneLogo.png"
+          alt="deskdyneLogo"
+          style="width: 50%; height: 50%"
+        />
+      </ng-container>
+      <ng-container *ngIf="isOrgAdmin">
+        {{ orgDetails.organization_name }}
+      </ng-container>
+    </h1>
+  </div>
+  <div class="offcanvas-body">
+    <ng-container>
+      <div *ngFor="let link of finalNavOption; let i = index">
+        <div *ngIf="link.showParent">
+          <div
+            class="orgbutton d-flex align-items-center flex-wrap gap-2"
+            [ngClass]="{ 'active-link': selectedIndex === i }"
+            (click)="selectLink(link, i)"
+          >
+            <img
+              *ngIf="selectedIndex === i"
+              [src]="'assets/images/' + link.imageblue + '.svg'"
+              alt="Active Icon"
+              style="margin-right: 10px; width: 20px; height: 20px"
+            />
+            <img
+              *ngIf="selectedIndex !== i"
+              [src]="'assets/images/' + link.image + '.svg'"
+              alt="Inactive Icon"
+              style="margin-right: 10px; width: 20px; height: 20px"
+            />
+            <span>{{ link.name }}</span>
+            <div class="plusMinus" *ngIf="link.children">
+              <span>{{ openChildSectionIndex === i ? "-" : "+" }}</span>
+            </div>
+          </div>
+          <div *ngIf="link.children && openChildSectionIndex === i">
+            <div *ngFor="let childLink of link.children; let j = index">
+              <div
+                *ngIf="childLink.showChild"
+                class="childMenuStyle"
+                type="button"
+                (click)="selectChildLink(childLink.route, i, j)"
+                [ngClass]="{
+                  'active-link':
+                    openChildSectionIndex === i && childSelectedIndex === j
+                }"
+              >
+                {{ childLink.name }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
 </ng-template>
 
 <ng-template #popOverBody>
-    <div class="popover-wrapper">
-        <div class="">
-            <span class="bold">Admin Name: </span>
-            <span class="grey">{{adminProfile.name}}</span>
-        </div>
-        <div class="mt-2">
-            <span class="bold">Admin ID: </span>
-            <span class="grey">{{adminProfile.loginId}}</span>
-        </div>
-        <div class="mt-2">
-            <span class="bold">phoneNo: </span>
-            <span class="grey">{{adminProfile.phoneNo}}</span>
-        </div>
-        <div class="mt-2">
-            <span class="bold">Email: </span>
-            <span class="grey">{{adminProfile.email}}</span>
-        </div>
-        <div class="mt-2">
-            <button class="btn btn-primary" (click)="logout()">logout</button>
-        </div>
+  <div class="popover-wrapper">
+    <div class="">
+      <span class="bold">Admin Name: </span>
+      <span class="grey">{{ adminProfile.name }}</span>
     </div>
+    <div class="mt-2">
+      <span class="bold">Admin ID: </span>
+      <span class="grey">{{ adminProfile.loginId }}</span>
+    </div>
+    <div class="mt-2">
+      <span class="bold">phoneNo: </span>
+      <span class="grey">{{ adminProfile.phoneNo }}</span>
+    </div>
+    <div class="mt-2">
+      <span class="bold">Email: </span>
+      <span class="grey">{{ adminProfile.email }}</span>
+    </div>
+    <div class="mt-2">
+      <button class="btn btn-primary" (click)="logout()">logout</button>
+    </div>
+  </div>
 </ng-template>

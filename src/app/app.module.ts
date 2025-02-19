@@ -34,9 +34,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     FormsModule,
     NgbModule,
     BrowserAnimationsModule,
-    MatDatepickerModule 
+    MatDatepickerModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

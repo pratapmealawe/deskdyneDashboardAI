@@ -547,6 +547,11 @@ button.accordion-button:focus {
     width: 75% !important;
   }
 }
+@media only screen and (min-width: 850px) and (max-width: 1300px) {
+  .offcanvas {
+    width: 20% !important;
+  }
+}
 
 .customCard {
   border: none;

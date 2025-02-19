@@ -90,9 +90,9 @@ const routes: Routes = [
   {
     path: 'B2B_search_org',
     loadChildren: () =>
-      import('./search-organization/search-organization.module').then(
-        (m) => m.SearchOrganizationModule
-      ),
+      import(
+        './deskdyne-components/search-organization/search-organization.module'
+      ).then((m) => m.SearchOrganizationModule),
   },
   {
     path: 'dashboard',
