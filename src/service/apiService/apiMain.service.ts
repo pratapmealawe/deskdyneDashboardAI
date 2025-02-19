@@ -596,4 +596,8 @@ export class ApiMainService {
       this.apiConfigService.apiEndPointObj.deleteIncident
     );
   }
+  updateOutletMenu(outletId:any,menuId:any,menuObj:any){
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOutletMenu;
+    return this.apiHttpService.REQUEST({url:urlObj.url+`/${outletId}`+`/${menuId}`,method:urlObj.method},menuObj)
+  }
 }
