@@ -20,67 +20,10 @@ import { UtilityService } from 'src/service/utility.service';
 })
 export class HeaderComponent implements OnInit {
   @ViewChild('content') content: any;
-  selectedTab = '';
   adminProfile: any = {};
   imageUrl = environment.imageUrl;
-  opened = true;
   isOrgAdmin: boolean = false;
-  showOld: boolean = true;
   orgDetails: any = {};
-  navOptions: any = [
-    {
-      name: 'Outlet',
-      showParent: true,
-      children: [
-        { label: 'Outlet Overview', route: 'outlet' },
-        { label: 'Outlet Add', route: 'outlet/add-outlet' },
-      ],
-    },
-    {
-      name: 'Vendor',
-      showParent: true,
-      children: [
-        { label: 'Search vendor', route: 'vendor/search-vendor' },
-        { label: 'Add Vendor', route: 'vendor/add-vendor' },
-      ],
-    },
-    {
-      name: 'Orders',
-      showParent: false,
-      children: [
-        { label: 'Current', route: 'currentOrder' },
-        { label: 'Search', route: 'searchOrder' },
-      ],
-    },
-    {
-      name: 'Miscelleneous',
-      showParent: true,
-      children: [
-        { label: 'FAQ', route: 'faq' },
-        { label: 'Config Variables', route: 'configVariable' },
-        { label: 'App Version Control', route: 'appVersionControl' },
-        { label: 'Server Logs', route: 'serverlogs' },
-      ],
-    },
-    {
-      name: 'Admin',
-      showParent: true,
-      children: [
-        { label: 'Admin', route: 'admin' },
-        { label: 'Add Admin', route: 'add-admin' },
-      ],
-    },
-    {
-      name: 'Policy',
-      showParent: true,
-      children: [
-        { label: 'Policy', route: 'policy' },
-        { label: 'Add Policy', route: 'addPolicy' },
-      ],
-    },
-    // { name: 'Dashboard', route: 'dashboard'}
-    // children: [{ label: 'Dashboard', route: 'dashboard' }, { label: 'Search Organization', route: 'B2B_search_org' }, { label: 'Add Organization', route: 'B2B_add_org' }]
-  ];
 
   finalNavOption: any = [];
 
@@ -137,6 +80,20 @@ export class HeaderComponent implements OnInit {
       children: [
         { name: 'Admin', route: 'admin', showChild: true },
         { name: 'Add Admin', route: 'add-admin', showChild: true },
+      ],
+    },
+    {
+      name: 'Organization',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        {
+          name: 'Search Organization',
+          route: 'B2B_search_org',
+          showChild: true,
+        },
+        { name: 'Add Organization', route: 'B2B_add_org', showChild: true },
       ],
     },
     {
@@ -324,6 +281,8 @@ export class HeaderComponent implements OnInit {
       }
 
       if (event instanceof NavigationEnd) {
+        console.log(event.url);
+
         this.currentRoute = event.url;
         this.breadCrumbText = event.url;
         const url = event.url.replace('/', '');
@@ -367,22 +326,6 @@ export class HeaderComponent implements OnInit {
     this.closeSidebar();
   }
 
-  checkRoute() {
-    // console.log('checkRoute')
-    // const hash = location.hash;
-    // let route;
-    // this.navOptions.forEach(routeObj => {
-    //   if(hash.indexOf(routeObj.route) > -1){
-    //     route = routeObj;
-    //   }
-    // });
-    // if(route){
-    //   this.selectTab(route);
-    // }else{
-    //   this.selectTab(this.navOptions[0]);
-    // }
-  }
-
   closeSidebar() {
     this.offcanvasService.dismiss();
   }
@@ -393,24 +336,16 @@ export class HeaderComponent implements OnInit {
     this.breadCrumbText = parent;
   }
 
-  selectTab(navObj: any) {
-    this.selectedTab = navObj.name;
-    // this.router.navigate([navObj.route])
-  }
-
   openEnd() {
     this.offcanvasService.open(this.content, { position: 'start' });
   }
 
   async getAdminProfile() {
-    console.log('admin');
     const adminId = this.localStorageService.getCacheData('ADMIN_ID');
     try {
       const adminProfile = await this.apiMainService.getadminprofile(adminId);
-      this.getAllPolicy();
       if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
-        console.log(this.adminProfile, 'this.adminProfile');
         if (this.adminProfile.role == 'ORGADMIN') {
           this.isOrgAdmin = true;
           this.orgDetails = JSON.parse(
@@ -422,12 +357,15 @@ export class HeaderComponent implements OnInit {
           this.finalNavOption = this.deskDineOptions;
           this.isOrgAdmin = false;
         }
+        this.getAllPolicy();
+
         this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
       }
     } catch (error) {
       console.log('error while logging out ', error);
     }
   }
+
   async logout() {
     try {
       await this.apiMainService.logout();
@@ -439,14 +377,6 @@ export class HeaderComponent implements OnInit {
     }
   }
 
-  selectchild(num1: number, num: number) {
-    console.log(num);
-    this.selectedIndexchild = num1 + num;
-  }
-  selectParent(num: number) {
-    console.log(num);
-    this.selectedIndexpar = num;
-  }
   async getAllPolicy() {
     try {
       const policyArr: any = await this.apiMainService.getAllPolicy();
@@ -459,7 +389,7 @@ export class HeaderComponent implements OnInit {
         if (adminPolicy && adminPolicy.length > 0) {
           this.adminProfile.policy = adminPolicy;
           const routePolicies = this.adminProfile.policy[0].route_policies;
-          this.navOptions.forEach((el: any) => {
+          this.finalNavOption.forEach((el: any) => {
             el.children.forEach((childEl: any) => {
               if (routePolicies && routePolicies[childEl.route] == true) {
                 childEl.showRoute = true;

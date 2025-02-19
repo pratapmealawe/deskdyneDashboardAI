@@ -3,24 +3,18 @@ import { CommonModule } from '@angular/common';
 import { SearchOrganizationComponent } from './search-organization.component';
 import { SearchOrganizationRoutingModule } from './search-organization-routing.module';
 import { FormsModule } from '@angular/forms';
-import { OrganizationCardModule } from '../organization-card/organization-card.module';
-import { OrganizationViewModule } from '../organization-view/organization-view.module';
-
-
+import { OrganizationCardModule } from '../../organization-card/organization-card.module';
+import { OrganizationViewModule } from '../../organization-view/organization-view.module';
 
 @NgModule({
-  declarations: [
-    SearchOrganizationComponent,
-  ],
+  declarations: [SearchOrganizationComponent],
   imports: [
     CommonModule,
     SearchOrganizationRoutingModule,
     OrganizationCardModule,
     OrganizationViewModule,
-    FormsModule
+    FormsModule,
   ],
-  exports:[
-    SearchOrganizationComponent
-  ]
+  exports: [SearchOrganizationComponent],
 })
-export class SearchOrganizationModule { }
+export class SearchOrganizationModule {}
