@@ -153,6 +153,20 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'app-feedbacks',
+    loadChildren: () =>
+      import('./common-components/suggessions-feedbacks/suggessions-feedbacks.module').then(
+        (m) => m.SuggessionsFeedbacksModule
+      ),
+  },
+  {
+    path: 'excel-export',
+    loadChildren: () =>
+      import('./common-components/excel-export/excel-export.module').then(
+        (m) => m.ExcelExportModule
+      ),
+  },
+  {
     path: 'org-reports',
     loadChildren: () =>
       import('./org-components/org-reports/org-reports.module').then(
@@ -236,8 +250,21 @@ const routes: Routes = [
         (m) => m.ChecklistHistoryModule
       ),
   },
+  {
+     path: 'food_item',
+     loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
   //deskdine routes
-
+  {
+    path: 'current_order',
+    loadChildren: () => import('./deskdyne-components/b2b-current-orders/b2b-current-orders.module').then(m => m.B2bCurrentOrdersModule) },
+    {
+      path: 'past_order',
+      loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule)
+     },
+     {
+      path: 'viewEnquiries',
+      loadChildren: () => import('./deskdyne-components/org-registry/org-registry.module').then(m => m.OrgRegistryModule)
+     },
   {
     path: '',
     redirectTo: 'login',

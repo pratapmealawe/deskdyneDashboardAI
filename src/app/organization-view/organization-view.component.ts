@@ -1,10 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 
 @Component({
   selector: 'app-organization-view',
   templateUrl: './organization-view.component.html',
-  styleUrls: ['./organization-view.component.scss']
+  styleUrls: ['./organization-view.component.scss'],
 })
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;

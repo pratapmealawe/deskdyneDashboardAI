@@ -1,0 +1,66 @@
+<div class="container-fluid">
+    <div class="col-12 col-md-8 col-lg-12">
+        <div class="row">
+            <div class="bold">Order Type</div>
+            <div class="col-6 col-md-4 col-lg-3 mt-1">
+                <div [ngClass]="{tileSelected: searchObj.orderType == 'allEventBulk'}" (click)="searchObj.orderType = 'allEventBulk'">
+                    <div class="tileLabel header4 countTile">Bulk Event</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3 mt-1">
+                <div [ngClass]="{tileSelected: searchObj.orderType == 'dailyBulk'}"
+                    (click)="searchObj.orderType = 'dailyBulk'">
+                    <div class="tileLabel header4 countTile">Admin Daily</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3 mt-1">
+                <div [ngClass]="{tileSelected: searchObj.orderType == 'subscriptionPackage'}"
+                    (click)="searchObj.orderType = 'subscriptionPackage'">
+                    <div class="tileLabel header4 countTile">Mealawe Virtual Cafe</div>
+                </div>
+            </div>
+
+            <div class="col-6 col-md-4 col-lg-3 mt-1">
+                <div [ngClass]="{tileSelected: searchObj.orderType == 'empPoll'}"
+                    (click)="searchObj.orderType = 'empPoll'">
+                    <div class="tileLabel header4 countTile">Emp Poll</div>
+                </div>
+            </div>
+<!-- 
+            <div class="col-6 col-md-4 col-lg-3 mt-1">
+                <div [ngClass]="{tileSelected: searchObj.orderType == 'indEmpPoll'}"
+                    (click)="searchObj.orderType = 'indEmpPoll'">
+                    <div class="tileLabel header4 countTile">Individual Emp Poll</div>
+                </div>
+            </div> -->
+
+        </div>
+    </div>
+
+    <div class="col-12 col-lg-12">
+        <div class="row mt-4">
+            <div class="col-12 col-md-3 col-lg-3">
+                <label for="reference" class="labelText">Organization</label>
+                <select class="custom-select" name="reference" [(ngModel)]="searchObj.org_id">
+                    <option disabled selected value> -- select organization -- </option>
+                    <option [value]="org._id" *ngFor="let org of orgChoices">{{org.organization_name}}
+                    </option>
+                </select>
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-3">
+                <label class="labelText">Select From Date:</label>
+                <input type="date" class="form-control searchDate" placeholder="From" [(ngModel)]="searchObj.fromDate">
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-3">
+                <label class="labelText">Select To Date:</label>
+                <input type="date" class="form-control searchDate" placeholder="To" [(ngModel)]="searchObj.toDate">
+            </div>
+            <div class="col-sm-12 col-md-4 col-lg-3 bgpadding2 mt-2">
+                <button type="button" class="btn btn-primary btn-sm header5 me-2"
+                    (click)="searchOrder()">Download Excel</button>
+            </div>
+        </div>
+    </div>
+</div>
