@@ -1,9 +1,7 @@
 <div class="container">
-  <div class="row">
-    <div class="col-lg-8">
-      <h2>Reviews</h2>
-    </div>
-    <div class="row mb-4">
+  <h3>Reviews</h3>
+  <div class="container">
+    <div class="row mb-4 mt-3 p-3 bg-light rounded">
       <!-- Organization Selection -->
       <div class="col-12 col-md-3">
         <label for="organization" class="labelText d-block">Organization</label>
@@ -19,7 +17,7 @@
           </option>
         </select>
       </div>
-  
+
       <!-- Cafeteria Selection -->
       <div class="col-12 col-md-3">
         <label for="cafeteria" class="labelText d-block">Cafeteria</label>
@@ -27,7 +25,7 @@
           [disabled]="!orgDetails"
           class="form-select"
           [(ngModel)]="filterObj.cafeId"
-          (change)="onCafeChange();getfeedbacklistByfilter()"
+          (change)="onCafeChange(); getfeedbacklistByfilter()"
         >
           <option selected disabled value="">Select Cafeteria</option>
           <option
@@ -47,7 +45,7 @@
           (change)="getfeedbacklistByfilter()"
         />
       </div>
-  
+
       <!-- To Date -->
       <div class="col-12 col-md-3">
         <label for="toDate" class="labelText d-block">To Date</label>
@@ -58,20 +56,21 @@
           (change)="getfeedbacklistByfilter()"
         />
       </div>
-    </div>
 
-    <div class="col-lg-4">
-      <input
-        type="text"
-        (input)="searchFilter($event)"
-        class="form-control"
-        placeholder="Search"
-        aria-label="Search Filter"
-        aria-describedby="basic-addon2"
-      />
+      <div class="col-12 col-md-3">
+        <label class="labelText d-block">Search</label>
+
+        <input
+          type="text"
+          (input)="searchFilter($event)"
+          class="form-control"
+          placeholder="Search"
+          aria-label="Search Filter"
+          aria-describedby="basic-addon2"
+        />
+      </div>
     </div>
   </div>
-
   <div class="mt-2" *ngIf="filteredFeedbackList.length > 0">
     <div
       class="row customCard list-group mb-2"

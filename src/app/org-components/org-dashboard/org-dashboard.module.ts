@@ -3,13 +3,10 @@ import { CommonModule } from '@angular/common';
 
 import { OrgDashboardRoutingModule } from './org-dashboard-routing.module';
 import { OrgDashboardComponent } from './org-dashboard.component';
-
+import { HighchartsChartModule } from 'highcharts-angular';
 
 @NgModule({
-  declarations: [],
-  imports: [
-    CommonModule,
-    OrgDashboardRoutingModule
-  ]
+  declarations: [OrgDashboardComponent],
+  imports: [CommonModule, OrgDashboardRoutingModule, HighchartsChartModule],
 })
-export class OrgDashboardModule { }
+export class OrgDashboardModule {}
