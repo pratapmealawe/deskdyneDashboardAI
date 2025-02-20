@@ -4,9 +4,9 @@
       <button (click)="backToMainPage()" *ngIf="selectedOutlet" class="backBtn">
         &#8592;
       </button>
-      <h2 class="m-0">
+      <h3 class="m-0">
         {{ selectedOutlet ? "Outlet Details" : "Menu Counters" }}
-      </h2>
+      </h3>
     </div>
 
     <div class="col-md-4">
@@ -26,10 +26,7 @@
         class="col-md-4"
         *ngFor="let outlet of filteredOutletList; let i = index"
       >
-        <div
-          class="card customCard backColor shadow-sm"
-          (click)="showOutletDetails(outlet)"
-        >
+        <div class="card customCard backColor shadow-sm">
           <img
             class="w-100 outlet-image"
             [src]="
@@ -84,7 +81,13 @@
               >
             </p>
 
-            <p class="text-end">
+            <div class="d-flex justify-content-between align-items-center">
+              <button
+                (click)="showOutletDetails(outlet)"
+                class="btn btn-primary"
+              >
+                View Menu List
+              </button>
               <span
                 *ngIf="outlet?.outletDescription.length > 100"
                 class="read-more"
@@ -92,7 +95,7 @@
               >
                 {{ outlet?.showFullDescription ? "Read Less" : "Read More" }}
               </span>
-            </p>
+            </div>
           </div>
         </div>
       </div>

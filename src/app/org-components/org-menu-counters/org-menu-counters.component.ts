@@ -63,6 +63,8 @@ export class OrgMenuCountersComponent implements OnInit {
   toggleReadMore(index: number) {
     this.filteredOutletList[index].showFullDescription =
       !this.filteredOutletList[index].showFullDescription;
+
+    console.log(this.filteredOutletList);
   }
 
   backToMainPage() {

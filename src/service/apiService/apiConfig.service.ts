@@ -258,7 +258,18 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getfeedbacklistByfilter`,
         method: 'POST',
       },
-      updateOutletMenu:{url:`${this.baseUrl}/api/updateOutletMenu`,method:'POST'},
+      updateOutletMenu: {
+        url: `${this.baseUrl}/api/updateOutletMenu`,
+        method: 'POST',
+      },
+      getDashboardCounts: {
+        url: `${this.baseUrl}/api/getDashboardCounts`,
+        method: 'POST',
+      },
+      getMenuItemsChartData: {
+        url: `${this.baseUrl}/api/getMenuItemsChartData`,
+        method: 'POST',
+      },
     };
   }
 }

@@ -1,1 +1,140 @@
-<p>org-dashboard works!</p>
+<div class="container py-3">
+  <h3>Dashboard</h3>
+
+  <!-- Four Statistic Cards -->
+  <div class="row mt-4">
+    <div class="col-md-3">
+      <div class="card p-3 shadow border-0 rounded-lg card-hover">
+        <div class="d-flex justify-content-between">
+          <div>
+            <span class="text-secondary d-block">Total Orders</span>
+            <h5 class="fw-bold">{{ dashboardData.totalOrders }}</h5>
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-center bg-primary bg-opacity-25 rounded-circle"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="bi bi-cart text-primary"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3 shadow border-0 rounded-lg card-hover">
+        <div class="d-flex justify-content-between">
+          <div>
+            <span class="text-secondary d-block">Total Vendors</span>
+            <h5 class="fw-bold">{{ dashboardData.totalVendors }}</h5>
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-center bg-warning bg-opacity-25 rounded-circle"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="bi bi-currency-dollar text-warning"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3 shadow border-0 rounded-lg card-hover">
+        <div class="d-flex justify-content-between">
+          <div>
+            <span class="text-secondary d-block">Total Outlets</span>
+            <h5 class="fw-bold">{{ dashboardData.totalOutlet }}</h5>
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="bi bi-chat-left-text text-secondary"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card p-3 shadow border-0 rounded-lg card-hover">
+        <div class="d-flex justify-content-between">
+          <div>
+            <span class="text-secondary d-block">Total Employees</span>
+            <h5 class="fw-bold">{{ dashboardData.totalEmployee }}</h5>
+          </div>
+          <div
+            class="d-flex align-items-center justify-content-center bg-info bg-opacity-25 rounded-circle"
+            style="width: 2.5rem; height: 2.5rem"
+          >
+            <i class="bi bi-people text-info"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Six Side-by-Side Cards -->
+  <!-- <div class="row mt-4">
+    <div class="col-md-2">
+      <div class="card p-3 shadow border-0 rounded card-hover">
+        <h6 class="fw-bold">Card 1</h6>
+        <p class="text-muted">Some content here.</p>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow border-0 rounded card-hover">
+        <h6 class="fw-bold">Card 2</h6>
+        <p class="text-muted">Some content here.</p>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow border-0 rounded card-hover">
+        <h6 class="fw-bold">Card 3</h6>
+        <p class="text-muted">Some content here.</p>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow border-0 rounded card-hover">
+        <h6 class="fw-bold">Card 4</h6>
+        <p class="text-muted">Some content here.</p>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow border-0 rounded card-hover">
+        <h6 class="fw-bold">Card 5</h6>
+        <p class="text-muted">Some content here.</p>
+      </div>
+    </div>
+    <div class="col-md-2">
+      <div class="card p-3 shadow border-0 rounded card-hover">
+        <h6 class="fw-bold">Card 6</h6>
+        <p class="text-muted">Some content here.</p>
+      </div>
+    </div>
+  </div> -->
+
+  <!-- Two Larger Side-by-Side Cards -->
+  <div class="row mt-4">
+    <div class="col-md-6">
+      <div class="card shadow border-0 rounded-lg card-hover">
+        <highcharts-chart
+          *ngIf="initialOrdersData.length > 0"
+          [Highcharts]="Highcharts"
+          [options]="chartOptions"
+          [update]="updateOrdersFlag"
+          [oneToOne]="oneToOneOrdersFlag"
+          style="width: 100%; height: 400px; display: block"
+        >
+        </highcharts-chart>
+
+        <div
+          class="h-100 d-flex justify-content-center align-items-center pt-2"
+        >
+          <p *ngIf="initialOrdersData.length <= 0">No Data Found</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card p-4 shadow border-0 rounded-lg card-hover">
+        <h5 class="fw-bold">Large Card 2</h5>
+        <p class="text-muted">More detailed content can be placed here.</p>
+      </div>
+    </div>
+  </div>
+</div>
