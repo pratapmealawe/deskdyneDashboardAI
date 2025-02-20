@@ -258,52 +258,195 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getfeedbacklistByfilter`,
         method: 'POST',
       },
-      updateOutletMenu:{url:`${this.baseUrl}/api/updateOutletMenu`,method:'POST'},
-      getGuestEmployeelistByOrgId:{url:`${this.baseUrl}/api/getGuestEmployeelist`,method:'GET'},
-      deleteGuestEmployee:{url:`${this.baseUrl}/api/deleteGuestEmployee`,method:'DELETE'},
-      updateGuestEmployee:{url:`${this.baseUrl}/api/updateGuestEmployee`,method:'POST'},
-      B2B_fetchBulkMenu: { url: `${this.baseUrl}/api/b2b_fetchBulkMenu`, method: 'GET' },
-      B2B_updateBulkMenu: { url: `${this.baseUrl}/api/b2b_updateBulkMenu`, method: 'POST' },
-      B2B_fetchIndividualMenu: { url: `${this.baseUrl}/api/b2b_fetchIndividualMenu`, method: 'GET' },
-      B2B_updateIndMenu: { url: `${this.baseUrl}/api/b2b_updateIndMenu`, method: 'POST' },
-      B2B_fetchBulkSnacksMenu: { url: `${this.baseUrl}/api/b2b_fetchBulkSnacksMenu`, method: 'GET' },
-      B2B_Bulk_SnackMenuAdd: { url: `${this.baseUrl}/api/b2b_updateBulkSnacksMenu`, method: 'POST' },
-      B2B_fetchIndSnacksMenu: { url: `${this.baseUrl}/api/b2b_fetchIndividualSnacksMenu`, method: 'GET' },
-      B2B_updateIndividualSnacksMenu: { url: `${this.baseUrl}/api/b2b_updateIndividualSnacksMenu`, method: 'POST' },
-      getAllB2BFooditems: { url: `${this.baseUrl}/api/getAllB2BFooditems`, method: 'GET' },
-      deleteB2BFoodItem: { url: `${this.baseUrl}/api/deleteB2BFoodItem`, method: 'POST' },
-      deleteFooditem: { url: `${this.baseUrl}/api/deleteFooditem`, method: 'POST' },
-      performBulkOrderTransfer: {url: `${this.baseUrl}/api/performBulkOrderTransfer`, method: 'POST'},
-      performBulkDailyOrderTransfer: {url: `${this.baseUrl}/api/performBulkDailyOrderTransfer`, method: 'POST'},
-      addEmployeeList:{url:`${this.baseUrl}/api/addEmployeeList`,method:'POST'},
-      deleteEmployee:{url:`${this.baseUrl}/api/deleteEmployee`,method:'DELETE'},
-      updateEmployee:{url:`${this.baseUrl}/api/updateEmployee`,method:'POST'},
-      getMealAweOutletById: {url: `${this.baseUrl}/api/getMealAweOutletById`, method: 'GET'},
-      updateMealAweOutlet: {url: `${this.baseUrl}/api/updateMealAweOutlet`, method: 'POST'},
-      setOutletOpenedStatus: {url: `${this.baseUrl}/api/outletOpenedStatus`, method: 'PUT'},
-      generateInvoice: {url: `${this.baseUrl}/api/generateInvoice`, method: 'GET'},
-      changePackageStatus: {url: `${this.baseUrl}/api/changePackageStatus`, method: 'POST'},
-      getMealPackageList: {url: `${this.baseUrl}/api/getMealPackageList`, method: 'GET'},
-      saveMealPackage: {url: `${this.baseUrl}/api/saveMealPackage`, method: 'POST'},
-      B2BFetchWeeklyMenu: {url: `${this.baseUrl}/api/B2BFetchWeeklyMenu`, method: 'GET'},
-      updateWeeklyMenuItem: {url: `${this.baseUrl}/api/updateWeeklyMenuItem`, method: 'POST'},
-      updateBulkB2BDailyFoodOrder: {url: `${this.baseUrl}/api/updateBulkB2BDailyFoodOrder`, method: 'POST'},
-      B2BweeklyMenuAdd: {url: `${this.baseUrl}/api/B2BweeklyMenuAdd`, method: 'POST'},
-      getGeneralAppFeeback: {url: `${this.baseUrl}/api/getGeneralAppFeeback`, method: 'GET'},
-      feedbackacknowledge: {url: `${this.baseUrl}/api/feedbackacknowledge`, method: 'PUT'},
-      getAdminDailyBulkOrders: {url: `${this.baseUrl}/api/getAdminDailyBulkOrders`, method: 'POST'},
-      orgMealPackages:{url:`${this.baseUrl}/api/orgMealPackages`,method:'POST'},
-      getAdminEmpPolls: {url: `${this.baseUrl}/api/getAdminEmpPolls`, method: 'POST'},
-      getOrgEmployeePollingList:{url:`${this.baseUrl}/api/getOrgEmployeePollingList`,method:'POST'},
-      getAdminPastOrders: {url: `${this.baseUrl}/api/getAdminPastOrders`, method: 'POST'},
+      updateOutletMenu: {
+        url: `${this.baseUrl}/api/updateOutletMenu`,
+        method: 'POST',
+      },
+      getGuestEmployeelistByOrgId: {
+        url: `${this.baseUrl}/api/getGuestEmployeelist`,
+        method: 'GET',
+      },
+      deleteGuestEmployee: {
+        url: `${this.baseUrl}/api/deleteGuestEmployee`,
+        method: 'DELETE',
+      },
+      updateGuestEmployee: {
+        url: `${this.baseUrl}/api/updateGuestEmployee`,
+        method: 'POST',
+      },
+      B2B_fetchBulkMenu: {
+        url: `${this.baseUrl}/api/b2b_fetchBulkMenu`,
+        method: 'GET',
+      },
+      B2B_updateBulkMenu: {
+        url: `${this.baseUrl}/api/b2b_updateBulkMenu`,
+        method: 'POST',
+      },
+      B2B_fetchIndividualMenu: {
+        url: `${this.baseUrl}/api/b2b_fetchIndividualMenu`,
+        method: 'GET',
+      },
+      B2B_updateIndMenu: {
+        url: `${this.baseUrl}/api/b2b_updateIndMenu`,
+        method: 'POST',
+      },
+      B2B_fetchBulkSnacksMenu: {
+        url: `${this.baseUrl}/api/b2b_fetchBulkSnacksMenu`,
+        method: 'GET',
+      },
+      B2B_Bulk_SnackMenuAdd: {
+        url: `${this.baseUrl}/api/b2b_updateBulkSnacksMenu`,
+        method: 'POST',
+      },
+      B2B_fetchIndSnacksMenu: {
+        url: `${this.baseUrl}/api/b2b_fetchIndividualSnacksMenu`,
+        method: 'GET',
+      },
+      B2B_updateIndividualSnacksMenu: {
+        url: `${this.baseUrl}/api/b2b_updateIndividualSnacksMenu`,
+        method: 'POST',
+      },
+      getAllB2BFooditems: {
+        url: `${this.baseUrl}/api/getAllB2BFooditems`,
+        method: 'GET',
+      },
+      deleteB2BFoodItem: {
+        url: `${this.baseUrl}/api/deleteB2BFoodItem`,
+        method: 'POST',
+      },
+      deleteFooditem: {
+        url: `${this.baseUrl}/api/deleteFooditem`,
+        method: 'POST',
+      },
+      performBulkOrderTransfer: {
+        url: `${this.baseUrl}/api/performBulkOrderTransfer`,
+        method: 'POST',
+      },
+      performBulkDailyOrderTransfer: {
+        url: `${this.baseUrl}/api/performBulkDailyOrderTransfer`,
+        method: 'POST',
+      },
+      addEmployeeList: {
+        url: `${this.baseUrl}/api/addEmployeeList`,
+        method: 'POST',
+      },
+      deleteEmployee: {
+        url: `${this.baseUrl}/api/deleteEmployee`,
+        method: 'DELETE',
+      },
+      updateEmployee: {
+        url: `${this.baseUrl}/api/updateEmployee`,
+        method: 'POST',
+      },
+      getMealAweOutletById: {
+        url: `${this.baseUrl}/api/getMealAweOutletById`,
+        method: 'GET',
+      },
+      updateMealAweOutlet: {
+        url: `${this.baseUrl}/api/updateMealAweOutlet`,
+        method: 'POST',
+      },
+      setOutletOpenedStatus: {
+        url: `${this.baseUrl}/api/outletOpenedStatus`,
+        method: 'PUT',
+      },
+      generateInvoice: {
+        url: `${this.baseUrl}/api/generateInvoice`,
+        method: 'GET',
+      },
+      changePackageStatus: {
+        url: `${this.baseUrl}/api/changePackageStatus`,
+        method: 'POST',
+      },
+      getMealPackageList: {
+        url: `${this.baseUrl}/api/getMealPackageList`,
+        method: 'GET',
+      },
+      saveMealPackage: {
+        url: `${this.baseUrl}/api/saveMealPackage`,
+        method: 'POST',
+      },
+      B2BFetchWeeklyMenu: {
+        url: `${this.baseUrl}/api/B2BFetchWeeklyMenu`,
+        method: 'GET',
+      },
+      updateWeeklyMenuItem: {
+        url: `${this.baseUrl}/api/updateWeeklyMenuItem`,
+        method: 'POST',
+      },
+      updateBulkB2BDailyFoodOrder: {
+        url: `${this.baseUrl}/api/updateBulkB2BDailyFoodOrder`,
+        method: 'POST',
+      },
+      B2BweeklyMenuAdd: {
+        url: `${this.baseUrl}/api/B2BweeklyMenuAdd`,
+        method: 'POST',
+      },
+      getGeneralAppFeeback: {
+        url: `${this.baseUrl}/api/getGeneralAppFeeback`,
+        method: 'GET',
+      },
+      feedbackacknowledge: {
+        url: `${this.baseUrl}/api/feedbackacknowledge`,
+        method: 'PUT',
+      },
+      getAdminDailyBulkOrders: {
+        url: `${this.baseUrl}/api/getAdminDailyBulkOrders`,
+        method: 'POST',
+      },
+      orgMealPackages: {
+        url: `${this.baseUrl}/api/orgMealPackages`,
+        method: 'POST',
+      },
+      getAdminEmpPolls: {
+        url: `${this.baseUrl}/api/getAdminEmpPolls`,
+        method: 'POST',
+      },
+      getOrgEmployeePollingList: {
+        url: `${this.baseUrl}/api/getOrgEmployeePollingList`,
+        method: 'POST',
+      },
+      getAdminPastOrders: {
+        url: `${this.baseUrl}/api/getAdminPastOrders`,
+        method: 'POST',
+      },
       B2B_fooditem: { url: `${this.baseUrl}/api/B2B_fooditem`, method: 'POST' },
-      updateB2BfoodItem: { url: `${this.baseUrl}/api/updateB2BfoodItem`, method: 'POST' },
-      getb2bBulkOrderList: {url: `${this.baseUrl}/api/getb2bBulkOrderList`, method: 'POST'},
-      getb2bBulkDailyOrderList: {url: `${this.baseUrl}/api/getb2bBulkDailyOrderList`, method: 'POST'},
-      getCurrentB2BOrdersCount: {url: `${this.baseUrl}/api/getCurrentB2BOrdersCount`, method: 'GET'},
-      updateb2bFoodOrder: {url: `${this.baseUrl}/api/updateb2bFoodOrder`, method: 'POST'},
-      createOrderFromPollObj:{url:`${this.baseUrl}/api/createOrderFromPollObj`,method:'POST'},
-      fetchAllEnquiries:{url:`${this.baseUrl}/api/fetchAllEnquiries`,method:'GET'},
+      updateB2BfoodItem: {
+        url: `${this.baseUrl}/api/updateB2BfoodItem`,
+        method: 'POST',
+      },
+      getb2bBulkOrderList: {
+        url: `${this.baseUrl}/api/getb2bBulkOrderList`,
+        method: 'POST',
+      },
+      getb2bBulkDailyOrderList: {
+        url: `${this.baseUrl}/api/getb2bBulkDailyOrderList`,
+        method: 'POST',
+      },
+      getCurrentB2BOrdersCount: {
+        url: `${this.baseUrl}/api/getCurrentB2BOrdersCount`,
+        method: 'GET',
+      },
+      updateb2bFoodOrder: {
+        url: `${this.baseUrl}/api/updateb2bFoodOrder`,
+        method: 'POST',
+      },
+      createOrderFromPollObj: {
+        url: `${this.baseUrl}/api/createOrderFromPollObj`,
+        method: 'POST',
+      },
+      fetchAllEnquiries: {
+        url: `${this.baseUrl}/api/fetchAllEnquiries`,
+        method: 'GET',
+      },
+      getDashboardCounts: {
+        url: `${this.baseUrl}/api/getDashboardCounts`,
+        method: 'POST',
+      },
+      getMenuItemsChartData: {
+        url: `${this.baseUrl}/api/getMenuItemsChartData`,
+        method: 'POST',
+      },
     };
   }
 }

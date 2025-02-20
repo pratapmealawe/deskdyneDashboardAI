@@ -1,81 +1,83 @@
 <div class="container">
-  <h2>CheckList History</h2>
-  <div class="row mb-4">
-    <!-- Organization Selection -->
-    <div class="col-12 col-md-3">
-      <label for="organization" class="labelText d-block">Organization</label>
-      <select
-        class="form-select"
-        [(ngModel)]="filterObj.orgId"
-        [disabled]="this.orgAdmin.role === 'ORGADMIN'"
-        (change)="setOrgDetails()"
-      >
-        <option selected disabled value="">Select Organization</option>
-        <option *ngFor="let option of orglist" [value]="option._id">
-          {{ option.organization_name }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Cafeteria Selection -->
-    <div class="col-12 col-md-3">
-      <label for="cafeteria" class="labelText d-block">Cafeteria</label>
-      <select
-        [disabled]="!orgDetails"
-        class="form-select"
-        [(ngModel)]="filterObj.cafeId"
-        (change)="clearList()"
-      >
-        <option selected disabled value="">Select Cafeteria</option>
-        <option
-          *ngFor="let option of orgDetails?.cafeteriaList"
-          [value]="option._id"
+  <h3>CheckList History</h3>
+  <div class="container">
+    <div class="row mb-4 mt-3 p-3 bg-light rounded">
+      <!-- Organization Selection -->
+      <div class="col-12 col-md-3">
+        <label for="organization" class="labelText d-block">Organization</label>
+        <select
+          class="form-select"
+          [(ngModel)]="filterObj.orgId"
+          [disabled]="this.orgAdmin.role === 'ORGADMIN'"
+          (change)="setOrgDetails()"
         >
-          {{ option.cafeteria_name }}
-        </option>
-      </select>
-    </div>
-    <div class="col-12 col-md-3">
-      <label for="fromDate" class="labelText d-block">From Date</label>
-      <input
-        type="date"
-        [(ngModel)]="filterObj.fromDate"
-        class="form-control"
-        (change)="getReportHistoryByfilter()"
-      />
-    </div>
+          <option selected disabled value="">Select Organization</option>
+          <option *ngFor="let option of orglist" [value]="option._id">
+            {{ option.organization_name }}
+          </option>
+        </select>
+      </div>
 
-    <!-- To Date -->
-    <div class="col-12 col-md-3">
-      <label for="toDate" class="labelText d-block">To Date</label>
-      <input
-        type="date"
-        [(ngModel)]="filterObj.toDate"
-        class="form-control"
-        (change)="getReportHistoryByfilter()"
-      />
-    </div>
+      <!-- Cafeteria Selection -->
+      <div class="col-12 col-md-3">
+        <label for="cafeteria" class="labelText d-block">Cafeteria</label>
+        <select
+          [disabled]="!orgDetails"
+          class="form-select"
+          [(ngModel)]="filterObj.cafeId"
+          (change)="clearList()"
+        >
+          <option selected disabled value="">Select Cafeteria</option>
+          <option
+            *ngFor="let option of orgDetails?.cafeteriaList"
+            [value]="option._id"
+          >
+            {{ option.cafeteria_name }}
+          </option>
+        </select>
+      </div>
+      <div class="col-12 col-md-3">
+        <label for="fromDate" class="labelText d-block">From Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filterObj.fromDate"
+          class="form-control"
+          (change)="getReportHistoryByfilter()"
+        />
+      </div>
 
-    <div class="col-12 col-md-3">
-      <label for="exampleFormControlInput2" class="labelText d-block"
-        >Search</label
-      >
+      <!-- To Date -->
+      <div class="col-12 col-md-3">
+        <label for="toDate" class="labelText d-block">To Date</label>
+        <input
+          type="date"
+          [(ngModel)]="filterObj.toDate"
+          class="form-control"
+          (change)="getReportHistoryByfilter()"
+        />
+      </div>
 
-      <input
-        type="text"
-        (input)="searchFilter($event)"
-        class="form-control"
-        placeholder="Search"
-        aria-label="Search Filter"
-        aria-describedby="basic-addon2"
-      />
+      <div class="col-12 col-md-3">
+        <label for="exampleFormControlInput2" class="labelText d-block"
+          >Search</label
+        >
+
+        <input
+          type="text"
+          (input)="searchFilter($event)"
+          class="form-control"
+          placeholder="Search"
+          aria-label="Search Filter"
+          aria-describedby="basic-addon2"
+        />
+      </div>
     </div>
   </div>
 
   <div>
     <div class="container mt-2" *ngIf="filteredReportHistory.length > 0">
       <div
-        class="row cardDesign list-group"
+        class="row customCard list-group mb-2"
         *ngFor="let Report of filteredReportHistory; let i = index"
       >
         <div class="list-group-item">

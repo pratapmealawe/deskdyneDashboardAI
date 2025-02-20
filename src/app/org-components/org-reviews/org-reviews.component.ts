@@ -6,6 +6,7 @@ import { SearchFilterService } from 'src/service/search-filter.service';
 interface filter {
   orgId: string;
   cafeId: string;
+
   fromDate: string;
   toDate: string;
   page: number;
@@ -23,13 +24,14 @@ export class OrgReviewsComponent implements OnInit {
   filteredFeedbackList: any[] = [];
   page: number = 1;
   expandedItems: boolean[] = [];
-  nextOn:boolean=false;
+  nextOn: boolean = false;
   filterObj: filter = {
     orgId: '',
     cafeId: '',
+
     fromDate: '',
     toDate: '',
-    page:  1,
+    page: 1,
   };
   orgAdmin: any;
   constructor(
@@ -65,32 +67,35 @@ export class OrgReviewsComponent implements OnInit {
     );
   }
   setOrgDetails() {
-    this.filterObj.page=1;
+    this.filterObj.page = 1;
     this.orgDetails = this.orglist.find((org: any) => {
       return org._id == this.filterObj?.orgId;
     });
     this.filterObj.cafeId = '';
+
     this.getfeedbacklistByfilter();
   }
-  async getfeedbacklistByfilter(){
-    this.nextOn=false;
+  async getfeedbacklistByfilter() {
+    this.nextOn = false;
     try {
       const feedbackList = await this.apiMainService.getfeedbacklistByfilter(
         this.filterObj
       );
       if (feedbackList && feedbackList.length > 0) {
-        this.nextOn=true;
+        this.nextOn = true;
         this.feedbackList = [...this.feedbackList, ...feedbackList];
-        this.filteredFeedbackList = [...this.filteredFeedbackList, ...feedbackList];
+        this.filteredFeedbackList = [
+          ...this.filteredFeedbackList,
+          ...feedbackList,
+        ];
         this.expandedItems = new Array(this.feedbackList.length).fill(true);
-      }else{
-        this.nextOn=false;
+      } else {
+        this.nextOn = false;
       }
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
   }
-
 
   async getOrgList() {
     try {
@@ -115,8 +120,8 @@ export class OrgReviewsComponent implements OnInit {
       this.setOrgDetails();
     }
   }
-  onCafeChange(){
-    this.feedbackList=[];
-    this.filteredFeedbackList=[];
+  onCafeChange() {
+    this.feedbackList = [];
+    this.filteredFeedbackList = [];
   }
 }

@@ -34,7 +34,7 @@
     "dotenv-flow": "^4.0.1",
     "force": "^0.0.3",
     "google-maps": "^4.3.3",
-    "highcharts": "^11.4.1",
+    "highcharts": "^11.4.8",
     "highcharts-angular": "^4.0.1",
     "jquery": "^3.7.1",
     "response-time": "^2.3.2",

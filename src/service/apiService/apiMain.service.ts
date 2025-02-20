@@ -596,9 +596,27 @@ export class ApiMainService {
       this.apiConfigService.apiEndPointObj.deleteIncident
     );
   }
-  updateOutletMenu(outletId:any,menuId:any,menuObj:any){
+  updateOutletMenu(outletId: any, menuId: any, menuObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletMenu;
-    return this.apiHttpService.REQUEST({url:urlObj.url+`/${outletId}`+`/${menuId}`,method:urlObj.method},menuObj)
+    return this.apiHttpService.REQUEST(
+      {
+        url: urlObj.url + `/${outletId}` + `/${menuId}`,
+        method: urlObj.method,
+      },
+      menuObj
+    );
+  }
+  getDashboardCounts(searchObj: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.getDashboardCounts,
+      searchObj
+    );
+  }
+  getMenuItemsChartData(searchObj: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.getMenuItemsChartData,
+      searchObj
+    );
   }
 
   addGuestEmployeeList(guestEmployeeList:any){
