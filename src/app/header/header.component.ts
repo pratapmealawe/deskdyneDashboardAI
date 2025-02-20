@@ -58,8 +58,10 @@ export class HeaderComponent implements OnInit {
       image: 'B2BOrders',
       imageblue: 'B2BOrders_Blue',
       children: [
-        { name: 'Current', route: 'currentOrder', showChild: true },
-        { name: 'Search', route: 'searchOrder', showChild: true },
+        { name: 'Outlet Current Order', route: 'currentOrder', showChild: true },
+        { name: 'Outlet Search Order', route: 'searchOrder', showChild: true },
+        { name: 'Current Order', route: 'current_order', showChild: true},
+        { name: 'Past Order', route: 'past_order', showChild: true}
       ],
     },
     {
@@ -149,6 +151,30 @@ export class HeaderComponent implements OnInit {
       children: [
         { name: 'View Feedbacks', route: 'org-reviews', showChild: true },
       ],
+    },
+    {
+      name: 'App Feedback',
+      showParent: true,
+      route: 'dashboard',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
+      children: [
+        { name: 'View App Feedbacks', route: 'app-feedbacks', showChild: true },
+      ],
+    },
+    {
+      name: 'Excel Export',
+      showParent: true,
+      route: 'excel-export',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
+    },
+    {
+      name: 'Food Items',
+      showParent: true,
+      route: 'food_item',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
     },
     {
       name: 'Incident Reporting',

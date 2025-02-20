@@ -1,0 +1,229 @@
+<div class="container-fluid menuWrapper">
+    <div class="row">
+        <div class="col-12 col-md-3 col-lg-3">
+            <label for="reference" class="labelText">Copy Organization Menu</label>
+            <select class="custom-select" name="reference" [(ngModel)]="orgSelected">
+                <option disabled selected> -- select organization -- </option>
+                <option [value]="org._id" *ngFor="let org of orgChoices">{{org.organization_name}}
+                </option>
+            </select>
+        </div>
+        <div class="col-12 col-md-3 col-lg-3 mt-4">
+            <button class="b2n btn-primary btn-sm" (click)="copyOrgMenu()">Copy Menu</button>
+        </div>
+    </div>
+    <div class="right addBtn addFoodItem" (click)="addB2BFoodItem()">+</div>
+    <div class="row" *ngIf="bulkMenuList">
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="labelText form-label">MOQ</div>
+            <input [disabled]="!slabEditMode" type="number" class="form-control" placeholder="MOQ"
+                [(ngModel)]="snackMenuFetched.moq">
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="labelText form-label">Slab Limit 1</div>
+            <input [disabled]="!slabEditMode" type="number" class="form-control" placeholder="Slab Limit 1"
+                [(ngModel)]="snackMenuFetched.slabLimit1">
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="labelText form-label">Slab Limit 2</div>
+            <input [disabled]="!slabEditMode" type="number" class="form-control" placeholder="Slab Limit 2"
+                [(ngModel)]="snackMenuFetched.slabLimit2">
+        </div>
+        <div class="col-12 col-md-6 col-lg-3">
+            <div class="labelText form-label">Slab Limit 3</div>
+            <input [disabled]="!slabEditMode" type="number" class="form-control" placeholder="Slab Limit 3"
+                [(ngModel)]="snackMenuFetched.slabLimit3">
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mt-1">
+            <div class="labelText form-label">Date Limit 1</div>
+            <input [disabled]="!slabEditMode" type="number" class="form-control" placeholder="Date Limit 1"
+                [(ngModel)]="snackMenuFetched.dateLimit1">
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mt-1">
+            <div class="labelText form-label">Date Limit 2</div>
+            <input [disabled]="!slabEditMode" type="number" class="form-control" placeholder="Date Limit 2"
+                [(ngModel)]="snackMenuFetched.dateLimit2">
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mt-1">
+            <div class="labelText form-label">Date Limit 3</div>
+            <input [disabled]="!slabEditMode" type="number" class="form-control" placeholder="Date Limit 3"
+                [(ngModel)]="snackMenuFetched.dateLimit3">
+        </div>
+        <div class="col-12 col-md-6 col-lg-3 mt-2">
+            <i class="bi bi-pencil-square editDeltesaveIcon" *ngIf="!slabEditMode"
+                (click)="slabEditMode = !slabEditMode"></i>
+            <i class="bi bi-check-lg editDeltesaveIcon" *ngIf="slabEditMode" (click)="slabEditMode = !slabEditMode"></i>
+        </div>
+    </div>
+    <div *ngIf="bulkMenuList?.length>0">
+        <div class="row cardDesign mt-2"
+            *ngFor="let foodItem of bulkMenuList | filter : menuSearchText : 'itemName'; index as i">
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-1">
+                    <img [src]="imageUrl + foodItem.imageUrl" class="kitchenMenuImage" />
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-2">
+                    <label>Item Name:</label>
+                    <div *ngIf="!foodItem.edit">{{foodItem.itemName}}</div>
+                    <input *ngIf="foodItem.edit" type="text" [(ngModel)]="foodItem.itemName">
+                </div>
+                <div class="col-sm-4 col-md-4 col-lg-2">
+                    <div class="inline">
+                        <div *ngIf="foodItem.itemType==='Veg'" class="vegIcon typeIcon inline"></div>
+                        <div *ngIf="foodItem.itemType==='NonVeg'" class="nonvegIcon typeIcon inline"></div>
+                        <span *ngIf="foodItem.itemType==='Jain'">
+                            <div class="vegIcon typeIcon inline"></div>Jain
+                        </span>
+                    </div>
+                    <div class="inline">{{foodItem.itemFlavour}}</div>
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-5">
+                    <label>Description:</label>
+                    <div *ngIf="!foodItem.edit">{{foodItem.itemDescription}}</div>
+                    <input *ngIf="foodItem.edit" type="text" [(ngModel)]="foodItem.itemDescription">
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-2 alignRight">
+                    <span *ngIf="!foodItem.edit">
+                        <i class="bi bi-pencil-square editDeltesaveIcon" (click)="editFoodItem(foodItem)"></i>
+                        <i class="bi bi-trash-fill editDeltesaveIcon" (click)="deleteFoodItem(i)"></i>
+                    </span>
+                    <span *ngIf="foodItem.edit">
+                        <i class="bi bi-check-lg editDeltesaveIcon" (click)="foodItem.edit = false"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-2">
+                    <div class="inline">
+                        <label class="inline" *ngIf="foodItem.itemServingType === 'perUnit'">PerUnit</label>
+                        <label class="inline" *ngIf="foodItem.itemServingType === 'perPerson'">PerPerson</label>
+                        <div class="inline" *ngIf="foodItem.itemServingType === 'perQuantity'">
+                            <label>Quantity:</label>
+                            <div *ngIf="!foodItem.edit" class="inline">{{foodItem.servingQuantity}}
+                                {{foodItem.servingQuantityUnit}}
+                            </div>
+                            <input class=" inline" *ngIf="foodItem.edit" type="text"
+                                [(ngModel)]="foodItem.servingQuantity">
+                            <select *ngIf="foodItem.edit" class="inline" [(ngModel)]="foodItem.servingQuantityUnit">
+                                <option value="Kg">Kg</option>
+                                <option value="gm">gm</option>
+                                <option value="L">L</option>
+                                <option value="ml">ml</option>
+                                <option value="Inch">Inch</option>
+                                <option value="cm">cm</option>
+                                <option value="Piece">Piece</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div class="col-sm-6 col-md-4 col-lg-1" *ngIf="foodItem.itemFlavour === 'Sour'">
+                    <div class="inline">
+                        <label>spicyLevel:</label>
+                        <div *ngIf="!foodItem.edit" class="inline">{{foodItem.spicyLevel}}</div>
+                        <select *ngIf="foodItem.edit" class="inline" [(ngModel)]="foodItem.spicyLevel">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                        </select>
+                    </div>
+                </div> -->
+                <div class="col-sm-12 col-md-6 col-lg-1">
+                    <label class="labeltext">Slab 1</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.slab1Price}}</div>
+                    <input type="number" *ngIf="foodItem.edit" [(ngModel)]="foodItem.slab1Price">
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-1">
+                    <label class="labeltext">Slab 2</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.slab2Price}}</div>
+                    <input type="number" *ngIf="foodItem.edit" [(ngModel)]="foodItem.slab2Price">
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-1">
+                    <label class="labeltext">Slab 3</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.slab3Price}}</div>
+                    <input type="number" *ngIf="foodItem.edit" [(ngModel)]="foodItem.slab3Price">
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-1">
+                    <label class="labeltext">Slab 4</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.slab4Price}}</div>
+                    <input type="number" *ngIf="foodItem.edit" [(ngModel)]="foodItem.slab4Price">
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-1">
+                    <label class="labeltext">Packaging Cost</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.packagingCost}}</div>
+                    <input type="text" *ngIf="foodItem.edit" [(ngModel)]="foodItem.packagingCost">
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-3">
+                    <label class="labeltext">Pay To Kitchen</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.payAmtToKitchen}}</div>
+                    <input type="text" *ngIf="foodItem.edit" [(ngModel)]="foodItem.payAmtToKitchen">
+                </div>
+                <div class="col-sm-12 col-md-6 col-lg-2">
+                    <label class="labeltext">Group</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.group}}</div>
+                    <input type="text" *ngIf="foodItem.edit" [(ngModel)]="foodItem.group">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12 col-md-6 col-lg-12">
+                    <label class="labeltext">Packaging Description</label>
+                    <div class="labelData" *ngIf="!foodItem.edit">{{foodItem.packagingDescription}}</div>
+                    <input type="text" *ngIf="foodItem.edit" [(ngModel)]="foodItem.packagingDescription">
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="inline me-2">
+                <button type="button" class="btn btn-primary btn-sm" (click)="editBulkMenu()">Submit</button>
+            </div>
+        </div>
+    </div>
+    <div class="center mt-5" *ngIf="bulkMenuList?.length===0">
+        no items found
+    </div>
+</div>
+
+<ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Add Food Item</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-6">
+                <input type="text" class="fullheight form-control" [(ngModel)]="searchText" placeholder="Search item">
+            </div>
+        </div>
+        <ul class="list-group labelText mt-1">
+            <li class="list-group-item" *ngFor="let foodItem of foodItemList | filter : searchText : 'itemName' ">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6 col-lg-2">
+                        <input type="checkbox" [(ngModel)]="foodItem.selected">
+                        {{foodItem.itemName}}
+                    </div>
+                    <div class="col-sm-12 col-md-6 col-lg-4">{{foodItem.itemDescription}}</div>
+                    <div class="col-sm-12 col-md-6 col-lg-3">{{foodItem.aliasNames}}</div>
+                    <div class="col-sm-4 col-md-4 col-lg-3">
+                        <div class="inline">
+                            <div *ngIf="foodItem.itemType==='Veg'" class="vegIcon typeIcon inline"></div>
+                            <div *ngIf="foodItem.itemType==='NonVeg'" class="nonvegIcon typeIcon inline"></div>
+                            <span *ngIf="foodItem.itemType==='Jain'">
+                                <div class="vegIcon typeIcon inline"></div>Jain
+                            </span>
+                        </div>
+                        <div class="inline">{{foodItem.itemFlavour}}</div>
+                        <div class="inline">&#8377; {{foodItem.itemPrice}}</div>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="modal-footer">
+        <div class="inline bgpadding1">
+            <button type="button" class="btn btn-primary btn-sm" (click)="modal.close('add')">Add</button>
+        </div>
+    </div>
+</ng-template>
