@@ -443,8 +443,8 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getDashboardCounts`,
         method: 'POST',
       },
-      getMenuItemsChartData: {
-        url: `${this.baseUrl}/api/getMenuItemsChartData`,
+      getChartData: {
+        url: `${this.baseUrl}/api/getChartData`,
         method: 'POST',
       },
     };

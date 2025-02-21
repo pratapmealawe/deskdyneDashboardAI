@@ -5,6 +5,15 @@ import * as Highcharts from 'highcharts';
 
 interface SearchObj {
   orgId: string;
+  time: 'today' | 'week' | 'month' | '3month' | '6month' | string;
+  status:
+    | 'paymentInprogress'
+    | 'paymentFailed'
+    | 'placed'
+    | 'completed'
+    | 'cancelled'
+    | string;
+  type: string;
 }
 
 interface DashboardData {
@@ -23,13 +32,53 @@ export class OrgDashboardComponent implements OnInit {
 
   chartOptions: Highcharts.Options = {
     chart: {
+      type: 'column',
+    },
+    title: {
+      text: 'Orders per Outlet',
+    },
+    xAxis: {
+      type: 'category',
+      title: {
+        text: 'Outlets',
+      },
+    },
+    yAxis: {
+      title: {
+        text: 'Order Count',
+      },
+    },
+    legend: {
+      enabled: false,
+    },
+    plotOptions: {
+      column: {
+        cursor: 'pointer',
+        colorByPoint: true,
+        dataLabels: {
+          enabled: true,
+        },
+      },
+    },
+    series: [
+      {
+        type: 'column',
+        name: 'Orders',
+        data: [],
+      },
+    ],
+  };
+
+  chartOptionsPie: Highcharts.Options = {
+    chart: {
       type: 'pie',
     },
     title: {
-      text: '',
+      text: 'Orders Status',
     },
     tooltip: {
       valueSuffix: '%',
+      valueDecimals: 1,
     },
     plotOptions: {
       pie: {
@@ -39,7 +88,6 @@ export class OrgDashboardComponent implements OnInit {
           enabled: true,
           format: '{point.name}: {point.percentage:.1f}%',
         },
-        showInLegend: true,
       },
     },
     series: [
@@ -53,10 +101,22 @@ export class OrgDashboardComponent implements OnInit {
 
   updateOrdersFlag: boolean = false;
   oneToOneOrdersFlag: boolean = true;
+  updateStatusFlag: boolean = false;
+  oneToOneStatusFlag: boolean = true;
 
   orgAdmin: any;
   searchObj: SearchObj = {
     orgId: '',
+    time: '6month',
+    status: 'completed',
+    type: 'salesByOutlet',
+  };
+
+  searchObjForPie: SearchObj = {
+    orgId: '',
+    time: '6month',
+    status: '',
+    type: 'orderStatusPercentage',
   };
   dashboardData: DashboardData = {
     totalVendors: 0,
@@ -66,6 +126,7 @@ export class OrgDashboardComponent implements OnInit {
   };
 
   initialOrdersData: any[] = [];
+  initialStatusData: any[] = [];
 
   constructor(
     private apiMainService: ApiMainService,
@@ -75,16 +136,79 @@ export class OrgDashboardComponent implements OnInit {
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.getDashboardData();
+    this.getChartData();
+    this.getPieChartData();
   }
 
   async getDashboardData() {
     this.searchObj.orgId = this.orgAdmin?.orgDetails?._id;
     try {
       let data = await this.apiMainService.getDashboardCounts(this.searchObj);
-      console.log(data);
       this.dashboardData = data;
     } catch (err) {
       console.error('Error fetching employee:', err);
+    }
+  }
+
+  async getChartData() {
+    this.searchObj.orgId = this.orgAdmin?.orgDetails?._id;
+    try {
+      let data = await this.apiMainService.getChartData(this.searchObj);
+
+      this.initialOrdersData = data;
+
+      console.log(data);
+
+      const formattedData = data.map((item: any) => ({
+        name: item.outletName,
+        y: item.totalOrders,
+      }));
+
+      this.chartOptions = {
+        ...this.chartOptions,
+        series: [
+          {
+            type: 'column',
+            name: 'Orders',
+            data: formattedData,
+          },
+        ],
+      };
+
+      this.updateOrdersFlag = true;
+    } catch (err) {
+      console.error('Error fetching chart data:', err);
+    }
+  }
+
+  async getPieChartData() {
+    this.searchObjForPie.orgId = this.orgAdmin?.orgDetails?._id;
+    try {
+      let data = await this.apiMainService.getChartData(this.searchObjForPie);
+
+      this.initialStatusData = data;
+
+      console.log(data);
+
+      const formattedData = data.map((item: any) => ({
+        name: item.orderStatus,
+        y: item.percentage,
+      }));
+
+      this.chartOptionsPie = {
+        ...this.chartOptionsPie,
+        series: [
+          {
+            type: 'pie',
+            name: 'Percentage',
+            data: formattedData,
+          },
+        ],
+      };
+
+      this.updateOrdersFlag = true;
+    } catch (err) {
+      console.error('Error fetching chart data:', err);
     }
   }
 }

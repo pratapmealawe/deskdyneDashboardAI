@@ -612,284 +612,473 @@ export class ApiMainService {
       searchObj
     );
   }
-  getMenuItemsChartData(searchObj: any) {
+  getChartData(searchObj: any) {
     return this.apiHttpService.REQUEST(
-      this.apiConfigService.apiEndPointObj.getMenuItemsChartData,
+      this.apiConfigService.apiEndPointObj.getChartData,
       searchObj
     );
   }
 
-  addGuestEmployeeList(guestEmployeeList:any){
+  addGuestEmployeeList(guestEmployeeList: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.addGuestEmployeeList;
-    return this.apiHttpService
-    .REQUEST({url:urlObj.url,method:urlObj.method},guestEmployeeList);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      guestEmployeeList
+    );
   }
-  getGuestEmployeelistByOrgId(orgId:any){
-    const urlObj =  this.apiConfigService.apiEndPointObj.getGuestEmployeelistByOrgId;
-    return this.apiHttpService
-    .REQUEST({url:urlObj.url+`/${orgId}` ,method:urlObj.method});
+  getGuestEmployeelistByOrgId(orgId: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getGuestEmployeelistByOrgId;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}`,
+      method: urlObj.method,
+    });
   }
-  deleteGuestEmployee(id:any){
-    const urlObj =  this.apiConfigService.apiEndPointObj.deleteGuestEmployee;
-    return this.apiHttpService
-    .REQUEST({url:urlObj.url+`/${id}` ,method:urlObj.method});
+  deleteGuestEmployee(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteGuestEmployee;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    });
   }
-  updateGuestEmployee(id:any,employeeObj:any){
-    const urlObj =  this.apiConfigService.apiEndPointObj.updateGuestEmployee;
-    return this.apiHttpService
-    .REQUEST({url:urlObj.url+`/${id}` ,method:urlObj.method},employeeObj);
+  updateGuestEmployee(id: any, employeeObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateGuestEmployee;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      employeeObj
+    );
   }
 
-  B2B_fetchBulkMenu(id:any){    
+  B2B_fetchBulkMenu(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},null,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_saveBulkMenu(data:any){    
+  B2B_saveBulkMenu(data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_updateBulkMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method}, data,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      data,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_fetchIndividualMenu(id:any){    
+  B2B_fetchIndividualMenu(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndividualMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},null,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_saveIndMenu(data:any){    
+  B2B_saveIndMenu(data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_updateIndMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method},data,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      data,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_fetchBulkSnacksMenu(id:any){    
+  B2B_fetchBulkSnacksMenu(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkSnacksMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},null,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_Bulk_SnackMenuAdd(data:any){    
+  B2B_Bulk_SnackMenuAdd(data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_Bulk_SnackMenuAdd;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method},data,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      data,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_fetchIndSnacksMenu(id:any){    
+  B2B_fetchIndSnacksMenu(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndSnacksMenu;
-    console.log(urlObj,'------')
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},null,null,false,true);
+    console.log(urlObj, '------');
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_Ind_SnackMenuAdd(data:any){    
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_updateIndividualSnacksMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method},data,null,false,true);
+  B2B_Ind_SnackMenuAdd(data: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.B2B_updateIndividualSnacksMenu;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      data,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_saveSnackBoxMenu(data:any){    
+  B2B_saveSnackBoxMenu(data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_saveSnackBoxMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method},data,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      data,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_snackBoxMenuFetch(id:any){    
+  B2B_snackBoxMenuFetch(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_snackBoxMenuFetch;
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},null,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_customSnackBoxMenuFetch(id:any){    
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_customSnackBoxMenuFetch;
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},null,null,false,true);
+  B2B_customSnackBoxMenuFetch(id: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.B2B_customSnackBoxMenuFetch;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
 
-  B2B_saveCustomSnackBoxMenu(data:any){    
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_saveCustomSnackBoxMenu;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method},data,null,false,true);
+  B2B_saveCustomSnackBoxMenu(data: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.B2B_saveCustomSnackBoxMenu;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      data,
+      null,
+      false,
+      true
+    );
   }
-  updateB2BfoodItem(item:any, id:any){    
+  updateB2BfoodItem(item: any, id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateB2BfoodItem;
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},item,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      item,
+      null,
+      false,
+      true
+    );
   }
 
-  getAllB2BFooditems(){    
+  getAllB2BFooditems() {
     const urlObj = this.apiConfigService.apiEndPointObj.getAllB2BFooditems;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method},null,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
 
-  deleteB2BFoodItem(id:any){    
+  deleteB2BFoodItem(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteB2BFoodItem;
-    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},null,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      null,
+      null,
+      false,
+      true
+    );
   }
-  performBulkOrderTransfer(data:any){
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.performBulkOrderTransfer,data);
+  performBulkOrderTransfer(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.performBulkOrderTransfer,
+      data
+    );
   }
-  performBulkDailyOrderTransfer(data:any){
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.performBulkDailyOrderTransfer,data);
+  performBulkDailyOrderTransfer(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.performBulkDailyOrderTransfer,
+      data
+    );
   }
-  addEmployeeList(employeeList:any){
+  addEmployeeList(employeeList: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.addEmployeeList;
-    return this.apiHttpService
-    .REQUEST({url:urlObj.url,method:urlObj.method},employeeList);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      employeeList
+    );
   }
-  deleteEmployee(id:any){
-    const urlObj =  this.apiConfigService.apiEndPointObj.deleteEmployee;
-    return this.apiHttpService
-    .REQUEST({url:urlObj.url+`/${id}` ,method:urlObj.method});
+  deleteEmployee(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteEmployee;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    });
   }
-  updateEmployee(id:any,employeeObj:any){
-    const urlObj =  this.apiConfigService.apiEndPointObj.updateEmployee;
-    return this.apiHttpService
-    .REQUEST({url:urlObj.url+`/${id}` ,method:urlObj.method},employeeObj);
+  updateEmployee(id: any, employeeObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployee;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      employeeObj
+    );
   }
-  searchBulkOrderList(data: any,page: number){
+  searchBulkOrderList(data: any, page: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.searchBulkOrderList;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${page}`, method: urlObj.method},data);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${page}`, method: urlObj.method },
+      data
+    );
   }
-  generateInvoice(id: any){
+  generateInvoice(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.generateInvoice;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    });
   }
-  changePackageStatus(status:any, mealId:any, orgId:any){
+  changePackageStatus(status: any, mealId: any, orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.changePackageStatus;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${mealId}` + `/${orgId}`, method: urlObj.method}, {status});
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${mealId}` + `/${orgId}`, method: urlObj.method },
+      { status }
+    );
   }
-  getMealAweOutletById(id:any){
+  getMealAweOutletById(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletById;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    });
   }
 
-  setOutletOpenedStatus(id:any,status:any){
+  setOutletOpenedStatus(id: any, status: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.setOutletOpenedStatus;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${id}` + `/${status}`, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}` + `/${status}`,
+      method: urlObj.method,
+    });
   }
 
-  getCurrentPackageOrdersList(status:any,page:any,limit:number){
-    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentPackageOrdersList;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method});
+  getCurrentPackageOrdersList(status: any, page: any, limit: number) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getCurrentPackageOrdersList;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${page}/${limit}/${status}`,
+      method: urlObj.method,
+    });
   }
-  getMealPackageList(){
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getMealPackageList);
+  getMealPackageList() {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.getMealPackageList
+    );
   }
-  saveMealPackage(data: any){
+  saveMealPackage(data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.saveMealPackage;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method}, data);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      data
+    );
   }
-  saveMealAweOutlet(outlet:any){
+  saveMealAweOutlet(outlet: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.saveMealAweOutlet;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method},outlet);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      outlet
+    );
   }
 
-  updateMealAweOutlet(id:any,outlet:any){
+  updateMealAweOutlet(id: any, outlet: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateMealAweOutlet;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method},outlet);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      outlet
+    );
   }
-  B2BFetchWeeklyMenu(orgId:any){
+  B2BFetchWeeklyMenu(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2BFetchWeeklyMenu;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${orgId}`, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}`,
+      method: urlObj.method,
+    });
   }
-  updateWeeklyMenuItem(menuObj:any, orgId:any){
+  updateWeeklyMenuItem(menuObj: any, orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateWeeklyMenuItem;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${orgId}`, method: urlObj.method}, menuObj);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${orgId}`, method: urlObj.method },
+      menuObj
+    );
   }
-  updateBulkB2BDailyFoodOrder(order:any){
-    const urlObj = this.apiConfigService.apiEndPointObj.updateBulkB2BDailyFoodOrder;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method}, order);
+  updateBulkB2BDailyFoodOrder(order: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.updateBulkB2BDailyFoodOrder;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      order
+    );
   }
-  B2BweeklyMenuAdd(menuObj:any){
+  B2BweeklyMenuAdd(menuObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2BweeklyMenuAdd;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method}, menuObj);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      menuObj
+    );
   }
-  getGeneralAppFeeback(page: number){
+  getGeneralAppFeeback(page: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getGeneralAppFeeback;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${page}`, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${page}`,
+      method: urlObj.method,
+    });
   }
 
-  feedbackacknowledge(id:string){
+  feedbackacknowledge(id: string) {
     const urlObj = this.apiConfigService.apiEndPointObj.feedbackacknowledge;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    });
   }
-  getAdminDailyBulkOrders(payload:any){
+  getAdminDailyBulkOrders(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getAdminDailyBulkOrders;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method},payload);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload
+    );
   }
-  getAdminEmpPolls(payload:any){
+  getAdminEmpPolls(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getAdminEmpPolls;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method},payload);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload
+    );
   }
-  getOrgEmployeePollingList(payload:any){
-    const urlObj = this.apiConfigService.apiEndPointObj.getOrgEmployeePollingList;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method},payload);
+  getOrgEmployeePollingList(payload: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getOrgEmployeePollingList;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload
+    );
   }
-  orgMealPackages(payload:any){
+  orgMealPackages(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.orgMealPackages;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method},payload);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload
+    );
   }
-  getBulkDailyBillingDetails(payload:any){
-    const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyBillingDetails;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method},payload);
+  getBulkDailyBillingDetails(payload: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getBulkDailyBillingDetails;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload
+    );
   }
-  getAdminPastOrders(payload:any){
+  getAdminPastOrders(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getAdminPastOrders;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method},payload);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload
+    );
   }
   B2B_fooditemAdd(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_fooditem;
-    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload,null,false,true);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload,
+      null,
+      false,
+      true
+    );
   }
-  getb2bBulkOrderList(status:any,page:any,limit:number){
+  getb2bBulkOrderList(status: any, page: any, limit: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getb2bBulkOrderList;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${page}/${limit}/${status}`,
+      method: urlObj.method,
+    });
   }
-  getb2bBulkDailyOrderList(status:any,page:any,limit:number){
-    const urlObj = this.apiConfigService.apiEndPointObj.getb2bBulkDailyOrderList;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method});
+  getb2bBulkDailyOrderList(status: any, page: any, limit: number) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getb2bBulkDailyOrderList;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${page}/${limit}/${status}`,
+      method: urlObj.method,
+    });
   }
 
-  updateb2bFoodOrder(order:any){
+  updateb2bFoodOrder(order: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateb2bFoodOrder;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method}, order);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      order
+    );
   }
-  getCurrentB2BOrdersCount(){
-    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentB2BOrdersCount;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method});
+  getCurrentB2BOrdersCount() {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getCurrentB2BOrdersCount;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url,
+      method: urlObj.method,
+    });
   }
 
-  getCurrentB2BDailyOrdersCount(){
-    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentB2BDailyOrdersCount;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method});
+  getCurrentB2BDailyOrdersCount() {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getCurrentB2BDailyOrdersCount;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url,
+      method: urlObj.method,
+    });
   }
-  getCafeteriasPollingList(deliveryDate:any){
-    const urlObj = this.apiConfigService.apiEndPointObj.getCafeteriasPollingList;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method}, deliveryDate);
+  getCafeteriasPollingList(deliveryDate: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getCafeteriasPollingList;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      deliveryDate
+    );
   }
-  createOrderFromPollObj(payload:any){
+  createOrderFromPollObj(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.createOrderFromPollObj;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method}, payload);
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      payload
+    );
   }
-  fetchAllEnquiries(){
+  fetchAllEnquiries() {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchAllEnquiries;
-    return this.apiHttpService
-    .REQUEST({url: urlObj.url, method: urlObj.method});
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url,
+      method: urlObj.method,
+    });
   }
 }

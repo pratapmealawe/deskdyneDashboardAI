@@ -12,6 +12,7 @@ interface SearchObj {
     | 'placed'
     | 'completed'
     | 'cancelled';
+  type: string;
 }
 
 @Component({
@@ -33,6 +34,7 @@ export class OrgMenuItemsComponent implements OnInit {
     },
     tooltip: {
       valueSuffix: '%',
+      valueDecimals: 1,
     },
     plotOptions: {
       pie: {
@@ -62,6 +64,7 @@ export class OrgMenuItemsComponent implements OnInit {
     orgId: '',
     time: '6month',
     status: 'completed',
+    type: 'salesByMenuItems',
   };
 
   initialData: any[] = [];
@@ -79,9 +82,7 @@ export class OrgMenuItemsComponent implements OnInit {
   async getChartData() {
     this.searchObj.orgId = this.orgAdmin?.orgDetails?._id;
     try {
-      let data = await this.apiMainService.getMenuItemsChartData(
-        this.searchObj
-      );
+      let data = await this.apiMainService.getChartData(this.searchObj);
 
       this.initialData = data;
 
