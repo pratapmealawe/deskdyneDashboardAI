@@ -71,7 +71,14 @@ export class OrgEmployeeListComponent implements OnInit {
 
   async saveEmployee() {
     console.log(this.employeeObj);
-
+    console.log(this.orgDetails);
+    let cafedetails = this.orgDetails.cafeteriaList.find((cafe:any)=>{
+      return cafe._id==this.employeeObj.cafeteria_id;
+    });
+    console.log(cafedetails);
+    this.employeeObj.cafeteria_id=cafedetails.cafeteria_id;
+    this.employeeObj.cafeteria_name = cafedetails.cafeteria_name;
+    
     try {
       let res = await this.apiMainService.employeeAdd(this.employeeObj);
     } catch (error) {

@@ -60,8 +60,6 @@ export class HeaderComponent implements OnInit {
       children: [
         { name: 'Outlet Current Order', route: 'currentOrder', showChild: true },
         { name: 'Outlet Search Order', route: 'searchOrder', showChild: true },
-        { name: 'Current Order', route: 'current_order', showChild: true},
-        { name: 'Past Order', route: 'past_order', showChild: true}
       ],
     },
     {
