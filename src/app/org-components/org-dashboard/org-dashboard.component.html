@@ -112,7 +112,7 @@
   <!-- Two Larger Side-by-Side Cards -->
   <div class="row mt-4">
     <div class="col-md-6">
-      <div class="card shadow border-0 rounded-lg card-hover">
+      <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
         <highcharts-chart
           *ngIf="initialOrdersData.length > 0"
           [Highcharts]="Highcharts"
@@ -131,9 +131,22 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="card p-4 shadow border-0 rounded-lg card-hover">
-        <h5 class="fw-bold">Large Card 2</h5>
-        <p class="text-muted">More detailed content can be placed here.</p>
+      <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
+        <highcharts-chart
+          *ngIf="initialStatusData.length > 0"
+          [Highcharts]="Highcharts"
+          [options]="chartOptionsPie"
+          [update]="updateStatusFlag"
+          [oneToOne]="oneToOneStatusFlag"
+          style="width: 100%; height: 400px; display: block"
+        >
+        </highcharts-chart>
+
+        <div
+          class="h-100 d-flex justify-content-center align-items-center pt-2"
+        >
+          <p *ngIf="initialStatusData.length <= 0">No Data Found</p>
+        </div>
       </div>
     </div>
   </div>
