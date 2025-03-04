@@ -1,0 +1,119 @@
+<header class="">
+  <div class="container py-2">
+    <img
+      src="assets/images/deskdyneLogo.png"
+      width="150"
+      height="70"
+      class="d-inline-block align-top"
+      alt="Deskdyne Logo"
+    />
+  </div>
+</header>
+
+<div class="container-fluid pb-3" style="padding-top: 7rem">
+  <div
+    style="width: fit-content"
+    class="bg-light rounded-3 py-3 px-5 mx-auto d-flex align-items-center"
+  >
+    <h4 *ngIf="paramsObj.cafeName" class="text-center mb-0">
+      {{ paramsObj.cafeName }} -&nbsp;
+    </h4>
+    <h4 class="text-center mb-0">
+      {{ todayDate | date : "dd/MM/yyyy" }}
+    </h4>
+  </div>
+
+  <div *ngIf="!allParamsPresent" class="row mb-4 mt-5 p-3 bg-light rounded">
+    <!-- Organization Selection -->
+    <div class="col-12 col-md-4">
+      <label for="organization" class="labelText d-block">Organization</label>
+      <select
+        class="form-select"
+        [(ngModel)]="filterObj.orgId"
+        (change)="setOrgDetails()"
+      >
+        <option selected disabled value="">Select Organization</option>
+        <option *ngFor="let option of orglist" [value]="option._id">
+          {{ option.organization_name }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Cafeteria Selection -->
+    <div class="col-12 col-md-4">
+      <label for="cafeteria" class="labelText d-block">Cafeteria</label>
+      <select
+        [disabled]="!orgDetails"
+        class="form-select"
+        [(ngModel)]="filterObj.cafeId"
+      >
+        <option selected disabled value="">Select Cafeteria</option>
+        <option
+          *ngFor="let option of orgDetails?.cafeteriaList"
+          [value]="option._id"
+        >
+          {{ option.cafeteria_name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="col-12 col-md-4 d-flex align-items-end">
+      <button (click)="saveOrgDetails()" class="btn btn-primary">Submit</button>
+    </div>
+  </div>
+  <div *ngIf="allParamsPresent" class="row mt-4">
+    <div class="col-lg-6">
+      <h2 class="text-center">Placed Orders</h2>
+      <table class="table table-striped mt-4">
+        <tbody>
+          <tr
+            *ngFor="
+              let order of placedOrdersList | listFilter : startIndex : endIndex
+            "
+            class="mb-3"
+          >
+            <td class="w-25">
+              <h6 class="mb-0">{{ order.orderNo }}</h6>
+            </td>
+            <td class="d-flex align-items-center flex-wrap">
+              <ng-container
+                *ngFor="let item of order.itemList; let last = last"
+              >
+                <h6 class="mb-0">
+                  {{ item.itemName }}<span *ngIf="!last">,&nbsp;</span>
+                </h6>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-lg-6">
+      <h2 class="text-center">Completed Orders</h2>
+      <table class="table table-striped mt-4">
+        <tbody>
+          <tr
+            *ngFor="
+              let order of completedOrdersList
+                | listFilter : startIndexComp : endIndexComp
+            "
+            class=""
+          >
+            <td class="w-25">
+              <h6 class="mb-0">{{ order.orderNo }}</h6>
+            </td>
+            <td class="d-flex align-items-center flex-wrap">
+              <ng-container
+                *ngFor="let item of order.itemList; let last = last"
+              >
+                <h6 class="mb-0">
+                  {{ item.itemName }}<span *ngIf="!last">,&nbsp;</span>
+                </h6>
+              </ng-container>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

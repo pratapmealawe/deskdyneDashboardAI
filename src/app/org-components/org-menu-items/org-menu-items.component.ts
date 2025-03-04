@@ -33,8 +33,9 @@ export class OrgMenuItemsComponent implements OnInit {
       text: '',
     },
     tooltip: {
-      valueSuffix: '%',
-      valueDecimals: 1,
+      // valueSuffix: '%',
+      // valueDecimals: 1,
+      pointFormat: '<small>Count</small>: <b>{point.count}</b>',
     },
     plotOptions: {
       pie: {
@@ -89,6 +90,7 @@ export class OrgMenuItemsComponent implements OnInit {
       const formattedData = data.map((item: any) => ({
         name: item.itemName,
         y: item.percentage,
+        count: item.totalCount,
       }));
 
       this.chartOptions = {

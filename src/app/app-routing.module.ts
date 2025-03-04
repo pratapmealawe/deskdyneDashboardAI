@@ -10,6 +10,11 @@ const routes: Routes = [
       import('./login/login.module').then((m) => m.LoginModule),
   },
   {
+    path: 'guest',
+    loadChildren: () =>
+      import('./guest/guest.module').then((m) => m.GuestModule),
+  },
+  {
     path: 'home',
     loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
   },
@@ -155,9 +160,9 @@ const routes: Routes = [
   {
     path: 'app-feedbacks',
     loadChildren: () =>
-      import('./common-components/suggessions-feedbacks/suggessions-feedbacks.module').then(
-        (m) => m.SuggessionsFeedbacksModule
-      ),
+      import(
+        './common-components/suggessions-feedbacks/suggessions-feedbacks.module'
+      ).then((m) => m.SuggessionsFeedbacksModule),
   },
   {
     path: 'excel-export',
@@ -251,20 +256,34 @@ const routes: Routes = [
       ),
   },
   {
-     path: 'food_item',
-     loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
+    path: 'food_item',
+    loadChildren: () =>
+      import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(
+        (m) => m.B2bFoodItemModule
+      ),
+  },
   //deskdine routes
   {
     path: 'current_order',
-    loadChildren: () => import('./deskdyne-components/b2b-current-orders/b2b-current-orders.module').then(m => m.B2bCurrentOrdersModule) },
-    {
-      path: 'past_order',
-      loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule)
-     },
-     {
-      path: 'viewEnquiries',
-      loadChildren: () => import('./deskdyne-components/org-registry/org-registry.module').then(m => m.OrgRegistryModule)
-     },
+    loadChildren: () =>
+      import(
+        './deskdyne-components/b2b-current-orders/b2b-current-orders.module'
+      ).then((m) => m.B2bCurrentOrdersModule),
+  },
+  {
+    path: 'past_order',
+    loadChildren: () =>
+      import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(
+        (m) => m.B2bFoodItemModule
+      ),
+  },
+  {
+    path: 'viewEnquiries',
+    loadChildren: () =>
+      import('./deskdyne-components/org-registry/org-registry.module').then(
+        (m) => m.OrgRegistryModule
+      ),
+  },
   {
     path: '',
     redirectTo: 'login',
