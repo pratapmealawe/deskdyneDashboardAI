@@ -186,6 +186,18 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getEmployeeListByOrgId`,
         method: 'GET',
       },
+      getDayRangeBasedAuditLogs: {
+        url: `${this.baseUrl}/utility/getDayRangeBasedAuditLogs`,
+        method: 'GET',
+      },
+      getTimeBasedAuditLogs: {
+        url: `${this.baseUrl}/utility/getTimeBasedAuditLogs`,
+        method: 'GET',
+      },
+      getLineBasedAuditLogs: {
+        url: `${this.baseUrl}/utility/getLineBasedAuditLogs`,
+        method: 'GET',
+      },
       employeeAdd: {
         url: `${this.baseUrl}/api/employeeAdd`,
         method: 'POST',
