@@ -1,4 +1,4 @@
-<app-header class="header-styles" *ngIf="currentRoute != '/login'"></app-header>
+<app-header class="header-styles" *ngIf="!isShowHeader"></app-header>
 <router-outlet></router-outlet>
 <app-main-loader></app-main-loader>
 <app-confirmation-modal></app-confirmation-modal>

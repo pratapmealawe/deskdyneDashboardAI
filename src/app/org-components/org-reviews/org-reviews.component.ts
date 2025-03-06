@@ -28,7 +28,6 @@ export class OrgReviewsComponent implements OnInit {
   filterObj: filter = {
     orgId: '',
     cafeId: '',
-
     fromDate: '',
     toDate: '',
     page: 1,

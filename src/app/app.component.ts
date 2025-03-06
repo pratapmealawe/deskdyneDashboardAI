@@ -1,36 +1,47 @@
 import { Component } from '@angular/core';
-import { NavigationEnd, NavigationError, NavigationStart, Router } from '@angular/router';
+import {
+  NavigationEnd,
+  NavigationError,
+  NavigationStart,
+  Router,
+} from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { WebNotificationService } from 'src/service/webNotification.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-
 export class AppComponent {
   title = 'dashboard-admin';
-  currentRoute:any
-  constructor(private webNotificationService: WebNotificationService, private router:Router, private runtimeStorageService:RuntimeStorageService){
+  currentRoute: any;
+  isShowHeader: boolean = false;
+  private unsubscribe$ = new Subject<void>();
+
+  constructor(
+    private webNotificationService: WebNotificationService,
+    private router: Router,
+    private runtimeStorageService: RuntimeStorageService
+  ) {
     this.webNotificationService.requestPermission();
-    this.router.events.subscribe((event: any) => {
-      if (event instanceof NavigationStart) {
-      }
-
-      if (event instanceof NavigationEnd) {
-        if(event.urlAfterRedirects){
-          this.currentRoute = event.urlAfterRedirects;
-          console.log('redirected route');
+    this.router.events
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe((event: any) => {
+        if (event instanceof NavigationEnd) {
+          this.currentRoute = event.urlAfterRedirects || event.url;
+          this.isShowHeader =
+            this.currentRoute.startsWith('/login') ||
+            this.currentRoute.startsWith('/guest');
+          // console.log(this.isShowHeader);
+        } else if (event instanceof NavigationError) {
+          console.error('Navigation Error:', event.error);
         }
-        else{
-          this.currentRoute = event.url;
-          console.log(this.currentRoute,'current route')
-        }
-      }
+      });
+  }
 
-      if (event instanceof NavigationError) {
-        console.log(event.error);
-      }
-    })
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 }

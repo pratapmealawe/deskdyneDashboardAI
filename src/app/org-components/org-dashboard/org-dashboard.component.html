@@ -1,5 +1,23 @@
-<div class="container py-3">
-  <h3>Dashboard</h3>
+<div class="container py-3 dashboardContainer">
+  <!-- <h3>Dashboard</h3> -->
+  <mat-form-field appearance="outline">
+    <mat-label>Enter a date range</mat-label>
+    <mat-date-range-input
+      [formGroup]="dateGroup"
+      [rangePicker]="picker"
+      [max]="maxDate"
+    >
+      <input matStartDate placeholder="Start date" formControlName="start" />
+      <input
+        matEndDate
+        placeholder="End date"
+        (dateChange)="changeDate()"
+        formControlName="end"
+      />
+    </mat-date-range-input>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-date-range-picker #picker> </mat-date-range-picker>
+  </mat-form-field>
 
   <!-- Four Statistic Cards -->
   <div class="row mt-4">
@@ -7,7 +25,7 @@
       <div class="card p-3 shadow border-0 rounded-lg card-hover">
         <div class="d-flex justify-content-between">
           <div>
-            <span class="text-secondary d-block">Total Orders</span>
+            <span class="text-secondary d-block">Orders Count</span>
             <h5 class="fw-bold">{{ dashboardData.totalOrders }}</h5>
           </div>
           <div
@@ -55,7 +73,7 @@
       <div class="card p-3 shadow border-0 rounded-lg card-hover">
         <div class="d-flex justify-content-between">
           <div>
-            <span class="text-secondary d-block">Total Employees</span>
+            <span class="text-secondary d-block">Perks Eligible Employees</span>
             <h5 class="fw-bold">{{ dashboardData.totalEmployee }}</h5>
           </div>
           <div

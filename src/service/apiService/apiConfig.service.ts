@@ -447,6 +447,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getChartData`,
         method: 'POST',
       },
+      getCurrentOutletOrdersListForGuest: {
+        url: `${this.baseUrl}/api/getCurrentOutletOrdersListForGuest`,
+        method: 'GET',
+      },
     };
   }
 }

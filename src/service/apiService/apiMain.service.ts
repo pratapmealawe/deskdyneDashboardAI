@@ -1081,4 +1081,12 @@ export class ApiMainService {
       method: urlObj.method,
     });
   }
+  getCurrentOutletOrdersListForGuest() {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getCurrentOutletOrdersListForGuest;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url,
+      method: urlObj.method,
+    });
+  }
 }
