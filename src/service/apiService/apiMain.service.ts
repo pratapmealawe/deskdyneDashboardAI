@@ -490,6 +490,28 @@ export class ApiMainService {
     });
   }
 
+  getDayRangeBasedAuditLogs(startDate: any, endDate: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getDayRangeBasedAuditLogs;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${startDate}` + `/${endDate}`,
+      method: urlObj.method,
+    });
+  }
+  getTimeBasedAuditLogs(hour: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTimeBasedAuditLogs;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${hour}`,
+      method: urlObj.method,
+    });
+  }
+  getLineBasedAuditLogs(lineLimit: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getLineBasedAuditLogs;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${lineLimit}`,
+      method: urlObj.method,
+    });
+  }
+
   getEmployeeListByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeListByOrgId;
     return this.apiHttpService.REQUEST({
