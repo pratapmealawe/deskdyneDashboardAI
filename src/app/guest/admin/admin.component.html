@@ -65,7 +65,7 @@
     <div class="col-lg-6">
       <h2 class="text-center">Placed Orders</h2>
       <table class="table table-striped mt-4">
-        <tbody>
+        <tbody *ngIf="placedOrdersList.length > 0">
           <tr
             *ngFor="
               let order of placedOrdersList | listFilter : startIndex : endIndex
@@ -86,12 +86,19 @@
             </td>
           </tr>
         </tbody>
+        <tbody *ngIf="placedOrdersList.length <= 0">
+          <tr class="mb-3">
+            <td class="text-center">
+              <h6 class="mb-0">No Placed Orders</h6>
+            </td>
+          </tr>
+        </tbody>
       </table>
     </div>
     <div class="col-lg-6">
       <h2 class="text-center">Completed Orders</h2>
       <table class="table table-striped mt-4">
-        <tbody>
+        <tbody *ngIf="completedOrdersList.length > 0">
           <tr
             *ngFor="
               let order of completedOrdersList
@@ -110,6 +117,13 @@
                   {{ item.itemName }}<span *ngIf="!last">,&nbsp;</span>
                 </h6>
               </ng-container>
+            </td>
+          </tr>
+        </tbody>
+        <tbody *ngIf="completedOrdersList.length <= 0">
+          <tr class="mb-3">
+            <td class="text-center">
+              <h6 class="mb-0">No Completed Orders</h6>
             </td>
           </tr>
         </tbody>
