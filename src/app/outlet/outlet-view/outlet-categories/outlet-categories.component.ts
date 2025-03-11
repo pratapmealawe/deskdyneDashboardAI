@@ -1,37 +1,45 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-outlet-categories',
   templateUrl: './outlet-categories.component.html',
-  styleUrls: ['./outlet-categories.component.scss']
+  styleUrls: ['./outlet-categories.component.scss'],
 })
 export class OutletCategoriesComponent implements OnInit {
-  @Input() outletObj:any;
+  @Input() outletObj: any;
   categoryForm: any;
+  btnPolicy: any;
 
-  constructor(private formBuilder: FormBuilder, private apiMainService:ApiMainService) { }
+  constructor(
+    private formBuilder: FormBuilder,
+    private apiMainService: ApiMainService,
+    private policyService: PolicyService
+  ) {}
 
   ngOnInit() {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.categoryForm = this.formBuilder.group({
-      categories: this.formBuilder.array([this.createCategory()])
+      categories: this.formBuilder.array([this.createCategory()]),
     });
-    if(this.outletObj.category && this.outletObj.category.length>0){
-      this.patchFormValues(this.outletObj.category)
+    if (this.outletObj.category && this.outletObj.category.length > 0) {
+      this.patchFormValues(this.outletObj.category);
     }
-    console.log(this.outletObj)
   }
 
-  patchFormValues(data:any){
-    console.log('data',data)
-    const categoriesFormArray = this.categoryForm.get('categories') as FormArray;
+  patchFormValues(data: any) {
+    const categoriesFormArray = this.categoryForm.get(
+      'categories'
+    ) as FormArray;
     categoriesFormArray.clear();
 
-    data.forEach((category:any) => {
+    data.forEach((category: any) => {
       const categoryFormGroup = this.formBuilder.group({
         name: category.name,
-        subCategories: this.formBuilder.array(category.subCategories || [])
+        subCategories: this.formBuilder.array(category.subCategories || []),
       });
       categoriesFormArray.push(categoryFormGroup);
     });
@@ -40,7 +48,7 @@ export class OutletCategoriesComponent implements OnInit {
   createCategory(): FormGroup {
     return this.formBuilder.group({
       name: '',
-      subCategories: this.formBuilder.array([])
+      subCategories: this.formBuilder.array([]),
     });
   }
 
@@ -66,11 +74,10 @@ export class OutletCategoriesComponent implements OnInit {
 
   async onSubmit() {
     try {
-      const obj = {...this.outletObj,...this.categoryForm.value};
+      const obj = { ...this.outletObj, ...this.categoryForm.value };
       await this.apiMainService.updateCategories(obj);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
-
 }

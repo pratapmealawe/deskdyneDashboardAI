@@ -1,48 +1,62 @@
 <div class="goback">
-    <button class="btn btn-primary btn-sm" (click)="goBack()">Back</button>
+  <button class="btn btn-primary btn-sm" (click)="goBack()">Back</button>
 </div>
 <div>
-    <div class="row">
-        <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of orgViewList"
-            [ngClass]="{tileSelected: selectedTab === view.path}" (click)="gotToTab(view.path)">
-            <div class="tileLabel header4 countTile">{{view.name}}</div>
-        </div>
+  <div class="row">
+    <div
+      class="col-4 col-md-3 col-lg-2 bgpadding1"
+      *ngFor="let view of orgViewList"
+      [ngClass]="{ tileSelected: selectedTab === view.path }"
+      (click)="gotToTab(view.path)"
+    >
+      <div class="tileLabel header4 countTile">{{ view.name }}</div>
     </div>
+  </div>
 </div>
-<div *ngIf="selectedTab==='orgDetails'">
-    <app-org-details [orgObj]="organization"></app-org-details>
+<div *ngIf="selectedTab === 'orgDetails'">
+  <app-org-details [orgObj]="organization"></app-org-details>
 </div>
-<div *ngIf="selectedTab==='guestEmployeeList'">
-    <app-guest-employee-list [orgObj]="organization"></app-guest-employee-list>
-</div> 
- <div *ngIf="selectedTab==='bulkMealsMenu'">
-    <app-org-bulk-menu [orgObj]="organization"></app-org-bulk-menu>
+<div *ngIf="selectedTab === 'guestEmployeeList'">
+  <app-guest-employee-list [orgObj]="organization"></app-guest-employee-list>
 </div>
-<div *ngIf="selectedTab==='individualMealsMenu'">
-    <app-org-individual-menu [orgObj]="organization"></app-org-individual-menu>
+<div *ngIf="selectedTab === 'bulkMealsMenu'">
+  <app-org-bulk-menu [orgObj]="organization"></app-org-bulk-menu>
 </div>
-<div *ngIf="selectedTab==='bulkSnacksMenu'">
-    <app-org-bulk-snackbox-menu [orgObj]="organization"></app-org-bulk-snackbox-menu>
+<div *ngIf="selectedTab === 'individualMealsMenu'">
+  <app-org-individual-menu [orgObj]="organization"></app-org-individual-menu>
 </div>
-<div *ngIf="selectedTab==='individualSnacksMenu'">
-    <app-org-individual-snackbox-menu [orgObj]="organization"></app-org-individual-snackbox-menu>
+<div *ngIf="selectedTab === 'bulkSnacksMenu'">
+  <app-org-bulk-snackbox-menu
+    [orgObj]="organization"
+  ></app-org-bulk-snackbox-menu>
 </div>
-<div *ngIf="selectedTab==='employeeList'">
-    <app-employee-list [orgObj]="organization"></app-employee-list>
-</div> 
-<div *ngIf="selectedTab==='predefinedSnackBoxMenu'">
-    <app-org-predefined-snackbox-menu [orgObj]="organization"></app-org-predefined-snackbox-menu>
-</div> 
-<div *ngIf="selectedTab==='customizedSnackBoxMenu'">
-    <app-org-customized-snackbox-menu [orgObj]="organization"></app-org-customized-snackbox-menu>
-</div> 
-<div *ngIf="selectedTab==='mealAweOutlet'">
-    <app-meal-awe-outlet [orgObj]="organization"></app-meal-awe-outlet>
-</div> 
+<div *ngIf="selectedTab === 'individualSnacksMenu'">
+  <app-org-individual-snackbox-menu
+    [orgObj]="organization"
+  ></app-org-individual-snackbox-menu>
+</div>
+<div *ngIf="selectedTab === 'employeeList'">
+  <app-employee-list [orgObj]="organization"></app-employee-list>
+</div>
+<div *ngIf="selectedTab === 'predefinedSnackBoxMenu'">
+  <app-org-predefined-snackbox-menu
+    [orgObj]="organization"
+  ></app-org-predefined-snackbox-menu>
+</div>
+<div *ngIf="selectedTab === 'customizedSnackBoxMenu'">
+  <app-org-customized-snackbox-menu
+    [orgObj]="organization"
+  ></app-org-customized-snackbox-menu>
+</div>
+<div *ngIf="selectedTab === 'mealAweOutlet'">
+  <app-meal-awe-outlet [orgObj]="organization"></app-meal-awe-outlet>
+</div>
 
-<div *ngIf="selectedTab==='b2bWeeklyMenu'">
-    <app-b2b-weekly-menu [orgObj]="organization"></app-b2b-weekly-menu>
+<div *ngIf="selectedTab === 'b2bWeeklyMenu'">
+  <app-b2b-weekly-menu [orgObj]="organization"></app-b2b-weekly-menu>
 </div>
-<div *ngIf="selectedTab==='organization-compliance'">
-    <app-organization-compliance [OrgObj]="organization"></app-organization-compliance>
-</div> 
+<div *ngIf="selectedTab === 'organization-compliance'">
+  <app-organization-compliance
+    [OrgObj]="organization"
+  ></app-organization-compliance>
+</div>

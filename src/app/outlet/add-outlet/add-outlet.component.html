@@ -1,106 +1,185 @@
 <div class="bgsidepadding1">
-    <div (click)="back()" class="pointer">BACK</div>
-    <div [formGroup]="form">
-        <div class="row">
-            <div class="col-12 col-md-2 col-lg-2 image-div">
-                <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
-                    (change)="handleFileInput($event)">
-                <img (click)="f.click()" [src]="imageUrl?imageUrl:'assets/images/dummyUpload.png'" class="uploadedImage" />
-                <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="labelText">Outlet Name</div>
-                <input type="text" class="form-control" placeholder="Outlet Name" formControlName="outletName">
-                <div class="error-text" *ngIf="form.controls.outletName.errors?.required && showError">*Outlet name
-                    is required</div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="labelText">Outlet Type</div>
-                <select class="custom-select" name="role" formControlName="outletType">
-                    <option disabled selected value> -- select type -- </option>
-                    <option value="Veg">Veg</option>
-                    <option value="NonVeg">Non Veg</option>
-                </select>
-                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="labelText">Outlet Description</div>
-                <input type="text" class="form-control" placeholder="Org Description" formControlName="outletDescription">
-                <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">*Outlet description
-                    is required</div>
-            </div>
-            <div class="col-12 col-md-6 col-lg-4">
-                <input class="me-1" type="checkbox" id="isSpicy" formControlName="outletOpened">
-                <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
-            </div>
-        </div>  
-        <div class="row" *ngIf="!seletedCafetria">
-            <div><button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">Select Org</button></div>
+  <div (click)="back()" class="pointer">BACK</div>
+  <div [formGroup]="form">
+    <div class="row">
+      <div class="col-12 col-md-2 col-lg-2 image-div">
+        <input
+          #f
+          type="file"
+          class="uploadInput"
+          accept="image/*"
+          capture="camera"
+          (change)="handleFileInput($event)"
+        />
+        <img
+          (click)="f.click()"
+          [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
+          class="uploadedImage"
+        />
+        <div class="uploadIcon" (click)="f.click()">
+          Upload <i class="bi bi-upload"></i>
         </div>
-      
-            <!-- <div>{{seletedCafetria.organizationDetails.organization_name}}</div> -->
-            <div class="cardDesign" *ngIf="seletedCafetria">
-                <div class="row card-wrapper" >
-                    <div class="col-lg-12 col-md-10 col-9">
-                        <div class="row" >
-                            <div class="col-12 col-md-4 col-lg-12">
-                                <div class="row" >    
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Organization Name</div>
-                                        <div class="labelData">{{seletedCafetria.organizationDetails.organization_name}}</div>
-                                    </div>
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Organization City</div>
-                                        <div class="labelData">{{seletedCafetria.organizationDetails.city}}</div>
-                                    </div>
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Cafeteria Name</div>
-                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
-                                    </div>
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Cafeteria Name</div>
-                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
-                                    </div>
-                                    <!-- <div class="col-6 col-md-5 col-lg-3">   
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="labelText">Outlet Name</div>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Outlet Name"
+          formControlName="outletName"
+        />
+        <div
+          class="error-text"
+          *ngIf="form.controls.outletName.errors?.required && showError"
+        >
+          *Outlet name is required
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="labelText">Outlet Type</div>
+        <select class="custom-select" name="role" formControlName="outletType">
+          <option disabled selected value>-- select type --</option>
+          <option value="Veg">Veg</option>
+          <option value="NonVeg">Non Veg</option>
+        </select>
+        <div
+          class="error-text"
+          *ngIf="form.controls.outletType.errors?.required && showError"
+        >
+          *Outlet type is required
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="labelText">Outlet Description</div>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Org Description"
+          formControlName="outletDescription"
+        />
+        <div
+          class="error-text"
+          *ngIf="form.controls.outletDescription.errors?.required && showError"
+        >
+          *Outlet description is required
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <input
+          class="me-1"
+          type="checkbox"
+          id="isSpicy"
+          formControlName="outletOpened"
+        />
+        <label class="labelText form-label" for="outletOpened"
+          >Outlet Opened</label
+        >
+      </div>
+    </div>
+    <div class="row" *ngIf="!seletedCafetria">
+      <div>
+        <button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">
+          Select Org
+        </button>
+      </div>
+    </div>
+
+    <!-- <div>{{seletedCafetria.organizationDetails.organization_name}}</div> -->
+    <div class="cardDesign" *ngIf="seletedCafetria">
+      <div class="row card-wrapper">
+        <div class="col-lg-12 col-md-10 col-9">
+          <div class="row">
+            <div class="col-12 col-md-4 col-lg-12">
+              <div class="row">
+                <div class="col-6 col-md-5 col-lg-3">
+                  <div class="labelText">Organization Name</div>
+                  <div class="labelData">
+                    {{ seletedCafetria.organizationDetails.organization_name }}
+                  </div>
+                </div>
+                <div class="col-6 col-md-5 col-lg-3">
+                  <div class="labelText">Organization City</div>
+                  <div class="labelData">
+                    {{ seletedCafetria.organizationDetails.city }}
+                  </div>
+                </div>
+                <div class="col-6 col-md-5 col-lg-3">
+                  <div class="labelText">Cafeteria Name</div>
+                  <div class="labelData">
+                    {{ seletedCafetria.cafeteriaDetails.cafeteria_name }}
+                  </div>
+                </div>
+                <div class="col-6 col-md-5 col-lg-3">
+                  <div class="labelText">Cafeteria Name</div>
+                  <div class="labelData">
+                    {{ seletedCafetria.cafeteriaDetails.cafeteria_name }}
+                  </div>
+                </div>
+                <!-- <div class="col-6 col-md-5 col-lg-3">   
                                         <div class="labelText">Cafeteria Location</div>
                                         <div class="labelData">{{seletedCafetria.cafeteriaDetails. cafeteria_location}}</div>
                                     </div> -->
-                                   
-                                   </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-             </div>
+              </div>
+            </div>
           </div>
-    <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
-    <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div
+    class="btn btn-primary btn-sm mt-2"
+    (click)="submit('update')"
+    *ngIf="showUpdate && btnPolicy?.editOutlet"
+  >
+    Update
+  </div>
+  <div
+    class="btn btn-primary btn-sm mt-2"
+    (click)="submit()"
+    *ngIf="!showUpdate && btnPolicy?.addOutlet"
+  >
+    Submit
+  </div>
 </div>
 <ng-template #contentOrg let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Select Org</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <ul class="list-group">
-            <li class="list-group-item" *ngFor="let org of formattedOrgList">
-               
-                    <div class="col-12 col-md-12 col-lg-12">
-                        <input type="radio" [(ngModel)]="selectedOrgCafeteria" name="selectOrg" [value]="org.key">
-                       {{org.key}}
-                    </div>
-                    <!-- <div class="col-sm-12 col-md-10 col-lg-6">
+  <div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Select Org</h4>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('cancel')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let org of formattedOrgList">
+        <div class="col-12 col-md-12 col-lg-12">
+          <input
+            type="radio"
+            [(ngModel)]="selectedOrgCafeteria"
+            name="selectOrg"
+            [value]="org.key"
+          />
+          {{ org.key }}
+        </div>
+        <!-- <div class="col-sm-12 col-md-10 col-lg-6">
                         {{org.organization_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
                     </div> -->
-       
-            </li>
-        </ul>
+      </li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <div class="inline bgpadding1">
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="modal.close('add')"
+      >
+        Add
+      </button>
     </div>
-    <div class="modal-footer">
-        <div class="inline bgpadding1">
-            <button type="button" class="btn btn-primary" (click)="modal.close('add')">Add</button>
-        </div>
-    </div>
+  </div>
 </ng-template>

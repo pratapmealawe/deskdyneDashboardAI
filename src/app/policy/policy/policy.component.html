@@ -1,21 +1,31 @@
 <div class="container-fluid mt-2 policy-wrapper">
-    <div class="row">
-        <div class="mt-2" *ngIf="policyArr && policyArr.length > 0">
-            <div *ngFor="let policy of policyArr" class="cardDesign">
-                <div class="row">
-                    <div class="col-4 col-md-4 col-lg-4 labelData">{{policy.policy_name}}</div>
-                    <div class="col-5 col-md-5 col-lg-4 labelData">{{policy.policy_description}}</div>
-                    <div class="col-3 col-md-3 col-lg-4">
-                        <div class="edit alignRight">
-                            <i class="bi bi-pencil-square bgsidepadding5 pointer" (click)="editPolicy(policy._id)"></i>
-                            <i class="bi bi-trash-fill  pointer" (click)="confirmDelete(policy._id)"></i>
-                        </div>
-                    </div>
-                </div>
+  <div class="row">
+    <div class="mt-2" *ngIf="policyArr && policyArr.length > 0">
+      <div *ngFor="let policy of policyArr" class="cardDesign">
+        <div class="row">
+          <div class="col-4 col-md-4 col-lg-4 labelData">
+            {{ policy.policy_name }}
+          </div>
+          <div class="col-5 col-md-5 col-lg-4 labelData">
+            {{ policy.policy_description }}
+          </div>
+          <div class="col-3 col-md-3 col-lg-4">
+            <div class="edit alignRight">
+              <i
+                class="bi bi-pencil-square bgsidepadding5 pointer"
+                *ngIf="btnPolicy?.editPolicy"
+                (click)="editPolicy(policy._id)"
+              ></i>
+              <i
+                *ngIf="btnPolicy?.deletePolicy"
+                class="bi bi-trash-fill pointer"
+                (click)="confirmDelete(policy._id)"
+              ></i>
             </div>
+          </div>
         </div>
-        <div *ngIf="noRecords">
-            No Records Found
-        </div>
+      </div>
     </div>
+    <div *ngIf="noRecords">No Records Found</div>
+  </div>
 </div>

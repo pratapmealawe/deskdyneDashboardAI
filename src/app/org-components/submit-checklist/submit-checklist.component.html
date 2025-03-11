@@ -1,10 +1,33 @@
 <div class="container">
-    <div class="row cardDesign" *ngFor="let question of allChecklistQuestions">
-        <div class="col-lg-8 col-md-12 col-sm-12"> <div class="labelText">Question:</div>{{question.checklistQuestion}}</div>
-        <div class="col-lg-1 col-md-2  col-sm-12"><div class="labelText">Selected:</div><input  type="checkbox" [value]="question.selected"></div>
-        <div class="col-lg-3 col-md-10 col-sm-12"><div class="labelText">Comment:</div><input type="text" [(ngModel)]="question.comment"></div>
+  <div class="row cardDesign" *ngFor="let question of allChecklistQuestions">
+    <div class="col-lg-8 col-md-12 col-sm-12">
+      <div class="labelText">Question:</div>
+      {{ question.checklistQuestion }}
     </div>
-    <button class="btn btn-primary btn-sm me-1" (click)="submitChecklist()" *ngIf="!editMode">Save</button>
-    <button class="btn btn-success btn-sm me-1" (click)="updateChecklist()" *ngIf="editMode">Update</button>
-    <button class="btn btn-danger btn-sm me-1" (click)="cancelChecklistSubmit()">Cancel</button>
+    <div class="col-lg-1 col-md-2 col-sm-12">
+      <div class="labelText">Selected:</div>
+      <input type="checkbox" [value]="question.selected" />
+    </div>
+    <div class="col-lg-3 col-md-10 col-sm-12">
+      <div class="labelText">Comment:</div>
+      <input type="text" [(ngModel)]="question.comment" />
+    </div>
+  </div>
+  <button
+    class="btn btn-primary btn-sm me-1"
+    (click)="submitChecklist()"
+    *ngIf="!editMode && btnPolicy?.addChecklist"
+  >
+    Save
+  </button>
+  <button
+    class="btn btn-success btn-sm me-1"
+    (click)="updateChecklist()"
+    *ngIf="editMode && btnPolicy?.editChecklist"
+  >
+    Update
+  </button>
+  <button class="btn btn-danger btn-sm me-1" (click)="cancelChecklistSubmit()">
+    Cancel
+  </button>
 </div>

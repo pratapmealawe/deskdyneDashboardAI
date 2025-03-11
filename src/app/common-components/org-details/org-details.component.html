@@ -1,32 +1,37 @@
-<span class="right btn-danger btn-sm pointer right" (click)="editOrg()">EDIT</span>
+<span
+  class="right btn-danger btn-sm pointer right"
+  *ngIf="btnPolicy?.editOrganization"
+  (click)="editOrg()"
+  >EDIT</span
+>
 <div class="row">
-    <div class="col-12 col-md-4 col-lg-12">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Org Name</div>
-                <div class="labelData">{{orgObj.organization_name}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Location</div>
-                <div class="labelData">{{orgObj.location}}</div>
-            </div>
-        </div>
+  <div class="col-12 col-md-4 col-lg-12">
+    <div class="row">
+      <div class="col-6 col-md-5 col-lg-4">
+        <div class="labelText">Org Name</div>
+        <div class="labelData">{{ orgObj.organization_name }}</div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Location</div>
+        <div class="labelData">{{ orgObj.location }}</div>
+      </div>
     </div>
+  </div>
 
-    <div class="col-12 col-md-4 col-lg-12">
-        <div class="row" *ngFor="let poc of orgObj.poc_details">
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Name</div>
-                <div class="labelData">{{poc.poc_name}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Email</div>
-                <div class="labelData">{{poc.poc_email}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Phone No</div>
-                <div class="labelData">{{poc.poc_phoneNo}}</div>
-            </div>
-        </div>
+  <div class="col-12 col-md-4 col-lg-12">
+    <div class="row" *ngFor="let poc of orgObj.poc_details">
+      <div class="col-6 col-md-5 col-lg-4">
+        <div class="labelText">Name</div>
+        <div class="labelData">{{ poc.poc_name }}</div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Email</div>
+        <div class="labelData">{{ poc.poc_email }}</div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Phone No</div>
+        <div class="labelData">{{ poc.poc_phoneNo }}</div>
+      </div>
     </div>
+  </div>
 </div>

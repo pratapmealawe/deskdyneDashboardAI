@@ -1,21 +1,30 @@
-import { Component, OnInit, Input, ViewChild, Output,EventEmitter } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  ViewChild,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { FormArray, FormBuilder } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-outlet-menu',
   templateUrl: './outlet-menu.component.html',
-  styleUrls: ['./outlet-menu.component.scss']
+  styleUrls: ['./outlet-menu.component.scss'],
 })
 export class OutletMenuComponent implements OnInit {
   @Input() outletObj: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild("content") content: any;
-  @ViewChild("comboContent") comboContent: any;
+  @ViewChild('content') content: any;
+  @ViewChild('comboContent') comboContent: any;
   categorySelected: boolean = false;
   form: any;
   selectedCategory: any;
@@ -23,38 +32,46 @@ export class OutletMenuComponent implements OnInit {
   uploadedImageFile: any;
   imageUrl: any;
   displayImgUrl = environment.imageUrl;
-  showCard:any = false;
-  menuList:any = [];
+  showCard: any = false;
+  menuList: any = [];
   menuIndex: any = 0;
-  showUpdateBtn:any = false;
-  imageReplaced:any = false;
-  noImages:boolean = false;
-  foodItem:any;
+  showUpdateBtn: any = false;
+  imageReplaced: any = false;
+  noImages: boolean = false;
+  foodItem: any;
+  btnPolicy: any;
 
-  constructor(private fb: FormBuilder, private modalService: NgbModal, private apiMainService: ApiMainService,private confirmationModalService: ConfirmationModalService) { }
+  constructor(
+    private fb: FormBuilder,
+    private modalService: NgbModal,
+    private apiMainService: ApiMainService,
+    private confirmationModalService: ConfirmationModalService,
+    private policyService: PolicyService
+  ) {}
 
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.init();
     this.createForm();
   }
 
-  init(){
-    if(this.outletObj.menuList && this.outletObj.menuList.length > 0){
+  init() {
+    if (this.outletObj.menuList && this.outletObj.menuList.length > 0) {
       this.showCard = true;
     }
   }
 
-  patchFormValue(item:any) {
+  patchFormValue(item: any) {
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
-      subcidyAmt: item.subcidyAmt? item.subcidyAmt:0,
+      subcidyAmt: item.subcidyAmt ? item.subcidyAmt : 0,
       category: item.category,
       subCategory: item.subCategory,
       itemType: item.itemType,
       isActive: item.isActive,
-      description: item.description
-    })
+      description: item.description,
+    });
   }
 
   createForm() {
@@ -82,7 +99,7 @@ export class OutletMenuComponent implements OnInit {
       // isEnabledInventory:[''],
       // reorderQuantity:[''],
       // availableStock:[''],
-    })
+    });
   }
 
   setCategory(event: any) {
@@ -94,9 +111,9 @@ export class OutletMenuComponent implements OnInit {
   setSubCategoryList() {
     this.outletObj.category.forEach((el: any) => {
       if (el.name === this.selectedCategory) {
-        this.subcategoryList = el.subCategories
+        this.subcategoryList = el.subCategories;
       }
-    })
+    });
   }
 
   handleFileInput($event: any) {
@@ -104,28 +121,32 @@ export class OutletMenuComponent implements OnInit {
       const file: File = $event.target.files[0];
       if (file) {
         const fileName = file.name;
-        console.log(fileName);
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef: NgbModalRef = this.modalService.open(ImageCropperComponent,
+            const modalRef: NgbModalRef = this.modalService.open(
+              ImageCropperComponent,
               {
-                ariaLabelledBy: 'modal-basic-title', size: 'xl', backdrop: 'static',
-                centered: true
-              });
-            modalRef.result.then((result: any) => {
-              console.log('Closed with:', result);
-              if (result && result.croppedImages) {
-                console.log('croppedImages ', result.croppedImages);
-                this.uploadedImageFile = result.croppedImages.file;
-                this.imageUrl = result.croppedImages.resizeDataUrl;
-                this.imageReplaced = true;
+                ariaLabelledBy: 'modal-basic-title',
+                size: 'xl',
+                backdrop: 'static',
+                centered: true,
               }
-            }, (reason: any) => {
-              console.log(`Model Dismissed`);
-            });
+            );
+            modalRef.result.then(
+              (result: any) => {
+                if (result && result.croppedImages) {
+                  this.uploadedImageFile = result.croppedImages.file;
+                  this.imageUrl = result.croppedImages.resizeDataUrl;
+                  this.imageReplaced = true;
+                }
+              },
+              (reason: any) => {
+                console.log(`Model Dismissed`);
+              }
+            );
             modalRef.componentInstance.uploadedImageUrl = imageUrl;
             modalRef.componentInstance.imageWidth = 150;
             modalRef.componentInstance.imageHeight = 150;
@@ -133,12 +154,12 @@ export class OutletMenuComponent implements OnInit {
           } catch (e) {
             console.log('error while changes kitchen opened status ', e);
           }
-        }
+        };
       }
     }
   }
 
-  async edit(item:any, index:any){
+  async edit(item: any, index: any) {
     this.imageUrl = item.imageUrl;
     this.showUpdateBtn = true;
     this.menuIndex = index;
@@ -146,29 +167,36 @@ export class OutletMenuComponent implements OnInit {
     this.open();
   }
 
-  async updateMenu(index:any){
+  async updateMenu(index: any) {
     try {
       const oldMenuItem = this.outletObj.menuList[index];
-      this.outletObj.menuList.splice(index,1,this.form.value);
+      this.outletObj.menuList.splice(index, 1, this.form.value);
       this.outletObj.menuList[index].imageUrl = oldMenuItem.imageUrl;
       const formData = this.objectToFormData(this.outletObj);
-      console.log(this.uploadedImageFile)
-      if(this.uploadedImageFile){
-        formData.append('image',this.uploadedImageFile);
-      }
-      else{
+      if (this.uploadedImageFile) {
+        formData.append('image', this.uploadedImageFile);
+      } else {
         this.noImages = true;
         index = null;
       }
-      const res = this.noImages ? await this.apiMainService.updateOutletNoImages(this.outletObj._id, this.outletObj) : await this.apiMainService.updateOutlet(this.outletObj._id, formData,index);
+      const res = this.noImages
+        ? await this.apiMainService.updateOutletNoImages(
+            this.outletObj._id,
+            this.outletObj
+          )
+        : await this.apiMainService.updateOutlet(
+            this.outletObj._id,
+            formData,
+            index
+          );
       this.outletObj = res;
       this.resetValues();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-  resetValues(){
+  resetValues() {
     this.form.reset();
     this.menuIndex = 0;
     this.imageUrl = '';
@@ -184,21 +212,23 @@ export class OutletMenuComponent implements OnInit {
       this.menuList = this.outletObj.menuList;
       this.menuList.push(this.form.value);
       this.menuIndex = this.outletObj.menuList.length - 1;
-      const finalObj = { ...this.outletObj, menuList:this.menuList };
+      const finalObj = { ...this.outletObj, menuList: this.menuList };
       const formData = this.objectToFormData(finalObj);
-      console.log(this.uploadedImageFile)
-      if(this.uploadedImageFile){
-        formData.append('image',this.uploadedImageFile)
-      }
-      else{
+      if (this.uploadedImageFile) {
+        formData.append('image', this.uploadedImageFile);
+      } else {
         this.menuIndex = null;
       }
-      const res = await this.apiMainService.updateOutlet(this.outletObj._id, formData,this.menuIndex);
-      if(res && res._id){
+      const res = await this.apiMainService.updateOutlet(
+        this.outletObj._id,
+        formData,
+        this.menuIndex
+      );
+      if (res && res._id) {
         this.outletObj = res;
         this.showCard = true;
       }
-      this.resetValues()
+      this.resetValues();
     } catch (error) {
       console.log(error);
     }
@@ -208,7 +238,11 @@ export class OutletMenuComponent implements OnInit {
     for (let key in obj) {
       if (obj.hasOwnProperty(key)) {
         let keyName = parentKey ? `${parentKey}[${key}]` : key;
-        if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+        if (
+          typeof obj[key] === 'object' &&
+          obj[key] !== null &&
+          !Array.isArray(obj[key])
+        ) {
           this.objectToFormData(obj[key], formData, keyName);
         } else if (Array.isArray(obj[key])) {
           obj[key].forEach((item: any, index: any) => {
@@ -227,128 +261,140 @@ export class OutletMenuComponent implements OnInit {
   }
 
   open() {
-    this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
-      .result.then((result) => {
-        console.log(`Closed with: ${result}`);
-        if (result === 'add') {
-          console.log("newadd")
-          this.submit();
+    this.modalService
+      .open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
+      .result.then(
+        (result) => {
+          if (result === 'add') {
+            this.submit();
+          } else if (result === 'update') {
+            this.updateMenu(this.menuIndex);
+          }
+        },
+        (reason) => {
+          console.log(`Model Dismissed`);
         }
-        else if(result === 'update'){
-          console.log("update")
-          this.updateMenu(this.menuIndex);
-        }
-      }, (reason) => {
-        console.log(`Model Dismissed`);
-      });
+      );
   }
-  showPopup(item:any,i:any) {
-    this.foodItem=item;
-    this.menuIndex=i
-    this.confirmationModalService.modal(`Are you sure, you want to delete ${item.itemName}`,
-      this.deleteFoodItem, this);
+
+  showPopup(item: any, i: any) {
+    this.foodItem = item;
+    this.menuIndex = i;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${item.itemName}`,
+      this.deleteFoodItem,
+      this
+    );
   }
+
   async deleteFoodItem() {
-    console.log(this.foodItem);
-    const res:any = await this.apiMainService.deleteOutletMenu(this.outletObj._id, this.foodItem._id);
-    console.log(res,"res")
-      if(res && res._id){
-        this.outletObj = res;
-        this.showCard = true;
-      }
-      this.resetValues()
-      this.back.emit(true)
-    } catch (error:any) {
-      console.log(error);
+    const res: any = await this.apiMainService.deleteOutletMenu(
+      this.outletObj._id,
+      this.foodItem._id
+    );
+    if (res && res._id) {
+      this.outletObj = res;
+      this.showCard = true;
     }
-    async changeMenuActivation(menu:any,event:any){
-      console.log(event);
-      menu.isActive=event.target.checked;
-      const formData = new FormData();
-      formData.append('isActive',event.target.checked);
-      let outletmenu = await this.apiMainService.updateOutletMenu(this.outletObj._id,menu._id,formData);
-      console.log(outletmenu);
+    this.resetValues();
+    this.back.emit(true);
   }
-  defineDescription(){
-    this.modalService.open(this.comboContent, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
-    .result.then((result) => {})
+
+  async changeMenuActivation(menu: any, event: any) {
+    menu.isActive = event.target.checked;
+    const formData = new FormData();
+    formData.append('isActive', event.target.checked);
+    let outletmenu = await this.apiMainService.updateOutletMenu(
+      this.outletObj._id,
+      menu._id,
+      formData
+    );
   }
-  comboout(event:any){
-    console.log(event);
-    if (event){
-      console.log('data.comboItem',event);
+
+  defineDescription() {
+    this.modalService
+      .open(this.comboContent, {
+        ariaLabelledBy: 'modal-basic-title',
+        size: 'xl',
+      })
+      .result.then((result) => {});
+  }
+
+  comboout(event: any) {
+    if (event) {
       this.createComboDescription(event);
     }
   }
 
-  createComboDescription(comboItem:any){
+  createComboDescription(comboItem: any) {
     let description = '';
     let comboType = '';
-    let descriptionArr =[];
+    let descriptionArr = [];
     let itemContains = [];
-    if(comboItem.vegCurry.selected){
-      comboItem.vegCurry.curryList.forEach((curry:any) =>{
+    if (comboItem.vegCurry.selected) {
+      comboItem.vegCurry.curryList.forEach((curry: any) => {
         descriptionArr.push(`${curry.size} ${curry.curryName}`);
         itemContains.push({
-          name: curry.curryName,   
+          name: curry.curryName,
           quantity: curry.size,
-          contentType: 'VegCurry'
-        });
-      });        
-    }
-    if(comboItem.nonVegCurry.selected){
-      comboItem.nonVegCurry.curryList.forEach((curry:any) =>{
-        descriptionArr.push(`${curry.size} ${curry.curryName}`);
-        itemContains.push({
-          name: curry.curryName,   
-          quantity: curry.size,
-          contentType: 'NonVegCurry'
+          contentType: 'VegCurry',
         });
       });
     }
-    if(comboItem.rice.selected){
-      descriptionArr.push(comboItem.rice.size+' Rice');
+    if (comboItem.nonVegCurry.selected) {
+      comboItem.nonVegCurry.curryList.forEach((curry: any) => {
+        descriptionArr.push(`${curry.size} ${curry.curryName}`);
+        itemContains.push({
+          name: curry.curryName,
+          quantity: curry.size,
+          contentType: 'NonVegCurry',
+        });
+      });
+    }
+    if (comboItem.rice.selected) {
+      descriptionArr.push(comboItem.rice.size + ' Rice');
       itemContains.push({
-        name: 'Rice',   
+        name: 'Rice',
         quantity: comboItem.rice.size,
-        contentType: 'Rice'
+        contentType: 'Rice',
       });
     }
-    if(comboItem.chapati.selected){
-      descriptionArr.push(comboItem.chapati.count+` ${comboItem.chapati.chapatiName}`);
+    if (comboItem.chapati.selected) {
+      descriptionArr.push(
+        comboItem.chapati.count + ` ${comboItem.chapati.chapatiName}`
+      );
       itemContains.push({
-        name: comboItem.chapati.chapatiName,   
+        name: comboItem.chapati.chapatiName,
         quantity: comboItem.chapati.count,
-        contentType: 'Chapati'
+        contentType: 'Chapati',
       });
     }
-    if(comboItem.dal.selected){
-      descriptionArr.push(comboItem.dal.size+' Dal');
+    if (comboItem.dal.selected) {
+      descriptionArr.push(comboItem.dal.size + ' Dal');
       itemContains.push({
-        name: 'Dal',   
+        name: 'Dal',
         quantity: comboItem.dal.size,
-        contentType: 'Dal'
+        contentType: 'Dal',
       });
     }
-    if(comboItem.sweet.selected){
+    if (comboItem.sweet.selected) {
       descriptionArr.push('Sweet');
       itemContains.push({
-        name: 'Sweet',   
+        name: 'Sweet',
         quantity: undefined,
-        contentType: 'Sweet'
+        contentType: 'Sweet',
       });
     }
-    if(comboItem.salad.selected){
+    if (comboItem.salad.selected) {
       descriptionArr.push('Salad');
       itemContains.push({
-        name: 'Salad',   
+        name: 'Salad',
         quantity: undefined,
-        contentType: 'Salad'
+        contentType: 'Salad',
       });
-    }     
+    }
     const finalDescription = descriptionArr.join(', ');
-    this.form.patchValue({description : finalDescription});
-    this.form.patchValue({itemContains : itemContains});
-    console.log('description ',description);
+    this.form.patchValue({ description: finalDescription });
+    this.form.patchValue({ itemContains: itemContains });
   }
 }
