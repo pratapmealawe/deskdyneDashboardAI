@@ -87,14 +87,14 @@
     <button
       class="btn btn-primary btn-sm me-1"
       (click)="addPolicy()"
-      *ngIf="!editMode"
+      *ngIf="!editMode && btnPolicy?.addPolicy"
     >
       Save
     </button>
     <button
       class="btn btn-success btn-sm me-1"
       (click)="updatePolicy()"
-      *ngIf="editMode"
+      *ngIf="editMode && btnPolicy?.editPolicy"
     >
       Update
     </button>

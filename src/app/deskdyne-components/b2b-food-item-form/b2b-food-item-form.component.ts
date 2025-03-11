@@ -3,11 +3,12 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from '../../image-cropper/image-cropper.component';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-b2b-food-item-form',
   templateUrl: './b2b-food-item-form.component.html',
-  styleUrls: ['./b2b-food-item-form.component.scss']
+  styleUrls: ['./b2b-food-item-form.component.scss'],
 })
 export class B2bFoodItemFormComponent implements OnInit {
   @Input() editType = '';
@@ -28,14 +29,21 @@ export class B2bFoodItemFormComponent implements OnInit {
     packagingCost: 0,
     packagingDescription: '',
   };
+  btnPolicy: any;
 
-  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal) { }
+  constructor(
+    private ddApiMainService: ApiMainService,
+    private modalService: NgbModal,
+    private policyService: PolicyService
+  ) {}
 
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+
     if (this.editfoodItemObj && this.editfoodItemObj._id) {
       this.imageUrl = environment.imageUrl + this.editfoodItemObj.imageUrl;
       this.foodItemObj = this.editfoodItemObj;
-      console.log(this.foodItemObj)
+      console.log(this.foodItemObj);
     }
   }
 
@@ -51,21 +59,28 @@ export class B2bFoodItemFormComponent implements OnInit {
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef: NgbModalRef = this.modalService.open(ImageCropperComponent,
+            const modalRef: NgbModalRef = this.modalService.open(
+              ImageCropperComponent,
               {
-                ariaLabelledBy: 'modal-basic-title', size: 'xl', backdrop: 'static',
-                centered: true
-              });
-            modalRef.result.then((result: any) => {
-              console.log('Closed with:', result);
-              if (result && result.croppedImages) {
-                console.log('croppedImages ', result.croppedImages);
-                this.uploadedImageFile = result.croppedImages.file;
-                this.imageUrl = result.croppedImages.resizeDataUrl;
+                ariaLabelledBy: 'modal-basic-title',
+                size: 'xl',
+                backdrop: 'static',
+                centered: true,
               }
-            }, (reason: any) => {
-              console.log(`Model Dismissed`);
-            });
+            );
+            modalRef.result.then(
+              (result: any) => {
+                console.log('Closed with:', result);
+                if (result && result.croppedImages) {
+                  console.log('croppedImages ', result.croppedImages);
+                  this.uploadedImageFile = result.croppedImages.file;
+                  this.imageUrl = result.croppedImages.resizeDataUrl;
+                }
+              },
+              (reason: any) => {
+                console.log(`Model Dismissed`);
+              }
+            );
             modalRef.componentInstance.uploadedImageUrl = imageUrl;
             modalRef.componentInstance.imageWidth = 150;
             modalRef.componentInstance.imageHeight = 150;
@@ -73,7 +88,7 @@ export class B2bFoodItemFormComponent implements OnInit {
           } catch (e) {
             console.log('error while changes kitchen opened status ', e);
           }
-        }
+        };
       }
     }
   }
@@ -95,12 +110,12 @@ export class B2bFoodItemFormComponent implements OnInit {
     formData.append('itemDescription', item.itemDescription);
     formData.append('packagingCost', item.packagingCost);
     formData.append('packagingDescription', item.packagingDescription);
-    console.log(formData)
+    console.log(formData);
     try {
       await this.ddApiMainService.B2B_fooditemAdd(formData);
       this.goToPreviousPage('new');
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
@@ -121,12 +136,12 @@ export class B2bFoodItemFormComponent implements OnInit {
     formData.append('itemDescription', item.itemDescription);
     formData.append('packagingCost', item.packagingCost);
     formData.append('packagingDescription', item.packagingDescription);
-    console.log(formData)
+    console.log(formData);
     try {
       await this.ddApiMainService.updateB2BfoodItem(formData, item._id);
       this.goToPreviousPage('new');
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 

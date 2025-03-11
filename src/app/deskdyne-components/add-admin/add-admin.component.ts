@@ -35,28 +35,28 @@ export class AddAdminComponent {
   ];
   orglist: any = [];
   filteredOptions = [...this.orglist];
-  access: any;
+  btnPolicy: any;
   policyArr: any;
   searchQuery: string = '';
   selectedValue: string = '';
   selectedCafeId: string = '';
   orgDetails: any = null;
   cafeDetails: any = null;
+
   constructor(
     private apiMainService: ApiMainService,
     public router: Router,
     private runtimeStorageService: RuntimeStorageService,
     private modalService: NgbModal,
     private policyService: PolicyService
-  ) {
-    this.access = this.policyService.getCurrentButtonPolicy();
-  }
+  ) {}
+
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+
     this.getOrgList();
     const cacheAdmin = this.runtimeStorageService.getCacheData('VIEW_ADMIN');
-    console.log('catche admin', cacheAdmin);
     this.getAllPolicy();
-    console.log('cacheAdmin ', cacheAdmin);
     if (cacheAdmin) {
       this.editMode = true;
       this.adminObj.name = cacheAdmin.name;
@@ -74,8 +74,8 @@ export class AddAdminComponent {
         this.setOrgDetails();
       }
     }
-    
   }
+
   cancel() {
     this.runtimeStorageService.resetCacheData('VIEW_ADMIN');
     this.router.navigate(['admin']);
@@ -94,7 +94,6 @@ export class AddAdminComponent {
       const file: File = $event.target.files[0];
       if (file) {
         const fileName = file.name;
-        console.log(fileName);
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (_event) => {
@@ -111,9 +110,7 @@ export class AddAdminComponent {
             );
             modalRef.result.then(
               (result: any) => {
-                console.log('Closed with:', result);
                 if (result && result.croppedImages) {
-                  console.log('croppedImages ', result.croppedImages);
                   this.uploadedImageFile = result.croppedImages.file;
                   this.imageUrl = result.croppedImages.resizeDataUrl;
                 }
@@ -133,17 +130,18 @@ export class AddAdminComponent {
       }
     }
   }
+
   async getAllPolicy() {
     try {
       const policyArr: any = await this.apiMainService.getAllPolicy();
       if (policyArr && policyArr.length > 0) {
         this.policyArr = policyArr;
-        console.log(this.policyArr);
       }
     } catch (error) {
       console.log(error);
     }
   }
+
   async addAdmin(adminObj: any) {
     // if(adminObj.role=='ORGADMIN'){
     //   this.setOrgDetails();
@@ -155,12 +153,10 @@ export class AddAdminComponent {
     }
     if (adminObj.role == 'ORGADMIN') {
       // this.setOrgDetails();
-      console.log(this.orgDetails);
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
     }
     if (adminObj.policy == 'cafeteria Manager') {
       // this.setOrgDetails();
-      console.log(this.orgDetails);
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
     }
     formData.append('name', adminObj.name);
@@ -168,7 +164,6 @@ export class AddAdminComponent {
     formData.append('email', adminObj.email);
     formData.append('role', adminObj.role);
     formData.append('policy_name', adminObj.policy);
-    console.log('form data', formData, adminObj);
     try {
       await this.apiMainService.saveAdminProfile(formData);
       this.router.navigate(['admin']);
@@ -176,6 +171,7 @@ export class AddAdminComponent {
       console.log('Error while saving kitchen partner ', e);
     }
   }
+
   async updateAdmin(adminObj: any) {
     // if(adminObj.role=='ORGADMIN'){
     //   this.setOrgDetails();
@@ -196,7 +192,6 @@ export class AddAdminComponent {
     }
     if (adminObj.policy == 'cafeteria Manager') {
       // this.setOrgDetails();
-      console.log(this.orgDetails);
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
     }
     try {
@@ -228,8 +223,8 @@ export class AddAdminComponent {
       console.log(error);
     }
   }
+
   setOrgDetails() {
-    console.log(this.orglist,"this.orglist");
     this.orgDetails = this.orglist.find((org: any) => {
       return org._id == this.selectedValue;
     });
@@ -237,6 +232,7 @@ export class AddAdminComponent {
       this.setCafeDetails();
     }
   }
+
   setCafeDetails() {
     this.cafeDetails = this.orgDetails.cafeteriaList.find((org: any) => {
       return org._id == this.selectedCafeId;

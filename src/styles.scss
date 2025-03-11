@@ -383,9 +383,9 @@ body {
 }
 
 .offcanvas {
-  width: 15% !important;
-  border-radius: 0px 30px 30px 0px;
-  background-color: #192754 !important;
+  width: 18% !important;
+  // border-radius: 0px 30px 30px 0px;
+  background-color: #1d1d41 !important;
 
   .offcanvas-header {
     padding-left: 10px;
@@ -549,7 +549,7 @@ button.accordion-button:focus {
 }
 @media only screen and (min-width: 850px) and (max-width: 1300px) {
   .offcanvas {
-    width: 20% !important;
+    width: 25% !important;
   }
 }
 

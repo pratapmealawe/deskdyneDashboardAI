@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
 interface Filter {
@@ -58,15 +59,19 @@ export class OrgIncidentManagementComponent implements OnInit {
   orgDetailsForm: any = {};
   incidentForm!: FormGroup;
   isSubmitting: boolean = false; // Prevent multiple submissions
+  btnPolicy: any;
 
   constructor(
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private searchService: SearchFilterService
+    private searchService: SearchFilterService,
+    private policyService: PolicyService
   ) {}
 
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.initIncidentForm();
     this.getOrgList();

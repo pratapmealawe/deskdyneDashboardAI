@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
@@ -60,11 +61,50 @@ export class AddPolicyComponent {
     button_policies: {
       addOutlet: false,
       editOutlet: false,
+      deleteOutlet: false,
+      viewOutlet: false,
+      addOutletCategory: false,
       addMenu: false,
       editMenu: false,
+      deleteMenu: false,
       addVendor: false,
       editVendor: false,
-      editOrder: false,
+      deleteVendor: false,
+      addPolicy: false,
+      editPolicy: false,
+      deletePolicy: false,
+      addAdmin: false,
+      editAdmin: false,
+      deleteAdmin: false,
+      addOrganization: false,
+      editOrganization: false,
+      deleteOrganization: false,
+      viewOrganization: false,
+      bulkMenuSection: false,
+      mealAweOutlet: false,
+      b2bWeeklyMenu: false,
+      employeeList: false,
+      guestEmployeeList: false,
+      'organization-compliance': false,
+      addFaq: false,
+      editFaq: false,
+      deleteFaq: false,
+      addVariable: false,
+      editVariable: false,
+      deleteVariable: false,
+      addAppVersion: false,
+      editAppVersion: false,
+      deleteAppVersion: false,
+      addChecklist: false,
+      editChecklist: false,
+      deleteChecklist: false,
+      addFoodItem: false,
+      editFoodItem: false,
+      deleteFoodItem: false,
+      feedbackAcknowledge: false,
+      addIncident: false,
+      editIncident: false,
+      deleteIncident: false,
     },
   };
   routeKeys: any;
@@ -73,15 +113,17 @@ export class AddPolicyComponent {
   showErrorMsg: Boolean = false;
   editMode: Boolean = false;
   policyId: any;
+  btnPolicy: any;
 
   constructor(
     private apiMainService: ApiMainService,
-    private localStorageService: LocalStorageService,
+    private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.routeKeys = Object.keys(this.policyObj.route_policies);
     this.buttonKeys = Object.keys(this.policyObj.button_policies);
     this.policyId = this.runtimeStorageService.getCacheData('VIEW_POLICY');
