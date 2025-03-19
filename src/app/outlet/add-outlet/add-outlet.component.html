@@ -125,6 +125,21 @@
         </div>
       </div>
     </div>
+    <div class="row mt-2">
+        <div class="col">
+            <label class="labelText">Meal Timing<span class="mandatory">*</span></label>
+            <button class="btn btn-primary btn-sm ms-2" (click)="setStandardEndTime()">Set Standard End Time</button>
+            <div class="row">
+                <div class="col-6 col-md-6 col-lg-3 bgpadding1" *ngFor="let timing of mealTiming">
+                    <div class="labelText">{{timing.mealType}}
+                        <div class="labelData">Order From</div>
+                        <input type="time" class="inline" [(ngModel)]="timing.acceptOrderFrom" placeholder="00:00"> To
+                        <input type="time" class="inline" [(ngModel)]="timing.acceptOrderTill" placeholder="00:00">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
   <div
     class="btn btn-primary btn-sm mt-2"

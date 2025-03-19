@@ -76,6 +76,10 @@ constructor(
     }
   }
 
+  ngOnChanges(){
+    console.log(this.itemContains,"this.itemContains");
+  }
+
   addCurry(curryList: any, index: any) {
     curryList.splice(index + 1, 0, {curryName:'',size: undefined});
   }

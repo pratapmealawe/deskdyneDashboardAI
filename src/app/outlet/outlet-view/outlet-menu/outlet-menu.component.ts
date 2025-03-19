@@ -29,6 +29,13 @@ export class OutletMenuComponent implements OnInit {
   form: any;
   selectedCategory: any;
   subcategoryList: any = [];
+  mealTypeList: any = [
+    'Lunch',
+    'Dinner',
+    'Breakfast',
+    'EveningSnacks',
+    'Fullday',
+  ];
   uploadedImageFile: any;
   imageUrl: any;
   displayImgUrl = environment.imageUrl;
@@ -68,9 +75,11 @@ export class OutletMenuComponent implements OnInit {
       subcidyAmt: item.subcidyAmt ? item.subcidyAmt : 0,
       category: item.category,
       subCategory: item.subCategory,
+      mealType: item.mealType,
       itemType: item.itemType,
       isActive: item.isActive,
       description: item.description,
+      itemContains: item.itemContains,
     });
   }
 
@@ -82,6 +91,7 @@ export class OutletMenuComponent implements OnInit {
       subcidyAmt: 0,
       category: [''],
       subCategory: [''],
+      mealType: [''],
       code: [''],
       recommended: [false],
       isSpicy: [false],
@@ -96,6 +106,7 @@ export class OutletMenuComponent implements OnInit {
       calories: [''],
       parcelChargeType: [''],
       parcelChargeValue: [''],
+      itemContains: [[]],
       // isEnabledInventory:[''],
       // reorderQuantity:[''],
       // availableStock:[''],
