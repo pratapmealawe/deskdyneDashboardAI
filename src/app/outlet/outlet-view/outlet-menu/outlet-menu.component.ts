@@ -20,6 +20,7 @@ export class OutletMenuComponent implements OnInit {
   form: any;
   selectedCategory: any;
   subcategoryList: any = [];
+  mealTypeList:any =['Lunch', 'Dinner','Breakfast','EveningSnacks','Fullday'];
   uploadedImageFile: any;
   imageUrl: any;
   displayImgUrl = environment.imageUrl;
@@ -45,15 +46,19 @@ export class OutletMenuComponent implements OnInit {
   }
 
   patchFormValue(item:any) {
+    console.log(item)
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
       subcidyAmt: item.subcidyAmt? item.subcidyAmt:0,
       category: item.category,
       subCategory: item.subCategory,
+      mealType:item.mealType,
       itemType: item.itemType,
       isActive: item.isActive,
-      description: item.description
+      description: item.description,
+      itemContains: item.itemContains,
+      
     })
   }
 
@@ -65,6 +70,7 @@ export class OutletMenuComponent implements OnInit {
       subcidyAmt: 0,
       category: [''],
       subCategory: [''],
+      mealType:[''],
       code: [''],
       recommended: [false],
       isSpicy: [false],
@@ -79,6 +85,7 @@ export class OutletMenuComponent implements OnInit {
       calories: [''],
       parcelChargeType: [''],
       parcelChargeValue: [''],
+      itemContains: [[]],
       // isEnabledInventory:[''],
       // reorderQuantity:[''],
       // availableStock:[''],
@@ -270,6 +277,7 @@ export class OutletMenuComponent implements OnInit {
       console.log(outletmenu);
   }
   defineDescription(){
+    console.log(this.form.value.itemContains,"form.value.itemContains");
     this.modalService.open(this.comboContent, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
     .result.then((result) => {})
   }

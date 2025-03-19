@@ -188,6 +188,15 @@
                             <option value="GST Included">GST Included</option>
                         </select>
                     </div> -->
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <label class="labelText form-label">MealType</label>
+                        <select class="custom-select" name="role" formControlName="mealType">
+                            <option disabled selected hidden>-- select MealType --</option>
+                            <option [value]="mealType" *ngFor="let mealType of mealTypeList">{{mealType}}</option>
+                        </select>
+                    </div>
+
                     <div class="col-12 col-md-6 col-lg-4">
                         <!-- <pre>{{outletObj.category|json}}</pre> -->
                         <label class="labelText form-label">Category</label>

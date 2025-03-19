@@ -21,58 +21,75 @@
                     <option value="Veg">Veg</option>
                     <option value="NonVeg">Non Veg</option>
                 </select>
-                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is required</div>
+                <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">*Outlet type is
+                    required</div>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="labelText">Outlet Description</div>
                 <input type="text" class="form-control" placeholder="Org Description" formControlName="outletDescription">
-                <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">*Outlet description
+                <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">*Outlet
+                    description
                     is required</div>
             </div>
             <div class="col-12 col-md-6 col-lg-4">
                 <input class="me-1" type="checkbox" id="isSpicy" formControlName="outletOpened">
                 <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
             </div>
-        </div>  
+        </div>
         <div class="row" *ngIf="!seletedCafetria">
             <div><button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">Select Org</button></div>
         </div>
-      
-            <!-- <div>{{seletedCafetria.organizationDetails.organization_name}}</div> -->
-            <div class="cardDesign" *ngIf="seletedCafetria">
-                <div class="row card-wrapper" >
-                    <div class="col-lg-12 col-md-10 col-9">
-                        <div class="row" >
-                            <div class="col-12 col-md-4 col-lg-12">
-                                <div class="row" >    
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Organization Name</div>
-                                        <div class="labelData">{{seletedCafetria.organizationDetails.organization_name}}</div>
-                                    </div>
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Organization City</div>
-                                        <div class="labelData">{{seletedCafetria.organizationDetails.city}}</div>
-                                    </div>
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Cafeteria Name</div>
-                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
-                                    </div>
-                                    <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Cafeteria Name</div>
-                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
-                                    </div>
-                                    <!-- <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Cafeteria Location</div>
-                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails. cafeteria_location}}</div>
-                                    </div> -->
-                                   
-                                   </div>
+    
+        <!-- <div>{{seletedCafetria.organizationDetails.organization_name}}</div> -->
+        <div class="cardDesign" *ngIf="seletedCafetria">
+            <div class="row card-wrapper">
+                <div class="col-lg-12 col-md-10 col-9">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-lg-12">
+                            <div class="row">
+                                <div class="col-6 col-md-5 col-lg-3">
+                                    <div class="labelText">Organization Name</div>
+                                    <div class="labelData">{{seletedCafetria.organizationDetails.organization_name}}</div>
+                                </div>
+                                <div class="col-6 col-md-5 col-lg-3">
+                                    <div class="labelText">Organization City</div>
+                                    <div class="labelData">{{seletedCafetria.organizationDetails.city}}</div>
+                                </div>
+                                <div class="col-6 col-md-5 col-lg-3">
+                                    <div class="labelText">Cafeteria Name</div>
+                                    <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
+                                </div>
+                                <div class="col-6 col-md-5 col-lg-3">
+                                    <div class="labelText">Cafeteria Name</div>
+                                    <div class="labelData">{{seletedCafetria.cafeteriaDetails.cafeteria_name}}</div>
+                                </div>
+                                <!-- <div class="col-6 col-md-5 col-lg-3">   
+                                            <div class="labelText">Cafeteria Location</div>
+                                            <div class="labelData">{{seletedCafetria.cafeteriaDetails. cafeteria_location}}</div>
+                                        </div> -->
+    
                             </div>
                         </div>
                     </div>
                 </div>
-             </div>
-          </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mt-2">
+        <div class="col">
+            <label class="labelText">Meal Timing<span class="mandatory">*</span></label>
+            <button class="btn btn-primary btn-sm ms-2" (click)="setStandardEndTime()">Set Standard End Time</button>
+            <div class="row">
+                <div class="col-6 col-md-6 col-lg-3 bgpadding1" *ngFor="let timing of mealTiming">
+                    <div class="labelText">{{timing.mealType}}
+                        <div class="labelData">Order From</div>
+                        <input type="time" class="inline" [(ngModel)]="timing.acceptOrderFrom" placeholder="00:00"> To
+                        <input type="time" class="inline" [(ngModel)]="timing.acceptOrderTill" placeholder="00:00">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')" *ngIf="showUpdate">Update</div>
     <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate">Submit</div>
 </div>

@@ -6,6 +6,9 @@ import { OutletComponent } from './outlet.component';
 import { FormsModule } from '@angular/forms';
 import { OutletCardModule } from './outlet-card/outlet-card.module';
 import { OutletViewModule } from './outlet-view/outlet-view.module';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 
 @NgModule({
@@ -17,7 +20,10 @@ import { OutletViewModule } from './outlet-view/outlet-view.module';
     OutletRoutingModule,
     FormsModule,
     OutletCardModule,
-    OutletViewModule
+    OutletViewModule,
+    MatSelectModule,
+    MatInputModule,
+    MatFormFieldModule
   ]
 })
 export class OutletModule { }

@@ -31,6 +31,18 @@ export class AddOutletComponent implements OnInit {
   formattedOrgList:any;
   selectedOrgCafeteria:any;
   seletedCafetria:any;
+  BREAKFAST_END_TIME: any;
+  LUNCH_END_TIME: any;
+  EVENINGSNACKS_END_TIME: any;
+  DINNER_END_TIME: any;
+  FULLDAY_END_TIME:any;
+  mealTiming:any= [
+    { mealType: 'Breakfast', acceptOrderFrom: null, acceptOrderTill: null },
+    { mealType: 'Lunch', acceptOrderFrom: null, acceptOrderTill: null },
+    { mealType: 'EveningSnacks', acceptOrderFrom: null, acceptOrderTill: null },
+    { mealType: 'Dinner', acceptOrderFrom: null, acceptOrderTill: null },
+    { mealType: 'Fullday', acceptOrderFrom: null, acceptOrderTill: null }
+  ];
 
   constructor(private apiMainService: ApiMainService, private router: Router, private runtimeStorageService: RuntimeStorageService, 
   private modalService: NgbModal, private fb: FormBuilder, private dataFormatService:DataFormatService,private sendDataToComponent: SendDataToComponent) {
@@ -68,7 +80,7 @@ export class AddOutletComponent implements OnInit {
       outletName: [''],
       outletDescription: [''],
       outletType: [''],
-      outletOpened: [false]
+      outletOpened: [false],
     })
   }
 
@@ -163,6 +175,7 @@ export class AddOutletComponent implements OnInit {
   }
 
   async submit(type?:any) {
+    console.log(this.mealTiming);
     try {
       const finalObj = { 
         cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
@@ -170,6 +183,7 @@ export class AddOutletComponent implements OnInit {
          ...this.form.value };
       console.log(finalObj)
       const formData = this.objectToFormData(finalObj);
+      formData.append('mealTiming', this.mealTiming);
       if(this.uploadedImageFile){
         formData.append('image', this.uploadedImageFile);
       }
@@ -223,5 +237,27 @@ export class AddOutletComponent implements OnInit {
   back(){
     this.router.navigate(['/outlet'])
   }
-
+  setStandardEndTime() {
+    console.log(this.form.controls.mealTiming)
+    // console.log('setStandardEndTime')
+    // this.mealTiming.forEach((meal: any) => {
+    //   let stdTime = '00:00';
+    //   if (meal.mealType === 'Breakfast') {
+    //     stdTime = this.BREAKFAST_END_TIME;
+    //   } else if (meal.mealType === 'Lunch') {
+    //     stdTime = this.LUNCH_END_TIME;
+    //   } else if (meal.mealType === 'EveningSnacks') {
+    //     stdTime = this.EVENINGSNACKS_END_TIME;
+    //   } else if (meal.mealType === 'Dinner') {
+    //     stdTime = this.DINNER_END_TIME;
+    //   }else if (meal.mealType === 'Fullday') {
+    //     stdTime = this.FULLDAY_END_TIME;
+    //   }
+    //   meal.acceptOrderTill = stdTime;
+    //   let stdarr = stdTime.split(':');
+    //   const startHr = parseInt(stdarr[0]) - 2;
+    //   stdarr[0] = startHr > 9 ? `${startHr}` : '0' + startHr;
+    //   meal.acceptOrderFrom = stdarr.join(':');
+    // });
+  }
 }
