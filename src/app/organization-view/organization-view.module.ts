@@ -15,15 +15,14 @@ import { GuestEmployeeListComponent } from '../common-components/guest-employee-
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormsModule } from '@angular/forms';
 import { B2bWeeklyMenuComponent } from '../common-components/b2b-weekly-menu/b2b-weekly-menu.component';
-import { OrgComplianceComponent} from './organization-compliance/organization-compliance.component';
-import { PdfuploadComponent} from '../pdfupload/pdfupload.component';
-
+import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
+import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 
 @NgModule({
   declarations: [
     OrganizationViewComponent,
-     OrgDetailsComponent,
-     GuestEmployeeListComponent,
+    OrgDetailsComponent,
+    GuestEmployeeListComponent,
     OrgBulkMenuComponent,
     OrgIndividualMenuComponent,
     OrgBulkSnackboxMenuComponent,
@@ -31,7 +30,7 @@ import { PdfuploadComponent} from '../pdfupload/pdfupload.component';
     OrgPredefinedSnackboxMenuComponent,
     OrgCustomizedSnackboxMenuComponent,
     MealAweOutletComponent,
-     EmployeeListComponent,
+    EmployeeListComponent,
     B2bWeeklyMenuComponent,
     OrgComplianceComponent,
   ],
@@ -40,10 +39,8 @@ import { PdfuploadComponent} from '../pdfupload/pdfupload.component';
     CustomPipeModule,
     FormsModule,
     ReactiveFormsModule,
-    PdfuploadComponent
+    PdfuploadComponent,
   ],
-  exports:[
-    OrganizationViewComponent
-  ]
+  exports: [OrganizationViewComponent],
 })
-export class OrganizationViewModule { }
+export class OrganizationViewModule {}

@@ -1,14 +1,14 @@
-<div class="container">
+<div class="container" *ngIf="!showAddPage">
   <div class="row">
     <div class="col-md-6">
-      <h2>Incident Management</h2>
+      <h3>Incident Management</h3>
     </div>
-    <div class="col-md-6 text-md-end">
+    <div class="col-md-6 text-md-end" *ngIf="orgAdmin.role === 'ORGADMIN'">
       <button
+        *ngIf="btnPolicy?.addIncident"
         class="btn btn-primary"
         type="button"
-        data-bs-toggle="modal"
-        data-bs-target="#incidentModal"
+        (click)="addIncident()"
       >
         Add Incident
       </button>
@@ -41,10 +41,7 @@
           [disabled]="!orgDetails"
         >
           <option selected disabled value="">Select Cafeteria</option>
-          <option
-            *ngFor="let option of orgDetails?.cafeteriaList"
-            [value]="option._id"
-          >
+          <option *ngFor="let option of cafeList" [value]="option._id">
             {{ option.cafeteria_name }}
           </option>
         </select>
@@ -83,25 +80,83 @@
   </div>
 
   <div *ngIf="filteredIncidentList.length > 0">
-    <div *ngFor="let incident of filteredIncidentList" class="cardDesign my-1">
+    <div *ngFor="let incident of filteredIncidentList" class="cardDesign mb-2">
       <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-1">
           <div class="labelText">Incident Type</div>
           <div class="labelData">{{ incident?.incidentType }}</div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <div class="labelText">Subject</div>
           <div class="labelData">{{ incident?.incidentSubject }}</div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <div class="labelText">Description</div>
           <div class="labelData">{{ incident?.incidentDescription }}</div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-2">
           <div class="labelText">Date</div>
           <div class="labelData">
             {{ incident?.createdAt | date : "dd/MM/yyyy" }}
           </div>
+        </div>
+        <div class="col-md-1">
+          <div class="labelText">Status</div>
+          <div class="labelData">
+            {{ incident?.status | titlecase }}
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="labelText">Change Status</div>
+          <div class="statusBtn">
+            <button
+              [disabled]="this.orgAdmin.role === 'ORGADMIN'"
+              *ngIf="incident.status !== 'resolved'"
+              class="btn btn-primary"
+              (click)="
+                openChangeStatus(
+                  incident,
+                  incident.status === 'created'
+                    ? 'acknowledged'
+                    : incident.status === 'acknowledged'
+                    ? 'inReview'
+                    : 'resolved'
+                )
+              "
+            >
+              {{
+                (incident.status === "created"
+                  ? "acknowledged"
+                  : incident.status === "acknowledged"
+                  ? "inReview"
+                  : "resolved"
+                ) | titlecase
+              }}
+            </button>
+
+            <button
+              [disabled]="this.orgAdmin.role === 'ORGADMIN'"
+              *ngIf="
+                incident.status === 'inReview' || incident.status === 'resolved'
+              "
+              class="btn btn-danger"
+              (click)="openChangeStatus(incident, 'blocked')"
+            >
+              {{ "blocked" | titlecase }}
+            </button>
+          </div>
+        </div>
+        <div class="col-md-1 action_btn">
+          <i
+            class="bi bi-pencil-square"
+            *ngIf="btnPolicy?.editIncident"
+            (click)="editIncident(incident)"
+          ></i>
+          <!-- <i
+            class="bi bi-trash-fill"
+            *ngIf="btnPolicy?.deleteIncident"
+            (click)="deleteIncident(incident)"
+          ></i> -->
         </div>
       </div>
     </div>
@@ -112,68 +167,178 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div
-  class="modal fade"
-  id="incidentModal"
-  data-bs-backdrop="static"
-  data-bs-keyboard="false"
-  tabindex="-1"
-  aria-labelledby="incidentModalLabel"
-  aria-hidden="true"
->
-  <div class="modal-dialog modal-dialog-centered modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Add Incident</h5>
-        <button
-          type="button"
-          class="btn-close"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
+<div class="container" *ngIf="showAddPage">
+  <div class="d-flex align-items-center gap-4 mb-3">
+    <div class="left_arrow" (click)="backBtn()" style="cursor: pointer">
+      <i class="bi bi-arrow-left"></i>
+    </div>
+    <h3 class="mb-0">{{ isEdit ? "Update" : "Add" }} Incident</h3>
+  </div>
+
+  <form
+    (submit)="isEdit ? updateIncident() : saveIncident()"
+    class="row"
+    [formGroup]="incidentForm"
+    novalidate
+  >
+    <div class="mb-3 col-md-4" formGroupName="orgDetails">
+      <label class="labelText">Organization</label>
+      <select
+        class="form-select"
+        [disabled]="orgAdmin.role === 'ORGADMIN'"
+        formControlName="orgId"
+        (change)="formOrgChange()"
+      >
+        <option selected disabled value="">Select Organization</option>
+        <option *ngFor="let option of orglist" [value]="option._id">
+          {{ option.organization_name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3 col-md-4" formGroupName="cafeteriaDetails">
+      <label class="labelText">Cafeteria</label>
+      <select
+        class="form-select"
+        [disabled]="!incidentForm.get('orgDetails.orgId')?.value || isEdit"
+        formControlName="cafeId"
+      >
+        <option selected disabled value="">Select Cafeteria</option>
+        <option *ngFor="let option of cafeList" [value]="option._id">
+          {{ option.cafeteria_name }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3 col-md-4">
+      <label class="labelText">Status</label>
+      <select
+        class="form-select"
+        [disabled]="isEdit"
+        (change)="changeStatus()"
+        formControlName="status"
+      >
+        <option selected disabled value="">Select Status</option>
+        <option *ngFor="let status of statusList" [value]="status">
+          {{ status | titlecase }}
+        </option>
+      </select>
+    </div>
+
+    <div class="mb-3 col-md-4">
+      <label class="labelText">Remark</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="incidentObj.remark"
+        formControlName="remark"
+        placeholder="Enter Remark"
+      />
+    </div>
+
+    <div class="mb-3 col-md-4">
+      <label class="labelText">Incident Type</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="incidentObj.incidentType"
+        formControlName="incidentType"
+        placeholder="Enter Type"
+      />
+    </div>
+    <div class="mb-3 col-md-4">
+      <label class="labelText">Incident Subject</label>
+      <input
+        type="text"
+        class="form-control"
+        [(ngModel)]="incidentObj.incidentSubject"
+        formControlName="incidentSubject"
+        placeholder="Enter Subject"
+      />
+    </div>
+    <div class="mb-3 col-md-4">
+      <label class="labelText">Incident Description</label>
+      <textarea
+        class="form-control"
+        formControlName="incidentDescription"
+        [(ngModel)]="incidentObj.incidentDescription"
+        rows="3"
+        placeholder="Enter Description"
+      ></textarea>
+    </div>
+
+    <button
+      *ngIf="!isEdit"
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="incidentForm.invalid"
+    >
+      Save
+    </button>
+
+    <button
+      *ngIf="isEdit"
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="incidentForm.invalid"
+    >
+      Update
+    </button>
+  </form>
+</div>
+
+<ng-template #statusChangeDiv let-modal>
+  <div class="modal-header">
+    <div class="header2 bold" id="modal-basic-title">Change Status</div>
+    <button
+      type="button"
+      class="close"
+      aria-label="Close"
+      (click)="modal.dismiss('cancel')"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      <div class="mb-3 col-md-12">
+        <label class="labelText">User</label>
+        <select
+          class="form-select"
+          [disabled]="
+            orgAdmin.role === 'SITEEXE' ||
+            incidentObj.status === 'inReview' ||
+            incidentObj.status === 'blocked' ||
+            incidentObj.status === 'resolved'
+          "
+          [(ngModel)]="assignedToInfo.id"
+        >
+          <option selected disabled value="">Select User</option>
+          <option *ngFor="let admin of adminList" [value]="admin._id">
+            {{ admin.name }}
+          </option>
+        </select>
       </div>
-      <div class="modal-body">
-        <form (submit)="saveIncident()" [formGroup]="incidentForm" novalidate>
-          <div class="mb-3">
-            <label class="form-label">Incident Type</label>
-            <input
-              type="text"
-              class="form-control"
-              [(ngModel)]="incidentObj.incidentType"
-              formControlName="incidentType"
-              placeholder="Enter Type"
-            />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Incident Subject</label>
-            <input
-              type="text"
-              class="form-control"
-              [(ngModel)]="incidentObj.incidentSubject"
-              formControlName="incidentSubject"
-              placeholder="Enter Subject"
-            />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Incident Description</label>
-            <textarea
-              class="form-control"
-              formControlName="incidentDescription"
-              [(ngModel)]="incidentObj.incidentDescription"
-              rows="3"
-              placeholder="Enter Description"
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            class="btn btn-primary"
-            [disabled]="incidentForm.invalid"
-          >
-            Submit
-          </button>
-        </form>
+
+      <div class="mb-3 col-md-12">
+        <label class="labelText">Remark</label>
+        <textarea
+          type="text"
+          class="form-control"
+          [(ngModel)]="incidentObj.remark"
+          placeholder="Enter Remark"
+        >
+        </textarea>
       </div>
     </div>
   </div>
-</div>
+  <div class="modal-footer">
+    <button
+      type="submit"
+      (click)="updateIncidentStatus()"
+      class="btn btn-primary"
+    >
+      Update
+    </button>
+  </div>
+</ng-template>

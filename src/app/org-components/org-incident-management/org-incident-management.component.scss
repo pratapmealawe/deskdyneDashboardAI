@@ -1,0 +1,25 @@
+.left_arrow {
+  background: #eeeeee;
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.action_btn {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+  i {
+    cursor: pointer;
+  }
+}
+
+.statusBtn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .btn {
+    font-size: 0.8rem !important;
+  }
+}

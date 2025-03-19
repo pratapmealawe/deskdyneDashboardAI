@@ -58,7 +58,11 @@ export class HeaderComponent implements OnInit {
       image: 'B2BOrders',
       imageblue: 'B2BOrders_Blue',
       children: [
-        { name: 'Outlet Current Order', route: 'currentOrder', showChild: true },
+        {
+          name: 'Outlet Current Order',
+          route: 'currentOrder',
+          showChild: true,
+        },
         { name: 'Outlet Search Order', route: 'searchOrder', showChild: true },
       ],
     },
@@ -177,9 +181,16 @@ export class HeaderComponent implements OnInit {
     {
       name: 'Incident Reporting',
       showParent: true,
-      route: 'dashboard',
+      route: 'org-incident-management',
       image: 'Incident_Reporting',
       imageblue: 'Incident_Reporting_Blue',
+    },
+    {
+      name: 'Submit CheckList',
+      route: 'submit-checklist',
+      showParent: true,
+      image: 'Checklist_white',
+      imageblue: 'Checklist_blue',
     },
   ];
 
@@ -205,20 +216,20 @@ export class HeaderComponent implements OnInit {
       image: 'Orders_white',
       imageblue: 'Orders_blue',
     },
-    // {
-    //   name: 'Pre Orders',
-    //   showParent: true,
-    //   route: 'org-pre-orders',
-    //   image: 'Pre_order_white',
-    //   imageblue: 'Pre_Order_blue',
-    // },
-    // {
-    //   name: 'Subscription',
-    //   showParent: true,
-    //   route: 'org-subcription',
-    //   image: 'Subscription_white',
-    //   imageblue: 'Subscription_blue',
-    // },
+    {
+      name: 'Pre Orders',
+      showParent: true,
+      route: 'org-pre-orders',
+      image: 'Pre_order_white',
+      imageblue: 'Pre_Order_blue',
+    },
+    {
+      name: 'Subscription',
+      showParent: true,
+      route: 'org-subcription',
+      image: 'Subscription_white',
+      imageblue: 'Subscription_blue',
+    },
     {
       name: 'Reviews',
       showParent: true,
@@ -268,33 +279,26 @@ export class HeaderComponent implements OnInit {
       image: 'Enquiry',
       imageblue: 'Enquiries_Blue',
     },
-    // {
-    //   name: 'Bulk Order History',
-    //   showParent: true,
-    //   route: 'org-bulk-order-history',
-    //   image: 'Bulk_history_white',
-    //   imageblue: 'Bulk_history_blue',
-    // },
-    // {
-    //   name: 'Manual Orders',
-    //   showParent: true,
-    //   route: 'org-manual-orders',
-    //   image: 'Manual_Orders_white',
-    //   imageblue: 'Manual_orders_blue',
-    // },
-    // {
-    //   name: 'Billing',
-    //   showParent: true,
-    //   route: 'org-billing',
-    //   image: 'Billing_white',
-    //   imageblue: 'Billing_Blue',
-    // },
     {
-      name: 'Submit CheckList',
-      route: 'submit-checklist',
+      name: 'Bulk Order History',
       showParent: true,
-      image: 'Checklist_white',
-      imageblue: 'Checklist_blue',
+      route: 'org-bulk-order-history',
+      image: 'Bulk_history_white',
+      imageblue: 'Bulk_history_blue',
+    },
+    {
+      name: 'Manual Orders',
+      showParent: true,
+      route: 'org-manual-orders',
+      image: 'Manual_Orders_white',
+      imageblue: 'Manual_orders_blue',
+    },
+    {
+      name: 'Billing',
+      showParent: true,
+      route: 'org-billing',
+      image: 'Billing_white',
+      imageblue: 'Billing_Blue',
     },
   ];
 
@@ -394,14 +398,14 @@ export class HeaderComponent implements OnInit {
             JSON.stringify(this.adminProfile.orgDetails)
           );
           this.finalNavOption = this.orgOptions;
-          this.router.navigate(['/org-dashboard']);
+          // this.router.navigate(['/org-dashboard']);
         } else {
           this.finalNavOption = this.deskDineOptions;
           this.isOrgAdmin = false;
         }
         this.getAllPolicy();
 
-        this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
+        // this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
       }
     } catch (error) {
       console.log('error while logging out ', error);
@@ -428,20 +432,27 @@ export class HeaderComponent implements OnInit {
         const adminPolicy = this.policyArr.filter(
           (el: any) => el.policy_name === this.adminProfile.policy_name
         );
+
         if (adminPolicy && adminPolicy.length > 0) {
           this.adminProfile.policy = adminPolicy;
           const routePolicies = this.adminProfile.policy[0].route_policies;
+
           this.finalNavOption.forEach((el: any) => {
-            el.children.forEach((childEl: any) => {
-              if (routePolicies && routePolicies[childEl.route] == true) {
-                childEl.showRoute = true;
-                el.showParent = true;
-              } else {
-                childEl.showRoute = false;
-              }
-            });
+            el.showParent = routePolicies[el.route] ? true : false;
+
+            if (el.children) {
+              el.children?.forEach((childEl: any) => {
+                if (routePolicies && routePolicies[childEl.route]) {
+                  childEl.showChild = true;
+                  el.showParent = true;
+                } else {
+                  childEl.showChild = false;
+                }
+              });
+            }
           });
         }
+
         this.localStorageService.setCacheData(
           'ADMIN_PROFILE',
           this.adminProfile

@@ -7,6 +7,21 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 
+interface Organization {
+  organization_name: string;
+  _id: string;
+}
+
+interface Cafeteria {
+  cafeteria_name: string;
+  _id: string;
+}
+
+interface SiteExecutiveDetails {
+  orgDetails: Organization[];
+  cafeDetails: Cafeteria[];
+}
+
 @Component({
   selector: 'app-add-admin',
   templateUrl: './add-admin.component.html',
@@ -26,37 +41,47 @@ export class AddAdminComponent {
   };
   roleArr = [
     { text: 'Admin', value: 'ADMIN' },
+    { text: 'OrgAdmin', value: 'ORGADMIN' },
+    { text: 'Site Executive', value: 'SITEEXE' },
     { text: 'Developer', value: 'DEVELOPER' },
     { text: 'Support', value: 'SUPPORT' },
     { text: 'Sales', value: 'SALES' },
     { text: 'Operations', value: 'OPERATIONS' },
     { text: 'Advisor', value: 'ADVISOR' },
-    { text: 'OrgAdmin', value: 'ORGADMIN' },
   ];
-  orglist: any = [];
+  orglist: any[] = [];
   filteredOptions = [...this.orglist];
-  access: any;
+  btnPolicy: any;
   policyArr: any;
   searchQuery: string = '';
   selectedValue: string = '';
   selectedCafeId: string = '';
   orgDetails: any = null;
   cafeDetails: any = null;
+  // For Site Executive
+  cafeList: any[] = [];
+  siteExecutiveDetails: SiteExecutiveDetails = {
+    orgDetails: [],
+    cafeDetails: [],
+  };
+
+  selectedItemsCafe: any[] = [];
+
   constructor(
     private apiMainService: ApiMainService,
     public router: Router,
     private runtimeStorageService: RuntimeStorageService,
     private modalService: NgbModal,
     private policyService: PolicyService
-  ) {
-    this.access = this.policyService.getCurrentButtonPolicy();
-  }
+  ) {}
+
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+
     this.getOrgList();
     const cacheAdmin = this.runtimeStorageService.getCacheData('VIEW_ADMIN');
-    console.log('catche admin', cacheAdmin);
+
     this.getAllPolicy();
-    console.log('cacheAdmin ', cacheAdmin);
     if (cacheAdmin) {
       this.editMode = true;
       this.adminObj.name = cacheAdmin.name;
@@ -73,9 +98,12 @@ export class AddAdminComponent {
         this.selectedValue = cacheAdmin.orgDetails._id;
         this.setOrgDetails();
       }
+      if (this.adminObj.role === 'SITEEXE') {
+        this.siteExecutiveDetails = cacheAdmin.siteExecutiveDetails;
+      }
     }
-    
   }
+
   cancel() {
     this.runtimeStorageService.resetCacheData('VIEW_ADMIN');
     this.router.navigate(['admin']);
@@ -94,7 +122,6 @@ export class AddAdminComponent {
       const file: File = $event.target.files[0];
       if (file) {
         const fileName = file.name;
-        console.log(fileName);
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (_event) => {
@@ -111,9 +138,7 @@ export class AddAdminComponent {
             );
             modalRef.result.then(
               (result: any) => {
-                console.log('Closed with:', result);
                 if (result && result.croppedImages) {
-                  console.log('croppedImages ', result.croppedImages);
                   this.uploadedImageFile = result.croppedImages.file;
                   this.imageUrl = result.croppedImages.resizeDataUrl;
                 }
@@ -133,42 +158,79 @@ export class AddAdminComponent {
       }
     }
   }
+
   async getAllPolicy() {
     try {
       const policyArr: any = await this.apiMainService.getAllPolicy();
       if (policyArr && policyArr.length > 0) {
         this.policyArr = policyArr;
-        console.log(this.policyArr);
       }
     } catch (error) {
       console.log(error);
     }
   }
+
   async addAdmin(adminObj: any) {
-    // if(adminObj.role=='ORGADMIN'){
-    //   this.setOrgDetails();
-    //   console.log(this.orgDetails);
-    // }
     const formData = new FormData();
     if (this.uploadedImageFile) {
       formData.append('image', this.uploadedImageFile);
     }
     if (adminObj.role == 'ORGADMIN') {
-      // this.setOrgDetails();
-      console.log(this.orgDetails);
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
     }
     if (adminObj.policy == 'cafeteria Manager') {
-      // this.setOrgDetails();
-      console.log(this.orgDetails);
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
     }
+    if (adminObj.role === 'SITEEXE') {
+      let cafeList = this.orglist.flatMap((org: any) =>
+        org.cafeteriaList.map((cafe: any) => ({
+          ...cafe,
+          organization_name: org.organization_name,
+          organization_id: org._id,
+        }))
+      );
+
+      if (!this.siteExecutiveDetails) {
+        this.siteExecutiveDetails = { orgDetails: [], cafeDetails: [] };
+      }
+
+      this.selectedItemsCafe.forEach((item) => {
+        const foundCafe = cafeList.find((a) => a._id === item);
+        if (!foundCafe) return;
+
+        const org: Organization = {
+          organization_name: foundCafe.organization_name,
+          _id: foundCafe.organization_id,
+        };
+
+        const cafe: Cafeteria = {
+          cafeteria_name: foundCafe.cafeteria_name,
+          _id: foundCafe._id,
+        };
+
+        if (
+          !this.siteExecutiveDetails.orgDetails.some((o) => o._id === org._id)
+        ) {
+          this.siteExecutiveDetails.orgDetails.push(org);
+        }
+        if (
+          !this.siteExecutiveDetails.cafeDetails.some((c) => c._id === cafe._id)
+        ) {
+          this.siteExecutiveDetails.cafeDetails.push(cafe);
+        }
+      });
+
+      formData.append(
+        'siteExecutiveDetails',
+        JSON.stringify(this.siteExecutiveDetails)
+      );
+    }
+
     formData.append('name', adminObj.name);
     formData.append('phoneNo', adminObj.phoneNo);
     formData.append('email', adminObj.email);
     formData.append('role', adminObj.role);
     formData.append('policy_name', adminObj.policy);
-    console.log('form data', formData, adminObj);
     try {
       await this.apiMainService.saveAdminProfile(formData);
       this.router.navigate(['admin']);
@@ -176,11 +238,8 @@ export class AddAdminComponent {
       console.log('Error while saving kitchen partner ', e);
     }
   }
+
   async updateAdmin(adminObj: any) {
-    // if(adminObj.role=='ORGADMIN'){
-    //   this.setOrgDetails();
-    //   console.log(this.orgDetails);
-    // }
     const formData = new FormData();
     if (this.uploadedImageFile) {
       formData.append('image', this.uploadedImageFile);
@@ -195,9 +254,51 @@ export class AddAdminComponent {
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
     }
     if (adminObj.policy == 'cafeteria Manager') {
-      // this.setOrgDetails();
-      console.log(this.orgDetails);
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
+    }
+    if (adminObj.role === 'SITEEXE') {
+      let cafeList = this.orglist.flatMap((org: any) =>
+        org.cafeteriaList.map((cafe: any) => ({
+          ...cafe,
+          organization_name: org.organization_name,
+          organization_id: org._id,
+        }))
+      );
+
+      if (!this.siteExecutiveDetails) {
+        this.siteExecutiveDetails = { orgDetails: [], cafeDetails: [] };
+      }
+
+      this.selectedItemsCafe.forEach((item) => {
+        const foundCafe = cafeList.find((a) => a._id === item);
+        if (!foundCafe) return;
+
+        const org: Organization = {
+          organization_name: foundCafe.organization_name,
+          _id: foundCafe.organization_id,
+        };
+
+        const cafe: Cafeteria = {
+          cafeteria_name: foundCafe.cafeteria_name,
+          _id: foundCafe._id,
+        };
+
+        if (
+          !this.siteExecutiveDetails.orgDetails.some((o) => o._id === org._id)
+        ) {
+          this.siteExecutiveDetails.orgDetails.push(org);
+        }
+        if (
+          !this.siteExecutiveDetails.cafeDetails.some((c) => c._id === cafe._id)
+        ) {
+          this.siteExecutiveDetails.cafeDetails.push(cafe);
+        }
+      });
+
+      formData.append(
+        'siteExecutiveDetails',
+        JSON.stringify(this.siteExecutiveDetails)
+      );
     }
     try {
       await this.apiMainService.updateadminprofile(adminObj.id, formData);
@@ -218,25 +319,33 @@ export class AddAdminComponent {
         searchObj,
         page
       );
+
       this.orglist = result;
+
+      if (this.adminObj.role === 'SITEEXE') {
+        this.selectedItemsCafe = [
+          ...new Set(this.siteExecutiveDetails.cafeDetails.map((a) => a._id)),
+        ];
+      }
+
       this.filteredOptions = [...this.orglist];
       if (this.adminObj.role == 'ORGADMIN') {
         this.setOrgDetails();
       }
-      // console.log(this.orglist);
     } catch (error) {
       console.log(error);
     }
   }
+
   setOrgDetails() {
-    console.log(this.orglist,"this.orglist");
     this.orgDetails = this.orglist.find((org: any) => {
       return org._id == this.selectedValue;
     });
-    if (this.adminObj.policy == 'cafeteria Manager') {
-      this.setCafeDetails();
-    }
+    // if (this.adminObj.policy == 'cafeteria Manager') {
+    this.setCafeDetails();
+    // }
   }
+
   setCafeDetails() {
     this.cafeDetails = this.orgDetails.cafeteriaList.find((org: any) => {
       return org._id == this.selectedCafeId;

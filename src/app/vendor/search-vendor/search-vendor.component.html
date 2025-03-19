@@ -1,46 +1,82 @@
 <div class="bgpadding1">
-    <div class="right addBtn addOutlet" (click)="addVendor()">+</div>
-    <div class="row">
-        <div class="col-12 col-md-4 col-lg-6">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">Vendor Name</div>
-                    <input type="text" class="form-control" placeholder="Vendor Name" [(ngModel)]="searchObj.vendorName">
-                </div>
-            </div>
+  <div
+    class="right addBtn addOutlet"
+    *ngIf="btnPolicy?.addVendor"
+    (click)="addVendor()"
+  >
+    +
+  </div>
+  <div class="row">
+    <div class="col-12 col-md-4 col-lg-6">
+      <div class="row">
+        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
+          <div class="bold">Vendor Name</div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Vendor Name"
+            [(ngModel)]="searchObj.vendorName"
+          />
         </div>
-
-        <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">Ph No</div>
-                    <input type="text" class="form-control" placeholder="Vendor Phone No"
-                        [(ngModel)]="searchObj.vendorPhoneNo">
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">Email</div>
-                    <input type="text" class="form-control" placeholder="Vendor Email" [(ngModel)]="searchObj.vendorEmail">
-                </div>
-            </div>
-        </div>
-
-        <div class="row mt-2">
-            <div class="col-sm-12 col-md-4 col-lg-12">
-                <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchVendor()">Search</button>
-                <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">Reset</button>
-            </div>
-        </div>
-        <div *ngIf="vendorList && vendorList.length==0" class="center mt-5">No Vendor Found</div>
-        <div class="mt-3" *ngIf="vendorList && vendorList.length > 0">
-            <div *ngFor="let vendor of vendorList" class="cardDesign">
-                <app-vendor-card [vendor]="vendor" (deleted)="getAllVendors()"></app-vendor-card>
-            </div>
-        </div>
-
+      </div>
     </div>
+
+    <div class="col-12 col-md-4 col-lg-4">
+      <div class="row">
+        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
+          <div class="bold">Ph No</div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Vendor Phone No"
+            [(ngModel)]="searchObj.vendorPhoneNo"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-4">
+      <div class="row">
+        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
+          <div class="bold">Email</div>
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Vendor Email"
+            [(ngModel)]="searchObj.vendorEmail"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <div class="col-sm-12 col-md-4 col-lg-12">
+        <button
+          type="button"
+          class="btn btn-primary btn-sm me-2"
+          (click)="searchVendor()"
+        >
+          Search
+        </button>
+        <button
+          type="button"
+          class="btn btn-success btn-sm"
+          (click)="resetForm()"
+        >
+          Reset
+        </button>
+      </div>
+    </div>
+    <div *ngIf="vendorList && vendorList.length == 0" class="center mt-5">
+      No Vendor Found
+    </div>
+    <div class="mt-3" *ngIf="vendorList && vendorList.length > 0">
+      <div *ngFor="let vendor of vendorList" class="cardDesign">
+        <app-vendor-card
+          [vendor]="vendor"
+          (deleted)="getAllVendors()"
+        ></app-vendor-card>
+      </div>
+    </div>
+  </div>
 </div>

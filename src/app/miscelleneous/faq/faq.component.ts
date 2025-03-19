@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -6,19 +6,25 @@ import { PolicyService } from 'src/service/policy.service';
 @Component({
   selector: 'app-faq',
   templateUrl: './faq.component.html',
-  styleUrls: ['./faq.component.scss']
+  styleUrls: ['./faq.component.scss'],
 })
-export class FaqComponent {
+export class FaqComponent implements OnInit {
   allFAQs: any = [];
   faqObj: any = {};
   editMode = false;
   addnewFAQ = false;
-  access:any;
+  btnPolicy: any;
 
-  constructor(private apiMainService: ApiMainService,
-    private confirmationModalService: ConfirmationModalService, private policyService:PolicyService) {
+  constructor(
+    private apiMainService: ApiMainService,
+    private confirmationModalService: ConfirmationModalService,
+    private policyService: PolicyService
+  ) {
     this.getAllFAQs();
-    this.access = this.policyService.getCurrentButtonPolicy();
+  }
+
+  ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
   }
 
   async getAllFAQs() {
@@ -41,7 +47,7 @@ export class FaqComponent {
     try {
       const allFAQs = await this.apiMainService.saveFAQ(faqObj);
       this.getAllFAQs();
-      this.cancel()
+      this.cancel();
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
@@ -50,7 +56,7 @@ export class FaqComponent {
     try {
       await this.apiMainService.updateFAQ(faqObj);
       this.getAllFAQs();
-      this.cancel()
+      this.cancel();
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
@@ -64,7 +70,7 @@ export class FaqComponent {
     try {
       await this.apiMainService.deleteFAQ(id);
       this.getAllFAQs();
-      this.cancel()
+      this.cancel();
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
@@ -75,8 +81,10 @@ export class FaqComponent {
     this.faqObj = faqObj;
   }
   showPopup(faqObj: any) {
-    this.confirmationModalService.modal(`Are you sure, you want to delete ${faqObj.question}`,
-      () => this.deleteFAQ(faqObj._id), this);
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${faqObj.question}`,
+      () => this.deleteFAQ(faqObj._id),
+      this
+    );
   }
-
 }

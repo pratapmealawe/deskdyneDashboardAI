@@ -1,21 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-app-version-control',
   templateUrl: './app-version-control.component.html',
-  styleUrls: ['./app-version-control.component.scss']
+  styleUrls: ['./app-version-control.component.scss'],
 })
-export class AppVersionControlComponent {
+export class AppVersionControlComponent implements OnInit {
   allAppVersions: any = [];
   variableObj: any = {};
   editMode = false;
   addnewVariable = false;
-  access:any;
-  constructor(private apiMainService: ApiMainService, private policyService:PolicyService) {
+  btnPolicy: any;
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private policyService: PolicyService
+  ) {
     this.getAllAppVersions();
-    this.access = this.policyService.getCurrentButtonPolicy();
+  }
+
+  ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
   }
 
   async getAllAppVersions() {
@@ -30,28 +37,32 @@ export class AppVersionControlComponent {
       console.log('Error while fetching config variables ', e);
     }
   }
+
   addVariable() {
     this.editMode = true;
     this.addnewVariable = true;
   }
+
   async submitnewVariable(variableObj: any) {
     try {
       await this.apiMainService.saveAppVersion(variableObj);
       this.getAllAppVersions();
-      this.cancel()
+      this.cancel();
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
   }
+
   async updateVariable(variableObj: any) {
     try {
       await this.apiMainService.updateAppVersion(variableObj);
       this.getAllAppVersions();
-      this.cancel()
+      this.cancel();
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
   }
+
   cancel() {
     this.editMode = false;
     this.addnewVariable = false;

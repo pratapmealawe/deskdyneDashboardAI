@@ -1,70 +1,90 @@
-<span class="right btn-danger btn-sm pointer right" (click)="editOrg()">EDIT</span>
+<span
+  class="right btn-danger btn-sm pointer right"
+  *ngIf="btnPolicy?.editOutlet"
+  (click)="editOrg()"
+  >EDIT</span
+>
 <div class="row">
-    <div class="col-12 col-md-4 col-lg-12">
-        <div class="row">
-            <div class="col-6 col-md-7 col-lg-4">
-                <img [src]="outletObj.imageUrl? imageUrl + outletObj.imageUrl :'assets/images/dummyUpload.png'" class="uploadedImage" />
-            </div>
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Outlet Name</div>
-                <div class="labelData">{{outletObj.outletName}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Outlet Type</div>
-                <div class="labelData">{{outletObj.outletType}}</div>
-            </div>
-        </div>
+  <div class="col-12 col-md-4 col-lg-12">
+    <div class="row">
+      <div class="col-6 col-md-7 col-lg-4">
+        <img
+          [src]="
+            outletObj.imageUrl
+              ? imageUrl + outletObj.imageUrl
+              : 'assets/images/dummyUpload.png'
+          "
+          class="uploadedImage"
+        />
+      </div>
+      <div class="col-6 col-md-5 col-lg-4">
+        <div class="labelText">Outlet Name</div>
+        <div class="labelData">{{ outletObj.outletName }}</div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Outlet Type</div>
+        <div class="labelData">{{ outletObj.outletType }}</div>
+      </div>
     </div>
-    <div class="col-12 col-md-4 col-lg-12 mt-2">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-12">
-                <div class="labelText">Outlet Description</div>
-                <div class="labelData">{{outletObj.outletDescription}}</div>
-            </div>
-        </div>
+  </div>
+  <div class="col-12 col-md-4 col-lg-12 mt-2">
+    <div class="row">
+      <div class="col-6 col-md-5 col-lg-12">
+        <div class="labelText">Outlet Description</div>
+        <div class="labelData">{{ outletObj.outletDescription }}</div>
+      </div>
     </div>
-    <div class="col-12 col-md-4 col-lg-12">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Organization Name</div>
-                <div class="labelData">{{outletObj.organizationDetails.organization_name}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">City</div>
-                <div class="labelData">{{outletObj.organizationDetails.city}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Location</div>
-                <div class="labelData">{{outletObj.organizationDetails.location}}</div>
-            </div>
+  </div>
+  <div class="col-12 col-md-4 col-lg-12">
+    <div class="row">
+      <div class="col-6 col-md-5 col-lg-4">
+        <div class="labelText">Organization Name</div>
+        <div class="labelData">
+          {{ outletObj.organizationDetails.organization_name }}
         </div>
-    </div>
-    <div class="col-12 col-md-4 col-lg-12">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Cafeteria Name</div>
-                <div class="labelData">{{outletObj.cafeteriaDetails.cafeteria_name}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Cafeteria City</div>
-                <div class="labelData">{{outletObj.cafeteriaDetails.cafeteria_city}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Landmark</div>
-                <div class="labelData">{{outletObj.cafeteriaDetails.landmark}}</div>
-            </div>
-            <div class="col-6 col-md-5 col-lg-4">
-                <div class="labelText">Cafeteria Name</div>
-                <div class="labelData">{{outletObj.cafeteriaDetails.location}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Cafeteria City</div>
-                <div class="labelData">{{outletObj.cafeteriaDetails.address1}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Location</div>
-                <div class="labelData">{{outletObj.cafeteriaDetails.address2}}</div>
-            </div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">City</div>
+        <div class="labelData">{{ outletObj.organizationDetails.city }}</div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Location</div>
+        <div class="labelData">
+          {{ outletObj.organizationDetails.location }}
         </div>
+      </div>
     </div>
+  </div>
+  <div class="col-12 col-md-4 col-lg-12">
+    <div class="row">
+      <div class="col-6 col-md-5 col-lg-4">
+        <div class="labelText">Cafeteria Name</div>
+        <div class="labelData">
+          {{ outletObj.cafeteriaDetails.cafeteria_name }}
+        </div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Cafeteria City</div>
+        <div class="labelData">
+          {{ outletObj.cafeteriaDetails.cafeteria_city }}
+        </div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Landmark</div>
+        <div class="labelData">{{ outletObj.cafeteriaDetails.landmark }}</div>
+      </div>
+      <div class="col-6 col-md-5 col-lg-4">
+        <div class="labelText">Cafeteria Name</div>
+        <div class="labelData">{{ outletObj.cafeteriaDetails.location }}</div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Cafeteria City</div>
+        <div class="labelData">{{ outletObj.cafeteriaDetails.address1 }}</div>
+      </div>
+      <div class="col-6 col-md-7 col-lg-4">
+        <div class="labelText">Location</div>
+        <div class="labelData">{{ outletObj.cafeteriaDetails.address2 }}</div>
+      </div>
+    </div>
+  </div>
 </div>

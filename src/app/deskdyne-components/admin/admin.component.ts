@@ -1,16 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+  styleUrls: ['./admin.component.scss'],
 })
-export class AdminComponent {
+export class AdminComponent implements OnInit {
   searchObj = {
     adminName: '',
     phoneNo: '',
@@ -18,12 +19,20 @@ export class AdminComponent {
     adminId: '',
   };
   adminList: any = [];
-  access:any;
+  access: any;
   imageUrl: any = environment.imageUrl;
-  constructor(public router: Router, private apiMainService: ApiMainService,
-    private runtimeStorageService: RuntimeStorageService, private policyService:PolicyService) {
+  btnPolicy: any;
+
+  constructor(
+    public router: Router,
+    private apiMainService: ApiMainService,
+    private runtimeStorageService: RuntimeStorageService,
+    private policyService: PolicyService
+  ) {
     this.getAllAdminList();
-    this.access = this.policyService.getCurrentButtonPolicy();
+  }
+  ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
   }
 
   addAdmin() {
@@ -33,14 +42,14 @@ export class AdminComponent {
     try {
       this.adminList = await this.apiMainService.getAdminProfileList();
     } catch (e) {
-      console.log('error while fetching admin profile')
+      console.log('error while fetching admin profile');
     }
   }
   async searchAdmin() {
     try {
       this.adminList = await this.apiMainService.searchAdmin(this.searchObj);
     } catch (e) {
-      console.log('error while searching admin profile')
+      console.log('error while searching admin profile');
     }
   }
 
@@ -48,5 +57,4 @@ export class AdminComponent {
     this.runtimeStorageService.setCacheData('VIEW_ADMIN', admin);
     this.router.navigate(['add-admin']);
   }
-
 }

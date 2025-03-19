@@ -1,33 +1,40 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-b2b-food-item',
   templateUrl: './b2b-food-item.component.html',
-  styleUrls: ['./b2b-food-item.component.scss']
+  styleUrls: ['./b2b-food-item.component.scss'],
 })
 export class B2bFoodItemComponent implements OnInit {
   foodItemList: any = [];
   editMode: boolean = false;
   editType: any = '';
   editfoodItemObj: any;
-  searchText:any = '';
+  searchText: any = '';
+  btnPolicy: any;
 
-  constructor(private apiMainService: ApiMainService, private ddApiMainService:ApiMainService) { }
+  constructor(
+    private apiMainService: ApiMainService,
+    private ddApiMainService: ApiMainService,
+    private policyService: PolicyService
+  ) {}
 
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+
     this.getFooditemList();
   }
 
   async getFooditemList() {
     try {
-      const foodItemList: any = await this.ddApiMainService.getAllB2BFooditems();
+      const foodItemList: any =
+        await this.ddApiMainService.getAllB2BFooditems();
       if (foodItemList && foodItemList.length > 0) {
-        this.foodItemList = foodItemList
+        this.foodItemList = foodItemList;
       }
-    } catch (error) {
-
-    }
+    } catch (error) {}
   }
 
   addFooditem() {
@@ -38,7 +45,7 @@ export class B2bFoodItemComponent implements OnInit {
   editFoodItem($event: any) {
     this.editMode = true;
     this.editType = 'edit';
-    this.editfoodItemObj = $event
+    this.editfoodItemObj = $event;
   }
 
   gotoPreviousState($event: any) {
@@ -57,12 +64,9 @@ export class B2bFoodItemComponent implements OnInit {
       await this.ddApiMainService.deleteB2BFoodItem(item._id);
       this.getFooditemList();
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
-  resetForm() {
-
-  }
-
+  resetForm() {}
 }

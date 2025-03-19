@@ -1,10 +1,98 @@
 <div class="container">
-    <div class="row cardDesign" *ngFor="let question of allChecklistQuestions">
-        <div class="col-lg-8 col-md-12 col-sm-12"> <div class="labelText">Question:</div>{{question.checklistQuestion}}</div>
-        <div class="col-lg-1 col-md-2  col-sm-12"><div class="labelText">Selected:</div><input  type="checkbox" [value]="question.selected"></div>
-        <div class="col-lg-3 col-md-10 col-sm-12"><div class="labelText">Comment:</div><input type="text" [(ngModel)]="question.comment"></div>
+  <h3 class="mb-4">Submit Checklist</h3>
+  <div class="container">
+    <div class="row mb-4 mt-3 p-3 bg-light rounded">
+      <div class="col-12 col-md-3">
+        <label for="organization" class="labelText d-block">Organization</label>
+        <select
+          [disabled]="editMode"
+          class="form-select"
+          [(ngModel)]="filterObj.orgId"
+          (change)="setOrgDetails()"
+        >
+          <option selected disabled value="">Select Organization</option>
+          <option *ngFor="let option of orglist" [value]="option._id">
+            {{ option.organization_name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label for="cafeteria" class="labelText d-block">Cafeteria</label>
+        <select
+          [disabled]="cafeList.length <= 0 || editMode"
+          class="form-select"
+          [(ngModel)]="filterObj.cafeId"
+          (change)="changeCafe()"
+        >
+          <option selected disabled value="">Select Cafeteria</option>
+          <option *ngFor="let option of cafeList" [value]="option._id">
+            {{ option.cafeteria_name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label for="exampleFormControlInput2" class="labelText d-block"
+          >Search</label
+        >
+
+        <input
+          type="text"
+          (input)="searchFilter($event)"
+          class="form-control"
+          placeholder="Search"
+          aria-label="Search Filter"
+          aria-describedby="basic-addon2"
+        />
+      </div>
     </div>
-    <button class="btn btn-primary btn-sm me-1" (click)="submitChecklist()" *ngIf="!editMode">Save</button>
-    <button class="btn btn-success btn-sm me-1" (click)="updateChecklist()" *ngIf="editMode">Update</button>
-    <button class="btn btn-danger btn-sm me-1" (click)="cancelChecklistSubmit()">Cancel</button>
+    <div
+      class="row cardDesign mb-3"
+      *ngFor="let question of filteredChecklistQuestions"
+    >
+      <div class="col-lg-1">
+        <input
+          type="checkbox"
+          class="form-check-input checkbox"
+          [(ngModel)]="question.selected"
+        />
+      </div>
+      <div class="col-lg-8">
+        {{ question.checklistQuestion }}
+      </div>
+
+      <div class="col-lg-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Enter Comment"
+          [(ngModel)]="question.comment"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="row mt-4">
+    <div class="col-lg-12">
+      <button
+        [disabled]="!filterObj.orgId && !filterObj.cafeId"
+        class="btn btn-primary me-2"
+        (click)="submitChecklist()"
+        *ngIf="!editMode && btnPolicy?.addChecklist"
+      >
+        Save
+      </button>
+      <button
+        [disabled]="!filterObj.orgId && !filterObj.cafeId"
+        class="btn btn-success me-2"
+        (click)="updateChecklist()"
+        *ngIf="editMode && btnPolicy?.editChecklist"
+      >
+        Update
+      </button>
+      <button class="btn btn-danger me-1" (click)="cancelChecklistSubmit()">
+        Cancel
+      </button>
+    </div>
+  </div>
 </div>

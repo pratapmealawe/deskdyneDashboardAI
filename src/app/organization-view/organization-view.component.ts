@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-organization-view',
@@ -10,36 +11,46 @@ import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  showBulkMenuSection:any = false;
+  showBulkMenuSection: any = false;
 
-  orgViewList = [{ name: 'Org Details', path: 'orgDetails' },
-  { name: 'Bulk Menu Section', path: 'bulkMenuSection' },
-  { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
-  { name: 'B2B Weekly Menu', path: 'b2bWeeklyMenu' },
-  { name: 'Employee List', path: 'employeeList' },
-  { name:'Guest Employee List', path:'guestEmployeeList'},
-  { name: 'Complience', path: 'organization-compliance' },
+  orgViewList = [
+    { name: 'Org Details', path: 'orgDetails' },
+    { name: 'Bulk Menu Section', path: 'bulkMenuSection' },
+    { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
+    { name: 'B2B Weekly Menu', path: 'b2bWeeklyMenu' },
+    { name: 'Employee List', path: 'employeeList' },
+    { name: 'Guest Employee List', path: 'guestEmployeeList' },
+    { name: 'Complience', path: 'organization-compliance' },
   ];
-  oldList:any = [];
-  bulkObj = [{ name: 'Bulk Meals Menu', path: 'bulkMealsMenu' },
+  oldList: any = [];
+  bulkObj = [
+    { name: 'Bulk Meals Menu', path: 'bulkMealsMenu' },
     { name: 'Individual Meals Menu', path: 'individualMealsMenu' },
     { name: 'Bulk Snacks Menu', path: 'bulkSnacksMenu' },
     { name: 'Individual Snacks Menu', path: 'individualSnacksMenu' },
     { name: 'Pre Defined Snack Box Menu', path: 'predefinedSnackBoxMenu' },
-    { name: 'Customized Snack Box Menu', path: 'customizedSnackBoxMenu' },]
+    { name: 'Customized Snack Box Menu', path: 'customizedSnackBoxMenu' },
+  ];
   selectedTab = 'orgDetails';
+  btnPolicy: any;
 
-  constructor(private router: Router) { }
+  constructor(private router: Router, private policyService: PolicyService) {}
 
   ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+
+    this.orgViewList = this.orgViewList.filter(
+      (item) => this.btnPolicy[item.path] !== false && item
+    );
+
     this.oldList = [...this.orgViewList];
   }
 
   gotToTab(tab: string) {
-    if(tab === 'bulkMenuSection'){
+    if (tab === 'bulkMenuSection') {
       this.showBulkMenuSection = !this.showBulkMenuSection;
-      if(this.showBulkMenuSection){
-        this.orgViewList = [...this.orgViewList,...this.bulkObj];
+      if (this.showBulkMenuSection) {
+        this.orgViewList = [...this.orgViewList, ...this.bulkObj];
         this.selectedTab = 'bulkMealsMenu';
         return;
       }
@@ -53,5 +64,4 @@ export class OrganizationViewComponent implements OnInit {
   goBack() {
     this.back.emit(true);
   }
-
 }

@@ -64,6 +64,10 @@ export class ApiConfigService {
       },
       searchVendor: { url: `${this.baseUrl}/api/searchVendor`, method: 'POST' },
       searchAdmin: { url: `${this.baseUrl}/api/searchAdmin`, method: 'POST' },
+      searchSiteExecutive: {
+        url: `${this.baseUrl}/api/searchSiteExecutive`,
+        method: 'POST',
+      },
       updateVendor: { url: `${this.baseUrl}/api/updateVendor`, method: 'POST' },
       searchOutlet: { url: `${this.baseUrl}/api/searchOutlet`, method: 'POST' },
       adminProfile: { url: `${this.baseUrl}/api/adminProfile`, method: 'POST' },
@@ -186,6 +190,18 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getEmployeeListByOrgId`,
         method: 'GET',
       },
+      getDayRangeBasedAuditLogs: {
+        url: `${this.baseUrl}/utility/getDayRangeBasedAuditLogs`,
+        method: 'GET',
+      },
+      getTimeBasedAuditLogs: {
+        url: `${this.baseUrl}/utility/getTimeBasedAuditLogs`,
+        method: 'GET',
+      },
+      getLineBasedAuditLogs: {
+        url: `${this.baseUrl}/utility/getLineBasedAuditLogs`,
+        method: 'GET',
+      },
       employeeAdd: {
         url: `${this.baseUrl}/api/employeeAdd`,
         method: 'POST',
@@ -219,8 +235,8 @@ export class ApiConfigService {
         method: 'GET',
       },
       updateChecklistReports: {
-        url: `${this.baseUrl}/api/updateChecklistQuestions`,
-        method: 'POST',
+        url: `${this.baseUrl}/api/updateChecklistReports`,
+        method: 'PUT',
       },
       deletechecklistReport: {
         url: `${this.baseUrl}/api/deleteOutletMenu`,
@@ -446,6 +462,10 @@ export class ApiConfigService {
       getChartData: {
         url: `${this.baseUrl}/api/getChartData`,
         method: 'POST',
+      },
+      getCurrentOutletOrdersListForGuest: {
+        url: `${this.baseUrl}/api/getCurrentOutletOrdersListForGuest`,
+        method: 'GET',
       },
     };
   }
