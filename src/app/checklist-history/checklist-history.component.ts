@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
@@ -22,6 +23,7 @@ export class ChecklistHistoryComponent implements OnInit {
   orgDetails: any = null;
   // Stores the list of all organizations
   orglist: any[] = [];
+  cafeList: any[] = [];
   // Stores checklist report history based on applied filters
   reportHistory: any[] = [];
   // Stores the filtered report history for search functionality
@@ -32,7 +34,7 @@ export class ChecklistHistoryComponent implements OnInit {
   filterObj: filter = {
     orgId: '',
     cafeId: '',
-    fromDate: '',
+    fromDate: new Date().toISOString().split('T')[0],
     toDate: '',
     page: 1,
   };
@@ -44,7 +46,8 @@ export class ChecklistHistoryComponent implements OnInit {
   constructor(
     public apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private searchService: SearchFilterService
+    private searchService: SearchFilterService,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -75,6 +78,13 @@ export class ChecklistHistoryComponent implements OnInit {
     if (this.orgAdmin.role === 'ORGADMIN') {
       this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
       this.setOrgDetails();
+    } else if (this.orgAdmin.role === 'SITEEXE') {
+      this.orglist = this.orglist.filter((item: any) =>
+        this.orgAdmin?.siteExecutiveDetails?.orgDetails.some(
+          (a: any) => a._id === item._id
+        )
+      );
+      this.getReportHistoryByfilter();
     } else {
       this.getReportHistoryByfilter();
     }
@@ -83,9 +93,19 @@ export class ChecklistHistoryComponent implements OnInit {
   // Find the selected organization based on the filter
   // Reset cafe ID and clear list
   setOrgDetails() {
-    this.orgDetails = this.orglist.find((org: any) => {
+    let orgDetails = this.orglist.find((org: any) => {
       return org._id == this.filterObj?.orgId;
     });
+
+    if (this.orgAdmin.role === 'SITEEXE') {
+      this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
+        this.orgAdmin?.siteExecutiveDetails?.cafeDetails.some(
+          (a: any) => a._id === item._id
+        )
+      );
+    } else {
+      this.cafeList = orgDetails.cafeteriaList;
+    }
     this.filterObj.cafeId = '';
     this.clearList();
   }
@@ -106,11 +126,17 @@ export class ChecklistHistoryComponent implements OnInit {
   // Determine if "Load More" button should be shown
   // Append the fetched data to existing list
   // Initialize expansion state for each item
-  async getReportHistoryByfilter() {
+  async getReportHistoryByfilter(isClear = false) {
+    if (!isClear) {
+      this.reportHistory = [];
+      this.filteredReportHistory = [];
+      this.filterObj.page = 1;
+    }
     try {
       const data = await this.apiMainService.getReportHistoryByfilter(
         this.filterObj
       );
+
       this.nextOn = data.length > 0;
       this.reportHistory = [...this.reportHistory, ...data];
       this.filteredReportHistory = [...this.reportHistory];
@@ -123,7 +149,7 @@ export class ChecklistHistoryComponent implements OnInit {
   // Increment the page number to fetch the next set of data
   getMore() {
     this.filterObj.page++;
-    this.getReportHistoryByfilter();
+    this.getReportHistoryByfilter(true);
   }
 
   // Define search configuration (searching by key)
@@ -135,6 +161,23 @@ export class ChecklistHistoryComponent implements OnInit {
       this.reportHistory,
       config,
       searchText
+    );
+  }
+
+  editChecklist(report: any) {
+    this.router.navigate(['/submit-checklist'], { state: report });
+  }
+
+  isToday(dateString: string | Date): boolean {
+    if (!dateString) return false;
+
+    const reportDate = new Date(dateString);
+    const today = new Date();
+
+    return (
+      reportDate.getFullYear() === today.getFullYear() &&
+      reportDate.getMonth() === today.getMonth() &&
+      reportDate.getDate() === today.getDate()
     );
   }
 }

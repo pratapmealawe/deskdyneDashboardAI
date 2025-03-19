@@ -242,6 +242,12 @@ export class ApiMainService {
       data
     );
   }
+  searchSiteExecutive(data: any) {
+    return this.apiHttpService.REQUEST(
+      this.apiConfigService.apiEndPointObj.searchSiteExecutive,
+      data
+    );
+  }
   getAdminProfileList() {
     const urlObj = this.apiConfigService.apiEndPointObj.getAdminProfileList;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: 'GET' });
@@ -491,7 +497,8 @@ export class ApiMainService {
   }
 
   getDayRangeBasedAuditLogs(startDate: any, endDate: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getDayRangeBasedAuditLogs;
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getDayRangeBasedAuditLogs;
     return this.apiHttpService.REQUEST({
       url: urlObj.url + `/${startDate}` + `/${endDate}`,
       method: urlObj.method,
@@ -608,15 +615,22 @@ export class ApiMainService {
     );
   }
   updateIncident(data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateIncident;
     return this.apiHttpService.REQUEST(
-      this.apiConfigService.apiEndPointObj.updateIncident,
+      {
+        url: urlObj.url + `/${data._id}`,
+        method: urlObj.method,
+      },
       data
     );
   }
-  deleteIncident() {
-    return this.apiHttpService.REQUEST(
-      this.apiConfigService.apiEndPointObj.deleteIncident
-    );
+  deleteIncident(incidentId: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteIncident;
+
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${incidentId}`,
+      method: urlObj.method,
+    });
   }
   updateOutletMenu(outletId: any, menuId: any, menuObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletMenu;

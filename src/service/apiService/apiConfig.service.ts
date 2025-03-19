@@ -64,6 +64,10 @@ export class ApiConfigService {
       },
       searchVendor: { url: `${this.baseUrl}/api/searchVendor`, method: 'POST' },
       searchAdmin: { url: `${this.baseUrl}/api/searchAdmin`, method: 'POST' },
+      searchSiteExecutive: {
+        url: `${this.baseUrl}/api/searchSiteExecutive`,
+        method: 'POST',
+      },
       updateVendor: { url: `${this.baseUrl}/api/updateVendor`, method: 'POST' },
       searchOutlet: { url: `${this.baseUrl}/api/searchOutlet`, method: 'POST' },
       adminProfile: { url: `${this.baseUrl}/api/adminProfile`, method: 'POST' },
@@ -231,8 +235,8 @@ export class ApiConfigService {
         method: 'GET',
       },
       updateChecklistReports: {
-        url: `${this.baseUrl}/api/updateChecklistQuestions`,
-        method: 'POST',
+        url: `${this.baseUrl}/api/updateChecklistReports`,
+        method: 'PUT',
       },
       deletechecklistReport: {
         url: `${this.baseUrl}/api/deleteOutletMenu`,

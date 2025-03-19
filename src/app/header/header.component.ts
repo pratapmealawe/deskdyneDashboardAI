@@ -181,9 +181,16 @@ export class HeaderComponent implements OnInit {
     {
       name: 'Incident Reporting',
       showParent: true,
-      route: 'dashboard',
+      route: 'org-incident-management',
       image: 'Incident_Reporting',
       imageblue: 'Incident_Reporting_Blue',
+    },
+    {
+      name: 'Submit CheckList',
+      route: 'submit-checklist',
+      showParent: true,
+      image: 'Checklist_white',
+      imageblue: 'Checklist_blue',
     },
   ];
 
@@ -293,13 +300,6 @@ export class HeaderComponent implements OnInit {
       image: 'Billing_white',
       imageblue: 'Billing_Blue',
     },
-    {
-      name: 'Submit CheckList',
-      route: 'submit-checklist',
-      showParent: true,
-      image: 'Checklist_white',
-      imageblue: 'Checklist_blue',
-    },
   ];
 
   breadCrumbText: any = 'Home';
@@ -398,14 +398,14 @@ export class HeaderComponent implements OnInit {
             JSON.stringify(this.adminProfile.orgDetails)
           );
           this.finalNavOption = this.orgOptions;
-          this.router.navigate(['/org-dashboard']);
+          // this.router.navigate(['/org-dashboard']);
         } else {
           this.finalNavOption = this.deskDineOptions;
           this.isOrgAdmin = false;
         }
         this.getAllPolicy();
 
-        this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
+        // this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
       }
     } catch (error) {
       console.log('error while logging out ', error);
