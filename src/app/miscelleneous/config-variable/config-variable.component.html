@@ -1,5 +1,7 @@
 <div class="bgpadding1">
-  <span class="addBtn" (click)="addVariable()">+</span>
+  <span class="addBtn" *ngIf="btnPolicy?.addVariable" (click)="addVariable()"
+    >+</span
+  >
 
   <div *ngIf="editMode" class="bgpadding1">
     <div class="labelText" *ngIf="addnewVariable">Add New Config Variable</div>
@@ -113,7 +115,7 @@
       </div>
     </div>
     <div class="mt-2">
-      <div class="inline" *ngIf="addnewVariable">
+      <div class="inline" *ngIf="addnewVariable && btnPolicy?.addVariable">
         <button
           type="button"
           class="btn btn-primary btn-sm me-2"
@@ -122,7 +124,7 @@
           Submit
         </button>
       </div>
-      <div class="inline" *ngIf="!addnewVariable">
+      <div class="inline" *ngIf="!addnewVariable && btnPolicy?.editVariable">
         <button
           type="button"
           class="btn btn-primary btn-sm me-2"
@@ -157,10 +159,12 @@
         </div>
         <div class="col-3 col-md-2 col-lg-2 alignRight">
           <i
+            *ngIf="btnPolicy?.editVariable"
             class="bi bi-pencil-square bgsidepadding5 pointer"
             (click)="editVariable(variable)"
           ></i>
           <i
+            *ngIf="btnPolicy?.deleteVariable"
             class="bi bi-trash-fill bgsidepadding5 pointer"
             (click)="showPopup(variable)"
           ></i>

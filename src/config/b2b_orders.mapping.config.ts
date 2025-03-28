@@ -1,0 +1,19 @@
+export const b2b_orders_mapper = {
+    b2b_placed:'placed',
+    b2b_waitingForApproval:'waitingForApproval',
+    b2b_accepted:'accepted',
+    b2b_declined:'declined',
+    b2b_completed:'delivered',
+    b2b_cancelled:'cancelled',
+    b2b_inprogress:'inprogress',
+    b2b_deliveryBoyAssigned:'deliveryBoyAssigned',
+    b2b_handedOverToDeliveryBoy:'handedOverToDeliveryBoy',
+    b2b_onTheWay:'onTheWay',
+    b2b_readyForDelivery:'readyForDelivery',
+    bulkMeals:'Bulk Meals',
+    individualMeals:'Individual Meals',
+    bulkSnacks: 'Bulk Snacks',
+    individualSnacks:'Individual Snacks',
+    predefinedSnackbox: 'Predefined SnackBox',
+    customSnackbox:'Custom SnackBox'
+}

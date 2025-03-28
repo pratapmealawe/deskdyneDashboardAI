@@ -11,7 +11,7 @@
             <button class="upload-btn" (click)="uploadFile()" [disabled]="!selectedFile">Upload</button>
             <button class="cancel-btn" *ngIf="selectedFile" (click)="cancelSelection()">Cancel</button>
         </div>
-        <p *ngIf="selectedFile" class="selected-file">Selected File: {{ selectedFile.name }}</p>
+        <p *ngIf="selectedFile" class="selected-file">Selected File: {{ selectedFile?.name }}</p>
     </div>
 
     <!-- PDF Preview -->

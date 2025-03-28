@@ -2,13 +2,16 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { OrgIncidentManagementRoutingModule } from './org-incident-management-routing.module';
-
+import { OrgIncidentManagementComponent } from './org-incident-management.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
-  declarations: [],
+  declarations: [OrgIncidentManagementComponent],
   imports: [
     CommonModule,
-    OrgIncidentManagementRoutingModule
-  ]
+    OrgIncidentManagementRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+  ],
 })
-export class OrgIncidentManagementModule { }
+export class OrgIncidentManagementModule {}

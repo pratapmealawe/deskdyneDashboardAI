@@ -1,0 +1,65 @@
+<div class="container-fluid">
+  <span
+    class="addBtn"
+    (click)="addFooditem()"
+    *ngIf="!editMode && btnPolicy?.addFoodItem"
+    >+</span
+  >
+  <div *ngIf="!editMode">
+    <div class="row">
+      <div class="col-12 col-md-4 col-lg-6">
+        <div class="row">
+          <div class="col-12 col-md-6 col-lg-6 bgpadding1">
+            <div class="bold">Item Name</div>
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Item Name"
+              [(ngModel)]="searchText"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+    <button
+      type="button"
+      class="btn btn-primary btn-sm me-2"
+      (click)="searchText = ''"
+    >
+      Reset
+    </button>
+    <div class="row" *ngIf="foodItemList.length > 0 && !editMode">
+      <div *ngIf="foodItemList.length > 0">
+        <div
+          *ngFor="let item of foodItemList | filter : searchText : 'itemName'"
+          class="cardDesign mt-2"
+        >
+          <app-b2b-food-item-card
+            [foodItem]="item"
+            (deleteItem)="deleteFoodItem($event)"
+            (editItem)="editFoodItem($event)"
+          ></app-b2b-food-item-card>
+        </div>
+        <!-- <div class="center mt-2">
+                    <button class="filterbox btn btn-primary btn-sm" (click)="previous(page)"
+                        [disabled]="page === 1">Previous</button>
+                    <div class="filterbox">{{page}} of {{totalpage}}</div>
+                    <button class="filterbox btn btn-success btn-sm" (click)="next(page)"
+                        [disabled]="page === totalpage">Next</button>
+                </div> -->
+      </div>
+
+      <div class="center" *ngIf="foodItemList.length === 0">
+        No Records Found for this filter
+      </div>
+    </div>
+  </div>
+
+  <div class="bgpadding1" *ngIf="editMode">
+    <app-b2b-food-item-form
+      [editType]="editType"
+      [editfoodItemObj]="editfoodItemObj"
+      (gotoPreviousState)="gotoPreviousState($event)"
+    ></app-b2b-food-item-form>
+  </div>
+</div>

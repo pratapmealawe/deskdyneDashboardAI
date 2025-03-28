@@ -5,7 +5,7 @@ export const environment = {
   webSocketUrl: 'wss://'+domainUrl,
   serverUrl : 'https://'+domainUrl,
   imageUrl : 'https://'+domainUrl + '/images/',
-  fileUrl: 'https://'+domainUrl + '/files/',
+  fileUrl: 'https://'+domainUrl + '/api/pdfs/',
   googleAPIkey: 'AIzaSyCtIAU1RAa32Y9at1VnmL-fa79AP0NPreQ',
   envName: 'Production',
   api_secret_key: 'Xs7dRTbaqPkcxHp5WcriK8CHUnVXbWMg'

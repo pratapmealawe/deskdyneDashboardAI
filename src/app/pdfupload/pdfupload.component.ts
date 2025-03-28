@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, Output,EventEmitter ,OnChanges, SimpleChanges} from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -6,6 +7,8 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 declare const Croppr:any;
 
 @Component({
+  standalone:true,
+  imports:[CommonModule],
   selector: 'app-pdfupload',
   templateUrl: './pdfupload.component.html',
   styleUrls: ['./pdfupload.component.scss']
@@ -14,7 +17,7 @@ export class PdfuploadComponent implements OnChanges{
   @Input() documentname:any;
   @Input() documentUrl:any;
   @Output() upload:EventEmitter<any> = new EventEmitter<any>();
-  selectedFile: File | null = null;
+  selectedFile: any;
   isDragging = false;
   selectedFileURL: SafeUrl | null = '';
   inputId=Math.random()*1000

@@ -1,31 +1,37 @@
 <div class="row card-wrapper">
-    <div class="col-lg-12 col-md-10 col-9">
+  <div class="col-lg-12 col-md-10 col-9">
+    <div class="row">
+      <div class="col-12 col-md-4 col-lg-12">
         <div class="row">
-            <div class="col-12 col-md-4 col-lg-12">
-                <div class="row">
-                    <div class="col-6 col-md-5 col-lg-3">
-                        <div class="labelText">Outlet Name</div>
-                        <div class="labelData">{{outlet.outletName}}</div>
-                    </div>
-                    <div class="col-6 col-md-5 col-lg-2">
-                        <div class="labelText">Outlet Type</div>
-                        <div class="labelData">{{outlet.outletType}}</div>
-                    </div>
-                    <div class="col-6 col-md-2 col-lg-1">
-                        <div class="labelText">Opened</div>
-                        <div class="labelData">{{outlet.outletOpened}}</div>
-                    </div>
-                    <div class="col-6 col-md-6 col-lg-5">
-                        <div class="labelText">Outlet Description</div>
-                        <div class="labelData">{{outlet.outletDescription}}</div>
-                    </div>
-                    <div class="col-6 col-md-6 col-lg-1">
-                        <div class="inline right pointer header3" (click)="vieworg(outlet)"><i class="bi bi-eye"></i></div>
-                    </div>
-                </div>
+          <div class="col-6 col-md-5 col-lg-3">
+            <div class="labelText">Outlet Name</div>
+            <div class="labelData">{{ outlet.outletName }}</div>
+          </div>
+          <div class="col-6 col-md-5 col-lg-2">
+            <div class="labelText">Outlet Type</div>
+            <div class="labelData">{{ outlet.outletType }}</div>
+          </div>
+          <div class="col-6 col-md-2 col-lg-1">
+            <div class="labelText">Opened</div>
+            <div class="labelData">{{ outlet.outletOpened }}</div>
+          </div>
+          <div class="col-6 col-md-6 col-lg-5">
+            <div class="labelText">Outlet Description</div>
+            <div class="labelData">{{ outlet.outletDescription }}</div>
+          </div>
+          <div class="col-6 col-md-6 col-lg-1">
+            <div
+              class="inline right pointer header3"
+              *ngIf="btnPolicy?.viewOutlet"
+              (click)="vieworg(outlet)"
+            >
+              <i class="bi bi-eye"></i>
             </div>
+          </div>
+        </div>
+      </div>
 
-            <!-- <div class="col-12 col-md-4 col-lg-12" *ngIf="outlet.ownerDetails.owner_name">
+      <!-- <div class="col-12 col-md-4 col-lg-12" *ngIf="outlet.ownerDetails.owner_name">
                 <div class="row">
                     <div class="col-6 col-md-5 col-lg-3">
                         <div class="labelText">Owner Name</div>
@@ -42,26 +48,30 @@
                 </div>
             </div> -->
 
-            <div class="col-12 col-md-4 col-lg-12">
-                <div class="row">
-                    <div class="col-6 col-md-5 col-lg-3">
-                        <div class="labelText">Cafeteria Name</div>
-                        <div class="labelData">{{outlet.cafeteriaDetails.cafeteria_name}}</div>
-                    </div>
-                    <div class="col-6 col-md-7 col-lg-2">
-                        <div class="labelText">Cafeteria City</div>
-                        <div class="labelData">{{outlet.cafeteriaDetails.cafeteria_city}}</div>
-                    </div>
-                    <div class="col-6 col-md-7 col-lg-3">
-                        <div class="labelText">Cafeteria Landmark</div>
-                        <div class="labelData">{{outlet.cafeteriaDetails.landmark}}</div>
-                    </div>
-                    <div class="col-6 col-md-7 col-lg-3">
-                        <div class="labelText">Cafeteria Location</div>
-                        <div class="labelData">{{outlet.cafeteriaDetails.location}}</div>
-                    </div>
-                </div>
+      <div class="col-12 col-md-4 col-lg-12">
+        <div class="row">
+          <div class="col-6 col-md-5 col-lg-3">
+            <div class="labelText">Cafeteria Name</div>
+            <div class="labelData">
+              {{ outlet.cafeteriaDetails.cafeteria_name }}
             </div>
+          </div>
+          <div class="col-6 col-md-7 col-lg-2">
+            <div class="labelText">Cafeteria City</div>
+            <div class="labelData">
+              {{ outlet.cafeteriaDetails.cafeteria_city }}
+            </div>
+          </div>
+          <div class="col-6 col-md-7 col-lg-3">
+            <div class="labelText">Cafeteria Landmark</div>
+            <div class="labelData">{{ outlet.cafeteriaDetails.landmark }}</div>
+          </div>
+          <div class="col-6 col-md-7 col-lg-3">
+            <div class="labelText">Cafeteria Location</div>
+            <div class="labelData">{{ outlet.cafeteriaDetails.location }}</div>
+          </div>
         </div>
+      </div>
     </div>
+  </div>
 </div>

@@ -1,33 +1,58 @@
 @import "src/styles.scss";
 
-.addOutlet{
-    position: absolute;
-    right: 5px;
-    top: 100px;
+.addOutlet {
+  position: absolute;
+  right: 5px;
+  top: 100px;
 }
-.uploadedImage{
-    width: 150px;
-    height: 150px;
-    cursor: pointer;
+.uploadedImage {
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
 }
-.uploadInput{
-    display: none;
+.uploadInput {
+  display: none;
 }
-.uploadIcon{
-    width: 84px;
-    background: $secondary-color3;
-    border-radius: 5px;
-    text-align: center;
-    color: white;
-    position: relative;
-    top: -15px;
-    left: 34px;
-    font-size: 13px;
-    padding: 4px 0px;
-    cursor: pointer;
+.uploadIcon {
+  width: 84px;
+  background: $secondary-color3;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  position: relative;
+  top: -15px;
+  left: 34px;
+  font-size: 13px;
+  padding: 4px 0px;
+  cursor: pointer;
 }
-.addBtn{
-    position:relative;
-    top:5px;
-    right:7px;
+.addBtn {
+  position: relative;
+  top: 5px;
+  right: 7px;
+}
+.createCombo {
+  padding: 7px;
+  margin-bottom: 9px;
+  background: #002f68;
+  color: white;
+  border-radius: 7px;
+}
+
+.chip-option {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+
+  .title {
+    font-size: small;
+  }
+
+  .time {
+    font-size: x-small;
+  }
+}
+
+.mat-mdc-chip.mat-mdc-standard-chip {
+  --mdc-chip-container-height: 52px;
 }
