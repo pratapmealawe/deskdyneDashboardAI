@@ -1,55 +1,73 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-11">
-            <div class="row">
-                <div class="col-lg-3">
-                    <div class="labelText">Vendor Name</div>
-                    <div class="labelData">{{vendor.vendorName}}</div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="labelText">vendor Ph No</div>
-                    <div class="labelData">{{vendor.vendorPhoneNo}}</div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="labelText">vendor Email</div>
-                    <div class="labelData">{{vendor.vendorEmail}}</div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="labelText">vendor Role</div>
-                    <div class="labelData">{{vendor.vendorRole}}</div>
-                </div>
-            </div>
+  <div class="row">
+    <div class="col-lg-11">
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="labelText">Vendor Name</div>
+          <div class="labelData">{{ vendor.vendorName }}</div>
+        </div>
+        <div class="col-lg-3">
+          <div class="labelText">vendor Ph No</div>
+          <div class="labelData">{{ vendor.vendorPhoneNo }}</div>
+        </div>
+        <div class="col-lg-3">
+          <div class="labelText">vendor Email</div>
+          <div class="labelData">{{ vendor.vendorEmail }}</div>
+        </div>
+        <div class="col-lg-3">
+          <div class="labelText">vendor Role</div>
+          <div class="labelData">{{ vendor.vendorRole }}</div>
+        </div>
+      </div>
 
-            <div *ngFor="let cafeteria of vendor.outletList" class="cafeteriaCard">
-                <div class="row">
-                    <div class="col-lg-3">
-                        <div class="labelText">Cafeteria Name</div>
-                        <div class="labelData">{{cafeteria.cafeteriaDetails.cafeteria_name}}</div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="labelText">Cafeteria City</div>
-                        <div class="labelData">{{cafeteria.cafeteriaDetails.cafeteria_city}}</div>
-                    </div>
-                    <div class="col-6 col-md-7 col-lg-3">
-                        <div class="labelText">Cafeteria Location</div>
-                        <div class="labelData">{{cafeteria.cafeteriaDetails.location}}</div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-lg-3">
-                        <div class="labelText">Organization Name</div>
-                        <div class="labelData">{{cafeteria.organizationDetails.organization_name}}</div>
-                    </div>
-                    <div class="col-lg-3">
-                        <div class="labelText">Organization City</div>
-                        <div class="labelData">{{cafeteria.organizationDetails.city}}</div>
-                    </div>
-                </div>
+      <div *ngFor="let cafeteria of vendor.outletList" class="cafeteriaCard">
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="labelText">Cafeteria Name</div>
+            <div class="labelData">
+              {{ cafeteria.cafeteriaDetails.cafeteria_name }}
             </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="labelText">Cafeteria City</div>
+            <div class="labelData">
+              {{ cafeteria.cafeteriaDetails.cafeteria_city }}
+            </div>
+          </div>
+          <div class="col-6 col-md-7 col-lg-3">
+            <div class="labelText">Cafeteria Location</div>
+            <div class="labelData">
+              {{ cafeteria.cafeteriaDetails.location }}
+            </div>
+          </div>
         </div>
-        <div class="col-lg-1 alignRight">
-            <i class="bi bi-pencil-square editDeltesaveIcon me-2" (click)="editVendor(vendor)"></i>
-            <i class="bi bi-trash editDeltesaveIcon" (click)="deleteVendor(vendor)"></i>
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="labelText">Organization Name</div>
+            <div class="labelData">
+              {{ cafeteria.organizationDetails.organization_name }}
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="labelText">Organization City</div>
+            <div class="labelData">
+              {{ cafeteria.organizationDetails.city }}
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+    <div class="col-lg-1 alignRight">
+      <i
+        *ngIf="btnPolicy?.editVendor"
+        class="bi bi-pencil-square editDeltesaveIcon me-2"
+        (click)="editVendor(vendor)"
+      ></i>
+      <i
+        class="bi bi-trash editDeltesaveIcon"
+        *ngIf="btnPolicy?.deleteVendor"
+        (click)="deleteVendor(vendor)"
+      ></i>
+    </div>
+  </div>
 </div>

@@ -1,0 +1,99 @@
+@import 'src/styles.scss';
+
+.main-div {
+    .cl6 {
+        margin:10px 15px 15px 15px;
+        display:inline-block;
+        // padding-bottom:15px;
+    }
+}
+
+.countTile:hover {
+    background-color: $primary-offset-color3;
+}
+
+.groupedTile {
+    position: absolute;
+    bottom: 25px;
+    font-size: 13px;
+    background-color: black;
+    border-radius: 100%;
+    color: white;
+    padding: 0px 3px;
+
+    &.one {
+        left: 15%;
+    }
+
+    &.two {
+        left: 30%;
+    }
+
+    &.three {
+        left: 45%
+    }
+
+    &.four {
+        left: 60%
+    }
+    &.five {
+        left: 75%
+    }
+    &.six {
+        left: 90%
+    }
+    &.seven {
+        left: 105%
+    }
+}
+
+.dropdown-item {
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.tileBtn:active{
+    color:black !important;
+}
+
+.tileBtn:hover {
+    color: black !important;
+}
+
+.countTile:hover {
+    background-color: $primary-offset-color3;
+}
+
+.navigationBtns {
+    text-align: center
+}
+
+.col-margin {
+    margin: 10px 0;
+}
+
+.badge-dark {
+    background-color:black !important;
+    padding: 5px;
+    margin-left: 5px;
+}
+
+.list-group-item{
+    // background-color:#f1eeee;
+    margin-bottom:12px;
+    border-color:#a3a3a3;
+}
+
+@media only screen and (max-width:600px) {
+    .countTile {
+        margin: 5px 0;
+    }
+
+    .main-div {
+        .cl6 {
+            margin:10px 5px 15px 5px;
+            display:inline-block;
+            // padding-bottom:15px;
+        }
+    }
+}

@@ -10,21 +10,32 @@ const routes: Routes = [
       import('./login/login.module').then((m) => m.LoginModule),
   },
   {
+    path: 'guest',
+    loadChildren: () =>
+      import('./guest/guest.module').then((m) => m.GuestModule),
+  },
+  {
     path: 'home',
     loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
   },
   {
     path: 'outlet',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./outlet/outlet.module').then((m) => m.OutletModule),
   },
   {
     path: 'vendor',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./vendor/vendor.module').then((m) => m.VendorModule),
   },
   {
     path: 'add-admin',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./deskdyne-components/add-admin/add-admin.module').then(
         (m) => m.AddAdminModule
@@ -32,6 +43,8 @@ const routes: Routes = [
   },
   {
     path: 'admin',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./deskdyne-components/admin/admin.module').then(
         (m) => m.AdminModule
@@ -39,11 +52,15 @@ const routes: Routes = [
   },
   {
     path: 'faq',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./miscelleneous//faq/faq.module').then((m) => FaqModule),
   },
   {
     path: 'configVariable',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./miscelleneous/config-variable/config-variable.module').then(
         (m) => m.ConfigVariableModule
@@ -51,6 +68,8 @@ const routes: Routes = [
   },
   {
     path: 'appVersionControl',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import(
         './miscelleneous/app-version-control/app-version-control.module'
@@ -58,11 +77,15 @@ const routes: Routes = [
   },
   {
     path: 'policy',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./policy/policy/policy.module').then((m) => m.PolicyModule),
   },
   {
     path: 'addPolicy',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./policy/add-policy/add-policy.module').then(
         (m) => m.AddPolicyModule
@@ -70,11 +93,15 @@ const routes: Routes = [
   },
   {
     path: 'currentOrder',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./orders/orders.module').then((m) => m.OrdersModule),
   },
   {
     path: 'searchOrder',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./search-order/search-order.module').then(
         (m) => m.SearchOrderModule
@@ -82,6 +109,8 @@ const routes: Routes = [
   },
   {
     path: 'B2B_add_org',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import(
         './deskdyne-components/add-organization/add-organization.module'
@@ -89,13 +118,16 @@ const routes: Routes = [
   },
   {
     path: 'B2B_search_org',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
-      import('./search-organization/search-organization.module').then(
-        (m) => m.SearchOrganizationModule
-      ),
+      import(
+        './deskdyne-components/search-organization/search-organization.module'
+      ).then((m) => m.SearchOrganizationModule),
   },
   {
     path: 'dashboard',
+
     loadChildren: () =>
       import('./deskdyne-components/dashboard/dashboard.module').then(
         (m) => m.DashboardModule
@@ -103,6 +135,8 @@ const routes: Routes = [
   },
   {
     path: 'serverlogs',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./server-logs/server-logs.module').then(
         (m) => m.ServerLogsModule
@@ -112,6 +146,7 @@ const routes: Routes = [
   //orgAdmin routes
   {
     path: 'org-dashboard',
+
     loadChildren: () =>
       import('./org-components/org-dashboard/org-dashboard.module').then(
         (m) => m.OrgDashboardModule
@@ -119,6 +154,8 @@ const routes: Routes = [
   },
   {
     path: 'org-menu-items',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-menu-items/org-menu-items.module').then(
         (m) => m.OrgMenuItemsModule
@@ -126,6 +163,8 @@ const routes: Routes = [
   },
   {
     path: 'org-orders',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-orders/org-orders.module').then(
         (m) => m.OrgOrdersModule
@@ -133,6 +172,8 @@ const routes: Routes = [
   },
   {
     path: 'org-pre-orders',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-pre-orders/org-pre-orders.module').then(
         (m) => m.OrgPreOrdersModule
@@ -140,6 +181,8 @@ const routes: Routes = [
   },
   {
     path: 'org-subcription',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-subscription/org-subscription.module').then(
         (m) => m.OrgSubscriptionModule
@@ -147,13 +190,35 @@ const routes: Routes = [
   },
   {
     path: 'org-reviews',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-reviews/org-reviews.module').then(
         (m) => m.OrgReviewsModule
       ),
   },
   {
+    path: 'app-feedbacks',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import(
+        './common-components/suggessions-feedbacks/suggessions-feedbacks.module'
+      ).then((m) => m.SuggessionsFeedbacksModule),
+  },
+  {
+    path: 'excel-export',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./common-components/excel-export/excel-export.module').then(
+        (m) => m.ExcelExportModule
+      ),
+  },
+  {
     path: 'org-reports',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-reports/org-reports.module').then(
         (m) => m.OrgReportsModule
@@ -161,6 +226,8 @@ const routes: Routes = [
   },
   {
     path: 'org-vendor-info',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-vendor-info/org-vendor-info.module').then(
         (m) => m.OrgVendorInfoModule
@@ -168,6 +235,7 @@ const routes: Routes = [
   },
   {
     path: 'org-menu-counters',
+    canActivate: [accessGuard],
     loadChildren: () =>
       import(
         './org-components/org-menu-counters/org-menu-counters.module'
@@ -175,6 +243,8 @@ const routes: Routes = [
   },
   {
     path: 'org-incident-management',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import(
         './org-components/org-incident-management/org-incident-management.module'
@@ -182,6 +252,8 @@ const routes: Routes = [
   },
   {
     path: 'org-checklist',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./checklist-history/checklist-history.module').then(
         (m) => m.ChecklistHistoryModule
@@ -189,6 +261,8 @@ const routes: Routes = [
   },
   {
     path: 'org-employee-list',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import(
         './org-components/org-employee-list/org-employee-list.module'
@@ -196,6 +270,8 @@ const routes: Routes = [
   },
   {
     path: 'org-bulk-order-history',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import(
         './org-components/org-bulk-order-history/org-bulk-order-history.module'
@@ -203,6 +279,8 @@ const routes: Routes = [
   },
   {
     path: 'org-manual-orders',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import(
         './org-components/org-manual-orders/org-manual-orders.module'
@@ -210,6 +288,8 @@ const routes: Routes = [
   },
   {
     path: 'org-billing',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/org-billing/org-billing.module').then(
         (m) => m.OrgBillingModule
@@ -217,6 +297,8 @@ const routes: Routes = [
   },
   {
     path: 'view-checklist-question',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import(
         './deskdyne-components/checklist-question/checklist-question.module'
@@ -224,6 +306,8 @@ const routes: Routes = [
   },
   {
     path: 'submit-checklist',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./org-components/submit-checklist/submit-checklist.module').then(
         (m) => m.SubmitChecklistModule
@@ -231,13 +315,50 @@ const routes: Routes = [
   },
   {
     path: 'checklistHistory',
+    canActivate: [accessGuard],
+
     loadChildren: () =>
       import('./checklist-history/checklist-history.module').then(
         (m) => m.ChecklistHistoryModule
       ),
   },
-  //deskdine routes
+  {
+    path: 'food_item',
+    canActivate: [accessGuard],
 
+    loadChildren: () =>
+      import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(
+        (m) => m.B2bFoodItemModule
+      ),
+  },
+  //deskdine routes
+  {
+    path: 'current_order',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import(
+        './deskdyne-components/b2b-current-orders/b2b-current-orders.module'
+      ).then((m) => m.B2bCurrentOrdersModule),
+  },
+  {
+    path: 'past_order',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(
+        (m) => m.B2bFoodItemModule
+      ),
+  },
+  {
+    path: 'viewEnquiries',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./deskdyne-components/org-registry/org-registry.module').then(
+        (m) => m.OrgRegistryModule
+      ),
+  },
   {
     path: '',
     redirectTo: 'login',

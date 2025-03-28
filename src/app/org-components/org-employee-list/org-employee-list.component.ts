@@ -1,7 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
+interface Employee {
+  employeeId: string;
+  employeeName: string;
+  employeeEmail: string;
+  employeePhoneNo: number;
+  organization_id: string;
+  organization_name: string;
+  cafeteria_id: string;
+  cafeteria_name: string;
+}
 
 @Component({
   selector: 'app-org-employee-list',
@@ -9,36 +21,110 @@ import { SearchFilterService } from 'src/service/search-filter.service';
   styleUrls: ['./org-employee-list.component.scss'],
 })
 export class OrgEmployeeListComponent implements OnInit {
-  orgDetails: any;
-  employeeList: any[] = [];
-  filteredEmployeeList: any[] = [];
+  orgAdmin: any;
+  employeeList: Employee[] = [];
+  filteredEmployeeList: Employee[] = [];
+  employeeObj: Employee = {
+    cafeteria_id: '',
+    cafeteria_name: '',
+    employeeEmail: '',
+    employeeId: '',
+    employeeName: '',
+    employeePhoneNo: 0,
+    organization_id: '',
+    organization_name: '',
+  };
+  orglist: any[] = [];
+  orgDetails: any = {};
+  employeeForm!: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService
   ) {}
 
   ngOnInit(): void {
-    this.orgDetails =
-      this.localStorageService.getCacheData('ADMIN_PROFILE')?.orgDetails;
+    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.initEmployeeForm();
     this.getEmployeeListByOrgId();
+    this.getOrgList();
+  }
+
+  initEmployeeForm() {
+    this.employeeForm = this.fb.group({
+      employeeId: ['', Validators.required],
+      employeeName: ['', Validators.required],
+      employeeEmail: ['', [Validators.required, Validators.email]],
+      employeePhoneNo: [
+        '',
+        [Validators.required, Validators.pattern('^\\d{10}$')],
+      ],
+      organization_id: [
+        { value: '', disabled: this.orgAdmin.role === 'ORGADMIN' },
+        Validators.required,
+      ],
+      cafeteria_id: ['', Validators.required],
+    });
   }
 
   async saveEmployee() {
+    console.log(this.employeeObj);
+    console.log(this.orgDetails);
+    let cafedetails = this.orgDetails.cafeteriaList.find((cafe:any)=>{
+      return cafe._id==this.employeeObj.cafeteria_id;
+    });
+    console.log(cafedetails);
+    this.employeeObj.cafeteria_id=cafedetails.cafeteria_id;
+    this.employeeObj.cafeteria_name = cafedetails.cafeteria_name;
+    
     try {
-      let res = await this.apiMainService.employeeAdd({});
+      let res = await this.apiMainService.employeeAdd(this.employeeObj);
     } catch (error) {
       console.log(error);
     }
   }
 
-  gotoAdd() {}
+  get f() {
+    return this.employeeForm.controls;
+  }
+
+  async getOrgList() {
+    try {
+      let page = 1;
+      let searchObj = { countOnly: false };
+      let data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
+        searchObj,
+        page
+      );
+      this.orglist = data;
+      this.setInitialData();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  setInitialData() {
+    if (this.orgAdmin.role === 'ORGADMIN') {
+      this.employeeObj.organization_id = this.orgAdmin?.orgDetails?._id;
+      this.employeeObj.organization_name =
+        this.orgAdmin?.orgDetails?.organization_name;
+      this.setOrgDetails();
+    }
+  }
+
+  setOrgDetails() {
+    this.orgDetails = this.orglist.find((org: any) => {
+      return org._id == this.employeeObj?.organization_id;
+    });
+    this.employeeObj.cafeteria_id = '';
+  }
 
   async getEmployeeListByOrgId() {
     try {
       let data = await this.apiMainService.getEmployeeListByOrgId(
-        this.orgDetails?._id
+        this.orgAdmin?.orgDetails?._id
       );
       this.employeeList = data;
       this.filteredEmployeeList = data.length === 0 ? [] : data;

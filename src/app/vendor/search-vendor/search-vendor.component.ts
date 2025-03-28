@@ -1,50 +1,53 @@
-import { Component } from "@angular/core";
-import { Router } from "@angular/router";
-import { ApiMainService } from "src/service/apiService/apiMain.service";
-
-
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-search-vendor',
   templateUrl: 'search-vendor.component.html',
-  styleUrls: ['search-vendor.component.html']
+  styleUrls: ['search-vendor.component.html'],
 })
-
-export class SearchVendorComponent {
+export class SearchVendorComponent implements OnInit {
   searchObj: any = {
     vendorName: '',
     vendorPhoneNo: '',
-    vendorEmail: ''
+    vendorEmail: '',
   };
   vendorList: any;
   orgName: any;
-  constructor(private apiMainService: ApiMainService,private router: Router) {
+  btnPolicy: any;
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private router: Router,
+    private policyService: PolicyService
+  ) {}
+
+  ngOnInit(): void {
+    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
   }
 
   async getAllVendors() {
     try {
-      this.vendorList = await this.apiMainService.getAllVendors()
-      console.log(this.vendorList);
-
+      this.vendorList = await this.apiMainService.getAllVendors();
     } catch (error) {
-      console.log('getAllVendor', error)
+      console.log('getAllVendor', error);
     }
   }
 
   async searchVendor() {
     try {
       this.vendorList = await this.apiMainService.searchVendor(this.searchObj);
-      console.log('searched vendor', this.vendorList);
     } catch (error) {
-      console.log('searchVendor', error)
+      console.log('searchVendor', error);
     }
-
   }
-  resetForm() {
 
-  }
+  resetForm() {}
+
   addVendor() {
     this.router.navigate(['/vendor/add-vendor']);
-    
   }
 }

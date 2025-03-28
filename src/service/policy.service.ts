@@ -2,16 +2,13 @@ import { Injectable } from '@angular/core';
 import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PolicyService {
+  constructor(private localStorageService: LocalStorageService) {}
 
-  constructor(private localStorageService:LocalStorageService) { }
-
-  getCurrentButtonPolicy(){
+  getCurrentButtonPolicy() {
     const policy = this.localStorageService.getCacheData('ADMIN_PROFILE');
-    // return policy.policy[0].button_policies;
-    return true;
+    return policy?.policy[0]?.button_policies;
   }
-  
 }

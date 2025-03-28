@@ -14,8 +14,6 @@ import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
 import { HeaderComponent } from './header/header.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-//import { PdfuploadComponent} from './pdfupload/pdfupload.component';
-// import { VendorComplianceComponent} from './vendor/add-vendor/vendor-compliance/vendor-compliance.component';
 
 @NgModule({
   declarations: [
@@ -34,9 +32,9 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     FormsModule,
     NgbModule,
     BrowserAnimationsModule,
-    MatDatepickerModule 
+    MatDatepickerModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

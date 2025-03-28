@@ -42,13 +42,19 @@ export class ServerLogsComponent {
     this.selectedStatus = 'DBLogs'
   }
 
+  getAuditLogs(){
+    this.serverLogsList=[];
+    this.logsList = [];
+    this.selectedDBStatus = '';
+    this.selectedStatus = 'AuditLogs'
+  }
+
   async getLineBasedLogs(selectedLines: any) {
     this.selectedDBStatus = selectedLines;
     this.logsList.length=0;
     try {
         const selectedLine = parseInt(selectedLines);
-        this.logsList= await this.apiMainService.getLineBasedLogs(selectedLine);
-       
+        this.logsList= await this.apiMainService.getLineBasedLogs(selectedLine);       
        this.logsList.forEach((element:any) => {
         element.timestamp = new Date(element.timestamp);
        });
@@ -82,18 +88,63 @@ async getDayRangeBasedLogs(startDate: any, endDate: any) {
     let eDate = new Date(endDate)
     try {
         this.logsList.length = 0 ;
-        this.logsList = await this.apiMainService.getDayRangeBasedLogs(startDate, endDate);
-        //   for(let obj of dayBasedLogs){
-        //     for(let key in obj){
-        //         this.logsList.push(obj[key])
-        //     }
-        // }
-      this.logsList.forEach((element:any) => {
-        element.timestamp = new Date(element.timestamp);
-      });
+        this.logsList = await this.apiMainService.getDayRangeBasedLogs(startDate, endDate);   
+        this.logsList.forEach((element:any) => {
+          element.timestamp = new Date(element.timestamp);
+        });
     } catch (error) {
         console.log(error)
     }
+}
+
+
+async getLineBasedAuditLogs(selectedLines: any) {
+  this.selectedDBStatus = selectedLines;
+  this.logsList.length=0;
+  try {
+      const selectedLine = parseInt(selectedLines);
+      this.logsList= await this.apiMainService.getLineBasedAuditLogs(selectedLine);       
+     this.logsList.forEach((element:any) => {
+      element.timestamp = new Date(element.timestamp);
+     });
+      console.log('loglist object',this.logsList);
+  } catch (error) {
+      console.log(error)
+  }
+}
+async getTimeBasedAuditLogs(selectedTime:string){
+try{
+ this.logsList.length=0;
+  this.selectedDBStatus = selectedTime;
+  if(selectedTime=='1Day'){
+    this.hours=24;
+  }else if(selectedTime=='2Day'){
+      this.hours=48;
+  }else{
+      this.hours = parseInt(selectedTime.split('')[0]);
+  }
+
+  this.logsList = await this.apiMainService.getTimeBasedAuditLogs(this.hours); 
+  this.logsList.forEach((element:any) => {
+  element.timestamp = new Date(element.timestamp);
+});
+}catch(error){
+    console.log('getServerLogs error ',error)
+}
+}
+
+async getDayRangeBasedAuditLogs(startDate: any, endDate: any) {
+  let sDate = new Date(startDate);
+  let eDate = new Date(endDate)
+  try {
+      this.logsList.length = 0 ;
+      this.logsList = await this.apiMainService.getDayRangeBasedAuditLogs(startDate, endDate);   
+      this.logsList.forEach((element:any) => {
+        element.timestamp = new Date(element.timestamp);
+      });
+  } catch (error) {
+      console.log(error)
+  }
 }
 
   goBack(){

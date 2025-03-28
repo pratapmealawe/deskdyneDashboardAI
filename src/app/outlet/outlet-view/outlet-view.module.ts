@@ -10,6 +10,9 @@ import { OutletComplianceComponent} from './outlet-compliance/outlet-compliance.
 // import { PdfuploadComponent} from '../../pdfupload/pdfupload.component';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
 import { ComboPopupComponent } from './combo-popup/combo-popup.component';
+import {MatSelectModule} from '@angular/material/select';
+import {MatInputModule} from '@angular/material/input';
+import {MatFormFieldModule} from '@angular/material/form-field';
 
 
 
@@ -27,7 +30,10 @@ import { ComboPopupComponent } from './combo-popup/combo-popup.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    CustomPipeModule
+    CustomPipeModule,
+    MatSelectModule,
+    MatInputModule,
+    MatFormFieldModule
   ],
   exports:[
     OutletViewComponent

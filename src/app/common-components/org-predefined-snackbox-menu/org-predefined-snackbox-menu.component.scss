@@ -1,0 +1,110 @@
+@import "/src/styles.scss";
+
+.menuWrapper{
+    input, select{
+        border:1px solid #dee2e6;
+        border-radius:6px;
+    }
+}
+
+.kitchenMenuImage{
+    width: 55px;
+}
+
+.itemModal{
+    max-width: 80% !important;
+}
+.addFoodItem{
+    position: absolute;
+    right: 5px;
+    top: 116px;
+}
+.cardDesign{
+    margin: 1px 2px;
+    padding: 4px 2px;
+    border-radius: 6px;
+    // box-shadow: 1px 2px 3px;
+    label{
+        font-size: 10px;
+        font-weight: bold;
+        padding: 0px 6px 0 0;
+        margin-bottom:0;
+    }
+    div{
+        font-size: 12px;
+    }
+    input{
+        width: 100%;
+    }
+    .prepTime{
+        width:20%;
+    }
+}
+.maxPrice{
+    width:25% !important;
+}
+
+.editDeltesaveIcon{
+    display: inline-block;
+    font-size: 20px;
+    padding: 5px 5px;
+    cursor:pointer;
+}
+
+.saveDisabled{
+    background: #808483 !important;
+}
+
+.itemCheckbox{
+    display: flex;
+    flex-direction: row;
+    line-height:25px;
+    .firstside{
+        width: 33%;
+        .checkbox {
+            width: initial;
+        }
+    }
+    .secondside{
+        width: 33%;
+        .checkbox {
+            width: initial;
+        }
+    }
+    .checkbox {
+        width: initial;
+    }
+}
+.uploadedImage{
+    width: 150px;
+    height: 150px;
+    cursor: pointer;
+}
+.uploadInput{
+    display: none;
+}
+.uploadIcon{
+    width: 84px;
+    background: $secondary-color3;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    position: relative;
+    top: -15px;
+    left: 30px;
+    font-size: 13px;
+    padding: 4px 0px;
+    cursor: pointer;
+}  
+
+@media only screen and (max-width:600px){
+    .addFoodItem{
+        top:60px;
+    }
+}
+
+@media only screen and (min-width:600px) and (max-width:1180px){
+    .addFoodItem{
+        top:60px;
+    }
+}

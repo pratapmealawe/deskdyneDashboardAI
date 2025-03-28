@@ -3,38 +3,33 @@ import { CanActivateFn, Router } from '@angular/router';
 import { ToasterService } from 'src/app/toaster/toaster.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 
-
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PermissionsService {
-
   constructor(
     private localStorageService: LocalStorageService,
     private toasterService: ToasterService,
-    public router: Router,
-  ) { }
+    public router: Router
+  ) {}
 
   canActivate(route: any, state: any): boolean {
-    let res: boolean
+    let res: boolean;
     const profile = this.localStorageService.getCacheData('ADMIN_PROFILE');
-    console.log(profile,'ADMIN_PROFILE');
     // const keys = ;
     if (profile && profile.policy[0].route_policies) {
       const url = state.url.replace('/', '');
-      res = this.checkForPermission(url, profile.policy[0].route_policies)
-    }
-    else if(state.url == '/currentOrder'){
+      res = this.checkForPermission(url, profile.policy[0].route_policies);
+    } else if (state.url == '/currentOrder') {
       res = true;
-    }
-    else {
-      res = false
+    } else {
+      res = false;
     }
     if (res === false) {
       this.localStorageService.resetAllCacheData();
-      if(profile.policy_name==="orgAdmin"){
-      this.router.navigate(['/orgdashboard']);
-      }else{
+      if (profile.policy_name === 'orgAdmin') {
+        this.router.navigate(['/org-dashboard']);
+      } else {
         this.router.navigate(['/dashboard']);
       }
       this.toasterService.error(122);
@@ -50,7 +45,6 @@ export class PermissionsService {
         return false;
     }
   }
-
 }
 
 export const accessGuard: CanActivateFn = (route, state) => {
