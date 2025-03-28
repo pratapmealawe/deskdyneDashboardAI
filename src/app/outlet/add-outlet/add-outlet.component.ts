@@ -38,13 +38,21 @@ export class AddOutletComponent implements OnInit {
   LUNCH_END_TIME: any;
   EVENINGSNACKS_END_TIME: any;
   DINNER_END_TIME: any;
-  FULLDAY_END_TIME:any;
-  mealTiming:any= [
-    { mealType: 'Breakfast', acceptOrderFrom: null, acceptOrderTill: null },
-    { mealType: 'Lunch', acceptOrderFrom: null, acceptOrderTill: null },
-    { mealType: 'EveningSnacks', acceptOrderFrom: null, acceptOrderTill: null },
-    { mealType: 'Dinner', acceptOrderFrom: null, acceptOrderTill: null },
-    { mealType: 'Fullday', acceptOrderFrom: null, acceptOrderTill: null }
+  FULLDAY_END_TIME: any;
+  mealTiming: any = [
+    { mealType: 'Fullday', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
+    {
+      mealType: 'Breakfast',
+      acceptOrderFrom: '00:00',
+      acceptOrderTill: '00:00',
+    },
+    { mealType: 'Lunch', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
+    {
+      mealType: 'EveningSnacks',
+      acceptOrderFrom: '00:00',
+      acceptOrderTill: '00:00',
+    },
+    { mealType: 'Dinner', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
   ];
 
   constructor(
@@ -195,18 +203,20 @@ export class AddOutletComponent implements OnInit {
       const finalObj = {
         cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
         organizationDetails: this.seletedCafetria.organizationDetails,
+        mealTiming: this.mealTiming,
         ...this.form.value,
       };
       const formData = this.objectToFormData(finalObj);
-      formData.append('mealTiming', this.mealTiming);
-      if(this.uploadedImageFile){
+      if (this.uploadedImageFile) {
         formData.append('image', this.uploadedImageFile);
       }
+
       const res =
         type === 'update'
           ? await this.apiMainService.updateOutlet(
               this.selectedOutlet._id,
-              formData
+              formData,
+              0
             )
           : await this.apiMainService.saveOutlet(formData);
       this.router.navigate(['/outlet']);
@@ -262,7 +272,34 @@ export class AddOutletComponent implements OnInit {
     this.router.navigate(['/outlet']);
   }
   setStandardEndTime() {
-    console.log(this.form.controls.mealTiming)
+    this.mealTiming = [
+      {
+        mealType: 'Fullday',
+        acceptOrderFrom: '06:00',
+        acceptOrderTill: '23:00',
+      },
+      {
+        mealType: 'Breakfast',
+        acceptOrderFrom: '06:00',
+        acceptOrderTill: '10:00',
+      },
+      {
+        mealType: 'Lunch',
+        acceptOrderFrom: '11:00',
+        acceptOrderTill: '14:00',
+      },
+      {
+        mealType: 'EveningSnacks',
+        acceptOrderFrom: '16:00',
+        acceptOrderTill: '18:00',
+      },
+      {
+        mealType: 'Dinner',
+        acceptOrderFrom: '19:00',
+        acceptOrderTill: '22:00',
+      },
+    ];
+
     // console.log('setStandardEndTime')
     // this.mealTiming.forEach((meal: any) => {
     //   let stdTime = '00:00';
