@@ -6,15 +6,14 @@ import { OutletCategoriesComponent } from './outlet-categories/outlet-categories
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OutletMenuComponent } from './outlet-menu/outlet-menu.component';
 import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.component';
-import { OutletComplianceComponent} from './outlet-compliance/outlet-compliance.component';
+import { OutletComplianceComponent } from './outlet-compliance/outlet-compliance.component';
 // import { PdfuploadComponent} from '../../pdfupload/pdfupload.component';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
 import { ComboPopupComponent } from './combo-popup/combo-popup.component';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-
-
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -33,10 +32,9 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     CustomPipeModule,
     MatSelectModule,
     MatInputModule,
-    MatFormFieldModule
+    MatChipsModule,
+    MatFormFieldModule,
   ],
-  exports:[
-    OutletViewComponent
-  ]
+  exports: [OutletViewComponent],
 })
-export class OutletViewModule { }
+export class OutletViewModule {}

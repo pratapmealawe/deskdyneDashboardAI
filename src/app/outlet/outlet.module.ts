@@ -6,15 +6,12 @@ import { OutletComponent } from './outlet.component';
 import { FormsModule } from '@angular/forms';
 import { OutletCardModule } from './outlet-card/outlet-card.module';
 import { OutletViewModule } from './outlet-view/outlet-view.module';
-import {MatSelectModule} from '@angular/material/select';
-import {MatInputModule} from '@angular/material/input';
-import {MatFormFieldModule} from '@angular/material/form-field';
-
+import { MatSelectModule } from '@angular/material/select';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
-  declarations: [
-    OutletComponent
-  ],
+  declarations: [OutletComponent],
   imports: [
     CommonModule,
     OutletRoutingModule,
@@ -23,7 +20,7 @@ import {MatFormFieldModule} from '@angular/material/form-field';
     OutletViewModule,
     MatSelectModule,
     MatInputModule,
-    MatFormFieldModule
-  ]
+    MatFormFieldModule,
+  ],
 })
-export class OutletModule { }
+export class OutletModule {}

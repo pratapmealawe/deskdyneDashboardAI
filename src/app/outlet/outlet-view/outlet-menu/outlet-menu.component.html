@@ -235,15 +235,7 @@
               Upload <i class="bi bi-upload"></i>
             </div>
           </div>
-          <!-- <div class="col-12 col-md-6 col-lg-4">
-                        <label class="labelText form-label">Tax Group</label>
-                        <select class="custom-select" name="role" formControlName="taxGroup">
-                            <option disabled selected value> -- select type -- </option>
-                            <option value="GST Included">GST Included</option>
-                        </select>
-                    </div> -->
           <div class="col-12 col-md-6 col-lg-4">
-            <!-- <pre>{{outletObj.category|json}}</pre> -->
             <label class="labelText form-label">Category</label>
             <select
               class="custom-select"
@@ -255,7 +247,6 @@
               <option [value]="cat.name" *ngFor="let cat of outletObj.category">
                 {{ cat.name }}
               </option>
-              <!-- <option value="Kulfi">Kulfi</option> -->
             </select>
           </div>
           <div class="col-12 col-md-6 col-lg-4" *ngIf="categorySelected">
@@ -269,7 +260,6 @@
               <option [value]="subcat" *ngFor="let subcat of subcategoryList">
                 {{ subcat }}
               </option>
-              <!-- <option value="Kulfi">Sundae</option> -->
             </select>
           </div>
           <div class="col-12 col-md-6 col-lg-4">
@@ -281,7 +271,27 @@
               formControlName="itemName"
             />
           </div>
-          <div class="col-sm-12 col-md-6 col-lg-2">
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <label class="labelText form-label">Price</label>
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Price"
+              formControlName="price"
+            />
+          </div>
+          <div class="col-12 col-md-6 col-lg-4">
+            <label class="labelText form-label">Subcidy Amount</label>
+            <input
+              type="number"
+              class="form-control"
+              placeholder="Subcidy Amount"
+              formControlName="subcidyAmt"
+            />
+          </div>
+
+          <div class="col-sm-12 col-md-6 col-lg-4">
             <label class="labelText">Item Type</label>
             <div>
               <input
@@ -293,7 +303,7 @@
               />
               <label class="labelText form-label" for="itemTypeVeg">Veg</label>
               <input
-                class="me-1"
+                class="me-1 ms-3"
                 type="radio"
                 id="itemTypeNonVeg"
                 formControlName="itemType"
@@ -304,45 +314,8 @@
               >
             </div>
           </div>
-          <div class="col-12 col-md-6 col-lg-2">
-            <label class="labelText form-label">Price</label>
-            <input
-              type="number"
-              class="form-control"
-              placeholder="Price"
-              formControlName="price"
-            />
-          </div>
-          <div class="col-12 col-md-6 col-lg-2">
-            <label class="labelText form-label">Subcidy Amount</label>
-            <input
-              type="number"
-              class="form-control"
-              placeholder="Subcidy Amount"
-              formControlName="subcidyAmt"
-            />
-          </div>
-          <!-- <div class="col-12 col-md-6 col-lg-2">
-                        <label class="labelText form-label">Display Order No</label>
-                        <input type="number" class="form-control" placeholder="Display Order No" formControlName="priority">
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-2">
-                        <label class="labelText form-label">Code</label>
-                        <input type="text" class="form-control" placeholder="Code" formControlName="code">
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-2">
-                        <input class="me-1" type="checkbox" id="recommended" formControlName="recommended">
-                        <label class="labelText form-label" for="recommended">Recommended</label>
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-2">
-                        <input class="me-1" type="checkbox" id="isSpicy" formControlName="isSpicy">
-                        <label class="labelText form-label" for="isSpicy">Is Spicy</label>
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-2">
-                        <input class="me-1" type="checkbox" id="itemType" formControlName="itemType">
-                        <label class="labelText form-label" for="itemType">Vegetarian</label>
-                    </div> -->
-          <div class="col-sm-12 col-md-4 col-lg-2">
+
+          <div class="col-sm-12 col-md-6 col-lg-4">
             <input
               class="me-1"
               type="checkbox"
@@ -351,31 +324,8 @@
             />
             <label class="labelText form-label" for="isActive">Active</label>
           </div>
-          <!-- <div class="col-sm-12 col-md-4 col-lg-2">
-                        <input class="me-1" type="checkbox" id="mealVoucherApplicable" formControlName="mealVoucherApplicable">
-                        <label class="labelText form-label" for="mealVoucherApplicable">Meal Voucher Applicable</label>
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-2">
-                        <input class="me-1" type="checkbox" id="isPrePrepared" formControlName="isPrePrepared">
-                        <label class="labelText form-label" for="isPrePrepared">Is Pre Prepared</label>
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-4">
-                        <input class="me-1" type="checkbox" id="priceIncludesTax" formControlName="priceIncludesTax">
-                        <label class="labelText form-label" for="priceIncludesTax">Is Price Includes tax?</label>
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-4">
-                        <input class="me-1" type="checkbox" id="hideItemPrice" formControlName="hideItemPrice">
-                        <label class="labelText form-label" for="hideItemPrice">Hide Item Price</label>
-                    </div> -->
-          <!-- <div class="col-sm-12 col-md-4 col-lg-4">
-                        <label class="labelText form-label" for="mrp">MRP/Non-MRP</label>
-                        <select class="custom-select" id="mrp" name="role" formControlName="mrp">
-                            <option disabled selected value> -- select any -- </option>
-                            <option value="MRP">MRP</option>
-                            <option value="nonMRP">Non-MRP</option>
-                        </select>
-                    </div> -->
-          <div class="col-sm-12 col-md-4 col-lg-6">
+
+          <div class="col-sm-12">
             <label class="labelText form-label" for="description"
               >Description</label
             >
@@ -385,27 +335,33 @@
               id="description"
               formControlName="description"
             />
-            <button (click)="defineDescription()" class="createCombo">
+            <button (click)="defineDescription()" class="createCombo mt-3">
               Create Combo Description
             </button>
           </div>
 
-          <!-- <div class="col-sm-12 col-md-4 col-lg-6">
-                        <label class="labelText form-label" for="calories">Calories</label>
-                        <input class="form-control me-1" type="text" id="calories" formControlName="calories">
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-4">
-                        <label class="labelText form-label" for="parcelChargeType">Parcel Charge Type</label>
-                        <select class="custom-select" id="parcelChargeType" name="role" formControlName="parcelChargeType">
-                            <option disabled selected value> -- select any -- </option>
-                            <option value="Flat">Flat</option>
-                            <option value="Percentage">Percentage</option>
-                        </select>
-                    </div>
-                    <div class="col-sm-12 col-md-4 col-lg-4">
-                        <label class="labelText form-label" for="parcelChargeValue">Parcel Charge Value</label>
-                        <input class="form-control me-1" type="number" id="parcelChargeValue" formControlName="parcelChargeValue">
-                    </div> -->
+          <div class="col-sm-12">
+            <label class="labelText form-label" for="description"
+              >Select MealTime</label
+            >
+            <mat-chip-listbox
+              formControlName="mealTimingInfo"
+              aria-label="Type selection"
+              multiple
+            >
+              <mat-chip-option
+                *ngFor="let chip of outletObj?.mealTiming"
+                [value]="chip.mealType"
+              >
+                <div class="chip-option">
+                  <div class="title">{{ chip?.mealType }}</div>
+                  <div class="time">
+                    {{ chip.acceptOrderFrom }} - {{ chip.acceptOrderTill }}
+                  </div>
+                </div>
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
         </div>
       </div>
     </div>

@@ -29,13 +29,6 @@ export class OutletMenuComponent implements OnInit {
   form: any;
   selectedCategory: any;
   subcategoryList: any = [];
-  mealTypeList: any = [
-    'Lunch',
-    'Dinner',
-    'Breakfast',
-    'EveningSnacks',
-    'Fullday',
-  ];
   uploadedImageFile: any;
   imageUrl: any;
   displayImgUrl = environment.imageUrl;
@@ -75,7 +68,9 @@ export class OutletMenuComponent implements OnInit {
       subcidyAmt: item.subcidyAmt ? item.subcidyAmt : 0,
       category: item.category,
       subCategory: item.subCategory,
-      mealType: item.mealType,
+      mealTimingInfo: item.mealTimingInfo
+        ? item.mealTimingInfo.map((a: any) => a.mealType)
+        : [],
       itemType: item.itemType,
       isActive: item.isActive,
       description: item.description,
@@ -91,7 +86,7 @@ export class OutletMenuComponent implements OnInit {
       subcidyAmt: 0,
       category: [''],
       subCategory: [''],
-      mealType: [''],
+      mealTimingInfo: [[]],
       code: [''],
       recommended: [false],
       isSpicy: [false],
@@ -107,9 +102,6 @@ export class OutletMenuComponent implements OnInit {
       parcelChargeType: [''],
       parcelChargeValue: [''],
       itemContains: [[]],
-      // isEnabledInventory:[''],
-      // reorderQuantity:[''],
-      // availableStock:[''],
     });
   }
 
@@ -183,6 +175,14 @@ export class OutletMenuComponent implements OnInit {
       const oldMenuItem = this.outletObj.menuList[index];
       this.outletObj.menuList.splice(index, 1, this.form.value);
       this.outletObj.menuList[index].imageUrl = oldMenuItem.imageUrl;
+
+      let mealTypes = this.outletObj.menuList[index].mealTimingInfo;
+
+      this.outletObj.menuList[index].mealTimingInfo =
+        this.outletObj.mealTiming.filter((meal: any) =>
+          mealTypes.includes(meal.mealType)
+        );
+
       const formData = this.objectToFormData(this.outletObj);
       if (this.uploadedImageFile) {
         formData.append('image', this.uploadedImageFile);
