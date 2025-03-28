@@ -425,39 +425,41 @@ export class HeaderComponent implements OnInit {
 
   async getAllPolicy() {
     try {
+      console.log('console1');
       const policyArr: any = await this.apiMainService.getAllPolicy();
-      if (policyArr && policyArr.length > 0) {
-        this.localStorageService.setCacheData('POLICIES', policyArr);
-        this.policyArr = policyArr;
-        const adminPolicy = this.policyArr.filter(
-          (el: any) => el.policy_name === this.adminProfile.policy_name
-        );
+      console.log('policyArr  ', policyArr);
+      // if (policyArr && policyArr.length > 0) {
+      //   this.localStorageService.setCacheData('POLICIES', policyArr);
+      //   this.policyArr = policyArr;
+      //   const adminPolicy = this.policyArr.filter(
+      //     (el: any) => el.policy_name === this.adminProfile.policy_name
+      //   );
 
-        if (adminPolicy && adminPolicy.length > 0) {
-          this.adminProfile.policy = adminPolicy;
-          const routePolicies = this.adminProfile.policy[0].route_policies;
+      //   if (adminPolicy && adminPolicy.length > 0) {
+      //     this.adminProfile.policy = adminPolicy;
+      //     const routePolicies = this.adminProfile.policy[0].route_policies;
 
-          this.finalNavOption.forEach((el: any) => {
-            el.showParent = routePolicies[el.route] ? true : false;
+      //     this.finalNavOption.forEach((el: any) => {
+      //       el.showParent = routePolicies[el.route] ? true : false;
 
-            if (el.children) {
-              el.children?.forEach((childEl: any) => {
-                if (routePolicies && routePolicies[childEl.route]) {
-                  childEl.showChild = true;
-                  el.showParent = true;
-                } else {
-                  childEl.showChild = false;
-                }
-              });
-            }
-          });
-        }
+      //       if (el.children) {
+      //         el.children?.forEach((childEl: any) => {
+      //           if (routePolicies && routePolicies[childEl.route]) {
+      //             childEl.showChild = true;
+      //             el.showParent = true;
+      //           } else {
+      //             childEl.showChild = false;
+      //           }
+      //         });
+      //       }
+      //     });
+      //   }
 
-        this.localStorageService.setCacheData(
-          'ADMIN_PROFILE',
-          this.adminProfile
-        );
-      }
+      //   this.localStorageService.setCacheData(
+      //     'ADMIN_PROFILE',
+      //     this.adminProfile
+      //   );
+      // }
     } catch (error) {
       console.log(error);
     }
