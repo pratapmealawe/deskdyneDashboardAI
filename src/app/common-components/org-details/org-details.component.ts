@@ -24,6 +24,6 @@ export class OrgDetailsComponent implements OnInit {
 
   editOrg() {
     this.runtimeStorageService.setCacheData('VIEW_ORG', this.orgObj);
-    this.router.navigate(['B2B_add_org']);
+    this.router.navigate(['b2bAddorg']);
   }
 }

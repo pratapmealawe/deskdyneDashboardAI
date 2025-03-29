@@ -2,7 +2,7 @@
   <!-- <div class="labelText">Add Menu Items</div> -->
   <div
     class="ms-2 addBtn inline"
-    *ngIf="btnPolicy?.addMenu"
+    *ngIf="true || btnPolicy?.addMenu"
     (click)="open(); resetValues()"
   >
     +
@@ -60,11 +60,11 @@
               >
                 <i
                   class="bi bi-pencil-square"
-                  *ngIf="btnPolicy?.editMenu"
+                  *ngIf="true || btnPolicy?.editMenu"
                   (click)="edit(item, i)"
                 ></i>
                 <i
-                  *ngIf="btnPolicy?.deleteMenu"
+                  *ngIf="true || btnPolicy?.deleteMenu"
                   class="bi bi-trash editDeltesaveIcon"
                   (click)="showPopup(item, i)"
                 ></i>

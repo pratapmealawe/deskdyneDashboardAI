@@ -59,13 +59,13 @@
     </div>
     <div class="col-lg-1 alignRight">
       <i
-        *ngIf="btnPolicy?.editVendor"
+        *ngIf="true || btnPolicy?.editVendor"
         class="bi bi-pencil-square editDeltesaveIcon me-2"
         (click)="editVendor(vendor)"
       ></i>
       <i
         class="bi bi-trash editDeltesaveIcon"
-        *ngIf="btnPolicy?.deleteVendor"
+        *ngIf="true || btnPolicy?.deleteVendor"
         (click)="deleteVendor(vendor)"
       ></i>
     </div>

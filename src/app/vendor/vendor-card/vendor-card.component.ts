@@ -28,7 +28,7 @@ export class VendorCardComponent implements OnInit {
 
   editVendor(vendor: any) {
     this.runtimeStorageService.setCacheData('VENDOR_EDIT', vendor);
-    this.router.navigate(['/vendor/add-vendor']);
+    this.router.navigate(['/addVendor']);
   }
 
   async deleteVendor(vendor: any) {
