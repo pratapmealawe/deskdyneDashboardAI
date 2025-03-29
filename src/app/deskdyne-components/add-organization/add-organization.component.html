@@ -671,7 +671,7 @@
           type="button"
           class="btn btn-primary btn-sm me-2"
           (click)="addOrg()"
-          *ngIf="!showUpdate && btnPolicy?.addOrganization"
+          *ngIf="!showUpdate && true || btnPolicy?.addOrganization"
         >
           Add
         </button>
@@ -679,7 +679,7 @@
           type="button"
           class="btn btn-secondary btn-sm me-2"
           (click)="updateOrg()"
-          *ngIf="showUpdate && btnPolicy?.editOrganization"
+          *ngIf="showUpdate && true || btnPolicy?.editOrganization"
         >
           Update
         </button>

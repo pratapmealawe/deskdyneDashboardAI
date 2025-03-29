@@ -218,6 +218,7 @@ export class OutletMenuComponent implements OnInit {
   }
 
   async submit() {
+    console.log(this.outletObj.menuList, 'this.outletObj.menuList');
     try {
       this.menuList = [];
       this.menuList = this.outletObj.menuList;

@@ -38,11 +38,11 @@
           <div class="col-6 col-md-7 col-lg-2 alignRight">
             <i
               class="bi bi-pencil-square pointer bgsidepadding5"
-              *ngIf="btnPolicy?.editFoodItem"
+              *ngIf="true || btnPolicy?.editFoodItem"
               (click)="editFoodItem()"
             ></i>
             <i
-              *ngIf="btnPolicy?.deleteFoodItem"
+              *ngIf="true || btnPolicy?.deleteFoodItem"
               class="bi bi-trash-fill pointer bgsidepadding5"
               (click)="showPopup()"
             ></i>

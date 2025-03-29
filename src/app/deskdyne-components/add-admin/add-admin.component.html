@@ -171,7 +171,7 @@
   </div>
 
   <div>
-    <div class="inline me-2 mt-2" *ngIf="!editMode && btnPolicy?.addAdmin">
+    <div class="inline me-2 mt-2" *ngIf="!editMode && true || btnPolicy?.addAdmin">
       <button
         type="button"
         class="btn btn-primary btn-sm"
@@ -180,7 +180,7 @@
         Submit
       </button>
     </div>
-    <div class="inline me-2" *ngIf="editMode && btnPolicy?.editAdmin">
+    <div class="inline me-2" *ngIf="editMode && true || btnPolicy?.editAdmin">
       <button
         type="button"
         class="btn btn-primary btn-sm"

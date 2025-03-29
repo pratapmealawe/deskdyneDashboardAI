@@ -75,7 +75,7 @@
       <button
         type="submit"
         class="btn-sm mt-1 btn btn-success"
-        *mgIf="btnPolicy?.addOutletCategory"
+        *ngIf="true || btnPolicy?.addOutletCategory"
         (click)="onSubmit()"
       >
         Submit

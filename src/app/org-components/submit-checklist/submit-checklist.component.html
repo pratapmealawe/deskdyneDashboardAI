@@ -78,7 +78,7 @@
         [disabled]="!filterObj.orgId && !filterObj.cafeId"
         class="btn btn-primary me-2"
         (click)="submitChecklist()"
-        *ngIf="!editMode && btnPolicy?.addChecklist"
+        *ngIf="!editMode && true || btnPolicy?.addChecklist"
       >
         Save
       </button>
@@ -86,7 +86,7 @@
         [disabled]="!filterObj.orgId && !filterObj.cafeId"
         class="btn btn-success me-2"
         (click)="updateChecklist()"
-        *ngIf="editMode && btnPolicy?.editChecklist"
+        *ngIf="editMode && true || btnPolicy?.editChecklist"
       >
         Update
       </button>

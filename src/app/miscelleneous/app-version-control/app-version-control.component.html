@@ -1,7 +1,7 @@
 <div class="bgpadding1">
   <div
     class="right addBtn"
-    *ngIf="btnPolicy?.addAppVersion"
+    *ngIf="true || btnPolicy?.addAppVersion"
     (click)="addVariable()"
   >
     +
@@ -39,7 +39,7 @@
     <div class="mt-2">
       <div
         class="inline me-2"
-        *ngIf="addnewVariable && btnPolicy?.addAppVersion"
+        *ngIf="addnewVariable && true || btnPolicy?.addAppVersion"
       >
         <button
           type="button"
@@ -51,7 +51,7 @@
       </div>
       <div
         class="inline me-2"
-        *ngIf="!addnewVariable && btnPolicy?.editAppVersion"
+        *ngIf="!addnewVariable && true || btnPolicy?.editAppVersion"
       >
         <button
           type="button"
@@ -80,7 +80,7 @@
         </div>
         <div class="col-2 col-md-2 col-lg-4 alignRight">
           <i
-            *ngIf="btnPolicy?.editAppVersion"
+            *ngIf="true || btnPolicy?.editAppVersion"
             class="bi bi-pencil-square bgsidepadding5"
             (click)="editVariable(variable)"
           ></i>

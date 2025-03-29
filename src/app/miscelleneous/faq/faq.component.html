@@ -10,12 +10,12 @@
   <span
     class="addBtn mt-2"
     (click)="addFAQ()"
-    *ngIf="!addnewFAQ && btnPolicy?.addFaq"
+    *ngIf="!addnewFAQ && true || btnPolicy?.addFaq"
     >+</span
   >
 
   <div class="mt-2" *ngIf="editMode">
-    <div class="labelText" *ngIf="!addnewFAQ && btnPolicy?.editFaq">
+    <div class="labelText" *ngIf="!addnewFAQ && true || btnPolicy?.editFaq">
       Update FAQ
     </div>
     <div>
@@ -59,7 +59,7 @@
       </div>
     </div>
     <div class="mt-2">
-      <span class="inline me-2" *ngIf="addnewFAQ && btnPolicy?.addFaq">
+      <span class="inline me-2" *ngIf="addnewFAQ && true || btnPolicy?.addFaq">
         <button
           type="button"
           class="btn btn-primary btn-sm"
@@ -68,7 +68,7 @@
           Submit
         </button>
       </span>
-      <span class="inline me-2" *ngIf="!addnewFAQ && btnPolicy?.editFaq">
+      <span class="inline me-2" *ngIf="!addnewFAQ && true || btnPolicy?.editFaq">
         <button
           type="button"
           class="btn btn-primary btn-sm"
@@ -95,12 +95,12 @@
         </div>
         <div class="col-2 col-md-2 col-lg-1 alignRight">
           <i
-            *ngIf="btnPolicy?.editFaq"
+            *ngIf="true || btnPolicy?.editFaq"
             class="bi bi-pencil-square bgsidepadding5 pointer"
             (click)="editFAQ(faq)"
           ></i>
           <i
-            *ngIf="btnPolicy?.deleteFaq"
+            *ngIf="true || btnPolicy?.deleteFaq"
             class="bi bi-trash-fill bgsidepadding5 pointer"
             (click)="showPopup(faq)"
           ></i>
