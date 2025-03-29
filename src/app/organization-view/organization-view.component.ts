@@ -20,7 +20,7 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'B2B Weekly Menu', path: 'b2bWeeklyMenu' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Guest Employee List', path: 'guestEmployeeList' },
-    { name: 'Complience', path: 'organization-compliance' },
+    { name: 'Complience', path: 'organizationCompliance' },
   ];
   oldList: any = [];
   bulkObj = [

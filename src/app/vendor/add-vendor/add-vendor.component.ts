@@ -132,7 +132,7 @@ export class AddVendorCommponent {
         );
       } else {
         await this.apiMainService.saveVendor(finalObj);
-        this.router.navigate(['/vendor/search-vendor']);
+        this.router.navigate(['/searchVendor']);
       }
 
       //const res = type=='update'?await this.apiMainService.updateVendor(this.selectedOutletsList._id,formData):await this.apiMainService.saveVendor(finalObj);
@@ -250,6 +250,6 @@ export class AddVendorCommponent {
   }
 
   goBack() {
-    this.router.navigate(['/vendor/search-vendor']);
+    this.router.navigate(['/searchVendor']);
   }
 }
