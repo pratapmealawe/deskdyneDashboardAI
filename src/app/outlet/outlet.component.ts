@@ -57,7 +57,7 @@ export class OutletComponent implements OnInit {
   }
 
   addOutlet() {
-    this.router.navigate(['/outlet/add-outlet']);
+    this.router.navigate(['/addOutlet']);
   }
 
   toggleShowOrder(val: any) {

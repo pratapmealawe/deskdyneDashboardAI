@@ -27,6 +27,6 @@ export class OutletDetailsComponent implements OnInit {
 
   editOrg() {
     this.runtimeStorageService.setCacheData('OUTLET_EDIT', this.outletObj);
-    this.router.navigate(['/outlet/add-outlet']);
+    this.router.navigate(['/addOutlet']);
   }
 }
