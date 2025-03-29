@@ -13,11 +13,11 @@
             <div class="edit alignRight">
               <i
                 class="bi bi-pencil-square bgsidepadding5 pointer"
-                *ngIf="btnPolicy?.editPolicy"
+                *ngIf="true || btnPolicy?.editPolicy"
                 (click)="editPolicy(policy._id)"
               ></i>
               <i
-                *ngIf="btnPolicy?.deletePolicy"
+                *ngIf="true || btnPolicy?.deletePolicy"
                 class="bi bi-trash-fill pointer"
                 (click)="confirmDelete(policy._id)"
               ></i>

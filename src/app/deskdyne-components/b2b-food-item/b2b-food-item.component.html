@@ -2,7 +2,7 @@
   <span
     class="addBtn"
     (click)="addFooditem()"
-    *ngIf="!editMode && btnPolicy?.addFoodItem"
+    *ngIf="!editMode && true || btnPolicy?.addFoodItem"
     >+</span
   >
   <div *ngIf="!editMode">

@@ -173,14 +173,14 @@
   <div
     class="btn btn-primary btn-sm mt-2"
     (click)="submit('update')"
-    *ngIf="showUpdate && btnPolicy?.editOutlet"
+    *ngIf="showUpdate && true || btnPolicy?.editOutlet"
   >
     Update
   </div>
   <div
     class="btn btn-primary btn-sm mt-2"
     (click)="submit()"
-    *ngIf="!showUpdate && btnPolicy?.addOutlet"
+    *ngIf="!showUpdate && true || btnPolicy?.addOutlet"
   >
     Submit
   </div>

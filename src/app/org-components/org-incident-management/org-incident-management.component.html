@@ -5,7 +5,7 @@
     </div>
     <div class="col-md-6 text-md-end" *ngIf="orgAdmin.role === 'ORGADMIN'">
       <button
-        *ngIf="btnPolicy?.addIncident"
+        *ngIf="true || btnPolicy?.addIncident"
         class="btn btn-primary"
         type="button"
         (click)="addIncident()"
@@ -149,12 +149,12 @@
         <div class="col-md-1 action_btn">
           <i
             class="bi bi-pencil-square"
-            *ngIf="btnPolicy?.editIncident"
+            *ngIf="true || btnPolicy?.editIncident"
             (click)="editIncident(incident)"
           ></i>
           <!-- <i
             class="bi bi-trash-fill"
-            *ngIf="btnPolicy?.deleteIncident"
+            *ngIf="true || btnPolicy?.deleteIncident"
             (click)="deleteIncident(incident)"
           ></i> -->
         </div>
