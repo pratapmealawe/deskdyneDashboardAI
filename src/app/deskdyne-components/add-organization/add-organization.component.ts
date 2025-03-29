@@ -383,7 +383,7 @@ export class AddOrganizationComponent implements OnInit {
       }
       await this.apiMainService.B2B_addOrg(this.form.getRawValue());
       this.clearRunTimeStorage();
-      this.router.navigate(['B2B_search_org']);
+      this.router.navigate(['b2bSearchOrg']);
     } catch (error) {
       console.log(error);
     }
@@ -400,7 +400,7 @@ export class AddOrganizationComponent implements OnInit {
         this.viewOrg._id
       );
       this.clearRunTimeStorage();
-      this.router.navigate(['B2B_search_org']);
+      this.router.navigate(['b2bSearchOrg']);
     } catch (error) {
       console.log(error);
     }
@@ -422,7 +422,7 @@ export class AddOrganizationComponent implements OnInit {
 
   back() {
     this.clearRunTimeStorage();
-    this.router.navigate(['B2B_search_org']);
+    this.router.navigate(['b2bSearchOrg']);
   }
 
   clearRunTimeStorage() {

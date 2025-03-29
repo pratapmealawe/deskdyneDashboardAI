@@ -26,16 +26,40 @@ const routes: Routes = [
       import('./outlet/outlet.module').then((m) => m.OutletModule),
   },
   {
+    path: 'addOutlet',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./outlet/add-outlet/add-outlet.module').then(
+        (m) => m.AddOutletModule
+      ),
+  },
+  {
     path: 'vendor',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./vendor/vendor.module').then((m) => m.VendorModule),
   },
   {
-    path: 'add-admin',
+    path: 'searchVendor',
     canActivate: [accessGuard],
 
+    loadChildren: () =>
+      import('./vendor/search-vendor/search-vendor.module').then(
+        (m) => m.SearchVendorModule
+      ),
+  },
+  {
+    path: 'addVendor',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./vendor/add-vendor/add-vendor.module').then(
+        (m) => m.AddVendorModule
+      ),
+  },
+  {
+    path: 'addAdmin',
+    canActivate: [accessGuard],
     loadChildren: () =>
       import('./deskdyne-components/add-admin/add-admin.module').then(
         (m) => m.AddAdminModule
@@ -108,7 +132,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'B2B_add_org',
+    path: 'b2bAddorg',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -117,7 +141,7 @@ const routes: Routes = [
       ).then((m) => m.AddOrganizationModule),
   },
   {
-    path: 'B2B_search_org',
+    path: 'b2bSearchOrg',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -145,7 +169,7 @@ const routes: Routes = [
 
   //orgAdmin routes
   {
-    path: 'org-dashboard',
+    path: 'orgDashboard',
 
     loadChildren: () =>
       import('./org-components/org-dashboard/org-dashboard.module').then(
@@ -153,7 +177,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-menu-items',
+    path: 'orgMenuItems',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -162,7 +186,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-orders',
+    path: 'orgOrders',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -171,7 +195,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-pre-orders',
+    path: 'orgPreOrders',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -180,7 +204,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-subcription',
+    path: 'orgSubcription',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -189,7 +213,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-reviews',
+    path: 'orgReviews',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -198,7 +222,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'app-feedbacks',
+    path: 'appFeedbacks',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -207,7 +231,7 @@ const routes: Routes = [
       ).then((m) => m.SuggessionsFeedbacksModule),
   },
   {
-    path: 'excel-export',
+    path: 'excelExport',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -216,7 +240,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-reports',
+    path: 'orgReports',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -225,7 +249,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-vendor-info',
+    path: 'orgVendorInfo',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -234,7 +258,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-menu-counters',
+    path: 'orgMenuCounters',
     canActivate: [accessGuard],
     loadChildren: () =>
       import(
@@ -242,7 +266,7 @@ const routes: Routes = [
       ).then((m) => m.OrgMenuCountersModule),
   },
   {
-    path: 'org-incident-management',
+    path: 'orgIncidentManagement',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -251,7 +275,7 @@ const routes: Routes = [
       ).then((m) => m.OrgIncidentManagementModule),
   },
   {
-    path: 'org-checklist',
+    path: 'orgChecklist',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -260,7 +284,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'org-employee-list',
+    path: 'orgEmployeeList',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -269,7 +293,7 @@ const routes: Routes = [
       ).then((m) => m.OrgEmployeeListModule),
   },
   {
-    path: 'org-bulk-order-history',
+    path: 'orgBulkOrderHistory',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -278,7 +302,7 @@ const routes: Routes = [
       ).then((m) => m.OrgBulkOrderHistoryModule),
   },
   {
-    path: 'org-manual-orders',
+    path: 'orgManualOrders',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -287,7 +311,7 @@ const routes: Routes = [
       ).then((m) => m.OrgManualOrdersModule),
   },
   {
-    path: 'org-billing',
+    path: 'orgBilling',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -296,7 +320,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'view-checklist-question',
+    path: 'viewChecklistQuestion',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -305,7 +329,7 @@ const routes: Routes = [
       ).then((m) => m.ChecklistQuestionModule),
   },
   {
-    path: 'submit-checklist',
+    path: 'submitChecklist',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -323,7 +347,7 @@ const routes: Routes = [
       ),
   },
   {
-    path: 'food_item',
+    path: 'foodItem',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -333,7 +357,7 @@ const routes: Routes = [
   },
   //deskdine routes
   {
-    path: 'current_order',
+    path: 'currentOrder',
     canActivate: [accessGuard],
 
     loadChildren: () =>
@@ -342,7 +366,7 @@ const routes: Routes = [
       ).then((m) => m.B2bCurrentOrdersModule),
   },
   {
-    path: 'past_order',
+    path: 'pastOrder',
     canActivate: [accessGuard],
 
     loadChildren: () =>
