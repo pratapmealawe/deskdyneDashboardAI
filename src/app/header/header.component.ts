@@ -406,6 +406,9 @@ export class HeaderComponent implements OnInit {
         this.getAllPolicy();
 
         // this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
+      } 
+      else{
+        this.logout();
       }
     } catch (error) {
       console.log('error while logging out ', error);
