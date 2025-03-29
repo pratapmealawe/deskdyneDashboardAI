@@ -223,6 +223,13 @@ export class OutletMenuComponent implements OnInit {
       this.menuList = this.outletObj.menuList;
       this.menuList.push(this.form.value);
       this.menuIndex = this.outletObj.menuList.length - 1;
+      let mealTypes = this.menuList[this.menuIndex].mealTimingInfo;
+
+      this.menuList[this.menuIndex].mealTimingInfo =
+        this.outletObj.mealTiming.filter((meal: any) =>
+          mealTypes.includes(meal.mealType)
+        );
+
       const finalObj = { ...this.outletObj, menuList: this.menuList };
       const formData = this.objectToFormData(finalObj);
       if (this.uploadedImageFile) {
