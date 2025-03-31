@@ -650,6 +650,16 @@ export class ApiMainService {
       menuObj
     );
   }
+  changeMenuActivation(outletId: any, menuId: any, menuObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changeMenuActivation;
+    return this.apiHttpService.REQUEST(
+      {
+        url: urlObj.url + `/${outletId}` + `/${menuId}`,
+        method: urlObj.method,
+      },
+      menuObj
+    );
+  }
   getDashboardCounts(searchObj: any) {
     return this.apiHttpService.REQUEST(
       this.apiConfigService.apiEndPointObj.getDashboardCounts,

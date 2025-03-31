@@ -83,6 +83,20 @@ export class AddOutletComponent implements OnInit {
         organizationDetails: outlet.organizationDetails,
         cafeteriaDetails: outlet.cafeteriaDetails,
       };
+      this.mealTiming = this.mealTiming.map((meal: any) => {
+        const matchingMeal = outlet.mealTiming.find(
+          (outletMeal: any) => outletMeal.mealType === meal.mealType
+        );
+
+        return matchingMeal
+          ? {
+              ...meal,
+              acceptOrderFrom: matchingMeal.acceptOrderFrom,
+              acceptOrderTill: matchingMeal.acceptOrderTill,
+            }
+          : meal;
+      });
+
       this.selectedOrg = outlet.companyDetails;
       this.selectedCafe = outlet.cafeteriaDetails;
       this.form.patchValue({

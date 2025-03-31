@@ -282,6 +282,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/updateOutletMenu`,
         method: 'POST',
       },
+      changeMenuActivation: {
+        url: `${this.baseUrl}/api/changeMenuActivation`,
+        method: 'PUT',
+      },
       getGuestEmployeelistByOrgId: {
         url: `${this.baseUrl}/api/getGuestEmployeelist`,
         method: 'GET',
