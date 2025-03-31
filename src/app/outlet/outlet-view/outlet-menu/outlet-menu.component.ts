@@ -228,6 +228,7 @@ export class OutletMenuComponent implements OnInit {
   }
 
   async submit() {
+    console.log(this.outletObj.menuList, 'this.outletObj.menuList');
     try {
       const formData: any = new FormData();
       if (this.imageUrl) {

@@ -1,6 +1,6 @@
 <div class="bgpadding1">
   <div class="labelText">Search Admin</div>
-  <div class="right addBtn" (click)="addAdmin()" *ngIf="btnPolicy?.addAdmin">
+  <div class="right addBtn" (click)="addAdmin()" *ngIf="true || btnPolicy?.addAdmin">
     +
   </div>
   <div class="row mt-2">
@@ -67,7 +67,7 @@
         <div class="col-3 col-md-2 col-lg-1">
           <div
             class="inline right edit"
-            *ngIf="btnPolicy?.editAdmin"
+            *ngIf="true || btnPolicy?.editAdmin"
             (click)="editAdmin(admin)"
           >
             <i class="bi bi-pencil-square"></i>

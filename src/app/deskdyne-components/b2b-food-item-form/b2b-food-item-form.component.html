@@ -203,7 +203,7 @@
   <div class="mt-2">
     <div
       class="inline me-2"
-      *ngIf="editType === 'new' && btnPolicy?.addFoodItem"
+      *ngIf="editType === 'new' && true || btnPolicy?.addFoodItem"
     >
       <button
         type="button"
@@ -215,7 +215,7 @@
     </div>
     <div
       class="inline me-2"
-      *ngIf="editType === 'edit' && btnPolicy?.editFoodItem"
+      *ngIf="editType === 'edit' && true || btnPolicy?.editFoodItem"
     >
       <button
         type="button"

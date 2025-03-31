@@ -122,14 +122,14 @@
   <div
     class="btn btn-primary btn-sm mt-1"
     (click)="submit('update')"
-    *ngIf="showUpdate && btnPolicy?.editVendor"
+    *ngIf="showUpdate && true || btnPolicy?.editVendor"
   >
     Update
   </div>
   <div
     class="btn btn-primary btn-sm mt-1"
     (click)="submit()"
-    *ngIf="!showUpdate && btnPolicy?.addVendor"
+    *ngIf="!showUpdate && true || btnPolicy?.addVendor"
   >
     Submit
   </div>

@@ -1,5 +1,5 @@
 <div class="bgpadding1">
-  <span class="addBtn" *ngIf="btnPolicy?.addVariable" (click)="addVariable()"
+  <span class="addBtn" *ngIf="true || btnPolicy?.addVariable" (click)="addVariable()"
     >+</span
   >
 
@@ -115,7 +115,7 @@
       </div>
     </div>
     <div class="mt-2">
-      <div class="inline" *ngIf="addnewVariable && btnPolicy?.addVariable">
+      <div class="inline" *ngIf="addnewVariable && true || btnPolicy?.addVariable">
         <button
           type="button"
           class="btn btn-primary btn-sm me-2"
@@ -124,7 +124,7 @@
           Submit
         </button>
       </div>
-      <div class="inline" *ngIf="!addnewVariable && btnPolicy?.editVariable">
+      <div class="inline" *ngIf="!addnewVariable && true || btnPolicy?.editVariable">
         <button
           type="button"
           class="btn btn-primary btn-sm me-2"
@@ -159,12 +159,12 @@
         </div>
         <div class="col-3 col-md-2 col-lg-2 alignRight">
           <i
-            *ngIf="btnPolicy?.editVariable"
+            *ngIf="true || btnPolicy?.editVariable"
             class="bi bi-pencil-square bgsidepadding5 pointer"
             (click)="editVariable(variable)"
           ></i>
           <i
-            *ngIf="btnPolicy?.deleteVariable"
+            *ngIf="true || btnPolicy?.deleteVariable"
             class="bi bi-trash-fill bgsidepadding5 pointer"
             (click)="showPopup(variable)"
           ></i>
