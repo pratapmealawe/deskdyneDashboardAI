@@ -76,31 +76,24 @@ export class OutletMenuComponent implements OnInit {
       description: item.description,
       itemContains: item.itemContains,
     });
+    if (item.subCategory) {
+      this.selectedCategory = item.category;
+      this.categorySelected = true;
+      this.setSubCategoryList();
+    }
   }
 
   createForm() {
     this.form = this.fb.group({
       itemName: [''],
       price: [''],
-      priority: ['1'],
       subcidyAmt: 0,
       category: [''],
       subCategory: [''],
       mealTimingInfo: [[]],
-      code: [''],
-      recommended: [false],
-      isSpicy: [false],
       itemType: ['Veg'],
       isActive: [false],
-      mealVoucherApplicable: [false],
-      isPrePrepared: [false],
-      priceIncludesTax: [false],
-      hideItemPrice: [false],
-      mrp: [''],
       description: [''],
-      calories: [''],
-      parcelChargeType: [''],
-      parcelChargeValue: [''],
       itemContains: [[]],
     });
   }
@@ -191,6 +184,7 @@ export class OutletMenuComponent implements OnInit {
       );
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
+      formData.append('itemType', this.form.value.itemType);
 
       let mealTypes = this.form.value.mealTimingInfo;
 
@@ -241,7 +235,10 @@ export class OutletMenuComponent implements OnInit {
       formData.append('price', this.form.value.price);
       formData.append('quantityAvailable', this.form.value.quantityAvailable);
       formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
-      formData.append('itemContains', this.form.value.itemContains);
+      formData.append(
+        'itemContains',
+        JSON.stringify(this.form.value.itemContains)
+      );
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
       formData.append('itemType', this.form.value.itemType);
@@ -337,12 +334,15 @@ export class OutletMenuComponent implements OnInit {
 
   async changeMenuActivation(menu: any, event: any) {
     menu.isActive = event.target.checked;
-    const formData = new FormData();
-    formData.append('isActive', event.target.checked);
-    let outletmenu = await this.apiMainService.updateOutletMenu(
+
+    const menuObj = {
+      isActive: event.target.checked,
+    };
+
+    let outletmenu = await this.apiMainService.changeMenuActivation(
       this.outletObj._id,
       menu._id,
-      formData
+      menuObj
     );
   }
 

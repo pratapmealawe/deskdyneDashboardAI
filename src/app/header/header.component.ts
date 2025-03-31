@@ -406,8 +406,7 @@ export class HeaderComponent implements OnInit {
         this.getAllPolicy();
 
         // this.localStorageService.setCacheData('ADMIN_PROFILE', adminProfile);
-      } 
-      else{
+      } else {
         this.logout();
       }
     } catch (error) {
