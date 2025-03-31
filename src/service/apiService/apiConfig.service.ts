@@ -17,6 +17,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/authadmin/loginAdmin`,
         method: 'POST',
       },
+      addOutletMenu: {
+        url: `${this.baseUrl}/api/addOutletMenu`,
+        method: 'POST',
+      },
       verifyOTP: { url: `${this.baseUrl}/authadmin/verifyOTP`, method: 'POST' },
       logout: { url: `${this.baseUrl}/authadmin/logout`, method: 'GET' },
       fetchAllOutlets: {

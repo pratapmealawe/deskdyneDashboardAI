@@ -96,6 +96,14 @@ export class ApiMainService {
     );
   }
 
+  addOutletMenu(outlet: any, outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addOutletMenu;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${outletId}`, method: urlObj.method },
+      outlet
+    );
+  }
+
   updateOutlet(id: any, payload: any, imgIndex?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutlet;
     return this.apiHttpService.REQUEST(

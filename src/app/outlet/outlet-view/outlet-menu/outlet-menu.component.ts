@@ -172,35 +172,45 @@ export class OutletMenuComponent implements OnInit {
 
   async updateMenu(index: any) {
     try {
-      const oldMenuItem = this.outletObj.menuList[index];
-      this.outletObj.menuList.splice(index, 1, this.form.value);
-      this.outletObj.menuList[index].imageUrl = oldMenuItem.imageUrl;
-
-      let mealTypes = this.outletObj.menuList[index].mealTimingInfo;
-
-      this.outletObj.menuList[index].mealTimingInfo =
-        this.outletObj.mealTiming.filter((meal: any) =>
-          mealTypes.includes(meal.mealType)
-        );
-
-      const formData = this.objectToFormData(this.outletObj);
-      if (this.uploadedImageFile) {
+      const menuId = this.outletObj.menuList[index]._id;
+      const outletId = this.outletObj._id;
+      const formData = new FormData();
+      if (this.imageUrl) {
         formData.append('image', this.uploadedImageFile);
-      } else {
-        this.noImages = true;
-        index = null;
       }
-      const res = this.noImages
-        ? await this.apiMainService.updateOutletNoImages(
-            this.outletObj._id,
-            this.outletObj
-          )
-        : await this.apiMainService.updateOutlet(
-            this.outletObj._id,
-            formData,
-            index
-          );
-      this.outletObj = res;
+      formData.append('imageUrl', this.form.value.imageUrl);
+      formData.append('description', this.form.value.description);
+      formData.append('isActive', this.form.value.isActive);
+      formData.append('itemName', this.form.value.itemName);
+      formData.append('price', this.form.value.price);
+      formData.append('quantityAvailable', this.form.value.quantityAvailable);
+      formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
+      formData.append(
+        'itemContains',
+        JSON.stringify(this.form.value.itemContains)
+      );
+      formData.append('category', this.form.value.category);
+      formData.append('subCategory', this.form.value.subCategory);
+
+      let mealTypes = this.form.value.mealTimingInfo;
+
+      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
+        mealTypes.includes(meal.mealType)
+      );
+
+      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+
+      const res = await this.apiMainService.updateOutletMenu(
+        outletId,
+        menuId,
+        formData
+      );
+
+      if (res && res._id) {
+        this.outletObj = res;
+        this.showCard = true;
+      }
+
       this.resetValues();
     } catch (error) {
       console.log(error);
@@ -220,29 +230,35 @@ export class OutletMenuComponent implements OnInit {
   async submit() {
     console.log(this.outletObj.menuList, 'this.outletObj.menuList');
     try {
-      this.menuList = [];
-      this.menuList = this.outletObj.menuList;
-      this.menuList.push(this.form.value);
-      this.menuIndex = this.outletObj.menuList.length - 1;
-      let mealTypes = this.menuList[this.menuIndex].mealTimingInfo;
-
-      this.menuList[this.menuIndex].mealTimingInfo =
-        this.outletObj.mealTiming.filter((meal: any) =>
-          mealTypes.includes(meal.mealType)
-        );
-
-      const finalObj = { ...this.outletObj, menuList: this.menuList };
-      const formData = this.objectToFormData(finalObj);
-      if (this.uploadedImageFile) {
+      const formData: any = new FormData();
+      if (this.imageUrl) {
         formData.append('image', this.uploadedImageFile);
-      } else {
-        this.menuIndex = null;
       }
-      const res = await this.apiMainService.updateOutlet(
-        this.outletObj._id,
-        formData,
-        this.menuIndex
+      formData.append('imageUrl', this.form.value.imageUrl);
+      formData.append('description', this.form.value.description);
+      formData.append('isActive', this.form.value.isActive);
+      formData.append('itemName', this.form.value.itemName);
+      formData.append('price', this.form.value.price);
+      formData.append('quantityAvailable', this.form.value.quantityAvailable);
+      formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
+      formData.append('itemContains', this.form.value.itemContains);
+      formData.append('category', this.form.value.category);
+      formData.append('subCategory', this.form.value.subCategory);
+      formData.append('itemType', this.form.value.itemType);
+
+      let mealTypes = this.form.value.mealTimingInfo;
+
+      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
+        mealTypes.includes(meal.mealType)
       );
+
+      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+
+      const res = await this.apiMainService.addOutletMenu(
+        formData,
+        this.outletObj._id
+      );
+
       if (res && res._id) {
         this.outletObj = res;
         this.showCard = true;
