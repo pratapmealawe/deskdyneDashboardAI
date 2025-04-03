@@ -15,35 +15,35 @@ export class PermissionsService {
 
   canActivate(route: any, state: any): boolean {
     let res: boolean;
-    // const profile = this.localStorageService.getCacheData('ADMIN_PROFILE');
-    // // const keys = ;
-    // if (profile && profile.policy[0].route_policies) {
-    //   const url = state.url.replace('/', '');
-    //   res = this.checkForPermission(url, profile.policy[0].route_policies);
-    // } else if (state.url == '/currentOrder') {
-    //   res = true;
-    // } else {
-    //   res = false;
-    // }
-    // if (res === false) {
-    //   this.localStorageService.resetAllCacheData();
-    //   if (profile.policy_name === 'orgAdmin') {
-    //     this.router.navigate(['/org-dashboard']);
-    //   } else {
-    //     this.router.navigate(['/dashboard']);
-    //   }
-    //   this.toasterService.error(122);
-    // }
+    const profile = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    // const keys = ;
+    if (profile && profile.policy[0].route_policies) {
+      const url = state.url.replace('/', '');
+      res = this.checkForPermission(url, profile.policy[0].route_policies);
+    } else if (state.url == '/currentOrder') {
+      res = true;
+    } else {
+      res = false;
+    }
+    if (res === false) {
+      this.localStorageService.resetAllCacheData();
+      if (profile.policy_name === 'orgAdmin') {
+        this.router.navigate(['/org-dashboard']);
+      } else {
+        this.router.navigate(['/dashboard']);
+      }
+      this.toasterService.error(122);
+    }
     return true;
   }
 
   checkForPermission(url: any, keys: any) {
-    // switch (url) {
-    //   case url:
-    //     return keys[url] ? true : false;
-    //   default:
-    //     return false;
-    // }
+    switch (url) {
+      case url:
+        return keys[url] ? true : false;
+      default:
+        return false;
+    }
     return true;
   }
 }
