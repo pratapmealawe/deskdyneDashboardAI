@@ -49,7 +49,7 @@ export class AdminComponent implements OnInit, OnDestroy {
     private apiMainService: ApiMainService,
     private router: Router,
     private route: ActivatedRoute
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.checkURLParams();
@@ -63,6 +63,7 @@ export class AdminComponent implements OnInit, OnDestroy {
       this.updateIndices();
     });
   }
+
 
   checkURLParams() {
     this.route.queryParams.subscribe((params) => {
@@ -99,7 +100,7 @@ export class AdminComponent implements OnInit, OnDestroy {
 
   async getDashboardData() {
     try {
-      let data = await this.apiMainService.getCurrentOutletOrdersListForGuest();
+      let data = await this.apiMainService.getCurrentOutletOrdersListForGuest(this.paramsObj.organization, this.paramsObj.cafeName, true);
       this.ordersList = data ?? [];
 
       // Reduce looping by grouping directly

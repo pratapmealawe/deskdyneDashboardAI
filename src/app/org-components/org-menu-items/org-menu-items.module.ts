@@ -14,5 +14,6 @@ import { FormsModule } from '@angular/forms';
     HighchartsChartModule,
     FormsModule,
   ],
+  exports: [OrgMenuItemsComponent]
 })
-export class OrgMenuItemsModule {}
+export class OrgMenuItemsModule { }

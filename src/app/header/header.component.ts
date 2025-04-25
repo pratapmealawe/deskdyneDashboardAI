@@ -29,6 +29,13 @@ export class HeaderComponent implements OnInit {
 
   deskDineOptions: any = [
     {
+      name: 'Dashboard',
+      showParent: true,
+      route: 'dashboard',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
       name: 'Outlet',
       showParent: true,
       image: 'Outlet',
@@ -216,20 +223,20 @@ export class HeaderComponent implements OnInit {
       image: 'Orders_white',
       imageblue: 'Orders_blue',
     },
-    {
-      name: 'Pre Orders',
-      showParent: true,
-      route: 'orgPreOrders',
-      image: 'Pre_order_white',
-      imageblue: 'Pre_Order_blue',
-    },
-    {
-      name: 'Subscription',
-      showParent: true,
-      route: 'orgSubcription',
-      image: 'Subscription_white',
-      imageblue: 'Subscription_blue',
-    },
+    // {
+    //   name: 'Pre Orders',
+    //   showParent: true,
+    //   route: 'orgPreOrders',
+    //   image: 'Pre_order_white',
+    //   imageblue: 'Pre_Order_blue',
+    // },
+    // {
+    //   name: 'Subscription',
+    //   showParent: true,
+    //   route: 'orgSubcription',
+    //   image: 'Subscription_white',
+    //   imageblue: 'Subscription_blue',
+    // },
     {
       name: 'Reviews',
       showParent: true,
@@ -237,13 +244,13 @@ export class HeaderComponent implements OnInit {
       image: 'Reviews_white',
       imageblue: 'Reviews_blue',
     },
-    {
-      name: 'Reports',
-      showParent: true,
-      route: 'orgReports',
-      image: 'Reports_white',
-      imageblue: 'Reports_blue',
-    },
+    // {
+    //   name: 'Reports',
+    //   showParent: true,
+    //   route: 'orgReports',
+    //   image: 'Reports_white',
+    //   imageblue: 'Reports_blue',
+    // },
     {
       name: 'Vendor Info',
       showParent: true,
@@ -286,13 +293,13 @@ export class HeaderComponent implements OnInit {
       image: 'Bulk_history_white',
       imageblue: 'Bulk_history_blue',
     },
-    {
-      name: 'Manual Orders',
-      showParent: true,
-      route: 'orgManualOrders',
-      image: 'Manual_Orders_white',
-      imageblue: 'Manual_orders_blue',
-    },
+    // {
+    //   name: 'Manual Orders',
+    //   showParent: true,
+    //   route: 'orgManualOrders',
+    //   image: 'Manual_Orders_white',
+    //   imageblue: 'Manual_orders_blue',
+    // },
     {
       name: 'Billing',
       showParent: true,
@@ -419,7 +426,8 @@ export class HeaderComponent implements OnInit {
       await this.apiMainService.logout();
       this.localStorageService.resetAllCacheData();
       this.runtimeStorageService.resetAllCacheData();
-      this.router.navigate(['/login']);
+
+      this.currentRoute === "/guest" ? this.router.navigate(['/guest']) : this.router.navigate(['/login']);
     } catch (error) {
       console.log('error while logging out ', error);
     }

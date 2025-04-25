@@ -7,5 +7,6 @@ import { OrgVendorInfoComponent } from './org-vendor-info.component';
 @NgModule({
   declarations: [OrgVendorInfoComponent],
   imports: [CommonModule, OrgVendorInfoRoutingModule],
+  exports: [OrgVendorInfoComponent]
 })
 export class OrgVendorInfoModule {}
