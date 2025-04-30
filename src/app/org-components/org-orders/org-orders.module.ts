@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
     OrgOrdersRoutingModule,
     OrderCardModule,
     FormsModule
-  ]
+  ],
+  exports: [OrgOrdersComponent]
 })
 export class OrgOrdersModule { }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import * as Highcharts from 'highcharts';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -20,8 +20,11 @@ interface SearchObj {
   templateUrl: './org-menu-items.component.html',
   styleUrls: ['./org-menu-items.component.scss'],
 })
-export class OrgMenuItemsComponent implements OnInit {
+export class OrgMenuItemsComponent implements OnInit, OnChanges {
   Highcharts: typeof Highcharts = Highcharts;
+
+  @Input() adminOrg: any
+  
 
   timeArray = ['today', 'week', 'month', '3month', '6month'];
 
@@ -76,7 +79,17 @@ export class OrgMenuItemsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.initFunc()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+      if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+        this.initFunc()
+      }
+  }
+
+  initFunc() {
+    this.orgAdmin = this.adminOrg ? {orgDetails : this.adminOrg}  : this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.getChartData();
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import * as Highcharts from 'highcharts';
@@ -30,8 +30,11 @@ interface DashboardData {
   templateUrl: './org-dashboard.component.html',
   styleUrls: ['./org-dashboard.component.scss'],
 })
-export class OrgDashboardComponent implements OnInit {
+export class OrgDashboardComponent implements OnInit, OnChanges {
   Highcharts: typeof Highcharts = Highcharts;
+
+  @Input() adminOrg: any
+
   maxDate: Date = new Date();
 
   chartOptions: Highcharts.Options = {
@@ -168,9 +171,19 @@ export class OrgDashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.initFunc()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+      this.initFunc()
+    }
+  }
+
+  initFunc() {
+    this.orgAdmin = this.adminOrg ? {orgDetails : this.adminOrg}  :  this.localStorageService.getCacheData('ADMIN_PROFILE') ;
     this.maxDate.setDate(this.maxDate.getDate());
     this.maxDate.setHours(23, 59, 59, 999);
-    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.getDashboardData();
     this.getChartData();
     this.getPieChartData();

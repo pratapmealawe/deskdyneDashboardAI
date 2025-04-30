@@ -11,7 +11,7 @@ export class ApiMainService {
     private apiConfigService: ApiConfigService,
     private apiHttpService: ApiHttpService,
     private runtimeStorageService: RuntimeStorageService
-  ) {}
+  ) { }
 
   private runTimeCacheInterceptor(
     key: any,
@@ -1135,12 +1135,20 @@ export class ApiMainService {
       method: urlObj.method,
     });
   }
-  getCurrentOutletOrdersListForGuest() {
+  getCurrentOutletOrdersListForGuest(orgId: string, cafeName: string, isSearchObj: boolean) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.getCurrentOutletOrdersListForGuest;
     return this.apiHttpService.REQUEST({
-      url: urlObj.url,
+      url: urlObj.url + `/${orgId}/${cafeName}/${isSearchObj}`,
       method: urlObj.method,
-    });
+    }, null, null, true, false);
+  }
+  getBulkOrderForChart(body:any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getBulkOrderForChart;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url ,
+      method: urlObj.method,
+    }, body);
   }
 }

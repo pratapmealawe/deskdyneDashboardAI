@@ -21,5 +21,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MatDatepickerModule,
     MatNativeDateModule,
   ],
+  exports: [OrgDashboardComponent]
 })
-export class OrgDashboardModule {}
+export class OrgDashboardModule { }

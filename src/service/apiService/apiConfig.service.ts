@@ -475,6 +475,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getCurrentOutletOrdersListForGuest`,
         method: 'GET',
       },
+      getBulkOrderForChart: {
+        url: `${this.baseUrl}/api/getBulkOrderForChart`,
+        method: 'POST'
+      }
     };
   }
 }
