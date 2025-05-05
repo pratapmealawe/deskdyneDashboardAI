@@ -31,7 +31,9 @@ export class OrderCardComponent implements OnInit {
 
 
   constructor() {}
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(this.order);
+  }
 
   viewOrder(order:any){
     this.showless = false;
