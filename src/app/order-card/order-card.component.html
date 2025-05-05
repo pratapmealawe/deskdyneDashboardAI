@@ -174,14 +174,20 @@
                             <span>{{order.itemAmount}}</span>
                         </div>
                     </div>
-                    <div class="header5 receipt-parent">
+                    <!-- <div class="header5 receipt-parent">
                         <div class="left-div">Taxes</div>
                         <div class="right-div">&#8377; {{order.taxes}}</div>
-                    </div>                   
+                    </div>                    -->
                     <div class="header5 discount receipt-parent">
                         <div class="left-div">Money Wallet Points Used</div>
                         <div class="right-div">(-)&#8377; {{order.moneyWalletPointsUsed}}</div>
                     </div>
+                    <ng-container *ngIf="order.subsidyAmount">
+                    <div class="header5 discount receipt-parent">
+                        <div class="left-div">Subsidy Total</div>
+                        <div class="right-div">(-)&#8377; {{order.subsidyAmount}}</div>
+                    </div>
+                </ng-container>
                     <div class="header5 discount receipt-parent totalAmtdiv">
                         <div class="left-div bold">Order Total Amount</div>
                         <div class="right-div bold">&#8377; {{order.amount}}</div>
