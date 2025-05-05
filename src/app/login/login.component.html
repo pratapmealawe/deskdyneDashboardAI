@@ -3,6 +3,7 @@
         <div class="card">
             <div class="row">
                 <div class="col-md-4 pe-md-0">
+
                     <div class="auth-side-wrapper"></div>
                 </div>
                 <div class="col-md-8 ps-md-0">
@@ -11,16 +12,25 @@
                             account.</h5>
                         <form class="forms-sample">
                             <div class="mb-2"><label for="adminID" class="form-label">ID</label>
-                                <input type="text" name="adminID" [(ngModel)]="adminId" placeholder="ID" class="form-control shadow-none">
+                                <input type="text" name="adminID" [(ngModel)]="adminId" placeholder="ID"
+                                    class="form-control shadow-none">
                             </div>
                             <button type="submit" class="btn btn-primary" (click)="login()">Login</button>
                         </form>
                     </div>
                     <div class="auth-form-wrapper px-4 py-5" *ngIf="showOTP">
-                        <h5 class="text-muted mb-3">Enter OTP</h5>
+                        <div class="mb-3" style="display: flex; align-items: center ; gap: 16px  ;">
+                            <div class="backBtn" (click)="backToLogin()">
+                                <i class="bi bi-chevron-left"></i>
+                                <p>Back</p>
+                            </div>
+                            <h5 class="text-muted mb-0">Enter OTP</h5>
+                        </div>
                         <form class="forms-sample">
-                            <div class="mb-3"><label for="otp" class="form-label">Please enter verification code sent to the registered Mobile No.</label>
-                                <input type="password" name="otp" [(ngModel)]="password" placeholder="OTP" class="form-control">
+                            <div class="mb-3"><label for="otp" class="form-label">Please enter verification code sent to
+                                    the registered Mobile No.</label>
+                                <input type="password" name="otp" [(ngModel)]="password" placeholder="OTP"
+                                    class="form-control">
                             </div>
                             <button type="submit" class="btn btn-primary" (click)="verifyOTP()">Submit</button>
                         </form>

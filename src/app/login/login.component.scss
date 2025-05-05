@@ -1,20 +1,32 @@
-.auth-page{
-    height:100vh;
-    background-color:#f9fafb;
+.auth-page {
+    height: 100vh;
+    background-color: #f9fafb;
 }
 
-.card-wrapper{
-    margin:auto;
+.card-wrapper {
+    margin: auto;
 }
 
-.auth-side-wrapper{
-    background:url('~src/assets/images/logo.svg');
+.auth-side-wrapper {
+    background: url('~src/assets/images/deskdyneLogoblue.png');
     background-size: 75%;
     background-repeat: no-repeat;
     height: 100%;
     background-position: center;
 }
 
-.btn-primary{
-    background-color:#6571ff;
+.btn-primary {
+    background-color: #6571ff;
+}
+
+.backBtn {
+    color: #4150f7;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+
+    p {
+        margin: 0;
+    }
 }

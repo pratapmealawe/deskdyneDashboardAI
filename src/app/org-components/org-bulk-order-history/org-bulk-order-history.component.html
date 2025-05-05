@@ -1,1 +1,30 @@
-<p>org-bulk-order-history works!</p>
+<div class="container py-3">
+    <mat-form-field appearance="outline">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [formGroup]="dateGroup" [rangePicker]="picker" [max]="maxDate">
+            <input matStartDate placeholder="Start date" formControlName="start" />
+            <input matEndDate placeholder="End date" (dateChange)="changeDate()" formControlName="end" />
+        </mat-date-range-input>
+        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker> </mat-date-range-picker>
+    </mat-form-field>
+    <div class="row mt-3">
+        <div class="col-lg-12">
+            <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
+                <highcharts-chart
+                  *ngIf="initialOrdersData.length > 0"
+                  [Highcharts]="Highcharts"
+                  [options]="chartOptionsPie"
+                  [update]="updateOrdersFlag"
+                  [oneToOne]="oneToOneOrdersFlag"
+                  style="width: 100%; height: 400px; display: block"
+                >
+                </highcharts-chart>
+                <div
+                class="h-100 d-flex justify-content-center align-items-center pt-2"
+              >
+                <p *ngIf="initialOrdersData.length <= 0">No Data Found</p>
+              </div>
+        </div>
+    </div>
+</div>

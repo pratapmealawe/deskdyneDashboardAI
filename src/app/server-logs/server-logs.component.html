@@ -1,9 +1,9 @@
 <div class="bgpadding1">
-    <div class="row mt-2">      
+    <div class="row mt-2">  
         <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedStatus === 'AuditLogs'}"
         (click)="getAuditLogs()" >
             <div class="tileLabel header4 countTile">Audit Logs</div>
-        </div>
+        </div>    
         <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedStatus === 'DBLogs'}"
         (click)="getMLDBLogs()" >
             <div class="tileLabel header4 countTile">DB Logs</div>
@@ -76,7 +76,7 @@
             <ng-container *ngFor="let log of logsList">
                 <div class="logContainer">
                  <div class="row">  
-                    <div class="col-12 col-md-6 col-lg-8"> 
+                    <div class="col-12 col-md-6 col-lg-9"> 
                         <span class="labelText"> Message :</span>
                         <span class="valueText">{{log.logMsg}}</span>
                     </div>                  
@@ -84,10 +84,14 @@
                         <span  class="labelText">Type :</span>
                         <span class="valueText">{{log.type}}</span>
                     </div>
-                    <div class="col-6 col-md-3 col-lg-3">
+                    <div class="col-6 col-md-3 col-lg-2">
                         <span  class="labelText">Date and Time :</span>
                         <span class="valueText">{{log.timestamp |  date:'dd-MMM-yyyy HH:mm a'}}</span>
-                    </div>                     
+                    </div>     
+                    <div class="col-12" *ngIf="log.logObj">
+                        <span  class="labelText">LogObj :</span>
+                        <span class="valueText">{{log.logObj}}</span>
+                    </div>                
                 </div> 
                 </div>
             </ng-container >      
@@ -150,7 +154,7 @@
             <ng-container *ngFor="let log of logsList">
                 <div class="logContainer">
                  <div class="row">  
-                    <div class="col-12 col-md-6 col-lg-4"> 
+                    <div class="col-12 col-md-6 col-lg-5"> 
                         <span class="labelText"> urlInfo :</span>
                         <span class="valueText">{{log.urlInfo}}</span>
                     </div>   
@@ -169,10 +173,23 @@
                     <div class="col-6 col-md-3 col-lg-3">
                         <span  class="labelText">Date and Time :</span>
                         <span class="valueText">{{log.timestamp |  date:'dd-MMM-yyyy HH:mm a'}}</span>
+                        <span class="viewPayload" *ngIf="log.payload" (click)="payloadView(log.payload)">View Payload</span>
                     </div>                     
                 </div> 
                 </div>
             </ng-container >      
         </ng-container>
     </div>
+    
 </div>
+
+<ng-template #contentPayload let-modal>
+    <div class="modal-header">
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{logPayload}}
+    </div>
+</ng-template>

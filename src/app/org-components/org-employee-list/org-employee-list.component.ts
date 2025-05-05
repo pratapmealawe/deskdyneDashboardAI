@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -20,7 +20,8 @@ interface Employee {
   templateUrl: './org-employee-list.component.html',
   styleUrls: ['./org-employee-list.component.scss'],
 })
-export class OrgEmployeeListComponent implements OnInit {
+export class OrgEmployeeListComponent implements OnInit, OnChanges {
+  @Input() adminOrg: any
   orgAdmin: any;
   employeeList: Employee[] = [];
   filteredEmployeeList: Employee[] = [];
@@ -43,10 +44,20 @@ export class OrgEmployeeListComponent implements OnInit {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.initFunc()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+      this.initFunc()
+    }
+  }
+
+  initFunc() {
+    this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.initEmployeeForm();
     this.getEmployeeListByOrgId();
     this.getOrgList();
@@ -72,13 +83,13 @@ export class OrgEmployeeListComponent implements OnInit {
   async saveEmployee() {
     console.log(this.employeeObj);
     console.log(this.orgDetails);
-    let cafedetails = this.orgDetails.cafeteriaList.find((cafe:any)=>{
-      return cafe._id==this.employeeObj.cafeteria_id;
+    let cafedetails = this.orgDetails.cafeteriaList.find((cafe: any) => {
+      return cafe._id == this.employeeObj.cafeteria_id;
     });
     console.log(cafedetails);
-    this.employeeObj.cafeteria_id=cafedetails.cafeteria_id;
+    this.employeeObj.cafeteria_id = cafedetails.cafeteria_id;
     this.employeeObj.cafeteria_name = cafedetails.cafeteria_name;
-    
+
     try {
       let res = await this.apiMainService.employeeAdd(this.employeeObj);
     } catch (error) {

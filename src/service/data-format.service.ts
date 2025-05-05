@@ -20,7 +20,8 @@ export class DataFormatService{
                         address1: cafeteria.address1,
                         address2: cafeteria.address2,
                         landmark: cafeteria.landmark,
-                        location: cafeteria.location
+                        location: cafeteria.location,
+                        cafeteria_id:cafeteria.cafeteria_id
                     },
                     organizationDetails: {
                         organization_name:org.organization_name,

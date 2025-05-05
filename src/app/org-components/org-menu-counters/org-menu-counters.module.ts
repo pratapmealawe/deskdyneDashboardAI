@@ -7,5 +7,6 @@ import { OrgMenuCountersComponent } from './org-menu-counters.component';
 @NgModule({
   declarations: [OrgMenuCountersComponent],
   imports: [CommonModule, OrgMenuCountersRoutingModule],
+  exports: [OrgMenuCountersComponent]
 })
 export class OrgMenuCountersModule {}

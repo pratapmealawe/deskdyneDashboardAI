@@ -34,6 +34,7 @@ export class ApiConfigService {
         method: 'POST',
       },
       updateOutlet: { url: `${this.baseUrl}/api/updateOutlet`, method: 'POST' },
+      updateOutletLevelSubsidy: { url: `${this.baseUrl}/api/updateOutletMenusubsidy`, method: 'POST' },
       updateOutletNoImages: {
         url: `${this.baseUrl}/api/updateOutletNoImages`,
         method: 'POST',
@@ -155,6 +156,14 @@ export class ApiConfigService {
       },
       B2B_org_update: {
         url: `${this.baseUrl}/api/b2b_org_update`,
+        method: 'POST',
+      },
+      B2B_org_updateOrglevelSubsidy:{
+        url: `${this.baseUrl}/api/B2B_org_updateOrglevelSubsidy`,
+        method: 'POST',
+      },
+      B2B_org_updateCafelevelSubsidy:{
+        url: `${this.baseUrl}/api/B2B_org_updateCafelevelSubsidy`,
         method: 'POST',
       },
       B2B_fetchFilteredAllOrgs: {
@@ -475,6 +484,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getCurrentOutletOrdersListForGuest`,
         method: 'GET',
       },
+      getBulkOrderForChart: {
+        url: `${this.baseUrl}/api/getBulkOrderForChart`,
+        method: 'POST'
+      }
     };
   }
 }

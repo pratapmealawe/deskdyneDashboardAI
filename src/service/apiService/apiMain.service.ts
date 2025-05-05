@@ -11,7 +11,7 @@ export class ApiMainService {
     private apiConfigService: ApiConfigService,
     private apiHttpService: ApiHttpService,
     private runtimeStorageService: RuntimeStorageService
-  ) {}
+  ) { }
 
   private runTimeCacheInterceptor(
     key: any,
@@ -109,6 +109,14 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${imgIndex}` + `/${id}`, method: urlObj.method },
       payload
+    );
+  }
+  updateOutletLevelSubsidy(id: any, subsidy:any) {
+    console.log(subsidy);
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOutletLevelSubsidy;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      subsidy
     );
   }
 
@@ -422,6 +430,26 @@ export class ApiMainService {
 
   B2B_org_update(payload: any, id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_update;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      payload,
+      null,
+      false,
+      true
+    );
+  }
+  B2B_org_updateOrglevelSubsidy(payload: any, id: any){
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateOrglevelSubsidy;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      payload,
+      null,
+      false,
+      true
+    );
+  }
+  B2B_org_updateCafelevelSubsidy(payload: any, id: any){
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateCafelevelSubsidy;
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${id}`, method: urlObj.method },
       payload,
@@ -1135,12 +1163,20 @@ export class ApiMainService {
       method: urlObj.method,
     });
   }
-  getCurrentOutletOrdersListForGuest() {
+  getCurrentOutletOrdersListForGuest(orgId: string, cafeName: string, isSearchObj: boolean) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.getCurrentOutletOrdersListForGuest;
     return this.apiHttpService.REQUEST({
-      url: urlObj.url,
+      url: urlObj.url + `/${orgId}/${cafeName}/${isSearchObj}`,
       method: urlObj.method,
-    });
+    }, null, null, true, false);
+  }
+  getBulkOrderForChart(body:any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getBulkOrderForChart;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url ,
+      method: urlObj.method,
+    }, body);
   }
 }

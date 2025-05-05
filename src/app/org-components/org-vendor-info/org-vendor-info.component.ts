@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { debounceTime, Subject } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -13,7 +13,9 @@ interface data {
   templateUrl: './org-vendor-info.component.html',
   styleUrls: ['./org-vendor-info.component.scss'],
 })
-export class OrgVendorInfoComponent {
+export class OrgVendorInfoComponent implements OnInit, OnChanges {
+  @Input() adminOrg: any
+
   orgDetails: any;
   vendorList: any[] = [];
   page: number = 1;
@@ -28,11 +30,20 @@ export class OrgVendorInfoComponent {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.orgDetails =
-      this.localStorageService.getCacheData('ADMIN_PROFILE')?.orgDetails;
+    this.initFunc()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+      this.initFunc()
+    }
+  }
+
+  initFunc() {
+    this.orgDetails = this.adminOrg ? this.adminOrg : this.localStorageService.getCacheData('ADMIN_PROFILE')?.orgDetails;
     this.getVendorByOrgId();
   }
 

@@ -20,19 +20,19 @@
 
       <!-- Cafeteria Selection -->
       <div class="col-12 col-md-3">
-        <label for="cafeteria" class="labelText d-block">Cafeteria</label>
+        <label for="cafeteria" class="labelText d-block">Outlet</label>
         <select
           [disabled]="!orgDetails"
           class="form-select"
-          [(ngModel)]="filterObj.cafeId"
+          [(ngModel)]="filterObj.outletId"
           (change)="onCafeChange(); getfeedbacklistByfilter()"
         >
-          <option selected disabled value="">Select Cafeteria</option>
+          <option selected disabled value="">Select Outlet</option>
           <option
-            *ngFor="let option of orgDetails?.cafeteriaList"
+            *ngFor="let option of outletList"
             [value]="option._id"
           >
-            {{ option.cafeteria_name }}
+            {{ option.outletName }}
           </option>
         </select>
       </div>

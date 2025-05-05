@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
+import { log } from 'util';
 
 interface filter {
   orgId: string;
-  cafeId: string;
-
+  outletId: string;
   fromDate: string;
   toDate: string;
   page: number;
@@ -17,7 +17,8 @@ interface filter {
   templateUrl: './org-reviews.component.html',
   styleUrls: ['./org-reviews.component.scss'],
 })
-export class OrgReviewsComponent implements OnInit {
+export class OrgReviewsComponent implements OnInit, OnChanges {
+  @Input() adminOrg: any
   orglist: any = [];
   orgDetails: any;
   feedbackList: any[] = [];
@@ -27,22 +28,35 @@ export class OrgReviewsComponent implements OnInit {
   nextOn: boolean = false;
   filterObj: filter = {
     orgId: '',
-    cafeId: '',
+    outletId: '',
     fromDate: '',
     toDate: '',
     page: 1,
   };
   orgAdmin: any;
+  outletList: any[] = []
+
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private searchService: SearchFilterService
-  ) {}
+    private searchService: SearchFilterService,
+  ) { }
 
   ngOnInit() {
-    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.initFunc()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+      this.initFunc()
+    }
+  }
+
+  initFunc() {
+    this.orgAdmin = this.adminOrg ? { role: "ORGADMIN", orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.getOrgList();
   }
+
   toggleFeedback(index: number) {
     this.expandedItems[index] = !this.expandedItems[index];
   }
@@ -70,7 +84,8 @@ export class OrgReviewsComponent implements OnInit {
     this.orgDetails = this.orglist.find((org: any) => {
       return org._id == this.filterObj?.orgId;
     });
-    this.filterObj.cafeId = '';
+    
+    this.filterObj.outletId = '';
 
     this.getfeedbacklistByfilter();
   }
@@ -80,6 +95,7 @@ export class OrgReviewsComponent implements OnInit {
       const feedbackList = await this.apiMainService.getfeedbacklistByfilter(
         this.filterObj
       );
+
       if (feedbackList && feedbackList.length > 0) {
         this.nextOn = true;
         this.feedbackList = [...this.feedbackList, ...feedbackList];
@@ -108,10 +124,30 @@ export class OrgReviewsComponent implements OnInit {
       );
       this.orglist = data;
       this.getInitialVlaues();
+      this.getOutlets()
     } catch (error) {
       console.log(error);
     }
   }
+
+  async getOutlets() {
+    let searchObj = {
+      orgId: this.orgAdmin?.orgDetails._id
+    };
+    try {
+      const data = await this.apiMainService.searchOutletByOrgId(
+        searchObj
+      );
+
+      this.outletList = [ ...data];
+
+      console.log(this.outletList);
+      
+    } catch (err) {
+      console.error('Error fetching orders:', err);
+    }
+  }
+
 
   getInitialVlaues() {
     if (this.orgAdmin.role === 'ORGADMIN') {

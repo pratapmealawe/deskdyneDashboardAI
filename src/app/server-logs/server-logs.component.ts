@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 
@@ -9,6 +10,7 @@ import { PolicyService } from 'src/service/policy.service';
   styleUrls: ['./server-logs.component.scss']
 })
 export class ServerLogsComponent {
+  @ViewChild("contentPayload") contentPayload: any;
   selectedStatus:string = '';
   selectedDBStatus:string = '';
   serverLogsList = [];
@@ -17,8 +19,11 @@ export class ServerLogsComponent {
   endDate: any;
   hours: any;
   logsList:any=[];
+  logPayload:any = '';
 
-  constructor(private apiMainService: ApiMainService,public router: Router, private policyService:PolicyService) {
+  constructor(private apiMainService: ApiMainService,public router: Router, private policyService:PolicyService,
+    private modalService: NgbModal
+  ) {
     this.access = this.policyService.getCurrentButtonPolicy();
   }
   async getServerLogs(selectedStatus:string,fileName:string){
@@ -42,6 +47,7 @@ export class ServerLogsComponent {
     this.selectedStatus = 'DBLogs'
   }
 
+  
   getAuditLogs(){
     this.serverLogsList=[];
     this.logsList = [];
@@ -54,9 +60,11 @@ export class ServerLogsComponent {
     this.logsList.length=0;
     try {
         const selectedLine = parseInt(selectedLines);
-        this.logsList= await this.apiMainService.getLineBasedLogs(selectedLine);       
+        this.logsList= await this.apiMainService.getLineBasedLogs(selectedLine);
+       
        this.logsList.forEach((element:any) => {
         element.timestamp = new Date(element.timestamp);
+        element.logObj = JSON.stringify(element.logObj);
        });
         console.log('loglist object',this.logsList);
     } catch (error) {
@@ -77,8 +85,9 @@ async getTimeBasedLogs(selectedTime:string){
 
     this.logsList = await this.apiMainService.getTimeBasedLogs(this.hours); 
     this.logsList.forEach((element:any) => {
-    element.timestamp = new Date(element.timestamp);
-  });
+      element.timestamp = new Date(element.timestamp);
+    });
+    console.log('loglist object',this.logsList);
   }catch(error){
       console.log('getServerLogs error ',error)
   }
@@ -88,15 +97,15 @@ async getDayRangeBasedLogs(startDate: any, endDate: any) {
     let eDate = new Date(endDate)
     try {
         this.logsList.length = 0 ;
-        this.logsList = await this.apiMainService.getDayRangeBasedLogs(startDate, endDate);   
+        this.logsList = await this.apiMainService.getDayRangeBasedLogs(startDate, endDate);
         this.logsList.forEach((element:any) => {
           element.timestamp = new Date(element.timestamp);
         });
+        console.log('loglist object',this.logsList);
     } catch (error) {
         console.log(error)
     }
 }
-
 
 async getLineBasedAuditLogs(selectedLines: any) {
   this.selectedDBStatus = selectedLines;
@@ -126,8 +135,9 @@ try{
 
   this.logsList = await this.apiMainService.getTimeBasedAuditLogs(this.hours); 
   this.logsList.forEach((element:any) => {
-  element.timestamp = new Date(element.timestamp);
-});
+    element.timestamp = new Date(element.timestamp);
+  });
+  console.log('loglist object',this.logsList);
 }catch(error){
     console.log('getServerLogs error ',error)
 }
@@ -142,9 +152,16 @@ async getDayRangeBasedAuditLogs(startDate: any, endDate: any) {
       this.logsList.forEach((element:any) => {
         element.timestamp = new Date(element.timestamp);
       });
+      console.log('loglist object',this.logsList);
   } catch (error) {
       console.log(error)
   }
+}
+
+payloadView(paylaod:any){
+  this.logPayload = JSON.stringify(paylaod);
+  const modalRef = this.modalService.open(this.contentPayload, { ariaLabelledBy: 'modal-basic-title', size: 'xl', windowClass: 'menuModel' });
+    modalRef.result.then(() => {  }, () => {});
 }
 
   goBack(){

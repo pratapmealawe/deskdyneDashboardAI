@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -13,7 +13,8 @@ interface filter {
   templateUrl: './org-menu-counters.component.html',
   styleUrls: ['./org-menu-counters.component.scss'],
 })
-export class OrgMenuCountersComponent implements OnInit {
+export class OrgMenuCountersComponent implements OnInit, OnChanges {
+  @Input() adminOrg: any
   outletList: any[] = [];
   filteredOutletList: any[] = [];
   searchObj: filter = {
@@ -29,10 +30,20 @@ export class OrgMenuCountersComponent implements OnInit {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
-    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.initFunc()
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+      this.initFunc()
+    }
+  }
+
+  initFunc() {
+    this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.getOutlets();
   }
 
@@ -42,8 +53,10 @@ export class OrgMenuCountersComponent implements OnInit {
       const data = await this.apiMainService.searchOutletByOrgId(
         this.searchObj
       );
-      this.outletList = [...this.outletList, ...data];
+
+      this.outletList = [ ...data];
       this.filteredOutletList = [...this.outletList];
+
     } catch (err) {
       console.error('Error fetching orders:', err);
     }
@@ -61,10 +74,9 @@ export class OrgMenuCountersComponent implements OnInit {
   }
 
   toggleReadMore(index: number) {
-    this.filteredOutletList[index].showFullDescription =
+    this.filteredOutletList[index]["showFullDescription"] =
       !this.filteredOutletList[index].showFullDescription;
 
-    console.log(this.filteredOutletList);
   }
 
   backToMainPage() {
