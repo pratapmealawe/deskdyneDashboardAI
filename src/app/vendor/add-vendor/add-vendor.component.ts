@@ -72,6 +72,7 @@ export class AddVendorCommponent {
       vendorPhoneNo: [''],
       vendorEmail: [''],
       vendorRole: [''],
+      isPrinter: [false]
     });
   }
 
@@ -113,6 +114,7 @@ export class AddVendorCommponent {
         vendorPhoneNo: vendor.vendorPhoneNo,
         vendorEmail: vendor.vendorEmail,
         vendorRole: vendor.vendorRole,
+        isPrinter: vendor.isPrinter
       });
     }
   }
@@ -135,7 +137,8 @@ export class AddVendorCommponent {
         this.router.navigate(['/searchVendor']);
       }
 
-      //const res = type=='update'?await this.apiMainService.updateVendor(this.selectedOutletsList._id,formData):await this.apiMainService.saveVendor(finalObj);
+
+      // const res = type=='update'?await this.apiMainService.updateVendor(this.selectedOutletsList._id,formData):await this.apiMainService.saveVendor(finalObj);
     } catch (error) {
       console.log('saveVendor submit error', error);
     }
