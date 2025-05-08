@@ -62,10 +62,11 @@ export class OutletMenuComponent implements OnInit {
   }
 
   patchFormValue(item: any) {
+    console.log(item,"item");
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
-      subcidyAmt: item.subcidyAmt ? item.subcidyAmt : 0,
+      subsidy: item.subsidy ? item.subsidy : 0,
       category: item.category,
       subCategory: item.subCategory,
       mealTimingInfo: item.mealTimingInfo
@@ -73,8 +74,10 @@ export class OutletMenuComponent implements OnInit {
         : [],
       itemType: item.itemType,
       isActive: item.isActive,
+      doNotChangeInFuture:item.doNotChangeInFuture,
       description: item.description,
       itemContains: item.itemContains,
+
     });
     if (item.subCategory) {
       this.selectedCategory = item.category;
@@ -87,13 +90,14 @@ export class OutletMenuComponent implements OnInit {
     this.form = this.fb.group({
       itemName: [''],
       price: [''],
-      subcidyAmt: 0,
+      subsidy: [0],
       category: [''],
       subCategory: [''],
       mealTimingInfo: [[]],
       itemType: ['Veg'],
       isActive: [false],
       description: [''],
+      doNotChangeInFuture:[false],
       itemContains: [[]],
     });
   }
@@ -164,6 +168,7 @@ export class OutletMenuComponent implements OnInit {
   }
 
   async updateMenu(index: any) {
+    console.log(this.form.value);
     try {
       const menuId = this.outletObj.menuList[index]._id;
       const outletId = this.outletObj._id;
@@ -178,10 +183,9 @@ export class OutletMenuComponent implements OnInit {
       formData.append('price', this.form.value.price);
       formData.append('quantityAvailable', this.form.value.quantityAvailable);
       formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
-      formData.append(
-        'itemContains',
-        JSON.stringify(this.form.value.itemContains)
-      );
+      formData.append('subsidy', this.form.value.subsidy);
+      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture);
+      formData.append('itemContains',JSON.stringify(this.form.value.itemContains));
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
       formData.append('itemType', this.form.value.itemType);
@@ -193,7 +197,7 @@ export class OutletMenuComponent implements OnInit {
       );
 
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
-
+      console.log(this.form.value,"formData");
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
         menuId,
@@ -201,6 +205,7 @@ export class OutletMenuComponent implements OnInit {
       );
 
       if (res && res._id) {
+        console.log(res,"res")
         this.outletObj = res;
         this.showCard = true;
       }
@@ -235,10 +240,9 @@ export class OutletMenuComponent implements OnInit {
       formData.append('price', this.form.value.price);
       formData.append('quantityAvailable', this.form.value.quantityAvailable);
       formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
-      formData.append(
-        'itemContains',
-        JSON.stringify(this.form.value.itemContains)
-      );
+      formData.append('subsidy', this.form.value.subsidy);
+      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture);
+      formData.append('itemContains',JSON.stringify(this.form.value.itemContains));
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
       formData.append('itemType', this.form.value.itemType);

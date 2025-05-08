@@ -76,7 +76,19 @@
         >
       </div>
     </div>
-    <div class="row" *ngIf="!seletedCafetria">
+    <div class="col-12 col-md-6 col-lg-4">
+      <label class="labelText form-label">Subsidy Amount (In Percent %)</label>
+      <input
+        type="number"
+        class="form-control"
+        placeholder="Subsidy Amount"
+        formControlName="subsidy"
+      />
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <label class="btn btn-primary"(click)="updateOutletLevelSubsidy()">Update Subsidy Amount</label>
+    </div>
+    <div class="row" *ngIf="seletedCafetria">
       <div>
         <button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">
           Select Org

@@ -111,6 +111,14 @@ export class ApiMainService {
       payload
     );
   }
+  updateOutletLevelSubsidy(id: any, subsidy:any) {
+    console.log(subsidy);
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOutletLevelSubsidy;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      subsidy
+    );
+  }
 
   updateOutletNoImages(id: any, payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletNoImages;
@@ -422,6 +430,26 @@ export class ApiMainService {
 
   B2B_org_update(payload: any, id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_update;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      payload,
+      null,
+      false,
+      true
+    );
+  }
+  B2B_org_updateOrglevelSubsidy(payload: any, id: any){
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateOrglevelSubsidy;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      payload,
+      null,
+      false,
+      true
+    );
+  }
+  B2B_org_updateCafelevelSubsidy(payload: any, id: any){
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateCafelevelSubsidy;
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${id}`, method: urlObj.method },
       payload,

@@ -54,6 +54,7 @@ export class AddOutletComponent implements OnInit {
     },
     { mealType: 'Dinner', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
   ];
+  outletSubsidy:number=0;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -73,6 +74,7 @@ export class AddOutletComponent implements OnInit {
 
   updateOutlet() {
     const outlet = this.runtimeStorageService.getCacheData('OUTLET_EDIT');
+    console.log(outlet);
     if (outlet && outlet._id) {
       this.showUpdate = true;
       this.imageUrl = environment.imageUrl + outlet.imageUrl;
@@ -104,6 +106,7 @@ export class AddOutletComponent implements OnInit {
         outletDescription: outlet.outletDescription,
         outletType: outlet.outletType,
         outletOpened: outlet.outletOpened,
+        subsidy: outlet.subsidy,
       });
     }
   }
@@ -114,6 +117,7 @@ export class AddOutletComponent implements OnInit {
       outletDescription: [''],
       outletType: [''],
       outletOpened: [false],
+      subsidy:[0]
     });
   }
 
@@ -160,6 +164,7 @@ export class AddOutletComponent implements OnInit {
           this.formattedOrgList.forEach((org: any) => {
             if (org.key === this.selectedOrgCafeteria) {
               this.seletedCafetria = { ...org };
+              console.log(this.seletedCafetria);
             }
           });
         }
@@ -211,7 +216,18 @@ export class AddOutletComponent implements OnInit {
       }
     }
   }
+  async updateOutletLevelSubsidy(){
+    try {
+      this.outletSubsidy =this.form.value.subsidy;
+      const res = await this.apiMainService.updateOutletLevelSubsidy(
+              this.selectedOutlet._id,
+              this.outletSubsidy
+            )
+            console.log(res,"res");
+    }catch(err){
 
+    }
+  }
   async submit(type?: any) {
     try {
       const finalObj = {
@@ -220,6 +236,7 @@ export class AddOutletComponent implements OnInit {
         mealTiming: this.mealTiming,
         ...this.form.value,
       };
+      console.log(finalObj);
       const formData = this.objectToFormData(finalObj);
       if (this.uploadedImageFile) {
         formData.append('image', this.uploadedImageFile);
@@ -279,6 +296,7 @@ export class AddOutletComponent implements OnInit {
       address2: cafe.address2,
       landmark: cafe.landmark,
       location: cafe.location,
+      cafeteria_id:cafe.cafeteria_id
     };
   }
 
