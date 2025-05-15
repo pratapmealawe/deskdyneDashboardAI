@@ -106,6 +106,7 @@ export class AddOutletComponent implements OnInit {
         outletDescription: outlet.outletDescription,
         outletType: outlet.outletType,
         outletOpened: outlet.outletOpened,
+        vendorCommissionPercentage: outlet.vendorCommissionPercentage,
         subsidy: outlet.subsidy,
       });
     }
@@ -117,6 +118,7 @@ export class AddOutletComponent implements OnInit {
       outletDescription: [''],
       outletType: [''],
       outletOpened: [false],
+      vendorCommissionPercentage: [0] ,
       subsidy:[0]
     });
   }

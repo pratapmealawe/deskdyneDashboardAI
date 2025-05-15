@@ -1171,6 +1171,7 @@ export class ApiMainService {
       method: urlObj.method,
     }, null, null, true, false);
   }
+
   getBulkOrderForChart(body:any) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.getBulkOrderForChart;
@@ -1178,5 +1179,23 @@ export class ApiMainService {
       url: urlObj.url ,
       method: urlObj.method,
     }, body);
+  }
+
+  updateVendorDetails(outletId:any, body:any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.updateVendorDetails;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${outletId}` ,
+      method: urlObj.method,
+    }, body);
+  }
+
+  getVendorListByOutletId(outletId:any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getVendorListByOutletId;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${outletId}` ,
+      method: urlObj.method,
+    });
   }
 }
