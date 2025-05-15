@@ -487,6 +487,14 @@ export class ApiConfigService {
       getBulkOrderForChart: {
         url: `${this.baseUrl}/api/getBulkOrderForChart`,
         method: 'POST'
+      },
+      updateVendorDetails: {
+        url: `${this.baseUrl}/api/updateVendorDetails`,
+        method: 'POST'
+      },
+      getVendorListByOutletId: {
+        url: `${this.baseUrl}/api/getVendorListByOutletId`,
+        method: 'GET'
       }
     };
   }

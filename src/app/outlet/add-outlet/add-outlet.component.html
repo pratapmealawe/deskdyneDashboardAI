@@ -3,35 +3,17 @@
   <div [formGroup]="form">
     <div class="row">
       <div class="col-12 col-md-2 col-lg-2 image-div">
-        <input
-          #f
-          type="file"
-          class="uploadInput"
-          accept="image/*"
-          capture="camera"
-          (change)="handleFileInput($event)"
-        />
-        <img
-          (click)="f.click()"
-          [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
-          class="uploadedImage"
-        />
+        <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+          (change)="handleFileInput($event)" />
+        <img (click)="f.click()" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'" class="uploadedImage" />
         <div class="uploadIcon" (click)="f.click()">
           Upload <i class="bi bi-upload"></i>
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText">Outlet Name</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Outlet Name"
-          formControlName="outletName"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.outletName.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="Outlet Name" formControlName="outletName" />
+        <div class="error-text" *ngIf="form.controls.outletName.errors?.required && showError">
           *Outlet name is required
         </div>
       </div>
@@ -42,51 +24,38 @@
           <option value="Veg">Veg</option>
           <option value="NonVeg">Non Veg</option>
         </select>
-        <div
-          class="error-text"
-          *ngIf="form.controls.outletType.errors?.required && showError"
-        >
+        <div class="error-text" *ngIf="form.controls.outletType.errors?.required && showError">
           *Outlet type is required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText">Outlet Description</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Org Description"
-          formControlName="outletDescription"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.outletDescription.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="Org Description" formControlName="outletDescription" />
+        <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
           *Outlet description is required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
-        <input
-          class="me-1"
-          type="checkbox"
-          id="isSpicy"
-          formControlName="outletOpened"
-        />
-        <label class="labelText form-label" for="outletOpened"
-          >Outlet Opened</label
-        >
+        <input class="me-1" type="checkbox" id="isSpicy" formControlName="outletOpened" />
+        <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
+        <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
+          *Outlet description is required
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <label class="labelText form-label" for="commision">Commision Percentage (%)</label>
+        <input type="text" class="form-control" id="commision" formControlName="vendorCommissionPercentage" placeholder="Enter Commision %">
+         <div class="error-text" *ngIf="form.controls.vendorCommissionPercentage.errors?.required && showError">
+          *Vendor Commision is required
+        </div>
       </div>
     </div>
     <div class="col-12 col-md-6 col-lg-4">
       <label class="labelText form-label">Subsidy Amount (In Percent %)</label>
-      <input
-        type="number"
-        class="form-control"
-        placeholder="Subsidy Amount"
-        formControlName="subsidy"
-      />
+      <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
     </div>
     <div class="col-12 col-md-6 col-lg-4">
-      <label class="btn btn-primary"(click)="updateOutletLevelSubsidy()">Update Subsidy Amount</label>
+      <label class="btn btn-primary" (click)="updateOutletLevelSubsidy()">Update Subsidy Amount</label>
     </div>
     <div class="row" *ngIf="seletedCafetria">
       <div>
@@ -140,41 +109,23 @@
     <hr />
     <div class="row mt-2">
       <div class="col">
-        <label class="labelText"
-          >Meal Timing<span class="mandatory">*</span></label
-        >
-        <button
-          class="btn btn-primary btn-sm ms-2"
-          (click)="setStandardEndTime()"
-        >
+        <label class="labelText">Meal Timing<span class="mandatory">*</span></label>
+        <button class="btn btn-primary btn-sm ms-2" (click)="setStandardEndTime()">
           Set Standard End Time
         </button>
         <div class="row">
-          <div
-            class="col-6 col-md-6 col-lg-3 bgpadding1"
-            *ngFor="let timing of mealTiming"
-          >
+          <div class="col-6 col-md-6 col-lg-3 bgpadding1" *ngFor="let timing of mealTiming">
             <div class="row bg-light py-3 px-2 rounded">
               <span class="labelText"> {{ timing.mealType }}</span>
               <div class="col-md-6">
                 <div class="labelData">From</div>
-                <input
-                  type="time"
-                  class="form-control"
-                  [(ngModel)]="timing.acceptOrderFrom"
-                  [ngModelOptions]="{ standalone: true }"
-                  placeholder="00:00"
-                />
+                <input type="time" class="form-control" [(ngModel)]="timing.acceptOrderFrom"
+                  [ngModelOptions]="{ standalone: true }" placeholder="00:00" />
               </div>
               <div class="col-md-6">
                 <div class="labelData">To</div>
-                <input
-                  type="time"
-                  class="form-control"
-                  [(ngModel)]="timing.acceptOrderTill"
-                  [ngModelOptions]="{ standalone: true }"
-                  placeholder="00:00"
-                />
+                <input type="time" class="form-control" [(ngModel)]="timing.acceptOrderTill"
+                  [ngModelOptions]="{ standalone: true }" placeholder="00:00" />
               </div>
             </div>
           </div>
@@ -182,30 +133,18 @@
       </div>
     </div>
   </div>
-  <div
-    class="btn btn-primary btn-sm mt-2"
-    (click)="submit('update')"
-    *ngIf="showUpdate && true || btnPolicy?.editOutlet"
-  >
+  <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')"
+    *ngIf="showUpdate && true || btnPolicy?.editOutlet">
     Update
   </div>
-  <div
-    class="btn btn-primary btn-sm mt-2"
-    (click)="submit()"
-    *ngIf="!showUpdate && true || btnPolicy?.addOutlet"
-  >
+  <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate && true || btnPolicy?.addOutlet">
     Submit
   </div>
 </div>
 <ng-template #contentOrg let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Select Org</h4>
-    <button
-      type="button"
-      class="close"
-      aria-label="Close"
-      (click)="modal.dismiss('cancel')"
-    >
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -213,12 +152,7 @@
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let org of formattedOrgList">
         <div class="col-12 col-md-12 col-lg-12">
-          <input
-            type="radio"
-            [(ngModel)]="selectedOrgCafeteria"
-            name="selectOrg"
-            [value]="org.key"
-          />
+          <input type="radio" [(ngModel)]="selectedOrgCafeteria" name="selectOrg" [value]="org.key" />
           {{ org.key }}
         </div>
         <!-- <div class="col-sm-12 col-md-10 col-lg-6">
@@ -229,11 +163,7 @@
   </div>
   <div class="modal-footer">
     <div class="inline bgpadding1">
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="modal.close('add')"
-      >
+      <button type="button" class="btn btn-primary" (click)="modal.close('add')">
         Add
       </button>
     </div>
