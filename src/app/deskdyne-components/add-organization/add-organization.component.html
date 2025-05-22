@@ -3,61 +3,29 @@
     <div class="row">
       <div class="col-12 col-md-6 col-lg-3">
         <div class="labelText">Org Name</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Org Name"
-          formControlName="organization_name"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.organization_name.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="Org Name" formControlName="organization_name" />
+        <div class="error-text" *ngIf="form.controls.organization_name.errors?.required && showError">
           *Org Name is Required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-3">
         <div class="labelText">Location</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Location"
-          formControlName="location"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.location.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="Location" formControlName="location" />
+        <div class="error-text" *ngIf="form.controls.location.errors?.required && showError">
           *Location is Required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-3">
         <div class="labelText">GSTIN</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="GSTIN"
-          formControlName="gstin"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.gstin.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="GSTIN" formControlName="gstin" />
+        <div class="error-text" *ngIf="form.controls.gstin.errors?.required && showError">
           *GSTIN is Required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-3">
         <div class="labelText">City</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="City"
-          formControlName="city"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.city.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="City" formControlName="city" />
+        <div class="error-text" *ngIf="form.controls.city.errors?.required && showError">
           *City is Required
         </div>
       </div>
@@ -66,55 +34,31 @@
       <div class="row">
         <div class="col-12 col-md-6 col-lg-4">
           <div class="labelText">Address Line 1</div>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Line 1"
-            formControlName="addressLine1"
-          />
-          <div
-            class="error-text"
-            *ngIf="
+          <input type="text" class="form-control" placeholder="Line 1" formControlName="addressLine1" />
+          <div class="error-text" *ngIf="
               form.controls.org_address.controls.addressLine1.errors
                 ?.required && showError
-            "
-          >
+            ">
             *Line 1 is required
           </div>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
           <div class="labelText">Address Line 2</div>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Line 2"
-            formControlName="addressLine2"
-          />
-          <div
-            class="error-text"
-            *ngIf="
+          <input type="text" class="form-control" placeholder="Line 2" formControlName="addressLine2" />
+          <div class="error-text" *ngIf="
               form.controls.org_address.controls.addressLine2.errors
                 ?.required && showError
-            "
-          >
+            ">
             *Line 2 is required
           </div>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
           <div class="labelText">Address Line 3</div>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Line 3"
-            formControlName="addressLine3"
-          />
-          <div
-            class="error-text"
-            *ngIf="
+          <input type="text" class="form-control" placeholder="Line 3" formControlName="addressLine3" />
+          <div class="error-text" *ngIf="
               form.controls.org_address.controls.addressLine3.errors
                 ?.required && showError
-            "
-          >
+            ">
             *Line 3 is required
           </div>
         </div>
@@ -122,16 +66,11 @@
     </div>
     <div class="col-12 col-md-6 col-lg-4">
       <label class="labelText form-label">Subsidy Amount(In Percent %)</label>
-      <input
-        type="number"
-        class="form-control"
-        placeholder="Subsidy Amount"
-        formControlName="subsidy"
-      />
+      <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
     </div>
     <div class="col-12 col-md-6 col-lg-4">
-      <button class="btn btn-primary"(click)="updateOrglevelSubsidy()">Update Subsidy</button>
-     </div>
+      <button class="btn btn-primary" (click)="updateOrglevelSubsidy()">Update Subsidy</button>
+    </div>
     <ng-container *ngIf="poc.controls.length > 0">
       <div class="d-flex w-100 align-items-center">
         <hr class="flex-grow-1" />
@@ -145,123 +84,73 @@
           <div class="row">
             <div class="col-12 col-md-6 col-lg-1 bgpadding1">
               <div class="labelText">POC Id</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="POC Id"
-                formControlName="poc_id"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="POC Id" formControlName="poc_id" />
+              <div class="error-text" *ngIf="
                   form.controls.poc_details.at(i).controls.poc_id.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *POC Id is Required
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-2 bgpadding1">
               <div class="labelText">POC Name</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="POC Name"
-                formControlName="poc_name"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="POC Name" formControlName="poc_name" />
+              <div class="error-text" *ngIf="
                   form.controls.poc_details.at(i).controls.poc_name.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *POC Name is Required
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-2 bgpadding1">
               <div class="labelText">POC Ph No</div>
-              <input
-                type="number"
-                class="form-control"
-                placeholder="POC Phone No"
-                formControlName="poc_phoneNo"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="number" class="form-control" placeholder="POC Phone No" formControlName="poc_phoneNo" />
+              <div class="error-text" *ngIf="
                   form.controls.poc_details.at(i).controls.poc_phoneNo.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *POC Phone No is Required
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3 bgpadding1">
               <div class="labelText">POC Email</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="POC Email"
-                formControlName="poc_email"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="POC Email" formControlName="poc_email" />
+              <div class="error-text" *ngIf="
                   form.controls.poc_details.at(i).controls.poc_email.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *POC Email is Required
               </div>
-              <div
-                class="error-text"
-                *ngIf="
+              <div class="error-text" *ngIf="
                   form.controls.poc_details.at(i).controls.poc_email.errors
                     ?.email && showError
-                "
-              >
+                ">
                 *Enter a Valid Email
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-2 bgpadding1">
               <div class="labelText">POC Location</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="POC Location"
-                formControlName="poc_location"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="POC Location" formControlName="poc_location" />
+              <div class="error-text" *ngIf="
                   form.controls.poc_details.at(i).controls.poc_location.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *POC Location is Required
               </div>
               <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
             </div>
             <div class="col-12 col-md-6 col-lg-1 bgpadding1">
               <div class="labelText">POC Role</div>
-              <select
-                class="custom-select"
-                name="role"
-                formControlName="poc_role"
-              >
+              <select class="custom-select" name="role" formControlName="poc_role">
                 <option disabled selected value>-- select role --</option>
                 <option [value]="item" *ngFor="let item of roleList">
                   {{ item }}
                 </option>
               </select>
-              <div
-                class="error-text"
-                *ngIf="
+              <div class="error-text" *ngIf="
                   form.controls.poc_details.at(i).controls.poc_role.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *POC Role is Required
               </div>
               <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
@@ -276,57 +165,30 @@
             <div class="row">
               <div class="col-12 col-md-6 col-lg-1">
                 <div class="labelText">Approver Id</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Approver Id"
-                  formControlName="approver_id"
-                />
+                <input type="text" class="form-control" placeholder="Approver Id" formControlName="approver_id" />
               </div>
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">Approver Name</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Approver Name"
-                  formControlName="approver_name"
-                />
+                <input type="text" class="form-control" placeholder="Approver Name" formControlName="approver_name" />
               </div>
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">Approver Ph No</div>
-                <input
-                  type="number"
-                  class="form-control"
-                  placeholder="Approver Phone No"
-                  formControlName="approver_phoneNo"
-                />
+                <input type="number" class="form-control" placeholder="Approver Phone No"
+                  formControlName="approver_phoneNo" />
               </div>
               <div class="col-12 col-md-6 col-lg-3">
                 <div class="labelText">Approver Email</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Approver Email"
-                  formControlName="approver_email"
-                />
+                <input type="text" class="form-control" placeholder="Approver Email" formControlName="approver_email" />
               </div>
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">Approver Location</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="Approver Location"
-                  formControlName="approver_location"
-                />
+                <input type="text" class="form-control" placeholder="Approver Location"
+                  formControlName="approver_location" />
                 <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
               </div>
               <div class="col-12 col-md-6 col-lg-1">
                 <div class="labelText">Approver Role</div>
-                <select
-                  class="custom-select"
-                  name="role"
-                  formControlName="approver_role"
-                >
+                <select class="custom-select" name="role" formControlName="approver_role">
                   <option disabled selected value>-- select role --</option>
                   <option [value]="item" *ngFor="let item of roleList">
                     {{ item }}
@@ -336,11 +198,7 @@
               </div>
               <div class="col-12 col-md-6 col-lg-1 bgpadding2">
                 <div>
-                  <span
-                    class="addBtn pointer"
-                    (click)="addApprover(i); poc_selected(i)"
-                    >Add</span
-                  >
+                  <span class="addBtn pointer" (click)="addApprover(i); poc_selected(i)">Add</span>
                 </div>
               </div>
             </div>
@@ -363,190 +221,141 @@
             <div class="col-3">
               <div class="labelText">Show Admin Daily Card</div>
               <input type="checkbox" formControlName="showAdminDaily" />
-              <div
-                class="error-text"
-                *ngIf="
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.showAdminDaily
                     .errors?.required && showError
-                "
-              >
+                ">
                 *This field is required
               </div>
             </div>
             <div class="col-3">
               <div class="labelText">Show Emp Poll Card</div>
               <input type="checkbox" formControlName="showEmpPolls" />
-              <div
-                class="error-text"
-                *ngIf="
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.showEmpPolls.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *This field is required
               </div>
             </div>
             <div class="col-3">
               <div class="labelText">Show Virtual Cafeteria</div>
               <input type="checkbox" formControlName="showVirtualCafe">
-          </div>
-          <div class="col-3">
+            </div>
+            <div class="col-3">
               <div class="labelText">Show Outlet</div>
               <input type="checkbox" formControlName="showSaas">
-          </div>
-          <div class="col-3">
+            </div>
+            <!-- <div class="col-3">
               <div class="labelText">Show Site Executive</div>
               <input type="checkbox" formControlName="showSiteExecutive">
-          </div>
-          <div class="col-3">
+            </div> -->
+            <div class="col-3">
               <div class="labelText">Show Company Wallet</div>
               <input type="checkbox" formControlName="showCompanyWallet">
-          </div>
+            </div>
 
-          <div class="col-3">
+            <!-- <div class="col-3">
               <div class="labelText">Show Checklist</div>
               <input type="checkbox" formControlName="showchecklist">
-          </div>
-          <div class="col-3">
-              <div class="labelText">Show Complience Tracker</div>
+            </div> -->
+            <div class="col-3">
+              <div class="labelText">Show compliance Tracker</div>
               <input type="checkbox" formControlName="showComplienceTracker">
-          </div>
+            </div>
           </div>
           <div class="row">
             <div class="col-12 col-md-6 col-lg-3">
               <div class="labelText">Cafeteria Name</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Cafeteria Name"
-                formControlName="cafeteria_name"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="Cafeteria Name" formControlName="cafeteria_name" />
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.cafeteria_name
                     .errors?.required && showError
-                "
-              >
+                ">
                 *Cafeteria Name is required
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
               <div class="labelText">Cafeteria City</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Cafeteria City"
-                formControlName="cafeteria_city"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="Cafeteria City" formControlName="cafeteria_city" />
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.cafeteria_city
                     .errors?.required && showError
-                "
-              >
+                ">
                 *Cafeteria City is required
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
               <div class="labelText">Location</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Location"
-                formControlName="location"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="Location" formControlName="location" />
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.location.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *Location is required
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-3">
               <div class="labelText">Landmark</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Landmark"
-                formControlName="landmark"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="Landmark" formControlName="landmark" />
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.landmark.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *Landmark is required
               </div>
             </div>
             <div class="col-12 col-md-6 col-lg-2 bgpadding1">
               <div class="labelText">Cafeteria Id</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Cafeteria Id"
-                formControlName="cafeteria_id"
-                readonly
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="Cafeteria Id" formControlName="cafeteria_id"
+                readonly />
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.cafeteria_id.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *Cafeteria Id is required
               </div>
             </div>
-            <div class="col-12 col-md-4 col-lg-4 bgpadding1">
+            <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+              <div class="labelText">Aceess Code</div>
+              <input type="text" class="form-control" placeholder="Aceess Code" formControlName="accessCode" />
+
+              <div class="error-text" *ngIf="showError && form.controls.cafeteriaList.at(i).get('accessCode').touched">
+                <div *ngIf="form.controls.cafeteriaList.at(i).get('accessCode').hasError('pattern')">
+                  *Must be 1–4 digits only
+                </div>
+                <!-- if you also added minLength/maxLength -->
+                <div *ngIf="form.controls.cafeteriaList.at(i).get('accessCode').hasError('minlength')">
+                  *At least 1 digit required
+                </div>
+                <div *ngIf="form.controls.cafeteriaList.at(i).get('accessCode').hasError('maxlength')">
+                  *No more than 4 digits allowed
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-2 bgpadding1">
               <div class="labelText">Address Line 1</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Address Line 1"
-                formControlName="address1"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="Address Line 1" formControlName="address1" />
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.address1.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *Address Line 1 is required
               </div>
             </div>
-            <div class="col-12 col-md-4 col-lg-4 bgpadding1">
+            <div class="col-12 col-md-6 col-lg-2 bgpadding1">
               <div class="labelText">Address Line 2</div>
-              <input
-                type="text"
-                class="form-control"
-                placeholder="Address Line 2"
-                formControlName="address2"
-              />
-              <div
-                class="error-text"
-                *ngIf="
+              <input type="text" class="form-control" placeholder="Address Line 2" formControlName="address2" />
+              <div class="error-text" *ngIf="
                   form.controls.cafeteriaList.at(i).controls.address2.errors
                     ?.required && showError
-                "
-              >
+                ">
                 *Address Line 2 is required
               </div>
             </div>
-            <div class="col-12 col-md-2 col-lg-2 bgpadding1">
+            <div class="col-12 col-md-6 col-lg-2 bgpadding1">
               <div class="labelText">AppMenu Type</div>
-              <select
-                class="custom-select"
-                name="menuType"
-                formControlName="appMenu_type"
-              >
+              <select class="custom-select" name="menuType" formControlName="appMenu_type">
                 <option disabled selected value>
                   -- select app Menu Type--
                 </option>
@@ -555,95 +364,55 @@
                 </option>
               </select>
             </div>
-            <div class="col-12 col-md-6 col-lg-4">
+            <div class="col-12 col-md-2 col-lg-2">
               <label class="labelText form-label">Subsidy Amount</label>
-              <input
-                type="number"
-                class="form-control"
-                placeholder="Subsidy Amount"
-                formControlName="subsidy"
-              />
+              <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
             </div>
-            <div class="col-12 col-md-6 col-lg-4">
-              <button class="btn btn-primary"(click)="updateCafelevelSubsidy(i)">Update Subsidy cafe</button>
-             </div>
+            <div class="col-12 col-md-4 col-lg-4 pt-5">
+              <button class="btn btn-primary" (click)="updateCafelevelSubsidy(i)">Update Subsidy cafe</button>
+            </div>
           </div>
 
           <div formGroupName="poc_details">
             <div class="row">
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">POC Id</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="poc id"
-                  formControlName="poc_id"
-                  readonly
-                />
-                <div
-                  class="error-text"
-                  *ngIf="
+                <input type="text" class="form-control" placeholder="poc id" formControlName="poc_id" readonly />
+                <div class="error-text" *ngIf="
                     form.controls.cafeteriaList.at(i).controls.poc_details
                       .controls.poc_id.errors?.required && showError
-                  "
-                >
+                  ">
                   *POC Id is required
                 </div>
               </div>
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">POC Role</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="poc role"
-                  formControlName="poc_role"
-                  readonly
-                />
-                <div
-                  class="error-text"
-                  *ngIf="
+                <input type="text" class="form-control" placeholder="poc role" formControlName="poc_role" readonly />
+                <div class="error-text" *ngIf="
                     form.controls.cafeteriaList.at(i).controls.poc_details
                       .controls.poc_role.errors?.required && showError
-                  "
-                >
+                  ">
                   *POC Role is required
                 </div>
               </div>
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">POC Name</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="poc name"
-                  formControlName="poc_name"
-                  readonly
-                />
-                <div
-                  class="error-text"
-                  *ngIf="
+                <input type="text" class="form-control" placeholder="poc name" formControlName="poc_name" readonly />
+                <div class="error-text" *ngIf="
                     form.controls.cafeteriaList.at(i).controls.poc_details
                       .controls.poc_name.errors?.required && showError
-                  "
-                >
+                  ">
                   *POC Name is required
                 </div>
               </div>
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">POC Phone No</div>
-                <input
-                  type="number"
-                  class="form-control"
-                  placeholder="poc phoneNo"
-                  formControlName="poc_phoneNo"
-                  readonly
-                />
-                <div
-                  class="error-text"
-                  *ngIf="
+                <input type="number" class="form-control" placeholder="poc phoneNo" formControlName="poc_phoneNo"
+                  readonly />
+                <div class="error-text" *ngIf="
                     form.controls.cafeteriaList.at(i).controls.poc_details
                       .controls.poc_phoneNo.errors?.required && showError
-                  "
-                >
+                  ">
                   *POC Phone No is required
                 </div>
               </div>
@@ -654,58 +423,34 @@
             <div class="row">
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">lat</div>
-                <input
-                  type="text"
-                  class="form-control"
-                  placeholder="lat"
-                  formControlName="lat"
-                  readonly
-                />
-                <div
-                  class="error-text"
-                  *ngIf="
+                <input type="text" class="form-control" placeholder="lat" formControlName="lat" readonly />
+                <div class="error-text" *ngIf="
                     form.controls.cafeteriaList.at(i).controls
                       .cafeteria_location.controls.lat.errors?.required &&
                     showError
-                  "
-                >
+                  ">
                   *Lat is required
                 </div>
               </div>
               <div class="col-12 col-md-6 col-lg-2">
                 <div class="labelText">lng</div>
-                <input
-                  type="number"
-                  class="form-control"
-                  placeholder="lng"
-                  formControlName="lng"
-                  readonly
-                />
-                <div
-                  class="error-text"
-                  *ngIf="
+                <input type="number" class="form-control" placeholder="lng" formControlName="lng" readonly />
+                <div class="error-text" *ngIf="
                     form.controls.cafeteriaList.at(i).controls
                       .cafeteria_location.controls.lng.errors?.required &&
                     showError
-                  "
-                >
+                  ">
                   *Lng is required
                 </div>
               </div>
               <div class="col-12 col-md-6 col-lg-1 bgpadding2">
                 <div>
-                  <span class="addBtn pointer" (click)="toggleMap(i)"
-                    >GeoLocation</span
-                  >
+                  <span class="addBtn pointer" (click)="toggleMap(i)">GeoLocation</span>
                 </div>
               </div>
               <div class="col-12 col-md-6 col-lg-1 bgpadding2">
                 <div>
-                  <span
-                    class="addBtn pointer"
-                    (click)="addApprover(i); cafe_selected(i)"
-                    >Add POC</span
-                  >
+                  <span class="addBtn pointer" (click)="addApprover(i); cafe_selected(i)">Add POC</span>
                 </div>
               </div>
             </div>
@@ -717,27 +462,15 @@
 
     <div class="row mt-1">
       <div class="col-sm-12 col-md-4 col-lg-12">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm me-2"
-          (click)="addOrg()"
-          *ngIf="!showUpdate && true || btnPolicy?.addOrganization"
-        >
+        <button type="button" class="btn btn-primary btn-sm me-2" (click)="addOrg()"
+          *ngIf="!showUpdate && true || btnPolicy?.addOrganization">
           Add
         </button>
-        <button
-          type="button"
-          class="btn btn-secondary btn-sm me-2"
-          (click)="updateOrg()"
-          *ngIf="showUpdate && true || btnPolicy?.editOrganization"
-        >
+        <button type="button" class="btn btn-secondary btn-sm me-2" (click)="updateOrg()"
+          *ngIf="showUpdate && true || btnPolicy?.editOrganization">
           Update
         </button>
-        <button
-          type="button"
-          class="btn btn-success btn-sm me-2"
-          (click)="resetForm()"
-        >
+        <button type="button" class="btn btn-success btn-sm me-2" (click)="resetForm()">
           Reset
         </button>
         <button class="btn btn-danger btn-sm" (click)="back()">Cancel</button>
@@ -748,28 +481,16 @@
 <ng-template #geolocation let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Geolocation</h4>
-    <button
-      type="button"
-      class="close"
-      aria-label="Close"
-      (click)="modal.dismiss('cancel')"
-    >
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-set-geolocation
-      class="padding-bottom"
-      (sendLocation)="updateLocation($event)"
-    ></app-set-geolocation>
+    <app-set-geolocation class="padding-bottom" (sendLocation)="updateLocation($event)"></app-set-geolocation>
   </div>
   <div class="modal-footer">
     <div class="inline bgpadding1">
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="modal.close('add')"
-      >
+      <button type="button" class="btn btn-primary" (click)="modal.close('add')">
         Add
       </button>
     </div>
@@ -778,12 +499,7 @@
 <ng-template #content let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Add Approver</h4>
-    <button
-      type="button"
-      class="close"
-      aria-label="Close"
-      (click)="modal.dismiss('cancel')"
-    >
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -795,21 +511,11 @@
         </div> -->
     <ul class="list-group labelText mt-1">
       <ng-container>
-        <li
-          class="list-group-item"
-          *ngFor="let admin of form.controls['poc_details'].getRawValue()"
-        >
-          <div
-            class="row"
-            *ngIf="admin.poc_phoneNo !== pocSelected.poc_phoneNo"
-          >
+        <li class="list-group-item" *ngFor="let admin of form.controls['poc_details'].getRawValue()">
+          <div class="row" *ngIf="admin.poc_phoneNo !== pocSelected.poc_phoneNo">
             <div class="col-6 col-md-6 col-lg-1 radioCol">
-              <div
-                class="radio"
-                [ngClass]="{ red: adminSelected.poc_id === admin.poc_id }"
-                (click)="pushAdmin(admin)"
-                name="admin"
-              ></div>
+              <div class="radio" [ngClass]="{ red: adminSelected.poc_id === admin.poc_id }" (click)="pushAdmin(admin)"
+                name="admin"></div>
             </div>
             <div class="col-6 col-md-6 col-lg-2">
               {{ admin.poc_id }}
@@ -833,20 +539,10 @@
   </div>
   <div class="modal-footer">
     <div class="inline bgpadding1">
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="modal.close('add')"
-        *ngIf="pocSelected"
-      >
+      <button type="button" class="btn btn-primary" (click)="modal.close('add')" *ngIf="pocSelected">
         Add
       </button>
-      <button
-        type="button"
-        class="btn btn-primary"
-        (click)="modal.close('addCafe')"
-        *ngIf="cafeSelected"
-      >
+      <button type="button" class="btn btn-primary" (click)="modal.close('addCafe')" *ngIf="cafeSelected">
         Add
       </button>
     </div>
