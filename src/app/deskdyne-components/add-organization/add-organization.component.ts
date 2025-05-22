@@ -93,6 +93,7 @@ export class AddOrganizationComponent implements OnInit {
   new_cafeteria(): FormGroup {
   let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
+      accessCode: ['', [ Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/) ]],
       showAdminDaily: ['', Validators.required],
       showEmpPolls: ['', Validators.required],
       showVirtualCafe:[false],
@@ -213,8 +214,15 @@ export class AddOrganizationComponent implements OnInit {
         });
 
       this.form.controls['cafeteriaList'].at(i).patchValue({
-        showAdminDaily: cafe.showAdminDaily,
-        showEmpPolls: cafe.showEmpPolls,
+        accessCode: cafe.accessCode,
+        showAdminDaily:cafe.showAdminDaily,
+        showEmpPolls:cafe.showEmpPolls,
+        showVirtualCafe:cafe.showVirtualCafe,
+        showSaas:cafe.showSaas,
+        showSiteExecutive:cafe.showSiteExecutive,
+        showCompanyWallet:cafe.showCompanyWallet,
+        showchecklist:cafe.showchecklist,
+        showComplienceTracker:cafe.showComplienceTracker,
         cafeteria_id: cafe.cafeteria_id,
         cafeteria_name: cafe.cafeteria_name,
         cafeteria_city: cafe.cafeteria_city,

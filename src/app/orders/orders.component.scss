@@ -5,6 +5,16 @@
     color: white !important;
 }
 
+
+.filterDiv {
+    display: flex;
+}
+
+.btnDiv {
+    display: flex;
+    align-items: flex-end;
+}
+
 .countTile {
     cursor: pointer;
     background-color: $primary-offset-color4;

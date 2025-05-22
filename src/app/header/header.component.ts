@@ -36,6 +36,20 @@ export class HeaderComponent implements OnInit {
       imageblue: 'DDDashboard_Blue',
     },
     {
+      name: 'Organization',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        {
+          name: 'Search Organization',
+          route: 'b2bSearchOrg',
+          showChild: true,
+        },
+        { name: 'Add Organization', route: 'b2bAddorg', showChild: true },
+      ],
+    },
+    {
       name: 'Outlet',
       showParent: true,
       image: 'Outlet',
@@ -74,54 +88,25 @@ export class HeaderComponent implements OnInit {
       ],
     },
     {
-      name: 'Policy',
+      name: 'Food Items',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        { name: 'Policy', route: 'policy', showChild: true },
-        { name: 'Add Policy', route: 'addPolicy', showChild: true },
-      ],
+      route: 'foodItem',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
     },
     {
-      name: 'Admin',
+      name: 'Incident Reporting',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        { name: 'Admin', route: 'admin', showChild: true },
-        { name: 'Add Admin', route: 'addAdmin', showChild: true },
-      ],
+      route: 'orgIncidentManagement',
+      image: 'Incident_Reporting',
+      imageblue: 'Incident_Reporting_Blue',
     },
     {
-      name: 'Organization',
+      name: 'Submit CheckList',
+      route: 'submitChecklist',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        {
-          name: 'Search Organization',
-          route: 'b2bSearchOrg',
-          showChild: true,
-        },
-        { name: 'Add Organization', route: 'b2bAddorg', showChild: true },
-      ],
-    },
-    {
-      name: 'Miscelleneous',
-      showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        { name: 'FAQ', route: 'faq', showChild: true },
-        { name: 'Config Variables', route: 'configVariable', showChild: true },
-        {
-          name: 'App Version Control',
-          route: 'appVersionControl',
-          showChild: true,
-        },
-        { name: 'Server Logs', route: 'serverlogs', showChild: true },
-      ],
+      image: 'Checklist_white',
+      imageblue: 'Checklist_blue',
     },
     {
       name: 'CheckList',
@@ -139,16 +124,6 @@ export class HeaderComponent implements OnInit {
           route: 'checklistHistory',
           showChild: true,
         },
-      ],
-    },
-    {
-      name: 'Enquiries',
-      showParent: true,
-      route: 'dashboard',
-      image: 'Enquiry',
-      imageblue: 'Enquiries_Blue',
-      children: [
-        { name: 'View Enquiries', route: 'viewEnquiries', showChild: true },
       ],
     },
     {
@@ -178,26 +153,54 @@ export class HeaderComponent implements OnInit {
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
     },
+    
     {
-      name: 'Food Items',
+      name: 'Enquiries',
       showParent: true,
-      route: 'foodItem',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      route: 'dashboard',
+      image: 'Enquiry',
+      imageblue: 'Enquiries_Blue',
+      children: [
+        { name: 'View Enquiries', route: 'viewEnquiries', showChild: true },
+      ],
+    },
+    
+    {
+      name: 'Policy',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'Policy', route: 'policy', showChild: true },
+        { name: 'Add Policy', route: 'addPolicy', showChild: true },
+      ],
     },
     {
-      name: 'Incident Reporting',
+      name: 'Admin',
       showParent: true,
-      route: 'orgIncidentManagement',
-      image: 'Incident_Reporting',
-      imageblue: 'Incident_Reporting_Blue',
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'Admin', route: 'admin', showChild: true },
+        { name: 'Add Admin', route: 'addAdmin', showChild: true },
+      ],
     },
+    
     {
-      name: 'Submit CheckList',
-      route: 'submitChecklist',
+      name: 'Miscelleneous',
       showParent: true,
-      image: 'Checklist_white',
-      imageblue: 'Checklist_blue',
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'FAQ', route: 'faq', showChild: true },
+        { name: 'Config Variables', route: 'configVariable', showChild: true },
+        {
+          name: 'App Version Control',
+          route: 'appVersionControl',
+          showChild: true,
+        },
+        { name: 'Server Logs', route: 'serverlogs', showChild: true },
+      ],
     },
   ];
 

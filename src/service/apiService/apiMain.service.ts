@@ -367,14 +367,14 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({
       url: urlObj.url,
       method: urlObj.method,
-    });
+    }, null, null, true);
   }
 
-  getCurrentOutletOrdersList(status: any, page: any, limit: number) {
+  getCurrentOutletOrdersList(orgId:any, cafeId: any, status: any, page: any, limit: number) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.getCurrentOutletOrdersList;
     return this.apiHttpService.REQUEST({
-      url: urlObj.url + `/${page}/${limit}/${status}`,
+      url: urlObj.url + `/${page}/${limit}/${status}/${orgId}/${cafeId}`,
       method: urlObj.method,
     });
   }

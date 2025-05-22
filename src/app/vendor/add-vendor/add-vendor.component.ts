@@ -150,9 +150,6 @@ export class AddVendorCommponent {
     }
   }
   selectCafeteria(event: any) {
-    // console.log(event);
-    // console.log(event.target.value)
-
     let argumentList = event.target.value.split(',');
     let [cafeteriaName, cafeteriaCity, organization] = argumentList;
     this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organization);
@@ -234,6 +231,7 @@ export class AddVendorCommponent {
             outletId: elm._id,
             outletName: elm.outletName,
             outletType: elm.outletType,
+            outletOpened: elm.outletOpened,
             cafeteriaDetails: elm.cafeteriaDetails,
             organizationDetails: elm.organizationDetails,
           });
