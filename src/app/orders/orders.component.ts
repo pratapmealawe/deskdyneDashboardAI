@@ -137,7 +137,6 @@ export class OrdersComponent implements OnInit, OnDestroy {
         this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
         this.pageLastEntry = this.pageFirstEntry + orderList.length - 1;
         this.filteredList = [...orderList];
-        console.log(this.filteredList);
         
         if (orderList.length < this.pageLimit) {
           this.paginationOver = true;
