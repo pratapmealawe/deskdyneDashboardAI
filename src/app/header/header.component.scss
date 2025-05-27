@@ -71,6 +71,7 @@
 }
 
 @media only screen and (max-width: 600px) {
+
   .name,
   .company-name {
     display: none;
@@ -86,6 +87,7 @@
   border-bottom: 0.5px solid gray;
   padding: 7px 10px;
 }
+
 .orgbuttonchild {
   background: none;
   border: none;
@@ -113,29 +115,34 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: transparent; /* Use your brand color */
+  background-color: transparent;
+  /* Use your brand color */
   padding: 10px;
   width: 100%;
 }
 
 .offcanvas-title {
   color: white;
-  font-size: 2rem; /* Adjust for larger screens */
+  font-size: 2rem;
+  /* Adjust for larger screens */
   margin: 0;
   text-align: center;
-  flex: 1; /* Ensures it spans the available space */
+  flex: 1;
+  /* Ensures it spans the available space */
 }
 
 /* Media queries for responsiveness */
 @media (max-width: 768px) {
   .offcanvas-title {
-    font-size: 1.5rem; /* Smaller font for tablets */
+    font-size: 1.5rem;
+    /* Smaller font for tablets */
   }
 }
 
 @media (max-width: 480px) {
   .offcanvas-title {
-    font-size: 1.2rem; /* Smaller font for mobile devices */
+    font-size: 1.2rem;
+    /* Smaller font for mobile devices */
   }
 }
 
@@ -143,4 +150,15 @@
   border: 0.5px solid;
   padding: 0px 4px;
   border-radius: 100%;
+}
+
+.badge {
+  background-color: #f9fafb;
+  border-radius: 50%;
+  color: #000;
+  text-align: center;
+  width: 20px;
+  height: 20px;
+  padding: 0px;
+  line-height: 20px;
 }

@@ -6,11 +6,14 @@ import {
   Router,
 } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { Observable } from 'rxjs';
 import { routeMapper } from 'src/config/route.mapping.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
 import { UtilityService } from 'src/service/utility.service';
 
 @Component({
@@ -24,6 +27,7 @@ export class HeaderComponent implements OnInit {
   imageUrl = environment.imageUrl;
   isOrgAdmin: boolean = false;
   orgDetails: any = {};
+  unAcknowledgedFeedbackCount$: Observable<number> = this.suggestionsFeedbackService.GeneralAppFeedbackCount$;
 
   finalNavOption: any = [];
 
@@ -34,6 +38,20 @@ export class HeaderComponent implements OnInit {
       route: 'dashboard',
       image: 'DDDashboard',
       imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Organization',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        {
+          name: 'Search Organization',
+          route: 'b2bSearchOrg',
+          showChild: true,
+        },
+        { name: 'Add Organization', route: 'b2bAddorg', showChild: true },
+      ],
     },
     {
       name: 'Outlet',
@@ -74,54 +92,25 @@ export class HeaderComponent implements OnInit {
       ],
     },
     {
-      name: 'Policy',
+      name: 'Food Items',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        { name: 'Policy', route: 'policy', showChild: true },
-        { name: 'Add Policy', route: 'addPolicy', showChild: true },
-      ],
+      route: 'foodItem',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
     },
     {
-      name: 'Admin',
+      name: 'Incident Reporting',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        { name: 'Admin', route: 'admin', showChild: true },
-        { name: 'Add Admin', route: 'addAdmin', showChild: true },
-      ],
+      route: 'orgIncidentManagement',
+      image: 'Incident_Reporting',
+      imageblue: 'Incident_Reporting_Blue',
     },
     {
-      name: 'Organization',
+      name: 'Submit CheckList',
+      route: 'submitChecklist',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        {
-          name: 'Search Organization',
-          route: 'b2bSearchOrg',
-          showChild: true,
-        },
-        { name: 'Add Organization', route: 'b2bAddorg', showChild: true },
-      ],
-    },
-    {
-      name: 'Miscelleneous',
-      showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
-      children: [
-        { name: 'FAQ', route: 'faq', showChild: true },
-        { name: 'Config Variables', route: 'configVariable', showChild: true },
-        {
-          name: 'App Version Control',
-          route: 'appVersionControl',
-          showChild: true,
-        },
-        { name: 'Server Logs', route: 'serverlogs', showChild: true },
-      ],
+      image: 'Checklist_white',
+      imageblue: 'Checklist_blue',
     },
     {
       name: 'CheckList',
@@ -142,13 +131,13 @@ export class HeaderComponent implements OnInit {
       ],
     },
     {
-      name: 'Enquiries',
+      name: 'Reviews',
       showParent: true,
       route: 'dashboard',
-      image: 'Enquiry',
-      imageblue: 'Enquiries_Blue',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
       children: [
-        { name: 'View Enquiries', route: 'viewEnquiries', showChild: true },
+        { name: 'View Reviews', route: 'orgReviews', showChild: true },
       ],
     },
     {
@@ -158,17 +147,7 @@ export class HeaderComponent implements OnInit {
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
       children: [
-        { name: 'View Feedbacks', route: 'orgReviews', showChild: true },
-      ],
-    },
-    {
-      name: 'App Feedback',
-      showParent: true,
-      route: 'dashboard',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
-      children: [
-        { name: 'View App Feedbacks', route: 'appFeedbacks', showChild: true },
+        { name: 'View Feedbacks', route: 'appFeedbacks', showChild: true },
       ],
     },
     {
@@ -178,26 +157,54 @@ export class HeaderComponent implements OnInit {
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
     },
+
     {
-      name: 'Food Items',
+      name: 'Enquiries',
       showParent: true,
-      route: 'foodItem',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      route: 'dashboard',
+      image: 'Enquiry',
+      imageblue: 'Enquiries_Blue',
+      children: [
+        { name: 'View Enquiries', route: 'viewEnquiries', showChild: true },
+      ],
+    },
+
+    {
+      name: 'Policy',
+      showParent: true,
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'Policy', route: 'policy', showChild: true },
+        { name: 'Add Policy', route: 'addPolicy', showChild: true },
+      ],
     },
     {
-      name: 'Incident Reporting',
+      name: 'Admin',
       showParent: true,
-      route: 'orgIncidentManagement',
-      image: 'Incident_Reporting',
-      imageblue: 'Incident_Reporting_Blue',
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'Admin', route: 'admin', showChild: true },
+        { name: 'Add Admin', route: 'addAdmin', showChild: true },
+      ],
     },
+
     {
-      name: 'Submit CheckList',
-      route: 'submitChecklist',
+      name: 'Miscelleneous',
       showParent: true,
-      image: 'Checklist_white',
-      imageblue: 'Checklist_blue',
+      image: 'Company_Dashboard',
+      imageblue: 'Company_Dashbaord_Blue',
+      children: [
+        { name: 'FAQ', route: 'faq', showChild: true },
+        { name: 'Config Variables', route: 'configVariable', showChild: true },
+        {
+          name: 'App Version Control',
+          route: 'appVersionControl',
+          showChild: true,
+        },
+        { name: 'Server Logs', route: 'serverlogs', showChild: true },
+      ],
     },
   ];
 
@@ -326,7 +333,8 @@ export class HeaderComponent implements OnInit {
     private localStorageService: LocalStorageService,
     private runtimeStorageService: RuntimeStorageService,
     private utilityService: UtilityService,
-    private offcanvasService: NgbOffcanvas
+    private offcanvasService: NgbOffcanvas,
+    private suggestionsFeedbackService: SuggestionsFeedbackService
   ) {
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
@@ -354,6 +362,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAdminProfile();
+    this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
   }
 
   selectLink(nav: any, index: number): void {

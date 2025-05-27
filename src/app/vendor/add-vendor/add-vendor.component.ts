@@ -72,6 +72,7 @@ export class AddVendorCommponent {
       vendorPhoneNo: [''],
       vendorEmail: [''],
       vendorRole: [''],
+      isPrinter: [false]
     });
   }
 
@@ -113,6 +114,7 @@ export class AddVendorCommponent {
         vendorPhoneNo: vendor.vendorPhoneNo,
         vendorEmail: vendor.vendorEmail,
         vendorRole: vendor.vendorRole,
+        isPrinter: vendor.isPrinter
       });
     }
   }
@@ -135,7 +137,8 @@ export class AddVendorCommponent {
         this.router.navigate(['/searchVendor']);
       }
 
-      //const res = type=='update'?await this.apiMainService.updateVendor(this.selectedOutletsList._id,formData):await this.apiMainService.saveVendor(finalObj);
+
+      // const res = type=='update'?await this.apiMainService.updateVendor(this.selectedOutletsList._id,formData):await this.apiMainService.saveVendor(finalObj);
     } catch (error) {
       console.log('saveVendor submit error', error);
     }
@@ -147,9 +150,6 @@ export class AddVendorCommponent {
     }
   }
   selectCafeteria(event: any) {
-    // console.log(event);
-    // console.log(event.target.value)
-
     let argumentList = event.target.value.split(',');
     let [cafeteriaName, cafeteriaCity, organization] = argumentList;
     this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organization);
@@ -231,6 +231,7 @@ export class AddVendorCommponent {
             outletId: elm._id,
             outletName: elm.outletName,
             outletType: elm.outletType,
+            outletOpened: elm.outletOpened,
             cafeteriaDetails: elm.cafeteriaDetails,
             organizationDetails: elm.organizationDetails,
           });

@@ -168,7 +168,12 @@ export class OutletMenuComponent implements OnInit {
   }
 
   async updateMenu(index: any) {
-    console.log(this.form.value);
+    if ((typeof this.form.value.subsidy === "undefined") ||
+    this.form.value.subsidy === null ||
+    this.form.value.subsidy === ''
+  ) {
+    this.form.patchValue({ subsidy: 0 });
+  }
     try {
       const menuId = this.outletObj.menuList[index]._id;
       const outletId = this.outletObj._id;
@@ -227,7 +232,12 @@ export class OutletMenuComponent implements OnInit {
   }
 
   async submit() {
-    console.log(this.outletObj.menuList, 'this.outletObj.menuList');
+    if ((typeof this.form.value.subsidy === "undefined") ||
+      this.form.value.subsidy === null ||
+      this.form.value.subsidy === ''
+    ) {
+      this.form.patchValue({ subsidy: 0 });
+    }
     try {
       const formData: any = new FormData();
       if (this.imageUrl) {

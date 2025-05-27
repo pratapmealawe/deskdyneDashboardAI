@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
+import { OutletVendorComponent } from './outlet-vendor/outlet-vendor.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { MatChipsModule } from '@angular/material/chips';
     OutletFeedbackComponent,
     OutletComplianceComponent,
     ComboPopupComponent,
+    OutletVendorComponent,
   ],
   imports: [
     CommonModule,

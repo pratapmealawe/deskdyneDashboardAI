@@ -4,6 +4,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { UtilityService } from 'src/service/utility.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-orders',
@@ -11,10 +12,12 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
   styleUrls: ['./orders.component.scss']
 })
 export class OrdersComponent implements OnInit, OnDestroy {
+  pollingSub!: Subscription;
+
   orderStatusCountObj: any = {
     paymentInprogress: 0,
-    paymentFailed: 0,   
-    completed: 0, 
+    paymentFailed: 0,
+    completed: 0,
     placed: 0
   };
   selectedStatus = '';
@@ -28,50 +31,77 @@ export class OrdersComponent implements OnInit, OnDestroy {
   paginationOver = false;
   filteredList: any[] = [];
   dbMasterList: any[] = [];
-  filterMeal:any[]=[];
+  filterMeal: any[] = [];
+  orglist: any[] = [];
+  cafeList: any[] = [];
+  filterObj: any = {
+    orgId: '',
+    cafeId: '',
+  };
 
-  
 
-  constructor(public router: Router, private apiMainService: ApiMainService, private modalService: NgbModal,
-    private utilityService: UtilityService,
-    private sendDataToComponent: SendDataToComponent,) {
+  constructor(public router: Router, private apiMainService: ApiMainService, private modalService: NgbModal, private utilityService: UtilityService, private sendDataToComponent: SendDataToComponent,) {
   }
 
   ngOnInit(): void {
-    this.getCurrentOrders(false);
-    this.getLatestOrderStatusList('placed');
     this.subscribeEvents();
+    this.getOrgList()
+
+    this.pollingSub = interval(30_000).subscribe(() => {
+      this.getCurrentOrders(false);
+      // this.getLatestOrderStatusList('placed');
+    });
   }
 
   reloadPage() {
     this.getCurrentOrders(false);
     this.getLatestOrderStatusList('placed');
   }
+  
+
   subscribeEvents() {
-    this.sendDataToComponent.subscribe('UPDATE_ORDER_PAGE', (orderList) => {
-      if (orderList) {
-        this.orderStatusCountObj = orderList;
-      }
-    });
-    this.sendDataToComponent.subscribe('UPDATE_CURRENT_ORDER_PAGE', (data) => {
-      if (data && data.reload) {
-        this.getCurrentOrders(false);
-        let selectedIndex = -1;
-        this.filteredList.forEach((ele, index) => {
-          if (ele._id === data._id) {
-            selectedIndex = index;
-          }
-        });
-        if (selectedIndex > -1) {
-          this.filteredList.splice(selectedIndex, 1);
-        }
-      }
-    });
+    // this.sendDataToComponent.subscribe('UPDATE_ORDER_PAGE', (orderList) => {
+    //   if (orderList) {
+    //     this.orderStatusCountObj = orderList;
+    //   }
+    // });
+    // this.sendDataToComponent.subscribe('UPDATE_CURRENT_ORDER_PAGE', (data) => {
+    //   if (data && data.reload) {
+    //     this.getCurrentOrders(false);
+    //     let selectedIndex = -1;
+    //     this.filteredList.forEach((ele, index) => {
+    //       if (ele._id === data._id) {
+    //         selectedIndex = index;
+    //       }
+    //     });
+    //     if (selectedIndex > -1) {
+    //       this.filteredList.splice(selectedIndex, 1);
+    //     }
+    //   }
+    // });
   }
 
 
+  async getOrgList() {
+    try {
+      let data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
+        { countOnly: false },
+        1
+      );
+      this.orglist = data;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
+  setOrgDetails() {
+    let orgDetails = this.orglist.find((org: any) => {
+      return org._id == this.filterObj?.orgId;
+    });
 
+    this.cafeList = orgDetails.cafeteriaList;
+    this.filterObj.cafeId = '';
+  }
 
   goBack() {
     this.router.navigate(['/home/orders']);
@@ -79,21 +109,12 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   async getCurrentOrders(showAlarm: boolean) {
     try {
-      this.selectedStatus = '';
-      this.currentOrderStatusList = [];
-      this.page = 1;
-      this.lastPage = 1;
-      this.paginationOver = false;
-      const orderList = await this.utilityService.getCurrentOutletOrdersCount(showAlarm);
+      const orderList = await this.apiMainService.getCurrentOutletOrdersCount();
       this.orderStatusCountObj = orderList;
     } catch (error) {
       console.log('error while searching orders ', error);
     }
   }
-
-
-
-
 
   async getLatestOrderStatusList(status: string) {
     this.selectedGroup = '';
@@ -110,13 +131,13 @@ export class OrdersComponent implements OnInit, OnDestroy {
     try {
       this.page = page;
       let orderList: any = [];
-      orderList = await this.apiMainService.getCurrentOutletOrdersList(status, this.page, this.pageLimit)
-      console.log('orderList',orderList)
+      const cafeName = this.cafeList.find((item: any) => item.cafeteria_id === this.filterObj.cafeId)?.cafeteria_name
+      orderList = await this.apiMainService.getCurrentOutletOrdersList(this.filterObj.orgId, cafeName, status, this.page, this.pageLimit)
       if (orderList && orderList.length > 0) {
         this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
         this.pageLastEntry = this.pageFirstEntry + orderList.length - 1;
         this.filteredList = [...orderList];
-        console.log('filtered list',this.filteredList)
+        
         if (orderList.length < this.pageLimit) {
           this.paginationOver = true;
           this.lastPage = page;
@@ -146,11 +167,9 @@ export class OrdersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('ngOnDestroy current order component');
-    // this.wsMainService.unsubscribeWS('NEW_ORDER',this.ws);
     this.sendDataToComponent.unsubscribe('UPDATE_ORDER_PAGE');
-    //clearTimeout(this.currentOrderCounter);
+    this.pollingSub?.unsubscribe();
   }
 
-  
+
 }

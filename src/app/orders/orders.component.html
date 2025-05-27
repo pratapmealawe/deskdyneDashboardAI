@@ -1,9 +1,37 @@
 <div class="bgpadding2">
-    <div class="mb-2">
+    
+
+    <div class="row mb-4 mt-2 p-3 bg-light rounded filterDiv">
+        <div class="mb-2">
         <i class="bi bi-bootstrap-reboot pointer right" (click)="reloadPage()"></i>
     </div>
+        <div class="col-md-3">
+            <label class="labelText">Organization</label>
+            <select class="form-select" [(ngModel)]="filterObj.orgId" (change)="setOrgDetails()">
+                <option selected disabled value="">Select Organization</option>
+                <option *ngFor="let option of orglist" [value]="option._id">
+                    {{ option.organization_name }}
+                </option>
+            </select>
+        </div>
 
-    <div class="main-div">
+        <div class="col-md-3">
+            <label class="labelText">Cafeteria</label>
+            <select class="form-select" [(ngModel)]="filterObj.cafeId">
+                <option selected disabled value="">Select Cafeteria</option>
+                <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
+                    {{ option.cafeteria_name }}
+                </option>
+            </select>
+        </div>
+
+        <div class="col-md-3 btnDiv">
+            <button class="btn btn-primary" [disabled]="!filterObj.orgId || !filterObj.cafeId"
+                (click)="reloadPage()">Submit</button>
+        </div>
+    </div>
+
+    <div class="main-div" >
         <div class="cl6" [ngClass]="{tileSelected: selectedStatus === 'paymentInprogress'}"
             (click)="getLatestOrderStatusList('paymentInprogress')">
             <span class="tileLabel header4 countTile">Payment In progress<span
@@ -19,7 +47,7 @@
             <span class="tileLabel header4 countTile">Placed<span
                     class="tileBadge">{{orderStatusCountObj.placed}}</span></span>
         </div>
-        
+
         <div class="cl6" [ngClass]="{tileSelected: selectedStatus === 'completed'}"
             (click)="getLatestOrderStatusList('completed')">
             <span class="tileLabel header4 countTile">Completed<span
@@ -42,9 +70,11 @@
                     </ul>
                 </div>
             </div>
-            <div class="center" *ngIf="filteredList.length === 0">
-                No Records Found for this filter
-            </div>
+
         </div>
+    </div>
+
+    <div class="center" *ngIf="filteredList.length === 0">
+        No Records Found
     </div>
 </div>

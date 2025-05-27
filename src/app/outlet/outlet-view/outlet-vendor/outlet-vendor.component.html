@@ -1,0 +1,27 @@
+<div class="container-fluid">
+    <div class="row">
+        
+        <div class="col-lg-12 mt-5">
+            <div *ngIf="vendorList.length; else noVendors">
+                <!-- <h2 class="mb-2">Vendor List</h2> -->
+                <div *ngFor="let v of vendorList" class="vendor-item">
+
+                    <label>
+                        <input type="radio" name="vendor" [value]="v._id" [checked]="v._id === selectedVendorId"
+                            (change)="onSelectVendor(v._id)" />
+                        {{ v.vendorName }} ({{ v.vendorPhoneNo }})
+                    </label>
+                </div>
+
+                <div class="mt-3">
+                    <button class="btn btn-primary" [disabled]="!selectedVendorId" (click)="updateVendorDetails()">
+                        Update Vendor
+                    </button>
+                </div>
+            </div>
+            <ng-template #noVendors>
+                <p>No vendors found for this outlet.</p>
+            </ng-template>
+        </div>
+    </div>
+</div>

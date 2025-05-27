@@ -13,27 +13,25 @@ export class UtilityService {
   constructor(private apiMainService: ApiMainService, private toasterService: ToasterService, private sendDataToComponent: SendDataToComponent) {
   }
 
-  async getCurrentOutletOrdersCount(showAlarm: boolean){
-    try{
-        clearTimeout(this.currentOrderCounter);
-        let orderList:any = {};
-        const response = await this.apiMainService.getCurrentOutletOrdersCount();
-        orderList = response; 
-        if(orderList && orderList.newOrder > 0 && showAlarm){
-          const msg = 'These are some new orders placed';
-          // this.toasterService.alarm(msg);
-        }
-        const self = this;      
-        this.currentOrderCounter = setTimeout(()=>{
-            console.log('getCurrentOrdersCount UtilityService')
-          self.getCurrentOutletOrdersCount(true)
-        },1000*60*2);
-        this.sendDataToComponent.publish('UPDATE_ORDER_PAGE',orderList)
-        return orderList;
-    }catch(error){
-        console.log('Error while requestPermission ',error)
+  async getCurrentOutletOrdersCount(showAlarm: boolean) {
+    try {
+      clearTimeout(this.currentOrderCounter);
+      let orderList: any = {};
+      const response = await this.apiMainService.getCurrentOutletOrdersCount();
+      orderList = response;
+      if (orderList && orderList.newOrder > 0 && showAlarm) {
+        const msg = 'These are some new orders placed';
+      }
+      const self = this;
+      this.currentOrderCounter = setTimeout(() => {
+        self.getCurrentOutletOrdersCount(true)
+      }, 1000 * 60 * 2);
+      this.sendDataToComponent.publish('UPDATE_ORDER_PAGE', orderList)
+      return orderList;
+    } catch (error) {
+      console.log('Error while requestPermission ', error)
     }
-}
+  }
 
 
 }
