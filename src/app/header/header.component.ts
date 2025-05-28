@@ -6,7 +6,7 @@ import {
   Router,
 } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { routeMapper } from 'src/config/route.mapping.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -28,6 +28,7 @@ export class HeaderComponent implements OnInit {
   isOrgAdmin: boolean = false;
   orgDetails: any = {};
   unAcknowledgedFeedbackCount$: Observable<number> = this.suggestionsFeedbackService.GeneralAppFeedbackCount$;
+  inReviewIncidentsCount$: any = new BehaviorSubject<number>(0);
 
   finalNavOption: any = [];
 
@@ -101,6 +102,8 @@ export class HeaderComponent implements OnInit {
     {
       name: 'Incident Reporting',
       showParent: true,
+      showBadge: true,
+      count: this.inReviewIncidentsCount$,
       route: 'orgIncidentManagement',
       image: 'Incident_Reporting',
       imageblue: 'Incident_Reporting_Blue',
@@ -143,6 +146,8 @@ export class HeaderComponent implements OnInit {
     {
       name: 'Feedback',
       showParent: true,
+      showBadge: true,
+      count: this.unAcknowledgedFeedbackCount$,
       route: 'dashboard',
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
@@ -363,6 +368,20 @@ export class HeaderComponent implements OnInit {
   ngOnInit(): void {
     this.getAdminProfile();
     this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
+    this.getInReviewIncidents();
+  }
+
+  async getInReviewIncidents() {
+    try {
+      const data = await this.apiMainService.getAllIncidents();
+
+      if (data && data.length > 0) {
+        const inReviewIncidents = data.filter((incident: any) => incident.status === "created").length;
+        this.inReviewIncidentsCount$.next(inReviewIncidents);
+      }
+    } catch (error) {
+      console.error('Error fetching incidents:', error);
+    }
   }
 
   selectLink(nav: any, index: number): void {

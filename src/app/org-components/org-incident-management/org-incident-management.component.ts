@@ -35,11 +35,11 @@ export interface HistoryEntry {
   changedByInfo: SubmittedByInfo;
   prevStatus?: 'created' | 'acknowledged' | 'inReview' | 'blocked' | 'resolved';
   changedToStatus:
-    | 'created'
-    | 'acknowledged'
-    | 'inReview'
-    | 'blocked'
-    | 'resolved';
+  | 'created'
+  | 'acknowledged'
+  | 'inReview'
+  | 'blocked'
+  | 'resolved';
   changedAt?: Date;
   remark?: string;
 }
@@ -106,7 +106,7 @@ export class OrgIncidentManagementComponent implements OnInit {
     private confirmationModalService: ConfirmationModalService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -152,8 +152,8 @@ export class OrgIncidentManagementComponent implements OnInit {
               this.orgAdmin.role === 'ORGADMIN'
                 ? this.orgAdmin?.orgDetails?._id
                 : this.isEdit
-                ? this.incidentObj.orgDetails.orgId
-                : '',
+                  ? this.incidentObj.orgDetails.orgId
+                  : '',
             disabled: true,
           },
           Validators.required,
@@ -261,8 +261,8 @@ export class OrgIncidentManagementComponent implements OnInit {
       name:
         this.orgAdmin.role === 'ADMIN'
           ? this.adminList.find(
-              (item: any) => item._id === this.assignedToInfo.id
-            )?.name
+            (item: any) => item._id === this.assignedToInfo.id
+          )?.name
           : this.orgAdmin.name,
     };
 
@@ -370,7 +370,9 @@ export class OrgIncidentManagementComponent implements OnInit {
   async getIncidentListByFilter() {
     this.incidentList = [];
     this.filteredIncidentList = [];
+
     try {
+      console.log('Fetching incidents with filter:', this.filterObj);
       let data = await this.apiMainService.getIncidentsByDateAndFilters(
         this.filterObj
       );
