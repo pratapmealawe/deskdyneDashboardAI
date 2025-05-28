@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RuntimeStorageService } from '../runtime-storage.service';
 import { ApiConfigService } from './apiConfig.service';
 import { ApiHttpService } from './apiHttp.service';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -1032,10 +1033,24 @@ export class ApiMainService {
       menuObj
     );
   }
-  getGeneralAppFeeback(page: number) {
+  getGeneralAppFeeback(page?: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getGeneralAppFeeback;
     return this.apiHttpService.REQUEST({
       url: urlObj.url + `/${page}`,
+      method: urlObj.method,
+    });
+  }
+
+  getGeneralAppFeebackCount(acknowledged?: boolean) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getGeneralAppFeebackCount;
+    let params = new HttpParams();
+
+    if (acknowledged !== undefined) {
+      params = params.set('acknowledged', String(acknowledged));
+    }
+
+    return this.apiHttpService.REQUEST({
+      url: `${urlObj.url}?${params}`,
       method: urlObj.method,
     });
   }
