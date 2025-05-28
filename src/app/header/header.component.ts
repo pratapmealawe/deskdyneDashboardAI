@@ -321,7 +321,7 @@ export class HeaderComponent implements OnInit {
     },
   ];
 
-  breadCrumbText: any = 'Home';
+  breadCrumbText: any = 'Dashboard';
   currentRoute: string = 'currentOrder';
   policyArr: any;
   routeMapper: any = routeMapper;
