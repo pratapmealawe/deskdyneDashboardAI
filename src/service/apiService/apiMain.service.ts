@@ -111,7 +111,7 @@ export class ApiMainService {
       payload
     );
   }
-  updateOutletLevelSubsidy(id: any, subsidy:any) {
+  updateOutletLevelSubsidy(id: any, subsidy: any) {
     console.log(subsidy);
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletLevelSubsidy;
     return this.apiHttpService.REQUEST(
@@ -370,7 +370,7 @@ export class ApiMainService {
     }, null, null, true);
   }
 
-  getCurrentOutletOrdersList(orgId:any, cafeId: any, status: any, page: any, limit: number) {
+  getCurrentOutletOrdersList(orgId: any, cafeId: any, status: any, page: any, limit: number) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.getCurrentOutletOrdersList;
     return this.apiHttpService.REQUEST({
@@ -438,7 +438,7 @@ export class ApiMainService {
       true
     );
   }
-  B2B_org_updateOrglevelSubsidy(payload: any, id: any){
+  B2B_org_updateOrglevelSubsidy(payload: any, id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateOrglevelSubsidy;
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${id}`, method: urlObj.method },
@@ -448,7 +448,7 @@ export class ApiMainService {
       true
     );
   }
-  B2B_org_updateCafelevelSubsidy(payload: any, id: any){
+  B2B_org_updateCafelevelSubsidy(payload: any, id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateCafelevelSubsidy;
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${id}`, method: urlObj.method },
@@ -1172,30 +1172,84 @@ export class ApiMainService {
     }, null, null, true, false);
   }
 
-  getBulkOrderForChart(body:any) {
+  getBulkOrderForChart(body: any) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.getBulkOrderForChart;
     return this.apiHttpService.REQUEST({
-      url: urlObj.url ,
+      url: urlObj.url,
       method: urlObj.method,
     }, body);
   }
 
-  updateVendorDetails(outletId:any, body:any) {
+  updateVendorDetails(outletId: any, body: any) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.updateVendorDetails;
     return this.apiHttpService.REQUEST({
-      url: urlObj.url + `/${outletId}` ,
+      url: urlObj.url + `/${outletId}`,
       method: urlObj.method,
     }, body);
   }
 
-  getVendorListByOutletId(outletId:any) {
+  getVendorListByOutletId(outletId: any) {
     const urlObj =
       this.apiConfigService.apiEndPointObj.getVendorListByOutletId;
     return this.apiHttpService.REQUEST({
-      url: urlObj.url + `/${outletId}` ,
+      url: urlObj.url + `/${outletId}`,
       method: urlObj.method,
     });
+  }
+
+  outletEmployeeAdd(body:any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.outletEmployeeAdd;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url,
+      method: urlObj.method,
+    }, body);
+  }
+
+  addOutletEmployeeList(body:any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.addOutletEmployeeList;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url,
+      method: urlObj.method,
+    }, body);
+  }
+  
+  outletEmployeeByOrgId(orgId: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.outletEmployeeByOrgId;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}`,
+      method: urlObj.method,
+    });
+  }
+
+  deleteOutletEmployee(id: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.deleteOutletEmployee;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    });
+  }
+
+  getOutletEmployeeByPhoneNo(phoneNo: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.getOutletEmployeeByPhoneNo;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${phoneNo}`,
+      method: urlObj.method,
+    });
+  }
+
+  updateOutletEmployee(id: any, body: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.updateOutletEmployee;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    }, body);
   }
 }

@@ -495,7 +495,35 @@ export class ApiConfigService {
       getVendorListByOutletId: {
         url: `${this.baseUrl}/api/getVendorListByOutletId`,
         method: 'GET'
-      }
+      },
+      outletEmployeeAdd: {
+        url: `${this.baseUrl}/api/outletEmployeeAdd`,
+        method: 'POST'
+      },
+      outletEmployeeByOrgId: {
+        url: `${this.baseUrl}/api/outletEmployeeByOrgId`,
+        method: 'GET'
+      },
+      addOutletEmployeeList: {
+        url: `${this.baseUrl}/api/addOutletEmployeeList`,
+        method: 'POST'
+      },
+      deleteOutletEmployee: {
+        url: `${this.baseUrl}/api/deleteOutletEmployee`,
+        method: 'DELETE'
+      },
+      updateOutletEmployee: {
+        url: `${this.baseUrl}/api/updateOutletEmployee`,
+        method: 'POST'
+      },
+      getOutletEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/getOutletEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      verifyOutletEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/verifyOutletEmployeeByPhoneNo`,
+        method: 'GET'
+      },
     };
   }
 }
