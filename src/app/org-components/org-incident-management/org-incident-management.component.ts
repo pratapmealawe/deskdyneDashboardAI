@@ -373,7 +373,6 @@ export class OrgIncidentManagementComponent implements OnInit {
     this.filteredIncidentList = [];
 
     try {
-      console.log('Fetching incidents with filter:', this.filterObj);
       let data = await this.apiMainService.getIncidentsByDateAndFilters(
         this.filterObj
       );
