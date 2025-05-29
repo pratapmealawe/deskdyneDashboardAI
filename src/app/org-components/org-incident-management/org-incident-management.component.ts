@@ -10,7 +10,7 @@ import { SearchFilterService } from 'src/service/search-filter.service';
 
 interface Filter {
   orgId: string;
-  cafeId: string;
+  cafeteria_id: string;
   vendorId: string;
   fromDate: string;
   toDate: string;
@@ -23,6 +23,7 @@ export interface SubmittedByInfo {
 
 export interface CafeteriaDetails {
   cafeId: string;
+  cafeteria_id: string;
   cafeName?: string;
 }
 
@@ -35,11 +36,11 @@ export interface HistoryEntry {
   changedByInfo: SubmittedByInfo;
   prevStatus?: 'created' | 'acknowledged' | 'inReview' | 'blocked' | 'resolved';
   changedToStatus:
-    | 'created'
-    | 'acknowledged'
-    | 'inReview'
-    | 'blocked'
-    | 'resolved';
+  | 'created'
+  | 'acknowledged'
+  | 'inReview'
+  | 'blocked'
+  | 'resolved';
   changedAt?: Date;
   remark?: string;
 }
@@ -76,7 +77,7 @@ export class OrgIncidentManagementComponent implements OnInit {
   filteredIncidentList: IncidentManagement[] = [];
   filterObj: Filter = {
     orgId: '',
-    cafeId: '',
+    cafeteria_id: '',
     vendorId: '',
     fromDate: '',
     toDate: '',
@@ -106,13 +107,15 @@ export class OrgIncidentManagementComponent implements OnInit {
     private confirmationModalService: ConfirmationModalService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
 
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
 
+    console.log(this.orgAdmin);
+    
     this.initIncidentForm();
     this.getOrgList();
   }
@@ -135,9 +138,9 @@ export class OrgIncidentManagementComponent implements OnInit {
         Validators.required,
       ],
       cafeteriaDetails: this.fb.group({
-        cafeId: [
+        cafeteria_id: [
           {
-            value: this.isEdit ? this.incidentObj.cafeteriaDetails.cafeId : '',
+            value: this.isEdit ? this.incidentObj.cafeteriaDetails.cafeteria_id : '',
             disabled: this.isEdit ? true : false,
           },
           Validators.required,
@@ -152,8 +155,8 @@ export class OrgIncidentManagementComponent implements OnInit {
               this.orgAdmin.role === 'ORGADMIN'
                 ? this.orgAdmin?.orgDetails?._id
                 : this.isEdit
-                ? this.incidentObj.orgDetails.orgId
-                : '',
+                  ? this.incidentObj.orgDetails.orgId
+                  : '',
             disabled: true,
           },
           Validators.required,
@@ -166,7 +169,7 @@ export class OrgIncidentManagementComponent implements OnInit {
     try {
       this.adminList = await this.apiMainService.searchSiteExecutive({
         orgId: incident.orgDetails.orgId,
-        cafeId: incident.cafeteriaDetails.cafeId,
+        cafeteria_name: incident.cafeteriaDetails.cafeteria_name,
       });
 
       if (this.orgAdmin.role === 'SITEEXE') {
@@ -199,7 +202,7 @@ export class OrgIncidentManagementComponent implements OnInit {
     );
     formValue.orgDetails.orgName = selectedOrg?.organization_name;
     formValue.cafeteriaDetails.cafeName = selectedOrg.cafeteriaList.find(
-      (item: any) => item._id === formValue.cafeteriaDetails.cafeId
+      (item: any) => item.cafeteria_id === formValue.cafeteriaDetails.cafeteria_id
     )?.cafeteria_name;
     formValue.submittedByInfo = {
       name: this.orgAdmin?.name,
@@ -261,8 +264,8 @@ export class OrgIncidentManagementComponent implements OnInit {
       name:
         this.orgAdmin.role === 'ADMIN'
           ? this.adminList.find(
-              (item: any) => item._id === this.assignedToInfo.id
-            )?.name
+            (item: any) => item._id === this.assignedToInfo.id
+          )?.name
           : this.orgAdmin.name,
     };
 
@@ -351,13 +354,13 @@ export class OrgIncidentManagementComponent implements OnInit {
     if (this.orgAdmin.role === 'SITEEXE') {
       this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
         this.orgAdmin?.siteExecutiveDetails?.cafeDetails.some(
-          (a: any) => a._id === item._id
+          (a: any) => a.cafeteria_id === item.cafeteria_id
         )
       );
     } else {
       this.cafeList = orgDetails.cafeteriaList;
     }
-    this.filterObj.cafeId = '';
+    this.filterObj.cafeteria_id = '';
     this.getIncidentListByFilter();
   }
 
@@ -370,6 +373,7 @@ export class OrgIncidentManagementComponent implements OnInit {
   async getIncidentListByFilter() {
     this.incidentList = [];
     this.filteredIncidentList = [];
+
     try {
       let data = await this.apiMainService.getIncidentsByDateAndFilters(
         this.filterObj

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
+import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
 
 @Component({
   selector: 'app-suggessions-feedbacks',
@@ -15,8 +16,9 @@ export class SuggessionsFeedbacksComponent implements OnInit {
 
   constructor(
     private ddApiMainService: ApiMainService,
-    private policyService: PolicyService
-  ) {}
+    private policyService: PolicyService,
+    private suggestionsFeedbackService: SuggestionsFeedbackService
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -26,7 +28,6 @@ export class SuggessionsFeedbacksComponent implements OnInit {
 
   async getFeedbackList() {
     try {
-      // this.feedbacklist = [];
       const feedbacklist = await this.ddApiMainService.getGeneralAppFeeback(
         this.page
       );
@@ -54,6 +55,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
     try {
       await this.ddApiMainService.feedbackacknowledge(feedback._id);
       feedback.acknowledged = true;
+      this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
     } catch (error) {
       console.log('error while acknowledge feedback ', error);
     }

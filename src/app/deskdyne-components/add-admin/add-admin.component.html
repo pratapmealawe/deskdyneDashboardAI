@@ -92,7 +92,7 @@
             >
               <mat-option
                 *ngFor="let cafe of group.cafeteriaList"
-                [value]="cafe._id"
+                [value]="cafe.cafeteria_id"
                 >{{ cafe.cafeteria_name }}</mat-option
               >
             </mat-optgroup>
@@ -161,7 +161,7 @@
         >
           <option
             *ngFor="let option of orgDetails.cafeteriaList"
-            [value]="option._id"
+            [value]="option.cafeteria_id"
           >
             {{ option.cafeteria_name }}
           </option>

@@ -7,7 +7,7 @@ import { SearchFilterService } from 'src/service/search-filter.service';
 // Interface for defining filter object structure
 interface filter {
   orgId: string;
-  cafeId: string;
+  cafeteria_id: string;
   fromDate: string;
   toDate: string;
   page: number;
@@ -33,7 +33,7 @@ export class ChecklistHistoryComponent implements OnInit {
   // Filter object used for API calls
   filterObj: filter = {
     orgId: '',
-    cafeId: '',
+    cafeteria_id: '',
     fromDate: new Date().toISOString().split('T')[0],
     toDate: '',
     page: 1,
@@ -100,13 +100,13 @@ export class ChecklistHistoryComponent implements OnInit {
     if (this.orgAdmin.role === 'SITEEXE') {
       this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
         this.orgAdmin?.siteExecutiveDetails?.cafeDetails.some(
-          (a: any) => a._id === item._id
+          (a: any) => a.cafeteria_id === item.cafeteria_id
         )
       );
     } else {
       this.cafeList = orgDetails.cafeteriaList;
     }
-    this.filterObj.cafeId = '';
+    this.filterObj.cafeteria_id = '';
     this.clearList();
   }
 
@@ -132,6 +132,7 @@ export class ChecklistHistoryComponent implements OnInit {
       this.filteredReportHistory = [];
       this.filterObj.page = 1;
     }
+
     try {
       const data = await this.apiMainService.getReportHistoryByfilter(
         this.filterObj

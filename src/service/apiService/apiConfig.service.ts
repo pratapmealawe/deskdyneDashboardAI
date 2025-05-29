@@ -158,11 +158,11 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/b2b_org_update`,
         method: 'POST',
       },
-      B2B_org_updateOrglevelSubsidy:{
+      B2B_org_updateOrglevelSubsidy: {
         url: `${this.baseUrl}/api/B2B_org_updateOrglevelSubsidy`,
         method: 'POST',
       },
-      B2B_org_updateCafelevelSubsidy:{
+      B2B_org_updateCafelevelSubsidy: {
         url: `${this.baseUrl}/api/B2B_org_updateCafelevelSubsidy`,
         method: 'POST',
       },
@@ -419,6 +419,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getGeneralAppFeeback`,
         method: 'GET',
       },
+      getGeneralAppFeebackCount: {
+        url: `${this.baseUrl}/api/getGeneralAppFeebackCount`,
+        method: 'GET',
+      },
       feedbackacknowledge: {
         url: `${this.baseUrl}/api/feedbackacknowledge`,
         method: 'PUT',
@@ -495,7 +499,39 @@ export class ApiConfigService {
       getVendorListByOutletId: {
         url: `${this.baseUrl}/api/getVendorListByOutletId`,
         method: 'GET'
-      }
+      },
+      outletEmployeeAdd: {
+        url: `${this.baseUrl}/api/outletEmployeeAdd`,
+        method: 'POST'
+      },
+      outletEmployeeByOrgId: {
+        url: `${this.baseUrl}/api/outletEmployeeByOrgId`,
+        method: 'GET'
+      },
+      addOutletEmployeeList: {
+        url: `${this.baseUrl}/api/addOutletEmployeeList`,
+        method: 'POST'
+      },
+      deleteOutletEmployee: {
+        url: `${this.baseUrl}/api/deleteOutletEmployee`,
+        method: 'DELETE'
+      },
+      updateOutletEmployee: {
+        url: `${this.baseUrl}/api/updateOutletEmployee`,
+        method: 'POST'
+      },
+      getOutletEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/getOutletEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      verifyOutletEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/verifyOutletEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      fetchOutletOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
     };
   }
 }

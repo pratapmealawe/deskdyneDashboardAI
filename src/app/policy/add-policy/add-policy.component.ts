@@ -56,6 +56,7 @@ export class AddPolicyComponent {
       foodItem: false,
       pastOrder: false,
       viewEnquiries: false,
+      outletExcelExport: false,
     },
     button_policies: {
       addOutlet: false,

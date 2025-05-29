@@ -240,6 +240,15 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'outletExcelExport',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./common-components/outlet-excel-export/outlet-excel-export.module').then(
+        (m) => m.OutletExcelExportModule
+      ),
+  },
+  {
     path: 'orgReports',
     canActivate: [accessGuard],
 

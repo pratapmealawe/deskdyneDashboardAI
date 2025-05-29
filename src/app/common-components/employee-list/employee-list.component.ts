@@ -138,7 +138,7 @@ export class EmployeeListComponent {
             console.log(employeeList)
             const res = await this.ddApiMainService.addEmployeeList(employeeList);
             if (res && res.length > 0) {
-            this.addMultipleEmploeeList = res;
+                this.addMultipleEmploeeList = res;
             }
         } catch (error) {
             console.log(error);

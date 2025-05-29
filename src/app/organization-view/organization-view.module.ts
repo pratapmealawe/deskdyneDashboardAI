@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { B2bWeeklyMenuComponent } from '../common-components/b2b-weekly-menu/b2b-weekly-menu.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
+import { OutletEmployeeComponent } from '../common-components/outlet-employee/outlet-employee.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
     EmployeeListComponent,
     B2bWeeklyMenuComponent,
     OrgComplianceComponent,
+    OutletEmployeeComponent,
   ],
   imports: [
     CommonModule,

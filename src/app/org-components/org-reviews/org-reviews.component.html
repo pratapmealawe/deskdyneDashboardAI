@@ -5,12 +5,8 @@
       <!-- Organization Selection -->
       <div class="col-12 col-md-3">
         <label for="organization" class="labelText d-block">Organization</label>
-        <select
-          class="form-select"
-          [(ngModel)]="filterObj.orgId"
-          [disabled]="this.orgAdmin.role === 'ORGADMIN'"
-          (change)="setOrgDetails()"
-        >
+        <select class="form-select" [(ngModel)]="filterObj.orgId" [disabled]="this.orgAdmin.role === 'ORGADMIN'"
+          (change)="setOrgDetails()">
           <option selected disabled value="">Select Organization</option>
           <option *ngFor="let option of orglist" [value]="option._id">
             {{ option.organization_name }}
@@ -21,68 +17,41 @@
       <!-- Cafeteria Selection -->
       <div class="col-12 col-md-3">
         <label for="cafeteria" class="labelText d-block">Outlet</label>
-        <select
-          [disabled]="!orgDetails"
-          class="form-select"
-          [(ngModel)]="filterObj.outletId"
-          (change)="onCafeChange(); getfeedbacklistByfilter()"
-        >
+        <select [disabled]="!orgDetails" class="form-select" [(ngModel)]="filterObj.outletId" (change)="onCafeChange()">
           <option selected disabled value="">Select Outlet</option>
-          <option
-            *ngFor="let option of outletList"
-            [value]="option._id"
-          >
+          <option *ngFor="let option of outletList" [value]="option._id">
             {{ option.outletName }}
           </option>
         </select>
       </div>
       <div class="col-12 col-md-3">
         <label for="fromDate" class="labelText d-block">From Date</label>
-        <input
-          type="date"
-          [(ngModel)]="filterObj.fromDate"
-          class="form-control"
-          (change)="getfeedbacklistByfilter()"
-        />
+        <input type="date" [(ngModel)]="filterObj.fromDate" class="form-control" (change)="getfeedbacklistByfilter()" />
+
       </div>
 
       <!-- To Date -->
       <div class="col-12 col-md-3">
         <label for="toDate" class="labelText d-block">To Date</label>
-        <input
-          type="date"
-          [(ngModel)]="filterObj.toDate"
-          class="form-control"
-          (change)="getfeedbacklistByfilter()"
-        />
+        <input type="date" [(ngModel)]="filterObj.toDate" class="form-control" (change)="getfeedbacklistByfilter()" />
       </div>
 
       <div class="col-12 col-md-3">
         <label class="labelText d-block">Search</label>
-
-        <input
-          type="text"
-          (input)="searchFilter($event)"
-          class="form-control"
-          placeholder="Search"
-          aria-label="Search Filter"
-          aria-describedby="basic-addon2"
-        />
+        <div class="searchDiv">
+          <i class="bi bi-search"></i>
+          <input type="text" (input)="searchFilter($event)" class="form-control" placeholder="Search"
+            aria-label="Search Filter" aria-describedby="basic-addon2" />
+        </div>
       </div>
     </div>
   </div>
   <div class="mt-2" *ngIf="filteredFeedbackList.length > 0">
-    <div
-      class="row customCard list-group mb-2"
-      *ngFor="let feedback of filteredFeedbackList; let i = index"
-    >
+    <div class="row customCard list-group mb-2" *ngFor="let feedback of filteredFeedbackList; let i = index">
       <div class="list-group-item">
         <div class="row">
-          <div
-            style="cursor: pointer"
-            class="bgTopDownpadding1 d-flex align-items-center justify-content-between p-2"
-            (click)="toggleFeedback(i)"
-          >
+          <div style="cursor: pointer" class="bgTopDownpadding1 d-flex align-items-center justify-content-between p-2"
+            (click)="toggleFeedback(i)">
             <div class="d-flex align-items-center gap-4 flex-wrap">
               <div class="d-flex align-items-center">
                 <div class="labelText">User Name :</div>
@@ -112,9 +81,7 @@
                       <span class="mx-2">Menu Contains</span>
                       <hr class="flex-grow-1" />
                     </div>
-                    <ng-container
-                      *ngFor="let itemContent of item.itemContains; index as ic"
-                    >
+                    <ng-container *ngFor="let itemContent of item.itemContains; index as ic">
                       <div class="cardDesign">
                         <div class="row">
                           <div class="col-4 col-md-4 col-lg-4">
@@ -162,11 +129,7 @@
         </div>
       </div>
     </div>
-    <button
-      type="button"
-      class="btn btn-primary btn-sm mt-2 me-2"
-      (click)="getMore()"
-    >
+    <button type="button" class="btn btn-primary btn-sm mt-2 me-2" (click)="getMore()">
       Load More
     </button>
   </div>

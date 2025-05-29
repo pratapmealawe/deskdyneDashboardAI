@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import {
   NavigationEnd,
   NavigationError,
@@ -6,11 +6,14 @@ import {
   Router,
 } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
+import { BehaviorSubject, interval, Observable, Subscription } from 'rxjs';
 import { routeMapper } from 'src/config/route.mapping.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
 import { UtilityService } from 'src/service/utility.service';
 
 @Component({
@@ -18,12 +21,14 @@ import { UtilityService } from 'src/service/utility.service';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.scss'],
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   @ViewChild('content') content: any;
   adminProfile: any = {};
   imageUrl = environment.imageUrl;
   isOrgAdmin: boolean = false;
   orgDetails: any = {};
+  unAcknowledgedFeedbackCount$: Observable<number> = this.suggestionsFeedbackService.GeneralAppFeedbackCount$;
+  inReviewIncidentsCount$: any = new BehaviorSubject<number>(0);
 
   finalNavOption: any = [];
 
@@ -85,6 +90,7 @@ export class HeaderComponent implements OnInit {
           showChild: true,
         },
         { name: 'Outlet Search Order', route: 'searchOrder', showChild: true },
+        { name: 'Outlet Export Order', route: 'outletExcelExport', showChild: true },
       ],
     },
     {
@@ -97,6 +103,8 @@ export class HeaderComponent implements OnInit {
     {
       name: 'Incident Reporting',
       showParent: true,
+      showBadge: true,
+      count: this.inReviewIncidentsCount$,
       route: 'orgIncidentManagement',
       image: 'Incident_Reporting',
       imageblue: 'Incident_Reporting_Blue',
@@ -127,24 +135,18 @@ export class HeaderComponent implements OnInit {
       ],
     },
     {
-      name: 'Feedback',
-      showParent: true,
-      route: 'dashboard',
+      name: 'Reviews',
+      route: 'orgReviews',
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
-      children: [
-        { name: 'View Feedbacks', route: 'orgReviews', showChild: true },
-      ],
     },
     {
-      name: 'App Feedback',
-      showParent: true,
-      route: 'dashboard',
+      name: 'Feedback',
+      showBadge: true,
+      count: this.unAcknowledgedFeedbackCount$,
+      route: 'appFeedbacks',
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
-      children: [
-        { name: 'View App Feedbacks', route: 'appFeedbacks', showChild: true },
-      ],
     },
     {
       name: 'Excel Export',
@@ -153,7 +155,6 @@ export class HeaderComponent implements OnInit {
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
     },
-    
     {
       name: 'Enquiries',
       showParent: true,
@@ -164,7 +165,7 @@ export class HeaderComponent implements OnInit {
         { name: 'View Enquiries', route: 'viewEnquiries', showChild: true },
       ],
     },
-    
+
     {
       name: 'Policy',
       showParent: true,
@@ -185,7 +186,7 @@ export class HeaderComponent implements OnInit {
         { name: 'Add Admin', route: 'addAdmin', showChild: true },
       ],
     },
-    
+
     {
       name: 'Miscelleneous',
       showParent: true,
@@ -223,6 +224,13 @@ export class HeaderComponent implements OnInit {
       name: 'Orders',
       showParent: true,
       route: 'orgOrders',
+      image: 'Orders_white',
+      imageblue: 'Orders_blue',
+    },
+    {
+      name: 'Export Orders',
+      showParent: true,
+      route: 'outletExcelExport',
       image: 'Orders_white',
       imageblue: 'Orders_blue',
     },
@@ -282,13 +290,13 @@ export class HeaderComponent implements OnInit {
       image: 'Checklist_white',
       imageblue: 'Checklist_blue',
     },
-    {
-      name: 'Employee List',
-      showParent: true,
-      route: 'orgEmployeeList',
-      image: 'Enquiry',
-      imageblue: 'Enquiries_Blue',
-    },
+    // {
+    //   name: 'Employee List',
+    //   showParent: true,
+    //   route: 'orgEmployeeList',
+    //   image: 'Enquiry',
+    //   imageblue: 'Enquiries_Blue',
+    // },
     {
       name: 'Bulk Order History',
       showParent: true,
@@ -312,7 +320,7 @@ export class HeaderComponent implements OnInit {
     },
   ];
 
-  breadCrumbText: any = 'Home';
+  breadCrumbText: any = 'home';
   currentRoute: string = 'currentOrder';
   policyArr: any;
   routeMapper: any = routeMapper;
@@ -322,6 +330,7 @@ export class HeaderComponent implements OnInit {
   openChildSectionIndex = -1;
   selectedIndexpar: number = 0;
   selectedIndexchild: number = 0;
+  pollingSub!: Subscription;
 
   constructor(
     private router: Router,
@@ -329,7 +338,8 @@ export class HeaderComponent implements OnInit {
     private localStorageService: LocalStorageService,
     private runtimeStorageService: RuntimeStorageService,
     private utilityService: UtilityService,
-    private offcanvasService: NgbOffcanvas
+    private offcanvasService: NgbOffcanvas,
+    private suggestionsFeedbackService: SuggestionsFeedbackService
   ) {
     this.router.events.subscribe((event: any) => {
       if (event instanceof NavigationStart) {
@@ -357,6 +367,25 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.getAdminProfile();
+    this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
+    this.getInReviewIncidents();
+
+    // this.pollingSub = interval(30_000).subscribe(() => {
+    //   this.getInReviewIncidents();
+    // });
+  }
+
+  async getInReviewIncidents() {
+    try {
+      const data = await this.apiMainService.getAllIncidents();
+
+      if (data && data.length > 0) {
+        const inReviewIncidents = data.filter((incident: any) => incident.status === "created").length;
+        this.inReviewIncidentsCount$.next(inReviewIncidents);
+      }
+    } catch (error) {
+      console.error('Error fetching incidents:', error);
+    }
   }
 
   selectLink(nav: any, index: number): void {
@@ -400,6 +429,9 @@ export class HeaderComponent implements OnInit {
     const adminId = this.localStorageService.getCacheData('ADMIN_ID');
     try {
       const adminProfile = await this.apiMainService.getadminprofile(adminId);
+
+      console.log(adminProfile);
+      
       if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
         if (this.adminProfile.role == 'ORGADMIN') {
@@ -476,4 +508,9 @@ export class HeaderComponent implements OnInit {
       console.log(error);
     }
   }
+
+  ngOnDestroy(): void {
+    // this.pollingSub.unsubscribe()
+  }
+
 }

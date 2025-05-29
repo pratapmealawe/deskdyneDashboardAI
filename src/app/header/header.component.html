@@ -1,19 +1,10 @@
 <nav class="navbar fixed-top navbar-dark bg-dark mb-5">
   <div class="container-fluid">
     <span class="navbar-brand mb-0 h1" style="flex: 1">
-      <img
-        src="/assets/images/menu-burger.svg"
-        class="menu-burger"
-        alt=""
-        (click)="openEnd()"
-      />
+      <img src="/assets/images/menu-burger.svg" class="menu-burger" alt="" (click)="openEnd()" />
       <span class="company-name">
         <ng-container *ngIf="!isOrgAdmin">
-          <img
-            src="assets/images/deskdyneLogo.png"
-            alt="deskdyneLogo"
-            style="width: 10%"
-          />
+          <img src="assets/images/deskdyneLogo.png" alt="deskdyneLogo" style="width: 10%" />
         </ng-container>
         <ng-container *ngIf="isOrgAdmin">
           {{ orgDetails.organization_name }}
@@ -23,21 +14,10 @@
     <span style="color: white; flex: 1">{{ breadCrumbText }}</span>
     <span>
       <span class="name">{{ adminProfile.name }}</span>
-      <img
-        placement="bottom-right"
-        class="profileImg pointer mr-2"
-        *ngIf="adminProfile.imageUrl"
-        [src]="imageUrl + adminProfile.imageUrl"
-        [ngbPopover]="popOverBody"
-        popoverTitle="Admin Profile"
-      />
-      <span
-        [ngbPopover]="popOverBody"
-        popoverTitle="Admin Profile"
-        *ngIf="!adminProfile.imageUrl"
-        class="img-span pointer"
-        ><i class="bi bi-person"></i
-      ></span>
+      <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
+        [src]="imageUrl + adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile" />
+      <span [ngbPopover]="popOverBody" popoverTitle="Admin Profile" *ngIf="!adminProfile.imageUrl"
+        class="img-span pointer"><i class="bi bi-person"></i></span>
     </span>
   </div>
 </nav>
@@ -46,11 +26,7 @@
   <div class="offcanvas-header">
     <h1 class="offcanvas-title">
       <ng-container *ngIf="!isOrgAdmin">
-        <img
-          src="assets/images/deskdyneLogo.png"
-          alt="deskdyneLogo"
-          style="width: 50%; height: 50%"
-        />
+        <img src="assets/images/deskdyneLogo.png" alt="deskdyneLogo" style="width: 50%; height: 50%" />
       </ng-container>
       <ng-container *ngIf="isOrgAdmin">
         {{ orgDetails.organization_name }}
@@ -61,45 +37,29 @@
     <ng-container>
       <div *ngFor="let link of finalNavOption; let i = index">
         <div *ngIf="link.showParent">
-          <div
-            class="orgbutton d-flex align-items-center justify-content-between"
-            [ngClass]="{ 'active-link': selectedIndex === i }"
-            (click)="selectLink(link, i)"
-          >
+          <div class="orgbutton d-flex align-items-center justify-content-between"
+            [ngClass]="{ 'active-link': selectedIndex === i }" (click)="selectLink(link, i)">
             <div class="d-flex align-items-center flex-wrap gap-2">
-              <img
-                *ngIf="selectedIndex === i"
-                [src]="'assets/images/' + link.imageblue + '.svg'"
-                alt="Active Icon"
-                style="margin-right: 10px; width: 20px; height: 20px"
-              />
-              <img
-                *ngIf="selectedIndex !== i"
-                [src]="'assets/images/' + link.image + '.svg'"
-                alt="Inactive Icon"
-                style="margin-right: 10px; width: 20px; height: 20px"
-              />
+              <img *ngIf="selectedIndex === i" [src]="'assets/images/' + link.imageblue + '.svg'" alt="Active Icon"
+                style="margin-right: 10px; width: 20px; height: 20px" />
+              <img *ngIf="selectedIndex !== i" [src]="'assets/images/' + link.image + '.svg'" alt="Inactive Icon"
+                style="margin-right: 10px; width: 20px; height: 20px" />
               <span>{{ link.name }}</span>
             </div>
+            <div class="badge" *ngIf="link.showBadge && (link.count | async) ">
+              <span>{{link.count | async}}</span>
+            </div>
             <div class="plusMinus" *ngIf="link.children">
-              <i
-                class="bi"
-                [ngClass]="openChildSectionIndex === i ? 'bi-dash' : 'bi-plus'"
-              ></i>
+              <i class="bi" [ngClass]="openChildSectionIndex === i ? 'bi-dash' : 'bi-plus'"></i>
             </div>
           </div>
           <div *ngIf="link.children && openChildSectionIndex === i">
             <div *ngFor="let childLink of link.children; let j = index">
-              <div
-                *ngIf="childLink.showChild"
-                class="childMenuStyle"
-                type="button"
-                (click)="selectChildLink(childLink.route, i, j)"
-                [ngClass]="{
+              <div *ngIf="childLink.showChild" class="childMenuStyle" type="button"
+                (click)="selectChildLink(childLink.route, i, j)" [ngClass]="{
                   'active-link':
                     openChildSectionIndex === i && childSelectedIndex === j
-                }"
-              >
+                }">
                 {{ childLink.name }}
               </div>
             </div>

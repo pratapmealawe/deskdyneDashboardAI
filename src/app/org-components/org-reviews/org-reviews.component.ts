@@ -79,17 +79,20 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       searchText
     );
   }
+
   setOrgDetails() {
     this.filterObj.page = 1;
     this.orgDetails = this.orglist.find((org: any) => {
       return org._id == this.filterObj?.orgId;
     });
-    
-    this.filterObj.outletId = '';
 
-    this.getfeedbacklistByfilter();
+    this.filterObj.outletId = '';
+    this.getOutlets()
   }
+
   async getfeedbacklistByfilter() {
+    console.log(this.filterObj);
+    
     this.nextOn = false;
     try {
       const feedbackList = await this.apiMainService.getfeedbacklistByfilter(
@@ -132,17 +135,16 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
 
   async getOutlets() {
     let searchObj = {
-      orgId: this.orgAdmin?.orgDetails._id
+      orgId: this.orgAdmin.role === 'ORGADMIN' ? this.orgAdmin?.orgDetails._id : this.orgDetails?._id
     };
     try {
       const data = await this.apiMainService.searchOutletByOrgId(
         searchObj
       );
 
-      this.outletList = [ ...data];
+      this.outletList = [...data];
 
-      console.log(this.outletList);
-      
+      this.getfeedbacklistByfilter()
     } catch (err) {
       console.error('Error fetching orders:', err);
     }
@@ -155,8 +157,10 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       this.setOrgDetails();
     }
   }
+
   onCafeChange() {
     this.feedbackList = [];
     this.filteredFeedbackList = [];
+    this.getfeedbacklistByfilter()
   }
 }
