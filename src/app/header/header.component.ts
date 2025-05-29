@@ -89,6 +89,7 @@ export class HeaderComponent implements OnInit {
           showChild: true,
         },
         { name: 'Outlet Search Order', route: 'searchOrder', showChild: true },
+        { name: 'Outlet Export Order', route: 'outletExcelExport', showChild: true },
       ],
     },
     {
@@ -157,7 +158,6 @@ export class HeaderComponent implements OnInit {
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
     },
-
     {
       name: 'Enquiries',
       showParent: true,
@@ -227,6 +227,13 @@ export class HeaderComponent implements OnInit {
       name: 'Orders',
       showParent: true,
       route: 'orgOrders',
+      image: 'Orders_white',
+      imageblue: 'Orders_blue',
+    },
+    {
+      name: 'Export Orders',
+      showParent: true,
+      route: 'outletExcelExport',
       image: 'Orders_white',
       imageblue: 'Orders_blue',
     },

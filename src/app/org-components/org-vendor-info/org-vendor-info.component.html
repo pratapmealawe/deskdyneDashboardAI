@@ -5,6 +5,8 @@
     </div>
 
     <div class="col-lg-4">
+      <div class="searchDiv"> 
+        <i class="bi bi-search"></i>
       <input
         type="text"
         (input)="searchFilter($event)"
@@ -13,6 +15,7 @@
         aria-label="Search Filter"
         aria-describedby="basic-addon2"
       />
+      </div>
     </div>
   </div>
   <div class="mt-2" *ngIf="filteredVendorList.length > 0">

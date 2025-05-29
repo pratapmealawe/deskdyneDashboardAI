@@ -1,0 +1,96 @@
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <h3>Outlet Order Export</h3>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row mb-4 mt-2 p-3 bg-light rounded">
+            <div class="col-md-3">
+                <label class="labelText">Organization</label>
+                <select class="form-select" [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin.role === 'ORGADMIN'"
+                    (change)="setOrgDetails()">
+                    <option selected disabled value="">Select Organization</option>
+                    <option *ngFor="let option of orglist" [value]="option._id">
+                        {{ option.organization_name }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="labelText">Cafeteria</label>
+                <select class="form-select" [(ngModel)]="filterObj.cafeId" [disabled]="!orgDetails">
+                    <option selected disabled value="">Select Cafeteria</option>
+                    <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
+                        {{ option.cafeteria_name }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="labelText">From Date</label>
+                <input type="date" [(ngModel)]="filterObj.fromDate" class="form-control" />
+            </div>
+
+            <div class="col-md-3">
+                <label class="labelText">To Date</label>
+                <input type="date" [(ngModel)]="filterObj.toDate" class="form-control" />
+            </div>
+
+            <div class="col-md-3 pt-4">
+                <button (click)="filterOrders()" class="btn btn-primary w-100">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="filteredOrderList.length > 0">
+        <div class="row">
+            <div class="col-lg-3">
+                <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel Export</button>
+            </div>
+        </div>
+        <div *ngFor="let order of filteredOrderList" class="cardDesign my-1">
+            <div class="row w-full">
+                <div class="col-md-2">
+                    <div class="labelText">Order No</div>
+                    <div class="labelData">{{ order?.orderNo }}</div>
+                </div>
+                <div class="col-md-2">
+                    <div class="labelText">Customer Name</div>
+                    <div class="labelData">{{ order?.customerName }}</div>
+                </div>
+                <div class="col-md-2">
+                    <div class="labelText">Date</div>
+                    <div class="labelData">
+                        {{ order?.orderDate | date : "dd/MM/yyyy" }}
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="labelText">Type</div>
+                    <div class="labelData">{{ order?.orderType }}</div>
+                </div>
+                <div class="col-md-2">
+                    <div class="labelText">Amount</div>
+                    <div class="labelData">&#8377; {{ order?.itemAmount }}</div>
+                </div>
+                <div class="col-md-2" *ngIf="order.subsidyAmount">
+                    <div class="labelText">Subsidy Amount</div>
+                    <div class="labelData">&#8377; {{ order?.subsidyAmount }}</div>
+                </div>
+                <div class="col-md-2">
+                    <div class="labelText">Paid Amount</div>
+                    <div class="labelData">&#8377; {{ order?.amount }}</div>
+                </div>
+                <div class="col-md-2">
+                    <div class="labelText">Status</div>
+                    <div class="labelData">{{ orderStatusMapper[order?.orderstatus] }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="filteredOrderList.length === 0" class="text-center">
+        No Records Found
+    </div>
+</div>

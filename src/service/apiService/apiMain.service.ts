@@ -1267,4 +1267,12 @@ export class ApiMainService {
       method: urlObj.method,
     }, body);
   }
+  fetchOutletOrdersbysearchObj( body: any) {
+    const urlObj =
+      this.apiConfigService.apiEndPointObj.fetchOutletOrdersbysearchObj;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url ,
+      method: urlObj.method,
+    }, body);
+  }
 }

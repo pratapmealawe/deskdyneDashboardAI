@@ -528,6 +528,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/verifyOutletEmployeeByPhoneNo`,
         method: 'GET'
       },
+      fetchOutletOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
     };
   }
 }

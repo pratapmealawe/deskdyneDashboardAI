@@ -25,7 +25,7 @@
           [disabled]="!orgDetails"
           class="form-select"
           [(ngModel)]="filterObj.outletId"
-          (change)="onCafeChange(); getfeedbacklistByfilter()"
+          (change)="onCafeChange()"
         >
           <option selected disabled value="">Select Outlet</option>
           <option
