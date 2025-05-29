@@ -24,11 +24,11 @@
         <select
           [disabled]="cafeList.length <= 0"
           class="form-select"
-          [(ngModel)]="filterObj.cafeId"
+          [(ngModel)]="filterObj.cafeteria_id"
           (change)="clearList()"
         >
           <option selected disabled value="">Select Cafeteria</option>
-          <option *ngFor="let option of cafeList" [value]="option._id">
+          <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
             {{ option.cafeteria_name }}
           </option>
         </select>
@@ -59,6 +59,8 @@
           >Search</label
         >
 
+      <div class="searchDiv">
+        <i class="bi bi-search"></i>
         <input
           type="text"
           (input)="searchFilter($event)"
@@ -67,6 +69,7 @@
           aria-label="Search Filter"
           aria-describedby="basic-addon2"
         />
+        </div>
       </div>
     </div>
   </div>

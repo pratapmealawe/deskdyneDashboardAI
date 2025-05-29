@@ -22,11 +22,11 @@
         <select
           [disabled]="cafeList.length <= 0 || editMode"
           class="form-select"
-          [(ngModel)]="filterObj.cafeId"
+          [(ngModel)]="filterObj.cafeteria_id"
           (change)="changeCafe()"
         >
           <option selected disabled value="">Select Cafeteria</option>
-          <option *ngFor="let option of cafeList" [value]="option._id">
+          <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
             {{ option.cafeteria_name }}
           </option>
         </select>
@@ -37,6 +37,8 @@
           >Search</label
         >
 
+      <div class="searchDiv">
+        <i class="bi bi-search"></i>
         <input
           type="text"
           (input)="searchFilter($event)"
@@ -45,6 +47,7 @@
           aria-label="Search Filter"
           aria-describedby="basic-addon2"
         />
+        </div>
       </div>
     </div>
     <div
@@ -75,7 +78,7 @@
   <div class="row mt-4">
     <div class="col-lg-12">
       <button
-        [disabled]="!filterObj.orgId && !filterObj.cafeId"
+        [disabled]="!filterObj.orgId && !filterObj.cafeteria_id"
         class="btn btn-primary me-2"
         (click)="submitChecklist()"
         *ngIf="!editMode && true || btnPolicy?.addChecklist"
@@ -83,7 +86,7 @@
         Save
       </button>
       <button
-        [disabled]="!filterObj.orgId && !filterObj.cafeId"
+        [disabled]="!filterObj.orgId && !filterObj.cafeteria_id"
         class="btn btn-success me-2"
         (click)="updateChecklist()"
         *ngIf="editMode && true || btnPolicy?.editChecklist"

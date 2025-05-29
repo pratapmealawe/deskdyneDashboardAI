@@ -23,7 +23,7 @@ export class LoginComponent implements OnInit {
     const ADMIN_ID = this.localStorageService.getCacheData('ADMIN_ID');
     const ADMIN_TOKEN = this.localStorageService.getCacheData('ADMIN_TOKEN');
     if (ADMIN_ID && ADMIN_TOKEN) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/home']);
     }
   }
   async login() {
@@ -43,7 +43,7 @@ export class LoginComponent implements OnInit {
       const loginObj = await this.apiMainService.verifyOTP({ adminId: this.adminId, password: this.password });
       this.localStorageService.setCacheData('ADMIN_ID', this.adminId);
       this.localStorageService.setCacheData('ADMIN_TOKEN', loginObj.token);
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(['/home']);
     } catch (error) {
       console.log('error while verifying otp ', error);
     }

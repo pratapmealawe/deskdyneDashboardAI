@@ -14,6 +14,7 @@ interface Organization {
 
 interface Cafeteria {
   cafeteria_name: string;
+  cafeteria_id: string;
   _id: string;
 }
 
@@ -91,11 +92,11 @@ export class AddAdminComponent {
       this.adminObj.policy = cacheAdmin.policy_name;
       this.adminObj.id = cacheAdmin._id;
       this.imageUrl = environment.imageUrl + cacheAdmin.imageUrl;
-      if (this.adminObj.policy == 'cafeteria Manager') {
-        this.selectedCafeId = cacheAdmin.cafeDetails._id;
-      }
+      
       if (this.adminObj.role == 'ORGADMIN') {
         this.selectedValue = cacheAdmin.orgDetails._id;
+        this.selectedCafeId = cacheAdmin.cafeDetails.cafeteria_id;
+
         this.setOrgDetails();
       }
       if (this.adminObj.role === 'SITEEXE') {
@@ -177,8 +178,6 @@ export class AddAdminComponent {
     }
     if (adminObj.role == 'ORGADMIN') {
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
-    }
-    if (adminObj.policy == 'cafeteria Manager') {
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
     }
     if (adminObj.role === 'SITEEXE') {
@@ -195,7 +194,7 @@ export class AddAdminComponent {
       }
 
       this.selectedItemsCafe.forEach((item) => {
-        const foundCafe = cafeList.find((a) => a._id === item);
+        const foundCafe = cafeList.find((a) => a.cafeteria_id === item);
         if (!foundCafe) return;
 
         const org: Organization = {
@@ -205,6 +204,7 @@ export class AddAdminComponent {
 
         const cafe: Cafeteria = {
           cafeteria_name: foundCafe.cafeteria_name,
+          cafeteria_id: foundCafe.cafeteria_id,
           _id: foundCafe._id,
         };
 
@@ -214,7 +214,7 @@ export class AddAdminComponent {
           this.siteExecutiveDetails.orgDetails.push(org);
         }
         if (
-          !this.siteExecutiveDetails.cafeDetails.some((c) => c._id === cafe._id)
+          !this.siteExecutiveDetails.cafeDetails.some((c) => c.cafeteria_id === cafe.cafeteria_id)
         ) {
           this.siteExecutiveDetails.cafeDetails.push(cafe);
         }
@@ -252,8 +252,6 @@ export class AddAdminComponent {
     }
     if (adminObj.role == 'ORGADMIN') {
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
-    }
-    if (adminObj.policy == 'cafeteria Manager') {
       formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
     }
     if (adminObj.role === 'SITEEXE') {
@@ -270,7 +268,7 @@ export class AddAdminComponent {
       }
 
       this.selectedItemsCafe.forEach((item) => {
-        const foundCafe = cafeList.find((a) => a._id === item);
+        const foundCafe = cafeList.find((a) => a.cafeteria_id === item);
         if (!foundCafe) return;
 
         const org: Organization = {
@@ -280,8 +278,10 @@ export class AddAdminComponent {
 
         const cafe: Cafeteria = {
           cafeteria_name: foundCafe.cafeteria_name,
+          cafeteria_id: foundCafe.cafeteria_id,
           _id: foundCafe._id,
         };
+        
 
         if (
           !this.siteExecutiveDetails.orgDetails.some((o) => o._id === org._id)
@@ -289,7 +289,7 @@ export class AddAdminComponent {
           this.siteExecutiveDetails.orgDetails.push(org);
         }
         if (
-          !this.siteExecutiveDetails.cafeDetails.some((c) => c._id === cafe._id)
+          !this.siteExecutiveDetails.cafeDetails.some((c) => c.cafeteria_id === cafe.cafeteria_id)
         ) {
           this.siteExecutiveDetails.cafeDetails.push(cafe);
         }
@@ -348,7 +348,7 @@ export class AddAdminComponent {
 
   setCafeDetails() {
     this.cafeDetails = this.orgDetails.cafeteriaList.find((org: any) => {
-      return org._id == this.selectedCafeId;
+      return org.cafeteria_id == this.selectedCafeId;
     });
   }
 }

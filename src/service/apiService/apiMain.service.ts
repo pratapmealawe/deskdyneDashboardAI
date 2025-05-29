@@ -648,7 +648,7 @@ export class ApiMainService {
   getIncidentsByDateAndFilters(data: any) {
     return this.apiHttpService.REQUEST(
       this.apiConfigService.apiEndPointObj.getIncidentsByDateAndFilters,
-      data
+      data, null, true
     );
   }
   updateIncident(data: any) {
