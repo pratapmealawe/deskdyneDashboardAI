@@ -46,8 +46,8 @@
                 style="margin-right: 10px; width: 20px; height: 20px" />
               <span>{{ link.name }}</span>
             </div>
-            <div class="badge" *ngIf="link.name == 'Feedback' && (unAcknowledgedFeedbackCount$ | async)">
-              <span>{{unAcknowledgedFeedbackCount$ | async}}</span>
+            <div class="badge" *ngIf="link.showBadge && (link.count | async) ">
+              <span>{{link.count | async}}</span>
             </div>
             <div class="plusMinus" *ngIf="link.children">
               <i class="bi" [ngClass]="openChildSectionIndex === i ? 'bi-dash' : 'bi-plus'"></i>
