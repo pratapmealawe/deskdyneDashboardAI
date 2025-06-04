@@ -28,6 +28,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   isOrgAdmin: boolean = false;
   orgDetails: any = {};
   unAcknowledgedFeedbackCount$: Observable<number> = this.suggestionsFeedbackService.GeneralAppFeedbackCount$;
+  enquiryCount$: Observable<number> = this.suggestionsFeedbackService.enquiryCount$;
   inReviewIncidentsCount$: any = new BehaviorSubject<number>(0);
 
   finalNavOption: any = [];
@@ -35,6 +36,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   deskDineOptions: any = [
     {
       name: 'Dashboard',
+      showParent: true,
+      route: 'mainDashboard',
+      image: 'DDDashboard',
+      imageblue: 'DDDashboard_Blue',
+    },
+    {
+      name: 'Org Dashboard',
       showParent: true,
       route: 'dashboard',
       image: 'DDDashboard',
@@ -92,6 +100,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Outlet Search Order', route: 'searchOrder', showChild: true },
         { name: 'Outlet Export Order', route: 'outletExcelExport', showChild: true },
       ],
+    },
+    {
+      name: 'Users',
+      showParent: true,
+      route: 'customer',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
     },
     {
       name: 'Food Items',
@@ -157,13 +172,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     },
     {
       name: 'Enquiries',
-      showParent: true,
-      route: 'dashboard',
+      showBadge: true,
+      count: this.enquiryCount$,
+      route: 'viewEnquiries',
       image: 'Enquiry',
       imageblue: 'Enquiries_Blue',
-      children: [
-        { name: 'View Enquiries', route: 'viewEnquiries', showChild: true },
-      ],
     },
 
     {
@@ -368,6 +381,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.getAdminProfile();
     this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
+    this.suggestionsFeedbackService.fetchAllEnquiries();
     this.getInReviewIncidents();
 
     // this.pollingSub = interval(30_000).subscribe(() => {

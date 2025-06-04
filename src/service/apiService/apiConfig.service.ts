@@ -532,6 +532,78 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
         method: 'POST'
       },
+      getStaticTotalCounts: {
+        url: `${this.baseUrl}/api/getStaticTotalCounts`,
+        method: 'GET'
+      },
+      getTotalCounts: {
+        url: `${this.baseUrl}/api/getTotalCounts`,
+        method: 'POST'
+      },
+      getTotalOrdersStatusWiseData: {
+        url: `${this.baseUrl}/api/getTotalOrdersStatusWiseData`,
+        method: 'POST'
+      },
+      getTotalSubOrdersStatusWiseData: {
+        url: `${this.baseUrl}/api/getTotalSubOrdersStatusWiseData`,
+        method: 'POST'
+      },
+      getCustomerProfileList: {
+        url: `${this.baseUrl}/api/getCustomerProfileList`,
+        method: 'GET'
+      },
+      getCustomerPastOrders: {
+        url: `${this.baseUrl}/api/getCustomerPastOrders`,
+        method: 'GET'
+      },
+      getCustomerPackageList: {
+        url: `${this.baseUrl}/api/getCustomerPackageList`,
+        method: 'GET'
+      },
+      getOrderPackage: {
+        url: `${this.baseUrl}/api/getOrderPackage`,
+        method: 'GET'
+      },
+      getCustomerListByOrgId: {
+        url: `${this.baseUrl}/api/getCustomerListByOrgId`,
+        method: 'POST'
+      },
+      updateOrderStatus: {
+        url: `${this.baseUrl}/api/updateOrderStatus`,
+        method: 'POST'
+      },
+      updatePackageFoodOrder: {
+        url: `${this.baseUrl}/api/updatePackageFoodOrder`,
+        method: 'POST'
+      },
+      createDailyPackageOrder: {
+        url: `${this.baseUrl}/api/createDailyPackageOrder`,
+        method: 'POST'
+      },
+      getOutletOrdersByCustomerId: {
+        url: `${this.baseUrl}/api/getOutletOrdersByCustomerId`,
+        method: 'GET'
+      },
+      userRewardsPointsHistory: {
+        url: `${this.baseUrl}/api/userRewardsPointsHistory`,
+        method: 'GET'
+      },
+      getWalletBalance: {
+        url: `${this.baseUrl}/api/getWalletBalance`,
+        method: 'GET'
+      },
+      depositeInWallet: {
+        url: `${this.baseUrl}/api/depositeInWallet`,
+        method: 'POST'
+      },
+      withdrawFromWallet: {
+        url: `${this.baseUrl}/api/withdrawFromWallet`,
+        method: 'POST'
+      },
+      checkUserWallet: {
+        url: `${this.baseUrl}/api/checkUserWallet`,
+        method: 'POST'
+      },
     };
   }
 }

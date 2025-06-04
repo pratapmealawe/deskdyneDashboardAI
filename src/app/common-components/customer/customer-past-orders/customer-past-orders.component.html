@@ -1,0 +1,15 @@
+<div>
+    <div *ngIf="orderList.length > 0"> 
+        <ul *ngFor="let order of orderList" class="list-group">
+            <li class="list-group-item">     
+            <app-order-card [order]="order" ></app-order-card>
+            </li>  
+        </ul>
+        <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm"
+            (click)="getMore()">Load More</button>    
+    </div>
+
+    <div class="center" *ngIf="orderList.length === 0">
+        No Records Found
+    </div>
+</div>

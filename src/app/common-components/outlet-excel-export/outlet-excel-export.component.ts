@@ -5,6 +5,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ExcelService } from 'src/service/excel.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
+import * as Highcharts from 'highcharts';
 
 interface Filter {
   orgId: string;
@@ -19,6 +20,7 @@ interface Filter {
   styleUrls: ['./outlet-excel-export.component.scss']
 })
 export class OutletExcelExportComponent implements OnInit {
+  Highcharts: typeof Highcharts = Highcharts;
   orglist: any[] = [];
   orgDetails: any = {};
   orgAdmin: any;
@@ -34,6 +36,39 @@ export class OutletExcelExportComponent implements OnInit {
   filteredOrderList: any[] = []
   orderStatusMapper: any = orderStatusMapper
 
+  // Chart
+  chartOptionsPie: Highcharts.Options = {
+    chart: {
+      type: 'pie',
+    },
+    title: {
+      text: 'Outlet Orders',
+    },
+    tooltip: {
+      pointFormat: '<small>Count</small>: <b>{point.count}</b>',
+    },
+    plotOptions: {
+      pie: {
+        allowPointSelect: true,
+        cursor: 'pointer',
+        dataLabels: {
+          enabled: true,
+          format: '{point.name}: {point.percentage:.1f}%',
+        },
+      },
+    },
+    series: [
+      {
+        type: 'pie',
+        name: 'Percentage',
+        data: [],
+      },
+    ],
+  };
+
+  updateStatusFlag: boolean = false;
+  oneToOneStatusFlag: boolean = true;
+  isShowChart: boolean = false
 
   constructor(
     private apiMainService: ApiMainService,
@@ -103,6 +138,7 @@ export class OutletExcelExportComponent implements OnInit {
   }
 
   async getOutletByFilter(body: any) {
+    this.isShowChart = false
     try {
       const res = await this.apiMainService.fetchOutletOrdersbysearchObj(body);
 
@@ -113,7 +149,6 @@ export class OutletExcelExportComponent implements OnInit {
   }
 
   async excelExport() {
-
     const exportData = this.filteredOrderList.map(order => {
       const items = (order.itemList || [])
         .map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`)
@@ -135,7 +170,48 @@ export class OutletExcelExportComponent implements OnInit {
     })
 
     console.log(exportData);
-    
+
     this.excelService.download(exportData, `outlet_order_${this.filterObj.fromDate}_TO_${this.filterObj.toDate}`)
+  }
+
+  changeDataView() {
+    if (!this.isShowChart) {
+      this.generateChartData()
+      // console.log(this.filteredOrderList)
+    } else {
+      this.isShowChart = false
+    }
+  }
+
+  generateChartData() {
+    let data: any = this.filteredOrderList
+
+    const statusCounts = data.reduce((acc: Record<string, number>, order: any) => {
+      const status = order.orderstatus;
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {});
+
+    const totalOrders = data.length;
+
+    const formattedData = Object.keys(statusCounts).map(status => ({
+      name: status,
+      y: +(statusCounts[status] / totalOrders * 100).toFixed(2),
+      count: statusCounts[status]
+    }));
+
+    this.chartOptionsPie = {
+      ...this.chartOptionsPie,
+      series: [
+        {
+          type: 'pie',
+          name: 'Order Status %',
+          data: formattedData
+        }
+      ]
+    };
+
+    this.isShowChart = true
+    this.updateStatusFlag = true;
   }
 }

@@ -1,0 +1,14 @@
+@import "/src/styles.scss";
+
+
+.userImage {
+    width: 150px;
+    height: 150px;
+}
+
+@media only screen and (min-width:600px) and (max-width:1180px) {
+    .userImage {
+        width: 100px;
+        height: 100px;
+    }
+}

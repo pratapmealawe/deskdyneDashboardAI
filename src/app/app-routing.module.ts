@@ -150,11 +150,27 @@ const routes: Routes = [
       ).then((m) => m.SearchOrganizationModule),
   },
   {
+    path: 'mainDashboard',
+
+    loadChildren: () =>
+      import('./deskdyne-components/main-dashboard/main-dashboard.module').then(
+        (m) => m.MainDashboardModule
+      ),
+  },
+  {
     path: 'dashboard',
 
     loadChildren: () =>
       import('./deskdyne-components/dashboard/dashboard.module').then(
         (m) => m.DashboardModule
+      ),
+  },
+  {
+    path: 'customer',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./common-components/customer/customer.module').then(
+        (m) => m.CustomerModule
       ),
   },
   {

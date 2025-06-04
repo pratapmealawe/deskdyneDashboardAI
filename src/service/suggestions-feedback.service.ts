@@ -12,6 +12,9 @@ export class SuggestionsFeedbackService {
   private feedbackCountSubject = new BehaviorSubject<number>(0);
   GeneralAppFeedbackCount$ = this.feedbackCountSubject.asObservable();
 
+  private enquiryCountSubject = new BehaviorSubject<number>(0);
+  enquiryCount$ = this.enquiryCountSubject.asObservable();
+
   async getGeneralAppFeebackCount(acknowledged?: boolean) {
     try {
       const data = await this.ddApiMainService.getGeneralAppFeebackCount(acknowledged);
@@ -21,6 +24,19 @@ export class SuggestionsFeedbackService {
       throw error;
     }
   }
+
+  async fetchAllEnquiries() {
+    try {
+      const data = await this.ddApiMainService.fetchAllEnquiries();
+      if (data) {
+        this.enquiryCountSubject.next(data?.length);
+      }
+    } catch (error) {
+      console.error("Error while loading data:", error);
+      throw error;
+    }
+  }
+
 
 
 }

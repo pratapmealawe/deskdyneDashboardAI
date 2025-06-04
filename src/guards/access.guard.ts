@@ -30,7 +30,7 @@ export class PermissionsService {
       if (profile.policy_name === 'orgAdmin') {
         this.router.navigate(['/org-dashboard']);
       } else {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(['/mainDashboard']);
       }
       this.toasterService.error(122);
     }

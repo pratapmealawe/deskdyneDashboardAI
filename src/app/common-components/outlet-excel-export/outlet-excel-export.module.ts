@@ -4,6 +4,7 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { OutletExcelExportRoutingModule } from './outlet-excel-export-routing.module';
 import { OutletExcelExportComponent } from './outlet-excel-export.component';
 import { FormsModule } from '@angular/forms';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     FormsModule,
-    OutletExcelExportRoutingModule
+    OutletExcelExportRoutingModule,
+    HighchartsChartModule
   ],
   providers: [DatePipe]
 })
