@@ -1275,4 +1275,76 @@ export class ApiMainService {
       method: urlObj.method,
     }, body);
   }
+  getStaticTotalCounts() {
+    const urlObj = this.apiConfigService.apiEndPointObj.getStaticTotalCounts;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
+  }
+  getTotalCounts( body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTotalCounts;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  getTotalOrdersStatusWiseData( body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTotalOrdersStatusWiseData;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  getTotalSubOrdersStatusWiseData( body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTotalSubOrdersStatusWiseData;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  getCustomerProfileList() {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerProfileList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
+  }
+  getCustomerPastOrders(id:any, page:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerPastOrders;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}/${page}`, method: urlObj.method });
+  }
+  getCustomerPackageList(id:any, page:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerPackageList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}/${page}`, method: urlObj.method });
+  }
+  getOrderPackage(id:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOrderPackage;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  getCustomerListByOrgId(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerListByOrgId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  updateOrderStatus(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOrderStatus;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  updatePackageFoodOrder(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updatePackageFoodOrder;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  createDailyPackageOrder(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.createDailyPackageOrder;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  getOutletOrdersByCustomerId(id:any, page:any, limit:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletOrdersByCustomerId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}/${page}/${limit}`, method: urlObj.method });
+  }
+  userRewardsPointsHistory(id:any, page:any, limit:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.userRewardsPointsHistory;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}/${page}/${limit}`, method: urlObj.method });
+  }
+  getWalletBalance(id:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getWalletBalance;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  depositeInWallet(id:any, body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.depositeInWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+  withdrawFromWallet(id:any, body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.withdrawFromWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+  checkUserWallet(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.checkUserWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
 }

@@ -1,0 +1,40 @@
+<div class="bgpadding2 user-partner-details">
+  <div class="text-center">
+    <h4 class="header1 mb-4 fw-bold">User Details</h4>
+  </div>
+
+  <div class="row details align-items-start mb-4">
+    <div class="col-12 col-md-2 text-center mb-3 mb-md-0">
+      <img [src]="imageUrl || 'assets/images/dummyUpload.png'" class="userImage rounded-circle" alt="User Image" />
+    </div>
+
+    <div class="col-12 col-md-10">
+      <div class="row">
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <div class="labelText">User Name</div>
+          <div class="labelData">{{ userDetails?.userName || '-' }}</div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <div class="labelText">Phone No</div>
+          <div class="labelData">{{ userDetails?.phoneNo || '-' }}</div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <div class="labelText">Email</div>
+          <div class="labelData">{{ userDetails?.email || '-' }}</div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <div class="labelText">Employee Info</div>
+          <div class="labelData">{{ userDetails?.employeeInfo?.org_name || '-' }} | {{userDetails?.employeeInfo?.empId || '-'}}</div>
+        </div>
+
+        <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
+          <div class="labelText">Referral Code</div>
+          <div class="labelData">{{ userDetails.referralCode || '-' }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

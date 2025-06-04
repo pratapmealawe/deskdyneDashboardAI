@@ -20,6 +20,8 @@ export class OrgDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    console.log(this.orgObj);
+    
   }
 
   editOrg() {
