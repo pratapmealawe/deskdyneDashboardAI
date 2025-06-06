@@ -103,8 +103,6 @@ export class OrgBulkOrderHistoryComponent implements OnInit, OnChanges {
         this.searchObj
       );
 
-      console.log(data);
-      
 
       this.initialOrdersData = data
 

@@ -1,0 +1,65 @@
+<div class="container-fluid">
+    <div class="row bg-light rounded py-3 my-4">
+        <div class="col-md-3">
+            <label class="labelText">From Date</label>
+            <input type="date" [(ngModel)]="fromDate" class="form-control" />
+        </div>
+
+        <div class="col-md-3">
+            <label class="labelText">To Date</label>
+            <input type="date" [(ngModel)]="toDate" class="form-control" />
+        </div>
+
+        <div class="col-md-3 pt-4">
+            <button (click)="getPastOrdersByDate()" class="btn btn-primary">Submit</button>
+        </div>
+    </div>
+    <div *ngIf="pastOrderList.length >0 ">
+        <div class="row mb-3">
+            <div class="col-lg-3">
+                <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel
+                    Export</button>
+            </div>
+            <div class="col-lg-6"></div>
+            <div class="col-lg-3">
+                <button (click)="changeDataView()" class="btn iconBtn " *ngIf="!isShowChart"><i
+                        class="bi bi-graph-down"></i></button>
+                <button (click)="changeDataView()" class="btn iconBtn " *ngIf="isShowChart"><i
+                        class="bi bi-table"></i></button>
+            </div>
+        </div>
+        <ng-container *ngIf="!isShowChart">
+
+            <ul *ngFor="let order of pastOrderList" class="list-group">
+                <li class="list-group-item">
+                    <app-order-card [order]="order"></app-order-card>
+                </li>
+            </ul>
+        </ng-container>
+        <div class="row my-1" *ngIf="isShowChart">
+            <div class="col-12">
+                <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
+                    <highcharts-chart *ngIf="pastOrderList.length > 0" [Highcharts]="Highcharts"
+                        [options]="chartOptions" [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
+                        style="width: 100%; height: 400px; display: block">
+                    </highcharts-chart>
+
+                    <div class="h-100 d-flex justify-content-center align-items-center pt-2">
+                        <p *ngIf="pastOrderList.length <= 0">No Data Found</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="pastOrderList.length <= 0 ">
+        <p>No Orders Found</p>
+    </div>
+    <!-- <div class="chartDiv" *ngIf="orders.length > 0 ">
+    <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions"
+      style="width: 100%; height: 400px; display: block;">
+    </highcharts-chart>
+  </div>
+  <div *ngIf="orders.length <=0">
+    No data available for graph.
+  </div> -->
+</div>

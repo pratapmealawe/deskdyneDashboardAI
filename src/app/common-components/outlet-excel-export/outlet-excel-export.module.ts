@@ -5,6 +5,7 @@ import { OutletExcelExportRoutingModule } from './outlet-excel-export-routing.mo
 import { OutletExcelExportComponent } from './outlet-excel-export.component';
 import { FormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { OrderCardModule } from 'src/app/order-card/order-card.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { HighchartsChartModule } from 'highcharts-angular';
     CommonModule,
     FormsModule,
     OutletExcelExportRoutingModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    OrderCardModule
   ],
   providers: [DatePipe]
 })
