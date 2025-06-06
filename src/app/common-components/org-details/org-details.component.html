@@ -4,7 +4,7 @@
   (click)="editOrg()"
   >EDIT</span
 >
-<div class="row">
+<div class="row pb-4">
   <div class="col-12  mb-3">
     <div class="row">
       <div class="col-6 col-md-5 col-lg-4">
@@ -18,7 +18,7 @@
     </div>
   </div>
 
-  <div class="col-12  bg-light card py-4 px-2">
+  <div class="col-12 mb-4 bg-light card py-4 px-2">
     <h5>POC :</h5>
     <div class="row" *ngFor="let poc of orgObj.poc_details; let last = last">
       <div class=" col-4">
@@ -32,6 +32,31 @@
       <div class=" col-4">
         <div class="labelText">Phone No</div>
         <div class="labelData">{{ poc.poc_phoneNo }}</div>
+      </div>
+      <div *ngIf="!last" class="hr"></div>
+    </div>
+  </div>
+
+  <div class="col-12  bg-light card py-4 px-2" *ngIf="filteredOutletList.length > 0">
+    <h5>Cafeteria :</h5>
+    <div class="row" *ngFor="let cafe of filteredOutletList; let last = last">
+      <div class="col-4">
+        <div class="labelText">Name</div>
+        <div class="labelData">{{ cafe?.cafeteria_name }}</div>
+      </div>
+      <div class=" col-4">
+        <div class="labelText">Address</div>
+        <div class="labelData">{{ cafe?.address1 }}, {{cafe?.address2}}</div>
+      </div>
+      <div class=" col-4">
+        <div class="labelText">Location - City</div>
+        <div class="labelData">{{cafe?.location}} - {{ cafe?.cafeteria_city }}</div>
+      </div>
+      <div class="col-12 outletsDiv" *ngIf="cafe.outlets.length > 0">
+        <h6 >Outlets :</h6>
+        <div *ngFor="let outlet of cafe.outlets">
+          <span>{{outlet?.outletName}}</span>
+        </div>
       </div>
       <div *ngIf="!last" class="hr"></div>
     </div>

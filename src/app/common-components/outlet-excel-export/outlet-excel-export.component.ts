@@ -37,34 +37,7 @@ export class OutletExcelExportComponent implements OnInit {
   orderStatusMapper: any = orderStatusMapper
 
   // Chart
-  chartOptionsPie: Highcharts.Options = {
-    chart: {
-      type: 'pie',
-    },
-    title: {
-      text: 'Outlet Orders',
-    },
-    tooltip: {
-      pointFormat: '<small>Count</small>: <b>{point.count}</b>',
-    },
-    plotOptions: {
-      pie: {
-        allowPointSelect: true,
-        cursor: 'pointer',
-        dataLabels: {
-          enabled: true,
-          format: '{point.name}: {point.percentage:.1f}%',
-        },
-      },
-    },
-    series: [
-      {
-        type: 'pie',
-        name: 'Percentage',
-        data: [],
-      },
-    ],
-  };
+  chartOptions!: Highcharts.Options;
 
   updateStatusFlag: boolean = false;
   oneToOneStatusFlag: boolean = true;
@@ -183,32 +156,84 @@ export class OutletExcelExportComponent implements OnInit {
     }
   }
 
+  private processOrdersData(data: Array<{ orderDate: string; orderstatus: string }>) {
+    const dateStatusMap: Record<string, Record<string, number>> = {};
+
+    data.forEach((item) => {
+      const dateOnly = new Date(item.orderDate).toISOString().slice(0, 10);
+      const status = item.orderstatus;
+
+      if (!dateStatusMap[dateOnly]) {
+        dateStatusMap[dateOnly] = {};
+      }
+      if (!dateStatusMap[dateOnly][status]) {
+        dateStatusMap[dateOnly][status] = 0;
+      }
+      dateStatusMap[dateOnly][status]++;
+    });
+
+    const categories = Object.keys(dateStatusMap).sort((a, b) =>
+      a < b ? -1 : a > b ? 1 : 0
+    );
+
+    const statusSet = new Set<string>();
+    Object.values(dateStatusMap).forEach((statusCounts) => {
+      Object.keys(statusCounts).forEach((st) => statusSet.add(st));
+    });
+    const statuses = Array.from(statusSet).sort();
+
+    const series = statuses.map((status) => {
+      const dataArray = categories.map((d) => {
+        return dateStatusMap[d]?.[status] ?? 0;
+      });
+      return {
+        name: status,
+        data: dataArray,
+        stack: 'orders'
+      };
+    });
+
+    return { categories, series };
+  }
+
   generateChartData() {
     let data: any = this.filteredOrderList
 
-    const statusCounts = data.reduce((acc: Record<string, number>, order: any) => {
-      const status = order.orderstatus;
-      acc[status] = (acc[status] || 0) + 1;
-      return acc;
-    }, {});
+    const { categories, series } = this.processOrdersData(data);
 
-    const totalOrders = data.length;
-
-    const formattedData = Object.keys(statusCounts).map(status => ({
-      name: status,
-      y: +(statusCounts[status] / totalOrders * 100).toFixed(2),
-      count: statusCounts[status]
-    }));
-
-    this.chartOptionsPie = {
-      ...this.chartOptionsPie,
-      series: [
-        {
-          type: 'pie',
-          name: 'Order Status %',
-          data: formattedData
+    this.chartOptions = {
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: 'Orders by Date and Status',
+        align: 'left'
+      },
+      xAxis: {
+        categories: categories,
+        labels: {
+          useHTML: true,
+          formatter: function () {
+            return `<span title="${this.value}">${this.value}</span>`;
+          }
         }
-      ]
+      },
+      yAxis: {
+        allowDecimals: false,
+        min: 0,
+        title: {
+          text: 'Number of Orders'
+        }
+      },
+      tooltip: {
+        pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+      },
+      plotOptions: {
+        column: {
+          stacking: 'normal'
+        }
+      },
+      series: series as Highcharts.SeriesOptionsType[]
     };
 
     this.isShowChart = true

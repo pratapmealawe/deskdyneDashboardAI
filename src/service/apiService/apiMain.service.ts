@@ -1347,4 +1347,8 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.checkUserWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
+  fetchPastOutletOrdersbysearchObj(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchPastOutletOrdersbysearchObj;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+  }
 }

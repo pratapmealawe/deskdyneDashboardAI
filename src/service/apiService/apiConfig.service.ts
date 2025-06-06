@@ -604,6 +604,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/checkUserWallet`,
         method: 'POST'
       },
+      fetchPastOutletOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchPastOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
     };
   }
 }

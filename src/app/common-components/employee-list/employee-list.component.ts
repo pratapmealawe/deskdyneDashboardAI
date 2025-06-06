@@ -3,6 +3,7 @@ import { ApiMainService } from "src/service/apiService/apiMain.service";
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormArray } from "@angular/forms";
 import { ExcelService } from "src/service/excel.service";
+import { ToasterService } from "src/app/toaster/toaster.service";
 
 @Component({
     selector: 'app-employee-list',
@@ -38,7 +39,7 @@ export class EmployeeListComponent {
     uploadEmployeeObj: any;
     uploadedFile: any;
     fileName: any
-    constructor(private ddApiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder) {
+    constructor(private ddApiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder,private toasterService: ToasterService) {
     }
 
     ngOnInit() {
@@ -142,6 +143,7 @@ export class EmployeeListComponent {
             }
         } catch (error) {
             console.log(error);
+            // this.toasterService.error("Something went wrong please try again")
         }
         this.getEmployeeListByOrgId();
         this.showMultipleEmployeeForm = false;

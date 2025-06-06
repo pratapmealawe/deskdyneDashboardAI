@@ -44,7 +44,7 @@
         </div>
     </div>
 
-    <div *ngIf="filteredOrderList.length > 0">
+    <div *ngIf="filteredOrderList.length > 0" class="pb-4">
         <div class="row">
             <div class="col-lg-3">
                 <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel
@@ -59,50 +59,17 @@
             </div>
         </div>
         <ng-container *ngIf="!isShowChart">
-            <div *ngFor="let order of filteredOrderList" class="cardDesign my-1">
-                <div class="row w-full">
-                    <div class="col-md-2">
-                        <div class="labelText">Order No</div>
-                        <div class="labelData">{{ order?.orderNo }}</div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="labelText">Customer Name</div>
-                        <div class="labelData">{{ order?.customerName }}</div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="labelText">Date</div>
-                        <div class="labelData">
-                            {{ order?.orderDate | date : "dd/MM/yyyy" }}
-                        </div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="labelText">Type</div>
-                        <div class="labelData">{{ order?.orderType }}</div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="labelText">Amount</div>
-                        <div class="labelData">&#8377; {{ order?.itemAmount }}</div>
-                    </div>
-                    <div class="col-md-2" *ngIf="order.subsidyAmount">
-                        <div class="labelText">Subsidy Amount</div>
-                        <div class="labelData">&#8377; {{ order?.subsidyAmount }}</div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="labelText">Paid Amount</div>
-                        <div class="labelData">&#8377; {{ order?.amount }}</div>
-                    </div>
-                    <div class="col-md-2">
-                        <div class="labelText">Status</div>
-                        <div class="labelData">{{ orderStatusMapper[order?.orderstatus] }}</div>
-                    </div>
-                </div>
-            </div>
+            <ul *ngFor="let order of filteredOrderList" class="list-group">
+                <li class="list-group-item">
+                    <app-order-card [order]="order"></app-order-card>
+                </li>
+            </ul>
         </ng-container>
         <div class="row my-1" *ngIf="isShowChart">
             <div class="col-12">
                 <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
                     <highcharts-chart *ngIf="filteredOrderList.length > 0" [Highcharts]="Highcharts"
-                        [options]="chartOptionsPie" [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
+                        [options]="chartOptions" [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
                         style="width: 100%; height: 400px; display: block">
                     </highcharts-chart>
 
