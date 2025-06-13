@@ -142,8 +142,6 @@ export class OutletExcelExportComponent implements OnInit {
       };
     })
 
-    console.log(exportData);
-
     this.excelService.download(exportData, `outlet_order_${this.filterObj.fromDate}_TO_${this.filterObj.toDate}`)
   }
 
@@ -156,7 +154,7 @@ export class OutletExcelExportComponent implements OnInit {
     }
   }
 
-  private processOrdersData(data: Array<{ orderDate: string; orderstatus: string }>) {
+   processOrdersData(data: Array<{ orderDate: string; orderstatus: string }>) {
     const dateStatusMap: Record<string, Record<string, number>> = {};
 
     data.forEach((item) => {

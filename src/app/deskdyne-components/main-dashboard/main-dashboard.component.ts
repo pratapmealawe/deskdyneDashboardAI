@@ -113,6 +113,8 @@ export class MainDashboardComponent implements OnInit {
     subscriptionCount: 0,
   }
 
+  bulkOrders: any[] = []
+
   constructor(private apiMainService: ApiMainService) {
     this.dateGroup = new FormGroup({
       start: new FormControl(new Date()),
@@ -131,6 +133,7 @@ export class MainDashboardComponent implements OnInit {
     this.getOrdersCount()
     this.getPieChartData()
     this.getPieChartDataSub()
+    this.getBulkOrdersByDate()
   }
 
 
@@ -146,9 +149,18 @@ export class MainDashboardComponent implements OnInit {
   async getOrdersCount() {
     try {
       const data = await this.apiMainService.getTotalCounts(this.searchObj)
-      console.log(data);
 
       this.totalCounts = data
+    } catch (err: any) {
+      console.log("order count err", err);
+    }
+  }
+
+  async getBulkOrdersByDate() {
+    try {
+      const data = await this.apiMainService.getBulkOrdersByDate(this.searchObj)
+
+      this.bulkOrders = data
     } catch (err: any) {
       console.log("order count err", err);
     }
@@ -158,8 +170,6 @@ export class MainDashboardComponent implements OnInit {
     try {
       let data = await this.apiMainService.getTotalOrdersStatusWiseData(this.searchObj);
 
-      console.log(data);
-      
       this.initialStatusData = data;
 
       const formattedData = data.map((item: any) => ({
@@ -189,8 +199,6 @@ export class MainDashboardComponent implements OnInit {
     try {
       let data = await this.apiMainService.getTotalSubOrdersStatusWiseData(this.searchObj);
 
-      console.log(data);
-      
       this.initialStatusDataSub = data;
 
       const formattedData = data.map((item: any) => ({

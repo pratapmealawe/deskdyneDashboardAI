@@ -544,6 +544,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getTotalOrdersStatusWiseData`,
         method: 'POST'
       },
+      getOrgTotalOrdersStatusWiseData: {
+        url: `${this.baseUrl}/api/getOrgTotalOrdersStatusWiseData`,
+        method: 'POST'
+      },
       getTotalSubOrdersStatusWiseData: {
         url: `${this.baseUrl}/api/getTotalSubOrdersStatusWiseData`,
         method: 'POST'
@@ -608,6 +612,27 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/fetchPastOutletOrdersbysearchObj`,
         method: 'POST'
       },
+      getOrg: {
+        url: `${this.baseUrl}/api/getOrg`,
+        method: 'GET'
+      },
+      getStaticTotalCountsByOrg: {
+        url: `${this.baseUrl}/api/getStaticTotalCountsByOrg`,
+        method: 'GET'
+      },
+      searchOutletByCafeId: {
+        url: `${this.baseUrl}/api/searchOutletByCafeId`,
+        method: 'GET'
+      },
+      getTotalCountsByOrgId: {
+        url: `${this.baseUrl}/api/getTotalCountsByOrgId`,
+        method: 'POST'
+      },
+      getBulkOrdersByDate: {
+        url: `${this.baseUrl}/api/getBulkOrdersByDate`,
+        method: 'POST'
+      },
+
     };
   }
 }

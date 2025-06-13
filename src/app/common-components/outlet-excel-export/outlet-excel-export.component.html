@@ -6,7 +6,7 @@
     </div>
 
     <div class="container">
-        <div class="row mb-4 mt-2 p-3 bg-light rounded">
+        <div class="row mb-4 mt-2 p-3 bg-light rounded ">
             <div class="col-md-3">
                 <label class="labelText">Organization</label>
                 <select class="form-select" [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin.role === 'ORGADMIN'"
@@ -45,7 +45,7 @@
     </div>
 
     <div *ngIf="filteredOrderList.length > 0" class="pb-4">
-        <div class="row">
+        <div class="row mb-4">
             <div class="col-lg-3">
                 <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel
                     Export</button>

@@ -1,19 +1,10 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import * as Highcharts from 'highcharts';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 
-interface SearchObj {
-  orgId: string;
-  time: 'today' | 'week' | 'month' | '3month' | '6month';
-  status:
-    | 'paymentInprogress'
-    | 'paymentFailed'
-    | 'placed'
-    | 'completed'
-    | 'cancelled';
-  type: string;
-}
+
 
 @Component({
   selector: 'app-org-menu-items',
@@ -24,102 +15,146 @@ export class OrgMenuItemsComponent implements OnInit, OnChanges {
   Highcharts: typeof Highcharts = Highcharts;
 
   @Input() adminOrg: any
-  
 
-  timeArray = ['today', 'week', 'month', '3month', '6month'];
+  maxDate: Date = new Date();
 
-  chartOptions: Highcharts.Options = {
-    chart: {
-      type: 'pie',
-    },
-    title: {
-      text: '',
-    },
-    tooltip: {
-      // valueSuffix: '%',
-      // valueDecimals: 1,
-      pointFormat: '<small>Count</small>: <b>{point.count}</b>',
-    },
-    plotOptions: {
-      pie: {
-        allowPointSelect: true,
-        cursor: 'pointer',
-        dataLabels: {
-          enabled: true,
-          format: '{point.name}: {point.percentage:.1f}%',
-        },
-        showInLegend: true,
-      },
-    },
-    series: [
-      {
-        type: 'pie',
-        name: 'Percentage',
-        data: [], // Initially empty, will be updated with API data
-      },
-    ],
-  };
+
 
   updateFlag: boolean = false;
   oneToOneFlag: boolean = true;
 
   orgAdmin: any;
-  searchObj: SearchObj = {
-    orgId: '',
-    time: '6month',
-    status: 'completed',
-    type: 'salesByMenuItems',
-  };
 
   initialData: any[] = [];
+
+  dateGroup!: FormGroup;
+
+  chartOptions!: Highcharts.Options;
+  updateOrdersFlag: boolean = false;
+  oneToOneOrdersFlag: boolean = true;
+
+  cafeteria_id: any
+  cafeList: any[] = []
+  orgDetails: any
+  outletOrderData: any[] = []
 
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService
-  ) {}
+  ) {
+    this.dateGroup = new FormGroup({
+      start: new FormControl(new Date()),
+      end: new FormControl(new Date()),
+    });
+  }
 
   ngOnInit(): void {
     this.initFunc()
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-      if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
-        this.initFunc()
-      }
+    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+      this.initFunc()
+    }
   }
 
   initFunc() {
-    this.orgAdmin = this.adminOrg ? {orgDetails : this.adminOrg}  : this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.getChartData();
+    this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.getOrgDetailsById();
+    this.maxDate.setDate(this.maxDate.getDate());
+    this.maxDate.setHours(23, 59, 59, 999);
+    this.fetchData()
   }
 
-  async getChartData() {
-    this.searchObj.orgId = this.orgAdmin?.orgDetails?._id;
+  buildPayload() {
+    return {
+      startDate: this.dateGroup.value.start,
+      endDate: this.dateGroup.value.end,
+      orgId: this.orgAdmin.orgDetails._id,
+      cafeteria_name: this.cafeList.find(c => c.cafeteria_id === this.cafeteria_id)
+        ?.cafeteria_name,
+    };
+  }
+
+  async getOrgDetailsById() {
     try {
-      let data = await this.apiMainService.getChartData(this.searchObj);
-
-      this.initialData = data;
-
-      const formattedData = data.map((item: any) => ({
-        name: item.itemName,
-        y: item.percentage,
-        count: item.totalCount,
-      }));
-
-      this.chartOptions = {
-        ...this.chartOptions,
-        series: [
-          {
-            type: 'pie',
-            name: 'Percentage',
-            data: formattedData,
-          },
-        ],
-      };
-
-      this.updateFlag = true;
-    } catch (err) {
-      console.error('Error fetching chart data:', err);
+      const res = await this.apiMainService.getOrg(this.orgAdmin?.orgDetails?._id)
+      this.orgDetails = res
+      if (res?.cafeteriaList.length > 0) {
+        this.cafeList = res?.cafeteriaList
+        this.cafeteria_id = this.cafeList[0]?.cafeteria_id
+      }
+    } catch (err: any) {
+      console.log(err);
     }
+  }
+
+  async getOrgTotalOrdersStatusWiseData() {
+    const data = this.buildPayload()
+    try {
+      const res = await this.apiMainService.getOrgTotalOrdersStatusWiseData(data)
+      console.log(res);
+
+      this.outletOrderData = res
+      if (res.length > 0) {
+        this.generateChartData(res)
+      }
+    } catch (err: any) {
+      console.log(err)
+    }
+  }
+
+  async generateChartData(data: any) {
+  const itemData: any = {};
+
+  data.forEach((order: any) => {
+    if (order?.orderstatus === 'completed') {
+      order.itemList.forEach((item: any) => {
+        if (!itemData[item.itemName]) {
+          itemData[item.itemName] = {
+            count: 0,
+            totalAmount: 0,
+            totalSubsidy: 0
+          };
+        }
+
+        itemData[item.itemName].count += item.count;
+        itemData[item.itemName].totalAmount += item.price * item.count;
+      });
+    }
+  });
+
+  const chartData = Object.keys(itemData).map(itemName => {
+    const item = itemData[itemName];
+    return {
+      name: itemName,
+      y: item.totalAmount, 
+      count: item.count, 
+    };
+  });
+
+  this.chartOptions = {
+    chart: {
+      type: 'pie' 
+    },
+    title: {
+      text: 'Item Distribution by Total Amount (Completed Orders)'
+    },
+    tooltip: {
+      pointFormat: '{series.name}: <b>₹{point.y}</b> (Count: {point.count})'
+    },
+    series: [{
+      type: 'pie', 
+      name: 'Total',
+      data: chartData
+    }]
+  };
+
+  this.updateOrdersFlag = !this.updateOrdersFlag;  
+}
+
+
+  fetchData() {
+    this.getOrgTotalOrdersStatusWiseData()
   }
 }

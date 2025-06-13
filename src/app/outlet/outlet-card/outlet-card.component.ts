@@ -17,6 +17,8 @@ export class OutletCardComponent implements OnInit {
   constructor(private policyService: PolicyService) {}
 
   ngOnInit(): void {
+    console.log(this.outlet);
+    
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
   }
 

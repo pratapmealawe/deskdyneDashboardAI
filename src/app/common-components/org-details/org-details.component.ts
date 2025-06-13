@@ -14,6 +14,7 @@ export class OrgDetailsComponent implements OnInit {
   btnPolicy: any;
   outltList: any[] = []
   filteredOutletList: any[] = []
+  vendorList: any[] = []
   constructor(
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
@@ -23,7 +24,7 @@ export class OrgDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    // console.log(this.orgObj);
+    console.log(this.orgObj);
     this.getOutlets()
   }
 
@@ -35,21 +36,50 @@ export class OrgDetailsComponent implements OnInit {
       const res = await this.apiMainService.searchOutletByOrgId(searchObj)
       // console.log(res);
       this.outltList = res
+      this.getVendors()
+
+    } catch (err: any) {
+      console.log(err);
+    }
+  }
+
+  async getVendors() {
+    const searchObj = {
+      orgId: this.orgObj?._id
+    }
+    try {
+      const res = await this.apiMainService.searchVendorByOrgId(searchObj)
+      this.vendorList = res
       this.getMatchedOutlets()
     } catch (err: any) {
       console.log(err);
     }
   }
 
-  async getMatchedOutlets() {
-    const merged = this.orgObj?.cafeteriaList.map((cafe: any) => ({
-      ...cafe,
-      outlets: this.outltList.filter(o => o.cafeteriaDetails.cafeteria_name === cafe.cafeteria_name)
-    }));
+ async getMatchedOutlets() {
+  const merged = this.orgObj?.cafeteriaList.map((cafe: any) => ({
+    ...cafe,
+    outlets: this.outltList.filter(o => o.cafeteriaDetails.cafeteria_name === cafe.cafeteria_name)
+  }));
 
-    this.filteredOutletList = merged
-    console.log(merged);
-  }
+  // Now, associate vendors with each outlet in the merged data
+  merged.forEach((cafeteria: any) => {
+    cafeteria.outlets.forEach((outlet: any) => {
+      // Find the vendors associated with the outlet
+      outlet.vendors = this.getVendorsForOutlet(outlet._id);
+    });
+  });
+
+  this.filteredOutletList = merged;
+  console.log(merged);
+}
+
+getVendorsForOutlet(outletId: string) {
+  // Find vendors for the specific outletId
+  return this.vendorList.filter((vendor: any) =>
+    vendor.outletList.some((outlet: any) => outlet.outletId === outletId)
+  ) || [];
+}
 
   editOrg() {
     this.runtimeStorageService.setCacheData('VIEW_ORG', this.orgObj);
