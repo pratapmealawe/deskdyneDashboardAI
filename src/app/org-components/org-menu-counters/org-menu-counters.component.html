@@ -9,9 +9,25 @@
       </h3>
     </div>
 
+
+  </div>
+
+  <div class="row mb-4 mt-3 p-3 bg-light rounded">
     <div class="col-md-4">
-      <input type="text" (input)="searchFilter($event)" class="form-control"
-        [placeholder]="selectedOutlet ? 'Search Menu...' : 'Search Outlets...'" aria-label="Search Filter" />
+      <label class="labelText">Cafeteria</label>
+      <select [disabled]="selectedOutlet" class="form-select" [(ngModel)]="cafeteria_id" (change)="fetchData()">
+        <option selected disabled value="">Select Cafeteria</option>
+        <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
+          {{ option.cafeteria_name }}
+        </option>
+      </select>
+    </div>
+    <div class="col-md-4">
+        <label class="labelText">Search</label>
+        <div class="searchDiv">
+          <i class="bi bi-search"></i>
+          <input type="text" class="form-control" (input)="searchFilter($event)" [placeholder]="selectedOutlet ? 'Search Menu...' : 'Search Outlets...'" />
+        </div>
     </div>
   </div>
 

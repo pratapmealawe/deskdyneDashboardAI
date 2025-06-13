@@ -7,7 +7,16 @@
 
 .outletsDiv {
     padding: 8px 24px;
-    h6, span{
+    h6, li{
         color: #757575;
+    }
+}
+
+.vendorDetails {
+    ul {
+        li {
+            font-size: 0.8rem;
+            color: #535252;
+        }
     }
 }

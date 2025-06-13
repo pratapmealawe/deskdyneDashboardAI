@@ -1,9 +1,5 @@
-<span
-  class="right btn-danger btn-sm pointer right"
-  *ngIf="true || btnPolicy?.editOrganization"
-  (click)="editOrg()"
-  >EDIT</span
->
+<span class="right btn-danger btn-sm pointer right" *ngIf="true || btnPolicy?.editOrganization"
+  (click)="editOrg()">EDIT</span>
 <div class="row pb-4">
   <div class="col-12  mb-3">
     <div class="row">
@@ -53,10 +49,17 @@
         <div class="labelData">{{cafe?.location}} - {{ cafe?.cafeteria_city }}</div>
       </div>
       <div class="col-12 outletsDiv" *ngIf="cafe.outlets.length > 0">
-        <h6 >Outlets :</h6>
-        <div *ngFor="let outlet of cafe.outlets">
-          <span>{{outlet?.outletName}}</span>
-        </div>
+        <h6>Outlets :</h6>
+        <ol *ngFor="let outlet of cafe.outlets">
+          <li>{{outlet?.outletName}}</li>
+
+          <div class="vendorDetails" *ngIf="outlet.vendors.length > 0">
+            <ul >
+              <li *ngFor="let vendor of outlet.vendors">{{vendor?.vendorName}} - {{vendor?.vendorEmail}}, {{vendor?.vendorPhoneNo}}</li>
+            </ul>
+          </div>
+
+        </ol>
       </div>
       <div *ngIf="!last" class="hr"></div>
     </div>

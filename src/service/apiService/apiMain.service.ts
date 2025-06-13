@@ -493,6 +493,12 @@ export class ApiMainService {
       searchObj
     );
   }
+  searchOutletByCafeId(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.searchOutletByCafeId;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+    );
+  }
 
   lastsevendaysorderdaywisecount(searchObj: any) {
     const urlObj =
@@ -1287,6 +1293,10 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.getTotalOrdersStatusWiseData;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
+  getOrgTotalOrdersStatusWiseData( body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOrgTotalOrdersStatusWiseData;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
   getTotalSubOrdersStatusWiseData( body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getTotalSubOrdersStatusWiseData;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
@@ -1350,5 +1360,21 @@ export class ApiMainService {
   fetchPastOutletOrdersbysearchObj(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchPastOutletOrdersbysearchObj;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+  }
+  getOrg(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOrg;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  getStaticTotalCountsByOrg(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getStaticTotalCountsByOrg;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  getTotalCountsByOrgId(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTotalCountsByOrgId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  getBulkOrdersByDate(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getBulkOrdersByDate;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
 }

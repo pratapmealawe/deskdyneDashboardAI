@@ -95,8 +95,6 @@ export class AddAdminComponent {
       
       if (this.adminObj.role == 'ORGADMIN') {
         this.selectedValue = cacheAdmin.orgDetails._id;
-        this.selectedCafeId = cacheAdmin.cafeDetails.cafeteria_id;
-
         this.setOrgDetails();
       }
       if (this.adminObj.role === 'SITEEXE') {
@@ -178,7 +176,6 @@ export class AddAdminComponent {
     }
     if (adminObj.role == 'ORGADMIN') {
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
-      formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
     }
     if (adminObj.role === 'SITEEXE') {
       let cafeList = this.orglist.flatMap((org: any) =>
@@ -252,7 +249,6 @@ export class AddAdminComponent {
     }
     if (adminObj.role == 'ORGADMIN') {
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
-      formData.append('cafeDetails', JSON.stringify(this.cafeDetails));
     }
     if (adminObj.role === 'SITEEXE') {
       let cafeList = this.orglist.flatMap((org: any) =>
@@ -341,14 +337,7 @@ export class AddAdminComponent {
     this.orgDetails = this.orglist.find((org: any) => {
       return org._id == this.selectedValue;
     });
-    // if (this.adminObj.policy == 'cafeteria Manager') {
-    this.setCafeDetails();
-    // }
   }
 
-  setCafeDetails() {
-    this.cafeDetails = this.orgDetails.cafeteriaList.find((org: any) => {
-      return org.cafeteria_id == this.selectedCafeId;
-    });
-  }
+  
 }
