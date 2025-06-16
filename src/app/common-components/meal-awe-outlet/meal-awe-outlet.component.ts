@@ -3,6 +3,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
+import { MlApiMainService } from 'src/service/apiService/mlApiMain.service';
 
 @Component({
   selector: 'app-meal-awe-outlet',
@@ -30,6 +31,7 @@ export class MealAweOutletComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
+    private mlApiMainService: MlApiMainService,
     private modalService: NgbModal,
     private router: Router
   ) {}
@@ -71,7 +73,7 @@ export class MealAweOutletComponent implements OnInit {
 
   async getFooditemList() {
     try {
-      let mealPackageList = await this.apiMainService.getMealPackageList();
+      let mealPackageList = await this.mlApiMainService.getMealPackageList();
       mealPackageList = [...mealPackageList].map((ele) => {
         ele.selected = false;
         return ele;
