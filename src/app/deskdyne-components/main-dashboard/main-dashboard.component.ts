@@ -18,6 +18,8 @@ interface DashboardCounts {
 interface TotalCounts {
   ordersCount: number;
   subscriptionCount: number;
+  outletTotalAmount: number;
+  subscriptionTotalAmount: number;
 }
 
 @Component({
@@ -111,6 +113,8 @@ export class MainDashboardComponent implements OnInit {
   totalCounts: TotalCounts = {
     ordersCount: 0,
     subscriptionCount: 0,
+    outletTotalAmount: 0,
+    subscriptionTotalAmount: 0,
   }
 
   bulkOrders: any[] = []
@@ -149,7 +153,8 @@ export class MainDashboardComponent implements OnInit {
   async getOrdersCount() {
     try {
       const data = await this.apiMainService.getTotalCounts(this.searchObj)
-
+      console.log(data);
+      
       this.totalCounts = data
     } catch (err: any) {
       console.log("order count err", err);

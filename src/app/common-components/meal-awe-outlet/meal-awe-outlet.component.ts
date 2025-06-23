@@ -13,7 +13,7 @@ import { MlApiMainService } from 'src/service/apiService/mlApiMain.service';
 export class MealAweOutletComponent implements OnInit {
   @Input() orgObj: any;
   @ViewChild('content') content: any;
-  serverUrl = environment.imageUrl;
+  serverUrl = environment.mlImageUrl;
   mealPackageList: any = [];
   mealAweOutlet: any;
   showMoreAddons: boolean = true;

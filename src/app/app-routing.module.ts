@@ -109,7 +109,6 @@ const routes: Routes = [
   {
     path: 'addPolicy',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./policy/add-policy/add-policy.module').then(
         (m) => m.AddPolicyModule
@@ -118,9 +117,14 @@ const routes: Routes = [
   {
     path: 'currentOrder',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./orders/orders.module').then((m) => m.OrdersModule),
+  },
+  {
+    path: 'outletMasterMenu',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./outlet-master-menu/outlet-master-menu.module').then((m) => m.OutletMasterMenuModule),
   },
   {
     path: 'searchOrder',

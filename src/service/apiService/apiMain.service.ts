@@ -1221,65 +1221,68 @@ export class ApiMainService {
   }
 
   outletEmployeeAdd(body:any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.outletEmployeeAdd;
-    return this.apiHttpService.REQUEST({
-      url: urlObj.url,
-      method: urlObj.method,
-    }, body);
+    const urlObj = this.apiConfigService.apiEndPointObj.outletEmployeeAdd;
+    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method}, body);
   }
 
   addOutletEmployeeList(body:any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.addOutletEmployeeList;
-    return this.apiHttpService.REQUEST({
-      url: urlObj.url,
-      method: urlObj.method,
-    }, body);
+    const urlObj = this.apiConfigService.apiEndPointObj.addOutletEmployeeList;
+    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method}, body);
   }
   
   outletEmployeeByOrgId(orgId: any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.outletEmployeeByOrgId;
-    return this.apiHttpService.REQUEST({
-      url: urlObj.url + `/${orgId}`,
-      method: urlObj.method,
-    });
+    const urlObj = this.apiConfigService.apiEndPointObj.outletEmployeeByOrgId;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${orgId}`, method: urlObj.method});
   }
 
   deleteOutletEmployee(id: any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.deleteOutletEmployee;
-    return this.apiHttpService.REQUEST({
-      url: urlObj.url + `/${id}`,
-      method: urlObj.method,
-    });
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteOutletEmployee;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method});
   }
 
   getOutletEmployeeByPhoneNo(phoneNo: any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.getOutletEmployeeByPhoneNo;
-    return this.apiHttpService.REQUEST({
-      url: urlObj.url + `/${phoneNo}`,
-      method: urlObj.method,
-    });
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletEmployeeByPhoneNo;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${phoneNo}`, method: urlObj.method});
   }
 
   updateOutletEmployee(id: any, body: any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.updateOutletEmployee;
-    return this.apiHttpService.REQUEST({
-      url: urlObj.url + `/${id}`,
-      method: urlObj.method,
-    }, body);
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOutletEmployee;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, body);
   }
+  vcEmployeeAdd(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.vcEmployeeAdd;
+    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method}, body);
+  }
+
+  addVcEmployeeList(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addVcEmployeeList;
+    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method}, body);
+  }
+  
+  vcEmployeeByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.vcEmployeeByOrgId;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${orgId}`, method: urlObj.method});
+  }
+
+  deleteVcEmployee(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteVcEmployee;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method});
+  }
+
+  getVcEmployeeByPhoneNo(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getVcEmployeeByPhoneNo;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${phoneNo}`, method: urlObj.method});
+  }
+
+  updateVcEmployee(id: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateVcEmployee;
+    return this.apiHttpService.REQUEST({url: urlObj.url + `/${id}`, method: urlObj.method}, body);
+  }
+
+
   fetchOutletOrdersbysearchObj( body: any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.fetchOutletOrdersbysearchObj;
-    return this.apiHttpService.REQUEST({
-      url: urlObj.url ,
-      method: urlObj.method,
-    }, body);
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchOutletOrdersbysearchObj;
+    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method}, body);
   }
   getStaticTotalCounts() {
     const urlObj = this.apiConfigService.apiEndPointObj.getStaticTotalCounts;

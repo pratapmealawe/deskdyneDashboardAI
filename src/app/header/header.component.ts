@@ -116,6 +116,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       imageblue: 'Feedback_Blue',
     },
     {
+      name: 'Outlet Master Menu',
+      showParent: true,
+      route: 'outletMasterMenu',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
+    },
+    {
       name: 'Incident Reporting',
       showParent: true,
       showBadge: true,

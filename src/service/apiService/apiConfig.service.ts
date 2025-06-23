@@ -528,6 +528,34 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/verifyOutletEmployeeByPhoneNo`,
         method: 'GET'
       },
+      vcEmployeeAdd: {
+        url: `${this.baseUrl}/api/vcEmployeeAdd`,
+        method: 'POST'
+      },
+      vcEmployeeByOrgId: {
+        url: `${this.baseUrl}/api/vcEmployeeByOrgId`,
+        method: 'GET'
+      },
+      addVcEmployeeList: {
+        url: `${this.baseUrl}/api/addVcEmployeeList`,
+        method: 'POST'
+      },
+      deleteVcEmployee: {
+        url: `${this.baseUrl}/api/deleteVcEmployee`,
+        method: 'DELETE'
+      },
+      updateVcEmployee: {
+        url: `${this.baseUrl}/api/updateVcEmployee`,
+        method: 'POST'
+      },
+      getVcEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/getVcEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      verifyVcEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/verifyVcEmployeeByPhoneNo`,
+        method: 'GET'
+      },
       fetchOutletOrdersbysearchObj: {
         url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
         method: 'POST'
