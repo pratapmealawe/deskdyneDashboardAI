@@ -8,7 +8,7 @@ import { SearchFilterService } from 'src/service/search-filter.service';
 
 interface filter {
   orgId: string;
-  cafeId: string;
+  cafeteria_id: string;
   fromDate: Date;
 }
 
@@ -28,7 +28,7 @@ export class SubmitChecklistComponent implements OnInit {
   orglist: any[] = [];
   filterObj: filter = {
     orgId: '',
-    cafeId: '',
+    cafeteria_id: '',
     fromDate: new Date(),
   };
   cafeList: any[] = [];
@@ -49,8 +49,6 @@ export class SubmitChecklistComponent implements OnInit {
     this.adminProfile = this.localStorageService.getCacheData('ADMIN_PROFILE');
 
     this.stateData = this.location.getState();
-
-    console.log(this.stateData);
 
     this.stateData?._id ? (this.editMode = true) : (this.editMode = false);
 
@@ -75,7 +73,7 @@ export class SubmitChecklistComponent implements OnInit {
 
       if (this.editMode) {
         this.filterObj.orgId = this.stateData.orgDetails._id;
-        this.filterObj.cafeId = this.stateData.cafeDetails._id;
+        this.filterObj.cafeteria_id = this.stateData.cafeDetails.cafeteria_id;
         this.setOrgDetails();
       }
       this.getReportHistoryByfilter();
@@ -96,11 +94,11 @@ export class SubmitChecklistComponent implements OnInit {
 
     this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
       this.adminProfile?.siteExecutiveDetails?.cafeDetails.some(
-        (a: any) => a._id === item._id
+        (a: any) => a.cafeteria_id === item.cafeteria_id
       )
     );
 
-    // !this.editMode && (this.filterObj.cafeId = '');
+    this.filterObj.cafeteria_id = '';
   }
 
   async getAllChecklistQuestions() {
@@ -175,7 +173,7 @@ export class SubmitChecklistComponent implements OnInit {
       );
     this.reportObj.cafeDetails =
       this.adminProfile.siteExecutiveDetails.cafeDetails.find(
-        (item: any) => item._id === this.filterObj.cafeId
+        (item: any) => item.cafeteria_id === this.filterObj.cafeteria_id
       );
     this.reportObj.SubmitedBy = this.adminProfile.name;
     this.reportObj.submitedUserId = this.adminProfile._id;
@@ -197,7 +195,7 @@ export class SubmitChecklistComponent implements OnInit {
       );
     this.reportObj.cafeDetails =
       this.adminProfile.siteExecutiveDetails.cafeDetails.find(
-        (item: any) => item._id === this.filterObj.cafeId
+        (item: any) => item.cafeteria_id === this.filterObj.cafeteria_id
       );
     this.reportObj.SubmitedBy = this.stateData?.SubmitedBy;
     this.reportObj.submitedUserId = this.stateData?.submitedUserId;
@@ -213,7 +211,7 @@ export class SubmitChecklistComponent implements OnInit {
   clear() {
     this.reportObj = {};
     this.filterObj = {
-      cafeId: '',
+      cafeteria_id: '',
       orgId: '',
       fromDate: new Date(),
     };

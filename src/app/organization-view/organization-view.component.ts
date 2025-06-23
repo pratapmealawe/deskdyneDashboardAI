@@ -1,6 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
-import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { PolicyService } from 'src/service/policy.service';
 
 @Component({
@@ -10,58 +8,67 @@ import { PolicyService } from 'src/service/policy.service';
 })
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  showBulkMenuSection: any = false;
+  @Output() back = new EventEmitter<boolean>();
 
   orgViewList = [
     { name: 'Org Details', path: 'orgDetails' },
-    { name: 'Bulk Menu Section', path: 'bulkMenuSection' },
+    {
+      name: 'Bulk Menu Section',
+      path: 'bulkMenuSection',
+      subTabs: [
+        { name: 'Bulk Meals Menu', path: 'bulkMealsMenu' },
+        { name: 'Individual Meals Menu', path: 'individualMealsMenu' },
+        { name: 'Bulk Snacks Menu', path: 'bulkSnacksMenu' },
+        { name: 'Individual Snacks Menu', path: 'individualSnacksMenu' },
+        { name: 'Pre-Defined Snack Box', path: 'predefinedSnackBoxMenu' },
+        { name: 'Customized Snack Box', path: 'customizedSnackBoxMenu' },
+      ]
+    },
     { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
     { name: 'B2B Weekly Menu', path: 'b2bWeeklyMenu' },
     { name: 'Employee List', path: 'employeeList' },
-    { name: 'Guest Employee List', path: 'guestEmployeeList' },
-    { name: 'Complience', path: 'organizationCompliance' },
+    { name: 'Outlet Employee', path: 'outletEmployee' },
+    { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
+    { name: 'Guest Employee', path: 'guestEmployeeList' },
+    { name: 'Compliance', path: 'organizationCompliance' },
   ];
-  oldList: any = [];
-  bulkObj = [
-    { name: 'Bulk Meals Menu', path: 'bulkMealsMenu' },
-    { name: 'Individual Meals Menu', path: 'individualMealsMenu' },
-    { name: 'Bulk Snacks Menu', path: 'bulkSnacksMenu' },
-    { name: 'Individual Snacks Menu', path: 'individualSnacksMenu' },
-    { name: 'Pre Defined Snack Box Menu', path: 'predefinedSnackBoxMenu' },
-    { name: 'Customized Snack Box Menu', path: 'customizedSnackBoxMenu' },
-  ];
-  selectedTab = 'orgDetails';
+
+  selectedTab: string = 'orgDetails';
+  selectedSubTab: string = '';
   btnPolicy: any;
 
-  constructor(private router: Router, private policyService: PolicyService) {}
+  constructor(private policyService: PolicyService) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-
-    this.orgViewList = this.orgViewList.filter(
-      (item) => this.btnPolicy[item.path] !== false && item
-    );
-
-    this.oldList = [...this.orgViewList];
+    this.orgViewList = this.orgViewList.filter(item => this.btnPolicy[item.path] !== false);
+    this.initSubTabFor(this.selectedTab);
   }
 
-  gotToTab(tab: string) {
-    if (tab === 'bulkMenuSection') {
-      this.showBulkMenuSection = !this.showBulkMenuSection;
-      if (this.showBulkMenuSection) {
-        this.orgViewList = [...this.orgViewList, ...this.bulkObj];
-        this.selectedTab = 'bulkMealsMenu';
-        return;
-      }
-      this.orgViewList = this.oldList;
-      this.selectedTab = 'orgDetails';
-      return;
-    }
+  gotToTab(tab: string): void {
     this.selectedTab = tab;
+    this.initSubTabFor(tab);
   }
 
-  goBack() {
+  goToSubTab(subPath: string): void {
+    this.selectedSubTab = subPath;
+  }
+
+  goBack(): void {
     this.back.emit(true);
+  }
+
+  getSubTab(): any[] {
+    const main = this.orgViewList.find(item => item.path === this.selectedTab);
+    return main?.subTabs || [];
+  }
+
+  private initSubTabFor(mainPath: string): void {
+    const main = this.orgViewList.find(item => item.path === mainPath);
+    if (main?.subTabs?.length) {
+      this.selectedSubTab = main.subTabs[0].path;
+    } else {
+      this.selectedSubTab = '';
+    }
   }
 }

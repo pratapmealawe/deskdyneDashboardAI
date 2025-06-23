@@ -499,7 +499,168 @@ export class ApiConfigService {
       getVendorListByOutletId: {
         url: `${this.baseUrl}/api/getVendorListByOutletId`,
         method: 'GET'
-      }
+      },
+      outletEmployeeAdd: {
+        url: `${this.baseUrl}/api/outletEmployeeAdd`,
+        method: 'POST'
+      },
+      outletEmployeeByOrgId: {
+        url: `${this.baseUrl}/api/outletEmployeeByOrgId`,
+        method: 'GET'
+      },
+      addOutletEmployeeList: {
+        url: `${this.baseUrl}/api/addOutletEmployeeList`,
+        method: 'POST'
+      },
+      deleteOutletEmployee: {
+        url: `${this.baseUrl}/api/deleteOutletEmployee`,
+        method: 'DELETE'
+      },
+      updateOutletEmployee: {
+        url: `${this.baseUrl}/api/updateOutletEmployee`,
+        method: 'POST'
+      },
+      getOutletEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/getOutletEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      verifyOutletEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/verifyOutletEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      vcEmployeeAdd: {
+        url: `${this.baseUrl}/api/vcEmployeeAdd`,
+        method: 'POST'
+      },
+      vcEmployeeByOrgId: {
+        url: `${this.baseUrl}/api/vcEmployeeByOrgId`,
+        method: 'GET'
+      },
+      addVcEmployeeList: {
+        url: `${this.baseUrl}/api/addVcEmployeeList`,
+        method: 'POST'
+      },
+      deleteVcEmployee: {
+        url: `${this.baseUrl}/api/deleteVcEmployee`,
+        method: 'DELETE'
+      },
+      updateVcEmployee: {
+        url: `${this.baseUrl}/api/updateVcEmployee`,
+        method: 'POST'
+      },
+      getVcEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/getVcEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      verifyVcEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/verifyVcEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      fetchOutletOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
+      getStaticTotalCounts: {
+        url: `${this.baseUrl}/api/getStaticTotalCounts`,
+        method: 'GET'
+      },
+      getTotalCounts: {
+        url: `${this.baseUrl}/api/getTotalCounts`,
+        method: 'POST'
+      },
+      getTotalOrdersStatusWiseData: {
+        url: `${this.baseUrl}/api/getTotalOrdersStatusWiseData`,
+        method: 'POST'
+      },
+      getOrgTotalOrdersStatusWiseData: {
+        url: `${this.baseUrl}/api/getOrgTotalOrdersStatusWiseData`,
+        method: 'POST'
+      },
+      getTotalSubOrdersStatusWiseData: {
+        url: `${this.baseUrl}/api/getTotalSubOrdersStatusWiseData`,
+        method: 'POST'
+      },
+      getCustomerProfileList: {
+        url: `${this.baseUrl}/api/getCustomerProfileList`,
+        method: 'GET'
+      },
+      getCustomerPastOrders: {
+        url: `${this.baseUrl}/api/getCustomerPastOrders`,
+        method: 'GET'
+      },
+      getCustomerPackageList: {
+        url: `${this.baseUrl}/api/getCustomerPackageList`,
+        method: 'GET'
+      },
+      getOrderPackage: {
+        url: `${this.baseUrl}/api/getOrderPackage`,
+        method: 'GET'
+      },
+      getCustomerListByOrgId: {
+        url: `${this.baseUrl}/api/getCustomerListByOrgId`,
+        method: 'POST'
+      },
+      updateOrderStatus: {
+        url: `${this.baseUrl}/api/updateOrderStatus`,
+        method: 'POST'
+      },
+      updatePackageFoodOrder: {
+        url: `${this.baseUrl}/api/updatePackageFoodOrder`,
+        method: 'POST'
+      },
+      createDailyPackageOrder: {
+        url: `${this.baseUrl}/api/createDailyPackageOrder`,
+        method: 'POST'
+      },
+      getOutletOrdersByCustomerId: {
+        url: `${this.baseUrl}/api/getOutletOrdersByCustomerId`,
+        method: 'GET'
+      },
+      userRewardsPointsHistory: {
+        url: `${this.baseUrl}/api/userRewardsPointsHistory`,
+        method: 'GET'
+      },
+      getWalletBalance: {
+        url: `${this.baseUrl}/api/getWalletBalance`,
+        method: 'GET'
+      },
+      depositeInWallet: {
+        url: `${this.baseUrl}/api/depositeInWallet`,
+        method: 'POST'
+      },
+      withdrawFromWallet: {
+        url: `${this.baseUrl}/api/withdrawFromWallet`,
+        method: 'POST'
+      },
+      checkUserWallet: {
+        url: `${this.baseUrl}/api/checkUserWallet`,
+        method: 'POST'
+      },
+      fetchPastOutletOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchPastOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
+      getOrg: {
+        url: `${this.baseUrl}/api/getOrg`,
+        method: 'GET'
+      },
+      getStaticTotalCountsByOrg: {
+        url: `${this.baseUrl}/api/getStaticTotalCountsByOrg`,
+        method: 'GET'
+      },
+      searchOutletByCafeId: {
+        url: `${this.baseUrl}/api/searchOutletByCafeId`,
+        method: 'GET'
+      },
+      getTotalCountsByOrgId: {
+        url: `${this.baseUrl}/api/getTotalCountsByOrgId`,
+        method: 'POST'
+      },
+      getBulkOrdersByDate: {
+        url: `${this.baseUrl}/api/getBulkOrdersByDate`,
+        method: 'POST'
+      },
+
     };
   }
 }

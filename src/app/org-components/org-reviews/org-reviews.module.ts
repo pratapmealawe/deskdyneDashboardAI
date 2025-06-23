@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { OrgReviewsRoutingModule } from './org-reviews-routing.module';
 import { FormsModule } from '@angular/forms';
 import { OrgReviewsComponent } from './org-reviews.component';
+import { HighchartsChartModule } from 'highcharts-angular';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { OrgReviewsComponent } from './org-reviews.component';
   imports: [
     CommonModule,
     OrgReviewsRoutingModule,
-    FormsModule
+    FormsModule,
+    HighchartsChartModule,
   ],
   exports: [OrgReviewsComponent]
 })

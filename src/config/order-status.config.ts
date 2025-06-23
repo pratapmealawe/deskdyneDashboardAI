@@ -1,6 +1,32 @@
 export const orderStatusMapper = {
-    'placed': 'Placed',   
+    'waitingForApproval': 'Waiting For Approval',
+    'placed':'Placed',
+    'accepted' : 'Accepted',
+    'declined': 'Declined',
+    'inprogress': 'In-Progress',
+    'cancelled': 'Cancelled',
+    'completed': 'Completed',
+    'preparing': 'Preparing',
     'delivered': 'Delivered',
+    'deliveryBoyAssigned': 'Delivery Boy Assigned',
+    'handedOverToDeliveryBoy': 'Handed Over To Delivery Boy',
+    'onTheWay': 'On The Way',
+    'readyForDelivery': 'Ready For Delivery',
+    'readyToDelivery': 'Ready For Delivery',
+    'dailyBulk': 'Admin Daily Bulk',
     'paymentInprogress': 'Payment Transaction In-Progress',
-    'paymentFailed': 'Payment Transaction Failed'
+    'paymentFailed': 'Payment Transaction Failed',
+    'cancelledByKitchen': 'Cancelled By Kitchen',
+    'rejectedByKitchen' : 'Not Accepted',
+    'cancelledByUser' : 'Cancelled',
+    'autoCancelled' : 'Auto Cancelled',
+    'advance': 'Advance',
+    'daily': 'Daily',
+    'allDay': 'All Day',
+    'subscription': 'Subscription',
+    'rescheduled': 'Rescheduled',
+    'subscriptionPackage': 'Subscription',
+    
 }
+
+

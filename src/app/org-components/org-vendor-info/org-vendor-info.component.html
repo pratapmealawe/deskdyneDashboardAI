@@ -5,28 +5,19 @@
     </div>
 
     <div class="col-lg-4">
-      <input
-        type="text"
-        (input)="searchFilter($event)"
-        class="form-control"
-        placeholder="Search"
-        aria-label="Search Filter"
-        aria-describedby="basic-addon2"
-      />
+      <div class="searchDiv">
+        <i class="bi bi-search"></i>
+        <input type="text" (input)="searchFilter($event)" class="form-control" placeholder="Search"
+          aria-label="Search Filter" aria-describedby="basic-addon2" />
+      </div>
     </div>
   </div>
   <div class="mt-2" *ngIf="filteredVendorList.length > 0">
-    <div
-      class="row customCard list-group mb-2"
-      *ngFor="let vendor of filteredVendorList; let i = index"
-    >
+    <div class="row customCard list-group mb-2" *ngFor="let vendor of filteredVendorList; let i = index">
       <div class="list-group-item">
         <div class="row">
-          <div
-            style="cursor: pointer"
-            class="bgTopDownpadding1 d-flex align-items-center justify-content-between p-2"
-            (click)="toggleVendor(i)"
-          >
+          <div style="cursor: pointer" class="bgTopDownpadding1 d-flex align-items-center justify-content-between p-2"
+            (click)="toggleVendor(i)">
             <div class="d-flex align-items-center gap-4 flex-wrap">
               <div class="d-flex align-items-center">
                 <div class="labelText">Vendor Name :</div>

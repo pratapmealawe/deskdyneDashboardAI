@@ -114,6 +114,8 @@ export class OrgIncidentManagementComponent implements OnInit {
 
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
 
+    console.log(this.orgAdmin);
+    
     this.initIncidentForm();
     this.getOrgList();
   }
@@ -352,7 +354,7 @@ export class OrgIncidentManagementComponent implements OnInit {
     if (this.orgAdmin.role === 'SITEEXE') {
       this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
         this.orgAdmin?.siteExecutiveDetails?.cafeDetails.some(
-          (a: any) => a._id === item._id
+          (a: any) => a.cafeteria_id === item.cafeteria_id
         )
       );
     } else {

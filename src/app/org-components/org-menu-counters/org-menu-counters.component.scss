@@ -9,6 +9,21 @@
   object-fit: cover;
 }
 
+.searchDiv {
+    position: relative;
+
+    i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translate(0px, -50%);
+    }
+
+    input {
+        padding-left: 35px;
+    }
+}
+
 .menu-img {
   width: 6rem;
   height: 6rem;

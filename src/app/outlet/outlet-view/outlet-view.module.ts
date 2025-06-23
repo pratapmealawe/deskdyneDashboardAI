@@ -15,6 +15,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
 import { OutletVendorComponent } from './outlet-vendor/outlet-vendor.component';
+import { OutletOrdersModule } from './outlet-orders/outlet-orders.module';
+import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,7 @@ import { OutletVendorComponent } from './outlet-vendor/outlet-vendor.component';
     MatInputModule,
     MatChipsModule,
     MatFormFieldModule,
+    OutletOrdersModule
   ],
   exports: [OutletViewComponent],
 })

@@ -25,6 +25,11 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
   imageUrl: any = environment.imageUrl;
   selectedOutlet: any = null;
   filteredMenuList: any[] = [];
+  cafeteria_id: any
+  cafeList: any[] = []
+  filteredCafeList: any[] = []
+  orgDetails: any
+  outletOrderData: any[] = []
 
   constructor(
     private apiMainService: ApiMainService,
@@ -44,19 +49,48 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
 
   initFunc() {
     this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.getOutlets();
+    this.getOrgDetailsById();
   }
 
-  async getOutlets() {
-    this.searchObj.orgId = this.orgAdmin?.orgDetails._id;
+
+  async getOrgDetailsById() {
     try {
-      const data = await this.apiMainService.searchOutletByOrgId(
-        this.searchObj
-      );
+      const res = await this.apiMainService.getOrg(this.orgAdmin?.orgDetails?._id)
+      this.orgDetails = res
+      if (res?.cafeteriaList.length > 0) {
+        this.cafeList = res?.cafeteriaList
+        this.cafeteria_id = this.cafeList[0]?.cafeteria_id
+        this.getOutlets()
+      }
+    } catch (err: any) {
+      console.log(err);
+    }
+  }
 
-      this.outletList = [ ...data];
-      this.filteredOutletList = [...this.outletList];
+  async getMatchedOutlets() {
+    const merged = this.cafeList.map((cafe: any) => ({
+      ...cafe,
+      outlets: this.outletList.filter(o => o.cafeteriaDetails.cafeteria_name === cafe.cafeteria_name)
+    }));
 
+    this.filteredCafeList = merged
+
+    if(this.filteredCafeList.length > 0) {
+      this.filteredOutletList  = this.filteredCafeList.find((item:any) => item?.cafeteria_id === this.cafeteria_id)?.outlets
+    }
+  }
+
+
+
+  async getOutlets() {
+    const searchObj = {
+      orgId: this.orgAdmin?.orgDetails?._id
+    }
+    try {
+      const data = await this.apiMainService.searchOutletByOrgId(searchObj)
+
+      this.outletList = [...data];
+      this.getMatchedOutlets()
     } catch (err) {
       console.error('Error fetching orders:', err);
     }
@@ -103,5 +137,9 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
         searchText
       );
     }
+  }
+
+  fetchData() {
+    this.getOutlets()
   }
 }

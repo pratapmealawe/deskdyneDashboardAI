@@ -18,6 +18,10 @@
 <div *ngIf="selectedTab==='outlet-menu'">
     <app-outlet-menu [outletObj]="outlet"(back)="updateOutlet($event)"></app-outlet-menu>
 </div>
+<div *ngIf="selectedTab==='outlet-orders'">
+    <app-outlet-orders [outletObj]="outlet"></app-outlet-orders>
+    <!-- <app-outlet-menu [outletObj]="outlet"(back)="updateOutlet($event)"></app-outlet-menu> -->
+</div>
 <div *ngIf="selectedTab==='outlet-feedback'">
     <app-outlet-feedback [outletObj]="outlet"></app-outlet-feedback>
 </div>

@@ -109,7 +109,6 @@ const routes: Routes = [
   {
     path: 'addPolicy',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./policy/add-policy/add-policy.module').then(
         (m) => m.AddPolicyModule
@@ -118,9 +117,14 @@ const routes: Routes = [
   {
     path: 'currentOrder',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./orders/orders.module').then((m) => m.OrdersModule),
+  },
+  {
+    path: 'outletMasterMenu',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./outlet-master-menu/outlet-master-menu.module').then((m) => m.OutletMasterMenuModule),
   },
   {
     path: 'searchOrder',
@@ -150,11 +154,27 @@ const routes: Routes = [
       ).then((m) => m.SearchOrganizationModule),
   },
   {
+    path: 'mainDashboard',
+
+    loadChildren: () =>
+      import('./deskdyne-components/main-dashboard/main-dashboard.module').then(
+        (m) => m.MainDashboardModule
+      ),
+  },
+  {
     path: 'dashboard',
 
     loadChildren: () =>
       import('./deskdyne-components/dashboard/dashboard.module').then(
         (m) => m.DashboardModule
+      ),
+  },
+  {
+    path: 'customer',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./common-components/customer/customer.module').then(
+        (m) => m.CustomerModule
       ),
   },
   {
@@ -237,6 +257,15 @@ const routes: Routes = [
     loadChildren: () =>
       import('./common-components/excel-export/excel-export.module').then(
         (m) => m.ExcelExportModule
+      ),
+  },
+  {
+    path: 'outletExcelExport',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./common-components/outlet-excel-export/outlet-excel-export.module').then(
+        (m) => m.OutletExcelExportModule
       ),
   },
   {

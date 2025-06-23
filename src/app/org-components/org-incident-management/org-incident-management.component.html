@@ -46,7 +46,10 @@
 
       <div class="col-md-3 mt-2">
         <label class="labelText">Search</label>
-        <input type="text" class="form-control" (input)="searchFilter($event)" placeholder="Search" />
+        <div class="searchDiv">
+          <i class="bi bi-search"></i>
+          <input type="text" class="form-control" (input)="searchFilter($event)" placeholder="Search" />
+        </div>
       </div>
     </div>
   </div>

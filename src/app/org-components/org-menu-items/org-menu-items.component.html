@@ -1,35 +1,36 @@
 <div class="container py-2">
   <h3>Menu Items</h3>
-  <div class="container">
+  <div class="container dashboardContainer">
     <div class="row mb-4 mt-3 p-3 bg-light rounded">
-      <div class="col-md-3">
-        <label class="labelText">Date-Time Range</label>
-        <select
-          class="form-select"
-          [(ngModel)]="searchObj.time"
-          (change)="getChartData()"
-        >
-          <option selected disabled value="">Select Date-Time Range</option>
-          <option *ngFor="let item of timeArray" [value]="item">
-            {{ item }}
-          </option>
-        </select>
+      <div class="col-md-4">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Enter a date range</mat-label>
+          <mat-date-range-input [formGroup]="dateGroup" [rangePicker]="picker" [max]="maxDate">
+            <input matStartDate placeholder="Start date" formControlName="start" />
+            <input matEndDate placeholder="End date" (dateChange)="fetchData()" formControlName="end" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker> </mat-date-range-picker>
+        </mat-form-field>
+      </div>
+      <div class="col-md-4">
+        <mat-form-field class="w-100" appearance="outline">
+          <mat-label>Select Cafeteria</mat-label>
+          <mat-select [(ngModel)]="cafeteria_id" (selectionChange)="fetchData()">
+            <mat-option *ngFor="let option of cafeList" [value]="option.cafeteria_id">{{
+              option.cafeteria_name}}</mat-option>
+          </mat-select>
+        </mat-form-field>
       </div>
     </div>
   </div>
   <div class="card-hover">
-    <highcharts-chart
-      *ngIf="initialData.length > 0"
-      [Highcharts]="Highcharts"
-      [options]="chartOptions"
-      [update]="updateFlag"
-      [oneToOne]="oneToOneFlag"
-      style="width: 100%; height: 400px; display: block"
-    >
+    <highcharts-chart *ngIf="outletOrderData.length > 0" [Highcharts]="Highcharts" [options]="chartOptions"
+      [update]="updateFlag" [oneToOne]="oneToOneFlag" style="width: 100%; height: 400px; display: block">
     </highcharts-chart>
 
     <div class="h-100 d-flex justify-content-center align-items-center pt-2">
-      <p *ngIf="initialData.length <= 0">No Data Found</p>
+      <p *ngIf="outletOrderData.length <= 0">No Data Found</p>
     </div>
   </div>
 </div>

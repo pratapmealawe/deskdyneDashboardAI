@@ -1,0 +1,40 @@
+.searchDiv {
+    position: relative;
+
+    i {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translate(0px, -50%);
+    }
+
+    input {
+        padding-left: 35px;
+    }
+}
+
+.btnIconDiv {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    margin-bottom: 1rem;
+
+    .iconBtn {
+        background: #8a8a8a;
+        color: white;
+        border-radius: 12px;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        width: fit-content;
+    }
+}
+
+.card-hover {
+  border-radius: 20px;
+  background-color: #f8f9fa;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
