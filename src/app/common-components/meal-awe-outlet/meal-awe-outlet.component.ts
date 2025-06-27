@@ -18,6 +18,7 @@ export class MealAweOutletComponent implements OnInit {
   mealAweOutlet: any;
   showMoreAddons: boolean = true;
   showMoreMenu: boolean = true;
+  showMoreCafeteria: boolean = true;
   searchText: any = '';
   showUpdate: boolean = false;
   mealAweOutletObj: any = {
@@ -27,18 +28,19 @@ export class MealAweOutletComponent implements OnInit {
     outletOpened: true,
     itemList: [],
   };
+  cafeteriaList: any = []
   packageEditMode: any = false;
-
   constructor(
     private apiMainService: ApiMainService,
     private mlApiMainService: MlApiMainService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.getFooditemList();
     console.log('mealawe packafge', this.orgObj);
+    this.cafeteriaList = [...this.orgObj.cafeteriaList];
   }
 
   async fetchMealAweOutlet(id: any) {
@@ -46,6 +48,7 @@ export class MealAweOutletComponent implements OnInit {
       const mealAweOutlet = await this.apiMainService.getMealAweOutletById(id);
       if (mealAweOutlet && mealAweOutlet._id) {
         console.log(mealAweOutlet);
+        this.mealAweOutletObj = mealAweOutlet;
         this.showUpdate = true;
         this.mealAweOutletObj.org_name = mealAweOutlet.org_name;
         this.mealAweOutletObj.showOnlyToEmployees =
@@ -120,6 +123,25 @@ export class MealAweOutletComponent implements OnInit {
       );
   }
 
+  onCafeteriaCheckChange(event: Event, cafe: any, i: any, j: any) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+
+    if (!this.mealAweOutletObj.itemList[i]['cafeteriaList']) {
+      this.mealAweOutletObj.itemList[i]['cafeteriaList'] = [];
+    }
+
+    if (isChecked) {
+      this.mealAweOutletObj.itemList[i].cafeteriaList.push(cafe);
+    } else {
+      const indexToRemove = this.mealAweOutletObj.itemList[i].cafeteriaList.findIndex(
+        (c: any) => c.cafeteria_id === cafe.cafeteria_id
+      );
+      if (indexToRemove > -1) {
+        this.mealAweOutletObj.itemList[i].cafeteriaList.splice(indexToRemove, 1);
+      }
+    }
+  }
+
   async changePackageStatus(status: any, mealId: any, orgId: any) {
     console.log(status, mealId, orgId);
     try {
@@ -152,7 +174,9 @@ export class MealAweOutletComponent implements OnInit {
         outlet._id,
         outlet
       );
+
       this.packageEditMode = false;
+      this.showMoreCafeteria = true;
       this.router.navigate(['b2bSearchOrg']);
     } catch (error) {
       console.log(error);
@@ -174,6 +198,12 @@ export class MealAweOutletComponent implements OnInit {
     } else {
       this.mealAweOutletObj.outletOpened = !this.mealAweOutletObj.outletOpened;
     }
+  }
+
+  checkedCafe(i: number, cafe: any): boolean {
+    return !!this.mealAweOutletObj.itemList[i].cafeteriaList.find(
+      (data: any) => data.cafeteria_id === cafe.cafeteria_id
+    );
   }
 
   editPackage(pakcage: any) {

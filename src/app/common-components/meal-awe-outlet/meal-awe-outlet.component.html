@@ -212,7 +212,78 @@
                     </div>
                 </div>
             </div>
-
+            <div class="labelheader order-sub-header header3" (click)="showMoreCafeteria = !showMoreCafeteria">Cafeteria:
+                <span class="right">
+                    <i class="bi bi-chevron-down" *ngIf="!showMoreCafeteria"></i>
+                    <i class="bi bi-chevron-up" *ngIf="showMoreCafeteria"></i>
+                </span>
+            </div>
+            <ng-container *ngIf="!showMoreCafeteria && package.cafeteriaList && !packageEditMode">  
+                <div class="row addonCardList" *ngFor="let cafe of package.cafeteriaList;let j = index">
+                    <div class="col-12 col-md-4 col-lg-2">
+                        <div class="labelText">Cafeteria name:</div>
+                        <div class="labelData">{{cafe.cafeteria_name}}</div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Address1:</div>
+                        <div class="labelData">{{cafe.address1}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Address2:</div>
+                        <div class="labelData">{{cafe.address2}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Landmark:</div>
+                        <div class="labelData">{{cafe.landmark}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Cafeteria city:</div>
+                        <div class="labelData">{{cafe.cafeteria_city}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Subsidy:</div>
+                        <div class="labelData">{{cafe.subsidy}}</div>
+                    </div>
+                    
+                </div>
+            </ng-container>
+               <ng-container *ngIf="!showMoreCafeteria && cafeteriaList && packageEditMode">  
+                <div class="row addonCardList" *ngFor="let cafe of cafeteriaList;let j = index">
+                      <div class="col-12 col-md-4 col-lg-1">
+                       <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkDefault"
+                        (change)="onCafeteriaCheckChange($event, cafe,i,j)" [checked]="checkedCafe(i,cafe)">
+                   </div>
+               </div>
+                    <div class="col-12 col-md-4 col-lg-2">
+                        <div class="labelText">Cafeteria name:</div>
+                        <div class="labelData">{{cafe.cafeteria_name}}</div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Address1:</div>
+                        <div class="labelData">{{cafe.address1}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Address2:</div>
+                        <div class="labelData">{{cafe.address2}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Landmark:</div>
+                        <div class="labelData">{{cafe.landmark}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Cafeteria city:</div>
+                        <div class="labelData">{{cafe.cafeteria_city}}</div>
+                    </div>
+                     <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Subsidy:</div>
+                        <div class="labelData">{{cafe.subsidy}}</div>
+                    </div>
+                </div>
+            </ng-container>
+            <div class="center mt-1" *ngIf="!showMoreCafeteria && package.cafeteriaList.length==0 && !packageEditMode">
+                No Cafeteria Found
+            </div>
             <div class="labelheader order-sub-header header3" (click)="showMoreAddons = !showMoreAddons">Addons:
                 <span class="right">
                     <i class="bi bi-chevron-down" *ngIf="!showMoreAddons"></i>
