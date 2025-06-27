@@ -486,6 +486,13 @@ export class ApiMainService {
       searchObj
     );
   }
+  searchVendorFirmByOrgId(searchObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.searchVendorFirmByOrgId;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: 'POST' },
+      searchObj
+    );
+  }
   searchOutletByOrgId(searchObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.searchOutletByOrgId;
     return this.apiHttpService.REQUEST(
@@ -1379,5 +1386,29 @@ export class ApiMainService {
   getBulkOrdersByDate(body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkOrdersByDate;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  saveVendorFirm(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.saveVendorFirm;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  updateVendorFirm(id:any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateVendorFirm;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+  updateVendorFirmCompliance(id:any, body: any) { 
+    const urlObj = this.apiConfigService.apiEndPointObj.updateVendorFirmCompliance;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+  getAllVendorFirms() { 
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllVendorFirms;
+    return this.apiHttpService.REQUEST({ url: urlObj.url , method: urlObj.method });
+  }
+  deleteUserFromAllList(phoneNo:any) { 
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteUserFromAllList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}` , method: urlObj.method });
+  }
+  fetchtOrgInfo(body:any) { 
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchtOrgInfo;
+    return this.apiHttpService.REQUEST({ url: urlObj.url , method: urlObj.method }, body);
   }
 }

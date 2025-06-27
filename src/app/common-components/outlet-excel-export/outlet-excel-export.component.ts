@@ -42,7 +42,7 @@ export class OutletExcelExportComponent implements OnInit {
   updateStatusFlag: boolean = false;
   oneToOneStatusFlag: boolean = true;
   isShowChart: boolean = false
-
+  totalAmount: any
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
@@ -116,6 +116,13 @@ export class OutletExcelExportComponent implements OnInit {
       const res = await this.apiMainService.fetchOutletOrdersbysearchObj(body);
 
       this.filteredOrderList = res
+
+      this.totalAmount = this.filteredOrderList.reduce((sum, order) => {
+        const amount = Number(order.amount) || 0;
+        const walletPoints = Number(order.moneyWalletPointsUsed) || 0;
+        return sum + amount + walletPoints;
+      }, 0);
+
     } catch (err: any) {
       console.error('Error fetching outlet orders', err);
     }
@@ -154,7 +161,7 @@ export class OutletExcelExportComponent implements OnInit {
     }
   }
 
-   processOrdersData(data: Array<{ orderDate: string; orderstatus: string }>) {
+  processOrdersData(data: Array<{ orderDate: string; orderstatus: string }>) {
     const dateStatusMap: Record<string, Record<string, number>> = {};
 
     data.forEach((item) => {

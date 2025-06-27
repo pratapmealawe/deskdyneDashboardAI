@@ -27,7 +27,8 @@
 
         <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
           <div class="labelText">Employee Info</div>
-          <div class="labelData">{{ userDetails?.employeeInfo?.org_name || '-' }} | {{userDetails?.employeeInfo?.empId || '-'}}</div>
+          <div class="labelData">{{ userDetails?.employeeInfo?.org_name || '-' }} | {{userDetails?.employeeInfo?.empId
+            || '-'}}</div>
         </div>
 
         <div class="col-6 col-sm-6 col-md-4 col-lg-3 mb-3">
@@ -35,6 +36,18 @@
           <div class="labelData">{{ userDetails.referralCode || '-' }}</div>
         </div>
       </div>
+    </div>
+
+    <div class="col-12">
+      <button class="btn btn-danger deleteBtn" (click)="confirmDelete()">Delete User</button>
+    </div>
+  </div>
+
+  <div class="row bg-light rounded p-4" *ngIf="pocDetails?.status">
+    <h4>POC Details</h4>
+    <div class="orgDetial">
+      <p>Organization Name :</p>
+      <p>{{pocDetails?.organization_name}}</p>
     </div>
   </div>
 </div>

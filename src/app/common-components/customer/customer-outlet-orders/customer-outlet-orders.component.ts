@@ -18,8 +18,8 @@ export class CustomerOutletOrdersComponent implements OnInit {
   pageFirstEntry = 1;
   pageLastEntry = 1;
   paginationOver = false;
-    orderStatusMapper: any = orderStatusMapper
-  
+  orderStatusMapper: any = orderStatusMapper
+  totalAmount: any
 
   constructor(private apiMainService: ApiMainService, private excelService: ExcelService,) { }
 
@@ -28,16 +28,20 @@ export class CustomerOutletOrdersComponent implements OnInit {
   }
 
   async getOrderListByCustomerId(page: number) {
-     this.page = page;
-      let orderList: any = [];
+    this.page = page;
+    let orderList: any = [];
     try {
-       orderList = await this.apiMainService.getOutletOrdersByCustomerId(this.userDetails?._id, page, this.pageLimit)
+      orderList = await this.apiMainService.getOutletOrdersByCustomerId(this.userDetails?._id, page, this.pageLimit)
       this.outletOrderList = orderList
       if (orderList && orderList.length > 0) {
         this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
         this.pageLastEntry = this.pageFirstEntry + orderList.length - 1;
         this.filteredList = [...orderList];
-
+        this.totalAmount = this.filteredList.reduce((sum, order) => {
+          const amount = Number(order.amount) || 0;
+          const walletPoints = Number(order.moneyWalletPointsUsed) || 0;
+          return sum + amount + walletPoints;
+        }, 0);
         if (orderList.length < this.pageLimit) {
           this.paginationOver = true;
           this.lastPage = page;

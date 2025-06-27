@@ -42,16 +42,30 @@ const routes: Routes = [
   {
     path: 'searchVendor',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./vendor/search-vendor/search-vendor.module').then(
         (m) => m.SearchVendorModule
       ),
   },
   {
+    path: 'addVendorFirm',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./add-vendor-firm/add-vendor-firm.module').then(
+        (m) => m.AddVendorFirmModule
+      ),
+  },
+  {
+    path: 'searchVendorFirm',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./vendor-firm/vendor-firm.module').then(
+        (m) => m.VendorFirmModule
+      ),
+  },
+  {
     path: 'addVendor',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./vendor/add-vendor/add-vendor.module').then(
         (m) => m.AddVendorModule

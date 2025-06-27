@@ -178,6 +178,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/searchVendorByOrgId`,
         method: 'POST',
       },
+      searchVendorFirmByOrgId: {
+        url: `${this.baseUrl}/api/searchVendorFirmByOrgId`,
+        method: 'POST',
+      },
       searchOutletByOrgId: {
         url: `${this.baseUrl}/api/searchOutletByOrgId`,
         method: 'POST',
@@ -660,7 +664,30 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getBulkOrdersByDate`,
         method: 'POST'
       },
-
+      saveVendorFirm: {
+        url: `${this.baseUrl}/api/saveVendorFirm`,
+        method: 'POST'
+      },
+      updateVendorFirm: {
+        url: `${this.baseUrl}/api/updateVendorFirm`,
+        method: 'PUT'
+      },
+      updateVendorFirmCompliance: {
+        url: `${this.baseUrl}/api/updateVendorFirmCompliance`,
+        method: 'PUT'
+      },
+      getAllVendorFirms: {
+        url: `${this.baseUrl}/api/getAllVendorFirms`,
+        method: 'GET'
+      },
+      deleteUserFromAllList: {
+        url: `${this.baseUrl}/api/deleteUserFromAllList`,
+        method: 'DELETE'
+      },
+      fetchtOrgInfo: {
+        url: `${this.baseUrl}/api/b2b_org_info`,
+        method: 'POST'
+      },
     };
   }
 }

@@ -60,6 +60,8 @@ export class AddPolicyComponent {
       mainDashboard: false,
       customer: false,
       outletMasterMenu: false,
+      addVendorFirm: false,
+      searchVendorFirm: false,
     },
     button_policies: {
       addOutlet: false,
