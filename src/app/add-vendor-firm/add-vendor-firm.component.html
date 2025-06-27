@@ -1,0 +1,213 @@
+<div class="bgpadding2">
+    <button class="btn btn-danger btn-sm" (click)="goBack()">Back</button>
+    <div [formGroup]="form" class="mt-2">
+        <div class="row">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="labelText form-label">Vendor Firm Name</div>
+                <input type="text" class="form-control" placeholder="Vendor Firm Name"
+                    formControlName="vendorFirmName" />
+                <div class="error-text" *ngIf="form.controls.vendorFirmName.errors?.required && showError">
+                    *Vendor Firm name is required
+                </div>
+            </div>
+        </div>
+        <hr>
+        <div class="mt-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5>Address List</h5>
+                <button class="btn btn-success btn-sm mt-2" (click)="addAddress()">Add Address</button>
+            </div>
+            <div formArrayName="address">
+                <div *ngFor="let addr of addressList?.controls; let j = index; let first = first" [formGroupName]="j"
+                    class="cardDesign p-3 mb-2">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Address Line 1</label>
+                            <input class="form-control" formControlName="address1" placeholder="Address 1" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Address Line 2</label>
+                            <input class="form-control" formControlName="address2" placeholder="Address 2" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Landmark</label>
+                            <input class="form-control" formControlName="landmark" placeholder="Landmark" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Location</label>
+                            <input class="form-control" formControlName="location" placeholder="Location" />
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end" *ngIf="!first">
+                            <button class="btn btn-danger btn-sm" (click)="removeAddress(j)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <hr>
+
+        <div class="mt-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5>POC Details</h5>
+                <button class="btn btn-success btn-sm " (click)="addPocDetail()">Add POC</button>
+            </div>
+            <div formArrayName="poc_details">
+                <div *ngFor="let poc of pocDetails.controls; let i = index; let first = first" [formGroupName]="i"
+                    class="cardDesign p-3 mb-2">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">POC ID</label>
+                            <input class="form-control" formControlName="poc_id" placeholder="POC ID" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Name</label>
+                            <input class="form-control" formControlName="poc_name" placeholder="POC Name" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Phone No</label>
+                            <input class="form-control" formControlName="poc_phoneNo" placeholder="Phone Number" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Email</label>
+                            <input class="form-control" formControlName="poc_email" placeholder="Email" />
+                        </div>
+                        <div class="col-md-3 mt-2">
+                            <label class="form-label">Location</label>
+                            <input class="form-control" formControlName="poc_location" placeholder="Location" />
+                        </div>
+                        <div class="col-md-1 d-flex align-items-end" *ngIf="!first">
+                            <button class="btn btn-danger btn-sm" (click)="removePocDetail(i)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
+            Add Outlet
+        </div>
+        <div class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
+            compliance
+        </div>
+        <br />
+        <div class="cardDesign mt-1" *ngFor="let outlet of selectedOutletsList; index as i">
+            <div class="row card-wrapper">
+                <div class="col-lg-10">
+                    <div class="row">
+                        <div class="col-12 col-md-4 col-lg-12">
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <div class="labelText">Outlet Name</div>
+                                    <div class="labelData">{{ outlet.outletName }}</div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="labelText">Outlet Type</div>
+                                    <div class="labelData">{{ outlet.outletType }}</div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="labelText">Description</div>
+                                    <div class="labelData">{{ outlet.outletDescription }}</div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="labelText">Organization</div>
+                                    <div class="labelData">
+                                        {{ outlet.organizationDetails.organization_name }}
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="labelText">Cafeteria Name</div>
+                                    <div class="labelData">
+                                        {{ outlet.cafeteriaDetails.cafeteria_name }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <i class="bi bi-trash" (click)="deleteOutlet(i)"></i>
+                </div>
+            </div>
+        </div>
+        <div class="btn btn-primary btn-sm mt-1" (click)="submit('update')"
+            *ngIf="showUpdate && true || btnPolicy?.editVendor">
+            Update
+        </div>
+        <div class="btn btn-primary btn-sm mt-1" (click)="submit()" *ngIf="!showUpdate && true || btnPolicy?.addVendor">
+            Submit
+        </div>
+    </div>
+    <ng-template #outletModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Outlet List</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="selectParent">
+                <select class="inline selectStyle" (change)="getOrgName($event)">
+                    <option>select organization</option>
+                    <option *ngFor="let org of orgList" value="{{ org.organization_name }}">
+                        {{ org.organization_name }}
+                    </option>
+                </select>
+                <select class="inline selectStyle" (change)="selectCafeteria($event)" *ngIf="showCafeteria">
+                    <option>Select Cafetereria</option>
+                    <ng-container *ngFor="let org of orgList">
+                        <ng-container *ngIf="orgName == org.organization_name">
+                            <option *ngFor="let cafeteria of org.cafeteriaList" value="{{ cafeteria.cafeteria_name }},{{
+                cafeteria.cafeteria_city
+              }},{{ org.organization_name }}">
+                                {{ cafeteria.cafeteria_name }}-{{ cafeteria.cafeteria_city }}
+                            </option>
+                        </ng-container>
+                    </ng-container>
+                </select>
+            </div>
+            <div class="mt-3" *ngIf="showModalOutletList">
+                <div *ngFor="let outlet of outletByCafeteriaList" class="cardDesign">
+                    <div class="row card-wrapper">
+                        <div class="col-12 col-md-4 col-lg-12">
+                            <div class="row">
+                                <div class="col-6 col-md-5 col-lg-2">
+                                    <input mdbCheckbox [(ngModel)]="outlet.isChecked" type="checkbox" />
+                                </div>
+                                <div class="col-6 col-md-5 col-lg-3">
+                                    <div class="labelText">outlet Name</div>
+                                    <div class="labelData">{{ outlet.outletName }}</div>
+                                </div>
+                                <div class="col-6 col-md-7 col-lg-3">
+                                    <div class="labelText">outlet type</div>
+                                    <div class="labelData">{{ outlet.outletType }}</div>
+                                </div>
+                                <div class="col-6 col-md-7 col-lg-4">
+                                    <div class="labelText">description</div>
+                                    <div class="labelData">{{ outlet.outletDescription }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="btn btn-primary btn-sm mt-2" (click)="getSelectedOutlets()">
+                Add
+            </div>
+        </div>
+    </ng-template>
+
+    <ng-template #complianceModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">compliance</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <app-vendor-compliance [venderDetails]="selectedVendorFirm"></app-vendor-compliance>
+        </div>
+    </ng-template>

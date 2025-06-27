@@ -1,15 +1,32 @@
 <div>
     <div *ngIf="filteredList.length > 0">
-        <div class="topDiv">
-            <div class="navigationBtns">
-                <button class="btn btn-dark btn-sm me-4" (click)="previous(page)"
-                    [disabled]="page === 1">Previous</button>
-                <span class="labelText">Showing {{pageFirstEntry}} to {{pageLastEntry}}</span>
-                <button class="btn btn-dark btn-sm ms-4" (click)="next(page)"
-                    [disabled]="paginationOver && page === lastPage">Next</button>
+        <div class="topDiv row">
+            <div class="col-lg-4">
+                <div class="navigationBtns">
+                    <button class="btn btn-dark btn-sm me-4" (click)="previous(page)"
+                        [disabled]="page === 1">Previous</button>
+                    <span class="labelText">Showing {{pageFirstEntry}} to {{pageLastEntry}}</span>
+                    <button class="btn btn-dark btn-sm ms-4" (click)="next(page)"
+                        [disabled]="paginationOver && page === lastPage">Next</button>
+                </div>
             </div>
-            <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel
-                Export</button>
+            <div class="col-lg-4">
+
+                <div class="totalDiv">
+                    <div class="leftDiv">
+                        <span>Total Items: </span>
+                        <span>{{ filteredList.length}} </span>
+                    </div>
+                    <div class="verticalHr"></div>
+                    <div class="rightDiv">
+                        <span>&#8377; {{totalAmount}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 ">
+                <button (click)="excelExport()" class="btn btn-success excelBtn"> <i class="bi bi-file-earmark-excel"></i> Excel
+                    Export</button>
+            </div>
         </div>
         <div *ngIf="filteredList.length > 0" class="mt-3">
             <ul *ngFor="let order of filteredList" class="list-group">

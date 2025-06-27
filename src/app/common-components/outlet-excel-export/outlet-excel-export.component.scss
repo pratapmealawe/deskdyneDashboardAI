@@ -1,8 +1,26 @@
 .iconBtn {
-        background: #8a8a8a;
-        color: white;
-        border-radius: 12px;
-        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-        width: fit-content;
-        float: right;
+    background: #8a8a8a;
+    color: white;
+    border-radius: 12px;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    width: fit-content;
+    float: right;
+}
+
+.totalDiv {
+    background: #002F68;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .verticalHr {
+        width: 1px;
+        height: auto;
+        background: #fff;
+        margin: 0 12px;
+        align-self: stretch;
     }
+}

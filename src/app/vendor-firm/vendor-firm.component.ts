@@ -1,17 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
-  selector: 'app-search-vendor',
-  templateUrl: 'search-vendor.component.html',
-  styleUrls: ['search-vendor.component.html'],
+  selector: 'app-vendor-firm',
+  templateUrl: './vendor-firm.component.html',
+  styleUrls: ['./vendor-firm.component.scss']
 })
-export class SearchVendorComponent implements OnInit {
-  searchObj: any = {
+export class VendorFirmComponent {
+ searchObj: any = {
     vendorName: '',
     vendorPhoneNo: '',
     vendorEmail: '',
@@ -29,30 +28,38 @@ export class SearchVendorComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.getAllVendors()
   }
 
   async getAllVendors() {
     try {
-      this.vendorList = await this.apiMainService.getAllVendors();
+      this.vendorList = await this.apiMainService.getAllVendorFirms();
     } catch (error) {
       console.log('getAllVendor', error);
     }
   }
 
-  async searchVendor() {
+  editVendor(vendor: any) {
+    this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
+    this.router.navigate(['/addVendorFirm']);
+  }
+
+  async deleteVendor(vendor: any) {
     try {
-      this.vendorList = await this.apiMainService.searchVendor(this.searchObj);
+      let id = vendor._id;
+      const deleted = await this.apiMainService.deleteVendor(id);
     } catch (error) {
-      console.log('searchVendor', error);
+      console.log('deleteVendor', error);
     }
   }
 
+
   resetForm() {
-    this.runtimeStorageService.setCacheData('VENDOR_EDIT', {});
+    this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', {});
   }
 
   addVendor() {
     this.resetForm()
-    this.router.navigate(['/addVendor']);
+    this.router.navigate(['/addVendorFirm']);
   }
 }
