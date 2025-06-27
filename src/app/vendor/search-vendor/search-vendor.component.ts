@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
+import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
   selector: 'app-search-vendor',
@@ -22,7 +23,8 @@ export class SearchVendorComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private runtimeStorageService: RuntimeStorageService
   ) {}
 
   ngOnInit(): void {
@@ -45,9 +47,12 @@ export class SearchVendorComponent implements OnInit {
     }
   }
 
-  resetForm() {}
+  resetForm() {
+    this.runtimeStorageService.setCacheData('VENDOR_EDIT', {});
+  }
 
   addVendor() {
+    this.resetForm()
     this.router.navigate(['/addVendor']);
   }
 }

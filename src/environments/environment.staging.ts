@@ -6,6 +6,7 @@ export const environment = {
   serverUrl: domainUrl,
   mlServerUrl: mlDomainUrl,
   imageUrl: domainUrl + '/images/',
+  mlImageUrl: mlDomainUrl + '/images/',
   fileUrl: domainUrl + '/api/pdfs/',
   googleAPIkey: 'AIzaSyCtIAU1RAa32Y9at1VnmL-fa79AP0NPreQ',
   envName: 'Staging',

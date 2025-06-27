@@ -30,7 +30,7 @@ export class AddOrganizationComponent implements OnInit {
   cafeteriaIndex: any;
   appmenutypelist = [1, 2];
   btnPolicy: any;
-  orgSubsidy:number=0;
+  orgSubsidy: number = 0;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -54,7 +54,7 @@ export class AddOrganizationComponent implements OnInit {
         addressLine3: ['', Validators.required],
       }),
       cafeteriaList: this.fb.array([]),
-      subsidy:[0]
+      subsidy: [0]
     });
   }
 
@@ -91,17 +91,17 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   new_cafeteria(): FormGroup {
-  let id = Math.floor(Math.random() * 1000000000);
+    let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
-      accessCode: ['', [ Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/) ]],
+      accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/)]],
       showAdminDaily: ['', Validators.required],
       showEmpPolls: ['', Validators.required],
-      showVirtualCafe:[false],
-      showSaas:[false],
-      showSiteExecutive:[false],
-      showCompanyWallet:[false],
-      showchecklist:[false],
-      showComplienceTracker:[false],
+      showVirtualCafe: [false],
+      showSaas: [false],
+      showSiteExecutive: [false],
+      showCompanyWallet: [false],
+      showchecklist: [false],
+      showComplienceTracker: [false],
       cafeteria_name: ['', Validators.required],
       cafeteria_id: [id, Validators.required,],
       cafeteria_city: ['', Validators.required],
@@ -116,7 +116,7 @@ export class AddOrganizationComponent implements OnInit {
       appMenu_type: [Number(1), Validators.required],
       landmark: ['', Validators.required],
       location: ['', Validators.required],
-      subsidy:[0],
+      subsidy: [0],
       poc_details: this.fb.group({
         poc_id: ['', Validators.required],
         poc_name: ['', Validators.required],
@@ -178,16 +178,16 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   patchFormValue(org: any) {
-    console.log("org",org)
+    console.log("org", org)
     let clusterdetails: any = {};
-    this.orgSubsidy=org.subsidy;
+    this.orgSubsidy = org.subsidy;
     // this.customerLocation = org.customerLocation;
     this.form.patchValue({
       organization_name: org.organization_name,
       location: org.location,
       city: org.city,
       gstin: org.gstin,
-      subsidy:org.subsidy
+      subsidy: org.subsidy
     });
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
       if (cafe.clusterId) {
@@ -215,14 +215,14 @@ export class AddOrganizationComponent implements OnInit {
 
       this.form.controls['cafeteriaList'].at(i).patchValue({
         accessCode: cafe.accessCode,
-        showAdminDaily:cafe.showAdminDaily,
-        showEmpPolls:cafe.showEmpPolls,
-        showVirtualCafe:cafe.showVirtualCafe,
-        showSaas:cafe.showSaas,
-        showSiteExecutive:cafe.showSiteExecutive,
-        showCompanyWallet:cafe.showCompanyWallet,
-        showchecklist:cafe.showchecklist,
-        showComplienceTracker:cafe.showComplienceTracker,
+        showAdminDaily: cafe.showAdminDaily,
+        showEmpPolls: cafe.showEmpPolls,
+        showVirtualCafe: cafe.showVirtualCafe,
+        showSaas: cafe.showSaas,
+        showSiteExecutive: cafe.showSiteExecutive,
+        showCompanyWallet: cafe.showCompanyWallet,
+        showchecklist: cafe.showchecklist,
+        showComplienceTracker: cafe.showComplienceTracker,
         cafeteria_id: cafe.cafeteria_id,
         cafeteria_name: cafe.cafeteria_name,
         cafeteria_city: cafe.cafeteria_city,
@@ -409,24 +409,28 @@ export class AddOrganizationComponent implements OnInit {
       console.log(error);
     }
   }
-async updateOrglevelSubsidy(){
-  try {
-    console.log(this.form);
-    this.orgSubsidy =this.form.value.subsidy;
-    let res =await this.apiMainService.B2B_org_updateOrglevelSubsidy(
-      this.orgSubsidy,
-      this.viewOrg._id
-    );
-    console.log(res,"res");
-    if (res && res._id) {
-      this.viewOrg = res;
-      this.showUpdate = true;
-      this.patchorgcafeValue(res);
-    }
-  } catch (error) {
-    console.log(error);
+
+  goBack() {
+    this.router.navigate(['b2bSearchOrg']);
   }
-}
+  async updateOrglevelSubsidy() {
+    try {
+      console.log(this.form);
+      this.orgSubsidy = this.form.value.subsidy;
+      let res = await this.apiMainService.B2B_org_updateOrglevelSubsidy(
+        this.orgSubsidy,
+        this.viewOrg._id
+      );
+      console.log(res, "res");
+      if (res && res._id) {
+        this.viewOrg = res;
+        this.showUpdate = true;
+        this.patchorgcafeValue(res);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   patchorgcafeValue(org: any) {
     this.orgSubsidy = org.subsidy;
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
@@ -474,17 +478,17 @@ async updateOrglevelSubsidy(){
   clearRunTimeStorage() {
     this.runtimeStorageService.resetCacheData('VIEW_ORG');
   }
-  async updateCafelevelSubsidy(index: any){
-    console.log( this.form.controls.cafeteriaList.value[index]);
+  async updateCafelevelSubsidy(index: any) {
+    console.log(this.form.controls.cafeteriaList.value[index]);
     try {
       console.log(this.form);
-      let subsidy =this.form.controls.cafeteriaList.value[index].subsidy;
-      let cafeteria_Id =this.form.controls.cafeteriaList.value[index].cafeteria_id
-     let res= await this.apiMainService.B2B_org_updateCafelevelSubsidy(
+      let subsidy = this.form.controls.cafeteriaList.value[index].subsidy;
+      let cafeteria_Id = this.form.controls.cafeteriaList.value[index].cafeteria_id
+      let res = await this.apiMainService.B2B_org_updateCafelevelSubsidy(
         subsidy,
         cafeteria_Id
       );
-      console.log(res,"res");
+      console.log(res, "res");
     } catch (error) {
       console.log(error);
     }

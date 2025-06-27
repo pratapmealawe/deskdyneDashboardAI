@@ -42,16 +42,30 @@ const routes: Routes = [
   {
     path: 'searchVendor',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./vendor/search-vendor/search-vendor.module').then(
         (m) => m.SearchVendorModule
       ),
   },
   {
+    path: 'addVendorFirm',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./add-vendor-firm/add-vendor-firm.module').then(
+        (m) => m.AddVendorFirmModule
+      ),
+  },
+  {
+    path: 'searchVendorFirm',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./vendor-firm/vendor-firm.module').then(
+        (m) => m.VendorFirmModule
+      ),
+  },
+  {
     path: 'addVendor',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./vendor/add-vendor/add-vendor.module').then(
         (m) => m.AddVendorModule
@@ -109,7 +123,6 @@ const routes: Routes = [
   {
     path: 'addPolicy',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./policy/add-policy/add-policy.module').then(
         (m) => m.AddPolicyModule
@@ -118,9 +131,14 @@ const routes: Routes = [
   {
     path: 'currentOrder',
     canActivate: [accessGuard],
-
     loadChildren: () =>
       import('./orders/orders.module').then((m) => m.OrdersModule),
+  },
+  {
+    path: 'outletMasterMenu',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./outlet-master-menu/outlet-master-menu.module').then((m) => m.OutletMasterMenuModule),
   },
   {
     path: 'searchOrder',

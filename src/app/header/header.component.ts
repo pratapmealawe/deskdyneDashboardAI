@@ -73,6 +73,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
       ],
     },
     {
+      name: 'vendor Firm',
+      showParent: true,
+      image: 'Vendor_Info_white',
+      imageblue: 'Vendor_Info_blue',
+      children: [
+        {
+          name: 'Search vendor Firm',
+          route: 'searchVendorFirm',
+          showChild: true,
+        },
+        { name: 'Add Vendor Firm', route: 'addVendorFirm', showChild: true },
+      ],
+    },
+    {
       name: 'Vendor',
       showParent: true,
       image: 'Vendor_Info_white',
@@ -112,6 +126,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       name: 'Food Items',
       showParent: true,
       route: 'foodItem',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
+    },
+    {
+      name: 'Outlet Master Menu',
+      showParent: true,
+      route: 'outletMasterMenu',
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
     },

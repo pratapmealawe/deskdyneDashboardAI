@@ -178,6 +178,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/searchVendorByOrgId`,
         method: 'POST',
       },
+      searchVendorFirmByOrgId: {
+        url: `${this.baseUrl}/api/searchVendorFirmByOrgId`,
+        method: 'POST',
+      },
       searchOutletByOrgId: {
         url: `${this.baseUrl}/api/searchOutletByOrgId`,
         method: 'POST',
@@ -528,6 +532,34 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/verifyOutletEmployeeByPhoneNo`,
         method: 'GET'
       },
+      vcEmployeeAdd: {
+        url: `${this.baseUrl}/api/vcEmployeeAdd`,
+        method: 'POST'
+      },
+      vcEmployeeByOrgId: {
+        url: `${this.baseUrl}/api/vcEmployeeByOrgId`,
+        method: 'GET'
+      },
+      addVcEmployeeList: {
+        url: `${this.baseUrl}/api/addVcEmployeeList`,
+        method: 'POST'
+      },
+      deleteVcEmployee: {
+        url: `${this.baseUrl}/api/deleteVcEmployee`,
+        method: 'DELETE'
+      },
+      updateVcEmployee: {
+        url: `${this.baseUrl}/api/updateVcEmployee`,
+        method: 'POST'
+      },
+      getVcEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/getVcEmployeeByPhoneNo`,
+        method: 'GET'
+      },
+      verifyVcEmployeeByPhoneNo: {
+        url: `${this.baseUrl}/api/verifyVcEmployeeByPhoneNo`,
+        method: 'GET'
+      },
       fetchOutletOrdersbysearchObj: {
         url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
         method: 'POST'
@@ -632,7 +664,30 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getBulkOrdersByDate`,
         method: 'POST'
       },
-
+      saveVendorFirm: {
+        url: `${this.baseUrl}/api/saveVendorFirm`,
+        method: 'POST'
+      },
+      updateVendorFirm: {
+        url: `${this.baseUrl}/api/updateVendorFirm`,
+        method: 'PUT'
+      },
+      updateVendorFirmCompliance: {
+        url: `${this.baseUrl}/api/updateVendorFirmCompliance`,
+        method: 'PUT'
+      },
+      getAllVendorFirms: {
+        url: `${this.baseUrl}/api/getAllVendorFirms`,
+        method: 'GET'
+      },
+      deleteUserFromAllList: {
+        url: `${this.baseUrl}/api/deleteUserFromAllList`,
+        method: 'DELETE'
+      },
+      fetchtOrgInfo: {
+        url: `${this.baseUrl}/api/b2b_org_info`,
+        method: 'POST'
+      },
     };
   }
 }

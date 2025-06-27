@@ -3,6 +3,27 @@
   <div [formGroup]="form" class="mt-2">
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4">
+        <div class="labelText form-label">Vendor Firm</div>
+        <select
+          class="inline"
+          class="selectStyle"
+          [(ngModel)]="vendorId"
+          formControlName="vendorId"
+          (change)="changeVendorFirm($event)"
+        >
+        <option value="" selected disabled>Select Vendor Firm</option>
+          <option *ngFor="let firm of vendorList" [value]="firm._id">
+            {{ firm?.vendorFirmName }}
+          </option>
+        </select>
+        <div
+          class="error-text"
+          *ngIf="form.controls.vendorId.errors?.required && showError"
+        >
+          *Vendor Firm is required
+        </div>
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText form-label">Vendor Name</div>
         <input
           type="text"
@@ -49,7 +70,6 @@
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText form-label">Vendor Role</div>
-        <!-- <input type="text" class="form-control" placeholder="Vendor Role" formControlName="vendorRole"> -->
         <select
           class="inline"
           formControlName="vendorRole"
@@ -68,22 +88,9 @@
         </div>
       </div>
 
-      
-      <!-- <div class="col-12 col-md-6 col-lg-4">
-        <div class="form-check">
-          <input class="form-check-input" type="checkbox" formControlName="isPrinter" id="checkDefault">
-          <label class="form-check-label" for="checkDefault">
-            Is Printer
-          </label>
-        </div>
-    </div> -->
   </div>
-  <!-- <div>Outlet List</div> -->
   <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
     Add Outlet
-  </div>
-  <div class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
-    compliance
   </div>
   <br />
   <div
@@ -156,34 +163,8 @@
     </button>
   </div>
   <div class="modal-body">
-    <div class="selectParent">
-      <select class="inline selectStyle" (change)="getOrgName($event)">
-        <option>select organization</option>
-        <option *ngFor="let org of orgList" value="{{ org.organization_name }}">
-          {{ org.organization_name }}
-        </option>
-      </select>
-      <select
-        class="inline selectStyle"
-        (change)="selectCafeteria($event)"
-        *ngIf="showCafeteria"
-      >
-        <option>Select Cafetereria</option>
-        <ng-container *ngFor="let org of orgList">
-          <ng-container *ngIf="orgName == org.organization_name">
-            <option
-              *ngFor="let cafeteria of org.cafeteriaList"
-              value="{{ cafeteria.cafeteria_name }},{{
-                cafeteria.cafeteria_city
-              }},{{ org.organization_name }}"
-            >
-              {{ cafeteria.cafeteria_name }}-{{ cafeteria.cafeteria_city }}
-            </option>
-          </ng-container>
-        </ng-container>
-      </select>
-    </div>
-    <div class="mt-3" *ngIf="showModalOutletList">
+    
+    <div class="mt-3" >
       <div *ngFor="let outlet of outletByCafeteriaList" class="cardDesign">
         <div class="row card-wrapper">
           <div class="col-12 col-md-4 col-lg-12">
@@ -202,10 +183,6 @@
               <div class="col-6 col-md-7 col-lg-3">
                 <div class="labelText">outlet type</div>
                 <div class="labelData">{{ outlet.outletType }}</div>
-              </div>
-              <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">description</div>
-                <div class="labelData">{{ outlet.outletDescription }}</div>
               </div>
             </div>
           </div>

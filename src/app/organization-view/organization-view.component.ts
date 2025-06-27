@@ -28,6 +28,7 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'B2B Weekly Menu', path: 'b2bWeeklyMenu' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Outlet Employee', path: 'outletEmployee' },
+    { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
     { name: 'Guest Employee', path: 'guestEmployeeList' },
     { name: 'Compliance', path: 'organizationCompliance' },
   ];
