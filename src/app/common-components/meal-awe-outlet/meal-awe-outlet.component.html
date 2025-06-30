@@ -1,17 +1,24 @@
 <div class="container-fluid">
     <!-- <div class="right addBtn addFoodItem">+</div> -->
-    <div class="col-12 col-md-8 col-lg-8">
-        <div class="row">
-            <div class="col-6 col-md-4 col-lg-3 mt-1">
-                <label class="labelText me-2">Outlet On/Off</label>
+    <div class="col-12 col-md-8 col-lg-12">
+        <div class="row w-100">
+            <div class="col-4 col-md-4 col-lg-3 mt-1">
+                <label class="labelText me-2">Virtual cafeteria On/Off</label>
                 <div class="switch me-2" (click)="enableDisableOutlet()">
                     <input type="checkbox" [(ngModel)]="mealAweOutletObj.outletOpened">
                     <span class="slider round"></span>
                 </div>
             </div>
-            <div class="col-6 col-md-4 col-lg-6 mt-1">
-                <label class="labelText form-label me-2">Show only to employees</label>
+            <div class="col-4 col-md-4 col-lg-6 mt-1">
+                <label class="labelText form-label me-2">Show only to virtual cafeteria employees</label>
                 <input type="checkbox" name="employeesOnly" [(ngModel)]="mealAweOutletObj.showOnlyToEmployees">
+            </div>
+            <div class="col col-md-4 col-lg-3 mt-1">
+                <div class="right">
+                    <button type="button" class="btn btn-primary btn-sm me-2"
+                        (click)="openMealPackageList()">Add</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="editPackage()">Edit All</button>
+                </div>
             </div>
         </div>
     </div>
@@ -59,8 +66,8 @@
                                     <div class="labelData">{{package.packageSubCategory}}</div>
                                 </div>
                                 <div class="col-6 col-md-5 col-lg-6 alignRight pointer">
-                                    <div class="inline view me-2" (click)="editPackage(package)"><i class="bi bi-pencil-square"></i></div>
-                                    <div class="inline view" (click)="deletePackage(i)"><i class="bi bi-trash"></i></div>
+                                    <!-- <div class="inline view me-2" (click)="editPackage(package)"><i class="bi bi-pencil-square"></i></div>
+                                    <div class="inline view" (click)="deletePackage(i)"><i class="bi bi-trash"></i></div> -->
                                 </div>
                             </div>
                         </div>
@@ -78,8 +85,9 @@
                                 <div class="col-6 col-md-8 col-lg-2">
                                     <label for="isActive" class="labelText me-4">Is Active</label>
                                     <input class="form-check-input" type="checkbox" id="isActive"
-                                    [(ngModel)]="package.isActive" (click)="package.isActive = !package.isActive;changePackageStatus(package.isActive, package._id,mealAweOutletObj.org_id)"
-                                    name="isActive">
+                                        [(ngModel)]="package.isActive"
+                                        (click)="package.isActive = !package.isActive;changePackageStatus(package.isActive, package._id,mealAweOutletObj.org_id)"
+                                        name="isActive">
                                 </div>
                             </div>
                         </div>
@@ -98,13 +106,13 @@
                             <div class="labelText">payToKitchenPerMeal 1st slab</div>
                             <div class="labelData" *ngIf="!packageEditMode">{{package.payToKitchenPerMeal}}</div>
                             <input type="number" class="form-control" placeholder="Slab Limit 1"
-                            [(ngModel)]="package.payToKitchenPerMeal" *ngIf="packageEditMode">
+                                [(ngModel)]="package.payToKitchenPerMeal" *ngIf="packageEditMode">
                         </div>
                         <div class="col-6 col-md-5 col-lg-5">
                             <div class="labelText">payToKitchenPerMeal 2nd slab</div>
                             <div class="labelData" *ngIf="!packageEditMode">{{package.payToKitchenPerMeal2}}</div>
                             <input type="number" class="form-control" placeholder="Slab Limit 2"
-                            [(ngModel)]="package.payToKitchenPerMeal2" *ngIf="packageEditMode">
+                                [(ngModel)]="package.payToKitchenPerMeal2" *ngIf="packageEditMode">
                         </div>
                     </div>
                 </div>
@@ -166,7 +174,7 @@
                             <div class="labelText">DD Discount</div>
                             <div class="labelData" *ngIf="!packageEditMode">{{package.ddDiscount}}</div>
                             <input type="number" class="form-control" placeholder="Slab Limit 1"
-                            [(ngModel)]="package.ddDiscount" *ngIf="packageEditMode">
+                                [(ngModel)]="package.ddDiscount" *ngIf="packageEditMode">
                         </div>
                     </div>
                 </div>
@@ -179,13 +187,13 @@
                             <select *ngIf="packageEditMode" class="inline" [(ngModel)]="package.subsidyType">
                                 <option value="flat">Flat</option>
                                 <option value="percentage">Percentage</option>
-                            </select> 
+                            </select>
                         </div>
                         <div class="col-6 col-md-5 col-lg-3">
                             <div class="labelText">Subsidy Value:</div>
                             <div class="labelData" *ngIf="!packageEditMode">{{package.subsidyValue}}</div>
                             <input type="number" class="form-control" placeholder="Slab Limit 1"
-                            [(ngModel)]="package.subsidyValue" *ngIf="packageEditMode">
+                                [(ngModel)]="package.subsidyValue" *ngIf="packageEditMode">
                         </div>
                     </div>
                 </div>
@@ -212,160 +220,183 @@
                     </div>
                 </div>
             </div>
-            <div class="labelheader order-sub-header header3" (click)="showMoreCafeteria = !showMoreCafeteria">Cafeteria:
+            <div class="labelheader order-sub-header header3" (click)="toggleSection('cafeteria', i)">Cafeteria:
                 <span class="right">
-                    <i class="bi bi-chevron-down" *ngIf="!showMoreCafeteria"></i>
-                    <i class="bi bi-chevron-up" *ngIf="showMoreCafeteria"></i>
+                    <i class="bi bi-chevron-down" *ngIf="openedSections['cafeteria'] === i"></i>
+                    <i class="bi bi-chevron-up" *ngIf="openedSections['cafeteria'] !== i"></i>
                 </span>
             </div>
-            <ng-container *ngIf="!showMoreCafeteria && package.cafeteriaList && !packageEditMode">  
-                <div class="row addonCardList" *ngFor="let cafe of package.cafeteriaList;let j = index">
-                    <div class="col-12 col-md-4 col-lg-2">
-                        <div class="labelText">Cafeteria name:</div>
-                        <div class="labelData">{{cafe.cafeteria_name}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Address1:</div>
-                        <div class="labelData">{{cafe.address1}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Address2:</div>
-                        <div class="labelData">{{cafe.address2}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Landmark:</div>
-                        <div class="labelData">{{cafe.landmark}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Cafeteria city:</div>
-                        <div class="labelData">{{cafe.cafeteria_city}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Subsidy:</div>
-                        <div class="labelData">{{cafe.subsidy}}</div>
-                    </div>
-                    
-                </div>
-            </ng-container>
-               <ng-container *ngIf="!showMoreCafeteria && cafeteriaList && packageEditMode">  
-                <div class="row addonCardList" *ngFor="let cafe of cafeteriaList;let j = index">
-                      <div class="col-12 col-md-4 col-lg-1">
-                       <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="checkDefault"
-                        (change)="onCafeteriaCheckChange($event, cafe,i,j)" [checked]="checkedCafe(i,cafe)">
-                   </div>
-               </div>
-                    <div class="col-12 col-md-4 col-lg-2">
-                        <div class="labelText">Cafeteria name:</div>
-                        <div class="labelData">{{cafe.cafeteria_name}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Address1:</div>
-                        <div class="labelData">{{cafe.address1}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Address2:</div>
-                        <div class="labelData">{{cafe.address2}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Landmark:</div>
-                        <div class="labelData">{{cafe.landmark}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Cafeteria city:</div>
-                        <div class="labelData">{{cafe.cafeteria_city}}</div>
-                    </div>
-                     <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Subsidy:</div>
-                        <div class="labelData">{{cafe.subsidy}}</div>
+            <ng-container *ngIf="package.cafeteriaList && !packageEditMode">
+                <div *ngIf="openedSections['cafeteria'] === i" class="ps-3">
+
+                    <div class="row addonCardList" *ngFor="let cafe of package.cafeteriaList;let j = index">
+                        <div class="col-12 col-md-4 col-lg-2">
+                            <div class="labelText">Cafeteria name:</div>
+                            <div class="labelData">{{cafe.cafeteria_name}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Address1:</div>
+                            <div class="labelData">{{cafe.address1}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Address2:</div>
+                            <div class="labelData">{{cafe.address2}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Landmark:</div>
+                            <div class="labelData">{{cafe.landmark}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Cafeteria city:</div>
+                            <div class="labelData">{{cafe.cafeteria_city}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Subsidy:</div>
+                            <div class="labelData">{{cafe.subsidy}}</div>
+                        </div>
+
                     </div>
                 </div>
             </ng-container>
-            <div class="center mt-1" *ngIf="!showMoreCafeteria && package.cafeteriaList.length==0 && !packageEditMode">
+            <ng-container *ngIf="cafeteriaList && packageEditMode">
+                <div *ngIf="openedSections['cafeteria'] === i" class="ps-3">
+
+                    <div class="row addonCardList" *ngFor="let cafe of cafeteriaList;let j = index">
+                        <div class="col-12 col-md-4 col-lg-1">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkDefault"
+                                    (change)="onCafeteriaCheckChange($event, cafe,i,j)" [checked]="checkedCafe(i,cafe)">
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-2">
+                            <div class="labelText">Cafeteria name:</div>
+                            <div class="labelData">{{cafe.cafeteria_name}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Address1:</div>
+                            <div class="labelData">{{cafe.address1}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Address2:</div>
+                            <div class="labelData">{{cafe.address2}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Landmark:</div>
+                            <div class="labelData">{{cafe.landmark}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Cafeteria city:</div>
+                            <div class="labelData">{{cafe.cafeteria_city}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Subsidy:</div>
+                            <div class="labelData">{{cafe.subsidy}}</div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+            <div class="center mt-1"
+                *ngIf="openedSections['cafeteria'] === i && package.cafeteriaList.length==0 && !packageEditMode">
                 No Cafeteria Found
             </div>
-            <div class="labelheader order-sub-header header3" (click)="showMoreAddons = !showMoreAddons">Addons:
+            <div class="labelheader order-sub-header header3" (click)="toggleSection('addsOn',i)">Addons:
                 <span class="right">
-                    <i class="bi bi-chevron-down" *ngIf="!showMoreAddons"></i>
-                    <i class="bi bi-chevron-up" *ngIf="showMoreAddons"></i>
+                    <i class="bi bi-chevron-down" *ngIf="openedSections['addsOn'] === i"></i>
+                    <i class="bi bi-chevron-up" *ngIf="openedSections['addsOn'] !== i"></i>
                 </span>
             </div>
-            <ng-container *ngIf="!showMoreAddons">
-                <div class="row addonCardList" *ngFor="let addon of package.addonsList">
-                    <div class="col-12 col-md-4 col-lg-2">
-                        <div class="labelText">AddonName:</div>
-                        <div class="labelData">{{addon.addonName}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Full Extra Price:</div>
-                        <div class="labelData">{{addon.extraPrice}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">AddOn Type:</div>
-                        <div class="labelData">{{addon.addOnType}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Applied Daily:</div>
-                        <div class="labelData">{{addon.daily}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Kitchen Extra Per Meal:</div>
-                        <div class="labelData">{{addon.payKitchenExtraPerMeal}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Per Meal Extra Per User:</div>
-                        <div class="labelData">{{addon.extraPrice}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2">
-                        <div class="labelText">Addon Icon type:</div>
-                        <div class="labelData">{{addon.addonIconType}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-2" *ngIf="!addon.daily">
-                        <span class="labelText">AddOn Day:</span>
-                        <span class="labelData" *ngIf="addon.day === 1">Sunday</span>
-                        <span class="labelData" *ngIf="addon.day === 2">Monday</span>
-                        <span class="labelData" *ngIf="addon.day === 3">Tuesday</span>
-                        <span class="labelData" *ngIf="addon.day === 4">Wednesday</span>
-                        <span class="labelData" *ngIf="addon.day === 5">Thursday</span>
-                        <span class="labelData" *ngIf="addon.day === 6">Friday</span>
-                        <span class="labelData" *ngIf="addon.day === 7">Saturday</span>
-                    </div>
-                    <div class="col-12 col-md-4 col-lg-2" *ngIf="!addon.daily">
-                        <span class="labelText">Day Count:</span>
-                        <span class="labelData">{{addon.dayCount}}</span>
+            <ng-container>
+                <div *ngIf="openedSections['addsOn'] === i" class="ps-3">
+                    <div class="row addonCardList" *ngFor="let addon of package.addonsList">
+
+                        <div class="col-12 col-md-4 col-lg-2">
+                            <div class="labelText">AddonName:</div>
+                            <div class="labelData">{{addon.addonName}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Full Extra Price:</div>
+                            <div class="labelData">{{addon.extraPrice}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">AddOn Type:</div>
+                            <div class="labelData">{{addon.addOnType}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Applied Daily:</div>
+                            <div class="labelData">{{addon.daily}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Kitchen Extra Per Meal:</div>
+                            <div class="labelData">{{addon.payKitchenExtraPerMeal}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Per Meal Extra Per User:</div>
+                            <div class="labelData">{{addon.extraPrice}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Addon Icon type:</div>
+                            <div class="labelData">{{addon.addonIconType}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-2" *ngIf="!addon.daily">
+                            <span class="labelText">AddOn Day:</span>
+                            <span class="labelData" *ngIf="addon.day === 1">Sunday</span>
+                            <span class="labelData" *ngIf="addon.day === 2">Monday</span>
+                            <span class="labelData" *ngIf="addon.day === 3">Tuesday</span>
+                            <span class="labelData" *ngIf="addon.day === 4">Wednesday</span>
+                            <span class="labelData" *ngIf="addon.day === 5">Thursday</span>
+                            <span class="labelData" *ngIf="addon.day === 6">Friday</span>
+                            <span class="labelData" *ngIf="addon.day === 7">Saturday</span>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-2" *ngIf="!addon.daily">
+                            <span class="labelText">Day Count:</span>
+                            <span class="labelData">{{addon.dayCount}}</span>
+                        </div>
                     </div>
                 </div>
             </ng-container>
-            <div class="labelheader order-sub-header header3" (click)="showMoreMenu = !showMoreMenu">Weekly Menu:
+            <div class="center mt-1" *ngIf=" openedSections['addsOn'] === i && package.addonsList.length==0">
+                No AddsOn Found
+            </div>
+            <div class="labelheader order-sub-header header3" (click)="toggleSection('weeklyMenu',i)">Weekly Menu:
                 <span class="right">
-                    <i class="bi bi-chevron-down" *ngIf="!showMoreMenu"></i>
-                    <i class="bi bi-chevron-up" *ngIf="showMoreMenu"></i>
+                    <i class="bi bi-chevron-down" *ngIf="openedSections['weeklyMenu'] === i"></i>
+                    <i class="bi bi-chevron-up" *ngIf="openedSections['weeklyMenu'] !== i"></i>
                 </span>
             </div>
-            <ng-container *ngIf="!showMoreMenu">
-                <div class="row addonCardList" *ngFor="let menu of package.menuList">
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <span class="labelText">Day:</span>
-                        <div class="labelData">{{menu.dayText}}</div>
-                    </div>
-                    <div class="col-6 col-md-4 col-lg-3">
-                        <span class="labelText">menuType:</span>
-                        <div class="labelData">{{menu.menuType}}</div>
-                    </div>
-                    <div class="col-12 col-md-4 col-lg-6">
-                        <span class="labelText">description:</span>
-                        <div class="labelData">{{menu.description}}</div>
+            <ng-container>
+                <div *ngIf="openedSections['weeklyMenu'] === i" class="ps-3">
+                    <div class="row addonCardList" *ngFor="let menu of package.menuList">
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <span class="labelText">Day:</span>
+                            <div class="labelData">{{menu.dayText}}</div>
+                        </div>
+                        <div class="col-6 col-md-4 col-lg-3">
+                            <span class="labelText">menuType:</span>
+                            <div class="labelData">{{menu.menuType}}</div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-6">
+                            <span class="labelText">description:</span>
+                            <div class="labelData">{{menu.description}}</div>
+                        </div>
                     </div>
                 </div>
             </ng-container>
+            <div class="center mt-1" *ngIf=" openedSections['weeklyMenu'] === i && package.menuList.length==0">
+                No Weekly Menu Found
+            </div>
         </div>
     </div>
     <div class="center mt-5" *ngIf="mealAweOutletObj.itemList.length === 0">
         No Items Found
     </div>
-    <div *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0">
-        <button class="btn btn-primary btn-sm me-2" *ngIf="!showUpdate" (click)="createOutlet('add')">Add</button>
-        <button class="btn btn-primary btn-sm me-2" *ngIf="showUpdate" (click)="createOutlet('update')">Update</button>
+    <div
+        *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0 && packageEditMode">
+        <div class="floating-buttons">
+            <button class="btn btn-primary btn-sm me-2" *ngIf="!showUpdate" (click)="createOutlet('add')">Add</button>
+            <button class="btn btn-primary btn-sm me-2" (click)="packageEditMode=!packageEditMode">Cancel</button>
+            <button class="btn btn-primary btn-sm me-2" *ngIf="showUpdate"
+                (click)="createOutlet('update')">Update</button>
+        </div>
     </div>
 </div>
 <ng-template #content let-modal>
@@ -380,9 +411,19 @@
             <div class="col-sm-12 col-md-12 col-lg-6">
                 <input type="text" class="fullheight form-control" [(ngModel)]="searchText" placeholder="Search item">
             </div>
+            <div class="col-sm-12 col-md-12 col-lg-3">
+
+                <select class="custom-select" name="reference" (change)="selectCluster($event)">
+                    <option disabled selected value> -- select cluster -- </option>
+                    <option [value]="'All'">All</option>
+                    <option [value]="cluster" *ngFor="let cluster of clusterList">{{cluster}}
+                    </option>
+                </select>
+            </div>
         </div>
         <ul class="list-group labelText mt-1">
-            <li class="list-group-item" *ngFor="let foodItem of mealPackageList | filter : searchText : 'itemName' ">
+
+            <li class="list-group-item" *ngFor="let foodItem of mealPackageList | filter : searchText : 'packageName' ">
                 <div class="row">
                     <div class="col-12 col-md-6 col-lg-3">
                         <input type="checkbox" [(ngModel)]="foodItem.selected">
