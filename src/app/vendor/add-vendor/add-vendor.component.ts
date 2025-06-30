@@ -21,14 +21,10 @@ export class AddVendorCommponent {
   form: any;
   showError = false;
   showUpdate = false;
-  orgList: any;
-  orgName = 'select organization';
-  cafeteriaNameNCity: any;
   outletByCafeteriaList: any;
   showModalOutletList = false;
   selectedOutletsList: any = [];
   defaultRole: any = 'Cashier';
-  // selectedOutlet: any;
 
   showAddbutton: any = false;
   vendorRole = ['Owner', 'Manager', 'Cashier'];
@@ -37,10 +33,12 @@ export class AddVendorCommponent {
   selectedVendor: any;
 
   showEditModalOutletList = false;
+  vendorId: string = ''
 
   @ViewChild('outletModal') outlet: any;
   @ViewChild('complianceModal') compliance: any;
   btnPolicy: any;
+  vendorList: any;
 
   constructor(
     private fb: FormBuilder,
@@ -50,20 +48,13 @@ export class AddVendorCommponent {
     private router: Router,
     private policyService: PolicyService
   ) {
-    this.getOrgList();
   }
 
   ngOnInit() {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.getAllVendors()
     this.createForm();
     this.updateVendor();
-  }
-  async getOrgList() {
-    try {
-      this.orgList = await this.apiMainService.getOrgList();
-    } catch (error) {
-      console.log('getOrgList', error);
-    }
   }
 
   createForm() {
@@ -72,8 +63,17 @@ export class AddVendorCommponent {
       vendorPhoneNo: [''],
       vendorEmail: [''],
       vendorRole: [''],
-      isPrinter: [false]
+      vendorId: [''],
     });
+  }
+
+  async getAllVendors() {
+    try {
+      this.vendorList = await this.apiMainService.getAllVendorFirms();
+      this.vendorId && this.changeVendorFirm(this.vendorId ? this.vendorId : "")
+    } catch (error) {
+      console.log('getAllVendor', error);
+    }
   }
 
   objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
@@ -102,8 +102,20 @@ export class AddVendorCommponent {
     return formData;
   }
 
+  changeVendorFirm(e: any) {
+    if (e) {
+      const id = typeof e === "string" ? e :  e.target.value
+      const vendorFirm = this.vendorList.find((item: any) => item?._id === id)
+      
+      if (vendorFirm?.outletList.length > 0) {
+        this.outletByCafeteriaList = vendorFirm?.outletList
+      }
+    }
+  }
+
   updateVendor() {
     const vendor = this.runtimeStorageService.getCacheData('VENDOR_EDIT');
+  
     if (vendor && vendor._id) {
       this.selectedVendor = vendor;
       this.showUpdate = true;
@@ -114,18 +126,27 @@ export class AddVendorCommponent {
         vendorPhoneNo: vendor.vendorPhoneNo,
         vendorEmail: vendor.vendorEmail,
         vendorRole: vendor.vendorRole,
-        isPrinter: vendor.isPrinter
+        vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
       });
+      this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : ""
     }
   }
 
   async submit(type?: any) {
     try {
+      const vendorFirmDetails = {
+        vendorFirmId: this.vendorId,
+        vendorFirmName: this.vendorList.find((item:any) => item._id === this.vendorId)?.vendorFirmName
+      }
       const finalObj = {
         ...this.form.value,
         outletList: this.selectedOutletsList,
+        vendorFirmDetails: vendorFirmDetails
       };
       const formData = this.objectToFormData(finalObj);
+
+      console.log(finalObj);
+
 
       if (type == 'update') {
         let updated = await this.apiMainService.updateVendor(
@@ -134,27 +155,14 @@ export class AddVendorCommponent {
         );
       } else {
         await this.apiMainService.saveVendor(finalObj);
-        this.router.navigate(['/searchVendor']);
       }
+        this.router.navigate(['/searchVendor']);
 
-
-      // const res = type=='update'?await this.apiMainService.updateVendor(this.selectedOutletsList._id,formData):await this.apiMainService.saveVendor(finalObj);
     } catch (error) {
       console.log('saveVendor submit error', error);
     }
   }
-  getOrgName(org: any) {
-    this.showCafeteria = true;
-    if (org && org.target) {
-      this.orgName = org.target.value;
-    }
-  }
-  selectCafeteria(event: any) {
-    let argumentList = event.target.value.split(',');
-    let [cafeteriaName, cafeteriaCity, organization] = argumentList;
-    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organization);
-    this.showModalOutletList = true;
-  }
+
   addOutlet() {
     this.modalService.open(this.outlet, {
       ariaLabelledBy: 'modal-basic-title',
@@ -169,66 +177,20 @@ export class AddVendorCommponent {
     });
   }
 
-  async getOutletByCafeteriaList(
-    cafeteriaName: any,
-    cafeteriaCity: any,
-    organization: any
-  ) {
-    try {
-      this.outletByCafeteriaList =
-        await this.apiMainService.getOutletByCafeteria(
-          cafeteriaName,
-          cafeteriaCity,
-          organization
-        );
-    } catch (error) {
-      console.log('getOutletByCafeteriaList', error);
-    }
-  }
-  // onCheckboxChange(event: any, selectedOutlet: any) {
-  //     if (event.target.checked) {
-  //         if(this.selectedOutletsList.length==0){
-  //         this.selectedOutletsList.push(selectedOutlet);
-  //     }else{
-  //        let filtered= this.selectedOutletsList.filter((elm:any)=>{
-  //             return elm._id==selectedOutlet._id
-  //         });
-  //         if(filtered.length==0){
-  //             this.selectedOutletsList.push(selectedOutlet)
-  //         }
-  //     }
-  //         this.showAddbutton=true;
-  //     } else {
-  //             this.selectedOutletsList.forEach((elm: any, index: any) => {
-  //             if (elm._id == selectedOutlet._id) {
-  //                 console.log(elm._id)
-  //                 this.selectedOutletsList.splice(index, 1)
-  //             }
-  //         })
-  //     }
-  //     console.log('selected list',this.selectedOutletsList);
-  // }
-
   getSelectedOutlets() {
-    // console.log(this.outletByCafeteriaList)
-    // this.outletByCafeteriaList.forEach((elm:any,index:any)=>{
-    //     if(elm._id==outlet._id){
-    //         this.outletByCafeteriaList.splice(index,1)
-    //     }
-
-    // })
-    let selectedList: any = [];
+    this.selectedOutletsList = []
+    
     this.outletByCafeteriaList.forEach((elm: any) => {
       if (elm.isChecked) {
         let outletPresent = false;
         this.selectedOutletsList.forEach((savedOutlet: any) => {
-          if (savedOutlet.outletId === elm._id) {
+          if (savedOutlet.outletId === elm.outletId) {
             outletPresent = true;
           }
         });
         if (!outletPresent) {
           this.selectedOutletsList.push({
-            outletId: elm._id,
+            outletId: elm.outletId,
             outletName: elm.outletName,
             outletType: elm.outletType,
             outletOpened: elm.outletOpened,

@@ -51,6 +51,9 @@
 <div *ngIf="selectedTab === 'outletEmployee'">
   <app-outlet-employee [orgObj]="organization"></app-outlet-employee>
 </div>
+<div *ngIf="selectedTab === 'vcEmployee'">
+  <app-vc-employee [orgObj]="organization"></app-vc-employee>
+</div>
 
 <!-- Sub-Tab Content -->
 <div *ngIf="selectedSubTab === 'bulkMealsMenu'">

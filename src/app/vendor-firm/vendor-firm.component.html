@@ -1,0 +1,44 @@
+<div class="bgpadding1">
+    <div class="right addBtn addOutlet" *ngIf="true || btnPolicy?.addVendor" (click)="addVendor()">
+        +
+    </div>
+    <div class="row">
+        <div *ngIf="vendorList && vendorList.length == 0" class="center mt-5">
+            No Vendor Firm Found
+        </div>
+        <div class="mt-3" *ngIf="vendorList && vendorList.length > 0">
+            <div *ngFor="let vendor of vendorList" class="cardDesign">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="labelText">Vendor Firm Name</div>
+                                    <div class="labelData">{{ vendor.vendorFirmName }}</div>
+                                </div>
+                            </div>
+
+                            <div *ngFor="let cafeteria of vendor.outletList" class="cafeteriaCard">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="labelText">Outlet Name</div>
+                                        <div class="labelData">
+                                            {{ cafeteria.outletName }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+                        <div class="col-md-1 alignRight">
+                                <i *ngIf="true || btnPolicy?.editVendor"
+                                    class="bi bi-pencil-square editDeltesaveIcon me-2" (click)="editVendor(vendor)"></i>
+                                <i class="bi bi-trash editDeltesaveIcon" *ngIf="true || btnPolicy?.deleteVendor"
+                                    (click)="deleteVendor(vendor)"></i>
+                            </div>      
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>

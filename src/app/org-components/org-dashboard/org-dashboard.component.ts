@@ -14,6 +14,7 @@ interface DashboardData {
   employeeCount: number,
   outletEmployeeCount: number,
   employeePollCount: number,
+  outletOrdersTotalAmount: number,
 }
 
 @Component({
@@ -48,6 +49,7 @@ export class OrgDashboardComponent implements OnInit, OnChanges {
     employeeCount: 0,
     outletEmployeeCount: 0,
     employeePollCount: 0,
+    outletOrdersTotalAmount: 0,
   };
 
   dateGroup!: FormGroup;

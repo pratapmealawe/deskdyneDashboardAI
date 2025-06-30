@@ -50,7 +50,18 @@
                 <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel
                     Export</button>
             </div>
-            <div class="col-lg-6"></div>
+            <div class="col-lg-6">
+                <div class="totalDiv">
+                    <div class="leftDiv">
+                        <span>Total Items: </span>
+                        <span>{{ filteredOrderList.length}} </span>
+                    </div>
+                    <div class="verticalHr"></div>
+                    <div class="rightDiv">
+                        <span>&#8377; {{totalAmount}}</span>
+                    </div>
+                </div>
+            </div>
             <div class="col-lg-3">
                 <button (click)="changeDataView()" class="btn iconBtn " *ngIf="!isShowChart"><i
                         class="bi bi-graph-down"></i></button>

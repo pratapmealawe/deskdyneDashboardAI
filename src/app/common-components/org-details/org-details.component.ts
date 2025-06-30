@@ -48,7 +48,7 @@ export class OrgDetailsComponent implements OnInit {
       orgId: this.orgObj?._id
     }
     try {
-      const res = await this.apiMainService.searchVendorByOrgId(searchObj)
+      const res = await this.apiMainService.searchVendorFirmByOrgId(searchObj)
       this.vendorList = res
       this.getMatchedOutlets()
     } catch (err: any) {
@@ -62,10 +62,8 @@ export class OrgDetailsComponent implements OnInit {
     outlets: this.outltList.filter(o => o.cafeteriaDetails.cafeteria_name === cafe.cafeteria_name)
   }));
 
-  // Now, associate vendors with each outlet in the merged data
   merged.forEach((cafeteria: any) => {
     cafeteria.outlets.forEach((outlet: any) => {
-      // Find the vendors associated with the outlet
       outlet.vendors = this.getVendorsForOutlet(outlet._id);
     });
   });
@@ -75,7 +73,6 @@ export class OrgDetailsComponent implements OnInit {
 }
 
 getVendorsForOutlet(outletId: string) {
-  // Find vendors for the specific outletId
   return this.vendorList.filter((vendor: any) =>
     vendor.outletList.some((outlet: any) => outlet.outletId === outletId)
   ) || [];
