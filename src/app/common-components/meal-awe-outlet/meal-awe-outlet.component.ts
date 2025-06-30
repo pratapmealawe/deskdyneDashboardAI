@@ -16,8 +16,13 @@ export class MealAweOutletComponent implements OnInit {
   serverUrl = environment.mlImageUrl;
   mealPackageList: any = [];
   mealAweOutlet: any;
-  showMoreAddons: boolean = true;
-  showMoreMenu: boolean = true;
+  openedSections: { [key: string]: number | null } = {
+  cafeteria: null,
+  addsOn: null,
+  weeklyMenu: null
+};
+tempMealPackage:any = [];
+clusterList:any = [];
   searchText: any = '';
   showUpdate: boolean = false;
   mealAweOutletObj: any = {
@@ -27,25 +32,30 @@ export class MealAweOutletComponent implements OnInit {
     outletOpened: true,
     itemList: [],
   };
+  cafeteriaList: any = []
   packageEditMode: any = false;
-
+  openedItemIndex: number | null = null;
   constructor(
     private apiMainService: ApiMainService,
     private mlApiMainService: MlApiMainService,
     private modalService: NgbModal,
     private router: Router
-  ) {}
+  ) { }
+
 
   ngOnInit(): void {
     this.getFooditemList();
     console.log('mealawe packafge', this.orgObj);
+    this.cafeteriaList = [...this.orgObj.cafeteriaList];
   }
+  
 
   async fetchMealAweOutlet(id: any) {
     try {
       const mealAweOutlet = await this.apiMainService.getMealAweOutletById(id);
       if (mealAweOutlet && mealAweOutlet._id) {
         console.log(mealAweOutlet);
+        this.mealAweOutletObj = mealAweOutlet;
         this.showUpdate = true;
         this.mealAweOutletObj.org_name = mealAweOutlet.org_name;
         this.mealAweOutletObj.showOnlyToEmployees =
@@ -61,6 +71,15 @@ export class MealAweOutletComponent implements OnInit {
               pkg.selected = true;
             }
           });
+          // console.log(this.mealPackageList);
+          this.tempMealPackage = [...this.mealPackageList];
+          let filterCluster = this.mealPackageList.map((data:any)=>{
+            return data.clusters[0];
+          }).filter((cluster:any) => cluster !== undefined);
+          
+          this.clusterList =[...new Set(filterCluster)];
+          console.log(this.clusterList);
+            
         });
       } else {
         this.mealAweOutletObj.org_name = this.orgObj.organization_name;
@@ -86,6 +105,7 @@ export class MealAweOutletComponent implements OnInit {
   }
 
   openMealPackageList() {
+    this.packageEditMode = false;
     if (this.showUpdate == false) {
       this.mealPackageList = [...this.mealPackageList].map((ele) => {
         ele.selected = false;
@@ -120,6 +140,42 @@ export class MealAweOutletComponent implements OnInit {
       );
   }
 
+  onCafeteriaCheckChange(event: Event, cafe: any, i: any, j: any) {
+    const isChecked = (event.target as HTMLInputElement).checked;
+
+    if (!this.mealAweOutletObj.itemList[i]['cafeteriaList']) {
+      this.mealAweOutletObj.itemList[i]['cafeteriaList'] = [];
+    }
+
+    if (isChecked) {
+      this.mealAweOutletObj.itemList[i].cafeteriaList.push(cafe);
+    } else {
+      const indexToRemove = this.mealAweOutletObj.itemList[i].cafeteriaList.findIndex(
+        (c: any) => c.cafeteria_id === cafe.cafeteria_id
+      );
+      if (indexToRemove > -1) {
+        this.mealAweOutletObj.itemList[i].cafeteriaList.splice(indexToRemove, 1);
+      }
+    }
+  }
+
+toggleSection(section: 'cafeteria' | 'addsOn' | 'weeklyMenu', index: number): void {
+  this.openedSections[section] =
+    this.openedSections[section] === index ? null : index;
+   
+}
+
+selectCluster(event: any) {
+  let selectedCluster = event.target.value;
+  if (selectedCluster === 'All') {
+    this.mealPackageList = [...this.tempMealPackage];
+  } else {
+    this.mealPackageList = this.tempMealPackage.filter((data: any) => {
+      return data.clusters?.[0] === selectedCluster;
+    });
+  }
+}
+
   async changePackageStatus(status: any, mealId: any, orgId: any) {
     console.log(status, mealId, orgId);
     try {
@@ -152,7 +208,11 @@ export class MealAweOutletComponent implements OnInit {
         outlet._id,
         outlet
       );
+
       this.packageEditMode = false;
+      this.openedSections['weeklyMenu'] = null;
+      this.openedSections['cafeteria'] = null;
+      this.openedSections['addsOn'] = null;
       this.router.navigate(['b2bSearchOrg']);
     } catch (error) {
       console.log(error);
@@ -176,8 +236,13 @@ export class MealAweOutletComponent implements OnInit {
     }
   }
 
-  editPackage(pakcage: any) {
-    console.log(pakcage);
+  checkedCafe(i: number, cafe: any): boolean {
+    return !!this.mealAweOutletObj.itemList[i].cafeteriaList.find(
+      (data: any) => data.cafeteria_id === cafe.cafeteria_id
+    );
+  }
+
+  editPackage() {
     this.packageEditMode = true;
   }
 
