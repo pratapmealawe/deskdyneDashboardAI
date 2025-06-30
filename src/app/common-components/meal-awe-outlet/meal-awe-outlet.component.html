@@ -15,15 +15,13 @@
             </div>
             <div class="col col-md-4 col-lg-3 mt-1">
                 <div class="right">
-                    <button type="button" class="btn btn-primary btn-sm me-2"
-                        (click)="openMealPackageList()">Add</button>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="editPackage()">Edit All</button>
+                    <button type="button" class="btn btn-success btn-sm me-2"
+                        (click)="openMealPackageList()"><span><i class="bi bi-plus-lg me-1"></i></span>Add</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="editPackage()"><span><i class="bi bi-pencil-square me-1"></i></span> Edit All</button>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="right addBtn" (click)="openMealPackageList()">+</div>
 
     <div *ngIf="mealAweOutletObj && mealAweOutletObj.itemList.length > 0">
         <div *ngFor="let package of mealAweOutletObj.itemList;let i = index" class="cardDesign mt-2">
@@ -448,7 +446,7 @@
     </div>
     <div class="modal-footer">
         <div class="inline bgpadding1">
-            <button type="button" class="btn btn-primary" (click)="modal.close('add')">Add</button>
+            <button type="button" class="btn btn-success" (click)="modal.close('add')">Add</button>
         </div>
     </div>
 </ng-template>
