@@ -356,6 +356,7 @@ body {
   font-weight: 600;
   color: #4bdf10;
 }
+
 .orange {
   font-weight: 600;
   color: #f47c22;
@@ -452,6 +453,7 @@ body {
     background: #e0dddd;
   }
 }
+
 .cardDesignfeddback {
   margin: 2px 0px;
   padding: 10px;
@@ -522,6 +524,7 @@ button.accordion-button:focus {
   background-color: #504f4f !important;
   color: white !important;
 }
+
 .tileBtn {
   background-color: #efefef !important;
   color: black !important;
@@ -547,6 +550,7 @@ button.accordion-button:focus {
     width: 75% !important;
   }
 }
+
 @media only screen and (min-width: 850px) and (max-width: 1300px) {
   .offcanvas {
     width: 25% !important;
@@ -565,4 +569,30 @@ button.accordion-button:focus {
   transform: translateY(-2px);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
   cursor: pointer;
+}
+
+
+.left_arrow {
+  background: #eeeeee;
+  border-radius: 8px;
+  padding: 4px 10px;
+  width: fit-content;
+}
+
+.parentDivFixedBar {
+  padding-bottom: 4rem;
+}
+
+.bottomFixedBar {
+      position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    padding: 10px 20px;
+    z-index: 1000;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
 }

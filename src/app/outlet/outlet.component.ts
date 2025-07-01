@@ -26,7 +26,8 @@ export class OutletComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private runtimeStorageService: RuntimeStorageService
   ) {}
 
   ngOnInit(): void {
@@ -57,6 +58,7 @@ export class OutletComponent implements OnInit {
   }
 
   addOutlet() {
+    this.runtimeStorageService.setCacheData('OUTLET_EDIT', {});
     this.router.navigate(['/addOutlet']);
   }
 

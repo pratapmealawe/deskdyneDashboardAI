@@ -415,13 +415,11 @@ export class AddOrganizationComponent implements OnInit {
   }
   async updateOrglevelSubsidy() {
     try {
-      console.log(this.form);
       this.orgSubsidy = this.form.value.subsidy;
       let res = await this.apiMainService.B2B_org_updateOrglevelSubsidy(
         this.orgSubsidy,
         this.viewOrg._id
       );
-      console.log(res, "res");
       if (res && res._id) {
         this.viewOrg = res;
         this.showUpdate = true;
@@ -445,6 +443,8 @@ export class AddOrganizationComponent implements OnInit {
         this.showError = true;
         return;
       }
+      console.log(this.form.getRawValue());
+      
       await this.apiMainService.B2B_org_update(
         this.form.getRawValue(),
         this.viewOrg._id

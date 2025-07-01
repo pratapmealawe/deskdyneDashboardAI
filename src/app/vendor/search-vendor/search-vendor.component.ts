@@ -42,6 +42,8 @@ export class SearchVendorComponent implements OnInit {
   async searchVendor() {
     try {
       this.vendorList = await this.apiMainService.searchVendor(this.searchObj);
+      console.log(this.vendorList);
+      
     } catch (error) {
       console.log('searchVendor', error);
     }
