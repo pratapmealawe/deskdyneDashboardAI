@@ -40,6 +40,6 @@ import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
     MatFormFieldModule,
     OutletOrdersModule
   ],
-  exports: [OutletViewComponent],
+  exports: [OutletViewComponent, ComboPopupComponent],
 })
-export class OutletViewModule {}
+export class OutletViewModule { }
