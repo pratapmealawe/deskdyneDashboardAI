@@ -17,12 +17,12 @@ export class MealAweOutletComponent implements OnInit {
   mealPackageList: any = [];
   mealAweOutlet: any;
   openedSections: { [key: string]: number | null } = {
-  cafeteria: null,
-  addsOn: null,
-  weeklyMenu: null
-};
-tempMealPackage:any = [];
-clusterList:any = [];
+    cafeteria: null,
+    addsOn: null,
+    weeklyMenu: null
+  };
+  tempMealPackage: any = [];
+  clusterList: any = [];
   searchText: any = '';
   showUpdate: boolean = false;
   mealAweOutletObj: any = {
@@ -48,7 +48,7 @@ clusterList:any = [];
     console.log('mealawe packafge', this.orgObj);
     this.cafeteriaList = [...this.orgObj.cafeteriaList];
   }
-  
+
 
   async fetchMealAweOutlet(id: any) {
     try {
@@ -56,6 +56,8 @@ clusterList:any = [];
       if (mealAweOutlet && mealAweOutlet._id) {
         console.log(mealAweOutlet);
         this.mealAweOutletObj = mealAweOutlet;
+        console.log(this.mealAweOutletObj);
+        
         this.showUpdate = true;
         this.mealAweOutletObj.org_name = mealAweOutlet.org_name;
         this.mealAweOutletObj.showOnlyToEmployees =
@@ -71,15 +73,6 @@ clusterList:any = [];
               pkg.selected = true;
             }
           });
-          // console.log(this.mealPackageList);
-          this.tempMealPackage = [...this.mealPackageList];
-          let filterCluster = this.mealPackageList.map((data:any)=>{
-            return data.clusters[0];
-          }).filter((cluster:any) => cluster !== undefined);
-          
-          this.clusterList =[...new Set(filterCluster)];
-          console.log(this.clusterList);
-            
         });
       } else {
         this.mealAweOutletObj.org_name = this.orgObj.organization_name;
@@ -98,6 +91,12 @@ clusterList:any = [];
         return ele;
       });
       this.mealPackageList = mealPackageList;
+      this.tempMealPackage = [...this.mealPackageList];
+      let filterCluster = this.mealPackageList.map((data: any) => {
+        return data.clusters[0];
+      }).filter((cluster: any) => cluster !== undefined);
+
+      this.clusterList = [...new Set(filterCluster)];
       this.fetchMealAweOutlet(this.orgObj._id);
     } catch (e) {
       console.log('error while getFooditemList', e);
@@ -159,22 +158,22 @@ clusterList:any = [];
     }
   }
 
-toggleSection(section: 'cafeteria' | 'addsOn' | 'weeklyMenu', index: number): void {
-  this.openedSections[section] =
-    this.openedSections[section] === index ? null : index;
-   
-}
+  toggleSection(section: 'cafeteria' | 'addsOn' | 'weeklyMenu', index: number): void {
+    this.openedSections[section] =
+      this.openedSections[section] === index ? null : index;
 
-selectCluster(event: any) {
-  let selectedCluster = event.target.value;
-  if (selectedCluster === 'All') {
-    this.mealPackageList = [...this.tempMealPackage];
-  } else {
-    this.mealPackageList = this.tempMealPackage.filter((data: any) => {
-      return data.clusters?.[0] === selectedCluster;
-    });
   }
-}
+
+  selectCluster(event: any) {
+    let selectedCluster = event.target.value;
+    if (selectedCluster === 'All') {
+      this.mealPackageList = [...this.tempMealPackage];
+    } else {
+      this.mealPackageList = this.tempMealPackage.filter((data: any) => {
+        return data.clusters?.[0] === selectedCluster;
+      });
+    }
+  }
 
   async changePackageStatus(status: any, mealId: any, orgId: any) {
     console.log(status, mealId, orgId);
