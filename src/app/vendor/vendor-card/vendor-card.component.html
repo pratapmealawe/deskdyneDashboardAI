@@ -1,20 +1,24 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-lg-11">
+    <div class="col-md-11">
       <div class="row">
-        <div class="col-lg-3">
+        <div class="col-md-3">
+          <div class="labelText">Vendor Firm Name</div>
+          <div class="labelData">{{ vendor?.vendorFirmDetails?.vendorFirmName }}</div>
+        </div>
+        <div class="col-md-3">
           <div class="labelText">Vendor Name</div>
           <div class="labelData">{{ vendor.vendorName }}</div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-md-3">
           <div class="labelText">vendor Ph No</div>
           <div class="labelData">{{ vendor.vendorPhoneNo }}</div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-md-3">
           <div class="labelText">vendor Email</div>
           <div class="labelData">{{ vendor.vendorEmail }}</div>
         </div>
-        <div class="col-lg-3">
+        <div class="col-md-3">
           <div class="labelText">vendor Role</div>
           <div class="labelData">{{ vendor.vendorRole }}</div>
         </div>
@@ -22,7 +26,7 @@
 
       <div *ngFor="let cafeteria of vendor.outletList" class="cafeteriaCard">
         <div class="row">
-          <div class="col-lg-3">
+          <div class="col-md-3">
             <div class="labelText">Outlet Name</div>
             <div class="labelData">
               {{ cafeteria.outletName }}
@@ -31,7 +35,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-1 alignRight">
+    <div class="col-md-1 alignRight">
       <i *ngIf="true || btnPolicy?.editVendor" class="bi bi-pencil-square editDeltesaveIcon me-2"
         (click)="editVendor(vendor)"></i>
       <i class="bi bi-trash editDeltesaveIcon" *ngIf="true || btnPolicy?.deleteVendor"

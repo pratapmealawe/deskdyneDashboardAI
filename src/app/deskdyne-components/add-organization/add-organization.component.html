@@ -1,7 +1,8 @@
-<div class="bgpadding1">
-  <div class="goback">
-  <button class="btn btn-primary btn-sm" (click)="goBack()">Back</button>
-</div>
+<div class="bgpadding1 parentDivFixedBar">
+  <div class="left_arrow" (click)="goBack()" style="cursor: pointer">
+    <i class="bi bi-arrow-left"></i>
+    Back
+  </div>
   <div [formGroup]="form">
     <div class="row">
       <div class="col-12 col-md-6 col-lg-3">
@@ -32,6 +33,11 @@
           *City is Required
         </div>
       </div>
+      <div class="col-12 col-md-6 col-lg-4" *ngIf="showUpdate">
+          <label class="labelText form-label">Subsidy Amount(In Percent %)</label>
+          <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
+          <button class="btn btn-primary mt-2" (click)="updateOrglevelSubsidy()">Update Subsidy</button>
+        </div>
     </div>
     <div class="mt-2" formGroupName="org_address">
       <div class="row">
@@ -65,15 +71,10 @@
             *Line 3 is required
           </div>
         </div>
+        
       </div>
     </div>
-    <div class="col-12 col-md-6 col-lg-4">
-      <label class="labelText form-label">Subsidy Amount(In Percent %)</label>
-      <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
-    </div>
-    <div class="col-12 col-md-6 col-lg-4">
-      <button class="btn btn-primary" (click)="updateOrglevelSubsidy()">Update Subsidy</button>
-    </div>
+
     <ng-container *ngIf="poc.controls.length > 0">
       <div class="d-flex w-100 align-items-center">
         <hr class="flex-grow-1" />
@@ -463,7 +464,7 @@
       <span class="addBtn me-2" (click)="add_cafeteria()">Add Cafeteria</span>
     </div>
 
-    <div class="row mt-1">
+    <div class="row mt-1 bottomFixedBar">
       <div class="col-sm-12 col-md-4 col-lg-12">
         <button type="button" class="btn btn-primary btn-sm me-2" (click)="addOrg()"
           *ngIf="!showUpdate && true || btnPolicy?.addOrganization">

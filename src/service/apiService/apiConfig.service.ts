@@ -688,6 +688,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/b2b_org_info`,
         method: 'POST'
       },
+      saveMealAweOutlet: {
+        url: `${this.baseUrl}/api/saveMealAweOutlet`,
+        method: 'POST'
+      },
     };
   }
 }

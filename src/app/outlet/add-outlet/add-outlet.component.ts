@@ -131,27 +131,13 @@ export class AddOutletComponent implements OnInit {
     try {
       const orgList = await this.apiMainService.getOrgList();
       if (orgList && orgList.length > 0) {
-        const formattedOrgList =
-          this.dataFormatService.getformattedOrgList(orgList);
+        const formattedOrgList = this.dataFormatService.getformattedOrgList(orgList);
         this.formattedOrgList = formattedOrgList;
       }
     } catch (error) {
       console.log(error);
     }
   }
-
-  // openMenuList(){
-  //   const modalRef = this.modalService.open(this.menuItem, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
-  //   modalRef.result.then((result) => {
-  //     console.log(`Closed with: ${result}`);
-  //     if (result === 'add') {
-
-  //     }
-  //   }, (reason) => {
-  //     console.log(`Model Dismissed`);
-
-  //   });
-  // }
 
   openOrgList() {
     this.selectedOrgCafeteria = undefined;
@@ -218,6 +204,7 @@ export class AddOutletComponent implements OnInit {
       }
     }
   }
+
   async updateOutletLevelSubsidy(){
     try {
       this.outletSubsidy =this.form.value.subsidy;
@@ -225,12 +212,12 @@ export class AddOutletComponent implements OnInit {
               this.selectedOutlet._id,
               this.outletSubsidy
             )
-            console.log(res,"res");
     }catch(err){
-
     }
   }
+  
   async submit(type?: any) {
+    
     try {
       const finalObj = {
         cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
