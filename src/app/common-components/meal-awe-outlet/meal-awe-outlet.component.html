@@ -15,16 +15,14 @@
             </div>
             <div class="col col-md-4 col-lg-3 mt-1">
                 <div class="right">
-                    <button type="button" class="btn btn-success btn-sm me-2"
-                        (click)="openMealPackageList()"><span><i class="bi bi-plus-lg me-1"></i></span>Add</button>
-                    <button type="button" class="btn btn-primary btn-sm" (click)="editPackage()"><span><i class="bi bi-pencil-square me-1"></i></span> Edit All</button>
+                    <button type="button" class="btn btn-success btn-sm me-2" (click)="openMealPackageList()"><span><i
+                                class="bi bi-plus-lg me-1"></i></span>Add</button>
+                    <button type="button" class="btn btn-primary btn-sm" (click)="editPackage()"><span><i
+                                class="bi bi-pencil-square me-1"></i></span> Edit All</button>
                 </div>
             </div>
         </div>
     </div>
-
-
-
 
     <!-- <div class="right addBtn" (click)="openMealPackageList()">+</div> -->
 
@@ -392,12 +390,12 @@
     <div class="center mt-5" *ngIf="mealAweOutletObj.itemList.length === 0">
         No Items Found
     </div>
-    <div
-        *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0 ">
+    <div *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0 ">
         <div class="floating-buttons">
             <button class="btn btn-primary btn-sm me-2" *ngIf="!showUpdate" (click)="createOutlet('add')">Add</button>
             <button class="btn btn-primary btn-sm me-2" (click)="packageEditMode=!packageEditMode">Cancel</button>
-            <button class="btn btn-primary btn-sm me-2" *ngIf="showUpdate && packageEditMode" (click)="createOutlet('update')">Update</button>
+            <button class="btn btn-primary btn-sm me-2" *ngIf="showUpdate && packageEditMode"
+                (click)="createOutlet('update')">Update</button>
         </div>
     </div>
 </div>
