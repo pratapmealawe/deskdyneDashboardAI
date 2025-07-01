@@ -1,15 +1,11 @@
- <div class="left_arrow" style="cursor: pointer">
-    <i class="bi bi-arrow-left"></i>
-    Back
-  </div>
+<div class="left_arrow" (click)="goBack()" style="cursor: pointer">
+  <i class="bi bi-arrow-left"></i>
+  Back
+</div>
 
 <div class="row bg-light rounded py-4 my-3">
-  <div
-    class="col-4 col-md-3 col-lg-2 bgpadding1"
-    *ngFor="let view of orgViewList"
-    [ngClass]="{ tileSelected: selectedTab === view.path }"
-    (click)="gotToTab(view.path)"
-  >
+  <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of orgViewList"
+    [ngClass]="{ tileSelected: selectedTab === view.path }" (click)="gotToTab(view.path)">
     <div class="tileLabel header4 countTile">
       {{ view.name }}
     </div>
@@ -17,12 +13,8 @@
 </div>
 
 <div class="row" *ngIf="getSubTab().length">
-  <div
-    class="col-4 col-md-3 col-lg-2 bgpadding1"
-    *ngFor="let sub of getSubTab()"
-    [ngClass]="{ tileSelected: selectedSubTab === sub.path }"
-    (click)="goToSubTab(sub.path)"
-  >
+  <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let sub of getSubTab()"
+    [ngClass]="{ tileSelected: selectedSubTab === sub.path }" (click)="goToSubTab(sub.path)">
     <div class="tileLabel header4 countTile">
       {{ sub.name }}
     </div>

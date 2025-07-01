@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid parentDivFixedBar">
     <!-- <div class="right addBtn addFoodItem">+</div> -->
     <div class="col-12 col-md-8 col-lg-12">
         <div class="row w-100">
@@ -393,12 +393,11 @@
         No Items Found
     </div>
     <div
-        *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0 && packageEditMode">
+        *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0 ">
         <div class="floating-buttons">
             <button class="btn btn-primary btn-sm me-2" *ngIf="!showUpdate" (click)="createOutlet('add')">Add</button>
             <button class="btn btn-primary btn-sm me-2" (click)="packageEditMode=!packageEditMode">Cancel</button>
-            <button class="btn btn-primary btn-sm me-2" *ngIf="showUpdate"
-                (click)="createOutlet('update')">Update</button>
+            <button class="btn btn-primary btn-sm me-2" *ngIf="showUpdate && packageEditMode" (click)="createOutlet('update')">Update</button>
         </div>
     </div>
 </div>

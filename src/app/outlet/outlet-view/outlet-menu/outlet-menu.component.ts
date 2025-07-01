@@ -80,7 +80,6 @@ export class OutletMenuComponent implements OnInit {
       doNotChangeInFuture: item.doNotChangeInFuture,
       description: item.description,
       itemContains: item.itemContains,
-
     });
     if (item.subCategory) {
       this.selectedCategory = item.category;
@@ -236,12 +235,6 @@ export class OutletMenuComponent implements OnInit {
   }
 
   async submit() {
-    if ((typeof this.form.value.subsidy === "undefined") ||
-      this.form.value.subsidy === null ||
-      this.form.value.subsidy === ''
-    ) {
-      this.form.patchValue({ subsidy: 0 });
-    }
     try {
       const formData: any = new FormData();
       if (this.imageUrl) {
@@ -249,13 +242,13 @@ export class OutletMenuComponent implements OnInit {
       }
       formData.append('imageUrl', this.form.value.imageUrl);
       formData.append('description', this.form.value.description);
-      formData.append('isActive', this.form.value.isActive);
+      formData.append('isActive', this.form.value.isActive ? this.form.value.isActive : false);
       formData.append('itemName', this.form.value.itemName);
       formData.append('price', this.form.value.price);
-      formData.append('quantityAvailable', this.form.value.quantityAvailable);
-      formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
-      formData.append('subsidy', this.form.value.subsidy);
-      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture);
+      formData.append('quantityAvailable', this.form.value.quantityAvailable ? this.form.value.quantityAvailable : 0);
+      formData.append('setDailyQuantity', this.form.value.setDailyQuantity ? this.form.value.setDailyQuantity : 0);
+      formData.append('subsidy', this.form.value.subsidy ? this.form.value.subsidy : 0);
+      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture ? this.form.value.doNotChangeInFuture : false);
       formData.append('itemContains', JSON.stringify(this.form.value.itemContains));
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
