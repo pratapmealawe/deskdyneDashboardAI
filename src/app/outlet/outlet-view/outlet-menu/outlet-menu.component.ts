@@ -1,18 +1,17 @@
 import {
   Component,
-  OnInit,
-  Input,
-  ViewChild,
-  Output,
   EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
 } from '@angular/core';
-import { FormArray, FormBuilder } from '@angular/forms';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 
 @Component({
@@ -25,6 +24,8 @@ export class OutletMenuComponent implements OnInit {
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('content') content: any;
   @ViewChild('comboContent') comboContent: any;
+  @ViewChild('masterMenu') masterMenu: any;
+  modalRef!: NgbModalRef;
   categorySelected: boolean = false;
   form: any;
   selectedCategory: any;
@@ -37,23 +38,28 @@ export class OutletMenuComponent implements OnInit {
   menuIndex: any = 0;
   showUpdateBtn: any = false;
   imageReplaced: any = false;
+  uploadStatus:any = false;
   noImages: boolean = false;
   foodItem: any;
   btnPolicy: any;
   filteredMenuList: any[] = []
+  filteredMasterMenuList: any[] = []
+  selectedMasterItem: any = null;
 
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private policyService: PolicyService,
   ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.fetchOutletMasterMenus();
     this.init();
     this.createForm();
+
   }
 
   init() {
@@ -111,12 +117,30 @@ export class OutletMenuComponent implements OnInit {
     this.setSubCategoryList();
   }
 
+  onItemSelected(item: any) {
+    this.selectedMasterItem = item;
+    console.log('Selected Master Menu Item:', item);
+  }
+
   setSubCategoryList() {
     this.outletObj.category.forEach((el: any) => {
       if (el.name === this.selectedCategory) {
         this.subcategoryList = el.subCategories;
       }
     });
+  }
+
+  async fetchOutletMasterMenus() {
+    try {
+      const res = await this.apiMainService.getAllOutletMasterMenus();
+      console.log(res);
+      if (res) {
+        this.filteredMasterMenuList = res;
+      }
+    }
+    catch (e) {
+      console.log('error while fetching outlet master menus')
+    }
   }
 
   handleFileInput($event: any) {
@@ -143,6 +167,8 @@ export class OutletMenuComponent implements OnInit {
                 if (result && result.croppedImages) {
                   this.uploadedImageFile = result.croppedImages.file;
                   this.imageUrl = result.croppedImages.resizeDataUrl;
+                  console.log(imageUrl);
+                  this.uploadStatus = true;
                   this.imageReplaced = true;
                 }
               },
@@ -166,8 +192,21 @@ export class OutletMenuComponent implements OnInit {
     this.imageUrl = item.imageUrl;
     this.showUpdateBtn = true;
     this.menuIndex = index;
+    console.log(item);
+    
     this.patchFormValue(item);
     this.open();
+  }
+
+  addMasterMenu() {
+    if (this.modalRef) {
+      this.modalRef.close();
+    }
+    this.imageReplaced = true;
+    this.uploadStatus = false;
+    this.imageUrl = this.selectedMasterItem.imageUrl;
+    console.log(this.selectedMasterItem);
+    this.form.patchValue(this.selectedMasterItem);
   }
 
   async updateMenu(index: any) {
@@ -235,6 +274,8 @@ export class OutletMenuComponent implements OnInit {
   }
 
   async submit() {
+    console.log(this.form.value);
+
     try {
       const formData: any = new FormData();
       if (this.imageUrl) {
@@ -257,9 +298,9 @@ export class OutletMenuComponent implements OnInit {
 
       let mealTypes = this.form.value.mealTimingInfo;
 
-      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
-        mealTypes.includes(meal.mealType)
-      );
+      const updatedMeal = JSON.stringify(this.outletObj.mealTiming.filter((meal: any) =>
+        mealTypes?.includes(meal.mealType)
+      ));
 
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
 
@@ -305,8 +346,8 @@ export class OutletMenuComponent implements OnInit {
   }
 
   open() {
-    this.modalService
-      .open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
+    this.selectedMasterItem = null;
+    this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
       .result.then(
         (result) => {
           if (result === 'add') {
@@ -319,6 +360,22 @@ export class OutletMenuComponent implements OnInit {
           console.log(`Model Dismissed`);
         }
       );
+  }
+
+  openMenu() {
+    this.modalRef = this.modalService.open(this.masterMenu, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
+    // .result.then(
+    //   (result) => {
+    //     if (result === 'add') {
+    //       this.submit();
+    //     } else if (result === 'update') {
+    //       this.updateMenu(this.menuIndex);
+    //     }
+    //   },
+    //   (reason) => {
+    //     console.log(`Model Dismissed`);
+    //   }
+    // );
   }
 
   showPopup(item: any, i: any) {
@@ -339,6 +396,7 @@ export class OutletMenuComponent implements OnInit {
     if (res && res._id) {
       this.outletObj = res;
       this.showCard = true;
+      this.init();
     }
     this.resetValues();
     this.back.emit(true);

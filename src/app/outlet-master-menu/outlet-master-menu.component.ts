@@ -6,6 +6,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
+import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
   selector: 'app-outlet-master-menu',
@@ -39,7 +40,8 @@ export class OutletMasterMenuComponent implements OnInit {
     private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private sendDataToComponent:SendDataToComponent
   ) { }
 
   ngOnInit(): void {

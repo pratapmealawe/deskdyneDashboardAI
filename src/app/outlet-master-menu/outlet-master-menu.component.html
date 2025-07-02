@@ -38,16 +38,16 @@
 
           <div class="col-12 col-md-4 col-lg-4">
             <div class="row">
-              <div class="col-6 col-md-7 col-lg-6 d-flex justify-content-between">
+              <div class="col-6 col-md-7 col-lg-4 d-flex justify-content-between">
                 <i class="bi bi-pencil-square editDeltesaveIcon" *ngIf="true || btnPolicy?.editMenu"
                   (click)="edit(item, i)"></i>
                 <i *ngIf="true || btnPolicy?.deleteMenu" class="bi bi-trash editDeltesaveIcon"
                   (click)="showPopup(item, i)"></i>
-                <div>
+                <!-- <div>
                   <input class="me-1" type="checkbox" [checked]="item.isActive"
                     (change)="changeMenuActivation(item, $event)" />
                   <label class="labelText form-label">Active</label>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -166,17 +166,17 @@
             </div>
           </div>
 
-          <div class="col-sm-12 col-md-6 col-lg-4 mt-2">
+          <!-- <div class="col-sm-12 col-md-6 col-lg-4 mt-2">
             <input class="me-1" type="checkbox" id="isActive" formControlName="isActive" />
             <label class="labelText form-label" for="isActive">Active</label>
-          </div>
+          </div> -->
           <!-- <div class="col-sm-12 col-md-6 col-lg-4">
             <input class="me-1" type="checkbox" id="doNotChangeInFuture" formControlName="doNotChangeInFuture" />
             <label class="labelText form-label" for="doNotChangeInFuture">Do Not Change subsidy In Future</label>
           </div> -->
 
 
-          <div class="col-sm-12">
+          <div class="col-sm-12 mt-2">
             <label class="labelText form-label" for="description">Description</label>
             <input class="form-control me-1" type="text" id="description" formControlName="description" />
             <button (click)="defineDescription()" class="createCombo mt-3">
