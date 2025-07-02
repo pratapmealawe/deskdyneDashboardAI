@@ -39,6 +39,8 @@ export class OutletComponent implements OnInit {
   async searchOutlet() {
     try {
       this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
+      console.log(this.outletList);
+      
     } catch (error) {
       console.log('seachOutlet', error);
     }
