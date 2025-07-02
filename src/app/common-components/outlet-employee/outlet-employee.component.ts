@@ -38,7 +38,7 @@ export class OutletEmployeeComponent implements OnInit {
   uploadEmployeeObj: any;
   uploadedFile: any;
   fileName: any
-  
+
   constructor(private apiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder) {
   }
 
@@ -139,8 +139,15 @@ export class OutletEmployeeComponent implements OnInit {
       if (res && res.length > 0) {
         this.addMultipleEmploeeList = res;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
+      const errorArr = error?.error?.msg?.skippedEmployees;
+
+      if (Array.isArray(errorArr) && errorArr.length > 0) {
+        errorArr.forEach(emp => {
+          alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
+        });
+      }
     }
     this.getEmployeeListByOrgId();
     this.showMultipleEmployeeForm = false;
