@@ -114,8 +114,6 @@ export class OrgIncidentManagementComponent implements OnInit {
 
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
 
-    console.log(this.orgAdmin);
-    
     this.initIncidentForm();
     this.getOrgList();
   }
@@ -331,7 +329,9 @@ export class OrgIncidentManagementComponent implements OnInit {
   }
 
   setInitialData() {
-    if (this.orgAdmin.role === 'ORGADMIN') {
+    console.log(this.orgAdmin);
+    
+    if (this.orgAdmin.role === 'ORGADMIN' ) {
       this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
       this.setOrgDetails();
       this.formOrgChange();
@@ -374,6 +374,8 @@ export class OrgIncidentManagementComponent implements OnInit {
     this.incidentList = [];
     this.filteredIncidentList = [];
 
+    console.log(this.filterObj);
+    
     try {
       let data = await this.apiMainService.getIncidentsByDateAndFilters(
         this.filterObj
