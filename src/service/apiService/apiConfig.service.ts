@@ -21,10 +21,19 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/addOutletMenu`,
         method: 'POST',
       },
+      addOutletMasterMenu: {
+        url: `${this.baseUrl}/api/addOutletMasterMenu`,
+        method: 'POST',
+      }
+      ,
       verifyOTP: { url: `${this.baseUrl}/authadmin/verifyOTP`, method: 'POST' },
       logout: { url: `${this.baseUrl}/authadmin/logout`, method: 'GET' },
       fetchAllOutlets: {
         url: `${this.baseUrl}/api/fetchAllOutlets`,
+        method: 'GET',
+      },
+      getAllOutletMasterMenus: {
+        url: `${this.baseUrl}/api/getAllOutletMasterMenus`,
         method: 'GET',
       },
       getOrgList: { url: `${this.baseUrl}/api/getOrgList`, method: 'GET' },
@@ -135,6 +144,10 @@ export class ApiConfigService {
       },
       deleteOutletMenu: {
         url: `${this.baseUrl}/api/deleteOutletMenu`,
+        method: 'DELETE',
+      },
+      deleteOutletMasterMenu: {
+        url: `${this.baseUrl}/api/deleteOutletMasterMenu`,
         method: 'DELETE',
       },
       updateComplianceByAdmin: {
@@ -295,6 +308,11 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/updateOutletMenu`,
         method: 'POST',
       },
+      updateOutletMasterMenu: {
+        url: `${this.baseUrl}/api/updateOutletMasterMenu`,
+        method: 'PUT',
+      }
+      ,
       changeMenuActivation: {
         url: `${this.baseUrl}/api/changeMenuActivation`,
         method: 'PUT',

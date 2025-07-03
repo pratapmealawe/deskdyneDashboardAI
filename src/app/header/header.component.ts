@@ -70,6 +70,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       children: [
         { name: 'Outlet Overview', route: 'outlet', showChild: true },
         { name: 'Outlet Add', route: 'addOutlet', showChild: true },
+        {
+          name: 'Outlet Master Menu',
+          route: 'outletMasterMenu',
+          showChild: true
+        }
       ],
     },
     {
@@ -128,14 +133,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: 'foodItem',
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
-    },
-    {
-      name: 'Outlet Master Menu',
-      showParent: true,
-      route: 'outletMasterMenu',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
-    },
+    }
+    ,
     {
       name: 'Incident Reporting',
       showParent: true,
@@ -466,7 +465,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       const adminProfile = await this.apiMainService.getadminprofile(adminId);
 
       console.log(adminProfile);
-      
+
       if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
         if (this.adminProfile.role == 'ORGADMIN') {
