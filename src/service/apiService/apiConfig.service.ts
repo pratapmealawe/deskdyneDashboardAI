@@ -21,10 +21,19 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/addOutletMenu`,
         method: 'POST',
       },
+      addOutletMasterMenu: {
+        url: `${this.baseUrl}/api/addOutletMasterMenu`,
+        method: 'POST',
+      }
+      ,
       verifyOTP: { url: `${this.baseUrl}/authadmin/verifyOTP`, method: 'POST' },
       logout: { url: `${this.baseUrl}/authadmin/logout`, method: 'GET' },
       fetchAllOutlets: {
         url: `${this.baseUrl}/api/fetchAllOutlets`,
+        method: 'GET',
+      },
+      getAllOutletMasterMenus: {
+        url: `${this.baseUrl}/api/getAllOutletMasterMenus`,
         method: 'GET',
       },
       getOrgList: { url: `${this.baseUrl}/api/getOrgList`, method: 'GET' },
@@ -135,6 +144,10 @@ export class ApiConfigService {
       },
       deleteOutletMenu: {
         url: `${this.baseUrl}/api/deleteOutletMenu`,
+        method: 'DELETE',
+      },
+      deleteOutletMasterMenu: {
+        url: `${this.baseUrl}/api/deleteOutletMasterMenu`,
         method: 'DELETE',
       },
       updateComplianceByAdmin: {
@@ -295,6 +308,11 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/updateOutletMenu`,
         method: 'POST',
       },
+      updateOutletMasterMenu: {
+        url: `${this.baseUrl}/api/updateOutletMasterMenu`,
+        method: 'PUT',
+      }
+      ,
       changeMenuActivation: {
         url: `${this.baseUrl}/api/changeMenuActivation`,
         method: 'PUT',
@@ -686,6 +704,54 @@ export class ApiConfigService {
       },
       fetchtOrgInfo: {
         url: `${this.baseUrl}/api/b2b_org_info`,
+        method: 'POST'
+      },
+      saveMealAweOutlet: {
+        url: `${this.baseUrl}/api/saveMealAweOutlet`,
+        method: 'POST'
+      },
+      b2b_fetchBulkCakeMenu: {
+        url: `${this.baseUrl}/api/b2b_fetchBulkCakeMenu`,
+        method: 'GET'
+      },
+      b2b_fetchBulkLuxMenu: {
+        url: `${this.baseUrl}/api/b2b_fetchBulkLuxMenu`,
+        method: 'GET'
+      },
+      b2b_fetchBulkSweetMenu: {
+        url: `${this.baseUrl}/api/b2b_fetchBulkSweetMenu`,
+        method: 'GET'
+      },
+      b2b_predefinedSnackboxFetch: {
+        url: `${this.baseUrl}/api/b2b_predefinedSnackboxFetch`,
+        method: 'GET'
+      },
+      b2b_customizedSnackboxFetch: {
+        url: `${this.baseUrl}/api/b2b_customizedSnackboxFetch`,
+        method: 'GET'
+      },
+      b2b_BulkCakeMenuAdd: {
+        url: `${this.baseUrl}/api/b2b_BulkCakeMenuAdd`,
+        method: 'POST'
+      },
+      b2b_updateBulkCakeMenu: {
+        url: `${this.baseUrl}/api/b2b_updateBulkCakeMenu`,
+        method: 'POST'
+      },
+      b2b_updateBulkLuxMenu: {
+        url: `${this.baseUrl}/api/b2b_updateBulkLuxMenu`,
+        method: 'POST'
+      },
+      b2b_updateBulkSweetMenu: {
+        url: `${this.baseUrl}/api/b2b_updateBulkSweetMenu`,
+        method: 'POST'
+      },
+      b2b_updatePredefinedSnackBox: {
+        url: `${this.baseUrl}/api/b2b_updatePredefinedSnackBox`,
+        method: 'POST'
+      },
+      b2b_updateCustomizedSnackBox: {
+        url: `${this.baseUrl}/api/b2b_updateCustomizedSnackBox`,
         method: 'POST'
       },
     };

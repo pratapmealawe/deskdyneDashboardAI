@@ -4,6 +4,24 @@
     top: 116px;
 }
 
+.floating-buttons {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;            
+  background-color: white;
+  padding: 10px 20px;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1); 
+}
+
+.floating-buttons .btn {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
 .itemImage {
     width: 66%
 }

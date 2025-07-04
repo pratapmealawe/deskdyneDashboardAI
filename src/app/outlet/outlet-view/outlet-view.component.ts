@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
   selector: 'app-outlet-view',
@@ -22,9 +23,16 @@ export class OutletViewComponent implements OnInit {
   selectedTab = 'outlet-details';
   updateval: any = false;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router,    private sendDataToComponent:SendDataToComponent
+) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+       this.sendDataToComponent.subscribe('MASTER_MENU_LIST',(data:any)=>{
+
+      console.log(data);
+      
+    })
+  }
 
   gotToTab(tab: string) {
     this.selectedTab = tab;

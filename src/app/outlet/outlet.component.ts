@@ -26,7 +26,9 @@ export class OutletComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private runtimeStorageService: RuntimeStorageService,
+    private sendDataToComponent:SendDataToComponent
   ) {}
 
   ngOnInit(): void {
@@ -38,6 +40,8 @@ export class OutletComponent implements OnInit {
   async searchOutlet() {
     try {
       this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
+      console.log(this.outletList);
+      
     } catch (error) {
       console.log('seachOutlet', error);
     }
@@ -52,11 +56,21 @@ export class OutletComponent implements OnInit {
   }
 
   viewOutlet(val: any) {
-    this.showSearchSection = false;
+    this.sendDataToComponent.subscribe('SAVE_OUTLET_MENU',(res:any)=>{
+      if (res) {
+        console.log('Received:', res);
+        this.selectedOutlet = res;
+      } else {
     this.selectedOutlet = val;
+    console.log('original:',val);
+  }
+    })
+    this.showSearchSection = false;
+    
   }
 
   addOutlet() {
+    this.runtimeStorageService.setCacheData('OUTLET_EDIT', {});
     this.router.navigate(['/addOutlet']);
   }
 

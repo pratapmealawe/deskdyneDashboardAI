@@ -1,75 +1,67 @@
-<div class="goback">
-  <button class="btn btn-primary btn-sm" (click)="goBack()">Back</button>
+<!-- Back Button -->
+<div class="left_arrow" (click)="goBack()" style="cursor: pointer">
+  <i class="bi bi-arrow-left"></i> Back
 </div>
 
+<!-- Main Tabs -->
 <div class="row bg-light rounded py-4 my-3">
   <div
     class="col-4 col-md-3 col-lg-2 bgpadding1"
     *ngFor="let view of orgViewList"
     [ngClass]="{ tileSelected: selectedTab === view.path }"
-    (click)="gotToTab(view.path)"
-  >
-    <div class="tileLabel header4 countTile">
-      {{ view.name }}
-    </div>
+    (click)="gotToTab(view.path)">
+    <div class="tileLabel header4 countTile">{{ view.name }}</div>
   </div>
 </div>
 
+<!-- Sub Tabs -->
 <div class="row" *ngIf="getSubTab().length">
   <div
     class="col-4 col-md-3 col-lg-2 bgpadding1"
     *ngFor="let sub of getSubTab()"
-    [ngClass]="{ tileSelected: selectedSubTab === sub.path }"
-    (click)="goToSubTab(sub.path)"
-  >
-    <div class="tileLabel header4 countTile">
-      {{ sub.name }}
-    </div>
+    [ngClass]="{ tileSelected: selectedSubTab === sub.path || selectedSubTab === sub.name }"
+    (click)="goToSubTab(sub.path || sub.name)">
+    <div class="tileLabel header4 countTile">{{ sub.name }}</div>
   </div>
 </div>
 
-<!-- Main‐Tab Content -->
-<div *ngIf="selectedTab === 'orgDetails'">
-  <app-org-details [orgObj]="organization"></app-org-details>
-</div>
-<div *ngIf="selectedTab === 'guestEmployeeList'">
-  <app-guest-employee-list [orgObj]="organization"></app-guest-employee-list>
-</div>
-<div *ngIf="selectedTab === 'mealAweOutlet'">
-  <app-meal-awe-outlet [orgObj]="organization"></app-meal-awe-outlet>
-</div>
-<div *ngIf="selectedTab === 'b2bWeeklyMenu'">
-  <app-b2b-weekly-menu [orgObj]="organization"></app-b2b-weekly-menu>
-</div>
-<div *ngIf="selectedTab === 'organizationCompliance'">
-  <app-organization-compliance [OrgObj]="organization"></app-organization-compliance>
-</div>
-<div *ngIf="selectedTab === 'employeeList'">
-  <app-employee-list [orgObj]="organization"></app-employee-list>
-</div>
-<div *ngIf="selectedTab === 'outletEmployee'">
-  <app-outlet-employee [orgObj]="organization"></app-outlet-employee>
-</div>
-<div *ngIf="selectedTab === 'vcEmployee'">
-  <app-vc-employee [orgObj]="organization"></app-vc-employee>
+<!-- Child Tabs -->
+<div class="row" *ngIf="getChildTabs().length">
+  <div
+    class="col-4 col-md-3 col-lg-2 bgpadding1"
+    *ngFor="let child of getChildTabs()"
+    [ngClass]="{ tileSelected: selectedChildTab === child.path }"
+    (click)="selectedChildTab = child.path">
+    <div class="tileLabel header4 countTile">{{ child.name }}</div>
+  </div>
 </div>
 
-<!-- Sub-Tab Content -->
-<div *ngIf="selectedSubTab === 'bulkMealsMenu'">
-  <app-org-bulk-menu [orgObj]="organization"></app-org-bulk-menu>
-</div>
-<div *ngIf="selectedSubTab === 'individualMealsMenu'">
-  <app-org-individual-menu [orgObj]="organization"></app-org-individual-menu>
-</div>
-<div *ngIf="selectedSubTab === 'bulkSnacksMenu'">
-  <app-org-bulk-snackbox-menu [orgObj]="organization"></app-org-bulk-snackbox-menu>
-</div>
-<div *ngIf="selectedSubTab === 'individualSnacksMenu'">
-  <app-org-individual-snackbox-menu [orgObj]="organization"></app-org-individual-snackbox-menu>
-</div>
-<div *ngIf="selectedSubTab === 'predefinedSnackBoxMenu'">
-  <app-org-predefined-snackbox-menu [orgObj]="organization"></app-org-predefined-snackbox-menu>
-</div>
-<div *ngIf="selectedSubTab === 'customizedSnackBoxMenu'">
-  <app-org-customized-snackbox-menu [orgObj]="organization"></app-org-customized-snackbox-menu>
-</div>
+<!-- Main Content Tabs -->
+<ng-container [ngSwitch]="selectedTab">
+  <app-org-details *ngSwitchCase="'orgDetails'" [orgObj]="organization"></app-org-details>
+  <app-guest-employee-list *ngSwitchCase="'guestEmployeeList'" [orgObj]="organization"></app-guest-employee-list>
+  <app-meal-awe-outlet *ngSwitchCase="'mealAweOutlet'" [orgObj]="organization"></app-meal-awe-outlet>
+  <app-b2b-weekly-menu *ngSwitchCase="'b2bWeeklyMenu'" [orgObj]="organization"></app-b2b-weekly-menu>
+  <app-organization-compliance *ngSwitchCase="'organizationCompliance'" [OrgObj]="organization"></app-organization-compliance>
+  <app-employee-list *ngSwitchCase="'employeeList'" [orgObj]="organization"></app-employee-list>
+  <app-outlet-employee *ngSwitchCase="'outletEmployee'" [orgObj]="organization"></app-outlet-employee>
+  <app-vc-employee *ngSwitchCase="'vcEmployee'" [orgObj]="organization"></app-vc-employee>
+</ng-container>
+
+<ng-container [ngSwitch]="selectedSubTab">
+  <app-cake-menu *ngSwitchCase="'cakeMenu'" [orgObj]="organization">Cake Menu</app-cake-menu>
+   <app-sweet-menu *ngSwitchCase="'sweetMenu'" [orgObj]="organization">Sweet Menu</app-sweet-menu>
+    <app-lux-menu *ngSwitchCase="'luxMenu'" [orgObj]="organization">Lux Menu</app-lux-menu>
+</ng-container>
+
+<hr *ngIf="selectedChildTab">
+
+<!-- Child Tab Components -->
+<ng-container [ngSwitch]="selectedChildTab">
+  <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization"></app-org-bulk-menu>
+  <app-org-individual-menu *ngSwitchCase="'individualMealsMenu'" [orgObj]="organization"></app-org-individual-menu>
+  <app-org-bulk-snackbox-menu *ngSwitchCase="'bulkSnacksMenu'" [orgObj]="organization"></app-org-bulk-snackbox-menu>
+  <app-org-individual-snackbox-menu *ngSwitchCase="'individualSnacksMenu'" [orgObj]="organization"></app-org-individual-snackbox-menu>
+  <app-org-predefined-snackbox-menu *ngSwitchCase="'predefinedSnackBoxMenu'" [orgObj]="organization"></app-org-predefined-snackbox-menu>
+  <app-org-customized-snackbox-menu *ngSwitchCase="'customizedSnackBoxMenu'" [orgObj]="organization"></app-org-customized-snackbox-menu>
+</ng-container>

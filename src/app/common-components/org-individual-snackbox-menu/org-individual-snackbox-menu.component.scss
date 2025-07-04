@@ -15,9 +15,10 @@
     max-width: 80% !important;
 }
 .addFoodItem{
-    position: absolute;
-    right: 5px;
-    top: 116px;
+    // position: absolute;
+    // right: 5px;
+    // top: 116px;
+    float: right;
 }
 .cardDesign{
     margin: 1px 2px;
@@ -96,15 +97,3 @@
     padding: 4px 0px;
     cursor: pointer;
 }  
-
-@media only screen and (max-width:600px){
-    .addFoodItem{
-        top:60px;
-    }
-}
-
-@media only screen and (min-width:600px) and (max-width:1180px){
-    .addFoodItem{
-        top:60px;
-    }
-}

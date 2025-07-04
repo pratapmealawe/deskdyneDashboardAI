@@ -50,9 +50,9 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
   async getVendorByOrgId() {
     this.vendorData.orgId = this.orgDetails?._id;
     try {
-      const data = await this.apiMainService.searchVendorByOrgId(
-        this.vendorData
-      );
+      const data = await this.apiMainService.searchVendorByOrgId(this.vendorData);
+      console.log(data);
+      
       this.vendorList = data;
       this.filteredVendorList = data.length === 0 ? [] : data;
       this.expandedItems = new Array(this.vendorList.length).fill(true);

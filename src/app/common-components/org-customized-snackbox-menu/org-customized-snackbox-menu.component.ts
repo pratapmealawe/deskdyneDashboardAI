@@ -34,7 +34,7 @@ export class OrgCustomizedSnackboxMenuComponent {
   async copyOrgMenu(){
     try {
       if(this.orgSelected){
-        const menuItems = await this.ddApiMainService.B2B_customSnackBoxMenuFetch(this.orgSelected);
+        const menuItems = await this.ddApiMainService.b2b_customizedSnackboxFetch(this.orgSelected);
         console.log(menuItems)
         this.snackMenuFetched = menuItems;
         if (this.snackMenuFetched) {
@@ -61,7 +61,7 @@ export class OrgCustomizedSnackboxMenuComponent {
   async getCustomizedSnackBoxMenuItems() {
     try {
       console.log(this.orgObj._id)
-      const menuItems = await this.ddApiMainService.B2B_customSnackBoxMenuFetch(this.orgObj._id);
+      const menuItems = await this.ddApiMainService.b2b_customizedSnackboxFetch(this.orgObj._id);
       console.log(menuItems)
       this.snackMenuFetched = menuItems;
       if (this.snackMenuFetched) {
@@ -160,7 +160,7 @@ export class OrgCustomizedSnackboxMenuComponent {
     };
     try {
       console.log(bulkMenuObj)
-      await this.ddApiMainService.B2B_saveCustomSnackBoxMenu(bulkMenuObj);
+      await this.ddApiMainService.b2b_updateCustomizedSnackBox(bulkMenuObj);
       this.editMode = false;
       this.changesMade = false;
       this.slabEditMode = false;

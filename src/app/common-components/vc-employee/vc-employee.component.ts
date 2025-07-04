@@ -119,8 +119,15 @@ export class VcEmployeeComponent implements OnInit {
       if (res && res.length > 0) {
         this.addMultipleEmploeeList = res;
       }
-    } catch (error) {
+    } catch (error:any) {
       console.log(error);
+      const errorArr = error?.error?.msg?.skippedEmployees;
+
+      if (Array.isArray(errorArr) && errorArr.length > 0) {
+        errorArr.forEach(emp => {
+          alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
+        });
+      }
     }
     this.getEmployeeListByOrgId();
     this.showMultipleEmployeeForm = false;

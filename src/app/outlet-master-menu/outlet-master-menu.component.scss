@@ -1,0 +1,25 @@
+@import 'src/styles.scss';
+
+.uploadInput{
+    display: none;
+}
+
+.uploadedImage{
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+
+.uploadIcon{
+    width: 84px;
+    background: $secondary-color3;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    position: relative;
+    top: -15px;
+    left: 8px;
+    font-size: 13px;
+    padding: 4px 0px;
+    cursor: pointer;
+}

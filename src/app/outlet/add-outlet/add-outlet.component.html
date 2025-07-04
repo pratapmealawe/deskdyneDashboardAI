@@ -1,5 +1,10 @@
 <div class="bgsidepadding1">
-  <div (click)="back()" class="pointer">BACK</div>
+  <!-- <div (click)="back()" class="pointer">BACK</div> -->
+  <div class="left_arrow mb-4" (click)="back()" style="cursor: pointer">
+    <i class="bi bi-arrow-left"></i>
+    Back
+  </div>
+
   <div [formGroup]="form">
     <div class="row">
       <div class="col-12 col-md-2 col-lg-2 image-div">
@@ -10,6 +15,15 @@
           Upload <i class="bi bi-upload"></i>
         </div>
       </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <input class="me-1" type="checkbox" id="isSpicy" formControlName="outletOpened" />
+        <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
+        <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
+          *Outlet opend is required
+        </div>
+      </div>
+    </div>
+    <div class="row">
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText">Outlet Name</div>
         <input type="text" class="form-control" placeholder="Outlet Name" formControlName="outletName" />
@@ -35,37 +49,30 @@
           *Outlet description is required
         </div>
       </div>
-      <div class="col-12 col-md-6 col-lg-4">
-        <input class="me-1" type="checkbox" id="isSpicy" formControlName="outletOpened" />
-        <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
-        <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
-          *Outlet description is required
-        </div>
-      </div>
+
       <div class="col-12 col-md-6 col-lg-4">
         <label class="labelText form-label" for="commision">Commision Percentage (%)</label>
-        <input type="text" class="form-control" id="commision" formControlName="vendorCommissionPercentage" placeholder="Enter Commision %">
-         <div class="error-text" *ngIf="form.controls.vendorCommissionPercentage.errors?.required && showError">
+        <input type="text" class="form-control" id="commision" formControlName="vendorCommissionPercentage"
+          placeholder="Enter Commision %">
+        <div class="error-text" *ngIf="form.controls.vendorCommissionPercentage.errors?.required && showError">
           *Vendor Commision is required
         </div>
       </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <label class="labelText form-label">Subsidy Amount (In Percent %)</label>
+        <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
+      <button class="btn btn-primary" (click)="updateOutletLevelSubsidy()">Update Subsidy</button>
+
+      </div>
     </div>
-    <div class="col-12 col-md-6 col-lg-4">
-      <label class="labelText form-label">Subsidy Amount (In Percent %)</label>
-      <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
-    </div>
-    <div class="col-12 col-md-6 col-lg-4">
-      <label class="btn btn-primary" (click)="updateOutletLevelSubsidy()">Update Subsidy Amount</label>
-    </div>
-    <div class="row" *ngIf="seletedCafetria">
-      <div>
+    <div class="row mt-4">
+      <div class="col-3">
         <button class="btn btn-success btn-sm mt-1" (click)="openOrgList()">
           Select Org
         </button>
       </div>
     </div>
 
-    <!-- <div>{{seletedCafetria.organizationDetails.organization_name}}</div> -->
     <div class="cardDesign" *ngIf="seletedCafetria">
       <div class="row card-wrapper">
         <div class="col-lg-12 col-md-10 col-9">
@@ -96,10 +103,6 @@
                     {{ seletedCafetria.cafeteriaDetails.cafeteria_name }}
                   </div>
                 </div>
-                <!-- <div class="col-6 col-md-5 col-lg-3">   
-                                        <div class="labelText">Cafeteria Location</div>
-                                        <div class="labelData">{{seletedCafetria.cafeteriaDetails. cafeteria_location}}</div>
-                                    </div> -->
               </div>
             </div>
           </div>
@@ -107,12 +110,15 @@
       </div>
     </div>
     <hr />
-    <div class="row mt-2">
-      <div class="col">
+    <div class="container-fluid mt-2">
+    <div class="row ">
+      <div class="col-4">
         <label class="labelText">Meal Timing<span class="mandatory">*</span></label>
         <button class="btn btn-primary btn-sm ms-2" (click)="setStandardEndTime()">
           Set Standard End Time
         </button>
+      </div>
+      <div class="col-12">
         <div class="row">
           <div class="col-6 col-md-6 col-lg-3 bgpadding1" *ngFor="let timing of mealTiming">
             <div class="row bg-light py-3 px-2 rounded">
@@ -132,12 +138,13 @@
         </div>
       </div>
     </div>
+    </div>
   </div>
-  <div class="btn btn-primary btn-sm mt-2" (click)="submit('update')"
+  <div class="btn btn-primary btn-sm my-2" (click)="submit('update')"
     *ngIf="showUpdate && true || btnPolicy?.editOutlet">
     Update
   </div>
-  <div class="btn btn-primary btn-sm mt-2" (click)="submit()" *ngIf="!showUpdate && true || btnPolicy?.addOutlet">
+  <div class="btn btn-primary btn-sm my-2" (click)="submit()" *ngIf="!showUpdate && true || btnPolicy?.addOutlet">
     Submit
   </div>
 </div>
@@ -152,12 +159,9 @@
     <ul class="list-group">
       <li class="list-group-item" *ngFor="let org of formattedOrgList">
         <div class="col-12 col-md-12 col-lg-12">
-          <input type="radio" [(ngModel)]="selectedOrgCafeteria" name="selectOrg" [value]="org.key" />
+          <input type="radio" class="pointer" [(ngModel)]="selectedOrgCafeteria" name="selectOrg" [value]="org.key" />
           {{ org.key }}
         </div>
-        <!-- <div class="col-sm-12 col-md-10 col-lg-6">
-                        {{org.organization_name}}-{{cafe.cafeteria_city}}-{{cafe.location}}
-                    </div> -->
       </li>
     </ul>
   </div>

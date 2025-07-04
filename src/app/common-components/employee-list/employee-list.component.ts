@@ -39,7 +39,7 @@ export class EmployeeListComponent {
     uploadEmployeeObj: any;
     uploadedFile: any;
     fileName: any
-    constructor(private ddApiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder,private toasterService: ToasterService) {
+    constructor(private ddApiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder, private toasterService: ToasterService) {
     }
 
     ngOnInit() {
@@ -141,9 +141,15 @@ export class EmployeeListComponent {
             if (res && res.length > 0) {
                 this.addMultipleEmploeeList = res;
             }
-        } catch (error) {
-            console.log(error);
-            // this.toasterService.error("Something went wrong please try again")
+        } catch (error: any) {
+            // console.log(error.error.msg);
+            const errorArr = error?.error?.msg?.skippedEmployees;
+
+            if (Array.isArray(errorArr) && errorArr.length > 0) {
+                errorArr.forEach(emp => {
+                    alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
+                });
+            }
         }
         this.getEmployeeListByOrgId();
         this.showMultipleEmployeeForm = false;
