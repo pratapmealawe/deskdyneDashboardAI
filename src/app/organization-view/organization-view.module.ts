@@ -19,6 +19,12 @@ import { OrgComplianceComponent } from './organization-compliance/organization-c
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OutletEmployeeComponent } from '../common-components/outlet-employee/outlet-employee.component';
 import { VcEmployeeComponent } from '../common-components/vc-employee/vc-employee.component';
+import { CakeMenuComponent } from '../common-components/cake-menu/cake-menu.component';
+import { SweetMenuComponent } from '../common-components/sweet-menu/sweet-menu.component';
+import { LuxMenuComponent } from '../common-components/lux-menu/lux-menu.component';
+import { CakeMenuModule } from '../common-components/cake-menu/cake-menu.module';
+import { SweetMenuModule } from '../common-components/sweet-menu/sweet-menu.module';
+import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
 
 @NgModule({
   declarations: [
@@ -44,6 +50,9 @@ import { VcEmployeeComponent } from '../common-components/vc-employee/vc-employe
     FormsModule,
     ReactiveFormsModule,
     PdfuploadComponent,
+    CakeMenuModule,
+    SweetMenuModule,
+    LuxMenuModule
   ],
   exports: [OrganizationViewComponent],
 })

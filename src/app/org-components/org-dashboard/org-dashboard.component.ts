@@ -9,13 +9,29 @@ interface DashboardStaticData {
   vendorsCount: number,
 }
 
-interface DashboardData {
-  ordersCount: number,
-  employeeCount: number,
-  outletEmployeeCount: number,
-  employeePollCount: number,
-  outletOrdersTotalAmount: number,
+interface OrderSummary {
+  ordersCount: number;
+  totalAmount: number;
+  employeeCount: number;
 }
+
+interface VirtualCafeSummary {
+  ordersCount: number;
+  totalAmount: number;
+  employeeCount: number;
+}
+
+interface OtherSummary {
+  employeeCount: number;
+  employeePollCount: number;
+}
+
+interface TotalCountsResponse {
+  outlet: OrderSummary;
+  virtualCafe: VirtualCafeSummary;
+  others: OtherSummary;
+}
+
 
 @Component({
   selector: 'app-org-dashboard',
@@ -44,13 +60,7 @@ export class OrgDashboardComponent implements OnInit, OnChanges {
     vendorsCount: 0,
   }
 
-  dashboarData: DashboardData = {
-    ordersCount: 0,
-    employeeCount: 0,
-    outletEmployeeCount: 0,
-    employeePollCount: 0,
-    outletOrdersTotalAmount: 0,
-  };
+  dashboarData!: TotalCountsResponse
 
   dateGroup!: FormGroup;
 

@@ -1449,4 +1449,48 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchtOrgInfo;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
+  b2b_fetchBulkCakeMenu(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_fetchBulkCakeMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  b2b_fetchBulkLuxMenu(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_fetchBulkLuxMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  b2b_fetchBulkSweetMenu(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_fetchBulkSweetMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  b2b_predefinedSnackboxFetch(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_predefinedSnackboxFetch;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  b2b_customizedSnackboxFetch(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_customizedSnackboxFetch;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+  b2b_BulkCakeMenuAdd(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_BulkCakeMenuAdd;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  b2b_updateBulkCakeMenu(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_updateBulkCakeMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  b2b_updateBulkLuxMenu(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_updateBulkLuxMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  b2b_updateBulkSweetMenu(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_updateBulkSweetMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  b2b_updatePredefinedSnackBox(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_updatePredefinedSnackBox;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  b2b_updateCustomizedSnackBox(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.b2b_updateCustomizedSnackBox;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
 }
