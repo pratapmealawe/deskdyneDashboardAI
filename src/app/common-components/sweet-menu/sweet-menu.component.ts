@@ -1,43 +1,43 @@
-import { Component,Input, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 @Component({
-  selector: 'app-org-customized-snackbox-menu',
-  templateUrl: './org-customized-snackbox-menu.component.html',
-  styleUrls: ['./org-customized-snackbox-menu.component.scss']
+  selector: 'app-sweet-menu',
+  templateUrl: './sweet-menu.component.html',
+  styleUrls: ['./sweet-menu.component.scss']
 })
-export class OrgCustomizedSnackboxMenuComponent {
-  @Input() orgObj: any;
+export class SweetMenuComponent implements OnInit {
+@Input() orgObj: any;
   @ViewChild("content") content: any;
-  bulkMenuList: any;
+  bulkMenuList: any = [];
   menuSearchText: any = '';
   searchText: any = '';
   imageUrl: any = environment.imageUrl;
   changesMade = false;
   editMode = false;
-  snackMenuFetched: any;
+  bulkMenuFetched: any = {};
   slabEditMode = false;
   foodItemList: any;
-  orgChoices:any;
-  orgSelected:any
+  orgChoices: any;
+  orgSelected: any
 
   constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getCustomizedSnackBoxMenuItems();
+    this.getBulkMenuItems();
     this.getAllB2BFoodItemList();
   }
 
-  async copyOrgMenu(){
+  async copyOrgMenu() {
     try {
-      if(this.orgSelected){
-        const menuItems = await this.ddApiMainService.b2b_customizedSnackboxFetch(this.orgSelected);
+      if (this.orgSelected) {
+        const menuItems = await this.ddApiMainService.b2b_fetchBulkSweetMenu(this.orgSelected);
         console.log(menuItems)
-        this.snackMenuFetched = menuItems;
-        if (this.snackMenuFetched) {
+        this.bulkMenuFetched = menuItems;
+        if (this.bulkMenuFetched) {
           this.bulkMenuList = menuItems.itemList ? menuItems.itemList : [];
         }
       }
@@ -58,13 +58,13 @@ export class OrgCustomizedSnackboxMenuComponent {
     }
   }
 
-  async getCustomizedSnackBoxMenuItems() {
+  async getBulkMenuItems() {
     try {
       console.log(this.orgObj._id)
-      const menuItems = await this.ddApiMainService.b2b_customizedSnackboxFetch(this.orgObj._id);
+      const menuItems = await this.ddApiMainService.b2b_fetchBulkSweetMenu(this.orgObj._id);
       console.log(menuItems)
-      this.snackMenuFetched = menuItems;
-      if (this.snackMenuFetched) {
+      this.bulkMenuFetched = menuItems;
+      if (this.bulkMenuFetched) {
         this.bulkMenuList = menuItems.itemList ? menuItems.itemList : [];
       }
     } catch (error) {
@@ -75,6 +75,7 @@ export class OrgCustomizedSnackboxMenuComponent {
   async getAllB2BFoodItemList() {
     try {
       this.foodItemList = await this.ddApiMainService.getAllB2BFooditems();
+      console.log(this.foodItemList)
     } catch (e) {
       console.log('error while fetching food itmem')
     }
@@ -86,8 +87,8 @@ export class OrgCustomizedSnackboxMenuComponent {
   }
 
   deleteFoodItem(index: any) {
-    this.bulkMenuList.splice(index,1);
-    if(this.bulkMenuList.length === 0){
+    this.bulkMenuList.splice(index, 1);
+    if (this.bulkMenuList.length === 0) {
       this.editBulkMenu();
     }
   }
@@ -116,7 +117,7 @@ export class OrgCustomizedSnackboxMenuComponent {
   }
 
   prepareB2BMenuList(fooditemList: any) {
-    [...fooditemList].forEach((fooditem:any)=>{
+    [...fooditemList].forEach((fooditem: any) => {
       if (fooditem.selected) {
         this.bulkMenuList.push({
           itemName: fooditem.itemName,
@@ -137,34 +138,30 @@ export class OrgCustomizedSnackboxMenuComponent {
         });
       }
     })
-    
+
     console.log(this.bulkMenuList)
   }
 
-  // editSlabs(){
-  //   this.slabEditMode = true;
-  // }
-
   async editBulkMenu() {
     const bulkMenuObj = {
-      companyName:this.orgObj.organization_name,
-      companyId:this.orgObj._id,
-      moq: this.snackMenuFetched.moq,
-      slabLimit1: this.snackMenuFetched.slabLimit1,
-      slabLimit2: this.snackMenuFetched.slabLimit2,
-      slabLimit3: this.snackMenuFetched.slabLimit3,
-      dateLimit1: this.snackMenuFetched.dateLimit1,
-      dateLimit2: this.snackMenuFetched.dateLimit2,
-      dateLimit3: this.snackMenuFetched.dateLimit3,
+      companyName: this.orgObj.organization_name,
+      companyId: this.orgObj._id,
+      moq: this.bulkMenuFetched.moq,
+      slabLimit1: this.bulkMenuFetched.slabLimit1,
+      slabLimit2: this.bulkMenuFetched.slabLimit2,
+      slabLimit3: this.bulkMenuFetched.slabLimit3,
+      dateLimit1: this.bulkMenuFetched.dateLimit1,
+      dateLimit2: this.bulkMenuFetched.dateLimit2,
+      dateLimit3: this.bulkMenuFetched.dateLimit3,
       itemList: [...this.bulkMenuList]
     };
     try {
       console.log(bulkMenuObj)
-      await this.ddApiMainService.b2b_updateCustomizedSnackBox(bulkMenuObj);
+      await this.ddApiMainService.b2b_updateBulkSweetMenu(bulkMenuObj);
       this.editMode = false;
       this.changesMade = false;
       this.slabEditMode = false;
-      this.getCustomizedSnackBoxMenuItems();
+      this.getBulkMenuItems();
     } catch (e) {
       console.log('error while saving kitchen')
     }
@@ -180,17 +177,12 @@ export class OrgCustomizedSnackboxMenuComponent {
         if (!ele.itemName || !ele.itemDescription) {
           disable = true
         }
-        if (!ele.itemPrice) {
-          disable = true
-        }
-        if (!ele.tasteOfRegion) {
-          disable = true
-        }
-        if (ele.itemServingType === 'perQuantity' && (!ele.servingQuantity || !ele.servingQuantityUnit)) {
+        if (!ele.slab1Price || !ele.slab2Price || !ele.slab3Price || !ele.slab4Price) {
           disable = true
         }
       });
     }
     return disable;
   }
+
 }

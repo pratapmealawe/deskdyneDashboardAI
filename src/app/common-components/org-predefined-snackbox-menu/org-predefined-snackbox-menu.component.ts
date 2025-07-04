@@ -11,7 +11,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 export class OrgPredefinedSnackboxMenuComponent {
   @Input() orgObj: any;
   @ViewChild("content") content: any;
-  bulkMenuList: any;
+  bulkMenuList: any[] = [];
   menuSearchText: any = '';
   searchText: any = '';
   imageUrl: any = environment.imageUrl;
@@ -34,7 +34,7 @@ export class OrgPredefinedSnackboxMenuComponent {
   async copyOrgMenu(){
     try {
       if(this.orgSelected){
-        const menuItems = await this.ddApiMainService.B2B_snackBoxMenuFetch(this.orgSelected);
+        const menuItems = await this.ddApiMainService.b2b_predefinedSnackboxFetch(this.orgSelected);
         console.log(menuItems)
         this.snackMenuFetched = menuItems;
         if (this.snackMenuFetched) {
@@ -61,7 +61,7 @@ export class OrgPredefinedSnackboxMenuComponent {
   async getPredefinedSnackBoxMenuItems() {
     try {
       console.log(this.orgObj._id)
-      const menuItems = await this.ddApiMainService.B2B_snackBoxMenuFetch(this.orgObj._id);
+      const menuItems = await this.ddApiMainService.b2b_predefinedSnackboxFetch(this.orgObj._id);
       console.log(menuItems)
       this.snackMenuFetched = menuItems;
       if (this.snackMenuFetched) {
@@ -116,6 +116,8 @@ export class OrgPredefinedSnackboxMenuComponent {
   }
 
   prepareB2BMenuList(fooditemList: any) {
+    console.log(this.foodItemList);
+    
     [...fooditemList].forEach((fooditem:any)=>{
       if (fooditem.selected) {
         this.bulkMenuList.push({
@@ -160,7 +162,7 @@ export class OrgPredefinedSnackboxMenuComponent {
     };
     try {
       console.log(bulkMenuObj)
-      await this.ddApiMainService.B2B_saveSnackBoxMenu(bulkMenuObj);
+      await this.ddApiMainService.b2b_updatePredefinedSnackBox(bulkMenuObj);
       this.editMode = false;
       this.changesMade = false;
       this.slabEditMode = false;
