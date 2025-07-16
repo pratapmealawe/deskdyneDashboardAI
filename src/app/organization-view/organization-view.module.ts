@@ -25,6 +25,7 @@ import { LuxMenuComponent } from '../common-components/lux-menu/lux-menu.compone
 import { CakeMenuModule } from '../common-components/cake-menu/cake-menu.module';
 import { SweetMenuModule } from '../common-components/sweet-menu/sweet-menu.module';
 import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
+import { EmployeeWalletComponent } from '../common-components/employee-wallet/employee-wallet.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
     OrgComplianceComponent,
     OutletEmployeeComponent,
     VcEmployeeComponent,
+    EmployeeWalletComponent
   ],
   imports: [
     CommonModule,
@@ -56,4 +58,4 @@ import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
   ],
   exports: [OrganizationViewComponent],
 })
-export class OrganizationViewModule {}
+export class OrganizationViewModule { }

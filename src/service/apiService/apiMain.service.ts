@@ -1304,13 +1304,33 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
 
+  addEmployeeWalletList(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addEmployeeWalletList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+
   vcEmployeeByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.vcEmployeeByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 
+  employeeWalletByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.employeeWalletByOrgId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  updateEmployeeCashback(orgId: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployeeCashback;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method }, body);
+  }
+
   deleteVcEmployee(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteVcEmployee;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  deleteEmployeeWallet(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteEmployeeWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
@@ -1324,6 +1344,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
 
+  updateEmployeeWallet(id: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployeeWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
 
   fetchOutletOrdersbysearchObj(body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchOutletOrdersbysearchObj;
