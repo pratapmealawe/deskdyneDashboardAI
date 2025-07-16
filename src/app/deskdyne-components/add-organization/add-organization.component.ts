@@ -31,6 +31,7 @@ export class AddOrganizationComponent implements OnInit {
   appmenutypelist = [1, 2];
   btnPolicy: any;
   orgSubsidy: number = 0;
+  domainList: string[] = [];
 
   constructor(
     private apiMainService: ApiMainService,
@@ -45,6 +46,7 @@ export class AddOrganizationComponent implements OnInit {
     this.form = this.fb.group({
       organization_name: ['', Validators.required],
       location: ['', Validators.required],
+      domain:['',Validators.required],
       city: ['', Validators.required],
       gstin: ['', Validators.required],
       poc_details: this.fb.array([]),
@@ -56,7 +58,7 @@ export class AddOrganizationComponent implements OnInit {
       cafeteriaList: this.fb.array([]),
       subsidy: [0]
     });
-  }
+  } 
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -157,6 +159,16 @@ export class AddOrganizationComponent implements OnInit {
     });
   }
 
+    processDomains() {
+    const inputValue: string = this.form.get('domain')?.value || '';
+    this.domainList = inputValue
+      .split(',')
+      .map(domain => domain.trim())
+      .filter(domain => domain !== '');
+      this.form.get('domain')?.patchValue(this.domainList)
+      
+  }
+
   add_admin_details() {
     this.admin.push(this.new_admin_details());
   }
@@ -187,7 +199,8 @@ export class AddOrganizationComponent implements OnInit {
       location: org.location,
       city: org.city,
       gstin: org.gstin,
-      subsidy: org.subsidy
+      subsidy: org.subsidy,
+      domain:org.domain
     });
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
       if (cafe.clusterId) {
@@ -397,11 +410,14 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   async addOrg() {
+    console.log(this.form.value);
+    
     try {
       if (!this.form.valid) {
         this.showError = true;
         return;
       }
+      
       await this.apiMainService.B2B_addOrg(this.form.getRawValue());
       this.clearRunTimeStorage();
       this.router.navigate(['b2bSearchOrg']);

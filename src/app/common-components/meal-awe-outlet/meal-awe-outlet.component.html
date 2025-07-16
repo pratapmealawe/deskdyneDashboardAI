@@ -297,7 +297,7 @@
                 </div>
             </ng-container>
             <div class="center mt-1"
-                *ngIf="openedSections['cafeteria'] === i && package.cafeteriaList.length==0 && !packageEditMode">
+                *ngIf="openedSections['cafeteria'] === i && package.cafeteriaList?.length==0 && !packageEditMode">
                 No Cafeteria Found
             </div>
             <div class="labelheader order-sub-header header3" (click)="toggleSection('addsOn',i)">Addons:
@@ -390,15 +390,19 @@
     <div class="center mt-5" *ngIf="mealAweOutletObj.itemList.length === 0">
         No Items Found
     </div>
-    <div *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0 ">
+    <div *ngIf="mealAweOutletObj && mealAweOutletObj.itemList && mealAweOutletObj.itemList.length > 0 && packageEditMode">
         <div class="floating-buttons">
             <button class="btn btn-primary btn-sm me-2" *ngIf="!showUpdate" (click)="createOutlet('add')">Add</button>
             <button class="btn btn-primary btn-sm me-2" (click)="packageEditMode=!packageEditMode">Cancel</button>
             <button class="btn btn-primary btn-sm me-2" *ngIf="showUpdate && packageEditMode"
                 (click)="createOutlet('update')">Update</button>
+              
         </div>
     </div>
+    
 </div>
+  <button class="btn btn-primary btn-sm me-2"
+                (click)="createOutlet('update')">Update</button>
 <ng-template #content let-modal>
     <div class="modal-header">
         <h4 class="modal-title" id="modal-basic-title">Add Package</h4>

@@ -54,6 +54,7 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
     { name: 'Guest Employee', path: 'guestEmployeeList' },
     { name: 'Compliance', path: 'organizationCompliance' },
+    { name: 'Employee wallet', path: 'employeeWallet' },
   ];
 
   constructor(private policyService: PolicyService) { }

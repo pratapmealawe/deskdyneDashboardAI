@@ -185,10 +185,12 @@ export class MealAweOutletComponent implements OnInit {
   }
 
   createOutlet(type: any) {
+    console.log(this.mealAweOutletObj);
+    
     if (type === 'add') {
       this.addOutlet(this.mealAweOutletObj);
     } else {
-      console.log(this.mealPackageList);
+      console.log(this.mealAweOutletObj);
       this.updateOutlet(this.mealAweOutletObj);
     }
   }
@@ -202,6 +204,8 @@ export class MealAweOutletComponent implements OnInit {
     }
   }
   async updateOutlet(outlet: any) {
+    console.log(outlet._id);
+    
     try {
       const updatedOutlet = this.apiMainService.updateMealAweOutlet(
         outlet._id,
