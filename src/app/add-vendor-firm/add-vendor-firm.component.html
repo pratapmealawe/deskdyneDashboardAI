@@ -90,7 +90,7 @@
         <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
             Add Outlet
         </div>
-        <div class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
+        <div *ngIf="isVendorEdit" class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
             compliance
         </div>
         <br />
@@ -211,3 +211,4 @@
             <app-vendor-compliance [venderDetails]="selectedVendorFirm"></app-vendor-compliance>
         </div>
     </ng-template>
+    </div>

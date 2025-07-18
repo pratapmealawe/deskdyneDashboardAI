@@ -22,7 +22,7 @@ export class AddVendorFirmComponent {
   showModalOutletList = false;
   selectedOutletsList: any = [];
   defaultRole: any = 'Cashier';
-
+isVendorEdit:any;
   showAddbutton: any = false;
   showCafeteria = false;
   showSelectCafeteriaOption = true;
@@ -47,6 +47,10 @@ export class AddVendorFirmComponent {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.createForm();
     this.updateVendorFirm();
+    console.log(this.router);
+    this.isVendorEdit = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
+
+
   }
 
   async getOrgList() {

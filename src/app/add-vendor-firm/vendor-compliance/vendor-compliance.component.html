@@ -34,6 +34,98 @@
         </div>
     </div>
     <div class="row">
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="!editMode">
+      <div class="labelText">Site FSSAI No: <span class="labelData">{{compliance.siteFssaiNo}}</span></div>
+    </div>
+    <div *ngIf="editMode">
+      <div class="labelText">Site FSSAI No:
+        <input type="text" class="form-control" placeholder="Site FSSAI No" [(ngModel)]="compliance.siteFssaiNo" />
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="editMode && !compliance.siteFssaiFileUrl">
+      <app-pdfupload [documentname]="'siteFssaiFile'" [documentUrl]="compliance.siteFssaiFileUrl"
+        (upload)="uploadDoc($event)"></app-pdfupload>
+    </div>
+    <div *ngIf="compliance.siteFssaiFileUrl" class="pdf-preview">
+      <iframe [src]="compliance.siteFssaiFileUrl" type="application/pdf"></iframe>
+      <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('siteFssaiFile')">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="!editMode">
+      <div class="labelText">Shop Act License No: <span class="labelData">{{compliance.shopActLicenseNo}}</span></div>
+    </div>
+    <div *ngIf="editMode">
+      <div class="labelText">Shop Act License No:
+        <input type="text" class="form-control" placeholder="Shop Act License No" [(ngModel)]="compliance.shopActLicenseNo" />
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="editMode && !compliance.shopActLicenseFileUrl">
+      <app-pdfupload [documentname]="'shopActLicenseFile'" [documentUrl]="compliance.shopActLicenseFileUrl"
+        (upload)="uploadDoc($event)"></app-pdfupload>
+    </div>
+    <div *ngIf="compliance.shopActLicenseFileUrl" class="pdf-preview">
+      <iframe [src]="compliance.shopActLicenseFileUrl" type="application/pdf"></iframe>
+      <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('shopActLicenseFile')">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="!editMode">
+      <div class="labelText">Aadhar No: <span class="labelData">{{compliance.aadharNo}}</span></div>
+    </div>
+    <div *ngIf="editMode">
+      <div class="labelText">Aadhar No:
+        <input type="text" class="form-control" placeholder="Aadhar No" [(ngModel)]="compliance.aadharNo" />
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="editMode && !compliance.aadharFileUrl">
+      <app-pdfupload [documentname]="'aadharFile'" [documentUrl]="compliance.aadharFileUrl"
+        (upload)="uploadDoc($event)"></app-pdfupload>
+    </div>
+    <div *ngIf="compliance.aadharFileUrl" class="pdf-preview">
+      <iframe [src]="compliance.aadharFileUrl" type="application/pdf"></iframe>
+      <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('aadharFile')">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="!editMode">
+      <div class="labelText">Udyam Aadhar No: <span class="labelData">{{compliance.udyamAadharNo}}</span></div>
+    </div>
+    <div *ngIf="editMode">
+      <div class="labelText">Udyam Aadhar No:
+        <input type="text" class="form-control" placeholder="Udyam Aadhar No" [(ngModel)]="compliance.udyamAadharNo" />
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="editMode && !compliance.udyamAadharFileUrl">
+      <app-pdfupload [documentname]="'udyamAadharFile'" [documentUrl]="compliance.udyamAadharFileUrl"
+        (upload)="uploadDoc($event)"></app-pdfupload>
+    </div>
+    <div *ngIf="compliance.udyamAadharFileUrl" class="pdf-preview">
+      <iframe [src]="compliance.udyamAadharFileUrl" type="application/pdf"></iframe>
+      <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('udyamAadharFile')">Delete</button>
+    </div>
+  </div>
+</div>
+
+    <!-- <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
             <div class="labelText" *ngIf="!editMode">TradeLic No: <span
                     class="labelData">{{compliance.tradeLicNumber}}</span>
@@ -55,7 +147,35 @@
                 </div>
             </ng-container>
         </div>
+    </div> -->
+<div class="row">
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="!editMode">
+      <div class="labelText">Trade License Number: <span class="labelData">{{compliance.tradeLicNumber}}</span></div>
     </div>
+    <div *ngIf="editMode">
+      <div class="labelText">Trade License Number:
+        <input type="text" class="form-control" placeholder="Trade License Number" [(ngModel)]="compliance.tradeLicNumber" />
+      </div>
+    </div>
+  </div>
+  
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="editMode && !compliance.TradeLicUrl">
+      <app-pdfupload
+        [documentname]="'TradeLic'"
+        [documentUrl]="compliance.TradeLicUrl"
+        (upload)="uploadDoc($event)">
+      </app-pdfupload>
+    </div>
+    
+    <div *ngIf="compliance.TradeLicUrl" class="pdf-preview">
+      <iframe [src]="compliance.TradeLicUrl" type="application/pdf"></iframe>
+      <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('TradeLic')">Delete</button>
+    </div>
+  </div>
+</div>
+
     <div class="row">
 
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
@@ -66,7 +186,7 @@
             </div>
         </div>
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-            <div *ngIf="editMode && !compliance.pfFile">
+            <div *ngIf="editMode && !compliance.pfFileUrl">
                 <app-pdfupload [documentname]="pfFile" [documentUrl]="compliance.pfFile"
                     (upload)=uploadDoc($event)></app-pdfupload>
             </div>
@@ -99,6 +219,29 @@
             </ng-container>
         </div>
     </div>
+    <!-- 4. ESI T3 -->
+<div class="row">
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="!editMode">
+      <div class="labelText">ESI T3 Number: <span class="labelData">{{compliance.esiT3Number}}</span></div>
+    </div>
+    <div *ngIf="editMode">
+      <div class="labelText">ESI T3 Number:
+        <input type="text" class="form-control" placeholder="ESI T3 Number" [(ngModel)]="compliance.esiT3Number" />
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+    <div *ngIf="editMode && !compliance.esiT3FileUrl">
+      <app-pdfupload [documentname]="'esiT3File'" [documentUrl]="compliance.esiT3FileUrl"
+        (upload)="uploadDoc($event)"></app-pdfupload>
+    </div>
+    <div *ngIf="compliance.esiT3FileUrl" class="pdf-preview">
+      <iframe [src]="compliance.esiT3FileUrl" type="application/pdf"></iframe>
+      <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('esiT3File')">Delete</button>
+    </div>
+  </div>
+</div>
     <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
             <div *ngIf="!editMode" class="labelText">
@@ -135,7 +278,7 @@
         </div>
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
             <div *ngIf="editMode && !compliance.PanCardFileUrl">
-                <app-pdfupload [documentname]="PanCardFile" [documentUrl]="compliance.PanCardFile"
+                <app-pdfupload [documentname]="'PanCardFile'" [documentUrl]="compliance.PanCardFileUrl"
                     (upload)=uploadDoc($event)></app-pdfupload>
             </div>
             <ng-container *ngIf="compliance.PanCardFileUrl">
@@ -159,7 +302,7 @@
         </div>
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
             <div *ngIf="editMode && !compliance.pestconFileUrl">
-                <app-pdfupload [documentname]="pestconFile" [documentUrl]="compliance.pestconFile"
+                <app-pdfupload [documentname]="pestconFile" [documentUrl]="compliance.pestconFileUrl"
                     (upload)=uploadDoc($event)></app-pdfupload>
             </div>
             <ng-container *ngIf="compliance.pestconFileUrl">
@@ -170,6 +313,39 @@
             </ng-container>
         </div>
     </div>
+       <div class="row">
+  <div class="col-sm-6 mt-2">
+    <div class="labelText">Cancelled Cheque:</div>
+
+    <!-- Upload Section -->
+    <div *ngIf="editMode && !compliance.cancelledChequeFileUrl">
+      <app-pdfupload
+        [documentname]="'cancelledChequeFile'"
+        [documentUrl]="compliance.cancelledChequeFileUrl"
+        (upload)="uploadDoc($event)">
+      </app-pdfupload>
+    </div>
+
+    <!-- Preview Section -->
+    <div *ngIf="compliance.cancelledChequeFileUrl" class="pdf-preview">
+      <iframe [src]="compliance.cancelledChequeFileUrl" type="application/pdf"></iframe>
+      <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('cancelledChequeFile')">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12 mt-2">
+    <div *ngIf="!editMode">
+      <div class="labelText">Comment: <span class="labelData">{{compliance.comment}}</span></div>
+    </div>
+    <div *ngIf="editMode">
+      <div class="labelText">Comment:
+        <textarea class="form-control" rows="3" placeholder="Comment..." [(ngModel)]="compliance.comment"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12">
             <div *ngIf="editMode">
@@ -182,4 +358,5 @@
             </div>
         </div>
     </div>
+
 </div>
