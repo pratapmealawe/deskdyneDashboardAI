@@ -10,6 +10,7 @@ import { DataFormatService } from 'src/service/data-format.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 
 @Component({
   selector: 'app-add-outlet',
@@ -54,7 +55,7 @@ export class AddOutletComponent implements OnInit {
     },
     { mealType: 'Dinner', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
   ];
-  outletSubsidy:number=0;
+  outletSubsidy: number = 0;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -62,9 +63,10 @@ export class AddOutletComponent implements OnInit {
     private runtimeStorageService: RuntimeStorageService,
     private modalService: NgbModal,
     private fb: FormBuilder,
+    private confirmationModal: ConfirmationModalService,
     private dataFormatService: DataFormatService,
     private policyService: PolicyService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -92,10 +94,10 @@ export class AddOutletComponent implements OnInit {
 
         return matchingMeal
           ? {
-              ...meal,
-              acceptOrderFrom: matchingMeal.acceptOrderFrom,
-              acceptOrderTill: matchingMeal.acceptOrderTill,
-            }
+            ...meal,
+            acceptOrderFrom: matchingMeal.acceptOrderFrom,
+            acceptOrderTill: matchingMeal.acceptOrderTill,
+          }
           : meal;
       });
 
@@ -118,8 +120,8 @@ export class AddOutletComponent implements OnInit {
       outletDescription: [''],
       outletType: [''],
       outletOpened: [false],
-      vendorCommissionPercentage: [0] ,
-      subsidy:[0]
+      vendorCommissionPercentage: [0],
+      subsidy: [0]
     });
   }
 
@@ -149,12 +151,15 @@ export class AddOutletComponent implements OnInit {
     modalRef.result.then(
       (result) => {
         if (result === 'add') {
-          this.formattedOrgList.forEach((org: any) => {
-            if (org.key === this.selectedOrgCafeteria) {
-              this.seletedCafetria = { ...org };
-              console.log(this.seletedCafetria);
-            }
-          });
+          this.confirmationModal.modal("Are you sure you want to change Organization and Cafeteria?", () => {
+            this.formattedOrgList.forEach((org: any) => {
+              if (org.key === this.selectedOrgCafeteria) {
+                this.seletedCafetria = { ...org };
+                console.log(this.seletedCafetria);
+              }
+            });
+          }, this)
+
         }
       },
       (reason) => {
@@ -205,19 +210,19 @@ export class AddOutletComponent implements OnInit {
     }
   }
 
-  async updateOutletLevelSubsidy(){
+  async updateOutletLevelSubsidy() {
     try {
-      this.outletSubsidy =this.form.value.subsidy;
+      this.outletSubsidy = this.form.value.subsidy;
       const res = await this.apiMainService.updateOutletLevelSubsidy(
-              this.selectedOutlet._id,
-              this.outletSubsidy
-            )
-    }catch(err){
+        this.selectedOutlet._id,
+        this.outletSubsidy
+      )
+    } catch (err) {
     }
   }
-  
+
   async submit(type?: any) {
-    
+
     try {
       const finalObj = {
         cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
@@ -234,10 +239,10 @@ export class AddOutletComponent implements OnInit {
       const res =
         type === 'update'
           ? await this.apiMainService.updateOutlet(
-              this.selectedOutlet._id,
-              formData,
-              0
-            )
+            this.selectedOutlet._id,
+            formData,
+            0
+          )
           : await this.apiMainService.saveOutlet(formData);
       this.router.navigate(['/outlet']);
     } catch (error) {
@@ -285,7 +290,7 @@ export class AddOutletComponent implements OnInit {
       address2: cafe.address2,
       landmark: cafe.landmark,
       location: cafe.location,
-      cafeteria_id:cafe.cafeteria_id
+      cafeteria_id: cafe.cafeteria_id
     };
   }
 

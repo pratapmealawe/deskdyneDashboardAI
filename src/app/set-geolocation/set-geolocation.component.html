@@ -1,9 +1,12 @@
 <div class="fullheight">
-    <div class="searchAddress row">  
-        <div class="col-sm-12 col-md-2 col-lg-2 currentLocation" (click)="goToCurrentLocation()">Current Location</div>      
-        <div class="col-sm-12 col-md-10 col-lg-10">
-            <input [(ngModel)]="searchText" class="searchInput" id="searchLocation" type='text' placeholder="Search Location">
-        </div>        
+    <div class="searchAddress row mb-2">
+        <div class="col-sm-12 col-md-3 col-lg-2 currentLocation" (click)="goToCurrentLocation()">Current Location</div>
+        <div class="col-sm-12 col-md-9 col-lg-10">
+            <input [(ngModel)]="searchText" class="searchInput" id="searchLocation" type='text'
+                placeholder="Search Location">
+        </div>
     </div>
-    <div [id]="mapid" class="map"></div>
+    <div class="row">
+        <div [id]="mapid" class="map"></div>
+    </div>
 </div>

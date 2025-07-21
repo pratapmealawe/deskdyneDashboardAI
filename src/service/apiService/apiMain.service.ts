@@ -1493,4 +1493,8 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.b2b_updateCustomizedSnackBox;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
+  fetchFoodOrderPackagebysearchObj(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchFoodOrderPackagebysearchObj;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
 }

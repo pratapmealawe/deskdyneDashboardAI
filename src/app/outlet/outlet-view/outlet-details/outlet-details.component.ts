@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { LoaderstatusService } from 'src/app/main-loader/loaderstatus.service';
 import { environment } from 'src/environments/environment';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -14,12 +15,15 @@ export class OutletDetailsComponent implements OnInit {
   @Input() outletObj: any;
   imageUrl: any = environment.imageUrl;
   btnPolicy: any;
+  loading: boolean = false
 
   constructor(
     private router: Router,
     private runtimeStorageService: RuntimeStorageService,
+    private loadingService: LoaderstatusService,
     private policyService: PolicyService
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();

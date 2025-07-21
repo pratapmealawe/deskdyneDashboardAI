@@ -582,6 +582,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
         method: 'POST'
       },
+      fetchFoodOrderPackagebysearchObj: {
+        url: `${this.baseUrl}/api/fetchFoodOrderPackagebysearchObj`,
+        method: 'POST'
+      },
       getStaticTotalCounts: {
         url: `${this.baseUrl}/api/getStaticTotalCounts`,
         method: 'GET'

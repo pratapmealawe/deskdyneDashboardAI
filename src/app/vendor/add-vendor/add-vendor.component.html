@@ -4,99 +4,110 @@
     <div class="row">
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText form-label">Vendor Firm</div>
-        <select
-          class="inline"
-          class="selectStyle"
-          [(ngModel)]="vendorId"
-          formControlName="vendorId"
-          (change)="changeVendorFirm($event)"
-        >
-        <option value="" selected disabled>Select Vendor Firm</option>
+        <select class="inline" class="selectStyle" [(ngModel)]="vendorId" formControlName="vendorId"
+          (change)="changeVendorFirm($event)">
+          <option value="" selected disabled>Select Vendor Firm</option>
           <option *ngFor="let firm of vendorList" [value]="firm._id">
             {{ firm?.vendorFirmName }}
           </option>
         </select>
-        <div
-          class="error-text"
-          *ngIf="form.controls.vendorId.errors?.required && showError"
-        >
+        <div class="error-text" *ngIf="form.controls.vendorId.errors?.required && showError">
           *Vendor Firm is required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText form-label">Vendor Name</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Vendor Name"
-          formControlName="vendorName"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.vendorName.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="Vendor Name" formControlName="vendorName" />
+        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
           *Vendor name is required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText form-label">Vendor Phone No</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Vendor Phone No"
-          formControlName="vendorPhoneNo"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.vendorName.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="Vendor Phone No" formControlName="vendorPhoneNo" />
+        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
           *Vendor phone no is required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText form-label">Vendor email</div>
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Vendor Email"
-          formControlName="vendorEmail"
-        />
-        <div
-          class="error-text"
-          *ngIf="form.controls.vendorName.errors?.required && showError"
-        >
+        <input type="text" class="form-control" placeholder="Vendor Email" formControlName="vendorEmail" />
+        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
           *Vendor email is required
         </div>
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText form-label">Vendor Role</div>
-        <select
-          class="inline"
-          formControlName="vendorRole"
-          class="selectStyle"
-          [(ngModel)]="defaultRole"
-        >
+        <select class="inline" formControlName="vendorRole" class="selectStyle" [(ngModel)]="defaultRole">
           <option *ngFor="let role of vendorRole" [value]="role">
             {{ role }}
           </option>
         </select>
-        <div
-          class="error-text"
-          *ngIf="form.controls.vendorName.errors?.required && showError"
-        >
+        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
           *Vendor role is required
         </div>
       </div>
-
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="labelText form-label">Vendor Access</div>
+        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
+          formControlName="accessType">
+          <mat-radio-button class="example-radio-button" [value]="'outlet'">
+            Outlet Access
+          </mat-radio-button>
+          <mat-radio-button class="example-radio-button" [value]="'daily_bulk'">
+            Daily And Bulk Access
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+    </div>
+    <div class="mt-4">
+      <div class="d-flex align-items-center justify-content-between">
+        <h5>Address</h5>
+      </div>
+      <div class="cardDesign p-3 mb-2" >
+        <div class="row" formGroupName="address">
+          <div class="col-md-3">
+            <label class="form-label">Address Line 1</label>
+            <input class="form-control" formControlName="address1" placeholder="Address 1" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Address Line 2</label>
+            <input class="form-control" formControlName="address2" placeholder="Address 2" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Landmark</label>
+            <input class="form-control" formControlName="landmark" placeholder="Landmark" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">Location</label>
+            <input class="form-control" formControlName="location" placeholder="Location" />
+          </div>
+          <div class="col-md-3">
+            <label class="form-label">City</label>
+            <input class="form-control" formControlName="city" placeholder="City" />
+          </div>
+        </div>
+        <div class="row" formGroupName="vendor_location">
+          <div class="col-md-3">
+            <div class="labelText">lat</div>
+            <input type="text" class="form-control" placeholder="lat" formControlName="lat" readonly />
+          </div>
+          <div class="col-md-3">
+            <div class="labelText">lng</div>
+            <input type="number" class="form-control" placeholder="lng" formControlName="lng" readonly />
+          </div>
+          <div class="col-md-3 bgpadding2">
+            <span class="addBtn pointer" (click)="toggleMap()">GeoLocation</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
   <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
     Add Outlet
   </div>
   <br />
-  <div
-    class="cardDesign mt-1"
-    *ngFor="let outlet of selectedOutletsList; index as i"
-  >
+  <div class="cardDesign mt-1" *ngFor="let outlet of selectedOutletsList; index as i">
     <div class="row card-wrapper">
       <div class="col-lg-10">
         <div class="row">
@@ -135,46 +146,30 @@
       </div>
     </div>
   </div>
-  <div
-    class="btn btn-primary btn-sm mt-1"
-    (click)="submit('update')"
-    *ngIf="showUpdate && true || btnPolicy?.editVendor"
-  >
+  <div class="btn btn-primary btn-sm mt-1" (click)="submit('update')"
+    *ngIf="showUpdate && true || btnPolicy?.editVendor">
     Update
   </div>
-  <div
-    class="btn btn-primary btn-sm mt-1"
-    (click)="submit()"
-    *ngIf="!showUpdate && true || btnPolicy?.addVendor"
-  >
+  <div class="btn btn-primary btn-sm mt-1" (click)="submit()" *ngIf="!showUpdate && true || btnPolicy?.addVendor">
     Submit
   </div>
 </div>
 <ng-template #outletModal let-modal>
   <div class="modal-header">
     <h4 class="modal-title" id="modal-basic-title">Outlet List</h4>
-    <button
-      type="button"
-      class="close"
-      aria-label="Close"
-      (click)="modal.dismiss('cancel')"
-    >
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    
-    <div class="mt-3" >
+
+    <div class="mt-3">
       <div *ngFor="let outlet of outletByCafeteriaList" class="cardDesign">
         <div class="row card-wrapper">
           <div class="col-12 col-md-4 col-lg-12">
             <div class="row">
               <div class="col-6 col-md-5 col-lg-2">
-                <input
-                  mdbCheckbox
-                  [(ngModel)]="outlet.isChecked"
-                  type="checkbox"
-                />
+                <input mdbCheckbox [(ngModel)]="outlet.isChecked" type="checkbox" />
               </div>
               <div class="col-6 col-md-5 col-lg-3">
                 <div class="labelText">outlet Name</div>
@@ -195,21 +190,21 @@
   </div>
 </ng-template>
 
-<ng-template #complianceModal let-modal>
+<ng-template #geolocation let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">compliance</h4>
-    <button
-      type="button"
-      class="close"
-      aria-label="Close"
-      (click)="modal.dismiss('cancel')"
-    >
+    <h4 class="modal-title" id="modal-basic-title">Geolocation</h4>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <app-vendor-compliance
-      [venderDetails]="selectedVendor"
-    ></app-vendor-compliance>
+    <app-set-geolocation class="padding-bottom" (sendLocation)="updateLocation($event)"></app-set-geolocation>
+  </div>
+  <div class="modal-footer">
+    <div class="inline bgpadding1">
+      <button type="button" class="btn btn-primary" (click)="modal.close('add')">
+        Add
+      </button>
+    </div>
   </div>
 </ng-template>

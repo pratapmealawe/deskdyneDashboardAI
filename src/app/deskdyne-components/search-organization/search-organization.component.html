@@ -59,8 +59,6 @@
             <div *ngFor="let org of orgList" class="cardDesign">
                 <app-organization-card [organization]="org" (view)="viewOrg($event)"></app-organization-card>
             </div>
-            <!-- <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm" (click)="getMore()">Load
-        More</button> -->
         </div>
     </div>
 </div>
