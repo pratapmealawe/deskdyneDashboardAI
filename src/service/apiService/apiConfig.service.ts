@@ -778,6 +778,7 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/b2b_updateCustomizedSnackBox`,
         method: 'POST'
       },
+      getCafeteriasPollingList:{url:`${this.baseUrl}/api/getCafeteriasPollingList`,method:'POST'},
     };
   }
 }
