@@ -11,13 +11,17 @@
             <div class="labelText">Location</div>
             <div class="labelData">{{ organization.location }}</div>
           </div>
-          <div class="col-6 col-md-7 col-lg-5">
+          <div class="col-6 col-md-7 col-lg-2">
             <div class="labelText">City</div>
             <div class="labelData">{{ organization.city }}</div>
           </div>
+          <div class="col-6 col-md-7 col-lg-2">
+            <div class="labelText">Domain</div>
+            <div class="labelData">{{ organization.domain }}</div>
+          </div>
           <div class="col-6 col-md-7 col-lg-1">
             <div
-              class="inline right pointer header3"
+              class="inline  pointer header3"
               *ngIf="true || btnPolicy?.viewOrganization"
               (click)="vieworg(organization)"
             >

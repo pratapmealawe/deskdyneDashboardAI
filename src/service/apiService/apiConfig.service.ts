@@ -558,16 +558,36 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/vcEmployeeByOrgId`,
         method: 'GET'
       },
+      employeeWalletByOrgId: {
+        url: `${this.baseUrl}/api/employeeWalletByOrgId`,
+        method: 'GET'
+      },
+      updateEmployeeCashback: {
+        url: `${this.baseUrl}/api/updateEmployeeCashbackList`,
+        method: 'POST'
+      },
       addVcEmployeeList: {
         url: `${this.baseUrl}/api/addVcEmployeeList`,
+        method: 'POST'
+      },
+      addEmployeeWalletList: {
+        url: `${this.baseUrl}/api/addEmployeeWalletList`,
         method: 'POST'
       },
       deleteVcEmployee: {
         url: `${this.baseUrl}/api/deleteVcEmployee`,
         method: 'DELETE'
       },
+      deleteEmployeeWallet: {
+        url: `${this.baseUrl}/api/deleteEmployeeWallet`,
+        method: 'DELETE'
+      },
       updateVcEmployee: {
         url: `${this.baseUrl}/api/updateVcEmployee`,
+        method: 'POST'
+      },
+      updateEmployeeWallet: {
+        url: `${this.baseUrl}/api/updateEmployeeWallet`,
         method: 'POST'
       },
       getVcEmployeeByPhoneNo: {

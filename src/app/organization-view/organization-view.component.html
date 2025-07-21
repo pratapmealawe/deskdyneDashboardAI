@@ -39,6 +39,8 @@
   <app-employee-list *ngSwitchCase="'employeeList'" [orgObj]="organization"></app-employee-list>
   <app-outlet-employee *ngSwitchCase="'outletEmployee'" [orgObj]="organization"></app-outlet-employee>
   <app-vc-employee *ngSwitchCase="'vcEmployee'" [orgObj]="organization"></app-vc-employee>
+  <app-employee-wallet *ngSwitchCase="'employeeWallet'" [orgObj]="organization"></app-employee-wallet>
+
 </ng-container>
 
 <ng-container [ngSwitch]="selectedSubTab">

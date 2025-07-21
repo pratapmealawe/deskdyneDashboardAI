@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Output,EventEmitter ,OnChanges, SimpleChanges} from '@angular/core';
+import { Component, Input, Output,EventEmitter ,OnChanges, SimpleChanges, OnInit} from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
@@ -24,8 +24,12 @@ export class PdfuploadComponent implements OnChanges{
   constructor(private sanitizer: DomSanitizer, private apiMainService: ApiMainService,) {
   }
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    
    if(this.documentUrl){
     this.selectedFileURL = this.sanitizer.bypassSecurityTrustResourceUrl(this.documentUrl);
+    console.log(this.selectedFileURL);
+    
    }
   }
 
