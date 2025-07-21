@@ -23,15 +23,9 @@ export class OutletViewComponent implements OnInit {
   selectedTab = 'outlet-details';
   updateval: any = false;
 
-  constructor(private router: Router,    private sendDataToComponent:SendDataToComponent
-) {}
+  constructor(private router: Router, private sendDataToComponent: SendDataToComponent) { }
 
   ngOnInit(): void {
-       this.sendDataToComponent.subscribe('MASTER_MENU_LIST',(data:any)=>{
-
-      console.log(data);
-      
-    })
   }
 
   gotToTab(tab: string) {
@@ -41,6 +35,7 @@ export class OutletViewComponent implements OnInit {
   goBack() {
     this.back.emit({ val: true, updateval: this.updateval });
   }
+  
   updateOutlet(val: any) {
     this.updateval = val;
   }

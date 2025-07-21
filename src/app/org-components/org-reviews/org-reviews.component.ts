@@ -153,7 +153,7 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
         this.expandedItems = new Array(this.feedbackList.length).fill(true);
       } 
 
-      console.log(feedbackList);
+      // console.log(feedbackList);
       
     } catch (e) {
       console.log('Error while fetching config variables ', e);
@@ -324,7 +324,7 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       });
     });
 
-    console.log(firstLevelDrill)
+    // console.log(firstLevelDrill)
 
     // 5. Put everything into chartOptionsPie
     this.chartOptionsPie = {

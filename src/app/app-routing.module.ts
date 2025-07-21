@@ -200,6 +200,12 @@ const routes: Routes = [
         (m) => m.ServerLogsModule
       ),
   },
+  {
+    path: 'billing',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import('./billing/billing.module').then((m) => m.BillingModule),
+  },
 
   //orgAdmin routes
   {
@@ -407,6 +413,14 @@ const routes: Routes = [
       import(
         './deskdyne-components/b2b-current-orders/b2b-current-orders.module'
       ).then((m) => m.B2bCurrentOrdersModule),
+  },
+  {
+    path: 'otherOrder',
+    canActivate: [accessGuard],
+    loadChildren: () =>
+      import(
+        './other-orders/other-orders.module'
+      ).then((m) => m.OtherOrdersModule),
   },
   {
     path: 'pastOrder',

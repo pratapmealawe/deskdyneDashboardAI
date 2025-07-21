@@ -51,7 +51,6 @@
 
 <hr *ngIf="selectedChildTab">
 
-<!-- Child Tab Components -->
 <ng-container [ngSwitch]="selectedChildTab">
   <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization"></app-org-bulk-menu>
   <app-org-individual-menu *ngSwitchCase="'individualMealsMenu'" [orgObj]="organization"></app-org-individual-menu>

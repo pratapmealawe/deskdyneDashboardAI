@@ -106,7 +106,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       ],
     },
     {
-      name: 'Orders',
+      name: 'Outlet Orders',
       showParent: true,
       image: 'B2BOrders',
       imageblue: 'B2BOrders_Blue',
@@ -121,9 +121,31 @@ export class HeaderComponent implements OnInit, OnDestroy {
       ],
     },
     {
+      name: 'Other Orders',
+      showParent: true,
+      image: 'B2BOrders',
+      imageblue: 'B2BOrders_Blue',
+      children: [
+        {
+          name: 'Current Order',
+          route: 'otherOrder',
+          showChild: true,
+        },
+        { name: 'Search Order', route: 'searchOrder', showChild: true },
+        { name: 'Export Order', route: 'outletExcelExport', showChild: true },
+      ],
+    },
+    {
       name: 'Users',
       showParent: true,
       route: 'customer',
+      image: 'Feedback',
+      imageblue: 'Feedback_Blue',
+    },
+    {
+      name: 'Billing',
+      showParent: true,
+      route: 'billing',
       image: 'Feedback',
       imageblue: 'Feedback_Blue',
     },
@@ -347,7 +369,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Billing',
       showParent: true,
-      route: 'orgBilling',
+      route: 'billing',
       image: 'Billing_white',
       imageblue: 'Billing_Blue',
     },

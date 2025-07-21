@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from './../environments/environment';
 import { Loader, LoaderOptions } from 'google-maps';
 import { ApiMainService } from './apiService/apiMain.service';
+import { RuntimeStorageService } from './runtime-storage.service';
 
 // tslint:disable-next-line:class-name
 declare interface google {
@@ -19,7 +20,7 @@ declare interface google {
     directionsService:any;
     googleQueue:any = [];
     callInProgess = false;
-    constructor(private apiMainService: ApiMainService) {
+    constructor(private apiMainService: ApiMainService,private runtimeStorageService:RuntimeStorageService,) {
        }
 
     private async  loadGoogleMap(){      
@@ -90,15 +91,16 @@ declare interface google {
                     await this.getGoogle();
                 }
                 // const geoFencinglist:any = await this.apiMainService.getGeoFencingList();
-                const geoFencinglist:any = [];
-                const mappedClusterList:any = []
+                let geoFencinglist:any
+                const mappedClusterList:any = [];
+                let clusterDetails:any={};
                 if(geoFencinglist && geoFencinglist.length > 0){
                     if(!this.google){
                         await this.getGoogle();
                     }
                     let clusterFound = false;
                     geoFencinglist.forEach((cluster:any) =>{
-                        clusterFound = this.google.maps.geometry.poly.containsLocation(
+                        clusterFound = this.google.maps.geometry.poly.containsLocation( 
                             new this.google.maps.LatLng(latLngObj.lat, latLngObj.lng),
                             new google.maps.Polygon({
                                 paths: [ [...cluster.clusterCoordinates]]
@@ -107,9 +109,11 @@ declare interface google {
                         console.log('Is new position inside fencing ', clusterFound, cluster);
                         if(clusterFound){
                             mappedClusterList.push(cluster.clusterId);
+                            clusterDetails=cluster;
                         }
                     });                   
                 }
+                this.runtimeStorageService.setCacheData('CLUSTERS_details',clusterDetails);
                 resolve(mappedClusterList);                
             }catch(error){
               console.log('error while fetching geo fencing list ',error);

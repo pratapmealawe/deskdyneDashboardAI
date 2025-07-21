@@ -62,6 +62,8 @@ export class AddPolicyComponent {
       outletMasterMenu: false,
       addVendorFirm: false,
       searchVendorFirm: false,
+      billing: false,
+      otherOrder: false,
     },
     button_policies: {
       addOutlet: false,

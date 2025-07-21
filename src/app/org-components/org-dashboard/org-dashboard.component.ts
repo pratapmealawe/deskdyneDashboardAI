@@ -134,7 +134,7 @@ export class OrgDashboardComponent implements OnInit, OnChanges {
     const data = this.buildPayload()
     try {
       const res = await this.apiMainService.getTotalCountsByOrgId(data)
-      console.log(res);
+      // console.log(res);
       this.dashboarData = res
     } catch (err: any) {
       console.log(err)
@@ -320,7 +320,7 @@ export class OrgDashboardComponent implements OnInit, OnChanges {
 
   fetchData() {
     const selCafe = this.cafeList.find(c => c.cafeteria_id === this.cafeteria_id)
-    console.log(selCafe);
+    // console.log(selCafe);
     this.selectedCafe = selCafe
     this.getDashboardDataByOrgId()
     this.getOrgTotalOrdersStatusWiseData()

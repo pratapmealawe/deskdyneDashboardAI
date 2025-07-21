@@ -11,7 +11,7 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
   styleUrls: ['vendor-card.component.scss'],
 })
 export class VendorCardComponent implements OnInit {
-  @Input() vendor: any;
+  @Input() vendorFirm: any;
   @Output() deleted = new EventEmitter();
   btnPolicy: any;
 

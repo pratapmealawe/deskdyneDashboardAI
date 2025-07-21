@@ -1,0 +1,37 @@
+<div class="container-fluid py-2 px-2">
+    <div class="row bg-light rounded py-4 my-3">
+        <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of OrderTypeViewList"
+            [ngClass]="{ tileSelected: selectedTab === view.path }" (click)="gotToTab(view.path)">
+            <div class="tileLabel header4 countTile">{{ view.name }}</div>
+        </div>
+    </div>
+
+    <!-- Sub Tabs -->
+    <div class="row" *ngIf="getSubTab().length">
+        <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let sub of getSubTab()"
+            [ngClass]="{ tileSelected: selectedSubTab === sub.path || selectedSubTab === sub.name }"
+            (click)="goToSubTab(sub.path || sub.name)">
+            <div class="tileLabel header4 countTile">{{ sub.name }}</div>
+        </div>
+    </div>
+
+    <!-- Main Content Tabs -->
+    <ng-container [ngSwitch]="selectedTab">
+    </ng-container>
+
+    <ng-container [ngSwitch]="selectedSubTab">
+        <p *ngSwitchCase="'today'">today</p>
+        <p *ngSwitchCase="'tomorrow'">tomorrow</p>
+        <p *ngSwitchCase="'dayAfterTomorrow'">dayAfterTomorrow</p>
+        <!-- BULK -->
+        <p *ngSwitchCase="'placed'">placed</p>
+        <p *ngSwitchCase="'accepted'">accepted</p>
+        <p *ngSwitchCase="'preparing'">preparing</p>
+        <p *ngSwitchCase="'readyForDelivery'">readyForDelivery</p>
+        <p *ngSwitchCase="'onTheWay'">onTheWay</p>
+        <p *ngSwitchCase="'delivered'">delivered</p>
+        <p *ngSwitchCase="'cancelled'">cancelled</p>
+    </ng-container>
+
+
+</div>

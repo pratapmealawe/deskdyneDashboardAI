@@ -1208,19 +1208,12 @@ export class ApiMainService {
     });
   }
   getCafeteriasPollingList(deliveryDate: any) {
-    const urlObj =
-      this.apiConfigService.apiEndPointObj.getCafeteriasPollingList;
-    return this.apiHttpService.REQUEST(
-      { url: urlObj.url, method: urlObj.method },
-      deliveryDate
-    );
+    const urlObj = this.apiConfigService.apiEndPointObj.getCafeteriasPollingList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, deliveryDate);
   }
   createOrderFromPollObj(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.createOrderFromPollObj;
-    return this.apiHttpService.REQUEST(
-      { url: urlObj.url, method: urlObj.method },
-      payload
-    );
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method },payload);
   }
   fetchAllEnquiries() {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchAllEnquiries;
@@ -1515,6 +1508,10 @@ export class ApiMainService {
   }
   b2b_updateCustomizedSnackBox(body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.b2b_updateCustomizedSnackBox;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+  fetchFoodOrderPackagebysearchObj(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchFoodOrderPackagebysearchObj;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
 }

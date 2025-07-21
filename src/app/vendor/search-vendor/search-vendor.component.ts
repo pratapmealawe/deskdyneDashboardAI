@@ -19,13 +19,14 @@ export class SearchVendorComponent implements OnInit {
   vendorList: any;
   orgName: any;
   btnPolicy: any;
+  filteredVendorList: any[] = []
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -42,8 +43,33 @@ export class SearchVendorComponent implements OnInit {
   async searchVendor() {
     try {
       this.vendorList = await this.apiMainService.searchVendor(this.searchObj);
-      console.log(this.vendorList);
-      
+
+      if (this.vendorList.length > 0) {
+        const vendorFirmMap = new Map<string, {
+          vendorFirmId: string;
+          vendorFirmName: string;
+          vendorList: any[];
+        }>();
+
+        for (const vendor of this.vendorList) {
+          const firmId = vendor?.vendorFirmDetails?.vendorFirmId || "No Vendor Firm";
+          const firmName = vendor?.vendorFirmDetails?.vendorFirmName || "No Vendor Firm";
+
+          if (!vendorFirmMap.has(firmId)) {
+            vendorFirmMap.set(firmId, {
+              vendorFirmId: firmId,
+              vendorFirmName: firmName,
+              vendorList: []
+            });
+          }
+
+          vendorFirmMap.get(firmId)!.vendorList.push(vendor);
+        }
+
+        this.filteredVendorList = Array.from(vendorFirmMap.values());
+
+        console.log(this.filteredVendorList);
+      }
     } catch (error) {
       console.log('searchVendor', error);
     }
