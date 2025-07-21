@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -18,6 +18,10 @@ export class VendorComplianceComponent implements OnInit {
   fileUrl = environment.fileUrl;
   comment = '';
   editMode = false;
+  showError = false;
+  fssaiNoStatus = false;
+  aadharNoStatus = false;
+  panNoStatus = false;
   uploadedCompliance: any = {};
   originalCompliance: any = {};
   access: any;
@@ -39,10 +43,22 @@ export class VendorComplianceComponent implements OnInit {
     url: '',
     file: undefined
   }
+  cancelledChequeFileStatus = false;
+  fssaiFileStatus = false;
+  adhaarFileStatus = false;
+  panFileStatus = false;
+  selectedMerchantFile: any;
+
+  @ViewChild('fssaiNoRef') fssaiNoField!: ElementRef;
+  @ViewChild('aadharNo') aadharNoField!: ElementRef;
+  @ViewChild('panNoRef') panNoField!: ElementRef;
+  @ViewChild('cancelledChequeRef') cancelledChequeField!: ElementRef;
+  @ViewChild('fssaiFileRef') fssaiFileRef!: ElementRef;
+  @ViewChild('adhaarFileRef') adhaarFileRef!: ElementRef;
+  @ViewChild('panFileRef') panFileRef!: ElementRef;
 
   constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private modalService: NgbModal, private policyService: PolicyService) {
     this.access = this.policyService.getCurrentButtonPolicy();
-    console.log(this.access);
   }
 
 
@@ -50,10 +66,8 @@ export class VendorComplianceComponent implements OnInit {
     // this.profileApproval = this.venderDetails.profileApproval;  
     if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
-      console.log(this.compliance);
 
       this.originalCompliance = { ...this.venderDetails.compliance };
-      console.log(this.originalCompliance);
 
       this.prepareForEdit();
     }
@@ -145,7 +159,6 @@ export class VendorComplianceComponent implements OnInit {
       this.originalCompliance.PanCardFileUrlOld = this.compliance.PanCardFile;
       this.originalCompliance.PanCardFile = this.compliance.PanCardFile;
       this.compliance.PanCardFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + this.compliance.PanCardFile);
-      console.log(this.compliance.PanCardFileUrl);
 
     }
     if (this.compliance.pestconFile) {
@@ -156,12 +169,18 @@ export class VendorComplianceComponent implements OnInit {
 
   }
 
+  closeMerchantDoc() {
+    this.compliance.merchantOnboarding = null;
+    this.originalCompliance.merchantOnboarding = null;
+    this.saveImages();
+
+  }
+
   handleFileInput($event: any, filename: string, height: number) {
     if ($event && $event.target && $event.target.files) {
       const file: File = $event.target.files[0];
       if (file) {
         const fileName = file.name;
-        console.log(fileName);
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (_event) => {
@@ -195,14 +214,77 @@ export class VendorComplianceComponent implements OnInit {
     }
   }
 
-  async saveImages() {
-    console.log(this.compliance);
+  checkFieldStatus(event: any, type: any) {
 
+    if (event.target.value) {
+
+      if (type == 'fssaiNo') {
+        this.fssaiNoStatus = false;
+      }
+      if (type == 'aadharNo') {
+        this.aadharNoStatus = false
+        this.compliance.adhaar = event.target.value;
+      }
+      if (type == 'panNo') {
+        this.panNoStatus = false
+      }
+    }
+  }
+  onFileSelected(event: any) {
+
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedMerchantFile = file.name;
+      this.originalCompliance.merchantOnboarding = this.selectedMerchantFile;
+      this.saveImages()
+    }
+
+  }
+
+  async saveImages() {
+    this.showError = true;
+    if (!this.compliance.fssaiNo) {
+      this.fssaiNoStatus = true;
+      this.scrollToField(this.fssaiNoField);
+      return;
+    }
+    if (!this.compliance.adhaar) {
+      this.aadharNoStatus = true;
+      this.scrollToField(this.aadharNoField);
+      return;
+    }
+
+    if (!this.compliance.cancelledChequeFileUrl) {
+      this.cancelledChequeFileStatus = true;
+      this.scrollToField(this.cancelledChequeField);
+      return;
+    }
+
+    if (!this.compliance.fssaiFileUrl) {
+      this.fssaiFileStatus = true;
+      this.scrollToField(this.fssaiFileRef);
+      return;
+    }
+    if (!this.compliance.aadharFileUrl) {
+      this.adhaarFileStatus = true;
+      this.scrollToField(this.adhaarFileRef);
+      return;
+    }
+
+    if (!this.compliance.PanCardFileUrl) {
+      this.panFileStatus = true;
+      this.scrollToField(this.panFileRef);
+      return;
+    }
+
+    if (!this.compliance.panNumber) {
+      this.panNoStatus = true;
+      this.scrollToField(this.panNoField);
+      return;
+    }
     try {
       const formData = new FormData();
       let uploadImageCount = 0
-      console.log(this.originalCompliance);
-
       if (this.uploadedCompliance.fssaiImageUrl) {
         formData.append('image', this.uploadedCompliance.fssaiImageUrl);
         formData.append('fssaiImageUrlNo', `${uploadImageCount}`);
@@ -303,12 +385,6 @@ export class VendorComplianceComponent implements OnInit {
       if (this.originalCompliance.cancelledChequeFileUrlOld) {
         formData.append('cancelledChequeFile', this.originalCompliance.cancelledChequeFileUrlOld);
       }
-      // if (this.originalCompliance.shopActFileUrlOld) {
-      //   formData.append('shopActLicenseFile', this.originalCompliance.shopActFileUrlOld);
-      // }
-      // if (this.originalCompliance.shopActFileUrlOld) {
-      //   formData.append('shopActLicenseFile', this.originalCompliance.shopActFileUrlOld);
-      // }
       if (this.originalCompliance.pfFileUrlOld) {
         formData.append('pfFile', this.originalCompliance.pfFileUrlOld);
       }
@@ -318,15 +394,16 @@ export class VendorComplianceComponent implements OnInit {
       if (this.originalCompliance.GSTFileUrlOld) {
         formData.append('GSTFile', this.originalCompliance.GSTFileUrlOld);
       }
-      console.log(this.originalCompliance);
       if (this.originalCompliance.PanCardFileUrlOld) {
         formData.append('PanCardFile', this.originalCompliance.PanCardFileUrlOld);
+      }
+      if (this.originalCompliance.merchantOnboarding) {
+        formData.append('merchantOnboarding', this.originalCompliance.merchantOnboarding);
+
       }
       if (this.originalCompliance.pestconFileUrlOld) {
         formData.append('pestconFile', this.originalCompliance.pestconFileUrlOld);
       }
-      console.log('formData', formData);
-      console.log(this.venderDetails);
 
       const kitchen = await this.apiMainService.updateVendorFirmCompliance(this.venderDetails._id, formData);
       this.venderDetails.compliance = kitchen.compliance;
@@ -341,96 +418,72 @@ export class VendorComplianceComponent implements OnInit {
   }
 
   cancelEdit() {
-    this.compliance = { ...this.originalCompliance };
     this.editMode = false;
   }
+
+  scrollToField(field: ElementRef) {
+    field?.nativeElement?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    field?.nativeElement?.focus();
+  }
+
   uploadDoc(event: any) {
-    console.log(event.documentname);
 
     if (event.documentname == "aadharFile") {
       this.originalCompliance.aadharFileUrlOld = event.url;
-      console.log(this.fileUrl);
-
-      // this.compliance.adhaarFileUrl=this.fileUrl + event.url;
       this.compliance.aadharFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.adhaarFileUrl);
-      console.log("eventaadharFile", event);
     } else if (event.documentname == "fssaiFile") {
       this.originalCompliance.fssaiFileUrlOld = event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       this.compliance.fssaiFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.fssaiFileUrl)
-      console.log("eventfssaiFile", event);
     } else if (event.documentname == "siteFssaiFile") {
       this.originalCompliance.siteFssaiFileUrlOld = event.url;
-
       this.compliance.siteFssaiFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.siteFssaiFileUrl)
-      console.log("eventfssaiFile", event);
     } else if (event.documentname == "shopActLicenseFile") {
       this.originalCompliance.shopActFileUrlOld = event.url;
       this.compliance.shopActLicenseFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.shopActLicenseFileUrl)
     } else if (event.documentname == "udyamAadharFile") {
       this.originalCompliance.udyamAadharFileUrlOld = event.url;
-
       this.compliance.udyamAadharFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.udyamAadharFileUrl)
-      console.log("eventfssaiFile", event);
     }
     else if (event.documentname == "TradeLic") {
       this.originalCompliance.tradeLicFileUrlOld = event.url;
-
       this.compliance.TradeLicUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.udyamAadharFileUrl)
-      console.log("eventfssaiFile", event);
     }
     else if (event.documentname == "esiT3File") {
       this.originalCompliance.esiT3FileUrlOld = event.url;
       this.compliance.esiT3FileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.esiT3FileUrl)
-      console.log("eventfssaiFile", event);
     }
 
     else if (event.documentname == "cancelledChequeFile") {
+      this.cancelledChequeFileStatus = true;
       this.originalCompliance.cancelledChequeFileUrlOld = event.url;
       this.compliance.cancelledChequeFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.cancelledChequeFileUrl)
-      console.log("eventfssaiFile", event);
     }
 
     else if (event.documentname == "pfFile") {
       this.originalCompliance.pfFileUrlOld = event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       this.compliance.pfFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
 
     else if (event.documentname == "ESIFile") {
       this.originalCompliance.ESIFileUrlOld = event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       this.compliance.ESIFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
 
     else if (event.documentname == "GSTFile") {
       this.originalCompliance.GSTFileUrlOld = event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       this.compliance.GSTFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
     else if (event.documentname == "PanCardFile") {
       this.originalCompliance.PanCardFileUrlOld = event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       this.compliance.PanCardFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
 
     else if (event.documentname == "pestconFile") {
       this.originalCompliance.pestconFileUrlOld = event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       this.compliance.pestconFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
   }
   DeleteFile(file: any) {
-    console.log(file);
-
     if (file == 'fssailic') {
       this.compliance.fssaiFileUrl = null;
       this.originalCompliance.fssaiFileUrlOld = null;
@@ -465,6 +518,13 @@ export class VendorComplianceComponent implements OnInit {
     } else if (file == 'pestconFile') {
       this.compliance.pestconFileUrl = null;
       this.originalCompliance.pestconFileUrlOld = null;
+    }
+    else if (file == 'esiT3File') {
+      this.compliance.esiT3FileUrl = null;
+      this.originalCompliance.esiT3FileUrlOld = null;
+    } else if (file == 'cancelledChequeFile') {
+      this.originalCompliance.cancelledChequeFileUrlOld = null;
+      this.compliance.cancelledChequeFileUrl = null;
     }
   }
 }

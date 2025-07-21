@@ -22,7 +22,7 @@ export class AddVendorFirmComponent {
   showModalOutletList = false;
   selectedOutletsList: any = [];
   defaultRole: any = 'Cashier';
-isVendorEdit:any;
+  isVendorEdit: any;
   showAddbutton: any = false;
   showCafeteria = false;
   showSelectCafeteriaOption = true;
@@ -47,7 +47,6 @@ isVendorEdit:any;
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.createForm();
     this.updateVendorFirm();
-    console.log(this.router);
     this.isVendorEdit = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
 
 
@@ -64,6 +63,13 @@ isVendorEdit:any;
   createForm() {
     this.form = this.fb.group({
       vendorFirmName: ['', Validators.required],
+      bank_details: this.fb.group({
+        accountNo: [''],
+        ifsc: [''],
+        upi: [''],
+        accountName: [''],
+        bank_name: ['']
+      }),
       poc_details: this.fb.array([
         this.fb.group({
           poc_id: [''],
@@ -81,6 +87,7 @@ isVendorEdit:any;
           location: [''],
         })
       ]),
+      accountEnrollment: ['']
     });
   }
 
@@ -100,6 +107,15 @@ isVendorEdit:any;
       poc_email: [''],
       poc_location: [''],
     }));
+  }
+
+  onFileSelected(event: any) {
+
+    const file = event.target.files[0];
+    if (file) {
+      this.form.get('accountEnrollment')?.setValue(file.name);
+    }
+
   }
 
   removePocDetail(index: number) {
@@ -154,6 +170,7 @@ isVendorEdit:any;
 
   updateVendorFirm() {
     const firm = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
+
     if (firm && firm._id) {
       this.selectedVendorFirm = firm;
       this.showUpdate = true;
@@ -179,10 +196,22 @@ isVendorEdit:any;
           }
         });
       }
+      if (firm.accountEnrollment) {
+        this.form.get('accountEnrollment').setValue(firm.accountEnrollment);
+      }
+
+      if (firm.bank_details) {
+        this.form.get('bank_details').setValue(firm.bank_details);
+      }
     }
   }
 
+  closeAccountEnroll() {
+    this.form.get('accountEnrollment').setValue('');
+  }
+
   async submit(type?: any) {
+
     try {
       const finalObj = {
         ...this.form.value,

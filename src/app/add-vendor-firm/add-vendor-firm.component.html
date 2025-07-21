@@ -11,6 +11,41 @@
                 </div>
             </div>
         </div>
+
+        <hr>
+        <div class="mt-4">
+            <div class="d-flex align-items-center justify-content-between">
+                <h5>Bank details</h5>
+            </div>
+            <div [formGroupName]="'bank_details'">
+                <div class="cardDesign p-3 mb-2">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-label">Account No</label>
+                            <input class="form-control" formControlName="accountNo"
+                                placeholder="Enter Account Number" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">IFSC CODE</label>
+                            <input class="form-control" formControlName="ifsc" placeholder="Enter IFSC Code" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">UPI</label>
+                            <input class="form-control" formControlName="upi" placeholder="Enter UPI ID" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label">Account Name</label>
+                            <input class="form-control" formControlName="accountName"
+                                placeholder="Enter Account Holder Name" />
+                        </div>
+                        <div class="col-md-3 mt-2">
+                            <label class="form-label">Bank Name</label>
+                            <input class="form-control" formControlName="bank_name" placeholder="Enter Bank Name" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <hr>
         <div class="mt-4">
             <div class="d-flex align-items-center justify-content-between">
@@ -86,12 +121,27 @@
                 </div>
             </div>
         </div>
+        <div class="d-flex align-items-center">
 
-        <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
-            Add Outlet
-        </div>
-        <div *ngIf="isVendorEdit" class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
-            compliance
+            <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
+                Add Outlet
+            </div>
+            <div *ngIf="isVendorEdit" class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
+                compliance
+            </div>
+            <div *ngIf="isVendorEdit" class="d-flex align-items-center mt-2 ml-2">
+                <button type="button" class="btn btn-primary btn-sm" (click)="fileInput.click()">
+                    {{ 'Account Enrollment Form' }}
+                </button>
+
+                <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
+                    style="display: none;" />
+
+                <div *ngIf="form.controls['accountEnrollment'].value" class="text-success mt-2 ml-2">
+                    {{ form.controls['accountEnrollment'].value }} <i class="bi bi-x-lg ms-1"
+                        (click)="closeAccountEnroll()"></i>
+                </div>
+            </div>
         </div>
         <br />
         <div class="cardDesign mt-1" *ngFor="let outlet of selectedOutletsList; index as i">
@@ -211,4 +261,4 @@
             <app-vendor-compliance [venderDetails]="selectedVendorFirm"></app-vendor-compliance>
         </div>
     </ng-template>
-    </div>
+</div>

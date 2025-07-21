@@ -5,7 +5,7 @@
         <h6>Upload PDF</h6>
         <p *ngIf="!selectedFile">Drag and drop your PDF here</p>
         <label [for]="inputId" class="file-label">Choose File</label>
-        <input [id]="inputId" type="file" (change)="onFileSelected($event)" accept="application/pdf" />
+        <input [id]="inputId" type="file" (change)="onFileSelected($event)" accept="application/pdf,.jpg,.jpeg,.png" />
 
         <div class="buttons">
             <button class="upload-btn" (click)="uploadFile()" [disabled]="!selectedFile">Upload</button>
