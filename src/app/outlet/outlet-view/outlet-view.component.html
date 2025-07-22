@@ -16,7 +16,8 @@
     <app-outlet-categories [outletObj]="outlet"></app-outlet-categories>
 </div>
 <div *ngIf="selectedTab==='outlet-menu'">
-    <app-outlet-menu [outletObj]="outlet"(back)="updateOutlet($event)"></app-outlet-menu>
+    <app-outlet-menu [outletObj]="outlet" (back)="updateOutlet($event)"
+        (dataToParent)="receiveData($event)"></app-outlet-menu>
 </div>
 <div *ngIf="selectedTab==='outlet-orders'">
     <app-outlet-orders [outletObj]="outlet"></app-outlet-orders>
@@ -27,7 +28,7 @@
 </div>
 
 <div *ngIf="selectedTab==='outlet-vendor'">
-    <app-outlet-vendor [outlet]="outlet" ></app-outlet-vendor>
+    <app-outlet-vendor [outlet]="outlet"></app-outlet-vendor>
 </div>
 <!-- <div *ngIf="selectedTab==='outlet-compliance'">
     <app-outlet-compliance [outletObj]="outlet"></app-outlet-compliance>

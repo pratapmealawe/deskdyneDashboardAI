@@ -42,6 +42,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/updateCategories`,
         method: 'POST',
       },
+      addOutletList: {
+        url: `${this.baseUrl}/api/addOutletList`,
+        method: 'PUT',
+      },
       updateOutlet: { url: `${this.baseUrl}/api/updateOutlet`, method: 'POST' },
       updateOutletLevelSubsidy: { url: `${this.baseUrl}/api/updateOutletMenusubsidy`, method: 'POST' },
       updateOutletNoImages: {
@@ -315,6 +319,10 @@ export class ApiConfigService {
       ,
       changeMenuActivation: {
         url: `${this.baseUrl}/api/changeMenuActivation`,
+        method: 'PUT',
+      },
+      changeMasterMenuActivation: {
+        url: `${this.baseUrl}/api/changeMasterMenuActivation`,
         method: 'PUT',
       },
       getGuestEmployeelistByOrgId: {
@@ -778,7 +786,7 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/b2b_updateCustomizedSnackBox`,
         method: 'POST'
       },
-      getCafeteriasPollingList:{url:`${this.baseUrl}/api/getCafeteriasPollingList`,method:'POST'},
+      getCafeteriasPollingList: { url: `${this.baseUrl}/api/getCafeteriasPollingList`, method: 'POST' },
     };
   }
 }
