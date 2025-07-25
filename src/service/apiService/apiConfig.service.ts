@@ -778,7 +778,23 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/b2b_updateCustomizedSnackBox`,
         method: 'POST'
       },
-      getCafeteriasPollingList:{url:`${this.baseUrl}/api/getCafeteriasPollingList`,method:'POST'},
+      getCafeteriasPollingList: { url: `${this.baseUrl}/api/getCafeteriasPollingList`, method: 'POST' },
+      getDailyFoodOrdersCount: { url: `${this.baseUrl}/api/getDailyFoodOrdersCount`, method: 'GET' },
+      getCurrentB2BDailyOrdersCount: { url: `${this.baseUrl}/api/getCurrentB2BDailyOrdersCount`, method: 'GET' },
+      searchVendorProfile: { url: `${this.baseUrl}/api/searchVendorProfile`, method: 'GET' },
+      getNearestVendors: { url: `${this.baseUrl}/api/getNearestVendors`, method: 'GET' },
+      getdeliveryAmount: { url: `${this.baseUrl}/api/quote`, method: 'POST' },
+      createDeliveryTask: { url: `${this.baseUrl}/api/createDunzoTask`, method: 'POST' },
+      createOnlyDunzoTask: { url: `${this.baseUrl}/api/createOnlyDunzoTask`, method: 'POST' },
+      createPorterTask: { url: `${this.baseUrl}/api/createPorterTask`, method: 'POST' },
+      createPidge3PLTask: { url: `${this.baseUrl}/api/createPidge3PLTask`, method: 'POST' },
+      createShadowFaxTask: { url: `${this.baseUrl}/api/createShadowFaxTask`, method: 'POST' },
+      cancelPidge3PLOrder: { url: `${this.baseUrl}/api/cancelPidge3PLOrder`, method: 'PUT' },
+      cancelShadowFaxTask: { url: `${this.baseUrl}/api/cancelShadowFaxTask`, method: 'PUT' },
+      updateB2BDailyManualDelivery: { url: `${this.baseUrl}/api/updateB2BDailyManualDelivery`, method: 'PUT' },
+      trackDeliveryTask: {url: `${this.baseUrl}/api/trackdeliveryTask`, method: 'GET'},
+      getVendorById: {url: `${this.baseUrl}/api/getVendorById`, method: 'GET'},
+      cancelPorterTask: {url: `${this.baseUrl}/api/cancelPorterTask`, method: 'PUT'},
     };
   }
 }

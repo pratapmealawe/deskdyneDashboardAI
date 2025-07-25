@@ -63,6 +63,8 @@ export class AddVendorFirmComponent {
   createForm() {
     this.form = this.fb.group({
       vendorFirmName: ['', Validators.required],
+      vendorFirmEmail: [''],
+      vendorFirmPhoneNo: [''],
       bank_details: this.fb.group({
         accountNo: [''],
         ifsc: [''],
@@ -177,6 +179,8 @@ export class AddVendorFirmComponent {
       this.selectedOutletsList = firm.outletList;
       this.form.patchValue({
         vendorFirmName: firm.vendorFirmName,
+        vendorFirmEmail: firm.vendorFirmEmail,
+        vendorFirmPhoneNo: firm.vendorFirmPhoneNo,
       });
 
       if (firm.poc_details?.length) {
@@ -219,13 +223,11 @@ export class AddVendorFirmComponent {
       };
       const formData = this.objectToFormData(finalObj);
 
-
       if (type == 'update') {
         await this.apiMainService.updateVendorFirm(this.selectedVendorFirm._id, finalObj);
       } else {
         await this.apiMainService.saveVendorFirm(finalObj);
       }
-
       this.router.navigate(['/searchVendorFirm']);
     } catch (error) {
       console.log('submit error', error);
