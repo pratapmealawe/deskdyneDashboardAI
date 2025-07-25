@@ -35,7 +35,7 @@
           <div class="row">
             <div class="col-md-3">
               <div class="labelText">Vendor Access</div>
-              <div class="labelData">{{ vendor.isOutletAccess ? "Outlet" : "Daily & Bulk" }}</div>
+              <div class="labelData">{{ vendor.isOutletAccess ? "Outlet" : vendor.isDailyAndBulkAccess ? "Daily & Bulk" : "NONE" }}</div>
             </div>
           </div>
 

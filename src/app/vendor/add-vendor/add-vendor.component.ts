@@ -73,7 +73,7 @@ export class AddVendorCommponent {
         location: [''],
         city: [''],
       }),
-      vendor_location: this.fb.group({
+      geolocation: this.fb.group({
         lat: [''],
         lng: [''],
       }),
@@ -140,7 +140,7 @@ export class AddVendorCommponent {
         vendorEmail: vendor.vendorEmail,
         vendorRole: vendor.vendorRole,
         address: vendor.address,
-        vendor_location: vendor.vendor_location,
+        geolocation: vendor.geolocation,
         accessType: vendor.isOutletAccess ? 'outlet' : 'daily_bulk',
         vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
       });
@@ -241,7 +241,7 @@ export class AddVendorCommponent {
   }
 
   async patchVendorLocation() {
-    const vendorLocationControl = this.form.get('vendor_location');
+    const vendorLocationControl = this.form.get('geolocation');
     if (vendorLocationControl && this.vendorLocation?.latlng) {
       vendorLocationControl.patchValue({
         lat: this.vendorLocation.latlng.lat,
