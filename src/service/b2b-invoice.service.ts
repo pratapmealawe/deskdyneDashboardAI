@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { MakePDFService } from './make-pdf.service';
 import { DatePipe } from '@angular/common';
 import { b2b_orders_mapper } from 'src/config/b2b_orders.mapping.config'
 import { HttpClient } from '@angular/common/http';
@@ -28,7 +27,7 @@ export class B2bInvoiceService {
     seal: any;
     sign: any;
 
-    constructor(private makePDFService: MakePDFService, private http: HttpClient) {
+    constructor( private http: HttpClient) {
         this.b2bOrdersMapper = b2b_orders_mapper;
         this.getBase64('/assets/images/logo_new.png', 'logo');
         this.getBase64('/assets/images/seal.jpg', 'seal');
@@ -202,12 +201,12 @@ export class B2bInvoiceService {
 
     download(order: any) {
         this.getVariables(order);
-        this.makePDFService.makePDF(this.createDocumentDefinition(), order);
+        // this.makePDFService.makePDF(this.createDocumentDefinition(), order);
     }
 
     view(order: any) {
         this.getVariables(order)
-        this.makePDFService.viewPDF(this.createDocumentDefinition());
+        // this.makePDFService.viewPDF(this.createDocumentDefinition());
     }
 
 }

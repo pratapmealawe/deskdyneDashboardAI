@@ -10,6 +10,22 @@
                     *Vendor Firm name is required
                 </div>
             </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="labelText form-label">Vendor Firm Email</div>
+                <input type="text" class="form-control" placeholder="Vendor Firm Email"
+                    formControlName="vendorFirmEmail" />
+                <div class="error-text" *ngIf="form.controls.vendorFirmEmail.errors?.required && showError">
+                    *Vendor Firm Email is required
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="labelText form-label">Vendor Firm PhoneNo</div>
+                <input type="text" class="form-control" placeholder="Vendor Firm PhoneNo"
+                    formControlName="vendorFirmPhoneNo" />
+                <div class="error-text" *ngIf="form.controls.vendorFirmPhoneNo.errors?.required && showError">
+                    *Vendor Firm PhoneNo is required
+                </div>
+            </div>
         </div>
 
         <hr>

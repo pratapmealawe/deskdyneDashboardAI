@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { b2b_orders_mapper } from 'src/config/b2b_orders.mapping.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { UtilityService } from 'src/service/utility.service';
 
 @Component({
   selector: 'app-other-orders',
@@ -7,127 +10,233 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
   styleUrls: ['./other-orders.component.scss']
 })
 export class OtherOrdersComponent implements OnInit {
-  selectedTab: string = 'employeePoll';
-  selectedSubTab: string = '';
+  selectedStatus = '';
+  b2bSelectedStatus:any = '';
+  bulkSelectedStatus:any = '';
+  selectedGroup = ''
+  currentOrderStatusList: any = [];
   page = 1;
-  day: any;
+  day:any;
   lastPage = 1;
   pageLimit = 200;
   pageFirstEntry = 1;
   pageLastEntry = 1;
   paginationOver = false;
   filteredList: any[] = [];
+  b2b_orders_mapper: any = b2b_orders_mapper;
+  orderStatusCountObj: any = {
+    paymentInprogress: 0,
+    paymentFailed: 0,
+    acceptedOrder: 0,
+    deliveredOrder: 0,
+    deliveryBoyAssigned: 0,
+    handedOverToDeliveryBoy: 0,
+    newOrder: 0,
+    onTheWay: 0,
+    preparingOrder: 0,
+    readyToDeliveryOrder: 0,
+    autoCancelled: 0,
+    rejectedByKitchen: 0,
+    cancelledByKitchen: 0,
+    cancelledByUser: 0,
+    bulkOrder: 0,
+    placed: 0,
+    approved: 0,
+    preApproved: 0,
+    decline: 0,
+    waitingForApproval:0
+  };
 
-  OrderTypeViewList = [
+  // tabs
+  orderTypeList = [
+    {
+      name: 'Admin Orders',
+      path: 'adminOrders',
+      subTabs: [
+        { name: 'Placed', path: 'placed'},
+        { name: 'Accepted', path: 'accepted'},
+        { name: 'Preparing', path: 'preparing'},
+        { name: 'Cancelled', path: 'cancelled'},
+        { name: 'Ready For Delivery', path: 'readyForDelivery'},
+        { name: 'Delivery Boy Assigned', path: 'deliveryBoyAssigned'},
+        { name: 'Handed To Delivery Boy', path: 'handedOverToDeliveryBoy'},
+        { name: 'On The Way', path: 'onTheWay'},
+        { name: 'Delivered', path: 'delivered'},
+        { name: 'Completed', path: 'completed'},
+      ],
+    },
+    {
+      name: 'Bulk Orders',
+      path: 'bulkOrders',
+    },
     {
       name: 'Employee Poll',
       path: 'employeePoll',
-      subTabs: [
-        { name: 'Today', path: 'today' },
-        { name: 'Tomorrow', path: 'tomorrow' },
-        { name: 'Day After Tomorrow', path: 'dayAfterTomorrow' },
-      ],
     },
-    {
-      name: 'Admin Poll',
-      path: 'adminPoll',
-      subTabs: [
-        { name: 'Placed', path: 'placed' },
-        { name: 'Accepted', path: 'accepted' },
-        { name: 'Preparing', path: 'preparing' },
-        { name: 'Ready For Delivery', path: 'readyForDelivery' },
-        { name: 'On the Way', path: 'onTheWay' },
-        { name: 'Delivered', path: 'delivered' },
-        { name: 'Cancelled', path: 'cancelled' },
-      ],
-    },
-    {
-      name: 'Bulk Order',
-      path: 'bulkOrder',
-      subTabs: [
-        { name: 'Placed', path: 'placed' },
-        { name: 'Accepted', path: 'accepted' },
-        { name: 'Preparing', path: 'preparing' },
-        { name: 'Ready For Delivery', path: 'readyForDelivery' },
-        { name: 'On the Way', path: 'onTheWay' },
-        { name: 'Delivered', path: 'delivered' },
-        { name: 'Cancelled', path: 'cancelled' },
-      ],
-    },
-  ];
+  ]
+    selectedTab: string = 'adminOrders';
+  selectedSubTab: string = '';
 
-  constructor(private apiMainService: ApiMainService) { }
+  constructor(private apiMainService: ApiMainService, private sendDataToComponent:SendDataToComponent, private utilityService:UtilityService){}
 
   ngOnInit(): void {
-    this.inItFunc()
-  }
-
-  inItFunc() {
-    this.selectedSubTab = this.OrderTypeViewList[0].subTabs[0].path;
-    this.getEmployeePollList(this.selectedSubTab);
+    this.getCurrentOrders(false);
+    this.subscribeEvents();
   }
 
   gotToTab(tab: string): void {
     this.selectedTab = tab;
-    this.selectedSubTab = this.OrderTypeViewList.find(item => item.path === this.selectedTab)?.subTabs[0].path || '';
   }
 
-  goToSubTab(subPath: string): void {    
+  goToSubTab(subPath: string): void {
     this.selectedSubTab = subPath;
-    this.getEmployeePollList(this.selectedSubTab);
   }
 
-  getSubTab(): any[] {
-    const main = this.OrderTypeViewList.find(item => item.path === this.selectedTab);
+    getSubTab(): any[] {
+    const main = this.orderTypeList.find(item => item.path === this.selectedTab);
     return main?.subTabs || [];
   }
 
-  // Fetch Emp Poll
-  async getEmployeePollList(day: any) {
+
+  subscribeEvents(){
+    this.sendDataToComponent.subscribe('UPDATE_BULK_ORDER_PAGE', (data) => {
+      if (data && data.reload) {
+        this.getCurrentOrders(false);
+        let selectedIndex = -1;
+        let b2bselectedIndex = -1;
+        this.filteredList.forEach((ele, index) => {
+          if (ele._id === data._id) {
+            selectedIndex = index;
+          }
+        });
+        if (selectedIndex > -1) {
+          this.filteredList.splice(selectedIndex, 1);
+        }
+      }
+    });
+  }
+
+  reloadPage(){
+    this.getCurrentOrders(false);
+  }
+
+  async getLatestb2bOrderStatusList(status:any){
+    this.selectedStatus = '';
+    this.bulkSelectedStatus = '';
+    this.b2bSelectedStatus = this.b2b_orders_mapper[status];
+    this.currentOrderStatusList = [];
+    this.filteredList = [];
+    this.page = 1;
+    this.lastPage = 1;
+    this.paginationOver = false;
+    this.getOrderStatusList(this.b2bSelectedStatus, 1, true, false);
+  }
+
+  async getLatestBulkDailyOrderStatusList(status:any){
+    this.selectedStatus = '';
+    this.b2bSelectedStatus = '';
+    this.bulkSelectedStatus = status;
+    this.currentOrderStatusList = [];
+    this.filteredList = [];
+    this.page = 1;
+    this.lastPage = 1;
+    this.paginationOver = false;
+    this.getOrderStatusList(this.bulkSelectedStatus, 1, false, true);
+  }
+
+  async getOrderStatusList(status: string, page: number, showB2B:any, showDailyBulk:any) {
+    try {
+      this.page = page;
+      let orderList: any = [];
+      let bulkOrderList: any = [];
+      if(showB2B){
+        orderList = await this.apiMainService.getb2bBulkOrderList(status,this.page, this.pageLimit)
+      }
+      else if(showDailyBulk){
+        orderList = await this.apiMainService.getb2bBulkDailyOrderList(status,this.page, this.pageLimit)
+      }
+      if (orderList && orderList.length > 0) {
+        this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
+        this.pageLastEntry = this.pageFirstEntry + orderList.length - 1;
+        this.filteredList = orderList;
+        if (orderList.length < this.pageLimit) {
+          this.paginationOver = true;
+          this.lastPage = page;
+        }
+      }
+      else {
+        this.paginationOver = true;
+        this.lastPage = page;
+      }
+    } catch (error) {
+      console.log('error while searching orders ', error);
+    }
+  }
+
+  async getCurrentOrders(showAlarm: boolean) {
+    try {
+      this.selectedStatus = '';
+      this.currentOrderStatusList = [];
+      this.page = 1;
+      this.lastPage = 1;
+      this.paginationOver = false;
+      // const orderList:any = []
+      const orderList = await this.utilityService.getCurrentB2BOrdersCount(showAlarm);
+      console.log(orderList)
+      this.orderStatusCountObj = orderList;
+    } catch (error) {
+      console.log('error while searching orders ', error);
+    }
+  }
+
+  async getEmployeePollList(day:any){
     this.day = day;
     this.page = 1;
     this.lastPage = 1;
     this.paginationOver = false;
     this.filteredList = [];
     const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    const after1Day = new Date((new Date()).setDate(currentDate.getDate() + 1)).setHours(0, 0, 0, 0);
-    const after2Day = new Date((new Date()).setDate(currentDate.getDate() + 2)).setHours(0, 0, 0, 0);
-    if (day === 'today') {
-      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: currentDate, deliveryEndDate: currentDate });
-      if (filteredList && filteredList.length > 0) {
+    currentDate.setHours(0,0,0,0);
+    const after1Day = new Date((new Date()).setDate(currentDate.getDate() + 1)).setHours(0,0,0,0);
+    const after2Day = new Date((new Date()).setDate(currentDate.getDate() + 2)).setHours(0,0,0,0);
+    if(day === 'today'){
+      const filteredList = await this.apiMainService.getCafeteriasPollingList({deliveryStartDate:currentDate,deliveryEndDate:currentDate});
+      if(filteredList && filteredList.length > 0){
         console.log(filteredList)
         this.filteredList = filteredList;
       }
     }
-    else if (day === 'tomorrow') {
-      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: after1Day, deliveryEndDate: after1Day });
-      if (filteredList && filteredList.length > 0) {
+    else if(day === 'tomorrow'){
+      const filteredList = await this.apiMainService.getCafeteriasPollingList({deliveryStartDate:after1Day,deliveryEndDate:after1Day});
+      if(filteredList && filteredList.length > 0){
         this.filteredList = filteredList;
       }
     }
-    else {
-      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: after2Day, deliveryEndDate: after2Day });
-      if (filteredList && filteredList.length > 0) {
+    else{
+      const filteredList = await this.apiMainService.getCafeteriasPollingList({deliveryStartDate:after2Day,deliveryEndDate:after2Day});
+      if(filteredList && filteredList.length > 0){
         this.filteredList = filteredList;
       }
     }
   }
 
-  //  Navigation
   previous(page: number) {
     page--;
-    // const status = this.selectedStatus ? true : false;
-    // const bulk = this.bulkSelectedStatus ? true : false;
-    // const b2b = this.b2bSelectedStatus ? true : false;
-    // this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus , page, b2b, bulk);
+    const status = this.selectedStatus ? true : false;
+    const bulk = this.bulkSelectedStatus ? true : false;
+    const b2b = this.b2bSelectedStatus ? true : false;
+    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus , page, b2b, bulk);
   }
   next(page: number) {
-    // page++;
-    // const status = this.selectedStatus ? true : false;
-    // const bulk = this.bulkSelectedStatus ? true : false;
-    // const b2b = this.b2bSelectedStatus ? true : false;
-    // this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus , page, b2b, bulk);
+    page++;
+    const status = this.selectedStatus ? true : false;
+    const bulk = this.bulkSelectedStatus ? true : false;
+    const b2b = this.b2bSelectedStatus ? true : false;
+    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus , page, b2b, bulk);
+  }
+
+  setBtnGroup(group: any) {
+    this.selectedGroup = group;
   }
 
 }
