@@ -36,12 +36,12 @@ export class BulkOrderCardComponent {
   addDeliveryCost = false;
 
   orderTransferStart: boolean = false;
-  searchedKitchen: any = {};
-  searchKitenLogingId = '';
+  searchedVendor: any = {};
+  searchVendor = '';
   transferDeliveryCharges = 0;
   nearKitchenFullList: any = [];
-  nearKitchenList: any = [];
-  nearestKitchen = '';
+  nearVendorList: any = [];
+  nearestVendor = '';
   showLoadMoreKitchen = true;
   orderStage = 0;
   kitchenmodal:any;
@@ -83,23 +83,10 @@ export class BulkOrderCardComponent {
     }
   }
 
-  async startDunzoDeliveryProcess() {
-    try {
-      // const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'DUNZO','DDBulk');
-      const deliveryOrder:any = {}
-      this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
-      this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;
-      this.order.deliveryVendor = deliveryOrder.deliveryVendor;
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while creating delivery task', error);
-    }
-  }
-
+ 
   async startPorterDeliveryProcess() {
     try {
-      // const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PORTER','DDBulk');
-      const deliveryOrder:any = {}
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PORTER','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = 'open';
       this.order.deliveryVendor = 'Porter';
@@ -111,8 +98,7 @@ export class BulkOrderCardComponent {
 
   async startShadowFaxDeliveryProcess() {
     try {
-      // const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'SHADOWFAX','DDBulk');
-      const deliveryOrder:any = {}
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'SHADOWFAX','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = 'ACCEPTED';
       this.order.deliveryVendor = 'ShadowFax';
@@ -124,8 +110,7 @@ export class BulkOrderCardComponent {
 
   async startPidgeDeliveryProcess() {
     try {
-      // const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PIDGE','DDBulk');
-      const deliveryOrder:any = {}
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PIDGE','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;;
       this.order.deliveryVendor = 'Pidge';
@@ -135,19 +120,9 @@ export class BulkOrderCardComponent {
     }
   }
 
-  async cancelDunzoDelivery() {
-    try {
-      // await this.apiMainService.cancelDunzotask(this.order.deliveryTaskId);
-      
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while creating delivery task', error);
-    }
-  }
-
   async cancelPorterDelivery() {
     try {
-      // await this.apiMainService.cancelPorterTask(this.order.deliveryTaskId);
+      await this.apiMainService.cancelPorterTask(this.order.deliveryTaskId);
       this.checkOrderCondition();
     } catch (error) {
       console.log('error while creating delivery task', error);
@@ -156,7 +131,7 @@ export class BulkOrderCardComponent {
 
   async cancelShadowFaxDelivery() {
     try {
-      // await this.apiMainService.cancelShadowFaxDelivery(this.order.deliveryTaskId);
+      await this.apiMainService.cancelShadowFaxDelivery(this.order.deliveryTaskId);
       this.checkOrderCondition();
     } catch (error) {
       console.log('error while creating delivery task', error);
@@ -165,7 +140,7 @@ export class BulkOrderCardComponent {
 
   async cancelPidge3PLOrder() {
     try {
-      // await this.apiMainService.cancelPidge3PLOrder(this.order.deliveryTaskId);
+      await this.apiMainService.cancelPidge3PLOrder(this.order.deliveryTaskId);
       this.checkOrderCondition();
     } catch (error) {
       console.log('error while creating delivery task', error);
@@ -174,8 +149,7 @@ export class BulkOrderCardComponent {
 
   async startDeliveryProcess() {
     try {
-      // const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'All','DDBulk');
-      const deliveryOrder:any = {}
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'All','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;
       this.order.deliveryVendor = deliveryOrder.deliveryVendor;
@@ -213,8 +187,7 @@ export class BulkOrderCardComponent {
   async getDeliveryStatus() {
     if (this.order && this.order.deliveryTaskId) {
       try {
-        // const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(this.order.deliveryTaskId, this.order.deliveryVendor);
-        const deliveryOrderStatus:any = {}
+        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(this.order.deliveryTaskId, this.order.deliveryVendor);
         this.order.deliveryTaskState = deliveryOrderStatus.state;
         console.log(deliveryOrderStatus.state)
         if (deliveryOrderStatus && deliveryOrderStatus.eta) {
@@ -243,8 +216,7 @@ export class BulkOrderCardComponent {
     }
     else if (this.orderInput && this.orderInput.deliveryTaskId) {
       try {
-        // const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(this.orderInput.deliveryTaskId, this.orderInput.deliveryVendor);
-        const deliveryOrderStatus:any = {}
+        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(this.orderInput.deliveryTaskId, this.orderInput.deliveryVendor);
         this.orderInput.deliveryTaskState = deliveryOrderStatus.state;
         if (deliveryOrderStatus && deliveryOrderStatus.eta) {
           this.orderInput.pickupEta = deliveryOrderStatus.eta.pickup;
@@ -286,7 +258,7 @@ export class BulkOrderCardComponent {
       const order = { ...this.order };
       await this.apiMainService.updateb2bFoodOrder(order);
       this.itemPriceEdit = false;
-      // this.checkOrderCondition(this.order);
+      this.checkOrderCondition();
     } catch (error) {
       console.log('error while confirmEditItemPrice ', error);
     }
@@ -297,7 +269,7 @@ export class BulkOrderCardComponent {
       const order = { ...this.order };
       await this.apiMainService.updateb2bFoodOrder(order);
       this.packagingPriceEdit = false;
-      // this.checkOrderCondition(this.order);
+      this.checkOrderCondition();
     } catch (error) {
       console.log('error while confirmEditItemPrice ', error);
     }
@@ -308,7 +280,7 @@ export class BulkOrderCardComponent {
       const order = { ...this.order };
       await this.apiMainService.updateb2bFoodOrder(order);
       this.addDeliveryCost = false;
-      // this.checkOrderCondition(this.order);
+      this.checkOrderCondition();
     } catch (error) {
       console.log('error while confirmEditItemPrice ', error);
     }
@@ -316,23 +288,21 @@ export class BulkOrderCardComponent {
 
   async searchKitchen() {
     try {
-      console.log('searchKitenLogingId ', this.searchKitenLogingId);
-      if (this.searchKitenLogingId) {
-        this.searchKitenLogingId = this.searchKitenLogingId.toUpperCase();
-        // const kitchen = await this.apiMainService.getKitchenPartnerProfile(this.searchKitenLogingId);
-        const kitchen:any = {}
-        if (kitchen && kitchen._id) {
-          if (kitchen.profileApproval === 'approved') {
-            if (kitchen.kitchenOpened) {
-              const kitchenObj: any = await this.googleMapService.getKitchenDistance(kitchen, this.order.customerLocation.geolocation);
-              this.searchedKitchen = { ...kitchenObj };
-              this.getDeliveryChargeQuote();
-            } else {
-              this.toasterService.error(115);
-            }
-          } else {
-            this.toasterService.error(114);
-          }
+      console.log('searchVendor ', this.searchVendor);
+      if (this.searchVendor) {
+        this.searchVendor = this.searchVendor.toUpperCase();
+         const vendor = await this.apiMainService.searchVendorProfile(this.searchVendor);
+       if (vendor.length > 0) {
+          let newVendor = vendor[0]
+              const vendorObj: any = await this.googleMapService.getKitchenDistance(newVendor, this.order.customerLocation.geolocation);
+              this.searchedVendor = { ...vendorObj };
+              // this.getDeliveryChargeQuote();
+          //   } else {
+          //     this.toasterService.error(115);
+          //   }
+          // } else {
+          //   this.toasterService.error(114);
+          // }
         } else {
           this.toasterService.error(113);
         }
@@ -345,7 +315,7 @@ export class BulkOrderCardComponent {
   async getDeliveryChargeQuote() {
     try {
       const cutomerLatLng = this.order.customerLocation.geolocation;
-      const kitchenLatLng = this.searchedKitchen.geolocation;
+      const kitchenLatLng = this.searchedVendor.geolocation;
       const deliveryObj = {
         optimised_route: true, pickup_details: [{ ...kitchenLatLng, reference_id: 'pickup_location' }],
         drop_details: [{ ...cutomerLatLng, reference_id: 'drop_location' }]
@@ -359,7 +329,7 @@ export class BulkOrderCardComponent {
   }
 
   confirmTransfer() {
-    this.confirmationModalService.modal(`Are you sure, you want to transfer this order to ${this.searchedKitchen.kitchenName}`,
+    this.confirmationModalService.modal(`Are you sure, you want to transfer this order to ${this.searchedVendor?.vendorFirmDetails?.vendorFirmName} - ${this.searchedVendor?.vendorName}`,
       () => this.performOrderTransfer(), this);
   }
 
@@ -367,26 +337,27 @@ export class BulkOrderCardComponent {
     try {
       const orderObj = { ...this.order };
       if (orderObj.transferHistory && orderObj.transferHistory.length === 0) {
-        orderObj.firstKitchenName = orderObj.kitchenName;
+        orderObj.firstKitchenName = orderObj.vendorName;
       }
-      orderObj.kitchenId = this.searchedKitchen._id;
-      orderObj.kitchenName = this.searchedKitchen.kitchenName;
-      orderObj.kitchenPhoneNo = this.searchedKitchen.phoneNo;
-      orderObj.kitchenAddress = this.searchedKitchen.address;
-      orderObj.kitchenGeolocation = this.searchedKitchen.geolocation;
-      orderObj.deliveryByMealaweBoy = this.searchedKitchen.deliveryByMealaweBoy;
-      orderObj.skipWalletPayment = this.searchedKitchen.skipWalletPayment;
-      if (this.searchedKitchen.distance) {
-        orderObj.distance = this.searchedKitchen.distance;
+     orderObj.vendorId = this.searchedVendor._id;
+      orderObj.vendorFirmName = this.searchedVendor?.vendorFirmDetails?.vendorFirmName;
+      orderObj.vendorName = this.searchedVendor.vendorName;
+      orderObj.vendorPhoneNo = this.searchedVendor.vendorPhoneNo;
+      orderObj.vendorAddress = this.searchedVendor.address;
+      orderObj.vendorGeolocation = this.searchedVendor.geolocation;
+      orderObj.deliveryByMealaweBoy = this.searchedVendor.deliveryByMealaweBoy;
+      orderObj.skipWalletPayment = this.searchedVendor.skipWalletPayment;
+      if (this.searchedVendor.distance) {
+        orderObj.distance = this.searchedVendor.distance;
       } else {
-        const kitchenObj: any = await this.googleMapService.getKitchenDistance(this.searchedKitchen, this.order.customerLocation.geolocation)
+        const kitchenObj: any = await this.googleMapService.getKitchenDistance(this.searchedVendor, this.order.customerLocation.geolocation)
         orderObj.distance = kitchenObj.distance;
       }
       // orderObj.transferExtraAmt = this.transferExtraAmt ? this.transferExtraAmt : 0;
       // orderObj.reduceExtraAmt = this.reduceExtraAmt ? this.reduceExtraAmt : 0;
       orderObj.orderTransferred = true;
       orderObj.transferHistory = orderObj.transferHistory ? orderObj.transferHistory : [];
-      orderObj.transferHistory.push({ kitchenName: this.order.kitchenName, kitchenPhoneNo: this.order.kitchenPhoneNo });
+      orderObj.transferHistory.push({ vendorName: this.order.vendorName, vendorFirmName: this.order.vendorFirmName, vendorPhoneNo: this.order.vendorPhoneNo });
       const order = await this.apiMainService.performBulkOrderTransfer(orderObj);
       if (order && order._id) {
         this.order = { ...order };
@@ -396,29 +367,10 @@ export class BulkOrderCardComponent {
       console.log('error while tranferring order ', error);
     }
   }
-
   async searchNearKitchen() {
     try {
-      let clusterList = [];
-      const clusters: any = await this.googleMapService.getClusterName(this.order.customerLocation.geolocation);
-      if (!clusters || clusters.length === 0) {
-        this.toasterService.error(120);
-        return;
-      } else {
-        clusterList = clusters;
-      }
-      let kitchenType;
-      if(this.order.orderType==='allDay'|| this.order.orderType==='advance'){
-        kitchenType=['B2B'];
-      }
-      if(this.order.orderType==='subscription'|| this.order.orderType==='subscriptionPackage'){
-        kitchenType=['Subscription'];
-      }
-      // const kitchenList = await this.apiMainService.getNearestKitchen(1, this.order.customerLocation.geolocation.lng,
-      //   this.order.customerLocation.geolocation.lat, { clusterList });
-      // const kitchenList = await this.apiMainService.getNearestKitchensOfType(1, this.order.customerLocation.geolocation.lng,
-        // this.order.customerLocation.geolocation.lat, { clusterList,kitchenType });
-        const kitchenList: any = []
+      const kitchenList = await this.apiMainService.getNearestVendors(this.order.customerLocation.geolocation.lng, this.order.customerLocation.geolocation.lat);
+      
       this.nearKitchenFullList = kitchenList;
       this.openKitchen(kitchenList);
     } catch (error) {
@@ -429,7 +381,7 @@ export class BulkOrderCardComponent {
   async openKitchen(kitchenList: any) {
     const topFiveKitchen = kitchenList.slice(0, 10);
     const topFive = await this.calculateDistance(topFiveKitchen, 0);
-    this.nearKitchenList = topFive;
+    this.nearVendorList = topFive;
     this.kitchenmodal = this.modalService.open(this.contentkitchen, {
       ariaLabelledBy: 'modal-basic-title',
       size: 'xl',
@@ -441,21 +393,21 @@ export class BulkOrderCardComponent {
       console.log(`Closed with: ${result}`, kitchenList);
       if (result === 'add') {
         let selectedKitchen: any = {};
-        this.nearKitchenList.forEach((kitchen: any) => {
-          if (kitchen.loginId === this.nearestKitchen) {
+        this.nearVendorList.forEach((kitchen: any) => {
+          if (kitchen._id === this.nearestVendor) {
             selectedKitchen = kitchen;
           }
         });
         if (selectedKitchen && selectedKitchen._id) {
-          this.searchedKitchen = { ...selectedKitchen };
-          this.getDeliveryChargeQuote();
+          this.searchedVendor = { ...selectedKitchen };
+          // this.getDeliveryChargeQuote();
         }
       }
-      this.nearestKitchen = '';
+      this.nearestVendor = '';
     }, (reason: any) => {
       console.log(`Model Dismissed`);
       this.showLoadMoreKitchen = true;
-      this.nearestKitchen = '';
+      this.nearestVendor = '';
     });
   }
 
@@ -503,15 +455,15 @@ export class BulkOrderCardComponent {
   }
 
   async loadMoreKitchen() {
-    const currentListLength = this.nearKitchenList.length;
+    const currentListLength = this.nearVendorList.length;
     const nextListLength = currentListLength + 10;
     if (nextListLength > this.nearKitchenFullList.length) {
       //hide loadMore
       this.showLoadMoreKitchen = false;
     } else {
-      let nextlist = this.nearKitchenFullList.slice(this.nearKitchenList.length, this.nearKitchenList.length + 10);
+      let nextlist = this.nearKitchenFullList.slice(this.nearVendorList.length, this.nearVendorList.length + 10);
       nextlist = await this.calculateDistance(nextlist, 0);
-      this.nearKitchenList = [...this.nearKitchenList, ...nextlist];
+      this.nearVendorList = [...this.nearVendorList, ...nextlist];
     }
   }
 
@@ -521,7 +473,7 @@ export class BulkOrderCardComponent {
       const response = await this.apiMainService.updateb2bFoodOrder(this.order);
       // await this.apiMainService.payServerFoodOrderAmtToKitchenDirect({ ids: [this.order.orderNo], server:'DDBulk' });
       console.log('payment to kitchen successfull', response);
-      // this.checkOrderCondition(this.order);
+      this.checkOrderCondition();
       this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id })
     } catch (error) {
       console.log('error while changing staus', error);
@@ -555,14 +507,15 @@ export class BulkOrderCardComponent {
 
   cancelTransfer() {
     this.orderTransferStart = false;
-    this.searchedKitchen = {};
-    this.searchKitenLogingId = '';
+    this.searchedVendor = {};
+    this.searchVendor = '';
   }
 
-  checkdistance() {
-    const selectedKitchen = this.nearKitchenList.find((kitchen: any) => {
-      return kitchen.loginId == this.nearestKitchen;
+   checkdistance() {
+    const selectedKitchen = this.nearVendorList.find((kitchen: any) => {
+      return kitchen._id == this.nearestVendor;
     });
+    
     if (selectedKitchen.distance > 6) {
       const modalRef = this.modalService.open(this.selectKitchenModal, {
         ariaLabelledBy: 'modal-basic-title',
@@ -575,12 +528,12 @@ export class BulkOrderCardComponent {
             this.selectKitchen();
           }
 
-          this.nearestKitchen = '';
+          this.nearestVendor = '';
         },
         (reason) => {
           console.log(`Model Dismissed`);
           this.showLoadMoreKitchen = true;
-          this.nearestKitchen = '';
+          this.nearestVendor = '';
         }
       );
     }else{
@@ -590,14 +543,14 @@ export class BulkOrderCardComponent {
 
   selectKitchen() {
     let selectedKitchen: any = {};
-    this.nearKitchenList.forEach((kitchen: any) => {
-      if (kitchen.loginId === this.nearestKitchen) {
+    this.nearVendorList.forEach((kitchen: any) => {
+      if (kitchen._id === this.nearestVendor) {
         selectedKitchen = kitchen;
       }
     });
     if (selectedKitchen && selectedKitchen._id) {
-      this.searchedKitchen = { ...selectedKitchen };
-      this.getDeliveryChargeQuote();
+      this.searchedVendor = { ...selectedKitchen };
+      // this.getDeliveryChargeQuote();
     }
     this.kitchenmodal.dismiss('add');
   }
