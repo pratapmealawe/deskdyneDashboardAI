@@ -22,12 +22,14 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
   templateUrl: './outlet-menu.component.html',
   styleUrls: ['./outlet-menu.component.scss'],
 })
-export class OutletMenuComponent implements OnInit ,OnChanges{
+export class OutletMenuComponent implements OnInit, OnChanges {
   @Input() outletObj: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild('content') content: any;
   @ViewChild('comboContent') comboContent: any;
   @ViewChild('masterMenu') masterMenu: any;
+  @Output() dataToParent = new EventEmitter<string>();
+
   modalRef!: NgbModalRef;
   categorySelected: boolean = false;
   form: any;
@@ -41,13 +43,15 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
   menuIndex: any = 0;
   showUpdateBtn: any = false;
   imageReplaced: any = false;
-  uploadStatus:any = false;
+  uploadStatus: any = false;
   noImages: boolean = false;
   foodItem: any;
   btnPolicy: any;
   filteredMenuList: any[] = []
   filteredMasterMenuList: any[] = []
   selectedMasterItem: any = null;
+  selectedItems: any[] = [];
+
 
   constructor(
     private fb: FormBuilder,
@@ -55,7 +59,7 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
-    private sendDataToComponent:SendDataToComponent
+    private sendDataToComponent: SendDataToComponent
   ) { }
 
   ngOnInit(): void {
@@ -71,9 +75,11 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
   }
 
   init() {
+    console.log(this.outletObj);
+
     if (this.outletObj.menuList && this.outletObj.menuList.length > 0) {
       this.filteredMenuList = this.outletObj.menuList.sort((a: any, b: any) => a.precedence - b.precedence)
-      this.showCard = true;      
+      this.showCard = true;
     } else {
       this.filteredMenuList = []
     }
@@ -203,19 +209,29 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
     this.showUpdateBtn = true;
     this.menuIndex = index;
     console.log(item);
-    
+
     this.patchFormValue(item);
     this.open();
   }
 
-  addMasterMenu() {
+  async addMasterMenu() {
     if (this.modalRef) {
       this.modalRef.close();
     }
+    console.log("correct");
+
     this.imageReplaced = true;
     this.uploadStatus = false;
-    this.imageUrl = this.selectedMasterItem.imageUrl;
-    console.log(this.selectedMasterItem);
+    this.imageUrl = this.selectedMasterItem?.imageUrl;
+    try {
+      const res = await this.apiMainService.addOutletList(this.outletObj._id, { outletList: this.selectedItems })
+      this.selectedItems = [];
+      this.dataToParent.emit(res);
+    }
+    catch (err) {
+      console.log(err);
+
+    }
     this.form.patchValue(this.selectedMasterItem);
   }
 
@@ -304,7 +320,7 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
       formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence? this.form.value.precedence : 0);
+      formData.append('precedence', this.form.value.precedence ? this.form.value.precedence : 0);
 
       let mealTypes = this.form.value.mealTimingInfo;
 
@@ -321,7 +337,7 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
 
       if (res && res._id) {
         this.outletObj = res;
-        this.sendDataToComponent.publish('SAVE_OUTLET_MENU',res);
+        this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
         this.init()
       }
       this.resetValues();
@@ -387,6 +403,23 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
     );
   }
 
+
+  onItemToggle(item: any, event: Event) {
+    const checkbox = event.target as HTMLInputElement;
+    if (checkbox.checked) {
+      this.selectedItems.push(item);
+    } else {
+      this.selectedItems = this.selectedItems.filter(i => i._id !== item._id);
+    }
+
+    console.log(this.selectedItems);
+
+  }
+
+  isSelected(item: any): boolean {
+    return this.selectedItems.find(i => i._id === item._id) !== undefined;
+  }
+
   async deleteFoodItem() {
     const res: any = await this.apiMainService.deleteOutletMenu(
       this.outletObj._id,
@@ -395,8 +428,8 @@ export class OutletMenuComponent implements OnInit ,OnChanges{
     if (res && res._id) {
       console.log(res);
       this.outletObj = res;
-      this.sendDataToComponent.publish('SAVE_OUTLET_MENU',res);
-      
+      this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
+
       this.showCard = true;
       this.init();
     }

@@ -35,8 +35,12 @@ export class OutletViewComponent implements OnInit {
   goBack() {
     this.back.emit({ val: true, updateval: this.updateval });
   }
-  
+
   updateOutlet(val: any) {
     this.updateval = val;
+  }
+
+  receiveData(event: any) {
+    this.outlet = event;
   }
 }

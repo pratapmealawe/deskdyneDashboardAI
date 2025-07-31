@@ -1,25 +1,39 @@
 @import 'src/styles.scss';
 
-.uploadInput{
-    display: none;
+.uploadInput {
+  display: none;
 }
 
-.uploadedImage{
-    width: 100px;
-    height: 100px;
-    cursor: pointer;
+.uploadedImage {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
 }
 
-.uploadIcon{
-    width: 84px;
-    background: $secondary-color3;
-    border-radius: 5px;
-    text-align: center;
-    color: white;
-    position: relative;
-    top: -15px;
-    left: 8px;
-    font-size: 13px;
-    padding: 4px 0px;
-    cursor: pointer;
+.uploadIcon {
+  width: 84px;
+  background: $secondary-color3;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  position: relative;
+  top: -15px;
+  left: 8px;
+  font-size: 13px;
+  padding: 4px 0px;
+  cursor: pointer;
+}
+
+.chip-option {
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+
+  .title {
+    font-size: small;
+  }
+
+  .time {
+    font-size: x-small;
+  }
 }

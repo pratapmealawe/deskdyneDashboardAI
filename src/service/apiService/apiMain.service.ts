@@ -145,6 +145,14 @@ export class ApiMainService {
     );
   }
 
+  addOutletList(id:any,outlet: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addOutletList;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url + `/${id}`, method: urlObj.method },
+      outlet
+    );
+  }
+
   fetchCategories() {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchCategories;
     return this.apiHttpService.REQUEST({
@@ -735,6 +743,17 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(
       {
         url: urlObj.url + `/${outletId}` + `/${menuId}`,
+        method: urlObj.method,
+      },
+      menuObj
+    );
+  }
+
+   changeMasterMenuActivation(menuId: any, menuObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changeMasterMenuActivation;
+    return this.apiHttpService.REQUEST(
+      {
+        url: urlObj.url + `/${menuId}`,
         method: urlObj.method,
       },
       menuObj
