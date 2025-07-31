@@ -267,6 +267,7 @@ export class DailyBulkCardComponent {
         orderObj.firstVendorName = orderObj.vendorName;
       }
       orderObj.vendorId = this.searchedVendor._id;
+      orderObj.vendorFirmId = this.searchedVendor?.vendorFirmDetails?.vendorFirmId;
       orderObj.vendorFirmName = this.searchedVendor?.vendorFirmDetails?.vendorFirmName;
       orderObj.vendorName = this.searchedVendor.vendorName;
       orderObj.vendorPhoneNo = this.searchedVendor.vendorPhoneNo;
@@ -307,7 +308,7 @@ export class DailyBulkCardComponent {
 
   async payAmtToKitchen() {
     try {
-      this.order.orderstatus = 'delivered';
+      this.order.orderstatus = 'completed';
       const response = await this.apiMainService.updateBulkB2BDailyFoodOrder(this.order);
       // await this.apiMainService.payServerFoodOrderAmtToKitchenDirect({ ids: [this.order.orderNo],server:'DDDaily' });
 

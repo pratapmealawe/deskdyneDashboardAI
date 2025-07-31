@@ -4,6 +4,7 @@ export const b2b_orders_mapper = {
     b2b_accepted:'accepted',
     b2b_declined:'declined',
     b2b_completed:'delivered',
+    completed:'completed',
     b2b_cancelled:'cancelled',
     b2b_inprogress:'inprogress',
     b2b_deliveryBoyAssigned:'deliveryBoyAssigned',
