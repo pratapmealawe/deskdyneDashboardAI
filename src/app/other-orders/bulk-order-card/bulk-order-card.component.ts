@@ -49,7 +49,7 @@ export class BulkOrderCardComponent {
   constructor(private sendDataToComponent:SendDataToComponent, private deliveryOrderService:DeliveryOrderService, private modalService:NgbModal, private confirmationModalService:ConfirmationModalService, private googleMapService:GoogleMapService, private apiMainService:ApiMainService, private toasterService:ToasterService,  private b2bInvoice:B2bInvoiceService){}
 
   ngOnInit(): void {
-    console.log(this.orderInput)
+    // console.log(this.orderInput)
   }
 
   viewOrder(order: any) {
@@ -340,6 +340,7 @@ export class BulkOrderCardComponent {
         orderObj.firstKitchenName = orderObj.vendorName;
       }
      orderObj.vendorId = this.searchedVendor._id;
+      orderObj.vendorFirmId = this.searchedVendor?.vendorFirmDetails?.vendorFirmId;
       orderObj.vendorFirmName = this.searchedVendor?.vendorFirmDetails?.vendorFirmName;
       orderObj.vendorName = this.searchedVendor.vendorName;
       orderObj.vendorPhoneNo = this.searchedVendor.vendorPhoneNo;

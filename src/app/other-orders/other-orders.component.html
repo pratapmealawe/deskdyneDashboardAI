@@ -112,6 +112,8 @@
                             class="badge badge-dark"> {{orderStatusCountObj?.b2bBulk?.declined}}</span></span>
                     <span class="dropdown-item" (click)="getLatestb2bOrderStatusList('b2b_cancelled')">Cancelled<span
                             class="badge badge-dark"> {{orderStatusCountObj?.b2bBulk?.cancelled}}</span></span>
+                    <span class="dropdown-item" (click)="getLatestb2bOrderStatusList('completed')">Completed<span
+                            class="badge badge-dark"> {{orderStatusCountObj?.b2bBulk?.completed}}</span></span>
                 </div>
             </div>
         </div>

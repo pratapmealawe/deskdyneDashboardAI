@@ -163,8 +163,6 @@ export class AddVendorCommponent {
       };
       const formData = this.objectToFormData(finalObj);
 
-      console.log(finalObj);
-
       if (type == 'update') {
         let updated = await this.apiMainService.updateVendor(
           this.selectedVendor._id,

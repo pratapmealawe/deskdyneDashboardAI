@@ -141,7 +141,7 @@
 <div class="bgpadding1" *ngIf="!showless">
     <!-- <div class="right pointer less" (click)="showLess()">-</div> -->
     <i class="bi bi-file-minus right pointer less" (click)="showLess()"></i>
-    <div class="right pointer me-1" (click)="toggleEditMode()">
+    <div class="right pointer me-1" *ngIf="order.orderstatus !== 'completed'" (click)="toggleEditMode()">
         <i class="bi bi-pencil-square" *ngIf="!editMode"></i>
         <i class="bi bi bi-x" *ngIf="editMode"></i>
     </div>
