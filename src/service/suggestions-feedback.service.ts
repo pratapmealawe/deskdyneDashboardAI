@@ -37,6 +37,8 @@ export class SuggestionsFeedbackService {
     }
   }
 
-
+  updateEnquiries(count: any) {
+    this.enquiryCountSubject.next(count);
+  }
 
 }

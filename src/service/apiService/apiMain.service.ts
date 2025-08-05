@@ -145,7 +145,7 @@ export class ApiMainService {
     );
   }
 
-  addOutletList(id:any,outlet: any) {
+  addOutletList(id: any, outlet: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.addOutletList;
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${id}`, method: urlObj.method },
@@ -749,7 +749,7 @@ export class ApiMainService {
     );
   }
 
-   changeMasterMenuActivation(menuId: any, menuObj: any) {
+  changeMasterMenuActivation(menuId: any, menuObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.changeMasterMenuActivation;
     return this.apiHttpService.REQUEST(
       {
@@ -1232,11 +1232,11 @@ export class ApiMainService {
   }
   createOrderFromPollObj(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.createOrderFromPollObj;
-    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method },payload);
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
   }
-  getDailyFoodOrdersCount(){
+  getDailyFoodOrdersCount() {
     const urlObj = this.apiConfigService.apiEndPointObj.getDailyFoodOrdersCount;
-    return this.apiHttpService.REQUEST({url: urlObj.url, method: urlObj.method});
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
   }
   fetchAllEnquiries() {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchAllEnquiries;
@@ -1244,6 +1244,13 @@ export class ApiMainService {
       url: urlObj.url,
       method: urlObj.method,
     });
+  }
+  updateAllEnquiriesStatus(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateAllEnquiriesStatus;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url,
+      method: urlObj.method,
+    }, body);
   }
   getCurrentOutletOrdersListForGuest(orgId: string, cafeName: string, isSearchObj: boolean) {
     const urlObj =
@@ -1552,7 +1559,7 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.updateB2BDailyManualDelivery;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
-   createDeliveryTask(data: any) {
+  createDeliveryTask(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDeliveryTask, data);
   }
   createOnlyDunzoTask(data: any) {
