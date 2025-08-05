@@ -310,7 +310,6 @@ export class DailyBulkCardComponent {
     try {
       this.order.orderstatus = 'completed';
       const response = await this.apiMainService.updateBulkB2BDailyFoodOrder(this.order);
-      // await this.apiMainService.payServerFoodOrderAmtToKitchenDirect({ ids: [this.order.orderNo],server:'DDDaily' });
 
       console.log('payment to kitchen successfull', response);
       this.checkOrderCondition();
