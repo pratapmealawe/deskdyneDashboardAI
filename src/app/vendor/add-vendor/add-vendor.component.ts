@@ -156,8 +156,8 @@ export class AddVendorCommponent {
       }
       const finalObj = {
         ...this.form.value,
-        isOutletAccess: this.form.value.accessType === 'outlet',
-        isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk',
+        isOutletAccess: this.form.value.accessType === 'outlet' ? true : false,
+        isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk' ? true : false,
         outletList: this.selectedOutletsList,
         vendorFirmDetails: vendorFirmDetails
       };
