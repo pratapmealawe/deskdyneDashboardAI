@@ -27,9 +27,10 @@ export class SuggestionsFeedbackService {
 
   async fetchAllEnquiries() {
     try {
-      const data = await this.ddApiMainService.fetchAllEnquiries();
-      if (data) {
-        this.enquiryCountSubject.next(data?.length);
+      const res = await this.ddApiMainService.fetchAllEnquiries();
+      if (res) {
+        const temp = res.filter((data: any) => data.status == 'review')
+        this.enquiryCountSubject.next(temp.length);
       }
     } catch (error) {
       console.error("Error while loading data:", error);
@@ -37,6 +38,8 @@ export class SuggestionsFeedbackService {
     }
   }
 
-
+  updateEnquiries(count: any) {
+    this.enquiryCountSubject.next(count);
+  }
 
 }

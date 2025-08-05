@@ -506,6 +506,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/fetchAllEnquiries`,
         method: 'GET',
       },
+      updateAllEnquiriesStatus: {
+        url: `${this.baseUrl}/api/updateAllEnquiriesStatus`,
+        method: 'PUT',
+      },
       getDashboardCounts: {
         url: `${this.baseUrl}/api/getDashboardCounts`,
         method: 'POST',
@@ -800,9 +804,9 @@ export class ApiConfigService {
       cancelPidge3PLOrder: { url: `${this.baseUrl}/api/cancelPidge3PLOrder`, method: 'PUT' },
       cancelShadowFaxTask: { url: `${this.baseUrl}/api/cancelShadowFaxTask`, method: 'PUT' },
       updateB2BDailyManualDelivery: { url: `${this.baseUrl}/api/updateB2BDailyManualDelivery`, method: 'PUT' },
-      trackDeliveryTask: {url: `${this.baseUrl}/api/trackdeliveryTask`, method: 'GET'},
-      getVendorById: {url: `${this.baseUrl}/api/getVendorById`, method: 'GET'},
-      cancelPorterTask: {url: `${this.baseUrl}/api/cancelPorterTask`, method: 'PUT'},
+      trackDeliveryTask: { url: `${this.baseUrl}/api/trackdeliveryTask`, method: 'GET' },
+      getVendorById: { url: `${this.baseUrl}/api/getVendorById`, method: 'GET' },
+      cancelPorterTask: { url: `${this.baseUrl}/api/cancelPorterTask`, method: 'PUT' },
     };
   }
 }

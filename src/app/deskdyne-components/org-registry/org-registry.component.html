@@ -1,5 +1,8 @@
 <div class="bgpadding3">
     <div class="header2 center">DeskDyne Enquiries</div>
+    <div class="d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-sm me-2 mb-2" (click)="updateAllEnquiries()">Acknowledge All</button>
+    </div>
     <div *ngIf="enquirylist && enquirylist.length > 0">
         <div *ngFor="let lead of enquirylist" class="cardDesign">
             <div class="row mt-2">
@@ -38,6 +41,10 @@
                         <div class="col-6 col-md-5 col-lg-4">
                             <div class="labelText">Org Name</div>
                             <div class="labelData">{{lead.organizationName}}</div>
+                        </div>
+                        <div class="col-6 col-md-5 col-lg-4">
+                            <div class="labelText">Status</div>
+                            <div class="labelData">{{lead.status}}</div>
                         </div>
                     </div>
                 </div>
