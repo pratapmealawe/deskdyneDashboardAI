@@ -44,7 +44,8 @@ export class OtherOrdersComponent implements OnInit {
     approved: 0,
     preApproved: 0,
     decline: 0,
-    waitingForApproval:0
+    waitingForApproval:0,
+    completed: 0,
   };
 
   // tabs

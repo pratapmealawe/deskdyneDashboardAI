@@ -35,6 +35,7 @@
                     <span class="groupedTile two">{{orderStatusCountObj?.dailyBulk?.accepted}}</span>
                     <span class="groupedTile three">{{orderStatusCountObj?.dailyBulk?.preparing}}</span>
                     <span class="groupedTile four">{{orderStatusCountObj?.dailyBulk?.cancelled}}</span>
+                    <span class="groupedTile four">{{orderStatusCountObj?.dailyBulk?.completed}}</span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1" (click)="setBtnGroup('dailyBulk')">
                     <span class="dropdown-item" (click)="getLatestBulkDailyOrderStatusList('placed')">Placed<span
@@ -45,6 +46,8 @@
                             class="badge badge-dark"> {{orderStatusCountObj?.dailyBulk?.preparing}}</span></span>
                     <span class="dropdown-item" (click)="getLatestBulkDailyOrderStatusList('cancelled')">Cancelled<span
                             class="badge badge-dark"> {{orderStatusCountObj?.dailyBulk?.cancelled}}</span></span>
+                    <span class="dropdown-item" (click)="getLatestBulkDailyOrderStatusList('completed')">Completed<span
+                            class="badge badge-dark"> {{orderStatusCountObj?.dailyBulk?.completed}}</span></span>
                 </div>
             </div>
         </div>
