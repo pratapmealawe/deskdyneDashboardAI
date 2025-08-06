@@ -132,7 +132,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
           showChild: true,
         },
         { name: 'Search Order', route: 'searchOrder', showChild: true },
-        { name: 'Export Order', route: 'outletExcelExport', showChild: true },
       ],
     },
     {
