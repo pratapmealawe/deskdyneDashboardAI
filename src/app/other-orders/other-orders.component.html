@@ -30,7 +30,7 @@
                 <button id="btnGroupDrop1" type="button" class="btn btn-secondary tileBtn dropdown-toggle tileLabel"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                     [ngClass]="{groupSelected: selectedGroup == 'dailyBulk'}">
-                    <span class="tileLabel">B2B Polling Orders</span>
+                    <span class="tileLabel">Polling Orders</span>
                     <span class="groupedTile one">{{orderStatusCountObj?.dailyBulk?.placed}}</span>
                     <span class="groupedTile two">{{orderStatusCountObj?.dailyBulk?.accepted}}</span>
                     <span class="groupedTile three">{{orderStatusCountObj?.dailyBulk?.preparing}}</span>
@@ -56,7 +56,7 @@
                 <button id="btnGroupDrop1" type="button" class="btn btn-secondary tileBtn dropdown-toggle"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                     [ngClass]="{groupSelected: selectedGroup == 'poll_delivery'}">
-                    <span class="tileLabel">B2B Polling Bulk Delivery Status</span>
+                    <span class="tileLabel">Polling Delivery Status</span>
                     <span class="groupedTile one">{{orderStatusCountObj?.dailyBulk?.readyForDelivery}}</span>
                     <span class="groupedTile two">{{orderStatusCountObj?.dailyBulk?.deliveryBoyAssigned}}</span>
                     <span class="groupedTile three">{{orderStatusCountObj?.dailyBulk?.handedOverToDeliveryBoy}}</span>
@@ -91,7 +91,7 @@
                 <button id="btnGroupDrop1" type="button" class="btn btn-secondary tileBtn dropdown-toggle"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                     [ngClass]="{b2bgroupSelected: selectedGroup == 'b2b'}">
-                    <span class="tileLabel">B2B Event Bulk Order</span>
+                    <span class="tileLabel">Event Bulk Order</span>
                     <span class="groupedTile one">{{orderStatusCountObj?.b2bBulk?.waitingForApproval}}</span>
                     <span class="groupedTile two">{{orderStatusCountObj?.b2bBulk?.placed}}</span>
                     <span class="groupedTile three">{{orderStatusCountObj?.b2bBulk?.accepted}}</span>
@@ -125,7 +125,7 @@
                 <button id="btnGroupDrop1" type="button" class="btn btn-secondary tileBtn dropdown-toggle"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
                     [ngClass]="{groupSelected: selectedGroup == 'bulk_delivery'}">
-                    <span class="tileLabel">B2B Event Bulk Delivery Status</span>
+                    <span class="tileLabel">Event Bulk Delivery Status</span>
                     <span class="groupedTile one">{{orderStatusCountObj?.b2bBulk?.readyForDelivery}}</span>
                     <span class="groupedTile two">{{orderStatusCountObj?.b2bBulk?.deliveryBoyAssigned}}</span>
                     <span class="groupedTile three">{{orderStatusCountObj?.b2bBulk?.handedOverToDeliveryBoy}}</span>
