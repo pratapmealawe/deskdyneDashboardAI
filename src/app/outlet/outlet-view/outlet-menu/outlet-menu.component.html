@@ -1,7 +1,12 @@
 <div class="bgsidepadding1">
   <!-- <div class="labelText">Add Menu Items</div> -->
-  <div class="ms-2 addBtn inline" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
-    +
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="ms-2 addBtn inline" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
+      +
+    </div>
+    <div class="d-flex align-items-center justify-content-end">
+      <button *ngIf="!showUpdateBtn" class="btn btn-success" (click)="openMenu()">Copy menu</button>
+    </div>
   </div>
   <div class="mt-2" *ngIf="showCard">
     <div class="row cardDesign" *ngFor="let item of filteredMenuList; let i = index">
@@ -55,13 +60,13 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-4 col-lg-4">
+          <div class="col-12 col-md-4 col-lg-4 mt-3">
             <div class="row">
-              <div class="col-6 col-md-7 col-lg-5">
+              <div class="col-6 col-md-7 col-lg-5" *ngIf="item.category">
                 <div class="labelText">Category</div>
                 <div class="labelData">{{ item.category }}</div>
               </div>
-              <div class="col-6 col-md-5 col-lg-8">
+              <div class="col-6 col-md-5 col-lg-8" *ngIf="item.subCategory">
                 <div class="labelText">Sub Category</div>
                 <div class="labelData">{{ item.subCategory }}</div>
               </div>
@@ -72,16 +77,16 @@
             </div>
           </div>
 
-          <div class="col-12 col-md-4 col-lg-4">
+          <!-- <div class="col-12 col-md-4 col-lg-4">
             <div class="row">
               <div class="col-6 col-md-7 col-lg-4">
                 <div class="labelText">Is Active</div>
                 <div class="labelData">{{ item.isActive }}</div>
               </div>
             </div>
-          </div>
+          </div> -->
 
-          <div class="col-12 col-md-4 col-lg-4">
+          <div class="col-12 col-md-4 col-lg-4 mt-3">
             <div class="row">
               <div class="col-6 col-md-7 col-lg-12">
                 <div class="labelText">Description</div>
@@ -104,7 +109,7 @@
     <div class="modal-body">
       <div [formGroup]="form">
         <div class="row">
-          <div class="col-12 col-md-6 col-lg-6">
+          <div class="col-12 col-md-6 col-lg-12">
             <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
               (change)="handleFileInput($event)" />
             <img class="uploadedImage" [src]="
@@ -114,15 +119,13 @@
                   ? imageUrl
                   : 'assets/images/dummyUpload.png'
               " *ngIf="!imageReplaced" />
-            <img class="uploadedImage" [src]="imageUrl ? (uploadStatus ? imageUrl : displayImgUrl + imageUrl) : 'assets/images/dummyUpload.png'"
+            <img class="uploadedImage"
+              [src]="imageUrl ? (uploadStatus ? imageUrl : displayImgUrl + imageUrl) : 'assets/images/dummyUpload.png'"
               *ngIf="imageReplaced" />
             <div class="uploadIcon" (click)="f.click()">
               Upload <i class="bi bi-upload"></i>
             </div>
           </div>
-            <div class="col-12 col-md-6 col-lg-6 d-flex align-items-center">
-              <button *ngIf="!showUpdateBtn" class="btn btn-success" (click)="openMenu()">Copy menu</button>
-            </div>
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label">Category</label>
             <select class="custom-select" name="role" formControlName="category" (change)="setCategory($event)">
@@ -185,7 +188,8 @@
 
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label" for="precedence">Precedence</label>
-            <input class="form-control me-1" type="text" placeholder="Precedence" id="precedence" formControlName="precedence" />
+            <input class="form-control me-1" type="text" placeholder="Precedence" id="precedence"
+              formControlName="precedence" />
           </div>
 
           <div class="col-sm-12">
@@ -228,7 +232,7 @@
     </div>
   </ng-template>
 
-   <ng-template #masterMenu let-modal>
+  <ng-template #masterMenu let-modal>
     <div class="modal-header">
       <div class="header2 bold" id="modal-basic-title">Add Menu Item</div>
       <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
@@ -237,48 +241,42 @@
     </div>
     <div class="modal-body">
       <div class="mt-2">
-    <div class="row cardDesign" *ngFor="let item of filteredMasterMenuList; let i = index">
-       <div class="col-sm-1 d-flex align-items-center justify-content-center">
-    <input
-      type="radio"
-      name="masterItem"
-       [value]="item"
-  [(ngModel)]="selectedMasterItem"
-  (change)="onItemSelected(item)"
-    />
-  </div>
-      <div class="col-sm-12 col-md-6 col-lg-2">
-        <img [src]="displayImgUrl + item.imageUrl" class="uploadedImage" />
-      </div>
-      <div class="col-sm-12 col-md-10 col-lg-9">
-        <div class="row">
-          <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-              <div class="col-6 col-md-8 col-lg-8">
-                <div class="labelText">ItemName</div>
-                <div class="labelData">{{ item.itemName }}</div>
-              </div>
-              <div class="col-6 col-md-4 col-lg-4">
-                <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
-                <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
-              </div>
-            </div>
+        <div class="row cardDesign" *ngFor="let item of filteredMasterMenuList; let i = index">
+          <div class="col-sm-1 d-flex align-items-center justify-content-center">
+            <input type="checkbox" [checked]="isSelected(item)" (change)="onItemToggle(item, $event)" />
           </div>
-
-          <div class="col-12 col-md-4 col-lg-4">
+          <div class="col-sm-12 col-md-6 col-lg-2">
+            <img [src]="displayImgUrl + item.imageUrl" class="uploadedImage" />
+          </div>
+          <div class="col-sm-12 col-md-10 col-lg-9">
             <div class="row">
-              <div class="col-6 col-md-5 col-lg-8">
-                <div class="labelText">Price</div>
-                <div class="labelData">{{ item.price }}</div>
+              <div class="col-12 col-md-4 col-lg-4">
+                <div class="row">
+                  <div class="col-6 col-md-8 col-lg-8">
+                    <div class="labelText">ItemName</div>
+                    <div class="labelData">{{ item.itemName }}</div>
+                  </div>
+                  <div class="col-6 col-md-4 col-lg-4">
+                    <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
+                    <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
+                  </div>
+                </div>
               </div>
-              <!-- <div class="col-6 col-md-7 col-lg-4">
+
+              <div class="col-12 col-md-4 col-lg-4">
+                <div class="row">
+                  <div class="col-6 col-md-5 col-lg-8">
+                    <div class="labelText">Price</div>
+                    <div class="labelData">{{ item.price }}</div>
+                  </div>
+                  <!-- <div class="col-6 col-md-7 col-lg-4">
                                 <div class="labelText">Priority</div>
                                 <div class="labelData">{{item.priority}}</div>
                             </div> -->
-            </div>
-          </div>
+                </div>
+              </div>
 
-          <!-- <div class="col-12 col-md-4 col-lg-4">
+              <!-- <div class="col-12 col-md-4 col-lg-4">
             <div class="row">
               <div class="col-6 col-md-7 col-lg-5">
                 <div class="labelText">Category</div>
@@ -295,7 +293,7 @@
             </div>
           </div> -->
 
-          <!-- <div class="col-12 col-md-4 col-lg-4">
+              <!-- <div class="col-12 col-md-4 col-lg-4">
             <div class="row">
               <div class="col-6 col-md-7 col-lg-4">
                 <div class="labelText">Is Active</div>
@@ -304,18 +302,18 @@
             </div>
           </div> -->
 
-          <div class="col-12 col-md-4 col-lg-4 mt-2">
-            <div class="row">
-              <div class="col-6 col-md-7 col-lg-12">
-                <div class="labelText">Description</div>
-                <div class="labelData">{{ item.description }}</div>
+              <div class="col-12 col-md-4 col-lg-4 mt-2">
+                <div class="row">
+                  <div class="col-6 col-md-7 col-lg-12">
+                    <div class="labelText">Description</div>
+                    <div class="labelData">{{ item.description }}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
     </div>
     <div class="modal-footer">
       <div class="inline bgpadding1">

@@ -22,7 +22,7 @@ import { MatSelectModule } from '@angular/material/select';
     MatDatepickerModule,
     MatNativeDateModule,
     MatSelectModule,
-        MatOptionModule,
+    MatOptionModule,
   ],
   providers: [    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ],

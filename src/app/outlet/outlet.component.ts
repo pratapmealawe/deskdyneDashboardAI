@@ -28,8 +28,8 @@ export class OutletComponent implements OnInit {
     private router: Router,
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
-    private sendDataToComponent:SendDataToComponent
-  ) {}
+    private sendDataToComponent: SendDataToComponent
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -41,7 +41,7 @@ export class OutletComponent implements OnInit {
     try {
       this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
       console.log(this.outletList);
-      
+
     } catch (error) {
       console.log('seachOutlet', error);
     }
@@ -56,17 +56,10 @@ export class OutletComponent implements OnInit {
   }
 
   viewOutlet(val: any) {
-    this.sendDataToComponent.subscribe('SAVE_OUTLET_MENU',(res:any)=>{
-      if (res) {
-        console.log('Received:', res);
-        this.selectedOutlet = res;
-      } else {
     this.selectedOutlet = val;
-    console.log('original:',val);
-  }
-    })
-    this.showSearchSection = false;
-    
+    if (this.selectedOutlet) {
+      this.showSearchSection = false;
+    }
   }
 
   addOutlet() {

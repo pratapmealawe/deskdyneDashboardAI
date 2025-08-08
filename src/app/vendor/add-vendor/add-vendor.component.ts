@@ -27,7 +27,7 @@ export class AddVendorCommponent {
   defaultRole: any = 'Cashier';
 
   showAddbutton: any = false;
-  vendorRole = ['Owner', 'Manager', 'Cashier'];
+  vendorRole = ['Owner', 'Manager', 'Cashier', 'Kitchen Manager'];
   showCafeteria = false;
   showSelectCafeteriaOption = true;
   selectedVendor: any;
@@ -36,9 +36,10 @@ export class AddVendorCommponent {
   vendorId: string = ''
 
   @ViewChild('outletModal') outlet: any;
-  @ViewChild('complianceModal') compliance: any;
   btnPolicy: any;
   vendorList: any;
+  vendorLocation: any
+  @ViewChild('geolocation') geolocation: any;
 
   constructor(
     private fb: FormBuilder,
@@ -64,6 +65,18 @@ export class AddVendorCommponent {
       vendorEmail: [''],
       vendorRole: [''],
       vendorId: [''],
+      accessType: [''],
+      address: this.fb.group({
+        address1: [''],
+        address2: [''],
+        landmark: [''],
+        location: [''],
+        city: [''],
+      }),
+      geolocation: this.fb.group({
+        lat: [''],
+        lng: [''],
+      }),
     });
   }
 
@@ -126,6 +139,9 @@ export class AddVendorCommponent {
         vendorPhoneNo: vendor.vendorPhoneNo,
         vendorEmail: vendor.vendorEmail,
         vendorRole: vendor.vendorRole,
+        address: vendor.address,
+        geolocation: vendor.geolocation,
+        accessType: vendor.isOutletAccess ? 'outlet' : 'daily_bulk',
         vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
       });
       this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : ""
@@ -140,13 +156,12 @@ export class AddVendorCommponent {
       }
       const finalObj = {
         ...this.form.value,
+        isOutletAccess: this.form.value.accessType === 'outlet' ? true : false,
+        isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk' ? true : false,
         outletList: this.selectedOutletsList,
         vendorFirmDetails: vendorFirmDetails
       };
       const formData = this.objectToFormData(finalObj);
-
-      console.log(finalObj);
-
 
       if (type == 'update') {
         let updated = await this.apiMainService.updateVendor(
@@ -156,8 +171,7 @@ export class AddVendorCommponent {
       } else {
         await this.apiMainService.saveVendor(finalObj);
       }
-        this.router.navigate(['/searchVendor']);
-
+      this.router.navigate(['/searchVendor']);
     } catch (error) {
       console.log('saveVendor submit error', error);
     }
@@ -165,13 +179,6 @@ export class AddVendorCommponent {
 
   addOutlet() {
     this.modalService.open(this.outlet, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
-    });
-  }
-
-  addComplience() {
-    this.modalService.open(this.compliance, {
       ariaLabelledBy: 'modal-basic-title',
       size: 'xl',
     });
@@ -210,6 +217,39 @@ export class AddVendorCommponent {
     } catch (error) {
       console.log('deleteOutlet', error);
     }
+  }
+
+  toggleMap() {
+    this.modalService
+      .open(this.geolocation, {
+        ariaLabelledBy: 'modal-basic-title',
+        size: 'lg',
+        windowClass: 'mapModel',
+      })
+      .result.then(
+        (result) => {
+          if (result === 'add') {
+            this.patchVendorLocation();
+          }
+        },
+        (reason) => {
+          console.log(`Model Dismissed`);
+        }
+      );
+  }
+
+  async patchVendorLocation() {
+    const vendorLocationControl = this.form.get('geolocation');
+    if (vendorLocationControl && this.vendorLocation?.latlng) {
+      vendorLocationControl.patchValue({
+        lat: this.vendorLocation.latlng.lat,
+        lng: this.vendorLocation.latlng.lng,
+      });
+    }
+  }
+
+  updateLocation(event: any) {
+    this.vendorLocation = event;
   }
 
   goBack() {
