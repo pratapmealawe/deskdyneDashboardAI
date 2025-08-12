@@ -206,7 +206,7 @@ export class EmployeeWalletComponent {
           remark: employeeObj.remark,
           previousAmount: this.previousHistory?.cashbackPoints,
           previousRemark: this.previousHistory?.remark,
-          usedAmount: employeeObj.cashbackPoints,
+          usedAmount: 0,
           updatedOn: new Date(),
           updateRemark: employeeObj.remark,
           name: this.currentUser.name,
@@ -319,7 +319,7 @@ export class EmployeeWalletComponent {
         updateHistory: {
           status: 'New',
           remark: value.remark,
-          usedAmount: value.cashbackPoints,
+          usedAmount: 0,
           updatedOn: new Date(),
           updateRemark: value.remark,
           name: this.currentUser.name,
