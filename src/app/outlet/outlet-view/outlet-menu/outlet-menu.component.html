@@ -5,7 +5,7 @@
       +
     </div>
     <div class="d-flex align-items-center justify-content-end">
-      <button *ngIf="!showUpdateBtn" class="btn btn-success" (click)="openMenu()">Copy menu</button>
+      <button class="btn btn-success" (click)="openMenu()">Copy menu</button>
     </div>
   </div>
   <div class="mt-2" *ngIf="showCard">
@@ -101,7 +101,8 @@
   <div class="center labelText mt-2" *ngIf="!showCard">No items found</div>
   <ng-template #content let-modal>
     <div class="modal-header">
-      <div class="header2 bold" id="modal-basic-title">Add Menu Item</div>
+      <div class="header2 bold" id="modal-basic-title" *ngIf="!showUpdateBtn">Add Menu Item</div>
+      <div class="header2 bold" id="modal-basic-title" *ngIf="showUpdateBtn">Edit Menu Item</div>
       <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
         <span aria-hidden="true">&times;</span>
       </button>
@@ -188,7 +189,7 @@
 
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label" for="precedence">Precedence</label>
-            <input class="form-control me-1" type="text" placeholder="Precedence" id="precedence"
+            <input class="form-control me-1" type="number" min="0" placeholder="Precedence" id="precedence"
               formControlName="precedence" />
           </div>
 
