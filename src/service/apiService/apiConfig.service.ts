@@ -80,6 +80,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/deleteVendor`,
         method: 'DELETE',
       },
+      deleteVendorFirm: {
+        url: `${this.baseUrl}/api/deleteVendorFirm`,
+        method: 'DELETE',
+      },
       searchVendor: { url: `${this.baseUrl}/api/searchVendor`, method: 'POST' },
       searchAdmin: { url: `${this.baseUrl}/api/searchAdmin`, method: 'POST' },
       searchSiteExecutive: {

@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 
 @Component({
   selector: 'app-org-bulk-menu',
@@ -20,10 +21,10 @@ export class OrgBulkMenuComponent implements OnInit {
   bulkMenuFetched: any = {};
   slabEditMode = false;
   foodItemList: any;
-  orgChoices:any;
-  orgSelected:any
-
-  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal) { }
+  orgChoices: any;
+  orgSelected: any
+  index: any;
+  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal, private confirmationModalService: ConfirmationModalService) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
@@ -31,9 +32,9 @@ export class OrgBulkMenuComponent implements OnInit {
     this.getAllB2BFoodItemList();
   }
 
-  async copyOrgMenu(){
+  async copyOrgMenu() {
     try {
-      if(this.orgSelected){
+      if (this.orgSelected) {
         const menuItems = await this.ddApiMainService.B2B_fetchBulkMenu(this.orgSelected);
         console.log(menuItems)
         this.bulkMenuFetched = menuItems;
@@ -86,11 +87,20 @@ export class OrgBulkMenuComponent implements OnInit {
     this.changesMade = true;
   }
 
-  deleteFoodItem(index: any) {
-    this.bulkMenuList.splice(index,1);
-    if(this.bulkMenuList.length === 0){
+  deleteFoodItem() {
+    this.bulkMenuList.splice(this.index, 1);
+    if (this.bulkMenuList.length === 0) {
       this.editBulkMenu();
     }
+  }
+
+  showPopup(foodItem: any, i: any) {
+    this.index = i;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${foodItem.itemName} Item`,
+      this.deleteFoodItem,
+      this
+    );
   }
 
   onItemPriceBlur(item: any) {
@@ -117,7 +127,7 @@ export class OrgBulkMenuComponent implements OnInit {
   }
 
   prepareB2BMenuList(fooditemList: any) {
-    [...fooditemList].forEach((fooditem:any)=>{
+    [...fooditemList].forEach((fooditem: any) => {
       if (fooditem.selected) {
         this.bulkMenuList.push({
           itemName: fooditem.itemName,
@@ -138,7 +148,7 @@ export class OrgBulkMenuComponent implements OnInit {
         });
       }
     })
-    
+
     console.log(this.bulkMenuList)
   }
 
@@ -148,8 +158,8 @@ export class OrgBulkMenuComponent implements OnInit {
 
   async editBulkMenu() {
     const bulkMenuObj = {
-      companyName:this.orgObj.organization_name,
-      companyId:this.orgObj._id,
+      companyName: this.orgObj.organization_name,
+      companyId: this.orgObj._id,
       moq: this.bulkMenuFetched.moq,
       slabLimit1: this.bulkMenuFetched.slabLimit1,
       slabLimit2: this.bulkMenuFetched.slabLimit2,
