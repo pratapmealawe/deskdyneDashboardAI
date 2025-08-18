@@ -34,6 +34,8 @@ export class OutletMasterMenuComponent implements OnInit {
   foodItem: any;
   activeStatus = false;
   btnPolicy: any;
+  menuInfo: any;
+  eventInfo: any;
   filteredMenuList: any[] = []
   mealTimeList = [
     {
@@ -408,7 +410,9 @@ export class OutletMasterMenuComponent implements OnInit {
     this.back.emit(true);
   }
 
-  async changeMenuActivation(menu: any, event: any) {
+  async changeMenuActivation() {
+    let menu = this.menuInfo;
+    let event = this.eventInfo;
     menu.isActive = event.target.checked;
 
     const menuObj = {
@@ -421,6 +425,16 @@ export class OutletMasterMenuComponent implements OnInit {
     );
     console.log(outletMastermenu);
 
+  }
+
+  showPopupForItemActivation(menu: any, event: any) {
+    this.menuInfo = menu;
+    this.eventInfo = event;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
+      this.changeMenuActivation,
+      this,
+    );
   }
 
   defineDescription() {

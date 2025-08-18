@@ -45,7 +45,7 @@
                   (click)="showPopup(item, i)"></i>
                 <div>
                   <input class="me-1" type="checkbox" [checked]="item.isActive"
-                    (change)="changeMenuActivation(item,$event)" />
+                    (change)="showPopupForItemActivation(item,$event)" />
                   <label class="labelText form-label">Active</label>
                 </div>
               </div>
