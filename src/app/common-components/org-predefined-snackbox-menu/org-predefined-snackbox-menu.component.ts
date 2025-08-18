@@ -1,5 +1,6 @@
-import { Component,Input, ViewChild } from '@angular/core';
+import { Component, Input, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
@@ -20,10 +21,11 @@ export class OrgPredefinedSnackboxMenuComponent {
   snackMenuFetched: any;
   slabEditMode = false;
   foodItemList: any;
-  orgChoices:any;
-  orgSelected:any
+  orgChoices: any;
+  orgSelected: any
+  index: any;
 
-  constructor( private ddApiMainService: ApiMainService, private modalService: NgbModal) { }
+  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal, private confirmationModalService: ConfirmationModalService) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
@@ -31,9 +33,9 @@ export class OrgPredefinedSnackboxMenuComponent {
     this.getAllB2BFoodItemList();
   }
 
-  async copyOrgMenu(){
+  async copyOrgMenu() {
     try {
-      if(this.orgSelected){
+      if (this.orgSelected) {
         const menuItems = await this.ddApiMainService.b2b_predefinedSnackboxFetch(this.orgSelected);
         console.log(menuItems)
         this.snackMenuFetched = menuItems;
@@ -85,12 +87,22 @@ export class OrgPredefinedSnackboxMenuComponent {
     this.changesMade = true;
   }
 
-  deleteFoodItem(index: any) {
-    this.bulkMenuList.splice(index,1);
-    if(this.bulkMenuList.length === 0){
+  deleteFoodItem() {
+    this.bulkMenuList.splice(this.index, 1);
+    if (this.bulkMenuList.length === 0) {
       this.editBulkMenu();
     }
   }
+
+  showPopup(foodItem: any, i: any) {
+    this.index = i;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${foodItem.itemName} Item`,
+      this.deleteFoodItem,
+      this
+    );
+  }
+
 
   onItemPriceBlur(item: any) {
 
@@ -117,8 +129,8 @@ export class OrgPredefinedSnackboxMenuComponent {
 
   prepareB2BMenuList(fooditemList: any) {
     console.log(this.foodItemList);
-    
-    [...fooditemList].forEach((fooditem:any)=>{
+
+    [...fooditemList].forEach((fooditem: any) => {
       if (fooditem.selected) {
         this.bulkMenuList.push({
           itemName: fooditem.itemName,
@@ -139,7 +151,7 @@ export class OrgPredefinedSnackboxMenuComponent {
         });
       }
     })
-    
+
     console.log(this.bulkMenuList)
   }
 
@@ -149,8 +161,8 @@ export class OrgPredefinedSnackboxMenuComponent {
 
   async editBulkMenu() {
     const bulkMenuObj = {
-      companyName:this.orgObj.organization_name,
-      companyId:this.orgObj._id,
+      companyName: this.orgObj.organization_name,
+      companyId: this.orgObj._id,
       moq: this.snackMenuFetched.moq,
       slabLimit1: this.snackMenuFetched.slabLimit1,
       slabLimit2: this.snackMenuFetched.slabLimit2,

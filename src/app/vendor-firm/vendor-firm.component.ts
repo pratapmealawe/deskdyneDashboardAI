@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
 
 @Component({
   selector: 'app-vendor-firm',
@@ -10,7 +11,7 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
   styleUrls: ['./vendor-firm.component.scss']
 })
 export class VendorFirmComponent {
- searchObj: any = {
+  searchObj: any = {
     vendorName: '',
     vendorPhoneNo: '',
     vendorEmail: '',
@@ -18,13 +19,15 @@ export class VendorFirmComponent {
   vendorList: any;
   orgName: any;
   btnPolicy: any;
+  vendorFirmInfo: any;
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
     private policyService: PolicyService,
-    private runtimeStorageService: RuntimeStorageService
-  ) {}
+    private runtimeStorageService: RuntimeStorageService,
+    private confirmationModalService: ConfirmationModalService
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -44,13 +47,23 @@ export class VendorFirmComponent {
     this.router.navigate(['/addVendorFirm']);
   }
 
-  async deleteVendor(vendor: any) {
+  async deleteVendorFirm() {
     try {
-      let id = vendor._id;
-      const deleted = await this.apiMainService.deleteVendor(id);
+      let id = this.vendorFirmInfo._id;
+      const deleted = await this.apiMainService.deleteVendorFirm(id);
+      this.getAllVendors();
     } catch (error) {
       console.log('deleteVendor', error);
     }
+  }
+
+  showPopup(vendorFirm: any) {
+    this.vendorFirmInfo = vendorFirm;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${vendorFirm.vendorFirmName} vendor firm`,
+      this.deleteVendorFirm,
+      this
+    );
   }
 
 

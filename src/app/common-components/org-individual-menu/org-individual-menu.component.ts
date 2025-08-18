@@ -1,5 +1,6 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
@@ -23,8 +24,9 @@ export class OrgIndividualMenuComponent {
   foodItemList: any;
   orgChoices:any;
   orgSelected:any
+  index:any;
 
-  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal) { }
+  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal,private confirmationModalService: ConfirmationModalService) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
@@ -85,11 +87,20 @@ export class OrgIndividualMenuComponent {
     this.changesMade = true;
   }
 
-  deleteFoodItem(index: any) {
-    this.bulkMenuList.splice(index,1);
+  deleteFoodItem() {
+    this.bulkMenuList.splice(this.index,1);
     if(this.bulkMenuList.length === 0){
       this.editBulkMenu();
     }
+  }
+
+   showPopup(foodItem: any, i: any) {
+    this.index = i;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${foodItem.itemName} Item`,
+      this.deleteFoodItem,
+      this
+    );
   }
 
   onItemPriceBlur(item: any) {

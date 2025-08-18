@@ -1,5 +1,6 @@
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
@@ -9,7 +10,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
   styleUrls: ['./lux-menu.component.scss']
 })
 export class LuxMenuComponent implements OnInit {
- @Input() orgObj: any;
+  @Input() orgObj: any;
   @ViewChild("content") content: any;
   bulkMenuList: any = [];
   menuSearchText: any = '';
@@ -22,8 +23,8 @@ export class LuxMenuComponent implements OnInit {
   foodItemList: any;
   orgChoices: any;
   orgSelected: any
-
-  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal) { }
+  index: any;
+  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal, private confirmationModalService: ConfirmationModalService) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
@@ -86,11 +87,20 @@ export class LuxMenuComponent implements OnInit {
     this.changesMade = true;
   }
 
-  deleteFoodItem(index: any) {
-    this.bulkMenuList.splice(index, 1);
+  deleteFoodItem() {
+    this.bulkMenuList.splice(this.index, 1);
     if (this.bulkMenuList.length === 0) {
       this.editBulkMenu();
     }
+  }
+
+  showPopup(foodItem: any, i: any) {
+    this.index = i;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${foodItem.itemName} Item`,
+      this.deleteFoodItem,
+      this
+    );
   }
 
   onItemPriceBlur(item: any) {

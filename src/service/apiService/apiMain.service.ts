@@ -200,6 +200,13 @@ export class ApiMainService {
       method: urlObj.method,
     });
   }
+   deleteVendorFirm(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteVendorFirm;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${id}`,
+      method: urlObj.method,
+    });
+  }
   searchVendor(searchObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.searchVendor;
     return this.apiHttpService.REQUEST(
