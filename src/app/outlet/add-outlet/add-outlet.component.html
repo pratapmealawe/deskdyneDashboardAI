@@ -61,7 +61,12 @@
       <div class="col-12 col-md-6 col-lg-4">
         <label class="labelText form-label">Subsidy Amount (In Percent %)</label>
         <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
-      <button class="btn btn-primary" (click)="updateOutletLevelSubsidy()">Update Subsidy</button>
+        <button class="btn btn-primary" (click)="updateOutletLevelSubsidy()">Update Subsidy</button>
+
+      </div>
+      <div class="col-12 col-md-6 col-lg-4">
+        <label class="labelText form-label">Precedence</label>
+        <input type="number" class="form-control" formControlName="precedence" />
 
       </div>
     </div>
@@ -111,33 +116,33 @@
     </div>
     <hr />
     <div class="container-fluid mt-2">
-    <div class="row ">
-      <div class="col-4">
-        <label class="labelText">Meal Timing<span class="mandatory">*</span></label>
-        <button class="btn btn-primary btn-sm ms-2" (click)="setStandardEndTime()">
-          Set Standard End Time
-        </button>
-      </div>
-      <div class="col-12">
-        <div class="row">
-          <div class="col-6 col-md-6 col-lg-3 bgpadding1" *ngFor="let timing of mealTiming">
-            <div class="row bg-light py-3 px-2 rounded">
-              <span class="labelText"> {{ timing.mealType }}</span>
-              <div class="col-md-6">
-                <div class="labelData">From</div>
-                <input type="time" class="form-control" [(ngModel)]="timing.acceptOrderFrom"
-                  [ngModelOptions]="{ standalone: true }" placeholder="00:00" />
-              </div>
-              <div class="col-md-6">
-                <div class="labelData">To</div>
-                <input type="time" class="form-control" [(ngModel)]="timing.acceptOrderTill"
-                  [ngModelOptions]="{ standalone: true }" placeholder="00:00" />
+      <div class="row ">
+        <div class="col-4">
+          <label class="labelText">Meal Timing<span class="mandatory">*</span></label>
+          <button class="btn btn-primary btn-sm ms-2" (click)="setStandardEndTime()">
+            Set Standard End Time
+          </button>
+        </div>
+        <div class="col-12">
+          <div class="row">
+            <div class="col-6 col-md-6 col-lg-3 bgpadding1" *ngFor="let timing of mealTiming">
+              <div class="row bg-light py-3 px-2 rounded">
+                <span class="labelText"> {{ timing.mealType }}</span>
+                <div class="col-md-6">
+                  <div class="labelData">From</div>
+                  <input type="time" class="form-control" [(ngModel)]="timing.acceptOrderFrom"
+                    [ngModelOptions]="{ standalone: true }" placeholder="00:00" />
+                </div>
+                <div class="col-md-6">
+                  <div class="labelData">To</div>
+                  <input type="time" class="form-control" [(ngModel)]="timing.acceptOrderTill"
+                    [ngModelOptions]="{ standalone: true }" placeholder="00:00" />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   </div>
   <div class="btn btn-primary btn-sm my-2" (click)="submit('update')"

@@ -13,6 +13,7 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 })
 export class OutletComponent implements OnInit {
   showSearchSection: boolean = true;
+  filteredOutletList: any;
   searchObj: any = {
     outletName: '',
     emailID: '',
@@ -33,13 +34,40 @@ export class OutletComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-
     this.searchOutlet();
   }
 
   async searchOutlet() {
     try {
       this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
+      console.log(this.outletList);
+
+      if (this.outletList.length > 0) {
+        const orgMap = new Map<string, {
+          organizationId: string;
+          organizationName: string;
+          outletList: any[];
+        }>();
+
+        for (const outlet of this.outletList) {
+          const orgId = outlet?.organizationDetails?.organizationId || "No Organization";
+          const orgName = outlet?.organizationDetails?.organization_name || "No Organization";
+
+          if (!orgMap.has(orgId)) {
+            orgMap.set(orgId, {
+              organizationId: orgId,
+              organizationName: orgName,
+              outletList: []
+            });
+          }
+
+          orgMap.get(orgId)!.outletList.push(outlet);
+        }
+
+        this.filteredOutletList = Array.from(orgMap.values());
+
+        console.log(this.filteredOutletList);
+      }
       console.log(this.outletList);
 
     } catch (error) {
