@@ -40,7 +40,7 @@ export class EmpPollCardComponent {
 
   checkCutoff(order: any, day: any) {
     const item = order.itemList[0];
-    if (day === 'today' && item.isSameDay) {
+    if (day === 'today') {
       const cutoffDate = new Date();
       const currDate = new Date();
       const endTime = item.cutOffTime.split(":")[0];

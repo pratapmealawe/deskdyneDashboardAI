@@ -1594,4 +1594,8 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.cancelPorterTask;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${taskId}`, method: urlObj.method });
   }
+  sendVendorOrderEmail(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.sendVendorOrderEmail;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
 }
