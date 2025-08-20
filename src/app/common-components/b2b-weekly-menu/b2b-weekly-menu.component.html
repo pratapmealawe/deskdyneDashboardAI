@@ -46,7 +46,7 @@
                 name="sameDay" *ngIf="editMode">
         </div>
         <!-- *ngIf="mealType.isSameDay" -->
-        <div class="col-lg-3 col-6" >
+        <div class="col-lg-3 col-6">
             <label class="labelText">Cut Off Time</label>
             <div class="labelData" *ngIf="!editMode">{{mealType.cutOffTime}}</div>
             <input type="time" class="form-control searchDate" placeholder="Cut Off Time"
@@ -55,7 +55,7 @@
         <div class="col-1 alignRight pointer">
             <i class="bi bi-pencil-square me-2" (click)="onEditClick()"></i>
             <!-- (click)="editMode = !editMode" -->
-            <i class="bi bi-trash-fill" (click)="deleteItem(i)"></i>
+            <i class="bi bi-trash-fill" (click)="showPopup(mealType,i)"></i>
         </div>
         <div class="col-lg-3 col-6">
             <label class="labelText">Delivery Time From</label>
@@ -77,7 +77,8 @@
         </div>
         <div class="col-lg-3 col-6">
             <label for="reference" class="labelText">Select Mealtype</label>
-            <select class="custom-select" name="reference" [(ngModel)]="mealType.selctedmealtype" [disabled]="!editMode">
+            <select class="custom-select" name="reference" [(ngModel)]="mealType.selctedmealtype"
+                [disabled]="!editMode">
                 <option disabled selected value> -- select Mealtype -- </option>
                 <option [value]="MealType" *ngFor="let MealType of Mealtypes">{{MealType}}</option>
             </select>

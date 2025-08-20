@@ -1,4 +1,4 @@
-<div class="row" *ngIf="showless"> 
+<div class="row" *ngIf="showless">
     <div class="col-12 col-md-4 col-lg-3">
         <div class="row">
             <div class="col-6 col-md-5 col-lg-6">
@@ -29,14 +29,16 @@
         <div class="row">
             <div class="col-6 col-md-5 col-lg-6">
                 <div class="labelText">Status</div>
-                <div class="labelData" [ngClass]="orderInput.orderstatus === 'placed' || orderInput.orderstatus === 'accepted' || orderInput.orderstatus === 'delivered' || orderInput.orderstatus === 'preApproved' ? 'green' : orderInput.orderstatus === 'declined' || orderInput.orderstatus === 'cancelled' ? 'red' : 'yellow'">{{orderInput.orderstatus}}</div>
+                <div class="labelData"
+                    [ngClass]="orderInput.orderstatus === 'placed' || orderInput.orderstatus === 'accepted' || orderInput.orderstatus === 'delivered' || orderInput.orderstatus === 'preApproved' ? 'green' : orderInput.orderstatus === 'declined' || orderInput.orderstatus === 'cancelled' ? 'red' : 'yellow'">
+                    {{orderInput.orderstatus}}</div>
             </div>
             <div class="col-6 col-md-7 col-lg-6">
                 <div class="labelText">Order Type</div>
                 <div class="labelData">{{orderInput.orderType}}</div>
             </div>
         </div>
-    </div>    
+    </div>
 
     <div class="col-12 col-md-4 col-lg-3">
         <div class="row">
@@ -73,15 +75,15 @@
                 <div class="labelText">Order Date</div>
                 <div class="labelData">{{orderInput.orderDate | date: 'MMM d, y'}}</div>
             </div>
-            
+
         </div>
-    </div> 
+    </div>
 
     <div class="col-12 col-md-4 col-lg-3">
         <div class="row">
             <div class="col-6 col-md-5 col-lg-6">
                 <div class="labelText">Delivery Date</div>
-            <div class="labelData">{{orderInput.deliveryDate | date: 'MMM d, y'}}</div>
+                <div class="labelData">{{orderInput.deliveryDate | date: 'MMM d, y'}}</div>
             </div>
             <div class="col-6 col-md-7 col-lg-6" *ngIf="orderInput.approver_phoneNo">
                 <div class="labelText">Delivery Slot</div>
@@ -91,7 +93,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-12 col-md-4 col-lg-3">
         <div class="row">
             <div class="col-6 col-md-5 col-lg-6" *ngIf="orderInput.deliveryTaskState">
@@ -160,7 +162,7 @@
         <div class="col-6 col-md-4 col-lg-2">
             <div class="labelText">Order Status</div>
             <div class="labelData"
-            [ngClass]="orderInput.orderstatus === 'placed' || orderInput.orderstatus === 'accepted' || orderInput.orderstatus === 'completed' || orderInput.orderstatus === 'preApproved' ? 'green' : orderInput.orderstatus === 'declined' || orderInput.orderstatus === 'cancelled' ? 'red' : 'yellow'">
+                [ngClass]="orderInput.orderstatus === 'placed' || orderInput.orderstatus === 'accepted' || orderInput.orderstatus === 'completed' || orderInput.orderstatus === 'preApproved' ? 'green' : orderInput.orderstatus === 'declined' || orderInput.orderstatus === 'cancelled' ? 'red' : 'yellow'">
                 {{order.orderstatus}}</div>
         </div>
         <div class="col-6 col-md-4 col-lg-2">
@@ -175,7 +177,7 @@
             <div class="labelText">Order Date</div>
             <div class="labelData">{{order.orderDate | date: 'MMM d, y'}}</div>
         </div>
-       
+
         <div class="col-6 col-md-4 col-lg-2">
             <div class="labelText">Special Request</div>
             <div class="labelData">{{order.specialRequest}}</div>
@@ -207,11 +209,12 @@
                     Amt Paid To Kitchen: &#8377;{{order.itemAmount}}
                 </div>
             </div>
-        
+
             <div class="col-sm-12 col-md-4 col-lg-3 labelText" *ngIf="itemPriceEdit">
                 <input type="number" [(ngModel)]="order.itemAmount">
             </div>
-            <div class="col-sm-12 col-md-4 col-lg-3 labelText" *ngIf="!order.amtAfterCommisionPaidToKitchen && editMode">
+            <div class="col-sm-12 col-md-4 col-lg-3 labelText"
+                *ngIf="!order.amtAfterCommisionPaidToKitchen && editMode">
                 <button *ngIf="!itemPriceEdit" class="btn btn-primary btn-sm" (click)="editItemPrice()">Edit
                     Price</button>
                 <div *ngIf="itemPriceEdit">
@@ -237,7 +240,7 @@
                 <button class="btn btn-primary btn-sm" (click)="packagingPriceEdit = !packagingPriceEdit"
                     *ngIf="editMode">Edit</button>
             </div>
-        
+
             <div *ngIf="packagingPriceEdit">
                 <input type="number" [(ngModel)]="order.packagingCost">
                 <div class="mt-1">
@@ -257,12 +260,13 @@
             </div>
             <div *ngIf="addDeliveryCost">
                 <input type="number" [(ngModel)]="order.deliveryCost">
-                <div class="mt-1"><button class="btn btn-primary btn-sm me-2" (click)="confirmDeliveryCost()">Confirm</button>
+                <div class="mt-1"><button class="btn btn-primary btn-sm me-2"
+                        (click)="confirmDeliveryCost()">Confirm</button>
                     <button class="btn btn-danger btn-sm" (click)="cancelDeliveryCost()">Cancel</button>
                 </div>
             </div>
         </div>
-        
+
     </div>
 
     <div class="header3 order-sub-header" (click)="showKitchenDetails = !showKitchenDetails">Organization Details
@@ -293,7 +297,7 @@
         </span>
     </div>
     <div class="row" *ngIf="showKitchenDetails">
-         <div class="col-6 col-md-4 col-lg-3">
+        <div class="col-6 col-md-4 col-lg-3">
             <div class="labelText">Vendor Firm Name</div>
             <div class="labelData">{{order.vendorFirmName}}</div>
         </div>
@@ -465,49 +469,51 @@
     </span>
     <span class="bgTopDownpadding1" *ngIf="editMode">
         <span class="me-2" *ngIf="orderStage === 3">
-            <button class="btn-danger btn-sm btn" (click)="acceptRejectOrder('readyForDelivery')">Ready To Deliver</button>
+            <button class="btn-danger btn-sm btn" (click)="acceptRejectOrder('readyForDelivery')">Ready To
+                Deliver</button>
         </span>
     </span>
     <span class="me-2"
-            *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
-            <button class="btn btn-primary btn-sm" (click)="startDeliveryProcess()">Start Any Delivery Process</button>
-        </span>
-        <span class="me-2" 
-            *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
-            <button class="btn btn-primary btn-sm" (click)="startPidgeDeliveryProcess()">Start Pidge Delivery
-                Process</button>
-        </span>
-        <!-- <span class="me-2"
+        *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
+        <button class="btn btn-primary btn-sm" (click)="startDeliveryProcess()">Start Any Delivery Process</button>
+    </span>
+    <span class="me-2"
+        *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
+        <button class="btn btn-primary btn-sm" (click)="startPidgeDeliveryProcess()">Start Pidge Delivery
+            Process</button>
+    </span>
+    <!-- <span class="me-2"
             *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
             <button class="btn btn-primary btn-sm" (click)="startDunzoDeliveryProcess()">Start Dunzo Delivery Process</button>
         </span> -->
-        <span class="me-2"
-            *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
-            <button class="btn btn-primary btn-sm" (click)="startPorterDeliveryProcess()">Start Porter Delivery
-                Process</button>
-        </span>
-        <span class="me-2"
-                *ngIf="orderStage === 4 && (order.deliveryTaskState !== 'cancelled' && order.deliveryVendor === 'Pidge')">
-                <button class="btn btn-primary btn-sm" (click)="cancelPidge3PLOrder()">Cancel Pidge Delivery
-                    Process</button>
-            </span>
-        <span class="me-2"
-            *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
-            <button class="btn btn-primary btn-sm" (click)="startShadowFaxDeliveryProcess()">Start ShadowFax Delivery
-                Process</button>
-        </span>
-        <!-- <span class="me-2"
+    <span class="me-2"
+        *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
+        <button class="btn btn-primary btn-sm" (click)="startPorterDeliveryProcess()">Start Porter Delivery
+            Process</button>
+    </span>
+    <span class="me-2"
+        *ngIf="orderStage === 4 && (order.deliveryTaskState !== 'cancelled' && order.deliveryVendor === 'Pidge')">
+        <button class="btn btn-primary btn-sm" (click)="cancelPidge3PLOrder()">Cancel Pidge Delivery
+            Process</button>
+    </span>
+    <span class="me-2"
+        *ngIf="(orderStage === 4 && !order.deliveryTaskState) || order.deliveryTaskState === 'cancelled' ">
+        <button class="btn btn-primary btn-sm" (click)="startShadowFaxDeliveryProcess()">Start ShadowFax Delivery
+            Process</button>
+    </span>
+    <!-- <span class="me-2"
             *ngIf="orderStage === 4 && order.deliveryTaskState && (order.deliveryTaskState !== 'cancelled' && order.deliveryVendor === 'Dunzo')">
             <button class="btn btn-primary btn-sm" (click)="cancelDunzoDelivery()">Cancel Dunzo Delivery Process</button>
         </span> -->
-        <span class="me-2"
-            *ngIf="orderStage === 4 && (order.deliveryTaskState !== 'cancelled' && order.deliveryVendor === 'Porter')">
-            <button class="btn btn-primary btn-sm" (click)="cancelPorterDelivery()">Cancel Porter Delivery Process</button>
-        </span>
-        <span class="me-2"
-            *ngIf="orderStage === 4 && (order.deliveryTaskState !== 'cancelled' && order.deliveryVendor === 'ShadowFax')">
-            <button class="btn btn-primary btn-sm" (click)="cancelShadowFaxDelivery()">Cancel ShadowFax Delivery Process</button>
-        </span>
+    <span class="me-2"
+        *ngIf="orderStage === 4 && (order.deliveryTaskState !== 'cancelled' && order.deliveryVendor === 'Porter')">
+        <button class="btn btn-primary btn-sm" (click)="cancelPorterDelivery()">Cancel Porter Delivery Process</button>
+    </span>
+    <span class="me-2"
+        *ngIf="orderStage === 4 && (order.deliveryTaskState !== 'cancelled' && order.deliveryVendor === 'ShadowFax')">
+        <button class="btn btn-primary btn-sm" (click)="cancelShadowFaxDelivery()">Cancel ShadowFax Delivery
+            Process</button>
+    </span>
     <span class="bgTopDownpadding1" *ngIf="editMode">
         <span class="me-2" *ngIf="orderStage === 2">
             <button class="btn-danger btn-sm btn" (click)="tranferToAnotherKitchen()">Change Vendor</button>
@@ -524,24 +530,9 @@
         </span>
     </span>
     <span class="bgTopDownpadding1" *ngIf="editMode">
-        <span class="me-2"
-           *ngIf="(orderStage === 4 || orderStage === 5 || orderStage === 6 )"> <!-- && !order.amtPaidToKitchen && !order.amtAfterCommisionPaidToKitchen -->
+        <span class="me-2" *ngIf="(orderStage === 4 || orderStage === 5 || orderStage === 6 )">
+            <!-- && !order.amtPaidToKitchen && !order.amtAfterCommisionPaidToKitchen -->
             <button class="btn-danger btn-sm btn" (click)="payAmtToKitchen()">Complete order & pay Vendor</button>
-        </span>
-    </span>
-    <span class="bgTopDownpadding1" *ngIf="editMode">
-        <span class="me-2" *ngIf="order.orderstatus === 'accepted'">
-            <button class="btn btn-danger btn-sm" (click)="invoice('view')">View Invoice</button>
-        </span>
-    </span>
-    <span class="bgTopDownpadding1" *ngIf="editMode">
-        <span class="me-2" *ngIf="order.orderstatus === 'accepted'">
-            <button class="btn btn-danger btn-sm" (click)="invoice('download')">Download Invoice</button>
-        </span>
-    </span>
-    <span class="bgTopDownpadding1" *ngIf="editMode">
-        <span class="me-2" *ngIf="order.orderstatus === 'accepted'">
-            <button class="btn btn-danger btn-sm" (click)="invoice('mail')">Mail Invoice</button>
         </span>
     </span>
 
@@ -557,8 +548,8 @@
         <div class="row">
             <div class="col-sm-12 col-md-4 col-lg-3">
                 <label class="labelText" for="kitchenId">Vendor<span class="mandatory">*</span></label>
-                <input class="labelData" type="text" class="form-control" id="kitchenId"
-                    [(ngModel)]="searchVendor" placeholder="Search with Vendor">
+                <input class="labelData" type="text" class="form-control" id="kitchenId" [(ngModel)]="searchVendor"
+                    placeholder="Search with Vendor">
             </div>
 
             <div class="col-sm-12 col-md-4 col-lg-3">
@@ -629,7 +620,7 @@
                     <div class="col-sm-12 col-md-40 col-lg-4 labelData">
                         {{kitchen.vendorName}} - {{kitchen.vendorPhoneNo}} - {{kitchen.vendorEmail}}</div>
                     <div class="col-sm-12 col-md-5 col-lg-2 labelData">
-                            {{kitchen?.vendorFirmDetails?.vendorFirmName}}
+                        {{kitchen?.vendorFirmDetails?.vendorFirmName}}
                     </div>
                     <!-- <div class="col-sm-12 col-md-5 col-lg-2 labelData">Google: {{kitchen.distance}}, Dunzo:
                         {{kitchen.dunzoDistance}}</div>
@@ -654,18 +645,18 @@
 </ng-template>
 <ng-template #selectKitchenModal let-modal>
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-basic-title">Confirm Selection</h4>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-        <span aria-hidden="true">&times;</span>
-      </button>
+        <h4 class="modal-title" id="modal-basic-title">Confirm Selection</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
     </div>
     <div class="modal-body">
-      <p class="lead text-center">
-        Selected kitchen distance is greater than 6 KM. Do you want to pay extra to proceed?
-      </p>
+        <p class="lead text-center">
+            Selected kitchen distance is greater than 6 KM. Do you want to pay extra to proceed?
+        </p>
     </div>
     <div class="modal-footer d-flex justify-content-center">
-      <button type="button" class="btn bluebutton btn-sm mr-2" (click)="modal.dismiss('cancel')">Cancel</button>
-      <button type="button" class="btn btn-danger btn-sm" (click)="modal.close('add')">Select</button>
+        <button type="button" class="btn bluebutton btn-sm mr-2" (click)="modal.dismiss('cancel')">Cancel</button>
+        <button type="button" class="btn btn-danger btn-sm" (click)="modal.close('add')">Select</button>
     </div>
-  </ng-template>
+</ng-template>

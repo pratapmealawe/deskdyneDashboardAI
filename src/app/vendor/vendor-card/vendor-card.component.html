@@ -28,7 +28,7 @@
               <i *ngIf="true || btnPolicy?.editVendor" class="bi bi-pencil-square editDeltesaveIcon me-2"
                 (click)="editVendor(vendor)"></i>
               <i class="bi bi-trash editDeltesaveIcon" *ngIf="true || btnPolicy?.deleteVendor"
-                (click)="deleteVendor(vendor)"></i>
+                (click)="showPopup(vendor)"></i>
             </div>
           </div>
 

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 @Component({
@@ -8,8 +9,9 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 })
 export class B2bWeeklyMenuComponent implements OnInit {
   @Input() orgObj: any;
-  orgChoices=Array();
-  orgSelected:any='';
+  orgChoices = Array();
+  orgSelected: any = '';
+  index: any;
   orgMenu: any = {
     organization_name: '',
     organizationId: '',
@@ -21,9 +23,9 @@ export class B2bWeeklyMenuComponent implements OnInit {
         deliveryCharge: 120,
         isSameDay: false,
         cutOffTime: '',
-        payAmtToKitchen:0,
-        deliveryTimeFrom:'',
-        deliveryTimeTo:'',
+        payAmtToKitchen: 0,
+        deliveryTimeFrom: '',
+        deliveryTimeTo: '',
         weeklyMenu: [
           {
             itemDay: 'Monday',
@@ -71,16 +73,16 @@ export class B2bWeeklyMenuComponent implements OnInit {
       }
     ]
   }
-  editMode:any = false;
-  menuFound:any = false;
-  showUpdate:any = false;
-  Mealtypes:any=['Breakfast', 'Lunch', 'EveningSnacks', 'Dinner'];
-  selctedmealtype='Breakfast';
+  editMode: any = false;
+  menuFound: any = false;
+  showUpdate: any = false;
+  Mealtypes: any = ['Breakfast', 'Lunch', 'EveningSnacks', 'Dinner'];
+  selctedmealtype = 'Breakfast';
 
-  constructor(private ddApiMainService:ApiMainService) { 
+  constructor(private ddApiMainService: ApiMainService, private confirmationModalService: ConfirmationModalService) {
   }
 
-  ngOnInit(){
+  ngOnInit() {
     this.fetchWeeklyMenu();
     this.fetchOrgChoices();
   }
@@ -95,22 +97,22 @@ export class B2bWeeklyMenuComponent implements OnInit {
       console.log('cafeteria fetch error', error)
     }
   }
-  async copyOrgMenu(){
+  async copyOrgMenu() {
     try {
-      if(this.orgSelected){
+      if (this.orgSelected) {
         const menuItems = await this.ddApiMainService.B2BFetchWeeklyMenu(this.orgSelected);
-        console.log(menuItems,"menuItems",this.orgMenu,"this.orgMenu");
-        if(menuItems && menuItems._id){
+        console.log(menuItems, "menuItems", this.orgMenu, "this.orgMenu");
+        if (menuItems && menuItems._id) {
           this.orgMenu.mealTypeList = JSON.parse(JSON.stringify(menuItems.mealTypeList));
-          this.showUpdate=true;
-          menuItems.mealTypeList.forEach((ele:any)=>{
+          this.showUpdate = true;
+          menuItems.mealTypeList.forEach((ele: any) => {
             const acceptOrderFrom = new Date(ele.deliveryTimeFrom);
             const fromhr = acceptOrderFrom.getHours();
             const strfromhr = fromhr > 9 ? fromhr : '0' + fromhr;
             const fromMin = acceptOrderFrom.getMinutes();
             const strfromMin = fromMin > 9 ? fromMin : '0' + fromMin;
             ele.deliveryTimeFrom = strfromhr + ':' + strfromMin;
-  
+
             const acceptOrderTill = new Date(ele.deliveryTimeTo);
             const tillhr = acceptOrderTill.getHours();
             const strtillhr = tillhr > 9 ? tillhr : '0' + tillhr;
@@ -122,7 +124,7 @@ export class B2bWeeklyMenuComponent implements OnInit {
           this.menuFound = true;
           //this.showUpdate = true;
         }
-        else{
+        else {
           this.menuFound = false;
           this.showUpdate = false;
         }
@@ -131,11 +133,11 @@ export class B2bWeeklyMenuComponent implements OnInit {
       console.log(error)
     }
   }
-  async fetchWeeklyMenu(){
+  async fetchWeeklyMenu() {
     try {
       const menu = await this.ddApiMainService.B2BFetchWeeklyMenu(this.orgObj._id);
-      if(menu && menu._id){
-        menu.mealTypeList.forEach((ele:any)=>{
+      if (menu && menu._id) {
+        menu.mealTypeList.forEach((ele: any) => {
           // console.log(ele)
           const acceptOrderFrom = new Date(ele.deliveryTimeFrom);
           const fromhr = acceptOrderFrom.getHours();
@@ -155,7 +157,7 @@ export class B2bWeeklyMenuComponent implements OnInit {
         this.menuFound = true;
         //this.showUpdate = true;
       }
-      else{
+      else {
         this.menuFound = false;
         this.showUpdate = false;
       }
@@ -163,15 +165,15 @@ export class B2bWeeklyMenuComponent implements OnInit {
       console.log(error)
     }
   }
-  onEditClick(){
+  onEditClick() {
     this.editMode = !this.editMode;
-    if(this.editMode){
-      this.showUpdate=true;
-    }else{
-      this.showUpdate=false;
+    if (this.editMode) {
+      this.showUpdate = true;
+    } else {
+      this.showUpdate = false;
     }
   }
-  addMeal(){
+  addMeal() {
     this.orgMenu.mealTypeList.push({
       itemName: '',
       mealPrice: 0,
@@ -179,9 +181,9 @@ export class B2bWeeklyMenuComponent implements OnInit {
       deliveryCharge: 120,
       isSameDay: false,
       cutOffTime: '',
-      payAmtToKitchen:0,
-      deliveryTimeFrom:'',
-      deliveryTimeTo:'',
+      payAmtToKitchen: 0,
+      deliveryTimeFrom: '',
+      deliveryTimeTo: '',
       weeklyMenu: [
         {
           itemDay: 'Monday',
@@ -230,17 +232,17 @@ export class B2bWeeklyMenuComponent implements OnInit {
     console.log(this.orgMenu)
   }
 
-  async submit(){
+  async submit() {
     this.update();
     try {
-      this.orgMenu.mealTypeList.forEach((meal:any)=>{
+      this.orgMenu.mealTypeList.forEach((meal: any) => {
         meal.deliveryTimeFrom = new Date((new Date().toDateString() + ' ' + meal.deliveryTimeFrom));
         meal.deliveryTimeTo = new Date((new Date().toDateString() + ' ' + meal.deliveryTimeTo));
       })
       this.orgMenu.organizationId = this.orgObj._id;
       this.orgMenu.organization_name = this.orgObj.organization_name;
       const menu = await this.ddApiMainService.B2BweeklyMenuAdd(this.orgMenu);
-      if(menu && menu._id){
+      if (menu && menu._id) {
         this.orgMenu = menu;
         //this.showUpdate = true;
       }
@@ -249,20 +251,20 @@ export class B2bWeeklyMenuComponent implements OnInit {
     }
   }
 
-  async update(){
-    console.log(this.orgMenu,"this.orgMenu",this.orgObj);
+  async update() {
+    console.log(this.orgMenu, "this.orgMenu", this.orgObj);
     try {
-      this.orgMenu.mealTypeList.forEach((meal:any)=>{
+      this.orgMenu.mealTypeList.forEach((meal: any) => {
         meal.deliveryTimeFrom = new Date((new Date().toDateString() + ' ' + meal.deliveryTimeFrom));
         meal.deliveryTimeTo = new Date((new Date().toDateString() + ' ' + meal.deliveryTimeTo));
       })
-      if(typeof this.orgMenu.organizationId==='undefined'|| this.orgMenu.organizationId == null || this.orgMenu.organizationId == ''){
-        this.orgMenu.organizationId=this.orgObj._id;
-        this.orgMenu.organization_name=this.orgObj.organization_name;
+      if (typeof this.orgMenu.organizationId === 'undefined' || this.orgMenu.organizationId == null || this.orgMenu.organizationId == '') {
+        this.orgMenu.organizationId = this.orgObj._id;
+        this.orgMenu.organization_name = this.orgObj.organization_name;
       }
-      const menu = await this.ddApiMainService.updateWeeklyMenuItem(this.orgMenu,this.orgMenu.organizationId);
-      if(menu && menu._id){
-        menu.mealTypeList.forEach((ele:any)=>{
+      const menu = await this.ddApiMainService.updateWeeklyMenuItem(this.orgMenu, this.orgMenu.organizationId);
+      if (menu && menu._id) {
+        menu.mealTypeList.forEach((ele: any) => {
           // console.log(ele)
           const acceptOrderFrom = new Date(ele.deliveryTimeFrom);
           const fromhr = acceptOrderFrom.getHours();
@@ -286,9 +288,18 @@ export class B2bWeeklyMenuComponent implements OnInit {
     }
   }
 
-  deleteItem(index:any){
-    this.orgMenu.mealTypeList.splice(index,1);
-    this.showUpdate= true;
+  deleteItem() {
+    this.orgMenu.mealTypeList.splice(this.index, 1);
+    this.showUpdate = true;
+  }
+
+  showPopup(foodItem: any, i: any) {
+    this.index = i;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${foodItem.itemName} Item`,
+      this.deleteItem,
+      this
+    );
   }
 
 }

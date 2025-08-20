@@ -51,7 +51,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   filteredMasterMenuList: any[] = []
   selectedMasterItem: any = null;
   selectedItems: any[] = [];
-
+  menuInfo: any;
+  eventInfo: any;
 
   constructor(
     private fb: FormBuilder,
@@ -437,7 +438,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.back.emit(true);
   }
 
-  async changeMenuActivation(menu: any, event: any) {
+  async changeMenuActivation() {
+    let menu = this.menuInfo;
+    let event = this.eventInfo;
     menu.isActive = event.target.checked;
 
     const menuObj = {
@@ -448,6 +451,16 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       this.outletObj._id,
       menu._id,
       menuObj
+    );
+  }
+
+  showPopupForItemActivation(menu: any, event: any) {
+    this.menuInfo = menu;
+    this.eventInfo = event;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
+      this.changeMenuActivation,
+      this
     );
   }
 

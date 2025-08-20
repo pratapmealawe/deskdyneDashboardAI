@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -14,12 +15,14 @@ export class VendorCardComponent implements OnInit {
   @Input() vendorFirm: any;
   @Output() deleted = new EventEmitter();
   btnPolicy: any;
+  vendorInfo:any;
 
   constructor(
     private router: Router,
     private runtimeStorageService: RuntimeStorageService,
     private apiMainService: ApiMainService,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private confirmationModalService: ConfirmationModalService
   ) {}
 
   ngOnInit(): void {
@@ -31,13 +34,22 @@ export class VendorCardComponent implements OnInit {
     this.router.navigate(['/addVendor']);
   }
 
-  async deleteVendor(vendor: any) {
+  async deleteVendor() {
     try {
-      let id = vendor._id;
+      let id = this.vendorInfo._id;
       const deleted = await this.apiMainService.deleteVendor(id);
       this.deleted.emit();
     } catch (error) {
       console.log('deleteVendor', error);
     }
+  }
+
+    showPopup(vendor: any) {
+    this.vendorInfo = vendor;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${this.vendorInfo.vendorName} vendor`,
+      this.deleteVendor,
+      this
+    );
   }
 }
