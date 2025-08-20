@@ -34,6 +34,8 @@ export class OutletMasterMenuComponent implements OnInit {
   foodItem: any;
   activeStatus = false;
   btnPolicy: any;
+  menuInfo: any;
+  eventInfo: any;
   filteredMenuList: any[] = []
   mealTimeList = [
     {
@@ -73,16 +75,18 @@ export class OutletMasterMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.init();
     this.fetchOutletMasterMenus();
+    this.init();
     this.createForm();
   }
 
   init() {
     console.log(this.outletObj);
 
-    if (this.outletObj?.menuList && this.outletObj.menuList.length > 0) {
-      this.filteredMenuList = this.outletObj.menuList.sort((a: any, b: any) => a.precedence - b.precedence)
+    if (this.filteredMenuList && this.filteredMenuList.length > 0) {
+      this.filteredMenuList = this.filteredMenuList.sort((a: any, b: any) => a.precedence - b.precedence)
+      console.log(this.filteredMenuList);
+
       this.showCard = true;
     }
   }
@@ -93,6 +97,7 @@ export class OutletMasterMenuComponent implements OnInit {
       console.log(res);
       if (res) {
         this.filteredMenuList = res;
+        this.init();
       }
     }
     catch (e) {
@@ -405,7 +410,9 @@ export class OutletMasterMenuComponent implements OnInit {
     this.back.emit(true);
   }
 
-  async changeMenuActivation(menu: any, event: any) {
+  async changeMenuActivation() {
+    let menu = this.menuInfo;
+    let event = this.eventInfo;
     menu.isActive = event.target.checked;
 
     const menuObj = {
@@ -418,6 +425,16 @@ export class OutletMasterMenuComponent implements OnInit {
     );
     console.log(outletMastermenu);
 
+  }
+
+  showPopupForItemActivation(menu: any, event: any) {
+    this.menuInfo = menu;
+    this.eventInfo = event;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
+      this.changeMenuActivation,
+      this,
+    );
   }
 
   defineDescription() {

@@ -157,7 +157,7 @@ export class EmployeeWalletComponent {
     this.empId = employee._id;
     this.showError = false;
 
-    if (employee.cashbackPoints) {
+    if (employee.cashbackPoints || employee.cashbackPoints == 0) {
       this.previousHistory = employee;
       this.form.patchValue({
         employeeName: employee.employeeName,
@@ -206,7 +206,9 @@ export class EmployeeWalletComponent {
           remark: employeeObj.remark,
           previousAmount: this.previousHistory?.cashbackPoints,
           previousRemark: this.previousHistory?.remark,
-          usedAmount: employeeObj.cashbackPoints,
+          usedAmount: 0,
+          cashback_points: this.form.get('cashbackPoints').value,
+          transactionType: "Credit",
           updatedOn: new Date(),
           updateRemark: employeeObj.remark,
           name: this.currentUser.name,
@@ -214,6 +216,9 @@ export class EmployeeWalletComponent {
         }
       ]
     }
+
+    console.log(obj);
+
     if (this.form.invalid) {
       return;
     }
@@ -319,11 +324,13 @@ export class EmployeeWalletComponent {
         updateHistory: {
           status: 'New',
           remark: value.remark,
-          usedAmount: value.cashbackPoints,
+          usedAmount: 0,
+          transactionType: 'Credit',
           updatedOn: new Date(),
           updateRemark: value.remark,
           name: this.currentUser.name,
-          loginId: this.currentUser.loginId
+          loginId: this.currentUser.loginId,
+          cashback_points: this.cashbackForm.get('cashbackPoints').value
         }
       }
       const updatedEmployeeList = await this.apiMainService.updateEmployeeCashback(this.orgObj._id, obj);

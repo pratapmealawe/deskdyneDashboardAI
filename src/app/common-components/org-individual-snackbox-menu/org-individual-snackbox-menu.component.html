@@ -88,7 +88,7 @@
                 <div class="col-sm-6 col-md-4 col-lg-2 alignRight">
                     <span *ngIf="!foodItem.edit">
                         <i class="bi bi-pencil-square editDeltesaveIcon" (click)="editFoodItem(foodItem)"></i>
-                        <i class="bi bi-trash-fill editDeltesaveIcon" (click)="deleteFoodItem(i)"></i>
+                        <i class="bi bi-trash-fill editDeltesaveIcon" (click)="showPopup(foodItem,i)"></i>
                     </span>
                     <span *ngIf="foodItem.edit">
                         <i class="bi bi-check-lg editDeltesaveIcon" (click)="foodItem.edit = false"></i>
