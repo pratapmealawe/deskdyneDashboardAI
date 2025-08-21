@@ -240,6 +240,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/utility/getLineBasedAuditLogs`,
         method: 'GET',
       },
+      sendVendorOrderEmail: {
+        url: `${this.baseUrl}/utility/sendVendorOrderEmail`,
+        method: 'POST',
+      },
       employeeAdd: {
         url: `${this.baseUrl}/api/employeeAdd`,
         method: 'POST',
