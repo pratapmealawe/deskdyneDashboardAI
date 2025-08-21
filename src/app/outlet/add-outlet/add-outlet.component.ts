@@ -110,6 +110,7 @@ export class AddOutletComponent implements OnInit {
         outletOpened: outlet.outletOpened,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage,
         subsidy: outlet.subsidy,
+        precedence: outlet.precedence
       });
     }
   }
@@ -121,7 +122,8 @@ export class AddOutletComponent implements OnInit {
       outletType: [''],
       outletOpened: [false],
       vendorCommissionPercentage: [0],
-      subsidy: [0]
+      subsidy: [0],
+      precedence: [0]
     });
   }
 

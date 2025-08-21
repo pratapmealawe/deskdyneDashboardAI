@@ -1,9 +1,5 @@
 <div class="bgsidepadding1" *ngIf="showSearchSection">
-  <div
-    class="right addBtn addOutlet"
-    *ngIf="true || btnPolicy?.addOutlet"
-    (click)="addOutlet()"
-  >
+  <div class="right addBtn addOutlet" *ngIf="true || btnPolicy?.addOutlet" (click)="addOutlet()">
     +
   </div>
   <div class="row">
@@ -11,12 +7,7 @@
       <div class="row">
         <div class="col-12 col-md-6 col-lg-12 bgpadding1">
           <div class="bold">Outlet Name</div>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Org Name"
-            [(ngModel)]="searchObj.outletName"
-          />
+          <input type="text" class="form-control" placeholder="Org Name" [(ngModel)]="searchObj.outletName" />
         </div>
       </div>
     </div>
@@ -25,12 +16,7 @@
       <div class="row">
         <div class="col-12 col-md-6 col-lg-12 bgpadding1">
           <div class="bold">Ph No</div>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="POC Phone No"
-            [(ngModel)]="searchObj.phoneNo"
-          />
+          <input type="text" class="form-control" placeholder="POC Phone No" [(ngModel)]="searchObj.phoneNo" />
         </div>
       </div>
     </div>
@@ -39,52 +25,30 @@
       <div class="row">
         <div class="col-12 col-md-6 col-lg-12 bgpadding1">
           <div class="bold">Email</div>
-          <input
-            type="text"
-            class="form-control"
-            placeholder="POC Email"
-            [(ngModel)]="searchObj.emailID"
-          />
+          <input type="text" class="form-control" placeholder="POC Email" [(ngModel)]="searchObj.emailID" />
         </div>
       </div>
     </div>
 
     <div class="row mt-2">
       <div class="col-sm-12 col-md-4 col-lg-12">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm me-2"
-          (click)="searchOutlet()"
-        >
+        <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchOutlet()">
           Search
         </button>
-        <button
-          type="button"
-          class="btn btn-success btn-sm"
-          (click)="resetForm()"
-        >
+        <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">
           Reset
         </button>
       </div>
     </div>
 
-    <div
-      class="mt-3"
-      *ngIf="outletList && outletList.length > 0 && showSearchSection"
-    >
-      <div *ngFor="let outlet of outletList" class="cardDesign">
-        <app-outlet-card
-          [outlet]="outlet"
-          (view)="viewOutlet($event)"
-        ></app-outlet-card>
+    <div class="mt-3" *ngIf="outletList && outletList.length > 0 && showSearchSection">
+      <div *ngFor="let outlet of filteredOutletList" class="cardDesign mt-3">
+        <app-outlet-card [outlet]="outlet" (view)="viewOutlet($event)"></app-outlet-card>
       </div>
     </div>
   </div>
 </div>
 <div class="center mt-5" *ngIf="outletList.length === 0">No Records Found</div>
 <div class="bgsidepadding2" *ngIf="!showSearchSection && outletList.length > 0">
-  <app-outlet-view
-    [outlet]="selectedOutlet"
-    (back)="toggleShowOrder($event)"
-  ></app-outlet-view>
+  <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
 </div>
