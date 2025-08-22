@@ -29,6 +29,10 @@
                             <div class="labelText">Email</div>
                             <div class="labelData">{{lead.emailId}}</div>
                         </div>
+                        <div class="col-6 col-md-5 col-lg-6">
+                            <div class="labelText">Employee Count</div>
+                            <div class="labelData">{{lead.employeeCount}}</div>
+                        </div>
                     </div>
                 </div>
 
@@ -44,7 +48,7 @@
                         </div>
                         <div class="col-6 col-md-5 col-lg-4">
                             <div class="labelText">Status</div>
-                            <div class="labelData">{{lead.status}}</div>
+                            <div class="labelData" [ngStyle]="{'color' : lead.status === 'review' ? 'red' : 'green' }">{{lead.status === 'review' ? 'Pending' : 'Acknowledged'}}</div>
                         </div>
                     </div>
                 </div>
