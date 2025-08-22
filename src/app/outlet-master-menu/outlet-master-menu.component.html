@@ -155,11 +155,13 @@
 
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label">Price</label>
-            <input type="number" class="form-control" placeholder="Price" formControlName="price" />
+            <input type="number"  min="1" (keydown)="preventInvalidNumber($event)"
+              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Price" formControlName="price" />
           </div>
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label">Subsidy Amount (In Rupess ₹)</label>
-            <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
+            <input type="number" min="1" (keydown)="preventInvalidNumber($event)"
+              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
           </div>
 
           <div class="col-subsidysm-12 col-md-6 col-lg-4">
@@ -194,7 +196,8 @@
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label" for="precedence">Precedence</label>
             <input class="form-control me-1" type="number" placeholder="Precedence" id="precedence"
-              formControlName="precedence" />
+              formControlName="precedence" min="1" (keydown)="preventInvalidNumber($event)"
+              (paste)="preventInvalidPaste($event)" />
           </div>
 
           <div class="col-sm-12">
