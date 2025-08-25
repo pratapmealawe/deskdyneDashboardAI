@@ -40,10 +40,10 @@
           <div class="orgbutton d-flex align-items-center justify-content-between"
             [ngClass]="{ 'active-link': selectedIndex === i }" (click)="selectLink(link, i)">
             <div class="d-flex align-items-center flex-wrap gap-2">
-              <img *ngIf="selectedIndex === i" [src]="'assets/images/' + link.imageblue + '.svg'" alt="Active Icon"
-                style="margin-right: 10px; width: 20px; height: 20px" />
-              <img *ngIf="selectedIndex !== i" [src]="'assets/images/' + link.image + '.svg'" alt="Inactive Icon"
-                style="margin-right: 10px; width: 20px; height: 20px" />
+              <img *ngIf="selectedIndex === i" [src]="'assets/images/SideNavbar/' + link.imageblue + '.svg'"
+                alt="Active Icon" style="margin-right: 10px; width: 20px; height: 20px" />
+              <img *ngIf="selectedIndex !== i" [src]="'assets/images/SideNavbar/' + link.image + '.svg'"
+                alt="Inactive Icon" style="margin-right: 10px; width: 20px; height: 20px" />
               <span>{{ link.name }}</span>
             </div>
             <div class="badge" *ngIf="link.showBadge && (link.count | async) ">

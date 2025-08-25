@@ -30,15 +30,16 @@ export class SearchVendorComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.searchVendor();
   }
 
   async getAllVendors() {
     console.log("get vendor after deletion");
-    
+
     try {
       this.vendorList = await this.apiMainService.getAllVendors();
       console.log(this.vendorList);
-      
+
     } catch (error) {
       console.log('getAllVendor', error);
     }

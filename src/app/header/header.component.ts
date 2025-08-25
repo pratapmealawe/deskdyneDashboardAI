@@ -38,38 +38,38 @@ export class HeaderComponent implements OnInit, OnDestroy {
       name: 'Dashboard',
       showParent: true,
       route: 'mainDashboard',
-      image: 'DDDashboard',
-      imageblue: 'DDDashboard_Blue',
+      image: 'Dashbaord_white',
+      imageblue: 'Dashbaord_blue',
     },
     {
       name: 'Org Dashboard',
       showParent: true,
       route: 'dashboard',
-      image: 'DDDashboard',
-      imageblue: 'DDDashboard_Blue',
+      image: 'Dashbaord_white_1',
+      imageblue: 'Organization_dashbaord_blue',
     },
     {
       name: 'Organization',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
+      image: 'Organization_white',
+      imageblue: 'Organization_Blue',
       children: [
         {
           name: 'Search Organization',
           route: 'b2bSearchOrg',
           showChild: true,
         },
-        { name: 'Add Organization', route: 'b2bAddorg', showChild: true },
+        { name: 'Add Organization', route: 'b2bAddorg', showChild: true, clearRunTimeStorage: ['VIEW_ORG'] },
       ],
     },
     {
       name: 'Outlet',
       showParent: true,
-      image: 'Outlet',
-      imageblue: 'Outlets_Blue',
+      image: 'Outlet_white',
+      imageblue: 'Outlet_blue',
       children: [
         { name: 'Outlet Overview', route: 'outlet', showChild: true },
-        { name: 'Outlet Add', route: 'addOutlet', showChild: true },
+        { name: 'Outlet Add', route: 'addOutlet', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] },
         {
           name: 'Outlet Master Menu',
           route: 'outletMasterMenu',
@@ -80,36 +80,36 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'vendor Firm',
       showParent: true,
-      image: 'Vendor_Info_white',
-      imageblue: 'Vendor_Info_blue',
+      image: 'Vendor firm_white',
+      imageblue: 'Vendor firm_blue',
       children: [
         {
           name: 'Search vendor Firm',
           route: 'searchVendorFirm',
           showChild: true,
         },
-        { name: 'Add Vendor Firm', route: 'addVendorFirm', showChild: true },
+        { name: 'Add Vendor Firm', route: 'addVendorFirm', showChild: true, clearRunTimeStorage: ['VENDOR_FIRM_EDIT'] },
       ],
     },
     {
       name: 'Vendor',
       showParent: true,
-      image: 'Vendor_Info_white',
-      imageblue: 'Vendor_Info_blue',
+      image: 'Vendor_white',
+      imageblue: 'Vendor_blue',
       children: [
         {
           name: 'Search vendor',
           route: 'searchVendor',
           showChild: true,
         },
-        { name: 'Add Vendor', route: 'addVendor', showChild: true },
+        { name: 'Add Vendor', route: 'addVendor', showChild: true, clearRunTimeStorage: ['VENDOR_EDIT'] },
       ],
     },
     {
       name: 'Outlet Orders',
       showParent: true,
-      image: 'B2BOrders',
-      imageblue: 'B2BOrders_Blue',
+      image: 'Outlet orders_white',
+      imageblue: 'Outlet orders_blue',
       children: [
         {
           name: 'Outlet Current Order',
@@ -123,8 +123,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Other Orders',
       showParent: true,
-      image: 'B2BOrders',
-      imageblue: 'B2BOrders_Blue',
+      image: 'Other orders_white',
+      imageblue: 'Other orders_blue',
       children: [
         {
           name: 'Current Order',
@@ -138,22 +138,22 @@ export class HeaderComponent implements OnInit, OnDestroy {
       name: 'Users',
       showParent: true,
       route: 'customer',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      image: 'Users_white',
+      imageblue: 'Users_blue',
     },
     {
       name: 'Billing',
       showParent: true,
       route: 'billing',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      image: 'Billing_white',
+      imageblue: 'Billing_blue',
     },
     {
       name: 'Food Items',
       showParent: true,
       route: 'foodItem',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      image: 'Food items_white',
+      imageblue: 'Food items_blue',
     }
     ,
     {
@@ -162,8 +162,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       showBadge: true,
       count: this.inReviewIncidentsCount$,
       route: 'orgIncidentManagement',
-      image: 'Incident_Reporting',
-      imageblue: 'Incident_Reporting_Blue',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
     },
     {
       name: 'Submit CheckList',
@@ -193,38 +193,38 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Reviews',
       route: 'orgReviews',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      image: 'Reviews_white',
+      imageblue: 'Reviews_blue',
     },
     {
       name: 'Feedback',
       showBadge: true,
       count: this.unAcknowledgedFeedbackCount$,
       route: 'appFeedbacks',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      image: 'Feedback_white',
+      imageblue: 'Feedback_blue',
     },
     {
       name: 'Excel Export',
       showParent: true,
       route: 'excelExport',
-      image: 'Feedback',
-      imageblue: 'Feedback_Blue',
+      image: 'Excel reports_white',
+      imageblue: 'Excel reports_blue',
     },
     {
       name: 'Enquiries',
       showBadge: true,
       count: this.enquiryCount$,
       route: 'viewEnquiries',
-      image: 'Enquiry',
-      imageblue: 'Enquiries_Blue',
+      image: 'Enquiries_white',
+      imageblue: 'Enquiries_blue',
     },
 
     {
       name: 'Policy',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
+      image: 'Policy_white',
+      imageblue: 'Policy_blue',
       children: [
         { name: 'Policy', route: 'policy', showChild: true },
         { name: 'Add Policy', route: 'addPolicy', showChild: true },
@@ -233,8 +233,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Admin',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
+      image: 'Admin_white',
+      imageblue: 'Admin_blue',
       children: [
         { name: 'Admin', route: 'admin', showChild: true },
         { name: 'Add Admin', route: 'addAdmin', showChild: true },
@@ -244,8 +244,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Miscelleneous',
       showParent: true,
-      image: 'Company_Dashboard',
-      imageblue: 'Company_Dashbaord_Blue',
+      image: 'Misc_white',
+      imageblue: 'Misc_blue',
       children: [
         { name: 'FAQ', route: 'faq', showChild: true },
         { name: 'Config Variables', route: 'configVariable', showChild: true },
@@ -463,7 +463,18 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.openChildSectionIndex = parentIndex;
     this.childSelectedIndex = childIndex;
     this.selectedIndex = -1;
+
+    let testObj = this.finalNavOption[parentIndex].children[childIndex]
+    if (testObj.clearRunTimeStorage) {
+      this.clearRunTimeStorage(testObj.clearRunTimeStorage)
+    }
     this.closeSidebar();
+  }
+
+  clearRunTimeStorage(clearArr: any) {
+    clearArr.forEach((item: any) => {
+      this.runtimeStorageService.resetCacheData(item)
+    })
   }
 
   closeSidebar() {

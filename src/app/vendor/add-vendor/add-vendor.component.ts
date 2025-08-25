@@ -117,9 +117,9 @@ export class AddVendorCommponent {
 
   changeVendorFirm(e: any) {
     if (e) {
-      const id = typeof e === "string" ? e :  e.target.value
+      const id = typeof e === "string" ? e : e.target.value
       const vendorFirm = this.vendorList.find((item: any) => item?._id === id)
-      
+
       if (vendorFirm?.outletList.length > 0) {
         this.outletByCafeteriaList = vendorFirm?.outletList
       }
@@ -128,7 +128,7 @@ export class AddVendorCommponent {
 
   updateVendor() {
     const vendor = this.runtimeStorageService.getCacheData('VENDOR_EDIT');
-  
+
     if (vendor && vendor._id) {
       this.selectedVendor = vendor;
       this.showUpdate = true;
@@ -152,7 +152,7 @@ export class AddVendorCommponent {
     try {
       const vendorFirmDetails = {
         vendorFirmId: this.vendorId,
-        vendorFirmName: this.vendorList.find((item:any) => item._id === this.vendorId)?.vendorFirmName
+        vendorFirmName: this.vendorList.find((item: any) => item._id === this.vendorId)?.vendorFirmName
       }
       const finalObj = {
         ...this.form.value,
@@ -186,7 +186,7 @@ export class AddVendorCommponent {
 
   getSelectedOutlets() {
     this.selectedOutletsList = []
-    
+
     this.outletByCafeteriaList.forEach((elm: any) => {
       if (elm.isChecked) {
         let outletPresent = false;
@@ -253,6 +253,7 @@ export class AddVendorCommponent {
   }
 
   goBack() {
+    this.form.reset();
     this.router.navigate(['/searchVendor']);
   }
 }
