@@ -207,6 +207,45 @@
               </mat-chip-option>
             </mat-chip-listbox>
           </div>
+
+          <div class="col-12">
+            <label class="labelText form-label">Nutrition Information</label>
+            <div class="col-12">
+              <label class="labelText form-label">Energy Value (kcal)</label>
+              <input type="number" class="form-control" placeholder="Energy Value" formControlName="energyValue" />
+            </div>
+            <div class="col-12" [formArrayName]="'nutritionList'">
+              <label class="labelText">Nutrition List:</label>
+              <div class="row" *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first ; let last = last" 
+              [formGroupName]="i">
+                  <div class="col-md-3">
+                    <label class="form-label">Nutrition Name</label>
+                    <select  class="form-control" formControlName="nutritionName" placeholder="Nutrition Name" >
+                      <option value="Protein">Protein</option>
+                      <option value="Fat">Fat</option>
+                    </select>
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Nutrition Value</label>
+                    <input type="number" class="form-control" formControlName="nutritionValue" placeholder="Nutrition Value" />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Nutrition Unit</label>
+                    <select  class="form-control" formControlName="nutritionUnit" placeholder="Nutrition Unit" >
+                      <option value="gm">gm</option>
+                      <option value="ml">ml</option>
+                    </select>
+                  </div>
+                        
+                  
+                  <div class="col-sm-2 col-md-2 col-lg-2">
+                      <span *ngIf="last" class='addtnc' (click)="addNutritionLists()">+</span>
+                      <span *ngIf="!first" class='removetnc' (click)="removenNutritionLists(i)">-</span>
+                  </div>
+              </div>
+              </div>
+          </div>
+
         </div>
       </div>
     </div>

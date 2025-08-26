@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -63,7 +63,7 @@ export class OutletMasterMenuComponent implements OnInit {
       "acceptOrderFrom": "20:00",
       "acceptOrderTill": "22:00"
     }
-  ]
+  ];
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -78,6 +78,10 @@ export class OutletMasterMenuComponent implements OnInit {
     this.fetchOutletMasterMenus();
     this.init();
     this.createForm();
+  }
+
+  get nutrition_Lists(): FormArray {
+    return this.form.get('nutritionList') as FormArray;
   }
 
   init() {
@@ -111,9 +115,11 @@ export class OutletMasterMenuComponent implements OnInit {
     );
   }
 
-  patchFormValue(item: any) {
-    console.log(item);
+ 
 
+  patchFormValue(item: any) {
+    console.log('patchFormValue',item);
+    this.form.reset();
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
@@ -123,12 +129,20 @@ export class OutletMasterMenuComponent implements OnInit {
       itemContains: item.itemContains,
       subsidy: item.subsidy,
       precedence: item.precedence,
-      mealTimingInfo: [...item.mealTimingInfo]
+      mealTimingInfo: [...item.mealTimingInfo],
+      energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
+      nutritionList: item.nutritionInfo ? [...item.nutritionInfo.nutritionList] : []
     });
     if (item.subCategory) {
       this.selectedCategory = item.category;
       this.categorySelected = true;
       this.setSubCategoryList();
+    }
+    if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
+      this.nutrition_Lists.clear();
+      item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
+       this.nutrition_Lists.push(this.fb.group(nutrition));
+      });
     }
   }
 
@@ -142,9 +156,31 @@ export class OutletMasterMenuComponent implements OnInit {
       precedence: [''],
       description: [''],
       itemContains: [[]],
-      mealTimingInfo: [[]]
+      mealTimingInfo: [[]],
+      energyValue: [10],
+      nutritionList : this.fb.array([
+              this.fb.group({ 
+                nutritionName : [''],
+                nutritionValue : [''],
+                nutritionUnit : ['']
+              })
+      ])
     });
   }
+
+  addNutritionLists() {
+      this.nutrition_Lists.push(this.fb.group({
+          nutritionName : [''],
+          nutritionValue : [''],
+          nutritionUnit : ['']
+      }));
+  }
+
+  removenNutritionLists(index: number) {
+    this.nutrition_Lists.removeAt(index);
+  }
+    
+
 
   setCategory(event: any) {
     this.selectedCategory = event.target.value;
@@ -257,11 +293,15 @@ export class OutletMasterMenuComponent implements OnInit {
       formData.append('subsidy', this.form.value.subsidy);
       formData.append('precedence', this.form.value.precedence);
       formData.append('mealTimingInfo', JSON.stringify(mealTimingInfoData));
+      const nutritionInfo = {
+          energyValue: this.form.value.energyValue,
+          nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
+      console.log('updateMenu ####',formData)
       const res = await this.apiMainService.updateOutletMasterMenu(menuId, formData);
 
       if (res && res._id) {
-        // this.outletObj = res;
-        // this.init()
         this.fetchOutletMasterMenus();
       }
 
@@ -289,6 +329,8 @@ export class OutletMasterMenuComponent implements OnInit {
     this.showUpdateBtn = false;
     this.imageReplaced = false;
     this.noImages = false;
+    this.nutrition_Lists.clear();
+    this.addNutritionLists();
   }
 
   async submit() {
@@ -319,6 +361,11 @@ export class OutletMasterMenuComponent implements OnInit {
       formData.append('itemType', this.form.value.itemType);
       formData.append('precedence', this.form.value.precedence);
       formData.append('mealTimingInfo', JSON.stringify(this.form.value.mealTimingInfo));
+      const nutritionInfo = {
+          energyValue: this.form.value.energyValue,
+          nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
       // let mealTypes = this.form.value.mealTimingInfo;
 
