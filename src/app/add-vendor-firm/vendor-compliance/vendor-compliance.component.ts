@@ -5,6 +5,7 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { LocalStorageService } from 'src/service/local-storage.service';
 @Component({
   selector: 'app-vendor-compliance',
   templateUrl: './vendor-compliance.component.html',
@@ -48,7 +49,7 @@ export class VendorComplianceComponent implements OnInit {
   adhaarFileStatus = false;
   panFileStatus = false;
   selectedMerchantFile: any;
-
+orgVendorInfo:any;
   @ViewChild('fssaiNoRef') fssaiNoField!: ElementRef;
   @ViewChild('aadharNo') aadharNoField!: ElementRef;
   @ViewChild('panNoRef') panNoField!: ElementRef;
@@ -57,13 +58,14 @@ export class VendorComplianceComponent implements OnInit {
   @ViewChild('adhaarFileRef') adhaarFileRef!: ElementRef;
   @ViewChild('panFileRef') panFileRef!: ElementRef;
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private modalService: NgbModal, private policyService: PolicyService) {
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private modalService: NgbModal, private policyService: PolicyService,private localStorageService: LocalStorageService) {
     this.access = this.policyService.getCurrentButtonPolicy();
   }
 
 
   ngOnInit() {
-    // this.profileApproval = this.venderDetails.profileApproval;  
+    // this.profileApproval = this.venderDetails.profileApproval;
+    this.orgVendorInfo =  this.localStorageService.getCacheData('ORG_VENDOR_INFO');
     if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
 

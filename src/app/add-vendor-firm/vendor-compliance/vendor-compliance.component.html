@@ -1,5 +1,5 @@
 <div class="bgpadding1">
-  <div class="right">
+  <div class="right" *ngIf="!orgVendorInfo">
     <button *ngIf="!editMode && access" type="button" class="btn btn-primary btn-sm"
       (click)="editMode = true">Edit</button>
   </div>
@@ -343,14 +343,24 @@
         </div>
       </div>
       <div *ngIf="!editMode" class="d-flex align-items-center gap-2">
-        <button type="button" class="btn btn-primary btn-sm mt-4" (click)="fileInput.click()">
+        <button type="button" *ngIf="!orgVendorInfo" class="btn btn-primary btn-sm mt-4" (click)="fileInput.click()">
+          {{ 'Merchant Onboarding' }}
+        </button>
+        <button *ngIf="orgVendorInfo" type="button" class="btn btn-primary btn-sm mt-4">
           {{ 'Merchant Onboarding' }}
         </button>
 
         <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
           style="display: none;" />
 
-        <div *ngIf="compliance && compliance.merchantOnboarding" class="text-success mt-4 ms-3">
+        <!-- <div *ngIf="compliance && compliance.merchantOnboarding" class="pdf-preview">
+          <iframe [src]="compliance.merchantOnboarding" type="application/pdf"></iframe>
+          <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('cancelledChequeFile')">Delete</button>
+        </div> -->
+        <div *ngIf="compliance && compliance.merchantOnboarding && orgVendorInfo" class="text-success mt-4 ms-3">
+          {{ compliance.merchantOnboarding }} <i class="bi bi-x-lg ms-1"></i>
+        </div>
+        <div *ngIf="compliance && compliance.merchantOnboarding && !orgVendorInfo" class="text-success mt-4 ms-3">
           {{ compliance.merchantOnboarding }} <i class="bi bi-x-lg ms-1" (click)="closeMerchantDoc()"></i>
         </div>
       </div>

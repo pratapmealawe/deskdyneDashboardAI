@@ -1,4 +1,5 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { debounceTime, Subject } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -15,7 +16,7 @@ interface data {
 })
 export class OrgVendorInfoComponent implements OnInit, OnChanges {
   @Input() adminOrg: any
-
+  @ViewChild('complianceModal') compliance: any;
   orgDetails: any;
   vendorList: any[] = [];
   page: number = 1;
@@ -23,13 +24,15 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     orgId: '',
     countOnly: 0,
   };
+  selectedVendor: any;
   expandedItems: boolean[] = [];
   filteredVendorList: any[] = [];
 
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private searchService: SearchFilterService
+    private searchService: SearchFilterService,
+    public modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
@@ -52,13 +55,23 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     try {
       const data = await this.apiMainService.searchVendorByOrgId(this.vendorData);
       console.log(data);
-      
+
       this.vendorList = data;
       this.filteredVendorList = data.length === 0 ? [] : data;
       this.expandedItems = new Array(this.vendorList.length).fill(true);
     } catch (error) {
       console.error('Error fetching vendors:', error);
     }
+  }
+
+  addComplience(event: any, vendorData: any) {
+    event.stopPropagation();
+    this.localStorageService.setCacheData('ORG_VENDOR_INFO',vendorData);
+    this.selectedVendor = vendorData;
+    this.modalService.open(this.compliance, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'xl',
+    });
   }
 
   toggleVendor(index: number) {

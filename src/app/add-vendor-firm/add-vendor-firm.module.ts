@@ -19,6 +19,7 @@ import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
     ReactiveFormsModule,
     FormsModule,
     PdfuploadComponent
-  ]
+  ],
+  exports:[VendorComplianceComponent]
 })
 export class AddVendorFirmModule { }
