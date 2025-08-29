@@ -40,12 +40,17 @@
         <div class="col-md-6">
                 <div class="totalDiv">
                     <div class="leftDiv">
+                        <span>Total Item Amount: </span>
+                        <span>&#8377; {{ grandTotalItemAmount }} </span>
+                    </div>
+                    <div class="verticalHr"></div>
+                    <div class="rightDiv">
                          <span>Total Subsidy Amount: </span>
                         <span>&#8377; {{ grandTotalSubsidy }} </span>
                     </div>
                     <div class="verticalHr"></div>
                     <div class="rightDiv">
-                        <span>Total Amount: </span>
+                        <span>Total Paid Amount: </span>
                         <span>&#8377; {{ grandTotalAmount }} </span>
                     </div>
                 </div>
@@ -61,8 +66,9 @@
                 <div style="cursor: pointer" class="bgTopDownpadding1 flexDiv p-2" (click)="toggleFeedback(i)">
                     <h6>{{ date.key | date: 'dd MMM yyyy' }}</h6>
                     <div class="summary">
+                        <strong>Total Item Amount:</strong> &#8377;{{ date.value.totalItemAmount }}<br>
                         <strong>Total Subsidy:</strong> &#8377;{{ date.value.totalSubsidy }}<br>
-                        <strong>Total Amount:</strong> &#8377;{{ date.value.totalAmount }}
+                        <strong>Total Paid Amount:</strong> &#8377;{{ date.value.totalAmount }}
                     </div>
                     <span class="right">
                         <i class="bi bi-chevron-down" *ngIf="!expandedItems[i]"></i>
@@ -75,8 +81,9 @@
                         <div class="flexDiv">
                             <h6>{{ outlet.key }}</h6>
                             <div class="ps-3">
+                                <strong>Outlet Total Item Amount:</strong> &#8377;{{ outlet.value.totalItemAmount }}<br>
                                 <strong>Outlet Subsidy:</strong> &#8377;{{ outlet.value.totalSubsidy }}<br>
-                                <strong>Outlet Total Amount:</strong> &#8377;{{ outlet.value.totalAmount }}
+                                <strong>Outlet Total Paid Amount:</strong> &#8377;{{ outlet.value.totalAmount }}
                             </div>
                         </div>
 

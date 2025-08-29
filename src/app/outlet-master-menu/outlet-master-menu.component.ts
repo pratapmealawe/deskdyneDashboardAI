@@ -146,6 +146,20 @@ export class OutletMasterMenuComponent implements OnInit {
     });
   }
 
+  preventInvalidNumber(e: KeyboardEvent) {
+    const invalidKeys = ['-', '+', 'e', 'E'];
+    if (invalidKeys.includes(e.key)) e.preventDefault();
+  }
+
+  preventInvalidPaste(e: ClipboardEvent, type: "integer" | "decimal" = "integer") {
+    const text = e.clipboardData?.getData('text') ?? '';
+    if(type === "integer") {
+    if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
+    } else {
+      if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
+    }
+  }
+
   setCategory(event: any) {
     this.selectedCategory = event.target.value;
     this.categorySelected = true;

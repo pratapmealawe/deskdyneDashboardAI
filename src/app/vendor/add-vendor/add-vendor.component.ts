@@ -161,6 +161,7 @@ export class AddVendorCommponent {
         outletList: this.selectedOutletsList,
         vendorFirmDetails: vendorFirmDetails
       };
+      
       const formData = this.objectToFormData(finalObj);
 
       if (type == 'update') {
