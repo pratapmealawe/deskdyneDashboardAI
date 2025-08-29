@@ -23,11 +23,12 @@
       </select>
     </div>
     <div class="col-md-4">
-        <label class="labelText">Search</label>
-        <div class="searchDiv">
-          <i class="bi bi-search"></i>
-          <input type="text" class="form-control" (input)="searchFilter($event)" [placeholder]="selectedOutlet ? 'Search Menu...' : 'Search Outlets...'" />
-        </div>
+      <label class="labelText">Search</label>
+      <div class="searchDiv">
+        <i class="bi bi-search"></i>
+        <input type="text" class="form-control" (input)="searchFilter($event)"
+          [placeholder]="selectedOutlet ? 'Search Menu...' : 'Search Outlets...'" />
+      </div>
     </div>
   </div>
 
@@ -120,7 +121,7 @@
                 <strong>Price:</strong> ₹{{ menu?.price }}
               </div>
             </div>
-            <hr *ngIf="menu?.itemContains.length > 0" class="my-1" />
+            <hr *ngIf="menu?.itemContains?.length > 0" class="my-1" />
             <ul>
               <li *ngFor="let item of menu?.itemContains">
                 {{ item?.name }} - {{ item?.quantity }}

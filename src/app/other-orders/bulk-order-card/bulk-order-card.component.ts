@@ -15,12 +15,12 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
   styleUrls: ['./bulk-order-card.component.scss']
 })
 export class BulkOrderCardComponent {
-  @ViewChild("contentkitchen") contentkitchen: any;
-  @ViewChild("selectKitchenModal") selectKitchenModal: any;
+ @ViewChild("contentkitchen") contentkitchen: any;
+  @ViewChild("selectKitchenModal") selectKitchenModal:any;
   @Input() orderInput: any;
   imageUrl = environment.imageUrl;
-  showless: boolean = true;
-  order: any;
+  showless:boolean = true;
+  order:any;
   editMode: boolean = false;
   showOrderDetails: boolean = true;
   showCustomerDetails: boolean = false;
@@ -44,9 +44,9 @@ export class BulkOrderCardComponent {
   nearestVendor = '';
   showLoadMoreKitchen = true;
   orderStage = 0;
-  kitchenmodal: any;
+  kitchenmodal:any;
 
-  constructor(private sendDataToComponent: SendDataToComponent, private deliveryOrderService: DeliveryOrderService, private modalService: NgbModal, private confirmationModalService: ConfirmationModalService, private googleMapService: GoogleMapService, private apiMainService: ApiMainService, private toasterService: ToasterService, private b2bInvoice: B2bInvoiceService) { }
+  constructor(private sendDataToComponent:SendDataToComponent, private deliveryOrderService:DeliveryOrderService, private modalService:NgbModal, private confirmationModalService:ConfirmationModalService, private googleMapService:GoogleMapService, private apiMainService:ApiMainService, private toasterService:ToasterService,  private b2bInvoice:B2bInvoiceService){}
 
   ngOnInit(): void {
     // console.log(this.orderInput)
@@ -83,10 +83,10 @@ export class BulkOrderCardComponent {
     }
   }
 
-
+ 
   async startPorterDeliveryProcess() {
     try {
-      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PORTER', 'DDBulk');
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PORTER','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = 'open';
       this.order.deliveryVendor = 'Porter';
@@ -98,7 +98,7 @@ export class BulkOrderCardComponent {
 
   async startShadowFaxDeliveryProcess() {
     try {
-      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'SHADOWFAX', 'DDBulk');
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'SHADOWFAX','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = 'ACCEPTED';
       this.order.deliveryVendor = 'ShadowFax';
@@ -110,7 +110,7 @@ export class BulkOrderCardComponent {
 
   async startPidgeDeliveryProcess() {
     try {
-      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PIDGE', 'DDBulk');
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'PIDGE','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;;
       this.order.deliveryVendor = 'Pidge';
@@ -149,7 +149,7 @@ export class BulkOrderCardComponent {
 
   async startDeliveryProcess() {
     try {
-      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'All', 'DDBulk');
+      const deliveryOrder = await this.deliveryOrderService.createTask(this.order, 'All','DDBulk');
       this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
       this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;
       this.order.deliveryVendor = deliveryOrder.deliveryVendor;
@@ -170,7 +170,7 @@ export class BulkOrderCardComponent {
         this.orderStage = 2;
       } else if (this.order.orderstatus === 'inprogress' || this.order.orderstatus === 'preparing') {
         this.orderStage = 3;
-      } else if (this.order.orderstatus === 'readyForDelivery') {
+      }  else if (this.order.orderstatus === 'readyForDelivery') {
         this.getDeliveryStatus();
         this.orderStage = 4;
       } else if (this.order.orderstatus === 'deliveryBoyAssigned'
@@ -194,7 +194,7 @@ export class BulkOrderCardComponent {
           this.order.pickupEta = deliveryOrderStatus.eta.pickup;
           this.order.dropoffEta = deliveryOrderStatus.eta.dropoff;
         }
-        if (deliveryOrderStatus && deliveryOrderStatus.sfx_order_id) {
+        if(deliveryOrderStatus && deliveryOrderStatus.sfx_order_id){
           this.order.sfx_order_id = deliveryOrderStatus.sfx_order_id;
         }
         if (deliveryOrderStatus && deliveryOrderStatus.runner) {
@@ -207,7 +207,7 @@ export class BulkOrderCardComponent {
           this.order.runnerPhone = undefined;
           this.order.runnerLocation = undefined;
         }
-        if (deliveryOrderStatus.state === 'CANCELLED') {
+        if(deliveryOrderStatus.state === 'CANCELLED'){
           this.order.deliveryTaskState = 'cancelled';
         }
       } catch (error) {
@@ -222,7 +222,7 @@ export class BulkOrderCardComponent {
           this.orderInput.pickupEta = deliveryOrderStatus.eta.pickup;
           this.orderInput.dropoffEta = deliveryOrderStatus.eta.dropoff;
         }
-        if (deliveryOrderStatus && deliveryOrderStatus.sfx_order_id) {
+        if(deliveryOrderStatus && deliveryOrderStatus.sfx_order_id){
           this.orderInput.sfx_order_id = deliveryOrderStatus.sfx_order_id;
         }
         if (deliveryOrderStatus && deliveryOrderStatus.runner) {
@@ -241,7 +241,7 @@ export class BulkOrderCardComponent {
     }
   }
 
-  invoice(type: any) {
+  invoice(type:any){
     // if(type === 'view'){
     //   this.b2bInvoice.view(this.order);
     // }
@@ -249,7 +249,7 @@ export class BulkOrderCardComponent {
     //   this.b2bInvoice.download(this.order);
     // }
     // else if(type === 'mail'){
-    this.apiMainService.generateInvoice(this.orderInput._id);
+      this.apiMainService.generateInvoice(this.orderInput._id);
     // }
   }
 
@@ -291,12 +291,12 @@ export class BulkOrderCardComponent {
       console.log('searchVendor ', this.searchVendor);
       if (this.searchVendor) {
         this.searchVendor = this.searchVendor.toUpperCase();
-        const vendor = await this.apiMainService.searchVendorProfile(this.searchVendor);
-        if (vendor.length > 0) {
+         const vendor = await this.apiMainService.searchVendorProfile(this.searchVendor);
+       if (vendor.length > 0) {
           let newVendor = vendor[0]
-          const vendorObj: any = await this.googleMapService.getKitchenDistance(newVendor, this.order.customerLocation.geolocation);
-          this.searchedVendor = { ...vendorObj };
-          // this.getDeliveryChargeQuote();
+              const vendorObj: any = await this.googleMapService.getKitchenDistance(newVendor, this.order.customerLocation.geolocation);
+              this.searchedVendor = { ...vendorObj };
+              // this.getDeliveryChargeQuote();
           //   } else {
           //     this.toasterService.error(115);
           //   }
@@ -321,7 +321,7 @@ export class BulkOrderCardComponent {
         drop_details: [{ ...cutomerLatLng, reference_id: 'drop_location' }]
       };
       // const quaotObj = await this.apiMainService.getdeliveryAmount(deliveryObj);
-      const quaotObj: any = {}
+      const quaotObj:any = {}
       this.transferDeliveryCharges = quaotObj.estimated_price
     } catch (error) {
       console.log('error while fetching dunzo quote ', error);
@@ -339,7 +339,7 @@ export class BulkOrderCardComponent {
       if (orderObj.transferHistory && orderObj.transferHistory.length === 0) {
         orderObj.firstKitchenName = orderObj.vendorName;
       }
-      orderObj.vendorId = this.searchedVendor._id;
+     orderObj.vendorId = this.searchedVendor._id;
       orderObj.vendorFirmId = this.searchedVendor?.vendorFirmDetails?.vendorFirmId;
       orderObj.vendorFirmName = this.searchedVendor?.vendorFirmDetails?.vendorFirmName;
       orderObj.vendorName = this.searchedVendor.vendorName;
@@ -371,7 +371,7 @@ export class BulkOrderCardComponent {
   async searchNearKitchen() {
     try {
       const kitchenList = await this.apiMainService.getNearestVendors(this.order.customerLocation.geolocation.lng, this.order.customerLocation.geolocation.lat);
-
+      
       this.nearKitchenFullList = kitchenList;
       this.openKitchen(kitchenList);
     } catch (error) {
@@ -390,26 +390,26 @@ export class BulkOrderCardComponent {
     });
 
     this.kitchenmodal.result.then(
-      (result: any) => {
-        console.log(`Closed with: ${result}`, kitchenList);
-        if (result === 'add') {
-          let selectedKitchen: any = {};
-          this.nearVendorList.forEach((kitchen: any) => {
-            if (kitchen._id === this.nearestVendor) {
-              selectedKitchen = kitchen;
-            }
-          });
-          if (selectedKitchen && selectedKitchen._id) {
-            this.searchedVendor = { ...selectedKitchen };
-            // this.getDeliveryChargeQuote();
+      (result:any) => {
+      console.log(`Closed with: ${result}`, kitchenList);
+      if (result === 'add') {
+        let selectedKitchen: any = {};
+        this.nearVendorList.forEach((kitchen: any) => {
+          if (kitchen._id === this.nearestVendor) {
+            selectedKitchen = kitchen;
           }
+        });
+        if (selectedKitchen && selectedKitchen._id) {
+          this.searchedVendor = { ...selectedKitchen };
+          // this.getDeliveryChargeQuote();
         }
-        this.nearestVendor = '';
-      }, (reason: any) => {
-        console.log(`Model Dismissed`);
-        this.showLoadMoreKitchen = true;
-        this.nearestVendor = '';
-      });
+      }
+      this.nearestVendor = '';
+    }, (reason: any) => {
+      console.log(`Model Dismissed`);
+      this.showLoadMoreKitchen = true;
+      this.nearestVendor = '';
+    });
   }
 
   async calculateDistance(kitchenList: any, index: number) {
@@ -448,7 +448,7 @@ export class BulkOrderCardComponent {
         drop_details: [{ ...cutomerLatLng, reference_id: 'drop_location' }]
       };
       // const quaotObj = await this.apiMainService.getdeliveryAmount(deliveryObj);
-      const quaotObj: any = {}
+      const quaotObj:any = {}
       return quaotObj;
     } catch (error) {
       console.log('error while fetching dunzo quote ', error);
@@ -512,11 +512,11 @@ export class BulkOrderCardComponent {
     this.searchVendor = '';
   }
 
-  checkdistance() {
+   checkdistance() {
     const selectedKitchen = this.nearVendorList.find((kitchen: any) => {
       return kitchen._id == this.nearestVendor;
     });
-
+    
     if (selectedKitchen.distance > 6) {
       const modalRef = this.modalService.open(this.selectKitchenModal, {
         ariaLabelledBy: 'modal-basic-title',
@@ -537,7 +537,7 @@ export class BulkOrderCardComponent {
           this.nearestVendor = '';
         }
       );
-    } else {
+    }else{
       this.selectKitchen();
     }
   }
@@ -555,4 +555,5 @@ export class BulkOrderCardComponent {
     }
     this.kitchenmodal.dismiss('add');
   }
+
 }

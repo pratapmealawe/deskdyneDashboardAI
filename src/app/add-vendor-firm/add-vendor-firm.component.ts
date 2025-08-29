@@ -89,18 +89,8 @@ export class AddVendorFirmComponent {
           location: [''],
         })
       ]),
-      accountEnrollment: [''],
-      emailsToSend: this.fb.array([
-        this.fb.group({
-          name: [''],
-          email: [''],
-        })
-      ])
+      accountEnrollment: ['']
     });
-  }
-
-  get emailsToSendList(): FormArray {
-    return this.form.get('emailsToSend') as FormArray;
   }
 
   get pocDetails(): FormArray {
@@ -145,16 +135,6 @@ export class AddVendorFirmComponent {
 
   removeAddress(index: number) {
     this.addressList.removeAt(index);
-  }
-  addEmailsToSend() {
-    this.emailsToSendList.push(this.fb.group({
-      name: [''],
-      email: [''],
-    }));
-  }
-
-  removeEmail(index: number) {
-    this.emailsToSendList.removeAt(index);
   }
 
   objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
@@ -220,16 +200,6 @@ export class AddVendorFirmComponent {
           }
         });
       }
-
-      if (firm.emailsToSend?.length) {
-        this.emailsToSendList.clear();
-        firm.emailsToSend.forEach((addr: any, index: number) => {
-          if (index !== 0 || this.emailsToSendList.length === 0) {
-            this.emailsToSendList.push(this.fb.group(addr));
-          }
-        });
-      }
-
       if (firm.accountEnrollment) {
         this.form.get('accountEnrollment').setValue(firm.accountEnrollment);
       }
@@ -251,7 +221,6 @@ export class AddVendorFirmComponent {
         ...this.form.value,
         outletList: this.selectedOutletsList,
       };
-
       const formData = this.objectToFormData(finalObj);
 
       if (type == 'update') {

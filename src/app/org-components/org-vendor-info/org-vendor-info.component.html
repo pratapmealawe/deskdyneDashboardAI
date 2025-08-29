@@ -35,6 +35,13 @@
                 <div class="labelText">Vendor Email :</div>
                 <div class="labelData">{{ vendor?.vendorEmail }}</div>
               </div>
+
+              <div class="d-flex align-items-center">
+                <div *ngIf="vendor.vendorFirmDetails.vendorFirmId.compliance" class="btn btn-success btn-sm ml-2"
+                  (click)="addComplience($event,vendor.vendorFirmDetails.vendorFirmId)">
+                  compliance
+                </div>
+              </div>
             </div>
             <span class="right">
               <i class="bi bi-chevron-down" *ngIf="!expandedItems[i]"></i>
@@ -90,6 +97,17 @@
               </div>
             </ng-container>
           </ng-container>
+          <ng-template #complianceModal let-modal>
+            <div class="modal-header">
+              <h4 class="modal-title" id="modal-basic-title">compliance</h4>
+              <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <app-vendor-compliance [venderDetails]="selectedVendor"></app-vendor-compliance>
+            </div>
+          </ng-template>
         </div>
       </div>
     </div>
