@@ -96,8 +96,8 @@ export class AddOrganizationComponent implements OnInit {
     let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
       accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/)]],
-      showAdminDaily: ['', Validators.required],
-      showEmpPolls: ['', Validators.required],
+      showAdminDaily: [false],
+      showEmpPolls: [false],
       showVirtualCafe: [false],
       showSaas: [false],
       showSiteExecutive: [false],

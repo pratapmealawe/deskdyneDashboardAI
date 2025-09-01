@@ -235,22 +235,12 @@
               <div class="col-3">
                 <div class="labelText">Show Admin Daily Card</div>
                 <input type="checkbox" formControlName="showAdminDaily" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.showAdminDaily
-                    .errors?.required && showError
-                ">
-                  *This field is required
-                </div>
+             
               </div>
               <div class="col-3">
                 <div class="labelText">Show Emp Poll Card</div>
                 <input type="checkbox" formControlName="showEmpPolls" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.showEmpPolls.errors
-                    ?.required && showError
-                ">
-                  *This field is required
-                </div>
+              
               </div>
               <div class="col-3">
                 <div class="labelText">Show Virtual Cafeteria</div>
