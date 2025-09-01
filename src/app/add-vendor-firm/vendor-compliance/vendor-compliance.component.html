@@ -574,10 +574,10 @@
       </div>
       <div *ngIf="!editMode" class="d-flex align-items-center gap-2">
         <button type="button" *ngIf="!orgVendorInfo" class="btn btn-primary btn-sm mt-4" (click)="fileInput.click()">
-          {{ 'Merchant Onboarding' }}
+          {{ 'Self declaration' }}
         </button>
         <button *ngIf="orgVendorInfo" type="button" class="btn btn-primary btn-sm mt-4">
-          {{ 'Merchant Onboarding' }}
+          {{ 'Self declaration' }}
         </button>
         <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
           style="display: none;" />

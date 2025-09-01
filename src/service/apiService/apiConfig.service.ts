@@ -726,6 +726,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/saveVendorFirm`,
         method: 'POST'
       },
+      getVendorFirmById: {
+        url: `${this.baseUrl}/api/getVendorFirmById`,
+        method: 'GET'
+      },
       updateVendorFirm: {
         url: `${this.baseUrl}/api/updateVendorFirm`,
         method: 'PUT'
