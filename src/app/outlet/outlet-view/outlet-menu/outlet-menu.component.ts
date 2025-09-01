@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -116,11 +116,19 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       doNotChangeInFuture: item.doNotChangeInFuture,
       description: item.description,
       itemContains: item.itemContains,
+      energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
+      nutritionList: item.nutritionInfo ? [...item.nutritionInfo.nutritionList] : []
     });
     if (item.subCategory) {
       this.selectedCategory = item.category;
       this.categorySelected = true;
       this.setSubCategoryList();
+    }
+     if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
+      this.nutrition_Lists.clear();
+      item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
+       this.nutrition_Lists.push(this.fb.group(nutrition));
+      });
     }
   }
 
@@ -138,7 +146,33 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       description: [''],
       doNotChangeInFuture: [false],
       itemContains: [[]],
+      energyValue: [10],
+      nutritionList : this.fb.array([
+                this.fb.group({ 
+                  nutritionName : [''],
+                  nutritionValue : [''],
+                  nutritionUnit : ['']
+                })
+       ]) 
+      
     });
+  }
+
+  
+  get nutrition_Lists(): FormArray {
+    return this.form.get('nutritionList') as FormArray;
+  }
+
+  addNutritionLists() {
+      this.nutrition_Lists.push(this.fb.group({
+          nutritionName : [''],
+          nutritionValue : [''],
+          nutritionUnit : ['']
+      }));
+  }
+
+  removenNutritionLists(index: number) {
+    this.nutrition_Lists.removeAt(index);
   }
 
   setCategory(event: any) {
@@ -285,6 +319,11 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       );
 
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+      const nutritionInfo = {
+          energyValue: this.form.value.energyValue,
+          nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
       console.log(this.form.value, "formData");
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
@@ -311,6 +350,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.showUpdateBtn = false;
     this.imageReplaced = false;
     this.noImages = false;
+    this.nutrition_Lists.clear();
+    this.addNutritionLists();
   }
 
   async submit() {
@@ -343,6 +384,11 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       );
 
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+      const nutritionInfo = {
+          energyValue: this.form.value.energyValue,
+          nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
       const res = await this.apiMainService.addOutletMenu(
         formData,
