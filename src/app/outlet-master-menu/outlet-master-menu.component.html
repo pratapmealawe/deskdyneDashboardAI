@@ -4,70 +4,78 @@
     +
   </div>
   <div class="mt-2">
-    <div class="row cardDesign" *ngFor="let item of filteredMenuList; let i = index">
-      <div class="col-sm-12 col-md-6 col-lg-2">
-        <img [src]="displayImgUrl + item.imageUrl" class="uploadedImage" />
-      </div>
-      <div class="col-sm-12 col-md-10 col-lg-10">
-        <div class="row">
-          <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-              <div class="col-6 col-md-8 col-lg-8">
-                <div class="labelText">ItemName</div>
-                <div class="labelData">{{ item.itemName }}</div>
-              </div>
-              <div class="col-6 col-md-4 col-lg-4">
-                <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
-                <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
-              </div>
-            </div>
-          </div>
 
-          <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-              <div class="col-6 col-md-5 col-lg-8">
-                <div class="labelText">Price</div>
-                <div class="labelData">{{ item.price }}</div>
-              </div>
-              <!-- <div class="col-6 col-md-7 col-lg-4">
-                                <div class="labelText">Priority</div>
-                                <div class="labelData">{{item.priority}}</div>
-                            </div> -->
-            </div>
-          </div>
+    <div *ngFor="let group of groupedMenuList">
+      <!-- Category Heading -->
+      <h4 class="mt-3 mb-2 category-heading">{{ group.category }}</h4>
 
-          <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-              <div class="col-6 col-md-7 col-lg-6 d-flex justify-content-between">
-                <i class="bi bi-pencil-square editDeltesaveIcon" *ngIf="true || btnPolicy?.editMenu"
-                  (click)="edit(item, i)"></i>
-                <i *ngIf="true || btnPolicy?.deleteMenu" class="bi bi-trash editDeltesaveIcon"
-                  (click)="showPopup(item, i)"></i>
-                <div>
-                  <input class="me-1" type="checkbox" [checked]="item.isActive"
-                    (change)="showPopupForItemActivation(item,$event)" />
-                  <label class="labelText form-label">Active</label>
+      <!-- Items under this category -->
+      <div class="row cardDesign" *ngFor="let item of group.items; let i = index">
+        <div class="col-sm-12 col-md-6 col-lg-2">
+          <img [src]="displayImgUrl + item.imageUrl" class="uploadedImage" />
+        </div>
+        <div class="col-sm-12 col-md-10 col-lg-10">
+          <!-- your existing card content -->
+          <div class="row">
+            <div class="col-12 col-md-4 col-lg-4">
+              <div class="row">
+                <div class="col-6 col-md-8 col-lg-8">
+                  <div class="labelText">ItemName</div>
+                  <div class="labelData">{{ item.itemName }}</div>
+                </div>
+                <div class="col-6 col-md-4 col-lg-4">
+                  <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
+                  <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-              <div class="col-6 col-md-7 col-lg-5">
-                <div class="labelText">Category</div>
-                <div class="labelData">{{ item.category }}</div>
+            <div class="col-12 col-md-4 col-lg-4">
+              <div class="row">
+                <div class="col-6 col-md-5 col-lg-8">
+                  <div class="labelText">Price</div>
+                  <div class="labelData">{{ item.price }}</div>
+                </div>
+                <!-- <div class="col-6 col-md-7 col-lg-4">
+                                <div class="labelText">Priority</div>
+                                <div class="labelData">{{item.priority}}</div>
+                            </div> -->
               </div>
-              <div class="col-6 col-md-5 col-lg-8">
-                <div class="labelText">Sub Category</div>
-                <div class="labelData">{{ item.subCategory }}</div>
-              </div>
-            
             </div>
-          </div> -->
 
+            <div class="col-12 col-md-4 col-lg-4">
+              <div class="row">
+                <div class="col-6 col-md-5 col-lg-5">
+                  <div class="labelText">Subsidy Amt</div>
+                  <div class="labelData">{{ item.subsidy }}</div>
+                </div>
+                <div class="col-6 col-md-7 col-lg-6 d-flex justify-content-between">
+                  <i class="bi bi-pencil-square" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)"></i>
+                  <i *ngIf="true || btnPolicy?.deleteMenu" class="bi bi-trash editDeltesaveIcon"
+                    (click)="showPopup(item, i)"></i>
+                  <div>
+                    <input class="me-1" type="checkbox" [checked]="item.isActive"
+                      (change)="showPopupForItemActivation(item, $event)" />
+                    <label class="labelText form-label">Active</label>
+                  </div>
+                </div>
+              </div>
+            </div>
 
-          <!-- <div class="col-12 col-md-4 col-lg-4">
+            <div class="col-12 col-md-4 col-lg-4 mt-3">
+              <div class="row">
+                <div class="col-6 col-md-7 col-lg-5" *ngIf="item.category">
+                  <div class="labelText">Category</div>
+                  <div class="labelData">{{ item.category }}</div>
+                </div>
+                <div class="col-6 col-md-5 col-lg-8">
+                  <div class="labelText">Precedence</div>
+                  <div class="labelData">{{ item.precedence }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- <div class="col-12 col-md-4 col-lg-4">
             <div class="row">
               <div class="col-6 col-md-7 col-lg-4">
                 <div class="labelText">Is Active</div>
@@ -75,22 +83,16 @@
               </div>
             </div>
           </div> -->
-          <div class="col-12 col-md-4 col-lg-4 mt-2">
-            <div class="row">
-              <div class="col-6 col-md-5 col-lg-8">
-                <div class="labelText">Precedence</div>
-                <div class="labelData">{{ item.precedence }}</div>
-              </div>
-            </div>
-          </div>
 
-          <div class="col-12 col-md-4 col-lg-4 mt-2">
-            <div class="row">
-              <div class="col-6 col-md-7 col-lg-12">
-                <div class="labelText">Description</div>
-                <div class="labelData">{{ item.description }}</div>
+            <div class="col-12 col-md-4 col-lg-4 mt-3">
+              <div class="row">
+                <div class="col-6 col-md-7 col-lg-12">
+                  <div class="labelText">Description</div>
+                  <div class="labelData">{{ item.description }}</div>
+                </div>
               </div>
             </div>
+            <!-- (rest of your card fields remain the same) -->
           </div>
         </div>
       </div>
@@ -155,13 +157,15 @@
 
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label">Price</label>
-            <input type="number"  min="1" (keydown)="preventInvalidNumber($event)"
-              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Price" formControlName="price" />
+            <input type="number" min="1" (keydown)="preventInvalidNumber($event)"
+              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Price"
+              formControlName="price" />
           </div>
           <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label">Subsidy Amount (In Rupess ₹)</label>
             <input type="number" min="1" (keydown)="preventInvalidNumber($event)"
-              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
+              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Subsidy Amount"
+              formControlName="subsidy" />
           </div>
 
           <div class="col-subsidysm-12 col-md-6 col-lg-4">
@@ -200,12 +204,23 @@
               (paste)="preventInvalidPaste($event)" />
           </div>
 
-          <div class="col-sm-12">
+          <div class="col-sm-12 mt-2">
             <label class="labelText form-label" for="description">Select MealTime</label>
             <mat-chip-listbox formControlName="mealTimingInfo" aria-label="Type selection" multiple>
               <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
                 <div class="chip-option">
                   <div class="title">{{ chip?.mealType }}</div>
+                </div>
+              </mat-chip-option>
+            </mat-chip-listbox>
+          </div>
+
+          <div class="col-sm-12 mt-2">
+            <label class="labelText form-label" for="description">Select Category</label>
+            <mat-chip-listbox formControlName="category" aria-label="Type selection">
+              <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
+                <div class="chip-option">
+                  <div class="title">{{ chip?.title }}</div>
                 </div>
               </mat-chip-option>
             </mat-chip-listbox>
@@ -219,34 +234,36 @@
             </div>
             <div class="col-12" [formArrayName]="'nutritionList'">
               <label class="labelText">Nutrition List:</label>
-              <div class="row" *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first ; let last = last" 
-              [formGroupName]="i">
-                  <div class="col-md-3">
-                    <label class="form-label">Nutrition Name</label>
-                    <select  class="form-control" formControlName="nutritionName" placeholder="Nutrition Name" >
-                      <option value="Protein">Protein</option>
-                      <option value="Fat">Fat</option>
-                    </select>
-                  </div>
-                  <div class="col-md-3">
-                    <label class="form-label">Nutrition Value</label>
-                    <input type="number" class="form-control" formControlName="nutritionValue" placeholder="Nutrition Value" />
-                  </div>
-                  <div class="col-md-3">
-                    <label class="form-label">Nutrition Unit</label>
-                    <select  class="form-control" formControlName="nutritionUnit" placeholder="Nutrition Unit" >
-                      <option value="gm">gm</option>
-                      <option value="ml">ml</option>
-                    </select>
-                  </div>
-                        
-                  
-                  <div class="col-sm-2 col-md-2 col-lg-2">
-                      <span *ngIf="last" class='addtnc' (click)="addNutritionLists()">+</span>
-                      <span *ngIf="!first" class='removetnc' (click)="removenNutritionLists(i)">-</span>
-                  </div>
+              <div class="row"
+                *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first ; let last = last"
+                [formGroupName]="i">
+                <div class="col-md-3">
+                  <label class="form-label">Nutrition Name</label>
+                  <select class="form-control" formControlName="nutritionName" placeholder="Nutrition Name">
+                    <option value="Protein">Protein</option>
+                    <option value="Fat">Fat</option>
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Nutrition Value</label>
+                  <input type="number" class="form-control" formControlName="nutritionValue"
+                    placeholder="Nutrition Value" />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label">Nutrition Unit</label>
+                  <select class="form-control" formControlName="nutritionUnit" placeholder="Nutrition Unit">
+                    <option value="gm">gm</option>
+                    <option value="ml">ml</option>
+                  </select>
+                </div>
+
+
+                <div class="col-sm-2 col-md-2 col-lg-2">
+                  <span *ngIf="last" class='addtnc' (click)="addNutritionLists()">+</span>
+                  <span *ngIf="!first" class='removetnc' (click)="removenNutritionLists(i)">-</span>
+                </div>
               </div>
-              </div>
+            </div>
           </div>
 
         </div>
