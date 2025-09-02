@@ -12,9 +12,9 @@
 <div *ngIf="selectedTab==='outlet-details'">
     <app-outlet-details [outletObj]="outlet"></app-outlet-details>
 </div>
-<div *ngIf="selectedTab==='outlet-categories'">
+<!-- <div *ngIf="selectedTab==='outlet-categories'">
     <app-outlet-categories [outletObj]="outlet"></app-outlet-categories>
-</div>
+</div> -->
 <div *ngIf="selectedTab==='outlet-menu'">
     <app-outlet-menu [outletObj]="outlet" (back)="updateOutlet($event)"
         (dataToParent)="receiveData($event)"></app-outlet-menu>

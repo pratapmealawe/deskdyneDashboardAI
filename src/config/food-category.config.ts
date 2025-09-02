@@ -1,0 +1,15 @@
+export let categoryList = [
+    { title: "Main Course", value: "Main Course" },
+    { title: "Fast Food", value: "Fast Food" },
+    { title: "Thalis", value: "Thalis" },
+    { title: "Breakfast", value: "Breakfast" },
+    { title: "Snacks", value: "Snacks" },
+    { title: "Juice", value: "Juice" },
+    { title: "Tea and Beverage", value: "Tea and Beverage" },
+    { title: "Chat", value: "Chat" },
+    { title: "Combos", value: "Combos" },
+    { title: "Sweet", value: "Sweet" },
+    { title: "Desserts", value: "Desserts" },
+    { title: "Biryani and Rice", value: "Biryani and Rice" },
+    { title: "Daily", value: "Daily" },
+];
