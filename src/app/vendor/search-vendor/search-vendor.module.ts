@@ -7,8 +7,8 @@ import { CommonModule } from "@angular/common";
 
 
 @NgModule({
-    declarations:[SearchVendorComponent],
-    imports:[SearchVendorRoutingModule,FormsModule,VendorCardModule,CommonModule]
+    declarations: [SearchVendorComponent],
+    imports: [SearchVendorRoutingModule, FormsModule, VendorCardModule, CommonModule]
 })
 
-export class SearchVendorModule{}
+export class SearchVendorModule { }

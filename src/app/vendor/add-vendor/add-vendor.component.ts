@@ -115,15 +115,22 @@ export class AddVendorCommponent {
     return formData;
   }
 
-  changeVendorFirm(e: any) {
+  async changeVendorFirm(e: any) {
+    this.getVendorFirmById(e.target.value);
     if (e) {
       const id = typeof e === "string" ? e : e.target.value
       const vendorFirm = this.vendorList.find((item: any) => item?._id === id)
-
       if (vendorFirm?.outletList.length > 0) {
         this.outletByCafeteriaList = vendorFirm?.outletList
       }
     }
+  }
+
+  async getVendorFirmById(event: any) {
+    const vendorFirmId = event;
+    const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
+    console.log(res);
+
   }
 
   updateVendor() {
@@ -161,7 +168,7 @@ export class AddVendorCommponent {
         outletList: this.selectedOutletsList,
         vendorFirmDetails: vendorFirmDetails
       };
-      
+
       const formData = this.objectToFormData(finalObj);
 
       if (type == 'update') {

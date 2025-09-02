@@ -1,0 +1,17 @@
+<!-- Back Button -->
+<div class="left_arrow" (click)="goBack()" style="cursor: pointer">
+  <i class="bi bi-arrow-left"></i> Back
+</div>
+
+<!-- Main Tabs -->
+<div class="row bg-light rounded py-4 my-3">
+  <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of vendorViewList"
+    [ngClass]="{ tileSelected: selectedTab === view.path }" (click)="gotToTab(view.path)">
+    <div class="tileLabel header4 countTile">{{ view.name }}</div>
+  </div>
+</div>
+
+<ng-container [ngSwitch]="selectedTab">
+  <!-- <app-add-vendor *ngSwitchCase="'vendorDetails'" [vendorObj]="vendor"></app-add-vendor> -->
+  <app-vendor-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-details>
+</ng-container>

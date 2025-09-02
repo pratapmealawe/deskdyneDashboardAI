@@ -44,9 +44,9 @@
 
         <input type="text" placeholder="e.g., example.com, test.org, mydomain.net" formControlName="domain"
           class="form-control" (blur)="processDomains()" />
-        <div class="error-text" *ngIf="form.controls.domain.errors?.required && showError">
+        <!-- <div class="error-text" *ngIf="form.controls.domain.errors?.required && showError">
           *Domain is Required
-        </div>
+        </div> -->
       </div>
       <div class="mt-2" formGroupName="org_address">
         <div class="row">
@@ -211,8 +211,9 @@
                   <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
                 </div>
                 <div class="col-12 col-md-6 col-lg-1 bgpadding2">
-                  <div>
-                    <span class="addBtn pointer" (click)="addApprover(i); poc_selected(i)">Add</span>
+                  <div class="d-flex align-items-center">
+                    <span class="addBtn pointer me-2" (click)="addApprover(i); poc_selected(i)">Add</span>
+                    <i class="bi bi-trash pointer" (click)="removeApprover(i)"></i>
                   </div>
                 </div>
               </div>
@@ -221,6 +222,27 @@
         </ng-container>
         <span class="addBtn me-2" (click)="add_poc_details()">Add POC</span>
       </div>
+
+
+      <ng-template #pocContent let-modal>
+        <div class="modal-header">
+          <h4 class="modal-title" id="modal-basic-title">Alert</h4>
+
+          <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          This POC cannot be deleted as it already exists in the cafeteria list
+        </div>
+        <div class="modal-footer">
+          <div class="inline bgpadding1">
+            <button type="button" class="btn btn-primary" (click)="modal.close('Cancel')">
+              Close
+            </button>
+          </div>
+        </div>
+      </ng-template>
       <ng-container *ngIf="cafeteria.controls.length > 0">
         <div class="d-flex w-100 align-items-center">
           <hr class="flex-grow-1" />
@@ -235,12 +257,12 @@
               <div class="col-3">
                 <div class="labelText">Show Admin Daily Card</div>
                 <input type="checkbox" formControlName="showAdminDaily" />
-             
+
               </div>
               <div class="col-3">
                 <div class="labelText">Show Emp Poll Card</div>
                 <input type="checkbox" formControlName="showEmpPolls" />
-              
+
               </div>
               <div class="col-3">
                 <div class="labelText">Show Virtual Cafeteria</div>
@@ -421,6 +443,16 @@
                     *POC Phone No is required
                   </div>
                 </div>
+                <div class="col-12 col-md-6 col-lg-2 bgpadding2 d-flex align-items-center">
+                  <div>
+                    <span class="addBtn pointer" *ngIf="!form.controls.cafeteriaList.at(i).controls.poc_details
+                      .controls.poc_id.value" (click)="addApprover(i); cafe_selected(i)">Add POC</span>
+                  </div>
+                  <div>
+                    <span class="addBtn pointer" *ngIf="form.controls.cafeteriaList.at(i).controls.poc_details
+                      .controls.poc_id.value" (click)="addApprover(i); cafe_selected(i)">Change POC</span>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -448,17 +480,22 @@
                     *Lng is required
                   </div>
                 </div>
+                <div class="col-12 col-md-6 col-lg-2 bgpadding2">
+                  <div>
+                    <span class="addBtn pointer" (click)="toggleMap(i)">GeoLocation</span>
+                  </div>
+                </div>
               </div>
-              <div class="col-12 col-md-6 col-lg-2 bgpadding2">
+              <!-- <div class="col-12 col-md-6 col-lg-2 bgpadding2">
                 <div>
                   <span class="addBtn pointer" (click)="toggleMap(i)">GeoLocation</span>
                 </div>
-              </div>
-              <div class="col-12 col-md-6 col-lg-2 bgpadding2">
+              </div> -->
+              <!-- <div class="col-12 col-md-6 col-lg-2 bgpadding2">
                 <div>
                   <span class="addBtn pointer" (click)="addApprover(i); cafe_selected(i)">Add POC</span>
                 </div>
-              </div>
+              </div> -->
             </div>
           </div>
         </ng-container>

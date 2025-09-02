@@ -200,7 +200,7 @@ export class ApiMainService {
       method: urlObj.method,
     });
   }
-   deleteVendorFirm(id: any) {
+  deleteVendorFirm(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteVendorFirm;
     return this.apiHttpService.REQUEST({
       url: urlObj.url + `/${id}`,
@@ -1595,6 +1595,11 @@ export class ApiMainService {
   }
   getVendorById(id: string) {
     const urlObj = this.apiConfigService.apiEndPointObj.getVendorById;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, true);
+  }
+
+  getVendorFirmById(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getVendorFirmById;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, true);
   }
   cancelPorterTask(taskId: any) {

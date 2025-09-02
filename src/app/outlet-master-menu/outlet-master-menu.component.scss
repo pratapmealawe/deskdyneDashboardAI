@@ -37,3 +37,28 @@
     font-size: x-small;
   }
 }
+
+
+.addtnc{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    font-size: 19px;
+    margin: 2px;
+    background: $secondary-color3;
+    
+}
+.removetnc{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    color: white;
+    text-align: center;
+    font-size: 19px;
+    margin: 2px;
+    background: $primary-color1;
+}

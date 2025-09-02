@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { VendorFirmRoutingModule } from './vendor-firm-routing.module';
 import { VendorFirmComponent } from './vendor-firm.component';
+import { VendorFirmViewModule } from '../vendor-firm-view/vendor-firm-view.module';
 
 
 @NgModule({
@@ -11,7 +12,8 @@ import { VendorFirmComponent } from './vendor-firm.component';
   ],
   imports: [
     CommonModule,
-    VendorFirmRoutingModule
+    VendorFirmRoutingModule,
+    VendorFirmViewModule
   ]
 })
 export class VendorFirmModule { }

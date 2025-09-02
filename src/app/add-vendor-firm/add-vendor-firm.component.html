@@ -88,12 +88,29 @@
                             <label class="form-label">Location</label>
                             <input class="form-control" formControlName="location" placeholder="Location" />
                         </div>
-                        <div class="col-md-1 d-flex align-items-end" *ngIf="!first">
+
+                    </div>
+                    <div class="row mt-2 align-items-center" formGroupName="geolocation">
+                        <div class="col-md-3">
+                            <div class="labelText">Latitude</div>
+                            <input type="text" class="form-control" placeholder="lat" formControlName="lat" readonly />
+                        </div>
+                        <div class="col-md-3">
+                            <div class="labelText">Longitude</div>
+                            <input type="number" class="form-control" placeholder="lng" formControlName="lng"
+                                readonly />
+                        </div>
+                        <div class="col-md-3 bgpadding2 d-flex mt-3">
+                            <span class="addBtn pointer" (click)="toggleMap(j)">GeoLocation</span>
+                        </div>
+                        <div class="col-md-1 d-flex align-items-center" *ngIf="!first">
                             <button class="btn btn-danger btn-sm" (click)="removeAddress(j)">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
                     </div>
+
+
                 </div>
             </div>
         </div>
@@ -268,7 +285,7 @@
 
     <ng-template #complianceModal let-modal>
         <div class="modal-header">
-            <h4 class="modal-title" id="modal-basic-title">compliance</h4>
+            <h4 class="modal-title" id="modal-basic-title">Compliance</h4>
             <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
                 <span aria-hidden="true">&times;</span>
             </button>
@@ -277,4 +294,24 @@
             <app-vendor-compliance [venderDetails]="selectedVendorFirm"></app-vendor-compliance>
         </div>
     </ng-template>
+
+    <ng-template #geolocation let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Geolocation</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <app-set-geolocation class="padding-bottom" (sendLocation)="updateLocation($event)"></app-set-geolocation>
+        </div>
+        <div class="modal-footer">
+            <div class="inline bgpadding1">
+                <button type="button" class="btn btn-primary" (click)="modal.close('add')">
+                    Add
+                </button>
+            </div>
+        </div>
+    </ng-template>
+
 </div>
