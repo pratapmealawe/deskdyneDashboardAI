@@ -28,7 +28,7 @@ export class OutletMasterMenuComponent implements OnInit {
   displayImgUrl = environment.imageUrl;
   showCard: any = false;
   menuList: any = [];
-  menuIndex: any = 0;
+  menuId: any = 0;
   showUpdateBtn: any = false;
   imageReplaced: any = false;
   noImages: boolean = false;
@@ -297,7 +297,7 @@ export class OutletMasterMenuComponent implements OnInit {
 
     this.imageUrl = item.imageUrl;
     this.showUpdateBtn = true;
-    this.menuIndex = index;
+    this.menuId = item._id;
     this.patchFormValue(item);
     this.open();
   }
@@ -310,12 +310,10 @@ export class OutletMasterMenuComponent implements OnInit {
     //   this.form.patchValue({ subsidy: 0 });
     // }
     console.log(this.form.value);
-    console.log(index);
+    console.log(this.filteredMenuList[index]);
 
 
     try {
-      const menuId = this.filteredMenuList[index]?._id;
-      console.log(this.form.value);
 
       const formData = new FormData();
       if (this.imageUrl) {
@@ -340,8 +338,9 @@ export class OutletMasterMenuComponent implements OnInit {
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
       console.log('updateMenu ####', formData)
-      const res = await this.apiMainService.updateOutletMasterMenu(menuId, formData);
-
+      const res = await this.apiMainService.updateOutletMasterMenu(this.menuId, formData);
+      console.log(res);
+      
       if (res && res._id) {
         this.fetchOutletMasterMenus();
       }
@@ -364,7 +363,7 @@ export class OutletMasterMenuComponent implements OnInit {
 
   resetValues() {
     this.form.reset();
-    this.menuIndex = 0;
+    this.menuId = '';
     this.imageUrl = '';
     this.uploadedImageFile = '';
     this.showUpdateBtn = false;
@@ -466,7 +465,7 @@ export class OutletMasterMenuComponent implements OnInit {
           if (result === 'add') {
             this.submit();
           } else if (result === 'update') {
-            this.updateMenu(this.menuIndex);
+            this.updateMenu(this.menuId);
           }
         },
         (reason) => {
@@ -477,7 +476,6 @@ export class OutletMasterMenuComponent implements OnInit {
 
   showPopup(item: any, i: any) {
     this.foodItem = item;
-    this.menuIndex = i;
     this.confirmationModalService.modal(
       `Are you sure, you want to delete ${item.itemName}`,
       this.deleteFoodItem,
