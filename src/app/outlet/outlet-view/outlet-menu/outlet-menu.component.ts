@@ -8,10 +8,11 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { categoryList } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -29,7 +30,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   @ViewChild('comboContent') comboContent: any;
   @ViewChild('masterMenu') masterMenu: any;
   @Output() dataToParent = new EventEmitter<string>();
-
+  categoryList = categoryList;
   modalRef!: NgbModalRef;
   categorySelected: boolean = false;
   form: any;
@@ -49,11 +50,14 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   btnPolicy: any;
   filteredMenuList: any[] = []
   filteredMasterMenuList: any[] = []
+  tempList: any;
   selectedMasterItem: any = null;
   selectedItems: any[] = [];
   menuInfo: any;
   eventInfo: any;
-
+  tempMenuList: any;
+  searchTerm: string = '';
+  groupedMenuList: any;
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -76,13 +80,48 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   init() {
-    console.log(this.outletObj);
-
     if (this.outletObj.menuList && this.outletObj.menuList.length > 0) {
       this.filteredMenuList = this.outletObj.menuList.sort((a: any, b: any) => a.precedence - b.precedence)
       this.showCard = true;
     } else {
       this.filteredMenuList = []
+    }
+
+    this.groupItemsByCategory();
+
+  }
+
+  groupItemsByCategory() {
+    const grouped = this.filteredMenuList.reduce((acc, item) => {
+      const category = item.category || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    }, {} as Record<string, any[]>);
+
+    this.groupedMenuList = Object.keys(grouped).map(category => ({
+      category,
+      items: grouped[category]
+    }));
+
+    console.log(this.groupedMenuList);
+
+  }
+
+
+  preventInvalidNumber(e: KeyboardEvent) {
+    const invalidKeys = ['-', '+', 'e', 'E'];
+    if (invalidKeys.includes(e.key)) e.preventDefault();
+  }
+
+  preventInvalidPaste(e: ClipboardEvent, type: "integer" | "decimal" = "integer") {
+    const text = e.clipboardData?.getData('text') ?? '';
+    if (type === "integer") {
+      if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
+    } else {
+      if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
     }
   }
 
@@ -103,11 +142,19 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       doNotChangeInFuture: item.doNotChangeInFuture,
       description: item.description,
       itemContains: item.itemContains,
+      energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
+      nutritionList: item.nutritionInfo ? [...item.nutritionInfo.nutritionList] : []
     });
     if (item.subCategory) {
       this.selectedCategory = item.category;
       this.categorySelected = true;
       this.setSubCategoryList();
+    }
+    if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
+      this.nutrition_Lists.clear();
+      item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
+        this.nutrition_Lists.push(this.fb.group(nutrition));
+      });
     }
   }
 
@@ -125,7 +172,33 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       description: [''],
       doNotChangeInFuture: [false],
       itemContains: [[]],
+      energyValue: [10],
+      nutritionList: this.fb.array([
+        this.fb.group({
+          nutritionName: [''],
+          nutritionValue: [''],
+          nutritionUnit: ['']
+        })
+      ])
+
     });
+  }
+
+
+  get nutrition_Lists(): FormArray {
+    return this.form.get('nutritionList') as FormArray;
+  }
+
+  addNutritionLists() {
+    this.nutrition_Lists.push(this.fb.group({
+      nutritionName: [''],
+      nutritionValue: [''],
+      nutritionUnit: ['']
+    }));
+  }
+
+  removenNutritionLists(index: number) {
+    this.nutrition_Lists.removeAt(index);
   }
 
   setCategory(event: any) {
@@ -137,6 +210,25 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   onItemSelected(item: any) {
     this.selectedMasterItem = item;
     console.log('Selected Master Menu Item:', item);
+  }
+
+  applyFilter() {
+    let tempList = [...this.tempList];
+
+    if (this.selectedCategory) {
+      tempList = tempList.filter(
+        (data) => data.category === this.selectedCategory
+      );
+    }
+
+    if (this.searchTerm) {
+      tempList = tempList.filter(
+        (data) =>
+          (data.itemName?.toLowerCase() || '').includes(this.searchTerm.toLowerCase())
+      );
+    }
+
+    this.filteredMasterMenuList = tempList;
   }
 
   setSubCategoryList() {
@@ -153,6 +245,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       console.log(res);
       if (res) {
         this.filteredMasterMenuList = res;
+        this.tempList = this.filteredMasterMenuList;
+        console.log(this.filteredMasterMenuList);
+
       }
     }
     catch (e) {
@@ -272,6 +367,11 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       );
 
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+      const nutritionInfo = {
+        energyValue: this.form.value.energyValue,
+        nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
       console.log(this.form.value, "formData");
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
@@ -298,6 +398,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.showUpdateBtn = false;
     this.imageReplaced = false;
     this.noImages = false;
+    this.nutrition_Lists.clear();
+    this.addNutritionLists();
   }
 
   async submit() {
@@ -330,6 +432,11 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       );
 
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+      const nutritionInfo = {
+        energyValue: this.form.value.energyValue,
+        nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
       const res = await this.apiMainService.addOutletMenu(
         formData,

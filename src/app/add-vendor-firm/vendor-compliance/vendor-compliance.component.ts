@@ -4,7 +4,8 @@ import { environment } from 'src/environments/environment';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PolicyService } from 'src/service/policy.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
+import { LocalStorageService } from 'src/service/local-storage.service';
 @Component({
   selector: 'app-vendor-compliance',
   templateUrl: './vendor-compliance.component.html',
@@ -48,7 +49,7 @@ export class VendorComplianceComponent implements OnInit {
   adhaarFileStatus = false;
   panFileStatus = false;
   selectedMerchantFile: any;
-
+  orgVendorInfo: any;
   @ViewChild('fssaiNoRef') fssaiNoField!: ElementRef;
   @ViewChild('aadharNo') aadharNoField!: ElementRef;
   @ViewChild('panNoRef') panNoField!: ElementRef;
@@ -57,13 +58,14 @@ export class VendorComplianceComponent implements OnInit {
   @ViewChild('adhaarFileRef') adhaarFileRef!: ElementRef;
   @ViewChild('panFileRef') panFileRef!: ElementRef;
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private modalService: NgbModal, private policyService: PolicyService) {
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private modalService: NgbModal, private policyService: PolicyService, private localStorageService: LocalStorageService) {
     this.access = this.policyService.getCurrentButtonPolicy();
   }
 
 
   ngOnInit() {
-    // this.profileApproval = this.venderDetails.profileApproval;  
+    // this.profileApproval = this.venderDetails.profileApproval;
+    this.orgVendorInfo = this.localStorageService.getCacheData('ORG_VENDOR_INFO');
     if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
 
@@ -426,12 +428,13 @@ export class VendorComplianceComponent implements OnInit {
     field?.nativeElement?.focus();
   }
 
+
   uploadDoc(event: any) {
 
     if (event.documentname == "aadharFile") {
       this.originalCompliance.aadharFileUrlOld = event.url;
       this.compliance.aadharFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-    } else if (event.documentname == "fssaiFile") {
+    } else if (event.documentname == "fssailic") {
       this.originalCompliance.fssaiFileUrlOld = event.url;
       this.compliance.fssaiFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     } else if (event.documentname == "siteFssaiFile") {
@@ -481,6 +484,50 @@ export class VendorComplianceComponent implements OnInit {
     else if (event.documentname == "pestconFile") {
       this.originalCompliance.pestconFileUrlOld = event.url;
       this.compliance.pestconFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+    }
+  }
+
+  downloadFile(fileUrl: string | SafeResourceUrl): void {
+    let urlString: string = '';
+
+    // Get the raw URL string from the sanitized object
+    if (fileUrl && (fileUrl as any).changingThisBreaksApplicationSecurity) {
+      urlString = (fileUrl as any).changingThisBreaksApplicationSecurity;
+    } else if (typeof fileUrl === 'string') {
+      urlString = fileUrl;
+    }
+
+    // Check if a valid URL string was found
+    if (urlString) {
+      // We fetch the file as a Blob to ensure we can force a download
+      fetch(urlString)
+        .then(response => response.blob())
+        .then(blob => {
+          // Create an object URL from the Blob
+          const blobUrl = URL.createObjectURL(blob);
+
+          // Create a temporary anchor element
+          const link = document.createElement('a');
+          link.href = blobUrl;
+
+          // Extract a filename from the URL for the download
+          const fileName = urlString.substring(urlString.lastIndexOf('/') + 1);
+          link.download = fileName;
+
+          // Append, click, and remove the link
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+
+          // Clean up the object URL to free up memory
+          URL.revokeObjectURL(blobUrl);
+        })
+        .catch(error => {
+          console.error('Download failed:', error);
+          alert('File download failed. Please try again.');
+        });
+    } else {
+      console.error('Invalid file URL provided for download:', fileUrl);
     }
   }
   DeleteFile(file: any) {

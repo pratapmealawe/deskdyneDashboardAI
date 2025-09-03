@@ -1,4 +1,4 @@
-<div class="bgpadding1">
+<div class="bgpadding1" *ngIf="showSearchSection">
     <div class="right addBtn addOutlet" *ngIf="true || btnPolicy?.addVendor" (click)="addVendor()">
         +
     </div>
@@ -30,14 +30,19 @@
                             </div>
                         </div>
                         <div class="col-md-1 alignRight">
-                                <i *ngIf="true || btnPolicy?.editVendor"
-                                    class="bi bi-pencil-square editDeltesaveIcon me-2" (click)="editVendor(vendor)"></i>
-                                <i class="bi bi-trash editDeltesaveIcon" *ngIf="true || btnPolicy?.deleteVendor"
-                                    (click)="showPopup(vendor)"></i>
-                            </div>      
+                            <i *ngIf="true || btnPolicy?.editVendor" class="bi bi-pencil-square editDeltesaveIcon me-2"
+                                (click)="editVendor(vendor)"></i>
+                            <i class="bi bi-trash editDeltesaveIcon" *ngIf="true || btnPolicy?.deleteVendor"
+                                (click)="showPopup(vendor)"></i>
+                        </div>
                     </div>
 
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<div class="bgsidepadding2" *ngIf="!showSearchSection">
+    <app-vendor-firm-view [vendor]="vendorInfo" (back)="toggleShowOrder($event)"></app-vendor-firm-view>
+</div>

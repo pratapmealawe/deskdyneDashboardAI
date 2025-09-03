@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormArray, Validators } from '@angular/forms';
+import { FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -27,9 +27,12 @@ export class AddVendorFirmComponent {
   showCafeteria = false;
   showSelectCafeteriaOption = true;
   selectedVendorFirm: any;
+  vendorLocation: any
 
   @ViewChild('outletModal') outlet: any;
   @ViewChild('complianceModal') compliance: any;
+  @ViewChild('geolocation') geolocation: any;
+
   btnPolicy: any;
 
   constructor(
@@ -87,20 +90,14 @@ export class AddVendorFirmComponent {
           address2: [''],
           landmark: [''],
           location: [''],
+          geolocation: this.fb.group({
+            lat: [''],
+            lng: [''],
+          })
         })
       ]),
-      accountEnrollment: [''],
-      emailsToSend: this.fb.array([
-        this.fb.group({
-          name: [''],
-          email: [''],
-        })
-      ])
+      accountEnrollment: ['']
     });
-  }
-
-  get emailsToSendList(): FormArray {
-    return this.form.get('emailsToSend') as FormArray;
   }
 
   get pocDetails(): FormArray {
@@ -140,21 +137,51 @@ export class AddVendorFirmComponent {
       address2: [''],
       landmark: [''],
       location: [''],
+      geolocation: this.fb.group({
+        lat: [''],
+        lng: [''],
+      })
     }));
+  }
+
+  toggleMap(index: any) {
+    this.modalService
+      .open(this.geolocation, {
+        ariaLabelledBy: 'modal-basic-title',
+        size: 'lg',
+        windowClass: 'mapModel',
+      })
+      .result.then(
+        (result) => {
+          if (result === 'add') {
+            this.patchVendorLocation(index);
+          }
+        },
+        (reason) => {
+          console.log(`Model Dismissed`);
+        }
+      );
+  }
+
+  updateLocation(event: any) {
+    this.vendorLocation = event;
+  }
+
+  async patchVendorLocation(index: any) {
+    const addressArray = this.form.get('address') as FormArray;
+    const addressGroup = addressArray.at(index) as FormGroup;
+
+    const geoControl = addressGroup.get('geolocation');
+    if (geoControl && this.vendorLocation?.latlng) {
+      geoControl.patchValue({
+        lat: this.vendorLocation.latlng.lat,
+        lng: this.vendorLocation.latlng.lng,
+      });
+    }
   }
 
   removeAddress(index: number) {
     this.addressList.removeAt(index);
-  }
-  addEmailsToSend() {
-    this.emailsToSendList.push(this.fb.group({
-      name: [''],
-      email: [''],
-    }));
-  }
-
-  removeEmail(index: number) {
-    this.emailsToSendList.removeAt(index);
   }
 
   objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
@@ -213,23 +240,33 @@ export class AddVendorFirmComponent {
       }
 
       if (firm.address?.length) {
-        this.addressList.clear();
-        firm.address.forEach((addr: any, index: number) => {
-          if (index !== 0 || this.addressList.length === 0) {
-            this.addressList.push(this.fb.group(addr));
-          }
-        });
-      }
+ this.addressList.clear();
+  firm.address.forEach((addr: any, index: number) => {
+    const addressGroup = this.fb.group({
+      address1: [addr.address1 || ''],
+      address2: [addr.address2 || ''],
+      landmark: [addr.landmark || ''],
+      location: [addr.location || ''],
+      geolocation: this.fb.group({
+        lat: [addr.geolocation?.lat || ''],
+        lng: [addr.geolocation?.lng || '']
+      })
+    });
 
-      if (firm.emailsToSend?.length) {
-        this.emailsToSendList.clear();
-        firm.emailsToSend.forEach((addr: any, index: number) => {
-          if (index !== 0 || this.emailsToSendList.length === 0) {
-            this.emailsToSendList.push(this.fb.group(addr));
-          }
-        });
-      }
+    if (index !== 0 || this.addressList.length === 0) {
+      this.addressList.push(addressGroup);
+    }
+  });
 
+
+
+        // this.addressList.clear();
+        // firm.address.forEach((addr: any, index: number) => {
+        //   if (index !== 0 || this.addressList.length === 0) {
+        //     this.addressList.push(this.fb.group(addr));
+        //   }
+        // });
+      }
       if (firm.accountEnrollment) {
         this.form.get('accountEnrollment').setValue(firm.accountEnrollment);
       }
@@ -251,6 +288,7 @@ export class AddVendorFirmComponent {
         ...this.form.value,
         outletList: this.selectedOutletsList,
       };
+      console.log(finalObj);
 
       const formData = this.objectToFormData(finalObj);
 

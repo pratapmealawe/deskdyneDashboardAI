@@ -240,10 +240,6 @@ export class ApiConfigService {
         url: `${this.baseUrl}/utility/getLineBasedAuditLogs`,
         method: 'GET',
       },
-      sendVendorOrderEmail: {
-        url: `${this.baseUrl}/utility/sendVendorOrderEmail`,
-        method: 'POST',
-      },
       employeeAdd: {
         url: `${this.baseUrl}/api/employeeAdd`,
         method: 'POST',
@@ -729,6 +725,10 @@ export class ApiConfigService {
       saveVendorFirm: {
         url: `${this.baseUrl}/api/saveVendorFirm`,
         method: 'POST'
+      },
+      getVendorFirmById: {
+        url: `${this.baseUrl}/api/getVendorFirmById`,
+        method: 'GET'
       },
       updateVendorFirm: {
         url: `${this.baseUrl}/api/updateVendorFirm`,

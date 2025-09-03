@@ -31,7 +31,6 @@ export class ToasterService {
     123: 'Amount and Remark are required',
     124: 'No Change in slot',
     125: 'Nothing to download',
-    126: 'Email Send Successfully...!',
     300: 'Something went wrong, Please try again later.'
 }
 

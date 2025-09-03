@@ -15,12 +15,14 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 })
 export class AddOrganizationComponent implements OnInit {
   @ViewChild('content') content: any;
+  @ViewChild('pocContent') pocContent: any;
   @ViewChild('geolocation') geolocation: any;
   form: any;
   viewOrg: any;
   showUpdate: boolean = false;
   adminSelected: any = [];
-  roleList = ['poc', 'admin', 'superAdmin'];
+  // roleList = ['poc', 'admin', 'superAdmin'];
+  roleList = ['poc', 'superAdmin'];
   pocSelected: any;
   cafeSelected: any;
   showError: boolean = false;
@@ -32,7 +34,8 @@ export class AddOrganizationComponent implements OnInit {
   btnPolicy: any;
   orgSubsidy: number = 0;
   domainList: string[] = [];
-
+  showDelete = false;
+  orgInfo: any;
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
@@ -46,7 +49,7 @@ export class AddOrganizationComponent implements OnInit {
     this.form = this.fb.group({
       organization_name: ['', Validators.required],
       location: ['', Validators.required],
-      domain:['',Validators.required],
+      domain: [''],
       city: ['', Validators.required],
       gstin: ['', Validators.required],
       poc_details: this.fb.array([]),
@@ -58,7 +61,7 @@ export class AddOrganizationComponent implements OnInit {
       cafeteriaList: this.fb.array([]),
       subsidy: [0]
     });
-  } 
+  }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -96,8 +99,8 @@ export class AddOrganizationComponent implements OnInit {
     let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
       accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/)]],
-      showAdminDaily: ['', Validators.required],
-      showEmpPolls: ['', Validators.required],
+      showAdminDaily: [false],
+      showEmpPolls: [false],
       showVirtualCafe: [false],
       showSaas: [false],
       showSiteExecutive: [false],
@@ -159,14 +162,14 @@ export class AddOrganizationComponent implements OnInit {
     });
   }
 
-    processDomains() {
+  processDomains() {
     const inputValue: string = this.form.get('domain')?.value || '';
     this.domainList = inputValue
       .split(',')
       .map(domain => domain.trim())
       .filter(domain => domain !== '');
-      this.form.get('domain')?.patchValue(this.domainList)
-      
+    this.form.get('domain')?.patchValue(this.domainList)
+
   }
 
   add_admin_details() {
@@ -186,11 +189,44 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   removePOC(index: any) {
-    this.form.controls['poc_details'].removeAt(index);
+    let status = this.checkPocIdExists(this.orgInfo.cafeteriaList, this.form.controls['poc_details'].value[index].poc_id);
+    if (status) {
+
+      this.modalService
+        .open(this.pocContent, {
+          ariaLabelledBy: 'modal-basic-title',
+          size: 'md',
+          windowClass: 'menuModel',
+          centered: true
+        })
+        .result.then(
+          (result) => {
+          },
+          (reason) => {
+            console.log(`Model Dismissed`);
+          }
+        );
+
+    }
+
+    else {
+      this.form.controls['poc_details'].removeAt(index);
+    }
+  }
+
+  removeApprover(index: any) {
+    this.form.controls['poc_details']
+      .at(index)
+      .controls['approverDetails'].reset();
+  }
+
+  checkPocIdExists(data: any, pocId: any) {
+    return data.find((item: any) => item.poc_details.poc_id === pocId) !== undefined;
   }
 
   patchFormValue(org: any) {
-    console.log("org", org)
+    console.log("org", org);
+    this.orgInfo = org;
     let clusterdetails: any = {};
     this.orgSubsidy = org.subsidy;
     // this.customerLocation = org.customerLocation;
@@ -200,7 +236,7 @@ export class AddOrganizationComponent implements OnInit {
       city: org.city,
       gstin: org.gstin,
       subsidy: org.subsidy,
-      domain:org.domain
+      domain: org.domain
     });
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
       if (cafe.clusterId) {
@@ -370,6 +406,10 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   patchSelectedAdmins(index: any) {
+    console.log(this.form.controls['poc_details']
+      .at(index)
+      .controls['approverDetails']);
+
     this.form.controls['poc_details']
       .at(index)
       .controls['approverDetails'].patchValue({
@@ -380,6 +420,7 @@ export class AddOrganizationComponent implements OnInit {
         approver_location: this.adminSelected.poc_location,
         approver_role: this.adminSelected.poc_role,
       });
+    this.showDelete = true;
   }
 
   patchCafeAdmins(index: any) {
@@ -411,13 +452,13 @@ export class AddOrganizationComponent implements OnInit {
 
   async addOrg() {
     console.log(this.form.value);
-    
+
     try {
       if (!this.form.valid) {
         this.showError = true;
         return;
       }
-      
+
       await this.apiMainService.B2B_addOrg(this.form.getRawValue());
       this.clearRunTimeStorage();
       this.router.navigate(['b2bSearchOrg']);
@@ -460,7 +501,7 @@ export class AddOrganizationComponent implements OnInit {
         return;
       }
       console.log(this.form.getRawValue());
-      
+
       await this.apiMainService.B2B_org_update(
         this.form.getRawValue(),
         this.viewOrg._id

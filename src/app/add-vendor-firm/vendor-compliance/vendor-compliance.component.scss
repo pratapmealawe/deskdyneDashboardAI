@@ -1,15 +1,16 @@
 @import "src/styles.scss";
 
-.uploadedImage{
+.uploadedImage {
     width: 150px;
     height: 150px;
     cursor: pointer;
 }
 
-.uploadInput{
+.uploadInput {
     display: none;
 }
-.uploadIcon{
+
+.uploadIcon {
     width: 84px;
     background: $secondary-color3;
     border-radius: 5px;
@@ -23,16 +24,18 @@
     cursor: pointer;
 }
 
-.bankDetails{
-    input{
+.bankDetails {
+    input {
         display: block;
-        width:100%;
+        width: 100%;
     }
-    label{
+
+    label {
         // font-weight: bold;
     }
 }
-.editBtn{
+
+.editBtn {
     cursor: pointer;
     background: $primary-color2;
     color: white;
@@ -41,11 +44,12 @@
     text-align: center;
 }
 
-.fssaiImg{
+.fssaiImg {
     width: 450px;
     height: 500px;
 }
-.adhaarImg{
+
+.adhaarImg {
     width: 400px;
     height: 300px;
     padding: 5px;

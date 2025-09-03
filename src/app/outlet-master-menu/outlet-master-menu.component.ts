@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -7,6 +7,7 @@ import { ConfirmationModalService } from '../confirmation-modal/confirmation-mod
 import { PolicyService } from 'src/service/policy.service';
 import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { categoryList } from 'src/config/food-category.config';
 
 @Component({
   selector: 'app-outlet-master-menu',
@@ -27,7 +28,7 @@ export class OutletMasterMenuComponent implements OnInit {
   displayImgUrl = environment.imageUrl;
   showCard: any = false;
   menuList: any = [];
-  menuIndex: any = 0;
+  menuId: any = 0;
   showUpdateBtn: any = false;
   imageReplaced: any = false;
   noImages: boolean = false;
@@ -63,7 +64,10 @@ export class OutletMasterMenuComponent implements OnInit {
       "acceptOrderFrom": "20:00",
       "acceptOrderTill": "22:00"
     }
-  ]
+  ];
+  groupedMenuList: any;
+  categoryList = categoryList;
+
   constructor(
     private fb: FormBuilder,
     private modalService: NgbModal,
@@ -80,6 +84,10 @@ export class OutletMasterMenuComponent implements OnInit {
     this.createForm();
   }
 
+  get nutrition_Lists(): FormArray {
+    return this.form.get('nutritionList') as FormArray;
+  }
+
   init() {
     console.log(this.outletObj);
 
@@ -89,6 +97,27 @@ export class OutletMasterMenuComponent implements OnInit {
 
       this.showCard = true;
     }
+
+    this.groupItemsByCategory();
+  }
+
+  groupItemsByCategory() {
+    const grouped = this.filteredMenuList.reduce((acc, item) => {
+      const category = item.category || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    }, {} as Record<string, any[]>);
+
+    this.groupedMenuList = Object.keys(grouped).map(category => ({
+      category,
+      items: grouped[category]
+    }));
+
+    console.log(this.groupedMenuList);
+
   }
 
   async fetchOutletMasterMenus() {
@@ -111,9 +140,11 @@ export class OutletMasterMenuComponent implements OnInit {
     );
   }
 
-  patchFormValue(item: any) {
-    console.log(item);
 
+
+  patchFormValue(item: any) {
+    console.log('patchFormValue', item);
+    this.form.reset();
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
@@ -123,12 +154,21 @@ export class OutletMasterMenuComponent implements OnInit {
       itemContains: item.itemContains,
       subsidy: item.subsidy,
       precedence: item.precedence,
-      mealTimingInfo: [...item.mealTimingInfo]
+      category: item.category,
+      mealTimingInfo: [...item.mealTimingInfo],
+      energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
+      nutritionList: item.nutritionInfo ? [...item.nutritionInfo.nutritionList] : []
     });
     if (item.subCategory) {
       this.selectedCategory = item.category;
       this.categorySelected = true;
       this.setSubCategoryList();
+    }
+    if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
+      this.nutrition_Lists.clear();
+      item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
+        this.nutrition_Lists.push(this.fb.group(nutrition));
+      });
     }
   }
 
@@ -142,9 +182,45 @@ export class OutletMasterMenuComponent implements OnInit {
       precedence: [''],
       description: [''],
       itemContains: [[]],
-      mealTimingInfo: [[]]
+      mealTimingInfo: [[]],
+      category: [''],
+      energyValue: [10],
+      nutritionList: this.fb.array([
+        this.fb.group({
+          nutritionName: [''],
+          nutritionValue: [''],
+          nutritionUnit: ['']
+        })
+      ])
     });
   }
+
+  preventInvalidNumber(e: KeyboardEvent) {
+    const invalidKeys = ['-', '+', 'e', 'E'];
+    if (invalidKeys.includes(e.key)) e.preventDefault();
+  }
+
+  preventInvalidPaste(e: ClipboardEvent, type: "integer" | "decimal" = "integer") {
+    const text = e.clipboardData?.getData('text') ?? '';
+    if (type === "integer") {
+      if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
+    } else {
+      if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
+    }
+  }
+  addNutritionLists() {
+    this.nutrition_Lists.push(this.fb.group({
+      nutritionName: [''],
+      nutritionValue: [''],
+      nutritionUnit: ['']
+    }));
+  }
+
+  removenNutritionLists(index: number) {
+    this.nutrition_Lists.removeAt(index);
+  }
+
+
 
   setCategory(event: any) {
     this.selectedCategory = event.target.value;
@@ -221,7 +297,7 @@ export class OutletMasterMenuComponent implements OnInit {
 
     this.imageUrl = item.imageUrl;
     this.showUpdateBtn = true;
-    this.menuIndex = index;
+    this.menuId = item._id;
     this.patchFormValue(item);
     this.open();
   }
@@ -234,12 +310,10 @@ export class OutletMasterMenuComponent implements OnInit {
     //   this.form.patchValue({ subsidy: 0 });
     // }
     console.log(this.form.value);
-    console.log(index);
+    console.log(this.filteredMenuList[index]);
 
 
     try {
-      const menuId = this.filteredMenuList[index]?._id;
-      console.log(this.form.value);
 
       const formData = new FormData();
       if (this.imageUrl) {
@@ -256,12 +330,18 @@ export class OutletMasterMenuComponent implements OnInit {
       formData.append('itemType', this.form.value.itemType);
       formData.append('subsidy', this.form.value.subsidy);
       formData.append('precedence', this.form.value.precedence);
+      formData.append('category', this.form.value.category);
       formData.append('mealTimingInfo', JSON.stringify(mealTimingInfoData));
-      const res = await this.apiMainService.updateOutletMasterMenu(menuId, formData);
-
+      const nutritionInfo = {
+        energyValue: this.form.value.energyValue,
+        nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
+      console.log('updateMenu ####', formData)
+      const res = await this.apiMainService.updateOutletMasterMenu(this.menuId, formData);
+      console.log(res);
+      
       if (res && res._id) {
-        // this.outletObj = res;
-        // this.init()
         this.fetchOutletMasterMenus();
       }
 
@@ -283,12 +363,14 @@ export class OutletMasterMenuComponent implements OnInit {
 
   resetValues() {
     this.form.reset();
-    this.menuIndex = 0;
+    this.menuId = '';
     this.imageUrl = '';
     this.uploadedImageFile = '';
     this.showUpdateBtn = false;
     this.imageReplaced = false;
     this.noImages = false;
+    this.nutrition_Lists.clear();
+    this.addNutritionLists();
   }
 
   async submit() {
@@ -314,11 +396,16 @@ export class OutletMasterMenuComponent implements OnInit {
       formData.append('price', this.form.value.price);
       formData.append('subsidy', this.form.value.subsidy);
       formData.append('itemContains', JSON.stringify(this.form.value.itemContains));
-      // formData.append('category', this.form.value.category);
+      formData.append('category', this.form.value.category);
       // formData.append('subCategory', this.form.value.subCategory);
       formData.append('itemType', this.form.value.itemType);
       formData.append('precedence', this.form.value.precedence);
       formData.append('mealTimingInfo', JSON.stringify(this.form.value.mealTimingInfo));
+      const nutritionInfo = {
+        energyValue: this.form.value.energyValue,
+        nutritionList: this.form.value.nutritionList
+      };
+      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
       // let mealTypes = this.form.value.mealTimingInfo;
 
@@ -378,7 +465,7 @@ export class OutletMasterMenuComponent implements OnInit {
           if (result === 'add') {
             this.submit();
           } else if (result === 'update') {
-            this.updateMenu(this.menuIndex);
+            this.updateMenu(this.menuId);
           }
         },
         (reason) => {
@@ -389,7 +476,6 @@ export class OutletMasterMenuComponent implements OnInit {
 
   showPopup(item: any, i: any) {
     this.foodItem = item;
-    this.menuIndex = i;
     this.confirmationModalService.modal(
       `Are you sure, you want to delete ${item.itemName}`,
       this.deleteFoodItem,

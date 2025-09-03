@@ -7,10 +7,12 @@ import { ExcelService } from 'src/service/excel.service';
 interface GroupedOrder {
   totalSubsidy: number;
   totalAmount: number;
+  totalItemAmount: number;
   outlets: {
     [outletName: string]: {
       totalSubsidy: number;
       totalAmount: number;
+      totalItemAmount: number;
       orders: any[];
     };
   };
@@ -35,6 +37,7 @@ export class OutletBillingComponent implements OnInit {
   expandedItems: boolean[] = [];
   grandTotalAmount: number = 0;
   grandTotalSubsidy: number = 0;
+  grandTotalItemAmount: number = 0;
 
   constructor(private apiMainService: ApiMainService, private excelService: ExcelService,) {
     this.dateGroup = new FormGroup({
@@ -145,6 +148,7 @@ export class OutletBillingComponent implements OnInit {
     this.groupedOrders = {};
     this.grandTotalAmount = 0;
     this.grandTotalSubsidy = 0;
+    this.grandTotalItemAmount = 0;
 
     this.orders.forEach(order => {
       const dateKey = new Date(order.orderDate).toISOString().split('T')[0]; // better sorting
@@ -154,6 +158,7 @@ export class OutletBillingComponent implements OnInit {
         this.groupedOrders[dateKey] = {
           totalSubsidy: 0,
           totalAmount: 0,
+          totalItemAmount: 0,
           outlets: {}
         };
       }
@@ -162,23 +167,31 @@ export class OutletBillingComponent implements OnInit {
         this.groupedOrders[dateKey].outlets[outletName] = {
           orders: [],
           totalSubsidy: 0,
-          totalAmount: 0
+          totalAmount: 0,
+          totalItemAmount: 0,
         };
       }
 
       const subsidy = order.subsidyAmount || 0;
       const totalAmt = (order.amount || 0) + (order.moneyWalletPointsUsed || 0);
+      const totalItemAmount = order.itemAmount || 0;
 
       this.groupedOrders[dateKey].outlets[outletName].orders.push(order);
       this.groupedOrders[dateKey].outlets[outletName].totalSubsidy += subsidy;
       this.groupedOrders[dateKey].outlets[outletName].totalAmount += totalAmt;
+      this.groupedOrders[dateKey].outlets[outletName].totalItemAmount += totalItemAmount;
 
       this.groupedOrders[dateKey].totalSubsidy += subsidy;
       this.groupedOrders[dateKey].totalAmount += totalAmt;
+      this.groupedOrders[dateKey].totalItemAmount += totalItemAmount;
 
       this.grandTotalSubsidy += subsidy;
       this.grandTotalAmount += totalAmt;
+      this.grandTotalItemAmount += totalItemAmount;
     });
+
+    console.log(this.groupedOrders);
+    
   }
 
   toggleFeedback(index: number) {
@@ -202,8 +215,9 @@ export class OutletBillingComponent implements OnInit {
         Date: new Date(dateKey).toISOString().split('T')[0],
         Organization: this.orgSelected?.organization_name || '',
         Cafeteria: selectedCafeteria?.cafeteria_name,
+        'Total Item Amount (₹)': dateGroup.totalItemAmount,
         'Subsidy Amount (₹)': dateGroup.totalSubsidy,
-        'Total Amount (₹)': dateGroup.totalAmount
+        'Total Paid Amount (₹)': dateGroup.totalAmount,
       });
     }
 
@@ -211,8 +225,9 @@ export class OutletBillingComponent implements OnInit {
       Date: 'Grand Total',
       Organization: '',
       Cafeteria: '',
+      'Total Item Amount (₹)': this.grandTotalItemAmount,
       'Subsidy Amount (₹)': this.grandTotalSubsidy,
-      'Total Amount (₹)': this.grandTotalAmount
+      'Total Paid Amount (₹)': this.grandTotalAmount,
     });
 
     const from = this.dateGroup.get('start')?.value?.toLocaleDateString() || '';

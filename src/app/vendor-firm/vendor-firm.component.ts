@@ -20,6 +20,8 @@ export class VendorFirmComponent {
   orgName: any;
   btnPolicy: any;
   vendorFirmInfo: any;
+  showSearchSection = true;
+  vendorInfo: any;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -43,8 +45,10 @@ export class VendorFirmComponent {
   }
 
   editVendor(vendor: any) {
-    this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
-    this.router.navigate(['/addVendorFirm']);
+    // this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
+    // this.router.navigate(['/addVendorFirm']);
+    this.showSearchSection = false;
+    this.vendorInfo = vendor;
   }
 
   async deleteVendorFirm() {
@@ -74,5 +78,10 @@ export class VendorFirmComponent {
   addVendor() {
     this.resetForm()
     this.router.navigate(['/addVendorFirm']);
+  }
+
+
+  toggleShowOrder(val: any) {
+    this.showSearchSection = val;
   }
 }
