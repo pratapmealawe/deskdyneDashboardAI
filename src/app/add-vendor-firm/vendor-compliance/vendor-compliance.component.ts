@@ -54,6 +54,7 @@ export class VendorComplianceComponent implements OnInit {
   @ViewChild('aadharNo') aadharNoField!: ElementRef;
   @ViewChild('panNoRef') panNoField!: ElementRef;
   @ViewChild('cancelledChequeRef') cancelledChequeField!: ElementRef;
+  @ViewChild('selfDeclarationRef') selfDeclarationRef!: ElementRef;
   @ViewChild('fssaiFileRef') fssaiFileRef!: ElementRef;
   @ViewChild('adhaarFileRef') adhaarFileRef!: ElementRef;
   @ViewChild('panFileRef') panFileRef!: ElementRef;
@@ -140,6 +141,12 @@ export class VendorComplianceComponent implements OnInit {
       this.originalCompliance.cancelledChequeFileUrlOld = this.compliance.cancelledChequeFile;
       this.originalCompliance.cancelledChequeFile = this.compliance.cancelledChequeFile;
       this.compliance.cancelledChequeFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + this.compliance.cancelledChequeFile);
+    }
+
+    if (this.compliance.selfDeclarationFile) {
+      this.originalCompliance.selfDeclarationFileUrlOld = this.compliance.selfDeclarationFile;
+      this.originalCompliance.selfDeclarationFile = this.compliance.selfDeclarationFile;
+      this.compliance.selfDeclarationFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + this.compliance.selfDeclarationFile);
     }
 
     if (this.compliance.pfFile) {
@@ -387,6 +394,9 @@ export class VendorComplianceComponent implements OnInit {
       if (this.originalCompliance.cancelledChequeFileUrlOld) {
         formData.append('cancelledChequeFile', this.originalCompliance.cancelledChequeFileUrlOld);
       }
+      if (this.originalCompliance.selfDeclarationFileUrlOld) {
+        formData.append('selfDeclarationFile', this.originalCompliance.selfDeclarationFileUrlOld);
+      }
       if (this.originalCompliance.pfFileUrlOld) {
         formData.append('pfFile', this.originalCompliance.pfFileUrlOld);
       }
@@ -399,10 +409,10 @@ export class VendorComplianceComponent implements OnInit {
       if (this.originalCompliance.PanCardFileUrlOld) {
         formData.append('PanCardFile', this.originalCompliance.PanCardFileUrlOld);
       }
-      if (this.originalCompliance.merchantOnboarding) {
-        formData.append('merchantOnboarding', this.originalCompliance.merchantOnboarding);
+      // if (this.originalCompliance.merchantOnboarding) {
+      //   formData.append('merchantOnboarding', this.originalCompliance.merchantOnboarding);
 
-      }
+      // }
       if (this.originalCompliance.pestconFileUrlOld) {
         formData.append('pestconFile', this.originalCompliance.pestconFileUrlOld);
       }
@@ -460,6 +470,12 @@ export class VendorComplianceComponent implements OnInit {
       this.cancelledChequeFileStatus = true;
       this.originalCompliance.cancelledChequeFileUrlOld = event.url;
       this.compliance.cancelledChequeFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+    }
+
+    else if (event.documentname == "selfDeclarationFile") {
+      // this.cancelledChequeFileStatus = true;
+      this.originalCompliance.selfDeclarationFileUrlOld = event.url;
+      this.compliance.selfDeclarationFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
 
     else if (event.documentname == "pfFile") {
@@ -572,6 +588,10 @@ export class VendorComplianceComponent implements OnInit {
     } else if (file == 'cancelledChequeFile') {
       this.originalCompliance.cancelledChequeFileUrlOld = null;
       this.compliance.cancelledChequeFileUrl = null;
+    }
+    else if (file == 'selfDeclarationFile') {
+      this.originalCompliance.selfDeclarationFileUrlOld = null;
+      this.compliance.selfDeclarationFileUrl = null;
     }
   }
 }
