@@ -5,10 +5,10 @@
   </div>
   <div class="row">
     <div *ngIf="!editMode" class="col-sm-6 col-md-6 col-lg-6 mt-2 mb-4 p-0">
-      <div class="labelText">Compliance Status: <span class="labelData">{{profileApproval}}</span></div>
+      <!-- <div class="labelText">Compliance Status: <span class="labelData">{{profileApproval}}</span></div> -->
     </div>
     <div *ngIf="editMode" class="col-sm-6 col-md-6 col-lg-6 mt-2 mb-4">
-      <div class="labelText">Compliance Status: <span class="labelData">{{profileApproval}}</span></div>
+      <!-- <div class="labelText">Compliance Status: <span class="labelData">{{profileApproval}}</span></div> -->
     </div>
   </div>
 
@@ -183,16 +183,15 @@
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.merchantOnboardingUrl">
+    <div class="row" *ngIf="compliance.selfDeclarationFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Merchant Onboarding: <span class="labelData">File Attached</span></div>
+        <div class="labelText">Self declaration: <span class="labelData">File Attached</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
         <div class="pdf-preview">
-          <iframe [src]="compliance.merchantOnboardingUrl" type="application/pdf"></iframe>
+          <iframe [src]="compliance.selfDeclarationFileUrl" type="application/pdf"></iframe>
           <button class="btn btn-success btn-sm"
-            (click)="downloadFile(compliance.merchantOnboardingUrl)">Download</button>
-
+            (click)="downloadFile(compliance.selfDeclarationFileUrl)">Download</button>
         </div>
       </div>
     </div>
@@ -293,10 +292,13 @@
   <ng-container *ngIf="editMode">
     <div class="row">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Fssai No*:
+        <div class="labelText">Fssai No<span class="text-danger">*</span>:
           <input type="number" class="form-control" placeholder="Fssai No" [(ngModel)]="compliance.fssaiNo"
-            (input)="checkFieldStatus($event,'fssaiNo')" #fssaiNoRef />
-          <div class="error-text" *ngIf="fssaiNoStatus && showError">*Fssai No is required</div>
+            (input)="checkFieldStatus($event,'fssaiNo')" #fssaiNoRef="ngModel" required pattern="^[0-9]{14}$" />
+          <div class="error-text" *ngIf="fssaiNoRef.invalid && fssaiNoRef.touched">
+            <div *ngIf="fssaiNoRef.errors?.['required']">* Fssai No is required</div>
+            <div *ngIf="fssaiNoRef.errors?.['pattern']">* Enter valid 14-digit FSSAI Number</div>
+          </div>
         </div>
         <div class="labelText mt-2">Fssai Expiry Date:
           <input type="date" class="form-control" placeholder="Fssai Expiry Date"
@@ -337,8 +339,14 @@
     <div class="row">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
         <div class="labelText">Shop Act License No:
-          <input type="number" class="form-control" placeholder="Shop Act License No"
-            [(ngModel)]="compliance.shopActLicenseNo" />
+
+          <input type="text" class="form-control" placeholder="Shop Act License No"
+            [(ngModel)]="compliance.shopActLicenseNo" #shopNoRef="ngModel" pattern="^[A-Za-z0-9\/\-]{6,20}$" />
+
+          <div class="error-text" *ngIf="shopNoRef.invalid && shopNoRef.touched">
+            <!-- <div *ngIf="shopNoRef.errors?.['required']">* Shop Act License Number is required</div> -->
+            <div *ngIf="shopNoRef.errors?.['pattern']">* Enter valid Shop Act License Number</div>
+          </div>
         </div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
@@ -355,10 +363,14 @@
 
     <div class="row">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Aadhar No*:
+        <div class="labelText">Aadhar No<span class="text-danger">*</span>:
           <input type="number" class="form-control" placeholder="Aadhar No" [(ngModel)]="compliance.adhaar"
-            (input)="checkFieldStatus($event,'aadharNo')" #aadharNo />
-          <div class="error-text" *ngIf="aadharNoStatus && showError">*Aadhar No is required</div>
+            (input)="checkFieldStatus($event,'aadharNo')" #aadharNo="ngModel" required pattern="^[2-9]{1}[0-9]{11}$" />
+          <!-- <div class="error-text" *ngIf="aadharNoStatus && showError">*Aadhar No is required</div> -->
+          <div class="error-text" *ngIf="aadharNo.invalid && aadharNo.touched">
+            <div *ngIf="aadharNo.errors?.['required']">* Aadhar No is required</div>
+            <div *ngIf="aadharNo.errors?.['pattern']">* Enter valid 12-digit Aadhaar Number</div>
+          </div>
         </div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
@@ -474,7 +486,13 @@
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
         <div class="labelText">
           Gst Number:
-          <input type="number" class="form-control" placeholder="Gst Number" [(ngModel)]="compliance.gstNumber" />
+          <input type="text" class="form-control" placeholder="Gst Number" [(ngModel)]="compliance.gstNumber"
+            #gstNoRef="ngModel" pattern="^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$" />
+
+          <div class="error-text" *ngIf="gstNoRef.invalid && gstNoRef.touched">
+            <!-- <div *ngIf="gstNoRef.errors?.['required']">* GST Number is required</div> -->
+            <div *ngIf="gstNoRef.errors?.['pattern']">* Enter valid 15-character GSTIN</div>
+          </div>
         </div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
@@ -494,10 +512,16 @@
     <div class="row">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
         <div class="labelText">
-          Pan Card Number*:
-          <input type="number" class="form-control" placeholder="Pan Card Number" [(ngModel)]="compliance.panNumber"
-            #panNoRef (input)="checkFieldStatus($event,'panNo')" />
-          <div class="error-text" *ngIf="panNoStatus && showError">*Pan No is required</div>
+          Pan Card Number<span class="text-danger">*</span>:
+          <input type="text" class="form-control" placeholder="Pan Card Number" [(ngModel)]="compliance.panNumber"
+            #panNoRef="ngModel" (input)="checkFieldStatus($event,'panNo')" required
+            pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$" />
+          <!-- <div class="error-text" *ngIf="panNoStatus && showError">*Pan No is required</div> -->
+
+          <div class="error-text" *ngIf="panNoRef.invalid && panNoRef.touched">
+            <div *ngIf="panNoRef.errors?.['required']">* PAN Number is required</div>
+            <div *ngIf="panNoRef.errors?.['pattern']">* Enter valid PAN (e.g. ABCDE1234F)</div>
+          </div>
         </div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
@@ -537,7 +561,7 @@
 
     <div class="row">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Cancelled Cheque*:</div>
+        <div class="labelText">Cancelled Cheque<span class="text-danger">*</span>:</div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
         <div *ngIf="!compliance.cancelledChequeFileUrl" #cancelledChequeRef>
@@ -548,6 +572,23 @@
         <div *ngIf="compliance.cancelledChequeFileUrl" class="pdf-preview">
           <iframe [src]="compliance.cancelledChequeFileUrl" type="application/pdf"></iframe>
           <button class="btn btn-danger btn-sm" (click)="DeleteFile('cancelledChequeFile')">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="labelText">Self declaration:</div>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div *ngIf="!compliance.selfDeclarationFileUrl" #selfDeclarationRef>
+          <app-pdfupload [documentname]="'selfDeclarationFile'" [documentUrl]="compliance.selfDeclarationFileUrl"
+            (upload)="uploadDoc($event)"></app-pdfupload>
+          <!-- <div class="error-text" *ngIf="cancelledChequeFileStatus && showError">*cancelledChequeFile is required</div> -->
+        </div>
+        <div *ngIf="compliance.selfDeclarationFileUrl" class="pdf-preview">
+          <iframe [src]="compliance.selfDeclarationFileUrl" type="application/pdf"></iframe>
+          <button class="btn btn-danger btn-sm" (click)="DeleteFile('selfDeclarationFile')">Delete</button>
         </div>
       </div>
     </div>
@@ -572,7 +613,7 @@
           <button type="button" class="btn btn-danger btn-sm" (click)="cancelEdit()">Cancel</button>
         </div>
       </div>
-      <div *ngIf="!editMode" class="d-flex align-items-center gap-2">
+      <!-- <div *ngIf="!editMode" class="d-flex align-items-center gap-2">
         <button type="button" *ngIf="!orgVendorInfo" class="btn btn-primary btn-sm mt-4" (click)="fileInput.click()">
           {{ 'Self declaration' }}
         </button>
@@ -587,7 +628,7 @@
         <div *ngIf="compliance && compliance.merchantOnboarding && !orgVendorInfo" class="text-success mt-4 ms-3">
           {{ compliance.merchantOnboarding }} <i class="bi bi-x-lg ms-1" (click)="closeMerchantDoc()"></i>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 </div>
