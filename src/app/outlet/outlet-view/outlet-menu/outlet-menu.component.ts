@@ -41,7 +41,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   displayImgUrl = environment.imageUrl;
   showCard: any = false;
   menuList: any = [];
-  menuIndex: any = 0;
+  // menuIndex: any = 0;
+  menuId: any = 0;
   showUpdateBtn: any = false;
   imageReplaced: any = false;
   uploadStatus: any = false;
@@ -303,7 +304,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   async edit(item: any, index: any) {
     this.imageUrl = item.imageUrl;
     this.showUpdateBtn = true;
-    this.menuIndex = index;
+    // this.menuIndex = index;
+    this.menuId = item._id;
     console.log(item);
 
     this.patchFormValue(item);
@@ -339,7 +341,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       this.form.patchValue({ subsidy: 0 });
     }
     try {
-      const menuId = this.outletObj.menuList[index]._id;
+      // const menuId = this.outletObj.menuList[index]._id;
       const outletId = this.outletObj._id;
       const formData = new FormData();
       if (this.imageUrl) {
@@ -375,7 +377,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       console.log(this.form.value, "formData");
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
-        menuId,
+        this.menuId,
         formData
       );
 
@@ -392,7 +394,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   resetValues() {
     this.form.reset();
-    this.menuIndex = 0;
+    // this.menuIndex = 0;
+        this.menuId = '';
+
     this.imageUrl = '';
     this.uploadedImageFile = '';
     this.showUpdateBtn = false;
@@ -488,7 +492,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
           if (result === 'add') {
             this.submit();
           } else if (result === 'update') {
-            this.updateMenu(this.menuIndex);
+            this.updateMenu(this.menuId);
           }
         },
         (reason) => {
@@ -503,7 +507,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   showPopup(item: any, i: any) {
     this.foodItem = item;
-    this.menuIndex = i;
+    // this.menuIndex = i;
     this.confirmationModalService.modal(
       `Are you sure, you want to delete ${item.itemName}`,
       this.deleteFoodItem,
