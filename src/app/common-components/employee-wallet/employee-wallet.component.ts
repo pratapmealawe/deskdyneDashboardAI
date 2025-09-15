@@ -41,7 +41,8 @@ export class EmployeeWalletComponent {
   fileName: any
   previousHistory: any;
   currentUser: any;
-
+  monthStart!: string;
+  monthEnd!: string;
   constructor(private apiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder, private localStorageService: LocalStorageService) {
   }
 
@@ -49,6 +50,11 @@ export class EmployeeWalletComponent {
     console.log(this.orgObj);
     this.currentUser = this.localStorageService.getCacheData('ADMIN_PROFILE')
     this.getEmployeeListByOrgId();
+
+    const today = new Date();
+      const currentMonth = this.formatMonth(today);
+    const nextMonthDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    const nextMonth = this.formatMonth(nextMonthDate);
     this.form = this.fb.group({
       organization_name: this.orgObj.organization_name,
       organization_id: this.orgObj._id,
@@ -66,7 +72,11 @@ export class EmployeeWalletComponent {
       cashbackPoints: ['', Validators.required],
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
-      remark: ['', Validators.required]
+      remark: ['', Validators.required],
+      dateType: ['daily', Validators.required],
+      monthDate: [''],
+      startMonth: [currentMonth],
+      endMonth: [nextMonth],
     })
 
     this.employeeObj = {
@@ -88,6 +98,12 @@ export class EmployeeWalletComponent {
       name: '',
     });
   }
+
+  formatMonth(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  return `${year}-${month}`;
+}
   addMoreEmployee() {
     this.addMultipleEmploeeList.push({ ...this.employeeObj });
     this.showRemoveForm = true;
