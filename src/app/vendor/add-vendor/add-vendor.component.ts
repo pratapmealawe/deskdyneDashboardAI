@@ -31,11 +31,15 @@ export class AddVendorCommponent {
   showCafeteria = false;
   showSelectCafeteriaOption = true;
   selectedVendor: any;
-
+  addressList: any = [];
   showEditModalOutletList = false;
   vendorId: string = ''
 
   @ViewChild('outletModal') outlet: any;
+  @ViewChild('addressModal') address: any;
+  selectedAddressList: any = [];
+  selectedAddress: any = null;  // holds the selected address object
+
   btnPolicy: any;
   vendorList: any;
   vendorLocation: any
@@ -66,17 +70,17 @@ export class AddVendorCommponent {
       vendorRole: [''],
       vendorId: [''],
       accessType: [''],
-      address: this.fb.group({
-        address1: [''],
-        address2: [''],
-        landmark: [''],
-        location: [''],
-        city: [''],
-      }),
-      geolocation: this.fb.group({
-        lat: [''],
-        lng: [''],
-      }),
+      // address: this.fb.group({
+      //   address1: [''],
+      //   address2: [''],
+      //   landmark: [''],
+      //   location: [''],
+      //   city: [''],
+      // }),
+      // geolocation: this.fb.group({
+      //   lat: [''],
+      //   lng: [''],
+      // }),
     });
   }
 
@@ -130,17 +134,21 @@ export class AddVendorCommponent {
     const vendorFirmId = event;
     const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
     console.log(res);
+    this.addressList = res.address;
+    // this.selectedAddressList = [];
 
   }
 
   updateVendor() {
     const vendor = this.runtimeStorageService.getCacheData('VENDOR_EDIT');
+    console.log(vendor);
 
     if (vendor && vendor._id) {
       this.selectedVendor = vendor;
       this.showUpdate = true;
       this.defaultRole = vendor.vendorRole;
       this.selectedOutletsList = vendor.outletList;
+      this.selectedAddressList = vendor.addressList;
       this.form.patchValue({
         vendorName: vendor.vendorName,
         vendorPhoneNo: vendor.vendorPhoneNo,
@@ -166,7 +174,8 @@ export class AddVendorCommponent {
         isOutletAccess: this.form.value.accessType === 'outlet' ? true : false,
         isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk' ? true : false,
         outletList: this.selectedOutletsList,
-        vendorFirmDetails: vendorFirmDetails
+        vendorFirmDetails: vendorFirmDetails,
+        addressList: this.selectedAddressList
       };
 
       const formData = this.objectToFormData(finalObj);
@@ -192,8 +201,16 @@ export class AddVendorCommponent {
     });
   }
 
+  addAddress() {
+    this.modalService.open(this.address, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'xl',
+    });
+  }
+
   getSelectedOutlets() {
     this.selectedOutletsList = []
+    console.log(this.outletByCafeteriaList);
 
     this.outletByCafeteriaList.forEach((elm: any) => {
       if (elm.isChecked) {
@@ -219,11 +236,50 @@ export class AddVendorCommponent {
     // console.log('selected outlet list',this.selectedOutletsList);
   }
 
+  selectAddress(address: any, event: any) {
+    const isChecked = event.target.checked;
+
+    if (isChecked) {
+      // user checked → select this address
+      this.selectedAddress = address;
+
+      this.selectedAddressList = [{
+        address1: address.address1,
+        address2: address.address2,
+        landmark: address.landmark,
+        location: address.location,
+        geolocation: address.geolocation
+      }];
+
+    } else {
+      // user unchecked → clear selection
+      this.selectedAddress = null;
+      this.selectedAddressList = [];
+    }
+
+    console.log('Selected address list:', this.selectedAddressList);
+  }
+
+  // console.log('selected outlet list',this.selectedOutletsList)
+
+  addSelectedAddress() {
+    this.modalService.dismissAll();
+
+  }
+
   deleteOutlet(index: any) {
     try {
       this.selectedOutletsList.splice(index, 1);
     } catch (error) {
       console.log('deleteOutlet', error);
+    }
+  }
+
+  deleteAddress(index: any) {
+    try {
+      this.selectedAddressList.splice(index, 1);
+    } catch (error) {
+      console.log('deleteAddress', error);
     }
   }
 

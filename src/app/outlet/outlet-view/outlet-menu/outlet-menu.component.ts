@@ -29,6 +29,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   @ViewChild('content') content: any;
   @ViewChild('comboContent') comboContent: any;
   @ViewChild('masterMenu') masterMenu: any;
+  @ViewChild('selectOutletModal') selectOutletModal: any;
   @Output() dataToParent = new EventEmitter<string>();
   categoryList = categoryList;
   modalRef!: NgbModalRef;
@@ -42,6 +43,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   showCard: any = false;
   menuList: any = [];
   // menuIndex: any = 0;
+  selectedOutlet: any = null;
+  outletMenuList: any = []
+
   menuId: any = 0;
   showUpdateBtn: any = false;
   imageReplaced: any = false;
@@ -51,6 +55,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   btnPolicy: any;
   filteredMenuList: any[] = []
   filteredMasterMenuList: any[] = []
+  outletList: any = [];
   tempList: any;
   selectedMasterItem: any = null;
   selectedItems: any[] = [];
@@ -71,6 +76,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.fetchOutletMasterMenus();
+    this.fetchAllOutlets();
     this.init();
     this.createForm();
   }
@@ -92,6 +98,14 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   }
 
+  async fetchAllOutlets() {
+
+    const res = await this.apiMainService.fetchAllOutlets();
+    console.log(res);
+    this.outletList = res;
+
+  }
+
   groupItemsByCategory() {
     const grouped = this.filteredMenuList.reduce((acc, item) => {
       const category = item.category || 'Uncategorized';
@@ -108,6 +122,12 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     }));
 
     console.log(this.groupedMenuList);
+
+  }
+
+  onOutletChange() {
+    console.log('Selected Outlet Object:', this.selectedOutlet.menuList);
+    this.outletMenuList = this.selectedOutlet.menuList;
 
   }
 
@@ -316,7 +336,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     if (this.modalRef) {
       this.modalRef.close();
     }
-    console.log("correct");
 
     this.imageReplaced = true;
     this.uploadStatus = false;
@@ -395,7 +414,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   resetValues() {
     this.form.reset();
     // this.menuIndex = 0;
-        this.menuId = '';
+    this.menuId = '';
 
     this.imageUrl = '';
     this.uploadedImageFile = '';
@@ -502,7 +521,36 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   openMenu() {
-    this.modalRef = this.modalService.open(this.masterMenu, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
+    const modalRef = this.modalService.open(this.masterMenu, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'xl'
+    });
+
+    modalRef.result.then(
+      (result) => {
+      },
+      (reason) => {
+        this.selectedItems = [];
+        console.log('Modal dismissed with reason:', reason);
+      }
+    );
+  }
+
+  openOutlet() {
+
+    const modalRef = this.modalService.open(this.selectOutletModal, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'xl'
+    });
+
+    modalRef.result.then(
+      (result) => {
+      },
+      (reason) => {
+        this.selectedItems = [];
+        console.log('Modal dismissed with reason:', reason);
+      }
+    );
   }
 
   showPopup(item: any, i: any) {
@@ -523,9 +571,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     } else {
       this.selectedItems = this.selectedItems.filter(i => i._id !== item._id);
     }
-
     console.log(this.selectedItems);
-
   }
 
   isSelected(item: any): boolean {
