@@ -44,7 +44,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   menuList: any = [];
   // menuIndex: any = 0;
   selectedOutlet: any = null;
+  selectedMenuItems: any[] = [];
   outletMenuList: any = []
+  transformedMenuItems: any[] = [];
 
   menuId: any = 0;
   showUpdateBtn: any = false;
@@ -333,6 +335,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   async addMasterMenu() {
+
     if (this.modalRef) {
       this.modalRef.close();
     }
@@ -348,6 +351,27 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     catch (err) {
       console.log(err);
 
+    }
+    this.form.patchValue(this.selectedMasterItem);
+  }
+
+  async addMenuItem() {
+
+    if (this.modalRef) {
+      this.modalRef.close();
+    }
+
+    this.imageReplaced = true;
+    this.uploadStatus = false;
+    this.imageUrl = this.selectedMasterItem?.imageUrl;
+    try {
+      const res = await this.apiMainService.addOutletList(this.outletObj._id, { outletList: this.transformedMenuItems })
+      this.transformedMenuItems = [];
+      this.selectedMenuItems = [];
+      this.dataToParent.emit(res);
+    }
+    catch (err) {
+      console.log(err);
     }
     this.form.patchValue(this.selectedMasterItem);
   }
@@ -521,16 +545,17 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   openMenu() {
-    const modalRef = this.modalService.open(this.masterMenu, {
+    this.modalRef = this.modalService.open(this.masterMenu, {
       ariaLabelledBy: 'modal-basic-title',
       size: 'xl'
     });
 
-    modalRef.result.then(
+    this.modalRef.result.then(
       (result) => {
       },
       (reason) => {
         this.selectedItems = [];
+        this.selectedMenuItems = [];
         console.log('Modal dismissed with reason:', reason);
       }
     );
@@ -538,16 +563,18 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   openOutlet() {
 
-    const modalRef = this.modalService.open(this.selectOutletModal, {
+    this.modalRef = this.modalService.open(this.selectOutletModal, {
       ariaLabelledBy: 'modal-basic-title',
       size: 'xl'
     });
 
-    modalRef.result.then(
+    this.modalRef.result.then(
       (result) => {
+        this.transformedMenuItems = []
       },
       (reason) => {
-        this.selectedItems = [];
+        this.transformedMenuItems = [];
+        this.selectedMenuItems = [];
         console.log('Modal dismissed with reason:', reason);
       }
     );
@@ -574,8 +601,31 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     console.log(this.selectedItems);
   }
 
+  onMenuItemToggle(item: any, event: Event) {
+    const checkbox = event.target as HTMLInputElement;
+
+    if (checkbox.checked) {
+      this.selectedMenuItems.push(item);
+    } else {
+      this.selectedMenuItems = this.selectedMenuItems.filter(
+        (i: any) => i._id !== item._id
+      );
+    }
+
+    this.transformedMenuItems = this.selectedMenuItems.map(item => {
+      return {
+        ...item,
+        mealTimingInfo: item.mealTimingInfo.map((info: any) => info.mealType)
+      };
+    });
+  }
+
   isSelected(item: any): boolean {
     return this.selectedItems.find(i => i._id === item._id) !== undefined;
+  }
+
+  isMenuSelected(item: any): boolean {
+    return this.transformedMenuItems.find(i => i._id === item._id) !== undefined;
   }
 
   async deleteFoodItem() {
