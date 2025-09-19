@@ -1,17 +1,27 @@
-<!-- Back Button -->
 <div class="left_arrow" (click)="goBack()" style="cursor: pointer">
   <i class="bi bi-arrow-left"></i> Back
 </div>
 
-<!-- Main Tabs -->
 <div class="row bg-light rounded py-4 my-3">
   <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of vendorViewList"
     [ngClass]="{ tileSelected: selectedTab === view.path }" (click)="gotToTab(view.path)">
     <div class="tileLabel header4 countTile">{{ view.name }}</div>
   </div>
 </div>
+<div class="row" *ngIf="getSubTab().length">
+  <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let sub of getSubTab()"
+    [ngClass]="{ tileSelected: selectedSubTab === sub.path || selectedSubTab === sub.name }"
+    (click)="goToSubTab(sub.path || sub.name)">
+    <div class="tileLabel header4 countTile">{{ sub.name }}</div>
+  </div>
+</div>
+
 
 <ng-container [ngSwitch]="selectedTab">
-  <!-- <app-add-vendor *ngSwitchCase="'vendorDetails'" [vendorObj]="vendor"></app-add-vendor> -->
   <app-vendor-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-details>
+</ng-container>
+
+<ng-container [ngSwitch]="selectedSubTab">
+  <app-wallet-details *ngSwitchCase="'walletDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-wallet-details>
+  <app-ledger-details *ngSwitchCase="'ledgerDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-ledger-details>
 </ng-container>
