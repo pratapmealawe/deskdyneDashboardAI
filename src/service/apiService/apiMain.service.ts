@@ -182,6 +182,16 @@ export class ApiMainService {
       method: urlObj.method,
     });
   }
+
+  getVendorWallet(vendorId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getVendorWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${vendorId}`, method: urlObj.method, });
+  }
+
+  getVendorLedgerByFirmAndTypeAndDate(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getVendorLedgerByFirmAndTypeAndDate;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
   getOutletByCafeteria(
     cafeteriaName: any,
     cafeteriaCity: any,
@@ -540,6 +550,11 @@ export class ApiMainService {
       { url: urlObj.url, method: 'POST' },
       searchObj
     );
+  }
+
+  vendorTransactionHistory(vendorFirmId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.vendorTransactionHistory;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${vendorFirmId}`, method: urlObj.method, });
   }
   searchOutletByCafeId(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.searchOutletByCafeId;
