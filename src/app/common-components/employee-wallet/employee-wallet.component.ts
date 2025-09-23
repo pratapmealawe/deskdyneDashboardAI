@@ -41,7 +41,8 @@ export class EmployeeWalletComponent {
   fileName: any
   previousHistory: any;
   currentUser: any;
-
+  monthStart!: string;
+  monthEnd!: string;
   constructor(private apiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder, private localStorageService: LocalStorageService) {
   }
 
@@ -49,6 +50,11 @@ export class EmployeeWalletComponent {
     console.log(this.orgObj);
     this.currentUser = this.localStorageService.getCacheData('ADMIN_PROFILE')
     this.getEmployeeListByOrgId();
+
+    const today = new Date();
+    const currentMonth = this.formatMonth(today);
+    const nextMonthDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+    const nextMonth = this.formatMonth(nextMonthDate);
     this.form = this.fb.group({
       organization_name: this.orgObj.organization_name,
       organization_id: this.orgObj._id,
@@ -64,9 +70,13 @@ export class EmployeeWalletComponent {
 
     this.cashbackForm = this.fb.group({
       cashbackPoints: ['', Validators.required],
-      startDate: ['', Validators.required],
-      endDate: ['', Validators.required],
-      remark: ['', Validators.required]
+      startDate: [''],
+      endDate: [''],
+      remark: ['', Validators.required],
+      dateType: ['daily', Validators.required],
+      monthDate: [''],
+      startMonth: [currentMonth],
+      endMonth: [nextMonth],
     })
 
     this.employeeObj = {
@@ -81,12 +91,56 @@ export class EmployeeWalletComponent {
     this.multipleEmployeeform = this.fb.group({
       employee: this.fb.array([this.createEmployeeForm()])
     })
+
+    this.cashbackForm.get('dateType')?.valueChanges.subscribe((value: any) => {
+      this.updateValidators(value);
+    });
+
+    this.updateValidators(this.cashbackForm.get('dateType')?.value);
+  }
+
+  updateValidators(dateType: string) {
+    console.log(dateType);
+
+    const startDate = this.cashbackForm.get('startDate');
+    const endDate = this.cashbackForm.get('endDate');
+    const monthDate = this.cashbackForm.get('monthDate');
+    const startMonth = this.cashbackForm.get('startMonth');
+    const endMonth = this.cashbackForm.get('endMonth');
+
+    if (dateType === 'daily') {
+      startDate?.setValidators([Validators.required]);
+      endDate?.setValidators([Validators.required]);
+
+      monthDate?.clearValidators();
+      startMonth?.clearValidators();
+      endMonth?.clearValidators();
+    } else if (dateType === 'monthly') {
+      monthDate?.setValidators([Validators.required]);
+      startMonth?.setValidators([Validators.required]);
+      endMonth?.setValidators([Validators.required]);
+
+      startDate?.clearValidators();
+      endDate?.clearValidators();
+    }
+
+    startDate?.updateValueAndValidity();
+    endDate?.updateValueAndValidity();
+    monthDate?.updateValueAndValidity();
+    startMonth?.updateValueAndValidity();
+    endMonth?.updateValueAndValidity();
   }
 
   createEmployeeForm() {
     return this.fb.group({
       name: '',
     });
+  }
+
+  formatMonth(date: Date): string {
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    return `${year}-${month}`;
   }
   addMoreEmployee() {
     this.addMultipleEmploeeList.push({ ...this.employeeObj });

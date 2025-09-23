@@ -1,0 +1,34 @@
+<div class="container mt-3">
+
+    <div class="card text-center mb-4 shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title">Wallet Balance</h5>
+            <h2 class="fw-bold text-success">{{ walletBalance | currency:'INR' }}</h2>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Transaction History</h5>
+
+            <div *ngFor="let tx of transactionHistoryList"
+                class="p-3 mb-2 border rounded bg-light d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="fw-bold">{{ tx.transactionType }}</div>
+                    <small class="text-muted">{{ tx.created_at | date:'short' }}</small>
+                    <div class="text-muted small">{{ tx.remark }}</div>
+                </div>
+                <div [ngClass]="{'text-success': tx.transactionType==='Credit', 
+                   'text-danger': tx.transactionType==='Debit'}" class="fw-bold">
+                    {{ tx.transactionType==='Credit' ? '+' : '-' }}
+                    {{ tx.transaction_amount | currency:'INR' }}
+                </div>
+            </div>
+
+            <div *ngIf="transactionHistoryList.length===0" class="text-muted text-center mt-3">
+                No transactions yet.
+            </div>
+        </div>
+    </div>
+
+</div>

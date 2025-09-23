@@ -188,30 +188,78 @@
                     <input type="number" class="form-control" placeholder="Cashback points"
                         formControlName="cashbackPoints" min="0">
                     <div class="error-text" *ngIf="cashbackForm.controls.cashbackPoints.errors?.required && showError">
-                        *Cashback points is required</div>
+                        *Cashback points is required
+                    </div>
                     <div class="error-text" *ngIf="cashbackForm.controls.cashbackPoints.errors?.min && showError">
-                        *Invalid Cahsback points</div>
+                        *Invalid Cashback points
+                    </div>
                 </div>
-                <div class="col-12 col-md-6 col-lg-6 mt-2">
+
+                <div class="col-12 col-md-6 col-lg-6 mt-2" style="display: flex;align-items: end;">
+                    <label>
+                        <input type="radio" value="daily" formControlName="dateType"> Daily
+                    </label>
+                    <label class="ml-3">
+                        <input type="radio" value="monthly" formControlName="dateType"> Monthly
+                    </label>
+                </div>
+            </div>
+            <!-- Date selection -->
+            <div class="row mt-1" *ngIf="cashbackForm.get('dateType')?.value === 'daily'">
+                <div class="col-12 col-md-6 mt-2">
                     <div class="labelText">From Date:</div>
                     <input type="date" class="form-control" formControlName="startDate">
                     <div class="error-text" *ngIf="cashbackForm.controls.startDate.errors?.required && showError">
-                        *startDate is required</div>
+                        *Start Date is required
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 mt-2">
+                    <div class="labelText">To Date:</div>
+                    <input type="date" class="form-control" formControlName="endDate">
+                    <div class="error-text" *ngIf="cashbackForm.controls.endDate.errors?.required && showError">
+                        *End Date is required
+                    </div>
                 </div>
             </div>
-            <div class="col-12 col-md-6 col-lg-6 mt-2 p-0">
-                <div class="labelText">To Date:</div>
-                <input type="date" class="form-control" formControlName="endDate">
-                <div class="error-text" *ngIf="cashbackForm.controls.endDate.errors?.required && showError">
-                    *endDate is required</div>
+
+            <div class="row mt-1" *ngIf="cashbackForm.get('dateType')?.value === 'monthly'">
+
+                <div class="col-12 col-md-6 mt-2">
+                    <div class="labelText">Start Month:</div>
+                    <input type="month" class="form-control" formControlName="startMonth">
+                    <div class="error-text" *ngIf="cashbackForm.controls.startMonth.errors?.required && showError">
+                        *Start Month is required
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 mt-2">
+                    <div class="labelText">End Month:</div>
+                    <input type="month" class="form-control" formControlName="endMonth"
+                        [min]="cashbackForm.get('startMonth')?.value">
+                    <div class="error-text" *ngIf="cashbackForm.controls.endMonth.errors?.required && showError">
+                        *End Month is required
+                    </div>
+                </div>
+                <div class="col-12 col-md-6 mt-2">
+                    <div class="labelText">Select Date:</div>
+                    <input type="date" class="form-control" formControlName="monthDate" [min]="monthStart"
+                        [max]="monthEnd">
+                    <div class="error-text" *ngIf="cashbackForm.controls.monthDate.errors?.required && showError">
+                        *Date is required
+                    </div>
+                </div>
             </div>
-            <div class="col-12 col-md-6 col-lg-12 mt-2 p-0">
+
+            <!-- Remark -->
+            <div class="col-12 col-md-6 col-lg-12 mt-3 p-0">
                 <div class="labelText">Remark:</div>
                 <input type="text" class="form-control" formControlName="remark">
                 <div class="error-text" *ngIf="cashbackForm.controls.remark.errors?.required && showError">
-                    *Remark is required</div>
+                    *Remark is required
+                </div>
             </div>
         </div>
+
     </div>
     <div class="modal-footer">
         <div class="inline bgpadding1">
