@@ -65,6 +65,18 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getAllVendors`,
         method: 'GET',
       },
+      getVendorWallet: {
+        url: `${this.baseUrl}/api/getVendorWallet`,
+        method: 'GET',
+      },
+      vendorTransactionHistory: {
+        url: `${this.baseUrl}/api/vendorTransactionHistory`,
+        method: 'GET',
+      },
+      getVendorLedgerByFirmAndTypeAndDate: {
+        url: `${this.baseUrl}/api/getVendorLedgerByFirmAndTypeAndDate`,
+        method: 'POST',
+      },
       getOutletByCafeteria: {
         url: `${this.baseUrl}/api/getOutletByCafeteria`,
         method: 'GET',
