@@ -107,9 +107,11 @@ export class AddOrganizationComponent implements OnInit {
       showCompanyWallet: [false],
       showchecklist: [false],
       showComplienceTracker: [false],
+      showConsumptionOrder: [false],
       cafeteria_name: ['', Validators.required],
       cafeteria_id: [id, Validators.required,],
       cafeteria_city: ['', Validators.required],
+      cafeteria_gstin: [''],
       cafeteria_location: this.fb.group({
         lat: ['', Validators.required],
         lng: ['', Validators.required],
@@ -224,6 +226,19 @@ export class AddOrganizationComponent implements OnInit {
     return data.find((item: any) => item.poc_details.poc_id === pocId) !== undefined;
   }
 
+  getOrgGstin(event: any, i: any) {
+    const cafeteriaArray = this.form.get('cafeteriaList') as FormArray;
+    const cafeteriaGroup = cafeteriaArray.at(i) as FormGroup;
+
+    const gstinValue = event.target.checked
+      ? this.form.get('gstin')?.value
+      : '';
+
+    cafeteriaGroup.patchValue({ cafeteria_gstin: gstinValue });
+    console.log(cafeteriaGroup);
+
+  }
+
   patchFormValue(org: any) {
     console.log("org", org);
     this.orgInfo = org;
@@ -271,10 +286,12 @@ export class AddOrganizationComponent implements OnInit {
         showSiteExecutive: cafe.showSiteExecutive,
         showCompanyWallet: cafe.showCompanyWallet,
         showchecklist: cafe.showchecklist,
+        showConsumptionOrder: cafe.showConsumptionOrder,
         showComplienceTracker: cafe.showComplienceTracker,
         cafeteria_id: cafe.cafeteria_id,
         cafeteria_name: cafe.cafeteria_name,
         cafeteria_city: cafe.cafeteria_city,
+        cafeteria_gstin: cafe.cafeteria_gstin,
         address1: cafe.address1,
         address2: cafe.address2 ? cafe.address2 : 1,
         appMenu_type: cafe.appMenu_type,
