@@ -49,6 +49,7 @@ export class OrganizationViewComponent implements OnInit {
     },
     { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
     { name: 'B2B Weekly Menu', path: 'b2bWeeklyMenu' },
+    { name: 'Consumption Order', path: 'consumptionOrder' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Outlet Employee', path: 'outletEmployee' },
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
@@ -62,6 +63,8 @@ export class OrganizationViewComponent implements OnInit {
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.orgViewList = this.orgViewList.filter(item => this.btnPolicy[item.path] !== false);
+    console.log(this.orgViewList);
+
     this.initSubTabFor(this.selectedTab);
   }
 

@@ -1,0 +1,160 @@
+<div class="container-fluid">
+    <div class="labelText">Select Cafeteria</div>
+    <div *ngFor="let cafeteria of orgObj.cafeteriaList">
+        <div>
+            <input type="radio" [id]="cafeteria._id" name="CafeteriaName" [value]="cafeteria"
+                [(ngModel)]="selectedCafeteria" (change)="onCafeteriaChange($event)">
+            <label class="ps-1" [for]="cafeteria._id">{{cafeteria.cafeteria_name}}</label>
+        </div>
+    </div>
+    <div class="btn btn-primary btn-sm" (click)="addConsumptionOrder()" *ngIf="!showMultipleConsumptionForm">Add
+        Consumption Order
+    </div>
+    <ng-container *ngIf="showMultipleConsumptionForm">
+
+        <div *ngFor="let consumptionItem of addMultipleConsumptionList; index as i">
+            <div class=" addMultipleConsumption" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">+</div>
+            <ng-container *ngIf="i>0 && i == addMultipleConsumptionList.length-1">
+                <div class=" addMultipleConsumption" (click)="addMoreEmployee()">+</div>
+            </ng-container>
+            <div class=" removeBtn addMultipleConsumption" (click)="removeEmployeeForm(i)" *ngIf="showRemoveForm">
+                -
+            </div>
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-3 mt-2">
+                    <div class="labelText">Item name</div>
+                    <input type="text" class="form-control" placeholder="itemName"
+                        [(ngModel)]="consumptionItem.itemName">
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 mt-2">
+                    <div class="labelText">Price</div>
+                    <input type="number" class="form-control" placeholder="price"
+                        [(ngModel)]="consumptionItem.mealPrice">
+                </div>
+
+                <!-- <div class="col-12 col-md-6 col-lg-3 mt-2">
+                    <div class="labelText">Delivery MOQ</div>
+                    <input type="number" class="form-control" placeholder="deliveryMOQ"
+                        [(ngModel)]="consumptionItem.deliveryMOQ">
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 mt-2">
+                    <div class="labelText">Delivery Charge</div>
+                    <input type="email" class="form-control" placeholder="deliveryCharge"
+                        [(ngModel)]="consumptionItem.deliveryCharge">
+                </div> -->
+                <!-- <div class="col-sm-12 mt-2">
+                    <label class="labelText form-label" for="description">Select MealType</label>
+                    <mat-chip-listbox formControlName="mealTimingInfo" aria-label="Type selection" multiple>
+                        <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
+                            <div class="chip-option">
+                                <div class="title">{{ chip?.mealType }}</div>
+                            </div>
+                        </mat-chip-option>
+                    </mat-chip-listbox>
+                </div> -->
+            </div>
+        </div>
+        <div class="inline bgpadding1" *ngIf="showMultipleConsumptionForm">
+            <button type="button" class="btn btn-primary btn-sm">Submit</button>
+            <button type="button" class="btn btn-danger btn-sm cancel ms-2"
+                (click)="showMultipleConsumptionForm=false; showAddMoreForm=true; showRemoveForm=false">Cancel</button>
+            <!-- <div class="error-text" *ngIf="disableSubmit">
+                *Please fill all above fields</div> -->
+        </div>
+    </ng-container>
+    <!-- <ng-container *ngIf="!showMultipleEmployeeForm">
+        <div *ngFor="let employee of employeeList; index as i">
+            <div class="cardDesign" *ngIf="employee.cafeteria_id==selectedCafeteriaId">
+                <div>
+                    <i class="bi bi-trash right" (click)="deleteEmployee(employee)"></i>
+                    <i class="bi bi-pencil-square right margin-right" (click)="editEmployee(employee)"></i>
+                </div>
+                <div class="row">
+                    <div class="col-6 col-md-5 col-lg-2">
+                        <div class="labelText">Employee Id</div>
+                        <div class="labelData">{{employee.employeeId}}</div>
+                    </div>
+                    <div class="col-6 col-md-5 col-lg-3">
+                        <div class="labelText">Employee Name</div>
+                        <div class="labelData">{{employee.employeeName}}</div>
+                    </div>
+                    <div class="col-6 col-md-5 col-lg-2">
+                        <div class="labelText"> Employee Phone No</div>
+                        <div class="labelData">{{employee.employeePhoneNo}}</div>
+                    </div>
+                    <div class="col-6 col-md-5 col-lg-3">
+                        <div class="labelText">Employee Email</div>
+                        <div class="labelData">{{employee.employeeEmail}}</div>
+                    </div>
+                    <div class="col-6 col-md-5 col-lg-2">
+                        <div class="labelText">Cafeteria</div>
+                        <div class="labelData">{{employee.cafeteria_name}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-container> -->
+</div>
+<!-- <ng-template #content let-modal>
+    <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Update Employee</h4>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div [formGroup]="form">
+            <div class="row">
+                <div class="col-12 col-md-6 col-lg-12">
+                    <div class="labelText">Employee Name</div>
+                    <input type="text" class="form-control" placeholder="Employee Name" formControlName="employeeName">
+                    <div class="error-text" *ngIf="form.controls.employeeName.errors?.required && showError">
+                        *Employee name is required</div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-12">
+                    <div class="labelText">Employee ID</div>
+                    <input type="text" class="form-control" placeholder="Employee ID" formControlName="employeeId">
+                    <div class="error-text" *ngIf="form.controls.employeeId.errors?.required && showError">
+                        *Employee ID is required</div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-12">
+                    <div class="labelText">Employee Phone No</div>
+                    <input type="number" class="form-control" placeholder="Employee Phone No"
+                        formControlName="employeePhoneNo">
+                    <div class="error-text" *ngIf="form.controls.employeePhoneNo.errors?.required && showError">
+                        *Employee Phone No is required</div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-12 mt-2">
+                    <div class="labelText">Employee Email</div>
+                    <input type="email" class="form-control" placeholder="Employee Email"
+                        formControlName="employeeEmail">
+                    <div class="error-text" *ngIf="form.controls.employeeEmail.errors?.required && showError">
+                        *Employee Email is required</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="inline bgpadding1">
+            <button type="button" class="btn btn-primary btn-sm"
+                (click)="updateEmployee(empId,form.value); modal.close('add')">Update</button>
+        </div>
+    </div>
+</ng-template>
+<ng-template #delete let-modal>
+    <div class="modal-header">
+        <div class="modal-title delete-modal-title" id="modal-basic-title">Delete Vendor</div>
+        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body">
+        <div class="selectParent">
+            <p>Do You Realy Want To Delete Employee : <span class="deletedEmployee"> {{deleteEmployeeName}}</span></p>
+        </div>
+        <button class="btn btn-danger confirmDeleteStyle" (click)="deleteConfirmed(deletedEmployee)">Yes</button>
+        <button class="btn btn-primary confirmDeleteStyle" (click)="modal.dismiss('cancel')">NO</button>
+    </div>
+
+</ng-template> -->
