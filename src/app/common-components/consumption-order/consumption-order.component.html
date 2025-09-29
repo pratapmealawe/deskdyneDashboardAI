@@ -13,13 +13,7 @@
     <ng-container *ngIf="showMultipleConsumptionForm">
 
         <div *ngFor="let consumptionItem of addMultipleConsumptionList; index as i">
-            <div class=" addMultipleConsumption" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">+</div>
-            <ng-container *ngIf="i>0 && i == addMultipleConsumptionList.length-1">
-                <div class=" addMultipleConsumption" (click)="addMoreEmployee()">+</div>
-            </ng-container>
-            <div class=" removeBtn addMultipleConsumption" (click)="removeEmployeeForm(i)" *ngIf="showRemoveForm">
-                -
-            </div>
+
             <div class="row">
                 <div class="col-12 col-md-6 col-lg-3 mt-2">
                     <div class="labelText">Item name</div>
@@ -31,6 +25,19 @@
                     <input type="number" class="form-control" placeholder="price"
                         [(ngModel)]="consumptionItem.mealPrice">
                 </div>
+                <div class="col-12 col-md-6 col-lg-3 mt-2">
+                    <div class="right addMultipleConsumption" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">+
+                    </div>
+                    <ng-container *ngIf="i>0 && i == addMultipleConsumptionList.length-1">
+                        <div class="right addMultipleConsumption" (click)="addMoreEmployee()">+</div>
+                    </ng-container>
+                    <div class="right removeBtn addMultipleConsumption" (click)="removeEmployeeForm(i)"
+                        *ngIf="showRemoveForm">
+                        -
+                    </div>
+
+                </div>
+
 
                 <!-- <div class="col-12 col-md-6 col-lg-3 mt-2">
                     <div class="labelText">Delivery MOQ</div>
@@ -42,58 +49,113 @@
                     <input type="email" class="form-control" placeholder="deliveryCharge"
                         [(ngModel)]="consumptionItem.deliveryCharge">
                 </div> -->
-                <!-- <div class="col-sm-12 mt-2">
+                <div class="col-sm-12 mt-2">
                     <label class="labelText form-label" for="description">Select MealType</label>
-                    <mat-chip-listbox formControlName="mealTimingInfo" aria-label="Type selection" multiple>
+                    <mat-chip-listbox [(ngModel)]="consumptionItem.selctedmealtype" aria-label="Type selection"
+                        multiple>
                         <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
                             <div class="chip-option">
                                 <div class="title">{{ chip?.mealType }}</div>
                             </div>
                         </mat-chip-option>
                     </mat-chip-listbox>
-                </div> -->
+                </div>
             </div>
         </div>
         <div class="inline bgpadding1" *ngIf="showMultipleConsumptionForm">
-            <button type="button" class="btn btn-primary btn-sm">Submit</button>
+            <button type="button" class="btn btn-primary btn-sm" (click)="submitMultipleConsumption()">Submit</button>
             <button type="button" class="btn btn-danger btn-sm cancel ms-2"
                 (click)="showMultipleConsumptionForm=false; showAddMoreForm=true; showRemoveForm=false">Cancel</button>
-            <!-- <div class="error-text" *ngIf="disableSubmit">
-                *Please fill all above fields</div> -->
+            <div class="error-text" *ngIf="disableSubmit">
+                *Please fill all above fields</div>
         </div>
     </ng-container>
-    <!-- <ng-container *ngIf="!showMultipleEmployeeForm">
-        <div *ngFor="let employee of employeeList; index as i">
-            <div class="cardDesign" *ngIf="employee.cafeteria_id==selectedCafeteriaId">
-                <div>
-                    <i class="bi bi-trash right" (click)="deleteEmployee(employee)"></i>
-                    <i class="bi bi-pencil-square right margin-right" (click)="editEmployee(employee)"></i>
+    <ng-container *ngIf="!showMultipleConsumptionForm">
+        <div *ngFor="let consumptionItem of consumptionList; index as i">
+            <ng-container *ngFor="let mealTypeItem of consumptionItem.mealTypeList">
+
+                <div class="cardDesign" *ngIf="consumptionItem.cafeteria_id==selectedCafeteriaId">
+                    <div>
+                        <i class="bi bi-trash right"></i>
+                        <i class="bi bi-pencil-square right margin-right" (click)="editConsumption(mealTypeItem)"></i>
+                    </div>
+                    <div class="row">
+                        <div class="col-6 col-md-5 col-lg-2">
+                            <div class="labelText">Item Name</div>
+                            <div class="labelData">{{mealTypeItem.itemName}}</div>
+                        </div>
+                        <div class="col-6 col-md-5 col-lg-3">
+                            <div class="labelText">Price</div>
+                            <div class="labelData">{{mealTypeItem.mealPrice}}</div>
+                        </div>
+                        <div class="col-6 col-md-5 col-lg-2">
+                            <div class="labelText"> Type</div>
+                            <div class="labelData">{{mealTypeItem.selctedmealtype}}</div>
+                        </div>
+                        <div class="col-6 col-md-5 col-lg-3">
+                            <!-- <div class="labelText">Employee Email</div>
+                            <div class="labelData">{{mealTypeItem.employeeEmail}}</div> -->
+                        </div>
+                        <div class="col-6 col-md-5 col-lg-2">
+                            <!-- <div class="labelText">Cafeteria</div>
+                            <div class="labelData">{{mealTypeItem.cafeteria_name}}</div> -->
+                        </div>
+                    </div>
                 </div>
+            </ng-container>
+        </div>
+    </ng-container>
+
+    <ng-template #content let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Update Employee</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div [formGroup]="MealForm">
                 <div class="row">
-                    <div class="col-6 col-md-5 col-lg-2">
-                        <div class="labelText">Employee Id</div>
-                        <div class="labelData">{{employee.employeeId}}</div>
+                    <div class="col-12 col-md-6 col-lg-12">
+                        <div class="labelText">Item Name</div>
+                        <input type="text" class="form-control" placeholder="Name" formControlName="itemName">
+                        <!-- <div class="error-text" *ngIf="form.controls.employeeName.errors?.required && showError">
+                        *Employee name is required</div> -->
                     </div>
-                    <div class="col-6 col-md-5 col-lg-3">
-                        <div class="labelText">Employee Name</div>
-                        <div class="labelData">{{employee.employeeName}}</div>
+                    <div class="col-12 col-md-6 col-lg-12">
+                        <div class="labelText">Price</div>
+                        <input type="number" class="form-control" placeholder="Price" formControlName="mealPrice">
+                        <!-- <div class="error-text" *ngIf="form.controls.employeeId.errors?.required && showError">
+                        *Employee ID is required</div> -->
                     </div>
-                    <div class="col-6 col-md-5 col-lg-2">
-                        <div class="labelText"> Employee Phone No</div>
-                        <div class="labelData">{{employee.employeePhoneNo}}</div>
+                    <div class="col-12 col-md-6 col-lg-12">
+                        <label class="labelText form-label" for="description">Select MealType</label>
+                        <mat-chip-listbox aria-label="Type selection" multiple formControlName="selctedmealtype">
+                            <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
+                                <div class="chip-option">
+                                    <div class="title">{{ chip?.mealType }}</div>
+                                </div>
+                            </mat-chip-option>
+                        </mat-chip-listbox>
+                        <!-- <div class="error-text" *ngIf="form.controls.employeePhoneNo.errors?.required && showError">
+                        *Employee Phone No is required</div> -->
                     </div>
-                    <div class="col-6 col-md-5 col-lg-3">
-                        <div class="labelText">Employee Email</div>
-                        <div class="labelData">{{employee.employeeEmail}}</div>
-                    </div>
-                    <div class="col-6 col-md-5 col-lg-2">
-                        <div class="labelText">Cafeteria</div>
-                        <div class="labelData">{{employee.cafeteria_name}}</div>
-                    </div>
+                    <!-- <div class="col-12 col-md-6 col-lg-12 mt-2">
+                    <div class="labelText">Employee Email</div>
+                    <input type="email" class="form-control" placeholder="Employee Email"
+                        formControlName="employeeEmail">
+                    <div class="error-text" *ngIf="form.controls.employeeEmail.errors?.required && showError">
+                        *Employee Email is required</div>
+                </div> -->
                 </div>
             </div>
         </div>
-    </ng-container> -->
+        <div class="modal-footer">
+            <div class="inline bgpadding1">
+                <button type="button" class="btn btn-primary btn-sm" (click)="updateMealTypeList()">Update</button>
+            </div>
+        </div>
+    </ng-template>
 </div>
 <!-- <ng-template #content let-modal>
     <div class="modal-header">

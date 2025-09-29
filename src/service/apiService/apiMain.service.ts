@@ -633,6 +633,16 @@ export class ApiMainService {
     });
   }
 
+
+  getConsumptionOrderByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getConsumptionOrderByOrgId;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}`,
+      method: urlObj.method,
+    });
+  }
+
+
   getFeedbackListByOrgId(orgId: any, page: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getFeedbackListByOrgId;
     return this.apiHttpService.REQUEST({
@@ -1008,6 +1018,13 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(
       { url: urlObj.url, method: urlObj.method },
       employeeList
+    );
+  }
+  addConsumptionOrderList(consumptionOrder: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addConsumptionOrderList;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      consumptionOrder
     );
   }
   deleteEmployee(id: any) {

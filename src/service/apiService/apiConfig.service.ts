@@ -240,6 +240,14 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getEmployeeListByOrgId`,
         method: 'GET',
       },
+      getConsumptionOrderByOrgId: {
+        url: `${this.baseUrl}/api/getConsumptionOrderByOrgId`,
+        method: 'GET',
+      },
+      addConsumptionOrderList: {
+        url: `${this.baseUrl}/api/addConsumptionOrderList`,
+        method: 'POST',
+      },
       getDayRangeBasedAuditLogs: {
         url: `${this.baseUrl}/utility/getDayRangeBasedAuditLogs`,
         method: 'GET',

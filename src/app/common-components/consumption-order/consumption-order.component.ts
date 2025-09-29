@@ -1,4 +1,7 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-consumption-order',
@@ -10,11 +13,16 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   selectedCafeteria: any;
   selectedCafeteriaName: any;
   selectedCafeteriaId: any;
+  selectedOriginalCafeteriaId: any;
   showMultipleConsumptionForm = false;
   addMultipleConsumptionList: any = [];
+  disableSubmit: any = false;
+  consumptionList: any = [];
   consumptionObj: any;
   showRemoveForm = false;
   showAddMoreForm = true;
+  @ViewChild("content") content: any;
+
   mealTimeList = [
     {
       "mealType": "Fullday",
@@ -43,11 +51,21 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     }
   ];
 
+  MealForm!: FormGroup;
+
+
+  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal, private fb: FormBuilder) { }
+
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.orgObj);
   }
 
   ngOnInit(): void {
+    this.MealForm = this.fb.group({
+      itemName: [''],
+      mealPrice: [''],
+      selctedmealtype: ['']
+    })
 
     this.consumptionObj = {
       organization_name: this.orgObj.organization_name,
@@ -60,13 +78,20 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
       this.selectedCafeteria = this.orgObj.cafeteriaList[0];
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+      this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
     }
+    this.fetchOrgMeals()
   }
 
   onCafeteriaChange(event: any) {
     console.log('radio change event', event.target.checked);
     this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
     this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+    this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
+  }
+
+  updateMealTypeList() {
+    console.log(this.MealForm.value);
   }
 
   addMoreEmployee() {
@@ -84,11 +109,32 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
 
   }
 
+  editConsumption(mealInfo: any) {
+    this.modalService.open(this.content);
+    console.log(mealInfo);
+    this.MealForm.patchValue(
+      {
+        itemName: mealInfo.itemName,
+        mealPrice: mealInfo.mealPrice,
+        selctedmealtype: mealInfo.selctedmealtype
+      }
+    );
+    // this.empId = employee._id;
+
+    // this.form.patchValue({
+    //   employeeName: employee.employeeName,
+    //   employeeId: employee.employeeId,
+    //   employeePhoneNo: employee.employeePhoneNo,
+    //   employeeEmail: employee.employeeEmail
+    // })
+  }
+
   addConsumptionOrder() {
     this.addMultipleConsumptionList.length = 0;
     if (this.selectedCafeteria) {
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+      this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
 
     } else {
       alert('select cafeteria');
@@ -97,6 +143,70 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     this.addMultipleConsumptionList.push({ ...this.consumptionObj });
     this.showMultipleConsumptionForm = true;
   }
+
+  async fetchOrgMeals() {
+    console.log("in orgggggg")
+    try {
+      const result = await this.ddApiMainService.getConsumptionOrderByOrgId(this.orgObj._id)
+      console.log(result);
+      this.consumptionList = result;
+      console.log(this.consumptionList);
+
+    }
+    catch (error) {
+      console.log(error)
+    }
+  }
+
+  async submitMultipleConsumption() {
+    console.log('employeee list to save', this.addMultipleConsumptionList);
+
+    // Validate input
+    const hasInvalid = this.addMultipleConsumptionList.some(
+      (consumption: any) =>
+        !consumption.itemName || !consumption.mealPrice || !consumption.selctedmealtype
+    );
+    if (hasInvalid) {
+      this.disableSubmit = true;
+      return;
+    }
+    this.disableSubmit = false;
+
+    try {
+      // Attach cafeteria info once
+      const transformedConsumptionList =
+      {
+        organization_name: this.orgObj.organization_name,
+        organization_id: this.orgObj._id,
+        cafeteria_name: this.selectedCafeteriaName,
+        cafeteria_id: this.selectedCafeteriaId,
+        cafeteria_orignal_id: this.selectedOriginalCafeteriaId,
+        mealTypeList: this.addMultipleConsumptionList.map((item: any) => ({
+          itemName: item.itemName,
+          mealPrice: item.mealPrice,
+          selctedmealtype: item.selctedmealtype
+        }))
+      }
+
+      console.log('Final payload', transformedConsumptionList);
+
+      const res = await this.ddApiMainService.addConsumptionOrderList(transformedConsumptionList);
+      if (res) {
+        this.addMultipleConsumptionList = [];
+        this.fetchOrgMeals();
+      }
+    } catch (error: any) {
+      const errorArr = error?.error?.msg?.skippedEmployees;
+      if (Array.isArray(errorArr) && errorArr.length > 0) {
+        errorArr.forEach(emp => {
+          alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
+        });
+      }
+    }
+
+    this.showMultipleConsumptionForm = false;
+  }
+
 
   //   async onFileChange(evt: any) {
   //     this.isuploadEmployeeData = true;
