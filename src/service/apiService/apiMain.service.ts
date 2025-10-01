@@ -642,6 +642,14 @@ export class ApiMainService {
     });
   }
 
+  updateConsumptionMenu(orgId: any, cafeId: any, consumptionMenu: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateConsumptionMenu;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}` + `/${cafeId}`,
+      method: urlObj.method,
+    }, consumptionMenu);
+  }
+
 
   getFeedbackListByOrgId(orgId: any, page: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getFeedbackListByOrgId;

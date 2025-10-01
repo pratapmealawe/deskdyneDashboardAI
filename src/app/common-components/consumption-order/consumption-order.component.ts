@@ -13,12 +13,14 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   selectedCafeteria: any;
   selectedCafeteriaName: any;
   selectedCafeteriaId: any;
+  consumptionMenuId: any;
   selectedOriginalCafeteriaId: any;
   showMultipleConsumptionForm = false;
   addMultipleConsumptionList: any = [];
   disableSubmit: any = false;
   consumptionList: any = [];
   consumptionObj: any;
+  cafeOriginalId: any;
   showRemoveForm = false;
   showAddMoreForm = true;
   @ViewChild("content") content: any;
@@ -52,6 +54,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   ];
 
   MealForm!: FormGroup;
+  modalRef: any;
 
 
   constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal, private fb: FormBuilder) { }
@@ -90,8 +93,19 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
   }
 
-  updateMealTypeList() {
+  async updateMealTypeList() {
     console.log(this.MealForm.value);
+    let obj = {
+      ...this.MealForm.value,
+      _id: this.consumptionMenuId
+    }
+
+    this.modalRef.dismiss();
+
+    const res = await this.ddApiMainService.updateConsumptionMenu(this.orgObj._id, this.cafeOriginalId, obj);
+    console.log(res);
+    this.fetchOrgMeals();
+
   }
 
   addMoreEmployee() {
@@ -109,9 +123,14 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
 
   }
 
-  editConsumption(mealInfo: any) {
-    this.modalService.open(this.content);
+  editConsumption(mealInfo: any, selectedCafeteriaId: any) {
+    this.modalRef = this.modalService.open(this.content);
     console.log(mealInfo);
+    this.consumptionMenuId = mealInfo._id;
+    this.cafeOriginalId = selectedCafeteriaId;
+    console.log(this.orgObj._id);
+
+
     this.MealForm.patchValue(
       {
         itemName: mealInfo.itemName,

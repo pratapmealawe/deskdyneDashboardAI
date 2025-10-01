@@ -244,6 +244,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getConsumptionOrderByOrgId`,
         method: 'GET',
       },
+      updateConsumptionMenu: {
+        url: `${this.baseUrl}/api/updateConsumptionMenuList`,
+        method: 'POST',
+      },
       addConsumptionOrderList: {
         url: `${this.baseUrl}/api/addConsumptionOrderList`,
         method: 'POST',
