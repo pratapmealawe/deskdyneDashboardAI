@@ -67,7 +67,8 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     this.MealForm = this.fb.group({
       itemName: [''],
       mealPrice: [''],
-      selctedmealtype: ['']
+      selctedmealtype: [''],
+      minGuarantees: ['']
     })
 
     this.consumptionObj = {
@@ -75,7 +76,8 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
       organization_id: this.orgObj._id,
       itemName: '',
       mealPrice: '',
-      selctedmealtype: ''
+      selctedmealtype: '',
+      minGuarantees: ''
     }
     if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
       this.selectedCafeteria = this.orgObj.cafeteriaList[0];
@@ -135,17 +137,10 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
       {
         itemName: mealInfo.itemName,
         mealPrice: mealInfo.mealPrice,
-        selctedmealtype: mealInfo.selctedmealtype
+        selctedmealtype: mealInfo.selctedmealtype,
+        minGuarantees: mealInfo.minGuarantees
       }
     );
-    // this.empId = employee._id;
-
-    // this.form.patchValue({
-    //   employeeName: employee.employeeName,
-    //   employeeId: employee.employeeId,
-    //   employeePhoneNo: employee.employeePhoneNo,
-    //   employeeEmail: employee.employeeEmail
-    // })
   }
 
   addConsumptionOrder() {
@@ -180,10 +175,9 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   async submitMultipleConsumption() {
     console.log('employeee list to save', this.addMultipleConsumptionList);
 
-    // Validate input
     const hasInvalid = this.addMultipleConsumptionList.some(
       (consumption: any) =>
-        !consumption.itemName || !consumption.mealPrice || !consumption.selctedmealtype
+        !consumption.itemName || !consumption.mealPrice || !consumption.selctedmealtype || !consumption.minGuarantees
     );
     if (hasInvalid) {
       this.disableSubmit = true;
@@ -192,7 +186,6 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     this.disableSubmit = false;
 
     try {
-      // Attach cafeteria info once
       const transformedConsumptionList =
       {
         organization_name: this.orgObj.organization_name,
@@ -203,7 +196,8 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
         mealTypeList: this.addMultipleConsumptionList.map((item: any) => ({
           itemName: item.itemName,
           mealPrice: item.mealPrice,
-          selctedmealtype: item.selctedmealtype
+          selctedmealtype: item.selctedmealtype,
+          minGuarantees: item.minGuarantees
         }))
       }
 
@@ -226,55 +220,4 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     this.showMultipleConsumptionForm = false;
   }
 
-
-  //   async onFileChange(evt: any) {
-  //     this.isuploadEmployeeData = true;
-  //     try {
-  //         const target: DataTransfer = <DataTransfer>(evt.target);
-  //         if (target.files.length !== 1) throw new Error('Cannot use multiple files');
-  //         let data: any = await this.excelService.upload(target.files[0])
-  //         console.log('target.files[0]', data);
-  //         console.log(target.files[0].name);
-  //         this.fileName = target.files[0].name;
-  //         if (data && data.files && data.files.length > 0) {
-  //             data = target.files;
-  //         }
-  //         this.uploadEmployeeData = data
-  //         console.log('uploaded excel data', this.uploadEmployeeData);
-  //         if (this.uploadEmployeeData && this.uploadEmployeeData.length > 0) {
-  //             this.addMultipleEmploeeList.length = 0;
-  //             this.uploadEmployeeData.forEach((elm: any) => {
-  //                 if (!(typeof elm[0] === 'undefined') && elm[0] != null && elm[0] != '' && elm[0] != 'Emp Name') {
-  //                     this.employeeObj.employeeName = elm[0];
-  //                     this.employeeObj.employeeId = elm[1];
-  //                     this.employeeObj.employeePhoneNo = elm[2];
-  //                     this.employeeObj.employeeEmail = elm[3];
-  //                     console.log('uploaded employee object', this.employeeObj)
-  //                     const employeeList: any = []
-  //                     employeeList.push({
-  //                         cafeteria_name: this.selectedCafeteriaName,
-  //                         cafeteria_id: this.selectedCafeteriaId,
-  //                         ...this.employeeObj
-  //                     })
-  //                     this.addMultipleEmploeeList.push(...employeeList);
-  //                     console.log(this.addMultipleEmploeeList)
-  //                     if (this.addMultipleEmploeeList.length == this.uploadEmployeeData.length) {
-  //                         this.employeeObj = {
-  //                             organization_name: this.orgObj.organization_name,
-  //                             organization_id: this.orgObj._id,
-  //                             employeeName: '',
-  //                             employeeId: '',
-  //                             employeePhoneNo: '',
-  //                             employeeEmail: '',
-  //                         }
-  //                     }
-  //                 }
-  //             })
-  //         }
-  //         this.showRemoveForm = true;
-  //         this.showAddMoreForm = false;
-  //     } catch (error) {
-  //         console.log(error)
-  //     }
-  // }
 }

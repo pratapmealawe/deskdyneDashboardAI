@@ -26,6 +26,11 @@
                         [(ngModel)]="consumptionItem.mealPrice">
                 </div>
                 <div class="col-12 col-md-6 col-lg-3 mt-2">
+                    <div class="labelText">MG</div>
+                    <input type="number" class="form-control" placeholder="minGuarantees"
+                        [(ngModel)]="consumptionItem.minGuarantees">
+                </div>
+                <div class="col-12 col-md-6 col-lg-3 mt-2">
                     <div class="right addMultipleConsumption" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">+
                     </div>
                     <ng-container *ngIf="i>0 && i == addMultipleConsumptionList.length-1">
@@ -94,8 +99,8 @@
                             <div class="labelData">{{mealTypeItem.selctedmealtype}}</div>
                         </div>
                         <div class="col-6 col-md-5 col-lg-3">
-                            <!-- <div class="labelText">Employee Email</div>
-                            <div class="labelData">{{mealTypeItem.employeeEmail}}</div> -->
+                            <div class="labelText">Min Guarantees</div>
+                            <div class="labelData">{{mealTypeItem.minGuarantees}}</div>
                         </div>
                         <div class="col-6 col-md-5 col-lg-2">
                             <!-- <div class="labelText">Cafeteria</div>
@@ -123,9 +128,15 @@
                         <!-- <div class="error-text" *ngIf="form.controls.employeeName.errors?.required && showError">
                         *Employee name is required</div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-12">
+                    <div class="col-12 col-md-6 col-lg-6">
                         <div class="labelText">Price</div>
                         <input type="number" class="form-control" placeholder="Price" formControlName="mealPrice">
+                        <!-- <div class="error-text" *ngIf="form.controls.employeeId.errors?.required && showError">
+                        *Employee ID is required</div> -->
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="labelText">Min Guarantees</div>
+                        <input type="number" class="form-control" placeholder="mg" formControlName="minGuarantees">
                         <!-- <div class="error-text" *ngIf="form.controls.employeeId.errors?.required && showError">
                         *Employee ID is required</div> -->
                     </div>
