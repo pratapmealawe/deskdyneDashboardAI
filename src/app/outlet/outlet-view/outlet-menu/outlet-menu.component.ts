@@ -36,7 +36,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   categorySelected: boolean = false;
   form: any;
   selectedCategory: any;
-  subcategoryList: any = [];
   uploadedImageFile: any;
   imageUrl: any;
   displayImgUrl = environment.imageUrl;
@@ -155,7 +154,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       price: item.price,
       subsidy: item.subsidy ? item.subsidy : 0,
       category: item.category,
-      subCategory: item.subCategory,
       mealTimingInfo: item.mealTimingInfo
         ? item.mealTimingInfo.map((a: any) => a.mealType)
         : [],
@@ -168,11 +166,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
       nutritionList: item.nutritionInfo ? [...item.nutritionInfo.nutritionList] : []
     });
-    if (item.subCategory) {
-      this.selectedCategory = item.category;
-      this.categorySelected = true;
-      this.setSubCategoryList();
-    }
     if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
       this.nutrition_Lists.clear();
       item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
@@ -227,7 +220,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   setCategory(event: any) {
     this.selectedCategory = event.target.value;
     this.categorySelected = true;
-    this.setSubCategoryList();
   }
 
   onItemSelected(item: any) {
@@ -254,13 +246,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.filteredMasterMenuList = tempList;
   }
 
-  setSubCategoryList() {
-    this.outletObj.category.forEach((el: any) => {
-      if (el.name === this.selectedCategory) {
-        this.subcategoryList = el.subCategories;
-      }
-    });
-  }
 
   async fetchOutletMasterMenus() {
     try {
@@ -302,7 +287,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
                 if (result && result.croppedImages) {
                   this.uploadedImageFile = result.croppedImages.file;
                   this.imageUrl = result.croppedImages.resizeDataUrl;
-                  console.log(imageUrl);
+                  // console.log(imageUrl);
                   this.uploadStatus = true;
                   this.imageReplaced = true;
                 }
@@ -328,7 +313,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.showUpdateBtn = true;
     // this.menuIndex = index;
     this.menuId = item._id;
-    console.log(item);
 
     this.patchFormValue(item);
     this.open();
