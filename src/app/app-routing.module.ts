@@ -441,6 +441,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'consumptionOrders',
+    loadChildren: () =>
+      import('./consumption-order-details/consumption-order-details.module').then(
+        (m) => m.ConsumptionOrderDetailsModule
+      ),
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full',
@@ -460,4 +467,4 @@ const routes: Routes = [
   ],
   exports: [RouterModule],
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

@@ -633,6 +633,32 @@ export class ApiMainService {
     });
   }
 
+
+  getConsumptionOrderByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getConsumptionOrderByOrgId;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}`,
+      method: urlObj.method,
+    });
+  }
+
+  updateConsumptionMenu(orgId: any, cafeId: any, consumptionMenu: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateConsumptionMenu;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}` + `/${cafeId}`,
+      method: urlObj.method,
+    }, consumptionMenu);
+  }
+
+  updateConsumptionOrderStatus(orgId: any, cafeId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateConsumptionOrderStatus;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}` + `/${cafeId}`,
+      method: urlObj.method,
+    });
+  }
+
+
   getFeedbackListByOrgId(orgId: any, page: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getFeedbackListByOrgId;
     return this.apiHttpService.REQUEST({
@@ -1010,6 +1036,13 @@ export class ApiMainService {
       employeeList
     );
   }
+  addConsumptionOrderList(consumptionOrder: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addConsumptionOrderList;
+    return this.apiHttpService.REQUEST(
+      { url: urlObj.url, method: urlObj.method },
+      consumptionOrder
+    );
+  }
   deleteEmployee(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteEmployee;
     return this.apiHttpService.REQUEST({
@@ -1252,6 +1285,10 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.getCafeteriasPollingList;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, deliveryDate);
   }
+  getCafeteriaList() {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCafeteriaList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
+  }
   createOrderFromPollObj(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.createOrderFromPollObj;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
@@ -1396,6 +1433,11 @@ export class ApiMainService {
 
   fetchOutletOrdersbysearchObj(body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchOutletOrdersbysearchObj;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+
+  fetchConsumptionOrdersbysearchObj(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchConsumptionOrdersbysearchObj;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
   getStaticTotalCounts() {

@@ -272,7 +272,7 @@
                 <div class="labelText">Show Outlet</div>
                 <input type="checkbox" formControlName="showSaas">
               </div>
-              
+
               <!-- <div class="col-3">
               <div class="labelText">Show Site Executive</div>
               <input type="checkbox" formControlName="showSiteExecutive">
@@ -289,6 +289,10 @@
               <div class="col-3">
                 <div class="labelText">Show compliance Tracker</div>
                 <input type="checkbox" formControlName="showComplienceTracker">
+              </div>
+              <div class="col-3">
+                <div class="labelText">Show Consumption Order</div>
+                <input type="checkbox" formControlName="showConsumptionOrder">
               </div>
               <div class="col-3">
                 <div class="labelText">Is Employee Email Login</div>
@@ -396,12 +400,28 @@
                   </option>
                 </select>
               </div>
-              <div class="col-12 col-md-2 col-lg-2">
-                <label class="labelText form-label">Subsidy Amount</label>
+              <div class="col-12 col-md-2 col-lg-2 bgpadding1">
+                <label class="labelText form-label mb-0">Subsidy Amount</label>
                 <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
               </div>
-              <div class="col-12 col-md-4 col-lg-4 pt-5">
-                <button class="btn btn-primary" (click)="updateCafelevelSubsidy(i)">Update Subsidy cafe</button>
+
+              <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                <div class="labelText">Cafeteria GSTIN</div>
+                <input type="text" class="form-control" placeholder="GSTIN" formControlName="cafeteria_gstin" />
+              </div>
+              <div class="col-12 col-md-6 col-lg-2 bgpadding1 d-flex align-items-end">
+                <label>
+                  <input type="checkbox" id="copyGstin"
+                    [checked]="form.controls.cafeteriaList.at(i).controls['cafeteria_gstin'].value"
+                    (change)="getOrgGstin($event,i)">
+                  Same as organization’s GSTIN
+                </label>
+              </div>
+
+              <div class="row">
+                <div class="col-12 col-md-4 col-lg-4 pt-5">
+                  <button class="btn btn-primary" (click)="updateCafelevelSubsidy(i)">Update Subsidy cafe</button>
+                </div>
               </div>
             </div>
 
