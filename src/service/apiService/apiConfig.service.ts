@@ -81,6 +81,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/getOutletByCafeteria`,
         method: 'GET',
       },
+      getCafeteriaList: {
+        url: `${this.baseUrl}/api/getCafeteriaList`,
+        method: 'GET',
+      },
       getAllPolicy: { url: `${this.baseUrl}/api/getAllPolicy`, method: 'GET' },
       addPolicy: { url: `${this.baseUrl}/api/addPolicy`, method: 'POST' },
       updatePolicy: { url: `${this.baseUrl}/api/updatePolicy`, method: 'POST' },
@@ -246,6 +250,10 @@ export class ApiConfigService {
       },
       updateConsumptionMenu: {
         url: `${this.baseUrl}/api/updateConsumptionMenuList`,
+        method: 'POST',
+      },
+      updateConsumptionOrderStatus: {
+        url: `${this.baseUrl}/api/updateConsumptionOrderStatus`,
         method: 'POST',
       },
       addConsumptionOrderList: {
@@ -640,6 +648,10 @@ export class ApiConfigService {
       },
       fetchOutletOrdersbysearchObj: {
         url: `${this.baseUrl}/api/fetchOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
+      fetchConsumptionOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchConsumptionOrdersbysearchObj`,
         method: 'POST'
       },
       fetchFoodOrderPackagebysearchObj: {
