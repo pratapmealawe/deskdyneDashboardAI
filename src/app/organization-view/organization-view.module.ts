@@ -26,6 +26,8 @@ import { CakeMenuModule } from '../common-components/cake-menu/cake-menu.module'
 import { SweetMenuModule } from '../common-components/sweet-menu/sweet-menu.module';
 import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
 import { EmployeeWalletComponent } from '../common-components/employee-wallet/employee-wallet.component';
+import { ConsumptionOrderComponent } from '../common-components/consumption-order/consumption-order.component';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -44,7 +46,8 @@ import { EmployeeWalletComponent } from '../common-components/employee-wallet/em
     OrgComplianceComponent,
     OutletEmployeeComponent,
     VcEmployeeComponent,
-    EmployeeWalletComponent
+    EmployeeWalletComponent,
+    ConsumptionOrderComponent
   ],
   imports: [
     CommonModule,
@@ -54,7 +57,8 @@ import { EmployeeWalletComponent } from '../common-components/employee-wallet/em
     PdfuploadComponent,
     CakeMenuModule,
     SweetMenuModule,
-    LuxMenuModule
+    LuxMenuModule,
+    MatChipsModule
   ],
   exports: [OrganizationViewComponent],
 })
