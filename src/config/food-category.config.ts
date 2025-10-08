@@ -20,4 +20,5 @@ export let categoryList = [
     { title: "Biryani and Rice", value: "Biryani and Rice" },
     { title: "Daily", value: "Daily" },
     { title: "Add On", value: "Add on" },
+    { title: "MRP", value: "MRP" },
 ];

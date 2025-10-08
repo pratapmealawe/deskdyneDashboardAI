@@ -15,11 +15,20 @@
           Upload <i class="bi bi-upload"></i>
         </div>
       </div>
-      <div class="col-12 col-md-6 col-lg-4">
-        <input class="me-1" type="checkbox" id="isSpicy" formControlName="outletOpened" />
-        <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
-        <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
-          *Outlet opend is required
+      <div class="col-12 col-md-6 ">
+        <div class="mainCheckDiv">
+        <div>
+          <input class="me-1" type="checkbox" id="outletOpened" formControlName="outletOpened" />
+          <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
+          <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
+            *Outlet opend is required
+          </div>
+        </div>
+        <div class="vr"></div>
+        <div>
+          <input class="me-1" type="checkbox" formControlName="isPreOrder" />
+          <label class="labelText form-label" for="preOrder">Is Pre Order</label>
+        </div>
         </div>
       </div>
     </div>
@@ -44,7 +53,7 @@
       </div>
       <div class="col-12 col-md-6 col-lg-4">
         <div class="labelText">Outlet Description</div>
-        <input type="text" class="form-control" placeholder="Org Description" formControlName="outletDescription" />
+        <input type="text" class="form-control" placeholder="Outlet Description" formControlName="outletDescription" />
         <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
           *Outlet description is required
         </div>
