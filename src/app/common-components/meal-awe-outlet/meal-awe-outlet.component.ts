@@ -92,6 +92,7 @@ export class MealAweOutletComponent implements OnInit {
       });
       this.mealPackageList = mealPackageList;
       this.tempMealPackage = [...this.mealPackageList];
+      
       let filterCluster = this.mealPackageList.map((data: any) => {
         return data.clusters[0];
       }).filter((cluster: any) => cluster !== undefined);

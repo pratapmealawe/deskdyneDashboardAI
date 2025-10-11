@@ -109,6 +109,8 @@ export class AddOutletComponent implements OnInit {
         outletType: outlet.outletType,
         outletOpened: outlet.outletOpened,
         isPreOrder: outlet.isPreOrder,
+        isSatAvailable: outlet.isSatAvailable,
+        isSunAvailable: outlet.isSunAvailable,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage,
         subsidy: outlet.subsidy,
         precedence: outlet.precedence
@@ -123,6 +125,8 @@ export class AddOutletComponent implements OnInit {
       outletType: [''],
       outletOpened: [false],
       isPreOrder: [false],
+      isSatAvailable: [false],
+      isSunAvailable: [false],
       vendorCommissionPercentage: [0],
       subsidy: [0],
       precedence: [0]

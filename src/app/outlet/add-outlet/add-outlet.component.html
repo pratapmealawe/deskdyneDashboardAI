@@ -17,18 +17,28 @@
       </div>
       <div class="col-12 col-md-6 ">
         <div class="mainCheckDiv">
-        <div>
-          <input class="me-1" type="checkbox" id="outletOpened" formControlName="outletOpened" />
-          <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
-          <div class="error-text" *ngIf="form.controls.outletDescription.errors?.required && showError">
-            *Outlet opend is required
+          <div>
+            <input class="me-1" type="checkbox" id="outletOpened" formControlName="outletOpened" />
+            <label class="labelText form-label" for="outletOpened">Outlet Opened</label>
+
+          </div>
+          <div class="vr"></div>
+          <div>
+            <input class="me-1" type="checkbox" formControlName="isPreOrder" />
+            <label class="labelText form-label" for="preOrder">Is Pre Order</label>
           </div>
         </div>
-        <div class="vr"></div>
-        <div>
-          <input class="me-1" type="checkbox" formControlName="isPreOrder" />
-          <label class="labelText form-label" for="preOrder">Is Pre Order</label>
-        </div>
+        <div class="mainCheckDiv" *ngIf="form.controls.isPreOrder.value">
+          <div>
+            <input class="me-1" type="checkbox" id="satAvail" formControlName="isSatAvailable" />
+            <label class="labelText form-label" for="satAvail">Saturday Available</label>
+
+          </div>
+          <div class="vr"></div>
+          <div>
+            <input class="me-1" type="checkbox" formControlName="isSunAvailable" />
+            <label class="labelText form-label" for="sunAvail">Sunday Available</label>
+          </div>
         </div>
       </div>
     </div>
