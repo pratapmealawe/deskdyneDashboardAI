@@ -40,7 +40,7 @@
   <app-outlet-employee *ngSwitchCase="'outletEmployee'" [orgObj]="organization"></app-outlet-employee>
   <app-vc-employee *ngSwitchCase="'vcEmployee'" [orgObj]="organization"></app-vc-employee>
   <app-employee-wallet *ngSwitchCase="'employeeWallet'" [orgObj]="organization"></app-employee-wallet>
-
+  <app-consumption-order *ngSwitchCase="'consumptionOrder'" [orgObj]="organization"></app-consumption-order>
 </ng-container>
 
 <ng-container [ngSwitch]="selectedSubTab">

@@ -33,6 +33,7 @@ export class AddPolicyComponent {
       serverlogs: false,
       b2bAddorg: false,
       b2bSearchOrg: false,
+      consumptionOrders: false,
       orgDashboard: false,
       orgMenuItems: false,
       orgOrders: false,
@@ -127,7 +128,7 @@ export class AddPolicyComponent {
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();

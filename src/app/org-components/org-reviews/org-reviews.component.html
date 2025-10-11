@@ -76,7 +76,7 @@
             <ng-container *ngIf="expandedItems[i]">
               <ng-container *ngFor="let item of feedback.itemlist; index as k">
                 <div class="cardDesignfeddback">
-                  <ng-container *ngIf="item.itemContains.length > 0">
+                  <ng-container *ngIf="item?.itemContains?.length > 0">
                     <div class="feedbackCard">
                       <div>
                         <div class="labelText">Menu Name</div>
@@ -113,7 +113,7 @@
                       </ng-container>
                     </div>
                   </ng-container>
-                  <ng-container *ngIf="item.itemContains.length == 0">
+                  <ng-container *ngIf="item?.itemContains?.length == 0">
                     <div class="d-flex flex-row items-center gap-4">
                       <div>
                         <div class="labelText">Menu Name</div>
@@ -139,9 +139,8 @@
     <div class="row" *ngIf="isChartShow">
       <div class="col-12">
         <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
-          <highcharts-chart *ngIf="filteredFeedbackList.length > 0" [Highcharts]="Highcharts" [options]="chartOptionsPie"
-            [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
-            
+          <highcharts-chart *ngIf="filteredFeedbackList.length > 0" [Highcharts]="Highcharts"
+            [options]="chartOptionsPie" [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
             style="width: 100%; height: 400px; display: block">
           </highcharts-chart>
 
