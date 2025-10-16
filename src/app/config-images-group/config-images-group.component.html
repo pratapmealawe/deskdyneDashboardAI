@@ -1,0 +1,58 @@
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-semibold">Image Group Configs</h2>
+        <button class="btn btn-success px-3" (click)="openAddConfigModal()">
+            <i class="bi bi-plus-circle me-1"></i> Add Config
+        </button>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle text-center">
+            <thead class="table-light">
+                <tr>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Created</th>
+                    <th>Updated</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody *ngIf="imageGroupConfigs?.length; else noData">
+                <tr *ngFor="let config of imageGroupConfigs; let i = index">
+                    <td>{{ i + 1 + (currentPage - 1) * pageSize }}</td>
+                    <td>{{ config.name }}</td>
+                    <td>{{ config.createdAt | date: 'dd-MM-yyyy' }}</td>
+                    <td>{{ config.updatedAt | date: 'dd-MM-yyyy' }}</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary me-2" (click)="editConfig(config)">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" (click)="confirmDelete(config)">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <ng-template #noData>
+        <tr>
+            <td colspan="7" class="text-center py-4">No image group configs found.</td>
+        </tr>
+    </ng-template>
+
+    <nav *ngIf="totalPages > 1" class="mt-3">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" [class.disabled]="currentPage === 1">
+                <a class="page-link" (click)="changePage(currentPage - 1)">Previous</a>
+            </li>
+            <li class="page-item" *ngFor="let page of pageSizeOptions" [class.active]="currentPage === page">
+                <a class="page-link" (click)="changePage(page)">{{ page }}</a>
+            </li>
+            <li class="page-item" [class.disabled]="currentPage === totalPages">
+                <a class="page-link" (click)="changePage(currentPage + 1)">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>

@@ -1663,4 +1663,41 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.cancelPorterTask;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${taskId}`, method: urlObj.method });
   }
+
+  getAllConfigImages() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllConfigImages);
+  }
+
+  saveConfigImage(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveConfigImage, data);
+  }
+
+  updateConfigImage(id: string, data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateConfigImage;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
+  }
+
+  createImageGroupConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createImageGroupConfig, data);
+  }
+
+  updateImageGroupConfig(id: string, data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateImageGroupConfig;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
+  }
+
+  deleteImageGroupConfig(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteImageGroupConfig;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getImageGroupConfigById(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getImageGroupConfigById;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getAllImageGroupConfigs(page: number, pageSize: number) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllImageGroupConfigs;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${pageSize}`, method: urlObj.method });
+  }
 }
