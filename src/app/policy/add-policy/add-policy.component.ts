@@ -65,6 +65,8 @@ export class AddPolicyComponent {
       searchVendorFirm: false,
       billing: false,
       otherOrder: false,
+      configImages: false,
+      configImagesGroup: false,
     },
     button_policies: {
       addOutlet: false,
