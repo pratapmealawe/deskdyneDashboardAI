@@ -30,9 +30,19 @@
         </div>
         <div class="mainCheckDiv" *ngIf="form.controls.isPreOrder.value">
           <div>
+            <input class="me-1" type="radio" formControlName="preOrderMealType"  value="lunch" />
+            <label class="labelText form-label" for="lunch">Lunch</label>
+          </div>
+          <div class="vr"></div>
+          <div>
+            <input class="me-1" type="radio" formControlName="preOrderMealType" value="dinner" />
+            <label class="labelText form-label" for="dinner">Dinner</label>
+          </div>
+        </div>
+        <div class="mainCheckDiv" *ngIf="form.controls.isPreOrder.value">
+          <div>
             <input class="me-1" type="checkbox" id="satAvail" formControlName="isSatAvailable" />
             <label class="labelText form-label" for="satAvail">Saturday Available</label>
-
           </div>
           <div class="vr"></div>
           <div>

@@ -255,6 +255,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       imageblue: 'Misc_blue',
       children: [
         { name: 'FAQ', route: 'faq', showChild: true },
+        { name: 'Config Images', route: 'configImages', showChild: true },
+        { name: 'Config Group Images', route: 'configImagesGroup', showChild: true },
         { name: 'Config Variables', route: 'configVariable', showChild: true },
         {
           name: 'App Version Control',

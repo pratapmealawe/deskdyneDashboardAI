@@ -851,6 +851,14 @@ export class ApiConfigService {
       trackDeliveryTask: { url: `${this.baseUrl}/api/trackdeliveryTask`, method: 'GET' },
       getVendorById: { url: `${this.baseUrl}/api/getVendorById`, method: 'GET' },
       cancelPorterTask: { url: `${this.baseUrl}/api/cancelPorterTask`, method: 'PUT' },
+      getAllConfigImages: { url: `${this.baseUrl}/api/getAllConfigImages`, method: 'GET' },
+      saveConfigImage: { url: `${this.baseUrl}/api/saveConfigImage`, method: 'POST' },
+      updateConfigImage: { url: `${this.baseUrl}/api/updateConfigImage`, method: 'POST' },
+      createImageGroupConfig: { url: `${this.baseUrl}/api/createImageGroupConfig`, method: 'POST' },
+      updateImageGroupConfig: { url: `${this.baseUrl}/api/updateImageGroupConfig`, method: 'PUT' },
+      deleteImageGroupConfig: { url: `${this.baseUrl}/api/deleteImageGroupConfig`, method: 'DELETE' },
+      getAllImageGroupConfigs: { url: `${this.baseUrl}/api/getAllImageGroupConfigs`, method: 'GET' },
+      getImageGroupConfigById: { url: `${this.baseUrl}/api/getImageGroupConfigById`, method: 'GET' },
     };
   }
 }
