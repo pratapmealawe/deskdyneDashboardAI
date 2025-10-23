@@ -105,6 +105,24 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'configImages',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./config-images/config-images.module').then(
+        (m) => m.ConfigImagesModule
+      ),
+  },
+  {
+    path: 'configImagesGroup',
+    canActivate: [accessGuard],
+
+    loadChildren: () =>
+      import('./config-images-group/config-images-group.module').then(
+        (m) => m.ConfigImagesGroupModule
+      ),
+  },
+  {
     path: 'appVersionControl',
     canActivate: [accessGuard],
 

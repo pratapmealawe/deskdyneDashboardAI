@@ -29,3 +29,18 @@
     padding: 4px 0px;
     cursor: pointer;
 }
+
+.mainCheckDiv {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    background: #f8f8f8;
+    border-radius: 16px;
+    padding: 16px 20px;
+    height: fit-content;
+    width: fit-content;
+
+    label {
+        margin: 0;
+    }
+}

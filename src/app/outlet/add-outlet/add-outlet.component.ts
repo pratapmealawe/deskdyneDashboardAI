@@ -108,6 +108,10 @@ export class AddOutletComponent implements OnInit {
         outletDescription: outlet.outletDescription,
         outletType: outlet.outletType,
         outletOpened: outlet.outletOpened,
+        isPreOrder: outlet.isPreOrder,
+        preOrderMealType: outlet.preOrderMealType,
+        isSatAvailable: outlet.isSatAvailable,
+        isSunAvailable: outlet.isSunAvailable,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage,
         subsidy: outlet.subsidy,
         precedence: outlet.precedence
@@ -121,6 +125,10 @@ export class AddOutletComponent implements OnInit {
       outletDescription: [''],
       outletType: [''],
       outletOpened: [false],
+      isPreOrder: [false],
+      preOrderMealType: ['lunch'],
+      isSatAvailable: [false],
+      isSunAvailable: [false],
       vendorCommissionPercentage: [0],
       subsidy: [0],
       precedence: [0]
@@ -327,26 +335,5 @@ export class AddOutletComponent implements OnInit {
         acceptOrderTill: '22:00',
       },
     ];
-
-    // console.log('setStandardEndTime')
-    // this.mealTiming.forEach((meal: any) => {
-    //   let stdTime = '00:00';
-    //   if (meal.mealType === 'Breakfast') {
-    //     stdTime = this.BREAKFAST_END_TIME;
-    //   } else if (meal.mealType === 'Lunch') {
-    //     stdTime = this.LUNCH_END_TIME;
-    //   } else if (meal.mealType === 'EveningSnacks') {
-    //     stdTime = this.EVENINGSNACKS_END_TIME;
-    //   } else if (meal.mealType === 'Dinner') {
-    //     stdTime = this.DINNER_END_TIME;
-    //   }else if (meal.mealType === 'Fullday') {
-    //     stdTime = this.FULLDAY_END_TIME;
-    //   }
-    //   meal.acceptOrderTill = stdTime;
-    //   let stdarr = stdTime.split(':');
-    //   const startHr = parseInt(stdarr[0]) - 2;
-    //   stdarr[0] = startHr > 9 ? `${startHr}` : '0' + startHr;
-    //   meal.acceptOrderFrom = stdarr.join(':');
-    // });
   }
 }
