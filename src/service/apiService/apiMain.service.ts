@@ -1700,4 +1700,19 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.getAllImageGroupConfigs;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${pageSize}`, method: urlObj.method });
   }
+
+  getTotalVendorLedgerBalanceByFirm(vendorFirmId:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTotalVendorLedgerBalanceByFirm;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${vendorFirmId}`, method: urlObj.method });
+  }
+
+  getVendorTransactionByFirmAndTypeAndDate(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getVendorTransactionByFirmAndTypeAndDate;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+
+  creditOrDebitVendorWallet(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.creditOrDebitVendorWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
 }

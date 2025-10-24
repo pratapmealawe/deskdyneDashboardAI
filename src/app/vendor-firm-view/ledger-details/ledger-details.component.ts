@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-ledger-details',
@@ -8,41 +9,163 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 })
 export class LedgerDetailsComponent implements OnInit {
   @Input() vendorFirmInfo: any;
+
   fromDate: string | null = null;
   toDate: string | null = null;
-  vendorLegerList: any = [];
-  totalVendorLegersBalance: any = 0;
-  transactionHistoryList: any = [];
-  constructor(private apiMainService: ApiMainService) { }
+
+  /** Raw page items from API (unfiltered) */
+  private pageItems: any[] = [];
+
+  /** What the template renders after status filtering */
+  displayedLedgers: any[] = [];
+
+  /** Balance (current page after status filtering; only "New") */
+  totalVendorLegersBalance = 0;
+  totalNewCount = 0;
+
+  /** Pagination state */
+  page = 1;
+  limit = 10;
+  totalCount: number | null = null;    // null => unknown from server
+  totalPages: number | null = null;
+  hasNextPage = false;
+  isLoading = false;
+
+  /** Status filter (Material Select + Bootstrap layout) */
+  selectedStatuses: Array<'New' | 'InProgress' | 'Closed'> = ['New'];
+
+  constructor(private apiMainService: ApiMainService) {}
 
   ngOnInit(): void {
-    const today = new Date().toISOString();
-    this.fromDate = today;
-    this.toDate = today;
-    this.getVendorLedger();
+    const todayISO = new Date().toISOString();
+    this.fromDate = todayISO;
+    this.toDate = todayISO;
+    this.fetchPage(1);
+    this.getVendorLedgerBalance()
   }
 
-  async getVendorLedger() {
+  async getVendorLedgerBalance() {
+    // this.vendorFirmInfo._id
     try {
-      const body = {
+      const res = await this.apiMainService.getTotalVendorLedgerBalanceByFirm(this.vendorFirmInfo._id)
+      console.log(res);
+      
+      this.totalVendorLegersBalance = res.totalBalance
+    } catch(err:any) {
+      console.log(err);
+    }
+  }
+
+  /**
+   * Normalize backend variations to the UI statuses:
+   * New | InProgress | Closed
+   */
+  normalizeStatus(s: any): 'New' | 'InProgress' | 'Closed' {
+    const v = String(s || '').toLowerCase();
+    if (v === 'closed') return 'Closed';
+    if (v === 'pending' || v === 'inprogress' || v === 'in progress') return 'InProgress';
+    return 'New';
+  }
+
+  /** Apply status filter on current page and recompute page-scope balance */
+  private applyFilters() {
+    const allowed = new Set(this.selectedStatuses);
+    const filtered = this.pageItems.filter(it => allowed.has(this.normalizeStatus(it.status)));
+    this.displayedLedgers = filtered;
+
+  }
+
+  /** Fetch a page (supports common API shapes) */
+  async fetchPage(page: number) {
+    if (!this.vendorFirmInfo?._id) return;
+    this.isLoading = true;
+
+    try {
+      const body: any = {
         vendorFirmId: this.vendorFirmInfo._id,
         fromDate: this.fromDate,
-        toDate: this.toDate
-      }
+        toDate: this.toDate,
+        page,
+        limit: this.limit,
+      };
 
-      const ledgers = await this.apiMainService.getVendorLedgerByFirmAndTypeAndDate(body);
-      if (ledgers && ledgers.length > 0) {
-        this.vendorLegerList = ledgers;
-        console.log(this.vendorLegerList);
+      const res = await this.apiMainService.getVendorLedgerByFirmAndTypeAndDate(body);
 
-        this.totalVendorLegersBalance = ledgers.filter((item: any) => item.status === 'New').reduce((sum: number, item: any) => sum + item.vendorLedgerAmt, 0);
-        console.log(this.totalVendorLegersBalance);
+      let items: any[] = [];
+      let total: number | null = null;
 
+      if (Array.isArray(res)) {
+        items = res;
+      } else if (res && Array.isArray(res.items)) {
+        items = res.items;
+        total = typeof res.total === 'number' ? res.total : null;
+      } else if (res && Array.isArray(res.docs)) {
+        items = res.docs;
+        total = typeof res.totalDocs === 'number' ? res.totalDocs : null;
+        if (typeof res.page === 'number') this.page = res.page;
+        if (typeof res.limit === 'number') this.limit = res.limit;
       } else {
-        this.vendorLegerList = []
+        items = res || [];
       }
+
+      this.pageItems = items;
+      this.page = page;
+
+      this.totalCount = total;
+      this.totalPages = (total && this.limit) ? Math.max(1, Math.ceil(total / this.limit)) : null;
+      this.hasNextPage = total !== null ? (this.totalPages! > this.page) : (items.length === this.limit);
+
+      // Apply status filter to fresh page
+      this.applyFilters();
+
     } catch (error) {
-      console.log('error while fetching ledger')
+      console.error('Error while fetching ledger', error);
+      this.pageItems = [];
+      this.displayedLedgers = [];
+      this.totalVendorLegersBalance = 0;
+      this.totalCount = null;
+      this.totalPages = null;
+      this.hasNextPage = false;
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  /** Material paginator -> backend page/limit */
+  onPage(e: PageEvent) {
+    const nextPage = e.pageIndex + 1;
+    const nextSize = e.pageSize;
+
+    // update page size if changed
+    if (this.limit !== nextSize) this.limit = nextSize;
+
+    // fetch requested page
+    this.fetchPage(nextPage);
+  }
+
+  /** Material select changed */
+  onStatusChanged() {
+    if (this.selectedStatuses.length === 0) {
+      // Keep at least one selected; default back to New
+      this.selectedStatuses = ['New'];
+    }
+
+    // Client-side re-filter current page:
+    this.applyFilters();
+
+    // Or switch to server-side filtering:
+    // this.fetchPage(1);
+  }
+
+  /** Backward compatibility if called elsewhere */
+  async getVendorLedger() {
+    this.fetchPage(1);
+  }
+
+  /** Provide a robust length to Material paginator even if total is unknown */
+  get paginatorLength(): number {
+    if (this.totalCount !== null) return this.totalCount;
+    // Approximate length so paginator enables "Next" when applicable
+    return (this.page - 1) * this.limit + this.displayedLedgers.length + (this.hasNextPage ? 1 : 0);
   }
 }
