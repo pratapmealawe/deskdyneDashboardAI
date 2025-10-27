@@ -21,8 +21,8 @@ export class AddOrganizationComponent implements OnInit {
   viewOrg: any;
   showUpdate: boolean = false;
   adminSelected: any = [];
-  // roleList = ['poc', 'admin', 'superAdmin'];
-  roleList = ['poc', 'superAdmin'];
+  roleList = ['poc', 'admin', 'superAdmin'];
+  // roleList = ['poc', 'superAdmin'];
   pocSelected: any;
   cafeSelected: any;
   showError: boolean = false;

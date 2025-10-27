@@ -1,111 +1,87 @@
 <div class="container-fluid pb-4 billingContainer">
     <div class="row pt-3 pb-2">
-        <div class="col-md-3">
-            <mat-form-field  class="w-100" appearance="outline">
-                <mat-label>Select Organization</mat-label>
-                <mat-select [ngModel]="orgSelected._id" [disabled]="selectedOrg"  (selectionChange)="changeOrganization($event)">
-                    <mat-option *ngFor="let org of orglist" [value]="org._id">
-                        {{org?.organization_name}}
-                    </mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="col-md-3">
-            <mat-form-field class="w-100" appearance="outline">
-                <mat-label>Select Cafeteria</mat-label>
-                <mat-select [(ngModel)]="cafeteria_id" (selectionChange)="fetchData()">
-                    <mat-option *ngFor="let option of cafeList" [value]="option.cafeteria_id">{{
-                        option.cafeteria_name}}</mat-option>
-                </mat-select>
-            </mat-form-field>
-        </div>
-        <div class="col-md-4">
-            <mat-form-field class="w-100" appearance="outline">
-                <mat-label>Enter a date range</mat-label>
-                <mat-date-range-input [formGroup]="dateGroup" [rangePicker]="picker" [max]="maxDate">
-                    <input matStartDate placeholder="Start date" formControlName="start" />
-                    <input matEndDate placeholder="End date" (dateChange)="fetchData()" formControlName="end" />
-                </mat-date-range-input>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker> </mat-date-range-picker>
-            </mat-form-field>
-        </div>
-        <div class="col-md-2 pt-3">
-            <button (click)="getOrders()" class="btn btn-primary">Submit</button>
+        <app-common-outlet-cafe-select [config]="headerConfig"
+            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+    </div>
+
+    <!-- All Totals -->
+    <div class="card shadow-sm mb-3 p-3">
+        <div class="d-flex flex-wrap gap-4 align-items-center">
+            <h6 class="mb-0 me-2">All Totals</h6>
+            <div><strong>Orders:</strong> {{ grandTotals.count }}</div>
+            <div><strong>Item:</strong> ₹{{ grandTotals.item | number:'1.2-2' }}</div>
+            <div><strong>Subsidy:</strong> ₹{{ grandTotals.subsidy | number:'1.2-2' }}</div>
+            <div><strong>Gross:</strong> ₹{{ grandTotals.gross | number:'1.2-2' }}</div>
         </div>
     </div>
 
-    <div class="row py-3"  *ngIf="orders.length > 0">
-        <div class="col-md-3"></div>
-        <div class="col-md-6">
-                <div class="totalDiv">
-                    <div class="leftDiv">
-                        <span>Total Item Amount: </span>
-                        <span>&#8377; {{ grandTotalItemAmount }} </span>
-                    </div>
-                    <div class="verticalHr"></div>
-                    <div class="rightDiv">
-                         <span>Total Subsidy Amount: </span>
-                        <span>&#8377; {{ grandTotalSubsidy }} </span>
-                    </div>
-                    <div class="verticalHr"></div>
-                    <div class="rightDiv">
-                        <span>Total Paid Amount: </span>
-                        <span>&#8377; {{ grandTotalAmount }} </span>
-                    </div>
-                </div>
-        </div>
-        <div class="col-md-3 exportDiv">
-            <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel Export</button>
+    <!-- (Optional) Current Page Totals -->
+    <div class="card shadow-sm mb-3 p-3">
+        <div class="d-flex flex-wrap gap-4 align-items-center">
+            <h6 class="mb-0 me-2">Current Page Totals</h6>
+            <div><strong>Orders:</strong> {{ pageTotals.count }}</div>
+            <div><strong>Item:</strong> ₹{{ pageTotals.item | number:'1.2-2' }}</div>
+            <div><strong>Subsidy:</strong> ₹{{ pageTotals.subsidy | number:'1.2-2' }}</div>
+            <div><strong>Gross:</strong> ₹{{ pageTotals.gross | number:'1.2-2' }}</div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12" *ngIf="orders.length > 0">
-            <div *ngFor="let date of groupedOrders | keyvalue : compareDates; let i = index; trackBy: trackByDateKey" class="cardDesign">
-                <div style="cursor: pointer" class="bgTopDownpadding1 flexDiv p-2" (click)="toggleFeedback(i)">
-                    <h6>{{ date.key | date: 'dd MMM yyyy' }}</h6>
-                    <div class="summary">
-                        <strong>Total Item Amount:</strong> &#8377;{{ date.value.totalItemAmount }}<br>
-                        <strong>Total Subsidy:</strong> &#8377;{{ date.value.totalSubsidy }}<br>
-                        <strong>Total Paid Amount:</strong> &#8377;{{ date.value.totalAmount }}
-                    </div>
-                    <span class="right">
-                        <i class="bi bi-chevron-down" *ngIf="!expandedItems[i]"></i>
-                        <i class="bi bi-chevron-up" *ngIf="expandedItems[i]"></i>
-                    </span>
-                </div>
-                <ng-container *ngIf="expandedItems[i]">
-                    <!-- <hr> -->
-                    <div class="outletDetails" *ngFor="let outlet of date.value.outlets | keyvalue">
-                        <div class="flexDiv">
-                            <h6>{{ outlet.key }}</h6>
-                            <div class="ps-3">
-                                <strong>Outlet Total Item Amount:</strong> &#8377;{{ outlet.value.totalItemAmount }}<br>
-                                <strong>Outlet Subsidy:</strong> &#8377;{{ outlet.value.totalSubsidy }}<br>
-                                <strong>Outlet Total Paid Amount:</strong> &#8377;{{ outlet.value.totalAmount }}
-                            </div>
-                        </div>
+    <!-- Actions -->
+    <div class="mb-2 d-flex flex-wrap gap-2 align-items-center">
+        <button class="btn btn-sm btn-outline-secondary" (click)="exportDatewiseSummary()">
+            Export Datewise Summary (Excel)
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="exportDatewiseDetailed()">
+            Export Detailed (Excel)
+        </button>
+    </div>
 
-                        <!-- <div *ngFor="let order of outlet.value.orders" class="p-2 border rounded mb-3 ps-3">
-                            <div *ngFor="let item of order.itemList" class="ps-3 pt-2">
-                                <div>Item Name: {{ item.itemName }}</div>
-                            </div>
+    <!-- Datewise groups (paged) -->
+    <mat-accordion multi>
+        <mat-expansion-panel *ngFor="let grp of pagedDateGroups; trackBy: trackByDateKey">
+            <mat-expansion-panel-header>
+                <mat-panel-title class="fw-semibold">
+                    {{ grp.dateLabel }}
+                </mat-panel-title>
+                <mat-panel-description class="d-flex flex-wrap gap-3">
+                    <span><strong>Orders:</strong> {{ grp.totals.count }}</span>
+                    <span><strong>Item:</strong> ₹{{ grp.totals.itemAmount | number:'1.2-2' }}</span>
+                    <span><strong>Subsidy:</strong> ₹{{ grp.totals.subsidy | number:'1.2-2' }}</span>
+                    <span><strong>Gross:</strong> ₹{{ grp.totals.gross | number:'1.2-2' }}</span>
+                </mat-panel-description>
+            </mat-expansion-panel-header>
 
-                            <div class="ps-3 pt-2">
-                                Subsidy Amount: &#8377;{{ order.subsidyAmount }}<br>
-                                Total Amount: &#8377;{{ (order.amount || 0) + (order.moneyWalletPointsUsed || 0) }}
-                            </div>
-                        </div> -->
-                    </div>
-                </ng-container>
+            <!-- Panel content -->
+            <div class="table-responsive">
+                <table class="table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th style="width: 140px;">Order No</th>
+                            <th>Customer</th>
+                            <th class="text-end">Item Amount</th>
+                            <th class="text-end">Subsidy</th>
+                            <th class="text-end">Gross</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let o of grp.orders">
+                            <td>{{ o.orderNo || o._id }}</td>
+                            <td>
+                                {{ o.customerName || '-' }}
+                                <span *ngIf="o.customerPhoneNo"> ({{ o.customerPhoneNo }})</span>
+                            </td>
+                            <td class="text-end">₹{{ getItemAmount(o) | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ getSubsidy(o) | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ getGross(o) | number:'1.2-2' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        </div>
+        </mat-expansion-panel>
+    </mat-accordion>
+    <!-- Paginator for date groups -->
+    <mat-paginator [length]="dateGroups.length" [pageSize]="groupPageSize" [pageIndex]="groupPageIndex"
+        [pageSizeOptions]="groupPageSizeOptions" (page)="onGroupPage($event)">
+    </mat-paginator>
 
-        <div class="col-md-12" *ngIf="orders.length <= 0">
-            <div class="cardDesign">
-                No Orders Found For Selected Filter...!
-            </div>
-        </div>
-    </div>
 </div>

@@ -12,7 +12,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-
+import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
+import { DatewiseOrdersDialogComponent } from './datewise-orders-dialog/datewise-orders-dialog.component';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
   declarations: [
@@ -20,7 +26,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     OutletBillingComponent,
     VcBillingComponent,
     DailyBillingComponent,
-    BulkBillingComponent
+    BulkBillingComponent,
+    DatewiseOrdersDialogComponent
   ],
   imports: [
     CommonModule,
@@ -30,7 +37,13 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatFormFieldModule,
     MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatInputModule,
+    MatPaginatorModule,
+    MatExpansionModule,
+    CommonOutletCafeSelectModule
   ],
   exports: [BillingComponent],
   providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }]

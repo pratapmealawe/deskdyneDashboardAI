@@ -29,7 +29,8 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
           path: 'ledgerDetails'
         }
       ],
-    }
+    },
+    { name: 'Order Report', path: 'vendorFirmReport' },
   ];
 
   ngOnChanges(changes: SimpleChanges): void {
