@@ -23,7 +23,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     ConfirmationModalComponent,
     ImageCropperComponent,
     HeaderComponent,
-    ImageCropperComponent
+    ImageCropperComponent,
   ],
   imports: [
     BrowserModule,

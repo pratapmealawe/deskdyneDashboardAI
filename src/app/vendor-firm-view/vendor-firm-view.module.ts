@@ -18,6 +18,7 @@ import { WalletTxnDialogComponent } from './wallet-txn-dialog/wallet-txn-dialog.
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
+import { VendorReportModule } from "../vendor-report/vendor-report.module";
 
 @NgModule({
   declarations: [
@@ -25,7 +26,7 @@ import { MatInputModule } from '@angular/material/input';
     VendorDetailsComponent,
     WalletDetailsComponent,
     LedgerDetailsComponent,
-    WalletTxnDialogComponent
+    WalletTxnDialogComponent,
   ],
   imports: [
     CommonModule,
@@ -36,13 +37,13 @@ import { MatInputModule } from '@angular/material/input';
     MatSelectModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-        MatDatepickerModule,
+    MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
     MatSnackBarModule,
     MatDialogModule,
     MatInputModule,
-
+    VendorReportModule
   ],
   exports: [VendorFirmViewComponent]
 })

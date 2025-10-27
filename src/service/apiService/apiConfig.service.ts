@@ -738,6 +738,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/fetchPastOutletOrdersbysearchObj`,
         method: 'POST'
       },
+      fetchCompletedOutletOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchCompletedOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
       getOrg: {
         url: `${this.baseUrl}/api/getOrg`,
         method: 'GET'

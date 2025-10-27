@@ -1520,6 +1520,10 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.fetchPastOutletOrdersbysearchObj;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
   }
+  fetchCompletedOutletOrdersbysearchObj(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchCompletedOutletOrdersbysearchObj;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+  }
   getOrg(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getOrg;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });

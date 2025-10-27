@@ -1,21 +1,41 @@
 import { KeyValue } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ExcelService } from 'src/service/excel.service';
+import { PageEvent } from '@angular/material/paginator';
 
-interface GroupedOrder {
-  totalSubsidy: number;
-  totalAmount: number;
-  totalItemAmount: number;
-  outlets: {
-    [outletName: string]: {
-      totalSubsidy: number;
-      totalAmount: number;
-      totalItemAmount: number;
-      orders: any[];
-    };
+type DayGroup = {
+  dateKey: string;       // "YYYY-MM-DD" in IST
+  dateLabel: string;     // readable (e.g., "27 Oct 2025")
+  orders: any[];
+  totals: {
+    count: number;
+    subsidy: number;
+    itemAmount: number;
+    gross: number;       // (itemAmount - subsidy) if you need it
   };
+};
+
+interface SummaryRow {
+  'Date (Label)': string;
+  'Orders Count': number;
+  'Item Amount (₹)': number;
+  'Subsidy (₹)': number;
+  'Gross (₹)': number;
+}
+
+interface DetailedRow {
+  'Date (Label)': string;
+  'Order No': string;
+  Customer: string;
+  Phone: string;
+  'Item Amount (₹)': number;
+  'Subsidy (₹)': number;
+  'Gross (₹)': number;
+  Status: string;
 }
 
 @Component({
@@ -24,217 +44,271 @@ interface GroupedOrder {
   styleUrls: ['./outlet-billing.component.scss']
 })
 export class OutletBillingComponent implements OnInit {
-  @Input() selectedOrg: any
-  orglist: any = [];
-  orgSelected: any = null;
+  @Input() selectedOrg: any;
+  public readonly Math = Math;
 
-  cafeteria_id: any
-  cafeList: any[] = []
-  dateGroup!: FormGroup;
-  maxDate: Date = new Date();
   orders: any[] = [];
-  groupedOrders: { [date: string]: GroupedOrder } = {};
-  expandedItems: boolean[] = [];
-  grandTotalAmount: number = 0;
-  grandTotalSubsidy: number = 0;
-  grandTotalItemAmount: number = 0;
+  dateGroups: DayGroup[] = [];
 
-  constructor(private apiMainService: ApiMainService, private excelService: ExcelService,) {
-    this.dateGroup = new FormGroup({
-      start: new FormControl(new Date()),
-      end: new FormControl(new Date()),
-    });
-  }
-
-  ngOnInit(): void {
-    this.initFunc()
-  }
-
-  initFunc() {
-    this.getorganizations()
-
-    this.maxDate.setDate(this.maxDate.getDate());
-    this.maxDate.setHours(23, 59, 59, 999);
-  }
-
-  compareDates = (a: KeyValue<string, any>, b: KeyValue<string, any>): number => {
-    const dateA = new Date(a.key);
-    const dateB = new Date(b.key);
-    return dateA.getTime() - dateB.getTime(); // ascending order
+  headerConfig: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: false,
+    maxDate: new Date(),
+    requireAll: true
   };
 
-  async getorganizations() {
-    try {
-      this.orglist = [];
-      let page = 1;
-      let searchObj = {
-        countOnly: false
-      }
-      let result = await this.apiMainService.B2B_fetchFilteredAllOrgs(searchObj, page);
-      this.orglist = result;
-      if (this.selectedOrg) {
-        this.orgSelected = this.orglist.find((item: any) => item._id === this.selectedOrg?._id)
-      } else {
-        this.orgSelected = this.orglist[0]
-      }
+  filteredData: any;
 
-      if (this.orgSelected) {
-        await this.getOrgDetailsById();
-      }
-    } catch (error) {
-      console.log(error)
+  // (kept for your main table if you need it later)
+  mainPageIndex = 0;
+  mainPageSize = 5;
+  mainPageSizeOptions = [5, 10, 25, 50, 100];
+
+  // --- Date-group pagination state ---
+  groupPageIndex = 0;
+  groupPageSize = 5;
+  groupPageSizeOptions = [3, 5, 10, 20, 50];
+
+  private readonly IST_TZ = 'Asia/Kolkata';
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private excelService: ExcelService,
+    private dialog: MatDialog
+  ) { }
+
+  ngOnInit(): void { }
+
+  trackByDateKey(index: number, g: DayGroup): string {
+    return g?.dateKey ?? index.toString();
+  }
+
+  // Slice for current page of date groups
+  get pagedDateGroups(): DayGroup[] {
+    const start = this.groupPageIndex * this.groupPageSize;
+    return this.dateGroups.slice(start, start + this.groupPageSize);
+  }
+
+  onGroupPage(e: PageEvent) {
+    this.groupPageIndex = e.pageIndex;
+    this.groupPageSize = e.pageSize;
+  }
+
+  onMainPage(e: PageEvent) {
+    this.mainPageIndex = e.pageIndex;
+    this.mainPageSize = e.pageSize;
+  }
+
+  private resetAllPagers() {
+    this.groupPageIndex = 0;
+    this.mainPageIndex = 0;
+  }
+
+  filterSubmitted(e: any) {
+    if (e.outlet_id) {
+      this.filteredData = e;
+      this.getOrders();
     }
-  }
-
-  async getOrgDetailsById() {
-    try {
-      const res = await this.apiMainService.getOrg(this.orgSelected?._id)
-      // this.orgDetails = res
-      if (res?.cafeteriaList.length > 0) {
-        this.cafeList = res?.cafeteriaList
-        this.cafeteria_id = this.cafeList[0]?.cafeteria_id
-      }
-      this.fetchData()
-    } catch (err: any) {
-      console.log(err);
-    }
-  }
-
-  fetchData() {
-    const selCafe = this.cafeList.find(c => c.cafeteria_id === this.cafeteria_id)
-    console.log(selCafe);
-  }
-
-  changeOrganization(e: any) {
-    const id = e.value
-    this.orgSelected = this.orglist.find((item: any) => item._id === id)
-    this.getOrgDetailsById()
   }
 
   async getOrders() {
-    const selectedCafeteria = this.cafeList.find(c => c.cafeteria_id === this.cafeteria_id);
-
     const body = {
-      cafeteriaName: selectedCafeteria?.cafeteria_name || '',
-      organizationName: this.orgSelected?.organization_name || '',
-      cafeteriaId: selectedCafeteria?.cafeteria_id || '',
-      organizationId: this.orgSelected?._id || '',
-      fromDate: this.dateGroup.get('start')?.value,
-      toDate: this.dateGroup.get('end')?.value,
+      outletId: this.filteredData.outlet_id,
+      fromDate: this.filteredData.date_from,
+      toDate: this.filteredData.date_to,
     };
-
-    console.log(body);
-
-
     this.fetchOutletOrders(body);
   }
 
-
   async fetchOutletOrders(body: any) {
     try {
-      const res = await this.apiMainService.fetchOutletOrdersbysearchObj(body);
-      console.log(res);
-      this.orders = res
-      if (res.length > 0) {
-        this.groupOrdersByDate()
-      }
-
-    } catch (err: any) {
-      console.log("err", err);
+      const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
+      this.orders = Array.isArray(res) ? res : [];
+      console.log(this.orders);
+      this.buildDatewiseGroups();
+      this.resetAllPagers();
+    } catch (err) {
+      console.log('err', err);
+      this.orders = [];
+      this.dateGroups = [];
+      this.resetAllPagers();
     }
   }
 
-  groupOrdersByDate() {
-    this.groupedOrders = {};
-    this.grandTotalAmount = 0;
-    this.grandTotalSubsidy = 0;
-    this.grandTotalItemAmount = 0;
+  // ---------- helpers (same as before) ----------
+  getSubsidy(order: any): number {
+    const byOrder = order?.subsidyAmount ?? order?.subsidy ?? order?.totalSubsidy ?? 0;
+    if (byOrder) return Number(byOrder) || 0;
+    const items = order?.itemList || order?.items || [];
+    if (!Array.isArray(items) || items.length === 0) return 0;
+    return items.reduce((acc: number, it: any) => {
+      const s = it?.subsidyAmount ?? it?.companySubsidy ?? it?.subsidy ?? 0;
+      return acc + (Number(s) || 0);
+    }, 0);
+  }
 
-    this.orders.forEach(order => {
-      const dateKey = new Date(order.orderDate).toISOString().split('T')[0]; // better sorting
-      const outletName = order.outletName || 'Unknown Outlet';
+  getItemAmount(order: any): number {
+    const byOrder = order?.itemAmount ?? order?.totalItemAmount ?? order?.amountBeforeSubsidy ?? order?.amount ?? 0;
+    if (byOrder) return Number(byOrder) || 0;
+    const items = order?.itemList || order?.items || [];
+    if (!Array.isArray(items) || items.length === 0) return 0;
+    return items.reduce((acc: number, it: any) => {
+      const price = Number(it?.price || it?.rate || 0);
+      const qty = Number(it?.count || it?.qty || 1);
+      return acc + price * qty;
+    }, 0);
+  }
 
-      if (!this.groupedOrders[dateKey]) {
-        this.groupedOrders[dateKey] = {
-          totalSubsidy: 0,
-          totalAmount: 0,
-          totalItemAmount: 0,
-          outlets: {}
-        };
-      }
+  getGross(order: any): number {
+    const item = this.getItemAmount(order);
+    const sub = this.getSubsidy(order);
+    return item - sub;
+  }
 
-      if (!this.groupedOrders[dateKey].outlets[outletName]) {
-        this.groupedOrders[dateKey].outlets[outletName] = {
+  istDateKey(d: Date | string): string {
+    const date = d ? new Date(d) : new Date();
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: this.IST_TZ, year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(date);
+  }
+
+  istDateLabel(d: Date | string): string {
+    const date = d ? new Date(d) : new Date();
+    return new Intl.DateTimeFormat('en-IN', {
+      timeZone: this.IST_TZ, weekday: 'short', day: '2-digit', month: 'short', year: 'numeric'
+    }).format(date);
+  }
+
+  buildDatewiseGroups(): void {
+    const map = new Map<string, DayGroup>();
+    for (const o of this.orders) {
+      const rawDate = o?.orderDate ?? o?.createdOn ?? o?.created_at ?? new Date();
+      const key = this.istDateKey(rawDate);
+      if (!map.has(key)) {
+        map.set(key, {
+          dateKey: key,
+          dateLabel: this.istDateLabel(rawDate),
           orders: [],
-          totalSubsidy: 0,
-          totalAmount: 0,
-          totalItemAmount: 0,
-        };
+          totals: { count: 0, subsidy: 0, itemAmount: 0, gross: 0 }
+        });
       }
+      const g = map.get(key)!;
+      g.orders.push(o);
+      const subsidy = this.getSubsidy(o);
+      const itemAmt = this.getItemAmount(o);
+      g.totals.count += 1;
+      g.totals.subsidy += subsidy;
+      g.totals.itemAmount += itemAmt;
+      g.totals.gross += (itemAmt - subsidy);
+    }
+    this.dateGroups = Array.from(map.values()).sort((a, b) => a.dateKey < b.dateKey ? 1 : -1);
+  }
 
-      const subsidy = order.subsidyAmount || 0;
-      const totalAmt = (order.amount || 0) + (order.moneyWalletPointsUsed || 0);
-      const totalItemAmount = order.itemAmount || 0;
+  // Totals across ALL dates
+get grandTotals() {
+  const init = { count: 0, item: 0, subsidy: 0, gross: 0 };
+  return this.dateGroups.reduce((acc, g) => {
+    acc.count   += g.totals.count;
+    acc.item    += g.totals.itemAmount;
+    acc.subsidy += g.totals.subsidy;
+    acc.gross   += g.totals.gross;
+    return acc;
+  }, init);
+}
 
-      this.groupedOrders[dateKey].outlets[outletName].orders.push(order);
-      this.groupedOrders[dateKey].outlets[outletName].totalSubsidy += subsidy;
-      this.groupedOrders[dateKey].outlets[outletName].totalAmount += totalAmt;
-      this.groupedOrders[dateKey].outlets[outletName].totalItemAmount += totalItemAmount;
+// Totals for CURRENT PAGE (optional: show/hide in UI)
+get pageTotals() {
+  const init = { count: 0, item: 0, subsidy: 0, gross: 0 };
+  return this.pagedDateGroups.reduce((acc, g) => {
+    acc.count   += g.totals.count;
+    acc.item    += g.totals.itemAmount;
+    acc.subsidy += g.totals.subsidy;
+    acc.gross   += g.totals.gross;
+    return acc;
+  }, init);
+}
 
-      this.groupedOrders[dateKey].totalSubsidy += subsidy;
-      this.groupedOrders[dateKey].totalAmount += totalAmt;
-      this.groupedOrders[dateKey].totalItemAmount += totalItemAmount;
+  // ---------- Excel Exports ----------
+  /** Export one row per date with totals */
+  exportDatewiseSummary(): void {
+    const rows: SummaryRow[] = this.dateGroups.map(g => ({
+      'Date (Label)': g.dateLabel,
+      'Orders Count': g.totals.count,
+      'Item Amount (₹)': this.round2(g.totals.itemAmount),
+      'Subsidy (₹)': this.round2(g.totals.subsidy),
+      'Gross (₹)': this.round2(g.totals.gross),
+    }));
 
-      this.grandTotalSubsidy += subsidy;
-      this.grandTotalAmount += totalAmt;
-      this.grandTotalItemAmount += totalItemAmount;
+    const grand = this.dateGroups.reduce(
+      (acc, g) => ({
+        count: acc.count + g.totals.count,
+        item: acc.item + g.totals.itemAmount,
+        subsidy: acc.subsidy + g.totals.subsidy,
+        gross: acc.gross + g.totals.gross,
+      }),
+      { count: 0, item: 0, subsidy: 0, gross: 0 }
+    );
+
+    rows.push({
+      'Date (Label)': 'TOTAL',
+      'Orders Count': grand.count,
+      'Item Amount (₹)': this.round2(grand.item),
+      'Subsidy (₹)': this.round2(grand.subsidy),
+      'Gross (₹)': this.round2(grand.gross),
     });
 
-    console.log(this.groupedOrders);
-    
+    if ((this.excelService as any).download) {
+      (this.excelService as any).download(rows, 'Outlet_Billing_Datewise_Summary');
+    }
   }
 
-  toggleFeedback(index: number) {
-    this.expandedItems[index] = !this.expandedItems[index];
-  }
+  /** Export order-level rows (with date attached) */
+  exportDatewiseDetailed(): void {
+    const rows: DetailedRow[] = [];
+    let totalOrders = 0, totalItem = 0, totalSubsidy = 0, totalGross = 0;
 
-  trackByDateKey(index: number, item: KeyValue<string, any>) {
-    return item.key;
-  }
+    for (const g of this.dateGroups) {
+      for (const o of g.orders) {
+        const itemAmt = this.getItemAmount(o);
+        const subsidy = this.getSubsidy(o);
+        const gross = itemAmt - subsidy;
 
-  async excelExport() {
-    const exportData: any[] = [];
+        rows.push({
+          'Date (Label)': g.dateLabel,
+          'Order No': String(o.orderNo || o._id || ''),
+          Customer: o.customerName || '',
+          Phone: o.customerPhoneNo || '',
+          'Item Amount (₹)': this.round2(itemAmt),
+          'Subsidy (₹)': this.round2(subsidy),
+          'Gross (₹)': this.round2(gross),
+          Status: o.orderstatus || o.status || '',
+        });
 
-    const selectedCafeteria = this.cafeList.find(c => c.cafeteria_id === this.cafeteria_id);
-
-
-    for (const dateKey in this.groupedOrders) {
-      const dateGroup = this.groupedOrders[dateKey];
-
-      exportData.push({
-        Date: new Date(dateKey).toISOString().split('T')[0],
-        Organization: this.orgSelected?.organization_name || '',
-        Cafeteria: selectedCafeteria?.cafeteria_name,
-        'Total Item Amount (₹)': dateGroup.totalItemAmount,
-        'Subsidy Amount (₹)': dateGroup.totalSubsidy,
-        'Total Paid Amount (₹)': dateGroup.totalAmount,
-      });
+        totalOrders += 1;
+        totalItem += itemAmt;
+        totalSubsidy += subsidy;
+        totalGross += gross;
+      }
     }
 
-    exportData.push({
-      Date: 'Grand Total',
-      Organization: '',
-      Cafeteria: '',
-      'Total Item Amount (₹)': this.grandTotalItemAmount,
-      'Subsidy Amount (₹)': this.grandTotalSubsidy,
-      'Total Paid Amount (₹)': this.grandTotalAmount,
+    rows.push({
+      'Date (Label)': 'TOTAL',
+      'Order No': `${totalOrders} orders`,
+      Customer: '',
+      Phone: '',
+      'Item Amount (₹)': this.round2(totalItem),
+      'Subsidy (₹)': this.round2(totalSubsidy),
+      'Gross (₹)': this.round2(totalGross),
+      Status: '',
     });
 
-    const from = this.dateGroup.get('start')?.value?.toLocaleDateString() || '';
-    const to = this.dateGroup.get('end')?.value?.toLocaleDateString() || '';
-    const filename = `Outlet_Billing_${from}_to_${to}`;
-
-    this.excelService.download(exportData, filename);
+    if ((this.excelService as any).download) {
+      (this.excelService as any).download(rows, 'Outlet_Billing_Datewise_Detailed');
+    }
   }
 
+  private round2(n: number): number {
+    return Math.round((n + Number.EPSILON) * 100) / 100;
+  }
 }

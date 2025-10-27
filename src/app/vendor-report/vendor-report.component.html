@@ -1,0 +1,166 @@
+<div class="container-fluid pb-4 billingContainer">
+    <div class="row pt-3 pb-2">
+        <!-- <app-common-outlet-cafe-select [config]="headerConfig"
+            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select> -->
+        <div class="col-12 col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Outlet</mat-label>
+
+                <mat-select [disabled]="loadingOutlets" [value]="selected.outletId"
+                    (valueChange)="onOutletChange($event)">
+                    <mat-option [value]="''" disabled>Select Outlet</mat-option>
+                    <mat-option *ngFor="let o of outletList" [value]="o.outletId">
+                        {{ o.outletName }}
+                    </mat-option>
+                </mat-select>
+
+                <mat-hint *ngIf="loadingOutlets">Loading outlets…</mat-hint>
+            </mat-form-field>
+        </div>
+        <!-- ===== Date Range (optional) ===== -->
+        <div class="col-12 col-md-3" >
+            <form [formGroup]="dateForm">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Date range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker" >
+                        <input matStartDate placeholder="From" formControlName="dateFrom" />
+                        <input matEndDate placeholder="To" formControlName="dateTo" />
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+            </form>
+        </div>
+
+        <div class="col-12 col-md-3 d-flex justify-content-end">
+        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit">
+            Submit
+        </button>
+    </div>
+    </div>
+    <!-- Overall totals -->
+    <div class="card shadow-sm mb-3 p-3">
+        <div class="d-flex flex-wrap align-items-start gap-3 w-100">
+
+            <!-- Stat grid -->
+            <div class="stat-grid flex-grow-1">
+                <div class="stat">
+                    <span class="label">Total Orders</span>
+                    <span class="value">{{ vendorTotals.count }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Item Amount</span>
+                    <span class="value">₹{{ vendorTotals.totalItemAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Subsidy</span>
+                    <span class="value">₹{{ vendorTotals.totalSubsidy | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">After GST (Items)</span>
+                    <span class="value">₹{{ vendorTotals.totalItemAmountAfterGst | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Comm</span>
+                    <span class="value">₹{{ vendorTotals.vendorCommissionAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Comm GST</span>
+                    <span class="value">₹{{ vendorTotals.vendorCommissionGstAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Before Comm GST</span>
+                    <span class="value">₹{{ vendorTotals.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Before TDS/TCS</span>
+                    <span class="value">₹{{ vendorTotals.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">TCS</span>
+                    <span class="value">₹{{ vendorTotals.tcsAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat">
+                    <span class="label">TDS</span>
+                    <span class="value">₹{{ vendorTotals.tdsAmount | number:'1.2-2' }}</span>
+                </div>
+                <div class="stat highlight">
+                    <span class="label">Vendor Total</span>
+                    <span class="value">₹{{ vendorTotals.totalVendorAmt | number:'1.2-2' }}</span>
+                </div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="d-flex flex-column gap-2 ms-auto">
+                <button mat-raised-button color="primary" (click)="exportAllToExcel()">
+                    Excel Export
+                </button>
+                <button mat-stroked-button color="primary" (click)="openDatewiseModal()">
+                    Date-wise view
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Flat order-wise table (all dates) -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+                <h6 class="mb-0">Order-wise Breakdown</h6>
+                <div class="text-muted small">
+                    Showing {{ pagedOrderWise.length ? (mainPageIndex * mainPageSize + 1) : 0 }}
+                    –
+                    {{ Math.min((mainPageIndex + 1) * mainPageSize, orderWise.length) }}
+                    of {{ orderWise.length }}
+                </div>
+            </div>
+
+            <div class="table-responsive table-wrap">
+                <table class="table table-sm align-middle">
+                    <thead class="sticky-top bg-body">
+                        <tr>
+                            <th>Date</th>
+                            <th>Order No</th>
+                            <th>Token</th>
+                            <th>Customer</th>
+                            <th class="text-end">Item</th>
+                            <th class="text-end">Subsidy</th>
+                            <th class="text-end">After GST</th>
+                            <th class="text-end">Comm</th>
+                            <th class="text-end">Comm GST</th>
+                            <th class="text-end">Before Comm GST</th>
+                            <th class="text-end">Before TDS/TCS</th>
+                            <th class="text-end">TCS</th>
+                            <th class="text-end">TDS</th>
+                            <th class="text-end">Vendor Amt</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let r of pagedOrderWise; trackBy: trackByOrder">
+                            <td>{{ r.orderDateIST }}</td>
+                            <td>{{ r.orderNo }}</td>
+                            <td>{{ r.tokenNo }}</td>
+                            <td>{{ r.customerName }}</td>
+                            <td class="text-end">₹{{ r.itemAmount | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.subsidyAmount | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.totalItemAmountAfterGst | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.vendorCommissionAmount | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.vendorCommissionGstAmount | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.tcsAmount | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.tdsAmount | number:'1.2-2' }}</td>
+                            <td class="text-end">₹{{ r.vendorLedgerAmt | number:'1.2-2' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Paginator -->
+            <mat-paginator [length]="orderWise.length" [pageIndex]="mainPageIndex" [pageSize]="mainPageSize"
+                [pageSizeOptions]="mainPageSizeOptions" (page)="onMainPage($event)"
+                showFirstLastButtons></mat-paginator>
+        </div>
+    </div>
+
+</div>
