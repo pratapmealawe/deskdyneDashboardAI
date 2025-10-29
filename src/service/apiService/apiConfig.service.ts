@@ -256,6 +256,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/updateConsumptionOrderStatus`,
         method: 'POST',
       },
+      updateConsumptionSingleMeslStatus: {
+        url: `${this.baseUrl}/api/updateConsumptionSingleMealStatus`,
+        method: 'POST',
+      },
       addConsumptionOrderList: {
         url: `${this.baseUrl}/api/addConsumptionOrderList`,
         method: 'POST',

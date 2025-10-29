@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { environment } from 'src/environments/environment';
 
 
 interface Filter {
@@ -28,7 +29,9 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
   orgDetails: any = {};
   filteredOrderList: any = [];
   cafeList: any[] = [];
-
+  imageUrl = environment.imageUrl;
+  orderDate: any;
+  statusPayload: any;
 
   constructor(private apiMainService: ApiMainService, private localStorageService: LocalStorageService, private confirmationModalService: ConfirmationModalService) { }
 
@@ -109,24 +112,77 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
     try {
       const res = await this.apiMainService.updateConsumptionOrderStatus(this.filteredOrderList[0].
         organization_id, this.filteredOrderList[0].
-        cafeteria_orignal_id
+        cafeteria_orignal_id,
+        this.statusPayload
       );
-      console.log(res);
       this.filterOrders();
-
 
     } catch (err: any) {
       console.error('Error fetching outlet orders', err);
     }
   }
 
-  showPopupForItemActivation() {
+  async updateConsumptionSingleMealStatus() {
+    try {
+      const res = await this.apiMainService.updateConsumptionSingleMeslStatus(this.filteredOrderList[0].
+        organization_id, this.filteredOrderList[0].
+        cafeteria_orignal_id,
+        this.statusPayload
+      );
+      this.filterOrders();
 
+    } catch (err: any) {
+      console.error('Error fetching outlet orders', err);
+    }
+  }
+
+  showPopupForItemActivation(order: any, status: any) {
+    this.orderDate = order.orderDate;
+    this.statusPayload = {
+      orderDate: this.orderDate,
+      status: status
+    };
+    const actionText = status === 'approved' ? 'approve' : 'reject';
+    const statusText = `Are you sure you want to ${actionText} all menu items?`;
     this.confirmationModalService.modal(
-      `Are you sure, you want to change status`,
+      statusText,
       this.updateConsumptionOrderStatus,
       this
     );
   }
+
+  showPopupForSinleItemActivation(order: any, meal: any, status: any) {
+    this.orderDate = order.orderDate;
+    this.statusPayload = {
+      orderDate: this.orderDate,
+      status,
+      itemId: meal._id
+    };
+    const actionText = status === 'approved' ? 'approve' : 'reject';
+    const statusText = `Are you sure you want to ${actionText} ${meal.itemName} item?`;
+    this.confirmationModalService.modal(
+      statusText,
+      this.updateConsumptionSingleMealStatus,
+      this
+    );
+  }
+
+  checkAllMealStatus(order: any) {
+    return order.mealTypeList.find((data: any) => data.status == 'review');
+  }
+
+  downloadOrder(order: any) {
+    const url = `${this.imageUrl}${order.imageUrl}`;
+    const link = document.createElement('a');
+    link.href = url;
+
+    const fileName = order.imageUrl.split('/').pop() || 'downloaded-file';
+    link.download = fileName;
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
 
 }

@@ -650,12 +650,20 @@ export class ApiMainService {
     }, consumptionMenu);
   }
 
-  updateConsumptionOrderStatus(orgId: any, cafeId: any) {
+  updateConsumptionOrderStatus(orgId: any, cafeId: any, payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateConsumptionOrderStatus;
     return this.apiHttpService.REQUEST({
       url: urlObj.url + `/${orgId}` + `/${cafeId}`,
       method: urlObj.method,
-    });
+    }, payload);
+  }
+
+  updateConsumptionSingleMeslStatus(orgId: any, cafeId: any, payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateConsumptionSingleMeslStatus;
+    return this.apiHttpService.REQUEST({
+      url: urlObj.url + `/${orgId}` + `/${cafeId}`,
+      method: urlObj.method,
+    }, payload);
   }
 
 
