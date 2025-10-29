@@ -7,6 +7,9 @@ import { ExcelService } from 'src/service/excel.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonSelectConfig, SubmitPayload } from '../common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { ItemBreakdownComponent } from './item-breakdown/item-breakdown.component';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-vendor-report',
@@ -57,6 +60,15 @@ export class VendorReportComponent {
       vendorLedgerAmtBeforeTdsTcs: number;
       tcsAmount: number;
       tdsAmount: number;
+      totalGstAmt: number; // <- sum of gstamt
+
+      // declared percentage fields (uniform per date or "mixed")
+      itemGstRatePct: number | null | undefined;
+      tcsRatePct: number | null | undefined;
+      tdsRatePct: number | null | undefined;
+      vendorCommissionPercentage: number | null | undefined;
+      vendorCommissionGstPercentage: number | null | undefined;
+
       count: number;
       orders: any[];
     };
@@ -130,7 +142,6 @@ export class VendorReportComponent {
     this.selected.outletId = outletId;
   }
 
-
   onMainPage(e: PageEvent) {
     this.mainPageIndex = e.pageIndex;
     this.mainPageSize = e.pageSize;
@@ -174,6 +185,42 @@ export class VendorReportComponent {
     }
   }
 
+  openItemBreakdownModal(): void {
+    const orders = (this.orders || []).filter(o => o?.orderstatus === 'completed');
+
+    const rangeLabel = this.buildRangeLabel(
+      this.dateForm.get('dateFrom')?.value,
+      this.dateForm.get('dateTo')?.value
+    );
+
+    this.dialog.open(ItemBreakdownComponent, {
+      width: '960px',
+      maxHeight: '85vh',
+      autoFocus: false,
+      data: {
+        rangeLabel,    // <- show this on top
+        orders         // <- use parent-filtered orders
+      }
+    });
+  }
+
+  private buildRangeLabel(from?: Date | null, to?: Date | null): string {
+    const fmt = (d?: Date | null) =>
+      d ? new Intl.DateTimeFormat('en-IN', {
+        day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata'
+      }).format(d) : '';
+    const a = fmt(from);
+    const b = fmt(to);
+    if (a && b) return `${a} – ${b}`;
+    if (a) return `${a}`;
+    if (b) return `${b}`;
+    return 'All Selected Dates';
+  }
+
+  get hasData(): boolean {
+    return (this.orderWise?.length ?? 0) > 0;
+  }
+
   compareDateDesc = (a: KeyValue<string, any>, b: KeyValue<string, any>) =>
     a.key < b.key ? 1 : a.key > b.key ? -1 : 0;
 
@@ -208,91 +255,116 @@ export class VendorReportComponent {
     this.byDate = {};
     this.orderWise = [];
 
+    // helper to keep a date-level % field uniform (else mark Mixed => null)
+    const keepUniform = (cur: number | null | undefined, next: any): number | null => {
+      const v = (next == null ? null : Number(next));
+      if (cur === undefined) return v;       // first value for the date
+      if (cur === null) return null;         // already mixed
+      return (v === cur) ? cur : null;       // if different -> mixed
+    };
+
     for (const o of this.orders || []) {
-      if (o.orderstatus === "completed") {
-        const vAmt = this.n(o.vendorLedgerAmt);
-        const itemAmt = this.n(o.itemAmount);
-        const subsidy = this.n(o.subsidyAmount);
-        const afterGst = this.n(o.totalItemAmountAfterGst);
-        const comm = this.n(o.vendorCommissionAmount);
-        const commGst = this.n(o.vendorCommissionGstAmount);
-        const beforeCommGst = this.n(o.vendorLedgerAmtBeforeCommissionGst);
-        const beforeTdsTcs = this.n(o.vendorLedgerAmtBeforeTdsTcs);
-        const tcsAmt = this.n(o.tcsAmount);
-        const tdsAmt = this.n(o.tdsAmount);
+      if (o.orderstatus !== "completed") continue;
 
-        // overall
-        this.vendorTotals.totalVendorAmt += vAmt;
-        this.vendorTotals.totalItemAmount += itemAmt;
-        this.vendorTotals.totalSubsidy += subsidy;
-        this.vendorTotals.totalItemAmountAfterGst += afterGst;
-        this.vendorTotals.vendorCommissionAmount += comm;
-        this.vendorTotals.vendorCommissionGstAmount += commGst;
-        this.vendorTotals.vendorLedgerAmtBeforeCommissionGst += beforeCommGst;
-        this.vendorTotals.vendorLedgerAmtBeforeTdsTcs += beforeTdsTcs;
-        this.vendorTotals.tcsAmount += tcsAmt;
-        this.vendorTotals.tdsAmount += tdsAmt;
-        this.vendorTotals.count += 1;
+      const vAmt = this.n(o.vendorLedgerAmt);
+      const itemAmt = this.n(o.itemAmount);
+      const subsidy = this.n(o.subsidyAmount);
+      const baseAmt = this.n(o.totalItemAmountAfterGst);
+      const comm = this.n(o.vendorCommissionAmount);
+      const commGst = this.n(o.vendorCommissionGstAmount);
+      const beforeCommGst = this.n(o.vendorLedgerAmtBeforeCommissionGst);
+      const beforeTdsTcs = this.n(o.vendorLedgerAmtBeforeTdsTcs);
+      const tcsAmt = this.n(o.tcsAmount);
+      const tdsAmt = this.n(o.tdsAmount);
+      const gstAmt = this.n(o.gstamt);
 
-        // date-wise (IST)
-        const key = this.toISTDateKey(o.orderDate);
-        if (!this.byDate[key]) {
-          this.byDate[key] = {
-            totalVendorAmt: 0,
-            totalItemAmount: 0,
-            totalSubsidy: 0,
-            totalItemAmountAfterGst: 0,
-            vendorCommissionAmount: 0,
-            vendorCommissionGstAmount: 0,
-            vendorLedgerAmtBeforeCommissionGst: 0,
-            vendorLedgerAmtBeforeTdsTcs: 0,
-            tcsAmount: 0,
-            tdsAmount: 0,
-            count: 0,
-            orders: [],
-          };
-        }
-        const b = this.byDate[key];
-        b.totalVendorAmt += vAmt;
-        b.totalItemAmount += itemAmt;
-        b.totalSubsidy += subsidy;
-        b.totalItemAmountAfterGst += afterGst;
-        b.vendorCommissionAmount += comm;
-        b.vendorCommissionGstAmount += commGst;
-        b.vendorLedgerAmtBeforeCommissionGst += beforeCommGst;
-        b.vendorLedgerAmtBeforeTdsTcs += beforeTdsTcs;
-        b.tcsAmount += tcsAmt;
-        b.tdsAmount += tdsAmt;
-        b.count += 1;
-        b.orders.push(o);
+      // overall
+      this.vendorTotals.totalVendorAmt += vAmt;
+      this.vendorTotals.totalItemAmount += itemAmt;
+      this.vendorTotals.totalSubsidy += subsidy;
+      this.vendorTotals.totalItemAmountAfterGst += baseAmt;
+      this.vendorTotals.vendorCommissionAmount += comm;
+      this.vendorTotals.vendorCommissionGstAmount += commGst;
+      this.vendorTotals.vendorLedgerAmtBeforeCommissionGst += beforeCommGst;
+      this.vendorTotals.vendorLedgerAmtBeforeTdsTcs += beforeTdsTcs;
+      this.vendorTotals.tcsAmount += tcsAmt;
+      this.vendorTotals.tdsAmount += tdsAmt;
+      this.vendorTotals.count += 1;
 
-        // per-order row (no outlet fields)
-        this.orderWise.push({
-          orderNo: o.orderNo,
-          tokenNo: o.tokenNo,
-          orderDateIST: key,
-          customerName: o.customerName,
+      // date-wise (IST)
+      const key = this.toISTDateKey(o.orderDate);
+      if (!this.byDate[key]) {
+        this.byDate[key] = {
+          totalVendorAmt: 0,
+          totalItemAmount: 0,
+          totalSubsidy: 0,
+          totalItemAmountAfterGst: 0,
+          vendorCommissionAmount: 0,
+          vendorCommissionGstAmount: 0,
+          vendorLedgerAmtBeforeCommissionGst: 0,
+          vendorLedgerAmtBeforeTdsTcs: 0,
+          tcsAmount: 0,
+          tdsAmount: 0,
+          totalGstAmt: 0,
 
-          itemAmount: itemAmt,
-          subsidyAmount: subsidy,
-          totalItemAmountAfterGst: afterGst,
-          vendorCommissionAmount: comm,
-          vendorCommissionGstAmount: commGst,
-          vendorLedgerAmtBeforeCommissionGst: beforeCommGst,
-          vendorLedgerAmtBeforeTdsTcs: beforeTdsTcs,
-          tcsAmount: tcsAmt,
-          tdsAmount: tdsAmt,
-          vendorLedgerAmt: vAmt,
+          itemGstRatePct: undefined,
+          tcsRatePct: undefined,
+          tdsRatePct: undefined,
+          vendorCommissionPercentage: undefined,
+          vendorCommissionGstPercentage: undefined,
 
-          tcsRatePct: this.n(o.tcsRatePct),
-          tdsRatePct: this.n(o.tdsRatePct),
-          vendorCommissionPercentage: this.n(o.vendorCommissionPercentage),
-          vendorCommissionGstPercentage: this.n(o.vendorCommissionGstPercentage),
-        });
+          count: 0,
+          orders: [],
+        };
       }
+      const b = this.byDate[key];
+
+      b.totalVendorAmt += vAmt;
+      b.totalItemAmount += itemAmt;
+      b.totalSubsidy += subsidy;
+      b.totalItemAmountAfterGst += baseAmt;
+      b.vendorCommissionAmount += comm;
+      b.vendorCommissionGstAmount += commGst;
+      b.vendorLedgerAmtBeforeCommissionGst += beforeCommGst;
+      b.vendorLedgerAmtBeforeTdsTcs += beforeTdsTcs;
+      b.tcsAmount += tcsAmt;
+      b.tdsAmount += tdsAmt;
+      b.totalGstAmt += gstAmt;
+
+      // keep rates uniform, else mark Mixed (null)
+      b.itemGstRatePct = keepUniform(b.itemGstRatePct, o.itemGstRatePct);
+      b.tcsRatePct = keepUniform(b.tcsRatePct, o.tcsRatePct);
+      b.tdsRatePct = keepUniform(b.tdsRatePct, o.tdsRatePct);
+      b.vendorCommissionPercentage = keepUniform(b.vendorCommissionPercentage, o.vendorCommissionPercentage);
+      b.vendorCommissionGstPercentage = keepUniform(b.vendorCommissionGstPercentage, o.vendorCommissionGstPercentage);
+
+      b.count += 1;
+      b.orders.push(o);
+
+      // per-order row (kept as-is if you still show order table elsewhere)
+      this.orderWise.push({
+        orderNo: o.orderNo,
+        tokenNo: o.tokenNo,
+        orderDateIST: key,
+        customerName: o.customerName,
+        itemAmount: itemAmt,
+        subsidyAmount: subsidy,
+        totalItemAmountAfterGst: baseAmt,
+        vendorCommissionAmount: comm,
+        vendorCommissionGstAmount: commGst,
+        vendorLedgerAmtBeforeCommissionGst: beforeCommGst,
+        vendorLedgerAmtBeforeTdsTcs: beforeTdsTcs,
+        tcsAmount: tcsAmt,
+        tdsAmount: tdsAmt,
+        vendorLedgerAmt: vAmt,
+        tcsRatePct: this.n(o.tcsRatePct),
+        tdsRatePct: this.n(o.tdsRatePct),
+        vendorCommissionPercentage: this.n(o.vendorCommissionPercentage),
+        vendorCommissionGstPercentage: this.n(o.vendorCommissionGstPercentage),
+      });
     }
 
-    // sort
+    // sort orders for your table
     this.orderWise.sort((a, b) => {
       if (a.orderDateIST !== b.orderDateIST) return a.orderDateIST < b.orderDateIST ? 1 : -1;
       return (a.orderNo || 0) - (b.orderNo || 0);
@@ -300,6 +372,7 @@ export class VendorReportComponent {
 
     this.resetMainPager();
   }
+
 
   get availableDateKeys(): string[] {
     return Object.keys(this.byDate || {}).sort().reverse(); // latest first
@@ -337,26 +410,192 @@ export class VendorReportComponent {
   }
 
   // --- (Optional) Excel export for the whole period ---
-  exportAllToExcel() {
-    // Map a flat sheet from orderWise; tweak headers as you like
-    const rows = this.orderWise.map(r => ({
-      Date: r.orderDateIST,
-      OrderNo: r.orderNo,
-      Token: r.tokenNo ?? '',
-      Customer: r.customerName ?? '',
-      Item: r.itemAmount,
-      Subsidy: r.subsidyAmount,
-      AfterGST: r.totalItemAmountAfterGst,
-      Commission: r.vendorCommissionAmount,
-      CommissionGST: r.vendorCommissionGstAmount,
-      BeforeCommissionGST: r.vendorLedgerAmtBeforeCommissionGst,
-      BeforeTDSTCS: r.vendorLedgerAmtBeforeTdsTcs,
-      TCS: r.tcsAmount,
-      TDS: r.tdsAmount,
-      VendorAmount: r.vendorLedgerAmt,
-    }));
+  async exportDatewiseSummaryExcel() {
+    if (!this.byDate || !Object.keys(this.byDate).length) return;
 
-    this.excelService.download(rows, 'Outlet-Billing');
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Datewise Summary');
+
+    const currencyFmt = '₹#,##0.00';
+    const dateFmt = 'dd-mmm-yy';
+
+    // Resolve outlet and range safely
+    const outlet =
+      this.outletList.find((item: any) => item.outletId === this.selected.outletId) ||
+      { outletName: 'Outlet' };
+    const rangeLabel = this.buildRangeLabel(
+      this.dateForm.get('dateFrom')?.value,
+      this.dateForm.get('dateTo')?.value
+    );
+
+    // Title (exactly 15 columns -> A..O)
+    ws.mergeCells('A1:O1');
+    const titleCell = ws.getCell('A1');
+    titleCell.value = `Outlet Billing — ${outlet.outletName}`;
+    titleCell.font = { bold: true, size: 13 };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    // Header — 15 columns (A..O)
+    const headers = [
+      'Date',                               // A
+      'Orders',                             // B
+      'Value (Gross)',                      // C  sum totalItemAmount
+      'GST(5%) Value',                      // D  sum totalGstAmt
+      'Value (GROSS - GST)',                // E  sum totalItemAmountAfterGst
+      'Commission',                         // F  sum vendorCommissionAmount
+      'Commission GST (18%)',               // G  sum vendorCommissionGstAmount
+      'Net Commission',                     // H  sum (commission + commission GST)
+      'Net Value (value - Net Commission)', // I  sum vendorLedgerAmtBeforeTdsTcs
+      'TCS (5%)',                           // J  sum tcsAmount
+      'TDS (1%)',                           // K  sum tdsAmount
+      'Vendor Amount (Net Value - TCS -TDS )', // L  sum totalVendorAmt
+      'Subsidy Balance',                    // M  sum totalSubsidy
+      'Final Vendor Payout',                // N  sum (totalVendorAmt - totalSubsidy)
+      'Wallet Status',                      // O  (blank/NA per date)
+    ];
+    const headerRow = ws.addRow(headers);
+    headerRow.eachCell((c) => {
+      c.font = { bold: true };
+      c.alignment = { vertical: 'middle', horizontal: 'center' };
+      c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEFEFEF' } };
+      c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+    });
+    ws.getRow(2).height = 22;
+
+    // Column widths — 15 entries (A..O)
+    const widths = [14, 10, 18, 18, 20, 16, 22, 18, 32, 16, 16, 34, 18, 20, 16];
+    widths.forEach((w, i) => ws.getColumn(i + 1).width = w);
+
+    const dateKeys = this.availableDateKeys;
+
+    // Grand totals (amounts only)
+    const totals = {
+      count: 0,
+      gross: 0,
+      gst: 0,
+      base: 0,
+      comm: 0,
+      commGst: 0,
+      netComm: 0,          // comm + commGst
+      netValue: 0,         // before TDS/TCS
+      tcs: 0,
+      tds: 0,
+      vendor: 0,
+      subsidy: 0,
+      finalPayout: 0,      // vendor - subsidy
+    };
+
+    // Data rows start at row 3
+    for (const key of dateKeys) {
+      const g = this.byDate[key];
+      if (!g || g.count === 0) continue;
+
+      const gross = this.n(g.totalItemAmount);
+      const gst = this.n(g.totalGstAmt);
+      const base = this.n(g.totalItemAmountAfterGst);
+      const commission = this.n(g.vendorCommissionAmount);
+      const commissionGst = this.n(g.vendorCommissionGstAmount);
+      const netCommission = commission + commissionGst;
+      const netValue = this.n(g.vendorLedgerAmtBeforeTdsTcs);
+      const tcs = this.n(g.tcsAmount);
+      const tds = this.n(g.tdsAmount);
+      const vendorAmt = this.n(g.totalVendorAmt);
+      const subsidy = this.n(g.totalSubsidy);
+      const finalPayout = vendorAmt - subsidy;
+      const walletStatus: string = ''; // no per-date status in data; leave blank or set as needed
+
+      // Date key "yyyy-mm-dd" -> real Date for Excel
+      const excelDate = new Date(`${key}T00:00:00`);
+
+      const row = ws.addRow([
+        excelDate,        // A Date
+        g.count,          // B Orders
+        gross,            // C Value (Gross)
+        gst,              // D GST(5%) Value
+        base,             // E Value (GROSS - GST)
+        commission,       // F Commission
+        commissionGst,    // G Commission GST (18%)
+        netCommission,    // H Net Commission
+        netValue,         // I Net Value
+        tcs,              // J TCS
+        tds,              // K TDS
+        vendorAmt,        // L Vendor Amount
+        subsidy,          // M Subsidy Balance
+        finalPayout,      // N Final Vendor Payout
+        walletStatus,     // O Wallet Status
+      ]);
+
+      // Formats & alignment
+      row.getCell(1).numFmt = dateFmt;
+      row.getCell(1).alignment = { horizontal: 'center' };
+      row.getCell(2).alignment = { horizontal: 'center' };
+
+      // Money columns: C..N (3..14)
+      for (let ci = 3; ci <= 14; ci++) {
+        const c = row.getCell(ci);
+        c.numFmt = currencyFmt;
+        c.alignment = { horizontal: 'right' };
+      }
+      // Wallet Status align center
+      row.getCell(15).alignment = { horizontal: 'center' };
+
+      row.eachCell((c) => {
+        c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+      });
+
+      // Totals
+      totals.count += g.count;
+      totals.gross += gross;
+      totals.gst += gst;
+      totals.base += base;
+      totals.comm += commission;
+      totals.commGst += commissionGst;
+      totals.netComm += netCommission;
+      totals.netValue += netValue;
+      totals.tcs += tcs;
+      totals.tds += tds;
+      totals.vendor += vendorAmt;
+      totals.subsidy += subsidy;
+      totals.finalPayout += finalPayout;
+    }
+
+    // Spacer + GRAND TOTAL (align to headers)
+    ws.addRow([]);
+    const gtRow = ws.addRow([
+      'GRAND TOTAL',         // A
+      totals.count,          // B Orders
+      totals.gross,          // C Value (Gross)
+      totals.gst,            // D GST(5%) Value
+      totals.base,           // E Value (GROSS - GST)
+      totals.comm,           // F Commission
+      totals.commGst,        // G Commission GST
+      totals.netComm,        // H Net Commission
+      totals.netValue,       // I Net Value
+      totals.tcs,            // J TCS
+      totals.tds,            // K TDS
+      totals.vendor,         // L Vendor Amount
+      totals.subsidy,        // M Subsidy Balance
+      totals.finalPayout,    // N Final Vendor Payout
+      '',                    // O Wallet Status (blank)
+    ]);
+
+    gtRow.font = { bold: true };
+    gtRow.getCell(1).alignment = { horizontal: 'center' };
+    gtRow.getCell(2).alignment = { horizontal: 'center' };
+    for (let ci = 3; ci <= 14; ci++) gtRow.getCell(ci).numFmt = currencyFmt;
+    gtRow.getCell(15).alignment = { horizontal: 'center' };
+    gtRow.eachCell((c) => {
+      c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+    });
+
+    // DO NOT freeze header (per your instruction)
+
+    // Save (sanitize filename)
+    const buf = await wb.xlsx.writeBuffer();
+    const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const safeRange = rangeLabel.replace(/[\\/:*?"<>|]/g, '–');
+    const fileName = `${outlet.outletName}-Outlet-Billing-${safeRange}.xlsx`;
+    saveAs(blob, fileName);
   }
 
   get canSubmit(): boolean {

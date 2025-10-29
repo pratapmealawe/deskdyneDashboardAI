@@ -1,0 +1,116 @@
+<div>
+  <h2 mat-dialog-title class="mb-0">Item Breakdown</h2>
+  <div mat-dialog-content class="dialog-body">
+
+    <!-- Range from parent -->
+    <div class="subtitle">{{ data.rangeLabel || 'Selected Dates (IST)' }}</div>
+
+    <mat-tab-group>
+      <!-- By Item -->
+      <mat-tab label="By Item">
+        <div class="tab-head">
+          <button mat-stroked-button (click)="export('item')">Export Excel</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th class="text-end">Count</th>
+                <th class="text-end">Total Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of byItemPaged()">
+                <td>{{ r.key }}</td>
+                <td class="text-end">{{ r.count }}</td>
+                <td class="text-end">₹{{ r.totalPrice | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <mat-paginator
+          [length]="byItem().length"
+          [pageIndex]="itemPageIndex()"
+          [pageSize]="itemPageSize()"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onItemPage($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-tab>
+
+      <!-- By Item Type -->
+      <mat-tab label="By Item Type">
+        <div class="tab-head">
+          <button mat-stroked-button (click)="export('type')">Export Excel</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Item Type</th>
+                <th class="text-end">Count</th>
+                <th class="text-end">Total Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of byTypePaged()">
+                <td>{{ r.key || '-' }}</td>
+                <td class="text-end">{{ r.count }}</td>
+                <td class="text-end">₹{{ r.totalPrice | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <mat-paginator
+          [length]="byType().length"
+          [pageIndex]="typePageIndex()"
+          [pageSize]="typePageSize()"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onTypePage($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-tab>
+
+      <!-- By Category -->
+      <mat-tab label="By Category">
+        <div class="tab-head">
+          <button mat-stroked-button (click)="export('category')">Export Excel</button>
+        </div>
+        <div class="table-wrap">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th class="text-end">Count</th>
+                <th class="text-end">Total Price</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of byCategoryPaged()">
+                <td>{{ r.key || '-' }}</td>
+                <td class="text-end">{{ r.count }}</td>
+                <td class="text-end">₹{{ r.totalPrice | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <mat-paginator
+          [length]="byCategory().length"
+          [pageIndex]="catPageIndex()"
+          [pageSize]="catPageSize()"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="onCatPage($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+
+  <div mat-dialog-actions align="end">
+    <button mat-button (click)="ref.close()">Close</button>
+  </div>
+</div>
