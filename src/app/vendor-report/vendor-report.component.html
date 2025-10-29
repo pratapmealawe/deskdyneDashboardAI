@@ -18,11 +18,11 @@
             </mat-form-field>
         </div>
         <!-- ===== Date Range (optional) ===== -->
-        <div class="col-12 col-md-3" >
+        <div class="col-12 col-md-3">
             <form [formGroup]="dateForm">
                 <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Date range</mat-label>
-                    <mat-date-range-input [rangePicker]="picker" >
+                    <mat-date-range-input [rangePicker]="picker">
                         <input matStartDate placeholder="From" formControlName="dateFrom" />
                         <input matEndDate placeholder="To" formControlName="dateTo" />
                     </mat-date-range-input>
@@ -33,13 +33,13 @@
         </div>
 
         <div class="col-12 col-md-3 d-flex justify-content-end">
-        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit">
-            Submit
-        </button>
-    </div>
+            <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit">
+                Submit
+            </button>
+        </div>
     </div>
     <!-- Overall totals -->
-    <div class="card shadow-sm mb-3 p-3">
+    <div class="card shadow-sm mb-3 p-3" *ngIf="hasData">
         <div class="d-flex flex-wrap align-items-start gap-3 w-100">
 
             <!-- Stat grid -->
@@ -92,32 +92,34 @@
 
             <!-- Buttons -->
             <div class="d-flex flex-column gap-2 ms-auto">
-                <button mat-raised-button color="primary" (click)="exportAllToExcel()">
+                <button mat-raised-button color="primary" (click)="exportDatewiseSummaryExcel()">
                     Excel Export
                 </button>
                 <button mat-stroked-button color="primary" (click)="openDatewiseModal()">
                     Date-wise view
+                </button>
+                <button mat-stroked-button color="primary" (click)="openItemBreakdownModal()">
+                    Detail breakdown
                 </button>
             </div>
         </div>
     </div>
 
     <!-- Flat order-wise table (all dates) -->
-    <div class="card shadow-sm">
+    <div *ngIf="hasData; else noDataTpl" class="card shadow-sm">
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between mb-2">
                 <h6 class="mb-0">Order-wise Breakdown</h6>
                 <div class="text-muted small">
-                    Showing {{ pagedOrderWise.length ? (mainPageIndex * mainPageSize + 1) : 0 }}
-                    –
+                    Showing {{ pagedOrderWise.length ? (mainPageIndex * mainPageSize + 1) : 0 }} –
                     {{ Math.min((mainPageIndex + 1) * mainPageSize, orderWise.length) }}
                     of {{ orderWise.length }}
                 </div>
             </div>
 
             <div class="table-responsive table-wrap">
-                <table class="table table-sm align-middle">
-                    <thead class="sticky-top bg-body">
+                <table class="table table-striped  table-sm align-middle">
+                    <thead class="bg-body">
                         <tr>
                             <th>Date</th>
                             <th>Order No</th>
@@ -163,4 +165,12 @@
         </div>
     </div>
 
+    <!-- No data message (covers both totals + table areas) -->
+    <ng-template #noDataTpl>
+        <div class="card shadow-sm">
+            <div class="card-body text-center text-muted py-5">
+                No data found for the selected filters.
+            </div>
+        </div>
+    </ng-template>
 </div>

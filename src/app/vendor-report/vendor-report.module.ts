@@ -13,11 +13,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CommonOutletCafeSelectModule } from '../common-outlet-cafe-select/common-outlet-cafe-select.module';
+import { ItemBreakdownComponent } from './item-breakdown/item-breakdown.component';
+import { MatTabsModule } from '@angular/material/tabs';
 
 
 @NgModule({
   declarations: [
     VendorReportComponent,
+    ItemBreakdownComponent,
   ],
   imports: [
     CommonModule,
@@ -32,6 +35,7 @@ import { CommonOutletCafeSelectModule } from '../common-outlet-cafe-select/commo
     MatButtonModule,
     MatInputModule,
     MatPaginatorModule,
+    MatTabsModule,
     CommonOutletCafeSelectModule
   ],
   exports: [VendorReportComponent]
