@@ -398,8 +398,8 @@ export class OutletMasterMenuComponent implements OnInit {
       formData.append('itemContains', JSON.stringify(this.form.value.itemContains));
       formData.append('category', this.form.value.category);
       // formData.append('subCategory', this.form.value.subCategory);
-      formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence);
+      formData.append('itemType', this.form.value.itemType ? this.form.value.itemType : "Veg");
+      formData.append('precedence', this.form.value.precedence ? this.form.value.precedence : 0);
       formData.append('mealTimingInfo', JSON.stringify(this.form.value.mealTimingInfo));
       const nutritionInfo = {
         energyValue: this.form.value.energyValue,

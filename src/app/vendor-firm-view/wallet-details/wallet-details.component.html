@@ -1,33 +1,92 @@
-<div class="container mt-3">
+<div class="container-fluid mt-3 pb-4">
 
+    <!-- Balance card -->
     <div class="card text-center mb-4 shadow-sm">
         <div class="card-body">
             <h5 class="card-title">Wallet Balance</h5>
             <h2 class="fw-bold text-success">{{ walletBalance | currency:'INR' }}</h2>
+
+            <div class="btnDiv py-2 ">
+                <button mat-flat-button class="mr-2" color="primary" (click)="openTxnDialog('Credit')">
+                    Credit Amount
+                </button>
+                <button mat-stroked-button color="warn" (click)="openTxnDialog('Debit')">
+                    Debit Amount
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Filters -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body d-flex flex-wrap gap-2 align-items-center">
+
+            <!-- Date range -->
+            <mat-form-field appearance="outline" class="w-100 w-md-auto">
+                <mat-label>Date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker" (dateChange)="onDateRangeChange()">
+                    <input matStartDate placeholder="From" [(ngModel)]="dateRange.start" name="fromDate">
+                    <input matEndDate placeholder="To" [(ngModel)]="dateRange.end" name="toDate">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
+
+            <!-- Optional: Type filter (uncomment if you want it)
+      <mat-form-field appearance="outline" class="w-100 w-md-auto">
+        <mat-label>Type</mat-label>
+        <mat-select [(value)]="typeFilter" (selectionChange)="applyFilters(true)">
+          <mat-option value="">All</mat-option>
+          <mat-option value="Credit">Credit</mat-option>
+          <mat-option value="Debit">Debit</mat-option>
+        </mat-select>
+      </mat-form-field>
+      -->
+
+            <button mat-button color="primary" (click)="applyFilters(true)" class="ms-auto">
+                Apply
+            </button>
+            <button mat-button (click)="clearFilters()">
+                Clear
+            </button>
         </div>
     </div>
 
+    <!-- Transactions -->
     <div class="card shadow-sm">
         <div class="card-body">
             <h5 class="card-title mb-3">Transaction History</h5>
 
-            <div *ngFor="let tx of transactionHistoryList"
-                class="p-3 mb-2 border rounded bg-light d-flex justify-content-between align-items-center">
-                <div>
-                    <div class="fw-bold">{{ tx.transactionType }}</div>
-                    <small class="text-muted">{{ tx.created_at | date:'short' }}</small>
-                    <div class="text-muted small">{{ tx.remark }}</div>
-                </div>
-                <div [ngClass]="{'text-success': tx.transactionType==='Credit', 
-                   'text-danger': tx.transactionType==='Debit'}" class="fw-bold">
-                    {{ tx.transactionType==='Credit' ? '+' : '-' }}
-                    {{ tx.transaction_amount | currency:'INR' }}
-                </div>
-            </div>
+            <ng-container *ngIf="loading; else listTpl">
+                <div class="skeleton" *ngFor="let s of [1,2,3,4]"></div>
+            </ng-container>
 
-            <div *ngIf="transactionHistoryList.length===0" class="text-muted text-center mt-3">
-                No transactions yet.
-            </div>
+            <ng-template #listTpl>
+                <div *ngFor="let tx of transactionHistoryList"
+                    class="p-3 mb-2 border rounded bg-light d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="fw-bold">{{ tx.transactionType }}</div>
+                        <small class="text-muted">{{ tx.created_at | date:'MMM d, y, h:mm:ss a' }}</small>
+                        <div class="text-muted small" *ngIf="tx.remark">{{ tx.remark }}</div>
+                    </div>
+                    <div [ngClass]="{'text-success': tx.transactionType==='Credit',
+              'text-danger': tx.transactionType==='Debit'
+            }" class="fw-bold">
+                        {{ tx.transactionType==='Credit' ? '+' : '-' }}
+                        {{ tx.transaction_amount | currency:'INR' }}
+                    </div>
+                </div>
+
+                <div *ngIf="!transactionHistoryList?.length && !loading" class="text-muted text-center mt-3">
+                    No transactions yet.
+                </div>
+            </ng-template>
+
+            <!-- Paginator -->
+            <mat-paginator [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 20, 50]"
+                [length]="estimatedTotal" (page)="onPageChange($event)">
+            </mat-paginator>
         </div>
     </div>
 
