@@ -14,6 +14,7 @@ export let categoryList = [
     { title: "Sandwich and Breads", value: "Sandwich and Breads" },
     { title: "Chaat", value: "Chaat" },
     { title: "Maggi", value: "Maggi" },
+    { title: "Egg and Omelette", value: "Egg and Omelette" },
     { title: "Combos", value: "Combos" },
     { title: "Sweet", value: "Sweet" },
     { title: "Desserts", value: "Desserts" },
