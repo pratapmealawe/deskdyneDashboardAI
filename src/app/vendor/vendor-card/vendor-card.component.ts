@@ -15,7 +15,7 @@ export class VendorCardComponent implements OnInit {
   @Input() vendorFirm: any;
   @Output() deleted = new EventEmitter();
   btnPolicy: any;
-  vendorInfo:any;
+  vendorInfo: any;
 
   constructor(
     private router: Router,
@@ -23,7 +23,7 @@ export class VendorCardComponent implements OnInit {
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
     private confirmationModalService: ConfirmationModalService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -44,7 +44,7 @@ export class VendorCardComponent implements OnInit {
     }
   }
 
-    showPopup(vendor: any) {
+  showPopup(vendor: any) {
     this.vendorInfo = vendor;
     this.confirmationModalService.modal(
       `Are you sure, you want to delete ${this.vendorInfo.vendorName} vendor`,
