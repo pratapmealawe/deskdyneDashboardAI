@@ -1,0 +1,34 @@
+<div>
+     <h2 mat-dialog-title>{{ data.kind === 'Credit' ? 'Credit Amount' : 'Debit Amount' }}</h2>
+
+    <div mat-dialog-content [formGroup]="form" class="d-flex flex-column gap-3 pt-3">
+      <mat-form-field appearance="outline">
+        <mat-label>Amount</mat-label>
+        <input
+          matInput
+          formControlName="amount"
+          type="number"
+          step="0.01"
+          min="0.01"
+          placeholder="0.00"
+          (keydown.enter)="onSubmit()"
+        />
+        <mat-error *ngIf="form.get('amount')?.hasError('required')">Amount is required</mat-error>
+        <mat-error *ngIf="form.get('amount')?.hasError('min')">Minimum ₹0.01</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Remark</mat-label>
+        <textarea matInput formControlName="remark" rows="3" maxlength="200"></textarea>
+        <mat-hint align="end">{{ form.get('remark')?.value?.length || 0 }}/200</mat-hint>
+        <mat-error *ngIf="form.get('remark')?.hasError('required')">Remark is required</mat-error>
+      </mat-form-field>
+    </div>
+
+    <div mat-dialog-actions class="justify-content-end">
+      <button mat-button (click)="onClose()" [disabled]="loading">Cancel</button>
+      <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="form.invalid || loading">
+        {{ loading ? 'Saving...' : 'Save' }}
+      </button>
+    </div>
+</div>

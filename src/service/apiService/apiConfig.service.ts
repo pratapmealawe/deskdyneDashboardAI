@@ -742,6 +742,10 @@ export class ApiConfigService {
         url: `${this.baseUrl}/api/fetchPastOutletOrdersbysearchObj`,
         method: 'POST'
       },
+      fetchCompletedOutletOrdersbysearchObj: {
+        url: `${this.baseUrl}/api/fetchCompletedOutletOrdersbysearchObj`,
+        method: 'POST'
+      },
       getOrg: {
         url: `${this.baseUrl}/api/getOrg`,
         method: 'GET'
@@ -863,6 +867,9 @@ export class ApiConfigService {
       deleteImageGroupConfig: { url: `${this.baseUrl}/api/deleteImageGroupConfig`, method: 'DELETE' },
       getAllImageGroupConfigs: { url: `${this.baseUrl}/api/getAllImageGroupConfigs`, method: 'GET' },
       getImageGroupConfigById: { url: `${this.baseUrl}/api/getImageGroupConfigById`, method: 'GET' },
+      getTotalVendorLedgerBalanceByFirm: { url: `${this.baseUrl}/api/getTotalVendorLedgerBalanceByFirm`, method: 'GET' },
+      getVendorTransactionByFirmAndTypeAndDate: { url: `${this.baseUrl}/api/getVendorTransactionByFirmAndTypeAndDate`, method: 'POST' },
+      creditOrDebitVendorWallet: { url: `${this.baseUrl}/api/creditOrDebitVendorWallet`, method: 'POST' },
     };
   }
 }

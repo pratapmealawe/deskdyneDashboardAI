@@ -108,7 +108,7 @@ export class AddOutletComponent implements OnInit {
         outletDescription: outlet.outletDescription,
         outletType: outlet.outletType,
         outletOpened: outlet.outletOpened,
-        isPreOrder: outlet.isPreOrder,
+        isPreOrder: outlet.isPreOrder ?? false,
         preOrderMealType: outlet.preOrderMealType,
         isSatAvailable: outlet.isSatAvailable,
         isSunAvailable: outlet.isSunAvailable,
