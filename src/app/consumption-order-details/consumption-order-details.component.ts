@@ -3,6 +3,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
+import { ExcelService } from 'src/service/excel.service';
 
 
 interface Filter {
@@ -33,7 +34,8 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
   orderDate: any;
   statusPayload: any;
 
-  constructor(private apiMainService: ApiMainService, private localStorageService: LocalStorageService, private confirmationModalService: ConfirmationModalService) { }
+  constructor(private apiMainService: ApiMainService, private localStorageService: LocalStorageService, private confirmationModalService: ConfirmationModalService, private excel: ExcelService
+  ) { }
 
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
@@ -135,6 +137,34 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
       console.error('Error fetching outlet orders', err);
     }
   }
+
+  export(which: 'item' | 'type' | 'category') {
+    let rows: any[] = [];
+
+    this.filteredOrderList.forEach((order: any) => {
+      order.mealTypeList.forEach((meal: any) => {
+        rows.push({
+          // 'User Name': order.userDetails?.userName,
+          // 'Email': order.userDetails?.email,
+          // 'Phone': order.userDetails?.phoneNo,
+          // 'Organization': order.organization_name,
+          // 'Cafeteria': order.cafeteria_name,
+          'Order Date': new Date(order.orderDate).toLocaleDateString(),
+          'Item Name': meal.itemName,
+          'Meal Types': meal.selctedmealtype?.join(', '),
+          'Meal Price': meal.mealPrice,
+          'Count': meal.count,
+          'Total Price': meal.totalPrice,
+          'Item Status': meal.status,
+          'Order Status': order.status,
+        });
+      });
+    });
+
+    const fname = `consumption_orders_${which}_${new Date().toISOString().split('T')[0]}.xlsx`;
+    this.excel.download(rows, fname);
+  }
+
 
   showPopupForItemActivation(order: any, status: any) {
     this.orderDate = order.orderDate;
