@@ -5,8 +5,10 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 export interface WalletTxnDialogData {
   vendorFirmId: string;
-  kind: 'Credit' | 'Debit';
+  kind: 'Credit' | 'Debit' | 'Transfer';
+  subsidyBalance?: number; // only for Transfer
 }
+
 
 export interface WalletTxnDialogResult {
   success: boolean;
@@ -19,7 +21,7 @@ export interface WalletTxnDialogResult {
   styleUrls: ['./wallet-txn-dialog.component.scss']
 })
 export class WalletTxnDialogComponent {
-form: FormGroup;
+  form: FormGroup;
   loading = false;
 
   constructor(
@@ -32,6 +34,14 @@ form: FormGroup;
       amount: [null, [Validators.required, Validators.min(0.01)]],
       remark: ['', [Validators.required, Validators.maxLength(200)]]
     });
+    // If transferring subsidy, cap by available subsidy
+    console.log(data);
+    
+    if (this.data.kind === 'Transfer') {
+      const maxSubsidy = this.data.subsidyBalance ?? 0;
+      this.form.get('amount')?.addValidators(Validators.max(maxSubsidy));
+      this.form.get('amount')?.updateValueAndValidity();
+    }
   }
 
   onClose() {
@@ -46,16 +56,23 @@ form: FormGroup;
     const remark = String(this.form.value.remark || '').trim();
 
     try {
-      // --- Adjust this to your API contract ---
-      // Option A: single endpoint with type
-      const payload = {
-        vendorFirmId: this.data.vendorFirmId,
-        transactionType: this.data.kind,           // 'Credit' | 'Debit'
-        transaction_amount: +amt.toFixed(2),
-        remark
-      };
-      
-      await this.api.creditOrDebitVendorWallet(payload);
+      if (this.data.kind === 'Transfer') {
+        // NEW: call the dedicated transfer API
+        await this.api.moveSubsidyToWallet({
+          vendorFirmId: this.data.vendorFirmId,
+          amount: +amt.toFixed(2),
+          remark
+        });
+      } else {
+        // Existing credit/debit API
+        await this.api.creditOrDebitVendorWallet({
+          vendorFirmId: this.data.vendorFirmId,
+          transactionType: this.data.kind, // 'Credit' | 'Debit'
+          transaction_amount: +amt.toFixed(2),
+          remark
+        });
+      }
+
       this.dialogRef.close({ success: true });
     } catch (e) {
       console.error('Failed to save wallet transaction', e);
