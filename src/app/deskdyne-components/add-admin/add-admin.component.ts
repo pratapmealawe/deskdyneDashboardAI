@@ -49,12 +49,16 @@ export class AddAdminComponent {
     { text: 'Sales', value: 'SALES' },
     { text: 'Operations', value: 'OPERATIONS' },
     { text: 'Advisor', value: 'ADVISOR' },
+    { text: 'Hyperpure Admin', value: 'HYPERPURE_ADMIN' },
+    { text: 'Hyperpure POC', value: 'HYPERPURE_POC' }
   ];
   orglist: any[] = [];
   filteredOptions = [...this.orglist];
   btnPolicy: any;
   policyArr: any;
   searchQuery: string = '';
+  // searchQuery: string = '';
+
   selectedValue: string = '';
   selectedCafeId: string = '';
   orgDetails: any = null;
@@ -74,7 +78,7 @@ export class AddAdminComponent {
     private runtimeStorageService: RuntimeStorageService,
     private modalService: NgbModal,
     private policyService: PolicyService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -92,7 +96,7 @@ export class AddAdminComponent {
       this.adminObj.policy = cacheAdmin.policy_name;
       this.adminObj.id = cacheAdmin._id;
       this.imageUrl = environment.imageUrl + cacheAdmin.imageUrl;
-      
+
       if (this.adminObj.role == 'ORGADMIN') {
         this.selectedValue = cacheAdmin.orgDetails._id;
         this.setOrgDetails();
@@ -177,6 +181,9 @@ export class AddAdminComponent {
     if (adminObj.role == 'ORGADMIN') {
       formData.append('OrgDetails', JSON.stringify(this.orgDetails));
     }
+
+    console.log(this.orgDetails);
+    
     if (adminObj.role === 'SITEEXE') {
       let cafeList = this.orglist.flatMap((org: any) =>
         org.cafeteriaList.map((cafe: any) => ({
@@ -229,8 +236,8 @@ export class AddAdminComponent {
     formData.append('role', adminObj.role);
     formData.append('policy_name', adminObj.policy);
     try {
-      await this.apiMainService.saveAdminProfile(formData);
-      this.router.navigate(['admin']);
+      // await this.apiMainService.saveAdminProfile(formData);
+      // this.router.navigate(['admin']);
     } catch (e) {
       console.log('Error while saving kitchen partner ', e);
     }
@@ -277,7 +284,7 @@ export class AddAdminComponent {
           cafeteria_id: foundCafe.cafeteria_id,
           _id: foundCafe._id,
         };
-        
+
 
         if (
           !this.siteExecutiveDetails.orgDetails.some((o) => o._id === org._id)
@@ -339,5 +346,5 @@ export class AddAdminComponent {
     });
   }
 
-  
+
 }
