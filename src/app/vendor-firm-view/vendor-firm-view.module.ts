@@ -19,6 +19,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatInputModule } from '@angular/material/input';
 import { VendorReportModule } from "../vendor-report/vendor-report.module";
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -43,6 +45,8 @@ import { VendorReportModule } from "../vendor-report/vendor-report.module";
     MatSnackBarModule,
     MatDialogModule,
     MatInputModule,
+    MatIconModule,
+    MatTooltipModule,
     VendorReportModule
   ],
   exports: [VendorFirmViewComponent]
