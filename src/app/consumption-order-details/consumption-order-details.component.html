@@ -1,51 +1,22 @@
 <div class="container-fluid">
-  <div class="row">
-    <div class="col-md-6">
-      <h3>Consumption Orders</h3>
-    </div>
-  </div>
+  <h3>Consumption Orders</h3>
 
   <div class="container-fluid">
-    <div class="row mb-4 mt-2 p-3 bg-light rounded ">
-      <div class="col-md-3">
-        <label class="labelText">Organization</label>
-        <select class="form-select" [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin.role === 'ORGADMIN'"
-          (change)="setOrgDetails()">
-          <option selected disabled value="">Select Organization</option>
-          <option *ngFor="let option of orglist" [value]="option._id">
-            {{ option.organization_name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="labelText">Cafeteria</label>
-        <select class="form-select" [(ngModel)]="filterObj.cafeId" [disabled]="!orgDetails">
-          <option selected disabled value="">Select Cafeteria</option>
-          <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
-            {{ option.cafeteria_name }}
-          </option>
-        </select>
-      </div>
-
-      <div class="col-md-3">
-        <label class="labelText">From Date</label>
-        <input type="date" [(ngModel)]="filterObj.fromDate" class="form-control" />
-      </div>
-
-      <div class="col-md-3">
-        <label class="labelText">To Date</label>
-        <input type="date" [(ngModel)]="filterObj.toDate" class="form-control" />
-      </div>
-
-      <div class="col-md-3 pt-4">
-        <button class="btn btn-primary w-100" (click)="filterOrders()">Search</button>
-      </div>
+    <div class="row mb-4 mt-3 p-3 bg-light rounded ">
+      <app-common-outlet-cafe-select
+        [config]="headerConfig"
+        (submitted)="filterSubmitted($event)">
+      </app-common-outlet-cafe-select>
     </div>
   </div>
 
-  <div class="container mt-4">
-    <div *ngFor="let order of filteredOrderList" class="mb-4">
+  <div class="container-fluid pb-4 mt-4">
+    <div class="d-flex justify-content-end mb-3" *ngIf="filteredOrderList.length > 0">
+      <button mat-stroked-button (click)="exportConsumptionOrdersExcel()">Export Excel</button>
+    </div>
+
+    <!-- LIST -->
+    <div *ngFor="let order of pagedOrderList; trackBy: trackByOrderId" class="mb-4">
       <div class="card shadow-sm border-0 mb-2">
         <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap">
           <div class="d-flex align-items-center gap-3">
@@ -55,36 +26,39 @@
             <div class="fw-bold fs-6 text-primary">
               {{ order.orderDate | date: 'MMM d, y' }}
             </div>
+            <div class="text-md-center">
+              <small class="">{{ order.remark }}</small>
+            </div>
           </div>
-
 
           <div class="d-flex align-items-center gap-2">
             <button class="btn btn-outline-secondary btn-sm" (click)="downloadOrder(order)">
               <i class="bi bi-download"></i>
             </button>
-            <button class="btn btn-primary btn-sm"
+
+            <!-- Approve All (unchanged) -->
+            <button
+              class="btn btn-primary btn-sm"
               [disabled]="order.status == 'cancelled' || order.status === 'approved' || !checkAllMealStatus(order)"
               (click)="showPopupForItemActivation(order,'approved')">
-              {{ 'Approve All' }}
-            </button>
-            <button class="btn btn-danger btn-sm"
-              [disabled]="order.status === 'cancelled' || order.status === 'approved' || !checkAllMealStatus(order)"
-              (click)="showPopupForItemActivation(order,'cancelled')">
-              {{ 'Reject All' }}
+              Approve All
             </button>
 
+            <!-- Cancel All (opens reason) -->
+            <!-- <button
+              class="btn btn-danger btn-sm"
+              [disabled]="order.status === 'cancelled' || order.status === 'approved' || !checkAllMealStatus(order)"
+              (click)="onCancelAll(order)">
+              Cancel All
+            </button> -->
           </div>
         </div>
       </div>
 
       <div *ngFor="let meal of order.mealTypeList" class="card mb-3 shadow-sm border-0">
         <div class="card-body row g-2 align-items-center">
-
           <div class="col-md-3 col-sm-12">
             <div class="fw-semibold fs-6">{{ meal.itemName }}</div>
-            <div class="text-muted small">
-              Meal Types: {{ meal.selctedmealtype.join(', ') }}
-            </div>
           </div>
 
           <div class="col-md-2 col-sm-6 text-md-center">
@@ -98,7 +72,7 @@
           </div>
 
           <div class="col-md-2 col-sm-6 text-md-center">
-            <div class="text-muted small">Total Amount</div>
+            <div class="text-muted small">Total Amount (Incl. GST)</div>
             <div class="fw-bold text-primary">₹{{ meal.totalPrice | number }}</div>
           </div>
 
@@ -107,11 +81,11 @@
               <div>
                 <span class="me-2 small text-muted">Status:</span>
                 <span class="badge" [ngClass]="{
-            'bg-success': meal.status === 'approved',
-            'bg-danger': meal.status === 'cancelled',
-            'bg-warning text-dark': meal.status === 'review'
-          }">
-                  {{ meal.status }}
+                  'bg-success': meal.status === 'approved',
+                  'bg-danger': meal.status === 'cancelled',
+                  'bg-warning text-dark': meal.status === 'review'
+                }">
+                  {{ meal.status | titlecase}}
                 </span>
               </div>
               <div class="small text-muted mt-1">
@@ -122,25 +96,41 @@
           </div>
 
           <div class="col-md-1 col-sm-12 d-flex justify-content-md-end justify-content-start gap-2">
-            <button class="btn btn-sm btn-outline-success rounded-circle"
+            <!-- Approve single (unchanged) -->
+            <button
+              class="btn btn-sm btn-outline-success rounded-circle"
               [disabled]="order.status == 'cancelled' || order.status === 'approved' || meal.status == 'cancelled' || meal.status === 'approved'"
-              title="Approve" (click)="showPopupForSinleItemActivation(order,meal,'approved')">
+              title="Approve"
+              (click)="showPopupForSinleItemActivation(order, meal, 'approved')">
               <i class="bi bi-check"></i>
             </button>
 
-            <button class="btn btn-sm btn-outline-danger rounded-circle"
+            <!-- Cancel single (opens reason) -->
+            <button
+              class="btn btn-sm btn-outline-danger rounded-circle"
               [disabled]="order.status == 'cancelled' || order.status === 'approved' || meal.status == 'cancelled' || meal.status === 'approved'"
-              title="Reject" (click)="showPopupForSinleItemActivation(order,meal,'cancelled')">
+              title="Cancel"
+              (click)="onCancelItem(order, meal)">
               <i class="bi bi-x"></i>
             </button>
           </div>
         </div>
       </div>
+    </div>
 
-
+    <!-- Paginator -->
+    <div *ngIf="filteredOrderList.length > 0" class="mt-3">
+      <mat-paginator
+        [length]="filteredOrderList.length"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="pageSizeOptions"
+        (page)="onPage($event)">
+      </mat-paginator>
     </div>
   </div>
 
   <div *ngIf="filteredOrderList.length === 0" class="text-center">
     No Records Found
   </div>
+</div>

@@ -494,7 +494,7 @@ export class VendorReportComponent {
       const gst = this.n(g.totalGstAmt);
       const base = this.n(g.totalItemAmountAfterGst);
       const commission = this.n(g.vendorCommissionAmount);
-      const commissionGst = this.n(g.vendorCommissionGstAmount);
+      const commissionGst = g.vendorCommissionGstAmount;
       const netCommission = commission + commissionGst;
       const netValue = this.n(g.vendorLedgerAmtBeforeTdsTcs);
       const tcs = this.n(g.tcsAmount);

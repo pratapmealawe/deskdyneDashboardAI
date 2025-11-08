@@ -1,0 +1,99 @@
+<form [formGroup]="dateGroup">
+    <div class="mt-4 row align-items-center">
+        <!-- Date range -->
+        <div class="col-md-4">
+            <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Enter a date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
+                    <input matStartDate placeholder="Start date" formControlName="start" />
+                    <input matEndDate placeholder="End date" formControlName="end" />
+                </mat-date-range-input>
+                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+                <mat-error *ngIf="dateGroup.invalid">
+                    Please choose a valid range (End ≥ Start, both ≤ today).
+                </mat-error>
+            </mat-form-field>
+        </div>
+
+        <!-- Cafeterias (multi-select) -->
+        <div class="col-md-4">
+            <mat-form-field class="w-100" appearance="outline">
+                <mat-label>Select Cafeteria(s)</mat-label>
+                <mat-select formControlName="cafeteria_ids" multiple>
+                    <!-- Select All -->
+                    <mat-option [value]="'__all__'" (onSelectionChange)="toggleSelectAll($event.source.selected)"
+                        [disabled]="!cafeList?.length">
+                        Select All
+                    </mat-option>
+
+                    <mat-option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
+                        {{ option.cafeteria_name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+
+        <!-- Fetch button -->
+        <div class="col-md-4">
+            <button mat-raised-button color="primary" class="w-100" (click)="fetchData()"
+                [disabled]="dateGroup.invalid || loading">
+                <ng-container *ngIf="!loading; else loadingTpl">Fetch Data</ng-container>
+                <ng-template #loadingTpl>
+                    <mat-icon class="me-1 spin">sync</mat-icon> Loading...
+                </ng-template>
+            </button>
+        </div>
+    </div>
+
+<!-- KPI Cards -->
+<div class="row mt-3" *ngIf="orders.length > 0">
+  <div class="col-md-4 mb-3">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Orders</div>
+      <div class="kpi-value">{{ kpis.totalOrders }}</div>
+    </div>
+  </div>
+
+  <div class="col-md-4 mb-3">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Billing(Incl. GST)</div>
+      <div class="kpi-value">
+        {{ kpis.totalEarnings | currency:'INR':'symbol':'1.0-0':'en-IN' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- changed: show total items instead of AOV -->
+  <div class="col-md-4 mb-3">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Items Ordered</div>
+      <div class="kpi-value">
+        {{ kpis.totalItems | number:'1.0-0':'en-IN' }}
+      </div>
+    </div>
+  </div>
+</div>
+
+    <!-- Date vs Count (tooltip shows Count + Revenue) -->
+    <div class="row" *ngIf="orders.length > 0">
+        <div class="col-6">
+            <div class="card p-3 shadow rounded-lg">
+                <highcharts-chart [Highcharts]="Highcharts" [options]="dateCountChartOptions"
+                    [update]="dateCountUpdateFlag" [oneToOne]="true" [callbackFunction]="dateCountChartCallback"
+                    style="width:100%; height:380px; display:block;"></highcharts-chart>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="card p-3 shadow rounded-lg">
+                <highcharts-chart [Highcharts]="Highcharts" [options]="itemPieCountOptions"
+                    [update]="itemPieCountUpdateFlag" [oneToOne]="true" [callbackFunction]="itemPieCountCallback"
+                    style="width:100%; height:380px; display:block;"></highcharts-chart>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="orders.length <= 0" class="d-flex align-items-center justify-content-center" style="height: 70vh;">
+        <p>No Data Found For Selected Filter</p>
+    </div>
+</form>

@@ -134,13 +134,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Search Order', route: 'searchOrder', showChild: true },
       ],
     },
-    {
-      name: 'Consumption Orders',
-      showParent: true,
-      route: 'consumptionOrders',
-      image: 'Users_white',
-      imageblue: 'Users_blue',
-    },
+   
     {
       name: 'Users',
       showParent: true,
@@ -275,6 +269,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: 'orgDashboard',
       image: 'Dashbaord_white',
       imageblue: 'Dashbaord_blue',
+    },
+     {
+      name: 'Consumption Orders',
+      showParent: true,
+      route: 'consumptionOrders',
+      image: 'Users_white',
+      imageblue: 'Users_blue',
     },
     {
       name: 'Menu Items',
@@ -509,7 +510,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
       if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
-        if (this.adminProfile.role == 'ORGADMIN') {
+        if (this.adminProfile.role == 'ORGADMIN' || this.adminProfile.role == 'HYPERPURE_ADMIN' || this.adminProfile.role == 'HYPERPURE_POC') {
           this.isOrgAdmin = true;
           this.orgDetails = JSON.parse(
             JSON.stringify(this.adminProfile.orgDetails)
