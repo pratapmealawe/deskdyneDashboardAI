@@ -1,195 +1,168 @@
-<div class="container adminForm">
-  <h3>Add Admin</h3>
-  <div class="row mb-4 mt-2 p-3 bg-light rounded">
-    <div class="col-12 col-md-2 col-lg-2 image-div">
-      <input
-        #f
-        type="file"
-        class="uploadInput"
-        accept="image/*"
-        capture="camera"
-        (change)="handleFileInput($event)"
-      />
-      <img
-        (click)="f.click()"
-        [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
-        class="uploadedImage"
-      />
-      <div class="uploadIcon" (click)="f.click()">
-        Upload <i class="bi bi-upload"></i>
-      </div>
-    </div>
-    <div class="col-12 col-md-10 col-lg-10">
-      <div class="row">
-        <div class="col-12 col-md-4 col-lg-3 bgpadding1">
-          <label class="labelText" for="adminName">User Name</label>
-          <input
-            type="text"
-            class="form-control"
-            id="adminName"
-            [(ngModel)]="adminObj.name"
-            placeholder="Enter User Name"
-          />
-        </div>
-        <div class="col-12 col-md-4 col-lg-3 bgpadding1">
-          <label class="labelText" for="phoneNo">Phone No</label>
-          <input
-            type="number"
-            class="form-control"
-            id="phoneNo"
-            [(ngModel)]="adminObj.phoneNo"
-            placeholder="Enter User Phone No"
-          />
-        </div>
-        <div class="col-12 col-md-4 col-lg-3 bgpadding1">
-          <label class="labelText" for="email">Email</label>
-          <input
-            type="text"
-            class="form-control"
-            id="email"
-            [(ngModel)]="adminObj.email"
-            placeholder="User Email"
-          />
-        </div>
-        <div class="col-12 col-md-4 col-lg-3 bgpadding1">
-          <label for="role" class="labelText">User Role</label>
-          <div>
-            <select class="pointer" name="role" [(ngModel)]="adminObj.role">
-              <option disabled selected value>-- select role --</option>
-              <option [value]="item.value" *ngFor="let item of roleArr">
-                {{ item.text }}
-              </option>
-            </select>
+<div class="container-fluid adminForm">
+    <h2>{{ editMode ? 'Edit Admin' : 'Add Admin' }}</h2>
+
+  <mat-card class="mb-3">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+        <div class="row g-3 align-items-start">
+          <!-- Image (OLD METHOD) -->
+          <div class="col-12 col-md-3">
+            <div class="image-uploader">
+              <input
+                #f
+                type="file"
+                class="d-none"
+                accept="image/*"
+                (change)="handleFileInput($event)"
+              />
+              <img
+                (click)="f.click()"
+                [src]="imageUrl || 'assets/images/dummyUpload.png'"
+                class="preview pointer"
+                alt="Profile"
+              />
+              <div class="mt-2">
+                <button mat-stroked-button type="button" (click)="f.click()">
+                  <mat-icon>upload</mat-icon>
+                  Upload
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fields -->
+          <div class="col-12 col-md-9">
+            <div class="row g-3">
+
+              <!-- Name -->
+              <div class="col-12 col-md-6 col-lg-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>User Name</mat-label>
+                  <input matInput formControlName="name" placeholder="Enter user name" />
+                  <mat-error *ngIf="form.controls.name.touched && form.controls.name.invalid">
+                    Name is required (2–60 chars).
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Phone -->
+              <div class="col-12 col-md-6 col-lg-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Phone No</mat-label>
+                  <input matInput formControlName="phoneNo" placeholder="10–15 digits or +91..." />
+                  <mat-error *ngIf="form.controls.phoneNo.touched && form.controls.phoneNo.invalid">
+                    Valid phone number is required.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Email -->
+              <div class="col-12 col-md-6 col-lg-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Email</mat-label>
+                  <input matInput formControlName="email" placeholder="Optional" />
+                  <mat-error *ngIf="form.controls.email.touched && form.controls.email.invalid">
+                    Please enter a valid email.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Role -->
+              <div class="col-12 col-md-6 col-lg-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>User Role</mat-label>
+                  <mat-select formControlName="role">
+                    <mat-option *ngFor="let item of roleArr" [value]="item.value">
+                      {{ item.text }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.controls.role.touched && form.controls.role.invalid">
+                    Role is required.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Policy -->
+              <div class="col-12 col-md-6 col-lg-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>User Policy</mat-label>
+                  <mat-select formControlName="policy_name">
+                    <mat-option *ngFor="let p of policyArr" [value]="p.policy_name">
+                      {{ p.policy_name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.controls.policy_name.touched && form.controls.policy_name.invalid">
+                    Policy is required.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Organization (ORGADMIN / HYPERPURE_ADMIN / HYPERPURE_POC) -->
+              <ng-container *ngIf="
+                form.controls.role.value === 'ORGADMIN' ||
+                form.controls.role.value === 'HYPERPURE_ADMIN' ||
+                form.controls.role.value === 'HYPERPURE_POC'
+              ">
+                <div class="col-12 col-md-6 col-lg-4">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Select Organization</mat-label>
+                    <mat-select formControlName="orgId">
+                      <mat-option *ngFor="let org of orgList" [value]="org._id">
+                        {{ org.organization_name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.controls.orgId.touched && form.controls.orgId.invalid">
+                      Organization is required.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </ng-container>
+
+              <!-- Cafeterias (only for HYPERPURE_POC) -->
+              <ng-container *ngIf="form.controls.role.value === 'HYPERPURE_POC'">
+                <div class="col-12 col-md-6 col-lg-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Select Cafeterias</mat-label>
+                    <mat-select formControlName="cafeIds" multiple>
+                      <mat-option *ngFor="let cafe of cafeteriaOptions" [value]="cafe.cafeteria_id">
+                        {{ cafe.cafeteria_name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-hint *ngIf="(cafeteriaOptions?.length || 0) === 0">No cafeterias under selected org</mat-hint>
+                    <mat-error *ngIf="form.controls.cafeIds.touched && form.controls.cafeIds.invalid">
+                      Select at least one cafeteria.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </ng-container>
+
+              <!-- Optional debug chip -->
+              <div class="col-12">
+                <small [ngClass]="form.valid ? 'text-success' : 'text-danger'">
+                  Form status: {{ form.valid ? 'VALID' : 'INVALID' }}
+                </small>
+              </div>
+
+            </div>
           </div>
         </div>
-        <div class="col-12 col-md-3 col-lg-3 bgpadding1">
-          <label for="reference" class="labelText">User Policy</label>
-          <select
-            class="pointer"
-            name="reference"
-            [(ngModel)]="adminObj.policy"
+
+        <!-- Actions -->
+        <div class="mt-3 d-flex gap-2">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="form.invalid || submitting "
           >
-            <option disabled selected value>-- select policy --</option>
-            <option [value]="item.policy_name" *ngFor="let item of policyArr">
-              {{ item.policy_name }}
-            </option>
-          </select>
+            {{ editMode ? 'Update' : 'Submit' }}
+          </button>
+
+          <button mat-stroked-button color="warn" type="button" (click)="onCancel()">
+            Cancel
+          </button>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="row mb-4 mt-2 p-3 bg-light rounded">
-    <ng-container *ngIf="adminObj.role == 'SITEEXE'">
-      <div class="col-lg-6">
-        <div class="labelText mb-3">Cafeteria</div>
-        <mat-form-field class="w-100" appearance="outline">
-          <mat-label>Select Cafeteria</mat-label>
-          <mat-select [(ngModel)]="selectedItemsCafe" multiple>
-            <mat-optgroup
-              *ngFor="let group of orglist"
-              [label]="group.organization_name"
-            >
-              <mat-option
-                *ngFor="let cafe of group.cafeteriaList"
-                [value]="cafe.cafeteria_id"
-                >{{ cafe.cafeteria_name }}</mat-option
-              >
-            </mat-optgroup>
-          </mat-select>
-        </mat-form-field>
-      </div>
-    </ng-container>
-
-    <ng-container *ngIf="adminObj.role == 'ORGADMIN'">
-      <div
-        style="width: 300px; margin: 0 auto"
-        class="col-12 col-md-3 col-lg-3 bgpadding1"
-      >
-        <label for="reference" class="labelText">Select Organization</label>
-        <!-- Search Box -->
-        <input
-          type="text"
-          placeholder="Search..."
-          [(ngModel)]="searchQuery"
-          (input)="filterOptions()"
-          style="
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 8px;
-            border: 1px solid #ccc;
-          "
-        />
-
-        <!-- Dropdown -->
-        <select
-          style="width: 100%; padding: 8px"
-          [(ngModel)]="selectedValue"
-          (change)="setOrgDetails()"
-        >
-          <option *ngFor="let option of filteredOptions" [value]="option._id">
-            {{ option.organization_name }}
-          </option>
-        </select>
-      </div>
-    </ng-container>
-     <ng-container *ngIf="adminObj.role == 'HYPERPURE_ADMIN'">
-      <div
-        style="width: 300px; margin: 0 auto"
-        class="col-12 col-md-3 col-lg-3 bgpadding1"
-      >
-        <label for="reference" class="labelText">Select Organization</label>
-        <!-- Search Box -->
-        <input
-          type="text"
-          placeholder="Search..."
-          [(ngModel)]="searchQuery"
-          (input)="filterOptions()"
-          style="
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 8px;
-            border: 1px solid #ccc;
-          "
-        />
-
-        <!-- Dropdown -->
-        <select
-          style="width: 100%; padding: 8px"
-          [(ngModel)]="selectedValue"
-          (change)="setOrgDetails()"
-        >
-          <option *ngFor="let option of filteredOptions" [value]="option._id">
-            {{ option.organization_name }}
-          </option>
-        </select>
-      </div>
-    </ng-container>
-  </div>
-
-  <div>
-    <div class="inline me-2 mt-2" *ngIf="!editMode && true || btnPolicy?.addAdmin">
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        (click)="addAdmin(adminObj)"
-      >
-        Submit
-      </button>
-    </div>
-    <div class="inline me-2" *ngIf="editMode && true || btnPolicy?.editAdmin">
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        (click)="updateAdmin(adminObj)"
-      >
-        Update
-      </button>
-    </div>
-    <div class="inline me-2">
-      <button type="button" class="btn btn-danger btn-sm" (click)="cancel()">
-        Cancel
-      </button>
-    </div>
-  </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
 </div>

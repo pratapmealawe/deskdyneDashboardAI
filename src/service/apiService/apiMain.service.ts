@@ -1737,4 +1737,9 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteOutlet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
+
+  getConsumptionOrderByDateForDashboard(data:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getConsumptionOrderByDateForDashboard;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, data);
+  }
 }
