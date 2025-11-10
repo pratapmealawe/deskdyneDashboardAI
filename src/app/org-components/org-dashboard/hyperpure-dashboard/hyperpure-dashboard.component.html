@@ -20,7 +20,7 @@
         <div class="col-md-4">
             <mat-form-field class="w-100" appearance="outline">
                 <mat-label>Select Cafeteria(s)</mat-label>
-                <mat-select formControlName="cafeteria_ids" multiple>
+                <mat-select formControlName="cafeteria_ids" multiple (openedChange)="onCafeDropdownOpen($event)">
                     <!-- Select All -->
                     <mat-option [value]="'__all__'" (onSelectionChange)="toggleSelectAll($event.source.selected)"
                         [disabled]="!cafeList?.length">
@@ -46,52 +46,115 @@
         </div>
     </div>
 
-<!-- KPI Cards -->
+    <!-- KPI Cards -->
+    <div class="row mt-3" *ngIf="orders.length > 0">
+        <div class="col-md-4 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Orders</div>
+                <div class="kpi-value">{{ kpis.totalOrders }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Items Ordered</div>
+                <div class="kpi-value">{{ kpis.totalItems | number:'1.0-0':'en-IN' }}</div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <div class="kpi-card">
+                <div class="kpi-label">Total Billing (Incl. GST)</div>
+                <div class="kpi-value">
+                    {{ kpis.totalEarnings | currency:'INR':'symbol':'1.0-0':'en-IN' }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Date vs Count + Revenue (combo) -->
+    <div class="row" *ngIf="orders.length > 0">
+        <div class="col-12 col-lg-6">
+            <div class="card p-3 shadow rounded-lg">
+                <highcharts-chart [Highcharts]="Highcharts" [options]="dateCountChartOptions"
+                    [update]="dateCountUpdateFlag" [oneToOne]="true" [callbackFunction]="dateCountChartCallback"
+                    style="width:100%; height:380px; display:block;">
+                </highcharts-chart>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-6">
+            <div class="card p-3 shadow rounded-lg">
+                <highcharts-chart [Highcharts]="Highcharts" [options]="itemPieCountOptions"
+                    [update]="itemPieCountUpdateFlag" [oneToOne]="true" [callbackFunction]="itemPieCountCallback"
+                    style="width:100%; height:380px; display:block;">
+                </highcharts-chart>
+            </div>
+        </div>
+    </div>
+
+<!-- Item Status-wise (stacked) + Consumption Menu (side card) -->
+
+ <!-- Item Status-wise (stacked) + Consumption Menu (one table) -->
 <div class="row mt-3" *ngIf="orders.length > 0">
-  <div class="col-md-4 mb-3">
-    <div class="kpi-card">
-      <div class="kpi-label">Total Orders</div>
-      <div class="kpi-value">{{ kpis.totalOrders }}</div>
+  <!-- Left: stacked graph -->
+  <div class="col-lg-6 col-12">
+    <div class="card p-3 shadow rounded-lg">
+      <highcharts-chart
+        [Highcharts]="Highcharts"
+        [options]="itemStatusStackedOptions"
+        [update]="itemStatusStackedUpdateFlag"
+        [oneToOne]="true"
+        [callbackFunction]="itemStatusStackedCallback"
+        style="width:100%; height:420px; display:block;">
+      </highcharts-chart>
     </div>
   </div>
 
-  <div class="col-md-4 mb-3">
-    <div class="kpi-card">
-      <div class="kpi-label">Total Billing(Incl. GST)</div>
-      <div class="kpi-value">
-        {{ kpis.totalEarnings | currency:'INR':'symbol':'1.0-0':'en-IN' }}
+  <!-- Right: unified menu table -->
+  <div class="col-lg-6 col-12 mt-3 mt-lg-0">
+    <div class="card p-3 shadow rounded-lg">
+      <div class="d-flex align-items-center justify-content-between mb-2">
+        <h6 class="m-0">Consumption Menu</h6>
+        <small class="text-muted">Filtered by selected cafeterias</small>
       </div>
-    </div>
-  </div>
 
-  <!-- changed: show total items instead of AOV -->
-  <div class="col-md-4 mb-3">
-    <div class="kpi-card">
-      <div class="kpi-label">Total Items Ordered</div>
-      <div class="kpi-value">
-        {{ kpis.totalItems | number:'1.0-0':'en-IN' }}
+      <div *ngIf="pagedMenu.length === 0" class="text-muted">
+        No cafeteria selected or no menu found.
       </div>
+
+      <div class="table-responsive" *ngIf="pagedMenu.length > 0">
+        <table class="table table-sm align-middle mb-2">
+          <thead>
+            <tr>
+              <th>Cafeteria</th>
+              <th>Item</th>
+              <th class="text-end">Price</th>
+              <th class="text-end">MG</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of pagedMenu; trackBy: trackByRow">
+              <td>{{ r.cafeteria_name }}</td>
+              <td>{{ r.itemName }}</td>
+              <td class="text-end">₹{{ (r.mealPrice || 0) | number:'1.0-0':'en-IN' }}</td>
+              <td class="text-end">{{ (r.minGuarantees || 0) | number:'1.0-0':'en-IN' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <mat-paginator
+        [length]="menuTotal"
+        [pageSize]="menuPageSize"
+        [pageIndex]="menuPageIndex"
+        [pageSizeOptions]="[5,10,20,50]"
+        (page)="onMenuPage($event)">
+      </mat-paginator>
     </div>
   </div>
 </div>
 
-    <!-- Date vs Count (tooltip shows Count + Revenue) -->
-    <div class="row" *ngIf="orders.length > 0">
-        <div class="col-6">
-            <div class="card p-3 shadow rounded-lg">
-                <highcharts-chart [Highcharts]="Highcharts" [options]="dateCountChartOptions"
-                    [update]="dateCountUpdateFlag" [oneToOne]="true" [callbackFunction]="dateCountChartCallback"
-                    style="width:100%; height:380px; display:block;"></highcharts-chart>
-            </div>
-        </div>
-        <div class="col-6">
-            <div class="card p-3 shadow rounded-lg">
-                <highcharts-chart [Highcharts]="Highcharts" [options]="itemPieCountOptions"
-                    [update]="itemPieCountUpdateFlag" [oneToOne]="true" [callbackFunction]="itemPieCountCallback"
-                    style="width:100%; height:380px; display:block;"></highcharts-chart>
-            </div>
-        </div>
-    </div>
 
     <div *ngIf="orders.length <= 0" class="d-flex align-items-center justify-content-center" style="height: 70vh;">
         <p>No Data Found For Selected Filter</p>
