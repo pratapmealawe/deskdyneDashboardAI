@@ -14,6 +14,8 @@ import { HyperpureDashboardComponent } from './hyperpure-dashboard/hyperpure-das
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [OrgDashboardComponent, MainDashboardComponent, HyperpureDashboardComponent],
@@ -31,7 +33,9 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
     MatIconModule,
     MatButtonModule,
     MatCheckboxModule,
-    MatPseudoCheckboxModule
+    MatPseudoCheckboxModule,
+    MatExpansionModule,
+    MatPaginatorModule
   ],
   providers: [    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ],
