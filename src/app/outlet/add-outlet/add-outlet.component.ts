@@ -113,6 +113,7 @@ export class AddOutletComponent implements OnInit {
         isSatAvailable: outlet.isSatAvailable,
         isSunAvailable: outlet.isSunAvailable,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage,
+        MRPCommissionPercentage: outlet.MRPCommissionPercentage,
         subsidy: outlet.subsidy,
         precedence: outlet.precedence
       });
@@ -130,6 +131,7 @@ export class AddOutletComponent implements OnInit {
       isSatAvailable: [false],
       isSunAvailable: [false],
       vendorCommissionPercentage: [0],
+      MRPCommissionPercentage: [0],
       subsidy: [0],
       precedence: [0]
     });
@@ -222,12 +224,13 @@ export class AddOutletComponent implements OnInit {
 
   async updateOutletLevelSubsidy() {
     try {
-      this.outletSubsidy = this.form.value.subsidy;
+      this.outletSubsidy = this.form.getRawValue().subsidy;
       const res = await this.apiMainService.updateOutletLevelSubsidy(
         this.selectedOutlet._id,
         this.outletSubsidy
       )
     } catch (err) {
+      console.log(err);
     }
   }
 

@@ -54,7 +54,6 @@ export class OutletBillingComponent implements OnInit {
     mode: 'outlet',
     showDateRange: true,
     disableOrg: false,
-    maxDate: new Date(),
     requireAll: true
   };
 
