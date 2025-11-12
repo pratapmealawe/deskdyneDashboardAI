@@ -121,11 +121,10 @@ export class ApiMainService {
     );
   }
   updateOutletLevelSubsidy(id: any, subsidy: any) {
-    console.log(subsidy);
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletLevelSubsidy;
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${id}`, method: urlObj.method },
-      subsidy
+      {subsidy}
     );
   }
 

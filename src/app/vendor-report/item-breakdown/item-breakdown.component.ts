@@ -3,12 +3,33 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ExcelService } from 'src/service/excel.service';
 
+// Option A: namespaced
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
+
+
 export interface ItemBreakdownDialogData {
-  orders: any[];            // <- parent-filtered orders (range or single)
-  rangeLabel?: string;      // <- parent-made label like "13 Oct 2025 – 20 Oct 2025 (IST)"
+  orders: any[];
+  rangeLabel?: string;
+
+  header?: {
+    cafeteriaName?: string;
+    counterName?: string;
+    gstNumber?: string;
+    fssaiNumber?: string;
+    createdBetween?: string;     // e.g. "Wed, 09 Jul, 2025, 5:30 am - Wed, 09 Jul, 2025, 5:30 am"
+    logoBase64?: string;         // optional base64 logo (data:image/png;base64,...)
+  };
 }
 
 type GroupRow = { key: string; count: number; totalPrice: number };
+
+type ItemRow = { 'Item Name': string; 'Price': string; 'Quantity': number; 'Final Amount': string };
+type GroupRowItemType = { 'Item Type': string; 'Quantity': number; 'Final Amount': string };
+type GroupRowCategory = { 'Category': string; 'Quantity': number; 'Final Amount': string };
+
+type AnyRow = ItemRow | GroupRowItemType | GroupRowCategory;
 
 @Component({
   selector: 'app-item-breakdown',
@@ -130,4 +151,231 @@ export class ItemBreakdownComponent {
     this.excel.download(rows, fname);
   }
 
+  // ---------- PDF export (revamped to match sample) ----------
+  exportPdf(which: 'item' | 'type' | 'category') {
+    const rows = this.buildRowsForPdf(which);
+
+    const isItem = which === 'item';
+    const headerCells = isItem
+      ? ['Item Name', 'Price', 'Quantity', 'Final Amount']
+      : [(which === 'type' ? 'Item Type' : 'Category'), 'Quantity', 'Final Amount'] as const;
+    const widths = isItem ? ['*', 60, 60, 80] : ['*', 60, 90];
+
+    const body: any[] = [];
+
+    // header
+    body.push(
+      headerCells.map(h => ({
+        text: h,
+        style: 'th',
+        alignment: (h === 'Item Name' || h === 'Item Type' || h === 'Category') ? 'left' : 'right'
+      }))
+    );
+
+    // rows
+    for (const r of rows.data) {
+      if (isItem) {
+        const ir = r as ItemRow;
+        body.push([
+          { text: ir['Item Name'] ?? '-', alignment: 'left' },
+          { text: ir['Price'] ?? '-', alignment: 'right' },
+          { text: String(ir['Quantity'] ?? ''), alignment: 'right' },
+          { text: ir['Final Amount'] ?? '-', alignment: 'right' },
+        ]);
+      } else if (which === 'type') {
+        const gr = r as GroupRowItemType;
+        body.push([
+          { text: gr['Item Type'] ?? '-', alignment: 'left' },
+          { text: String(gr['Quantity'] ?? ''), alignment: 'right' },
+          { text: gr['Final Amount'] ?? '-', alignment: 'right' },
+        ]);
+      } else {
+        const gr = r as GroupRowCategory;
+        body.push([
+          { text: gr['Category'] ?? '-', alignment: 'left' },
+          { text: String(gr['Quantity'] ?? ''), alignment: 'right' },
+          { text: gr['Final Amount'] ?? '-', alignment: 'right' },
+        ]);
+      }
+    }
+
+    // optional TOTAL row (works for both shapes)
+    body.push([{ text: '', colSpan: headerCells.length, border: [false, false, false, false] }, ...Array(headerCells.length - 1).fill({})]);
+    const totalRow = isItem
+      ? [
+        { text: 'TOTAL', style: 'th', alignment: 'left' },
+        { text: '-', alignment: 'right' },
+        { text: String(rows.totalQty), alignment: 'right', bold: true },
+        { text: this.toINR(rows.totalAmount), alignment: 'right', bold: true },
+      ]
+      : [
+        { text: 'TOTAL', style: 'th', alignment: 'left' },
+        { text: String(rows.totalQty), alignment: 'right', bold: true },
+        { text: this.toINR(rows.totalAmount), alignment: 'right', bold: true },
+      ];
+    body.push(totalRow);
+
+    const range = this.data.header?.createdBetween || this.data.rangeLabel || 'Selected Dates (IST)';
+    const headerBlock = this.buildPdfHeaderBlock(range);
+
+    const docDefinition: any = {
+      pageSize: 'A4',
+      pageMargins: [24, 28, 24, 40],
+      content: [
+        headerBlock,
+        {
+          text:
+            which === 'item'
+              ? 'Item-wise Breakdown'
+              : which === 'type'
+                ? 'Item Type-wise Breakdown'
+                : 'Category-wise Breakdown',
+          style: 'h2',
+          margin: [0, 12, 0, 6],
+        },
+        {
+          table: { headerRows: 1, widths, body },
+          layout: {
+            fillColor: (rowIndex: number) => (rowIndex === 0 ? '#F4F6F8' : null),
+            hLineColor: '#DADADA',
+            vLineColor: '#DADADA',
+            paddingTop: () => 6,
+            paddingBottom: () => 6,
+          },
+        },
+      ],
+      styles: {
+        h1: { fontSize: 14, bold: true },
+        h2: { fontSize: 11, bold: true },
+        metaKey: { color: '#555', fontSize: 9 },
+        metaVal: { bold: true, fontSize: 9 },
+        th: { bold: true, fontSize: 9 },
+      },
+      defaultStyle: { fontSize: 9 },
+      footer: (currentPage: number, pageCount: number) => ({
+        columns: [
+          { text: `Generated on: ${new Date().toLocaleString('en-IN')}`, alignment: 'left', margin: [24, 0, 0, 0] },
+          { text: `Page ${currentPage} of ${pageCount}`, alignment: 'right', margin: [0, 0, 24, 0] },
+        ],
+        fontSize: 8,
+        color: '#666',
+      }),
+    };
+
+    const safeLabel = range.replace(/[^a-z0-9-_]+/gi, '_');
+    const fname =
+      which === 'item'
+        ? `ItemBreakdown_${safeLabel}.pdf`
+        : which === 'type'
+          ? `ItemTypeBreakdown_${safeLabel}.pdf`
+          : `CategoryBreakdown_${safeLabel}.pdf`;
+    (pdfMake as any).createPdf(docDefinition).download(fname);
+  }
+
+
+  private buildRowsForPdf(which: 'item' | 'type' | 'category') {
+    const rows: AnyRow[] = [];
+    let totalQty = 0;
+    let totalAmount = 0;
+
+    const toINR = (n: number) => this.toINR(n);
+
+    if (which === 'item') {
+      for (const r of this.byItem()) {
+        const unit = r.count ? r.totalPrice / r.count : 0;
+        rows.push({
+          'Item Name': r.key || '-',
+          'Price': toINR(unit),
+          'Quantity': r.count || 0,
+          'Final Amount': toINR(r.totalPrice || 0),
+        } as ItemRow);
+        totalQty += r.count || 0;
+        totalAmount += r.totalPrice || 0;
+      }
+    } else if (which === 'type') {
+      for (const r of this.byType()) {
+        rows.push({
+          'Item Type': r.key || '-',
+          'Quantity': r.count || 0,
+          'Final Amount': toINR(r.totalPrice || 0),
+        } as GroupRowItemType);
+        totalQty += r.count || 0;
+        totalAmount += r.totalPrice || 0;
+      }
+    } else {
+      for (const r of this.byCategory()) {
+        rows.push({
+          'Category': r.key || '-',
+          'Quantity': r.count || 0,
+          'Final Amount': toINR(r.totalPrice || 0),
+        } as GroupRowCategory);
+        totalQty += r.count || 0;
+        totalAmount += r.totalPrice || 0;
+      }
+    }
+
+    return { data: rows, totalQty, totalAmount };
+  }
+
+  // Header block like the sample PDF (logo + meta)
+  private buildPdfHeaderBlock(range: string): any {
+    const h = this.data.header || {};
+    const leftStack: any[] = [
+      { text: h.cafeteriaName || '-', style: 'h1', margin: [0, 0, 0, 2] },
+      { text: h.counterName ? `Counter: ${h.counterName}` : '', margin: [0, 0, 0, 2] },
+      {
+        columns: [
+          { text: 'GST Number: ', style: 'metaKey', width: 'auto' },
+          { text: h.gstNumber || '-', style: 'metaVal', width: '*' },
+        ],
+        columnGap: 3,
+      },
+      {
+        columns: [
+          { text: 'FSSAI Number: ', style: 'metaKey', width: 'auto' },
+          { text: h.fssaiNumber || '-', style: 'metaVal', width: '*' },
+        ],
+        columnGap: 3,
+      },
+      {
+        columns: [
+          { text: 'Created Between: ', style: 'metaKey', width: 'auto' },
+          { text: range, style: 'metaVal', width: '*' },
+        ],
+        columnGap: 3,
+        margin: [0, 2, 0, 0],
+      },
+    ];
+
+    const logoCol = h.logoBase64
+      ? {
+        image: h.logoBase64,
+        width: 70,
+        alignment: 'right',
+      }
+      : { text: '' };
+
+    return {
+      columns: [
+        { stack: leftStack, width: '*' },
+        { ...logoCol, width: 80 },
+      ],
+      columnGap: 10,
+    };
+  }
+
+  /** Format INR uniformly with ₹ and 2 decimals */
+  private toINR(n: number): string {
+    try {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: 'INR',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      }).format(Number(n || 0));
+    } catch {
+      const fixed = (Number(n || 0)).toFixed(2);
+      return `₹${fixed}`;
+    }
+  }
 }
