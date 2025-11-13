@@ -2,19 +2,54 @@
 
     <!-- Balance card -->
     <div class="card text-center mb-4 shadow-sm">
-        <div class="card-body">
-            <h5 class="card-title">Wallet Balance</h5>
-            <h2 class="fw-bold text-success">{{ walletBalance | currency:'INR' }}</h2>
+        <div class="card-body w-100">
+            <div class="balances d-flex align-items-center justify-content-center gap-5 w-100 flex-wrap">
+                <div class="flex-1">
+                    <h5 class="card-title mb-1">Wallet Balance</h5>
+                    <h2 class="fw-bold text-success" *ngIf="walletBalance > 0; else zeroWallet">
+                        {{ walletBalance | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                    </h2>
+                    <ng-template #zeroWallet>
+                        <h2 class="fw-bold text-muted">₹0.00</h2>
+                    </ng-template>
+                </div>
 
-            <div class="btnDiv py-2 ">
-                <button mat-flat-button class="mr-2" color="primary" (click)="openTxnDialog('Credit')">
-                    Credit Amount
+
+                <div class="flex-1 bg-light rounded-3 p-2" *ngIf="subsidyBalance > 0">
+                    <div class="d-flex align-items-center gap-2 mb1">
+                        <h6 class=" mb-0">Subsidy Balance</h6>
+                        <button mat-icon-button matTooltip="Subsidy gets credited monthly."
+                            aria-label="About subsidy credit frequency" type="button">
+                            <mat-icon aria-hidden="true">info</mat-icon>
+                        </button>
+                    </div>
+
+                    <h4 class="fw-bold text-success text-align-start" *ngIf="subsidyBalance > 0; else noSubsidy">
+                        {{ subsidyBalance | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                    </h4>
+                    <ng-template #noSubsidy>
+                        <h2 class="fw-bold text-muted mt-1">—</h2>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div class="btnDiv py-2 pt-4 d-flex gap-2 justify-content-center flex-wrap">
+                <button mat-flat-button color="primary" (click)="openTxnDialog('Credit')" aria-label="Credit Wallet">
+                    Credit Wallet Balance
                 </button>
-                <button mat-stroked-button color="warn" (click)="openTxnDialog('Debit')">
-                    Debit Amount
+
+                <button mat-stroked-button color="warn" [disabled]="!walletBalance || walletBalance <= 0 "
+                    (click)="openTxnDialog('Debit')" aria-label="Debit amount (disabled when wallet is zero)">
+                    Debit Wallet Balance
+                </button>
+
+                <button mat-flat-button *ngIf="subsidyBalance > 0" [disabled]="!subsidyBalance || subsidyBalance <= 0 "
+                    (click)="openTxnDialog('Transfer')" aria-label="Debit amount (disabled when wallet is zero)">
+                    Transfer Subsidy To Wallet Balance
                 </button>
             </div>
         </div>
+
 
     </div>
 
@@ -69,11 +104,12 @@
                         <div class="fw-bold">{{ tx.transactionType }}</div>
                         <small class="text-muted">{{ tx.created_at | date:'MMM d, y, h:mm:ss a' }}</small>
                         <div class="text-muted small" *ngIf="tx.remark">{{ tx.remark }}</div>
+                        <div class="text-muted small" *ngIf="tx.walletPreviousBalance">{{ tx.walletPreviousBalance | currency:'INR' }}</div>
                     </div>
                     <div [ngClass]="{'text-success': tx.transactionType==='Credit',
               'text-danger': tx.transactionType==='Debit'
             }" class="fw-bold">
-                        {{ tx.transactionType==='Credit' ? '+' : '-' }}
+                        {{ tx.transactionType==='Debit' ? '-' : '+' }}
                         {{ tx.transaction_amount | currency:'INR' }}
                     </div>
                 </div>

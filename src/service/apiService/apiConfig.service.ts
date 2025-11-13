@@ -870,6 +870,9 @@ export class ApiConfigService {
       getTotalVendorLedgerBalanceByFirm: { url: `${this.baseUrl}/api/getTotalVendorLedgerBalanceByFirm`, method: 'GET' },
       getVendorTransactionByFirmAndTypeAndDate: { url: `${this.baseUrl}/api/getVendorTransactionByFirmAndTypeAndDate`, method: 'POST' },
       creditOrDebitVendorWallet: { url: `${this.baseUrl}/api/creditOrDebitVendorWallet`, method: 'POST' },
+      moveSubsidyToWallet: { url: `${this.baseUrl}/api/moveSubsidyToWallet`, method: 'POST' },
+      deleteOutlet: { url: `${this.baseUrl}/api/deleteOutlet`, method: 'DELETE' },
+      getConsumptionOrderByDateForDashboard: { url: `${this.baseUrl}/api/getConsumptionOrderByDateForDashboard`, method: 'POST' },
     };
   }
 }

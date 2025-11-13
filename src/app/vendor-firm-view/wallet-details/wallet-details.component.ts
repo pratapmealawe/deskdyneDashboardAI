@@ -12,6 +12,7 @@ interface VendorTransaction {
   transaction_amount: number;
   created_at: string | Date;
   remark?: string;
+  walletPreviousBalance?: number
 }
 
 @Component({
@@ -23,6 +24,7 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
   @Input() vendorFirmInfo: any;
 
   walletBalance: number = 0;
+  subsidyBalance: number = 0;
   transactionHistoryList: VendorTransaction[] = [];
 
   // Filters
@@ -38,7 +40,7 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
   // State
   loading = false;
 
-  constructor(private snackBar: MatSnackBar, private dialog: MatDialog,private apiMainService: ApiMainService) { }
+  constructor(private snackBar: MatSnackBar, private dialog: MatDialog, private apiMainService: ApiMainService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
   }
@@ -50,27 +52,26 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
     this.loadPage(true);
   }
 
-    openTxnDialog(kind: 'Credit' | 'Debit') {
-    const ref = this.dialog.open(
-      WalletTxnDialogComponent,
-      {
-        width: '420px',
-        disableClose: true,
-        data: {
-          vendorFirmId: this.vendorFirmInfo._id,
-          kind
-        }
+  openTxnDialog(kind: 'Credit' | 'Debit' | 'Transfer') {
+    const ref = this.dialog.open(WalletTxnDialogComponent, {
+      width: '420px',
+      disableClose: true,
+      data: {
+        vendorFirmId: this.vendorFirmInfo._id,
+        kind,
+        subsidyBalance: kind === 'Transfer' ? this.subsidyBalance : undefined
       }
-    );
+    });
 
     ref.afterClosed().subscribe(async (res) => {
       if (!res || !res.success) return;
-      // Refresh balance + reload list (stay on current page)
       await this.getWalletBalance();
       this.loadPage(false);
-      this.snackBar.open(`${kind}ed successfully`, 'OK', { duration: 2500 });
+      const verb = kind === 'Transfer' ? 'Transfer' : `${kind}ed`;
+      this.snackBar.open(`${verb} successfully`, 'OK', { duration: 2500 });
     });
   }
+
 
   // ——— Public UI handlers ———
   onDateRangeChange() {
@@ -98,6 +99,8 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
       const wallet: any = await this.apiMainService.getVendorWallet(this.vendorFirmInfo._id);
       const bal = Number(wallet?.wallet_balance ?? 0);
       this.walletBalance = Number.isFinite(bal) ? +bal.toFixed(2) : 0;
+      const subBal = Number(wallet?.subsidy_balance ?? 0);
+      this.subsidyBalance = Number.isFinite(subBal) ? +subBal.toFixed(2) : 0;
     } catch (error) {
       console.log('error while fetching wallet');
     }

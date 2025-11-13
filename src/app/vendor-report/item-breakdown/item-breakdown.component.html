@@ -10,6 +10,7 @@
       <mat-tab label="By Item">
         <div class="tab-head">
           <button mat-stroked-button (click)="export('item')">Export Excel</button>
+          <button class="ms-2" mat-stroked-button color="primary" (click)="exportPdf('item')">Export PDF</button>
         </div>
         <div class="table-wrap">
           <table class="table table-sm">
@@ -30,13 +31,8 @@
           </table>
         </div>
 
-        <mat-paginator
-          [length]="byItem().length"
-          [pageIndex]="itemPageIndex()"
-          [pageSize]="itemPageSize()"
-          [pageSizeOptions]="pageSizeOptions"
-          (page)="onItemPage($event)"
-          showFirstLastButtons>
+        <mat-paginator [length]="byItem().length" [pageIndex]="itemPageIndex()" [pageSize]="itemPageSize()"
+          [pageSizeOptions]="pageSizeOptions" (page)="onItemPage($event)" showFirstLastButtons>
         </mat-paginator>
       </mat-tab>
 
@@ -44,6 +40,7 @@
       <mat-tab label="By Item Type">
         <div class="tab-head">
           <button mat-stroked-button (click)="export('type')">Export Excel</button>
+          <button class="ms-2" mat-stroked-button color="primary" (click)="exportPdf('type')">Export PDF</button>
         </div>
         <div class="table-wrap">
           <table class="table table-sm">
@@ -64,13 +61,8 @@
           </table>
         </div>
 
-        <mat-paginator
-          [length]="byType().length"
-          [pageIndex]="typePageIndex()"
-          [pageSize]="typePageSize()"
-          [pageSizeOptions]="pageSizeOptions"
-          (page)="onTypePage($event)"
-          showFirstLastButtons>
+        <mat-paginator [length]="byType().length" [pageIndex]="typePageIndex()" [pageSize]="typePageSize()"
+          [pageSizeOptions]="pageSizeOptions" (page)="onTypePage($event)" showFirstLastButtons>
         </mat-paginator>
       </mat-tab>
 
@@ -78,6 +70,7 @@
       <mat-tab label="By Category">
         <div class="tab-head">
           <button mat-stroked-button (click)="export('category')">Export Excel</button>
+          <button class="ms-2" mat-stroked-button color="primary" (click)="exportPdf('category')">Export PDF</button>
         </div>
         <div class="table-wrap">
           <table class="table table-sm">
@@ -98,13 +91,8 @@
           </table>
         </div>
 
-        <mat-paginator
-          [length]="byCategory().length"
-          [pageIndex]="catPageIndex()"
-          [pageSize]="catPageSize()"
-          [pageSizeOptions]="pageSizeOptions"
-          (page)="onCatPage($event)"
-          showFirstLastButtons>
+        <mat-paginator [length]="byCategory().length" [pageIndex]="catPageIndex()" [pageSize]="catPageSize()"
+          [pageSizeOptions]="pageSizeOptions" (page)="onCatPage($event)" showFirstLastButtons>
         </mat-paginator>
       </mat-tab>
     </mat-tab-group>

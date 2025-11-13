@@ -34,8 +34,10 @@
               <div class="labelData">{{ outlet.outletDescription }}</div>
             </div>
             <div class="col-6 col-md-6 col-lg-1">
-              <div class="inline right pointer header3" *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(outlet)">
-                <i class="bi bi-eye"></i>
+              <div class="d-flex align-items-center">
+                <i *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(outlet)"
+                  class="bi bi-eye editDeltesaveIcon me-4"></i>
+                <!-- <i class="bi bi-trash editDeltesaveIcon" (click)="showPopup(outlet)"></i> -->
               </div>
             </div>
           </div>

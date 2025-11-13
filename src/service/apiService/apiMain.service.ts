@@ -121,11 +121,10 @@ export class ApiMainService {
     );
   }
   updateOutletLevelSubsidy(id: any, subsidy: any) {
-    console.log(subsidy);
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletLevelSubsidy;
     return this.apiHttpService.REQUEST(
       { url: urlObj.url + `/${id}`, method: urlObj.method },
-      subsidy
+      {subsidy}
     );
   }
 
@@ -1726,5 +1725,20 @@ export class ApiMainService {
   creditOrDebitVendorWallet(body:any) {
     const urlObj = this.apiConfigService.apiEndPointObj.creditOrDebitVendorWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+
+  moveSubsidyToWallet(body:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.moveSubsidyToWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+
+  deleteOutlet(id:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getConsumptionOrderByDateForDashboard(data:any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getConsumptionOrderByDateForDashboard;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, data);
   }
 }

@@ -10,6 +10,9 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ItemBreakdownComponent } from './item-breakdown/item-breakdown.component';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { environment } from 'src/environments/environment';
+import { firstValueFrom } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-vendor-report',
@@ -122,7 +125,7 @@ export class VendorReportComponent {
     return this.orderWise.slice(start, start + this.mainPageSize);
   }
 
-  constructor(private apiMainService: ApiMainService, private excelService: ExcelService, private dialog: MatDialog, fb: FormBuilder) {
+  constructor(private apiMainService: ApiMainService, private http: HttpClient, private excelService: ExcelService, private dialog: MatDialog, fb: FormBuilder) {
     this.dateForm = fb.group({
       dateFrom: new FormControl<Date | null>(null),
       dateTo: new FormControl<Date | null>(null),
@@ -185,13 +188,36 @@ export class VendorReportComponent {
     }
   }
 
-  openItemBreakdownModal(): void {
+  private async assetToBase64(url: string): Promise<string | undefined> {
+    try {
+      const blob = await firstValueFrom(this.http.get(url, { responseType: 'blob' }));
+      return await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    } catch {
+      return undefined;
+    }
+  }
+
+  async openItemBreakdownModal() {
     const orders = (this.orders || []).filter(o => o?.orderstatus === 'completed');
 
     const rangeLabel = this.buildRangeLabel(
       this.dateForm.get('dateFrom')?.value,
       this.dateForm.get('dateTo')?.value
     );
+    const selectedOutlet = this.outletList.find((i: any) => i.outletId === this.selected.outletId) || {};
+    const orgName = selectedOutlet.organizationDetails?.organization_name ?? '-';
+    const cafeName = selectedOutlet.cafeteriaDetails?.cafeteria_name ?? '-';
+    const counterName = selectedOutlet.outletName ?? '-';
+    const orgCafe = `${orgName} - ${cafeName}`;
+
+    // ✅ Use runtime path:
+    const imageUrl = 'assets/images/deskdyneLogoblue.png';
+    const logoBase64 = await this.assetToBase64(imageUrl);
 
     this.dialog.open(ItemBreakdownComponent, {
       width: '960px',
@@ -199,8 +225,16 @@ export class VendorReportComponent {
       autoFocus: false,
       data: {
         rangeLabel,    // <- show this on top
-        orders         // <- use parent-filtered orders
-      }
+        orders,
+        header: {
+          cafeteriaName: orgCafe,
+          counterName,
+          gstNumber: this.vendorFirmInfo?.compliance?.gstNumber || '00000000000',
+          fssaiNumber: this.vendorFirmInfo?.compliance?.fssaiNo || '00000000000000',
+          createdBetween: rangeLabel,
+          logoBase64,
+        },
+      },
     });
   }
 
@@ -224,15 +258,43 @@ export class VendorReportComponent {
   compareDateDesc = (a: KeyValue<string, any>, b: KeyValue<string, any>) =>
     a.key < b.key ? 1 : a.key > b.key ? -1 : 0;
 
+  // Replace your current toISTDateKey with this:
   private toISTDateKey(d: string | Date): string {
-    const dt = typeof d === 'string' ? new Date(d) : d;
+    const tz = 'Asia/Kolkata';
+    let dt: Date;
+
+    if (typeof d === 'string') {
+      // If it's a plain date (no time), interpret it as IST 00:00.
+      const m = d.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if (m) {
+        const [, y, mo, da] = m;
+        // Build a UTC instant that corresponds to 00:00 IST (UTC+05:30)
+        const utcMs = Date.UTC(+y, +mo - 1, +da, -5, -30);
+        dt = new Date(utcMs);
+      } else {
+        // Full ISO with timezone? Trust it.
+        dt = new Date(d);
+      }
+    } else {
+      dt = d;
+    }
+
     return new Intl.DateTimeFormat('en-CA', {
-      timeZone: 'Asia/Kolkata',
+      timeZone: tz,
       year: 'numeric',
       month: '2-digit',
       day: '2-digit',
     }).format(dt);
   }
+
+  // Add this helper:
+  private excelDateFromISTKey(key: string): Date {
+    // key is "yyyy-mm-dd" (already an IST calendar day)
+    const [y, m, d] = key.split('-').map(Number);
+    // Use UTC *noon* to avoid Excel timezone rollovers on any OS/locale.
+    return new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
+  }
+
 
   private n(v: any): number { return Number(v) || 0; }
 
@@ -454,7 +516,7 @@ export class VendorReportComponent {
       'Wallet Status',                      // O  (blank/NA per date)
     ];
     const headerRow = ws.addRow(headers);
-    headerRow.eachCell((c) => {
+    headerRow.eachCell((c: any) => {
       c.font = { bold: true };
       c.alignment = { vertical: 'middle', horizontal: 'center' };
       c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEFEFEF' } };
@@ -494,7 +556,7 @@ export class VendorReportComponent {
       const gst = this.n(g.totalGstAmt);
       const base = this.n(g.totalItemAmountAfterGst);
       const commission = this.n(g.vendorCommissionAmount);
-      const commissionGst = this.n(g.vendorCommissionGstAmount);
+      const commissionGst = g.vendorCommissionGstAmount;
       const netCommission = commission + commissionGst;
       const netValue = this.n(g.vendorLedgerAmtBeforeTdsTcs);
       const tcs = this.n(g.tcsAmount);
@@ -505,7 +567,7 @@ export class VendorReportComponent {
       const walletStatus: string = ''; // no per-date status in data; leave blank or set as needed
 
       // Date key "yyyy-mm-dd" -> real Date for Excel
-      const excelDate = new Date(`${key}T00:00:00`);
+      const excelDate = this.excelDateFromISTKey(key);
 
       const row = ws.addRow([
         excelDate,        // A Date
@@ -539,7 +601,7 @@ export class VendorReportComponent {
       // Wallet Status align center
       row.getCell(15).alignment = { horizontal: 'center' };
 
-      row.eachCell((c) => {
+      row.eachCell((c: any) => {
         c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
       });
 

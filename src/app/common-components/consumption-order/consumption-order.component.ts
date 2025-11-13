@@ -159,13 +159,9 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   }
 
   async fetchOrgMeals() {
-    console.log("in orgggggg")
     try {
       const result = await this.ddApiMainService.getConsumptionOrderByOrgId(this.orgObj._id)
-      console.log(result);
       this.consumptionList = result;
-      console.log(this.consumptionList);
-
     }
     catch (error) {
       console.log(error)
@@ -173,8 +169,6 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   }
 
   async submitMultipleConsumption() {
-    console.log('employeee list to save', this.addMultipleConsumptionList);
-
     const hasInvalid = this.addMultipleConsumptionList.some(
       (consumption: any) =>
         !consumption.itemName || !consumption.mealPrice || !consumption.selctedmealtype || !consumption.minGuarantees
@@ -200,8 +194,6 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
           minGuarantees: item.minGuarantees
         }))
       }
-
-      console.log('Final payload', transformedConsumptionList);
 
       const res = await this.ddApiMainService.addConsumptionOrderList(transformedConsumptionList);
       if (res) {

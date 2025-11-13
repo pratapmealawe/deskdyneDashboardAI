@@ -21,7 +21,7 @@
                         [(ngModel)]="consumptionItem.itemName">
                 </div>
                 <div class="col-12 col-md-6 col-lg-3 mt-2">
-                    <div class="labelText">Price (Inclusive of GST)</div>
+                    <div class="labelText">Price (Incl. GST)</div>
                     <input type="number" class="form-control" placeholder="price"
                         [(ngModel)]="consumptionItem.mealPrice">
                 </div>
@@ -54,7 +54,7 @@
                     <input type="email" class="form-control" placeholder="deliveryCharge"
                         [(ngModel)]="consumptionItem.deliveryCharge">
                 </div> -->
-                <div class="col-sm-12 mt-2">
+                <!-- <div class="col-sm-12 mt-2">
                     <label class="labelText form-label" for="description">Select MealType</label>
                     <mat-chip-listbox [(ngModel)]="consumptionItem.selctedmealtype" aria-label="Type selection"
                         multiple>
@@ -64,7 +64,7 @@
                             </div>
                         </mat-chip-option>
                     </mat-chip-listbox>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="inline bgpadding1" *ngIf="showMultipleConsumptionForm">
@@ -91,7 +91,7 @@
                             <div class="labelData">{{mealTypeItem.itemName}}</div>
                         </div>
                         <div class="col-6 col-md-5 col-lg-3">
-                            <div class="labelText">Price (Inclusive of GST)</div>
+                            <div class="labelText">Price (Incl.GST)</div>
                             <div class="labelData">{{mealTypeItem.mealPrice}}</div>
                         </div>
                         <div class="col-6 col-md-5 col-lg-2">

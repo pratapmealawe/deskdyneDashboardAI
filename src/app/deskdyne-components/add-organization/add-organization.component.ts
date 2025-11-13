@@ -59,7 +59,8 @@ export class AddOrganizationComponent implements OnInit {
         addressLine3: ['', Validators.required],
       }),
       cafeteriaList: this.fb.array([]),
-      subsidy: [0]
+      subsidy: [0],
+      isEmpIdRequired: [true, Validators.required],
     });
   }
 
@@ -252,7 +253,8 @@ export class AddOrganizationComponent implements OnInit {
       city: org.city,
       gstin: org.gstin,
       subsidy: org.subsidy,
-      domain: org.domain
+      domain: org.domain,
+      isEmpIdRequired: org.isEmpIdRequired,
     });
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
       if (cafe.clusterId) {
