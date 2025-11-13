@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 
@@ -8,39 +11,73 @@ import { PolicyService } from 'src/service/policy.service';
   styleUrls: ['./search-organization.component.scss'],
 })
 export class SearchOrganizationComponent implements OnInit {
-  searchObj: any = {
-    organization_name: '',
-    location: '',
-    poc_details: {
-      poc_name: '',
-      poc_phoneNo: '',
-      poc_email: '',
-      poc_location: '',
-    },
-  };
-  page: any = 0;
+  searchForm!: FormGroup;
+  pageIndex: number = 0;
+  pageSize: number = 5;
   orgList: any = [];
   showSearchSection = true;
+  showSearchFilter: boolean = true;
   selectedOrg: any;
   btnPolicy: any;
+  searchControl = new FormControl('')
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService
-  ) {}
+    private policyService: PolicyService,
+    private fb: FormBuilder,
+    private router: Router
+  ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.searchOrg();
+    this.initializeForm();
+    this.searchOrg(this.pageIndex, this.pageSize, this.searchForm.value);
+    this.searchControl.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.searchOrg(this.pageIndex, this.pageSize, value);
+    })
+  }
+  
+  initializeForm() {
+    this.searchForm = this.fb.group({
+      organization_name: [''],
+      location: [''],
+      poc_name: [''],
+      poc_phoneNo: [''],
+      poc_email: ['']
+
+    })
   }
 
-  async searchOrg() {
+
+  onReset(): void {
+    this.searchForm.reset();
+    this.pageIndex = 0;
+    this.pageSize = 5;
+    this.searchOrg(this.pageIndex, this.pageSize);
+  }
+
+
+  async searchOrg(pageIndex: number, pageSize: number, searchValue?: any) {
     try {
-      this.orgList = [];
-      this.page = 1;
+      const pagination = { pageIndex, pageSize };
+      const safeSearchValue = searchValue || {};
+      const safePoc = safeSearchValue.poc_details || {};
+      const searchObj: any = {
+        organization_name: searchValue || '',
+        location: safeSearchValue.location || '',
+        poc_details: {
+          poc_name: safePoc.poc_name || '',
+          poc_phoneNo: safePoc.poc_phoneNo || '',
+          poc_email: safePoc.poc_email || '',
+          poc_location: safePoc.poc_location || ''
+        }
+      };
       const orgList = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        this.searchObj,
-        this.page
+        searchObj,
+        pagination
       );
       if (orgList && orgList.length > 0) {
         this.orgList = orgList;
@@ -50,27 +87,22 @@ export class SearchOrganizationComponent implements OnInit {
     }
   }
 
-  getOrgList() {}
-
   viewOrg(org: any) {
     this.selectedOrg = org;
     this.showSearchSection = false;
   }
 
-  resetForm() {
-    this.searchObj = {
-      organization_name: '',
-      location: '',
-      poc_details: {
-        poc_name: '',
-        poc_phoneNo: '',
-        poc_email: '',
-        poc_location: '',
-      },
-    };
-  }
-
   toggleShowOrder(val: any) {
     this.showSearchSection = val;
+  }
+
+  paginationConfig(config: any) {
+    this.pageIndex = config.pageIndex;
+    this.pageSize = config.pageSize;
+    this.searchOrg(this.pageIndex, this.pageSize);
+  }
+
+  addOrg() {
+    this.router.navigate(['/b2bAddorg'])
   }
 }

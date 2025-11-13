@@ -1,0 +1,31 @@
+<section class="common-dialog">
+  <h2 mat-dialog-title>Details</h2>
+
+  <mat-dialog-content>
+    <div class="table-responsive">
+      <table class="table table-bordered table-hover">
+        <thead>
+          <tr>
+            <th *ngFor="let key of displayedColumns">{{ key }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of data">
+            <td *ngFor="let key of displayedColumns">
+              <ng-container *ngIf="!isObject(item[key]); else nestedObj">
+                {{ item[key] }}
+              </ng-container>
+              <ng-template #nestedObj>
+                <pre>{{ item[key] | json }}</pre>
+              </ng-template>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</section>
