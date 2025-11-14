@@ -14,7 +14,6 @@ import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
 import { HeaderComponent } from './header/header.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { CommonDialogComponent } from './shared/common-dialog/common-dialog.component';
 import { MaterialModule } from './common-components/material.module';
 
 @NgModule({
@@ -26,7 +25,6 @@ import { MaterialModule } from './common-components/material.module';
     ImageCropperComponent,
     HeaderComponent,
     ImageCropperComponent,
-    CommonDialogComponent,
   ],
   imports: [
     BrowserModule,
