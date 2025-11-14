@@ -39,7 +39,7 @@ export class SearchOrganizationComponent implements OnInit {
       this.searchOrg(this.pageIndex, this.pageSize, value);
     })
   }
-  
+
   initializeForm() {
     this.searchForm = this.fb.group({
       organization_name: [''],
@@ -50,15 +50,6 @@ export class SearchOrganizationComponent implements OnInit {
 
     })
   }
-
-
-  onReset(): void {
-    this.searchForm.reset();
-    this.pageIndex = 0;
-    this.pageSize = 5;
-    this.searchOrg(this.pageIndex, this.pageSize);
-  }
-
 
   async searchOrg(pageIndex: number, pageSize: number, searchValue?: any) {
     try {

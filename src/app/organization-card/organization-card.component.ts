@@ -2,8 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild, OnChanges, S
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { PolicyService } from 'src/service/policy.service';
-import { CommonDialogComponent } from '../shared/common-dialog/common-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -13,12 +11,16 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class OrganizationCardComponent implements  AfterViewInit {
   displayedColumns: string[] = ['Organization Name', 'Location', 'Cafeteria', 'Poc Details' , 'action'];
+  columns:string[]=[];
+  tableDetails :string =''
   dataSource = new MatTableDataSource<any>([]);
+  tableData: any[] = []; 
   totalRecords = 0; 
   pageIndex: number = 0;
   pageSize: number = 5;
   pageSizeOptions = [5, 10, 20];
-  // @Input() organization :any[]=[]
+  showModal: boolean = false;
+  selectedOrgData: any[] = [];
   readonly dialog = inject(MatDialog);
   private _organization: any[] = [];
 
@@ -66,14 +68,39 @@ export class OrganizationCardComponent implements  AfterViewInit {
     });
   }
 
-  dataView(org:any){
-    const dialogRef = this.dialog.open(CommonDialogComponent,{
-      width: '900px',
-      data: Array.isArray(org) ? org : [org]
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log(`Dialog result: ${result}`);
-    });
+dataView(org: any , type:any) {
+  console.log(org, "org");
+  let keysToRemove:any[] = [];
+  this.tableDetails=  type == 'poc' ?  'POC Details' : "Cafeteria Details";
+  if (type === 'poc') {
+    keysToRemove = ["_id", "approverDetails", "poc_id"];
   }
+  if (type === 'cafeteria') {
+    keysToRemove = ["cafeteria_location", "poc_details", "_id", "accessCode","subsidy","showAdminDaily"];
+  }
+  const filteredData = this.removeKeysFromObjects(org, keysToRemove);
+  this.columns = Object.keys(filteredData[0]);
+  filteredData.forEach(row => {
+    this.columns.forEach(col => {
+      if (!(col in row)) row[col] = null;
+    });
+  });
+  console.log(this.columns,"displ");
+  
+  this.selectedOrgData = filteredData;
+  this.tableData = [...this.selectedOrgData];
+  this.showModal = true;
+}
 
+closeModal() {
+  this.showModal = false;
+}
+
+removeKeysFromObjects(data: any[], keys: string[]) {
+  return data.map(item => {
+     const newItem = { ...item };
+     keys.forEach(k => delete newItem[k]);
+     return newItem;
+  });
+}
 }
