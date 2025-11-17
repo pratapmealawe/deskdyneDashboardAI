@@ -510,11 +510,11 @@ export class ApiMainService {
     );
   }
 
-  B2B_fetchFilteredAllOrgs(data: any, page: any) {
+  B2B_fetchFilteredAllOrgs(data: any, page?: any) {
         const urlObj =
       this.apiConfigService.apiEndPointObj.B2B_fetchFilteredAllOrgs;
     return this.apiHttpService.REQUEST(
-      { url: urlObj.url + `/${page.pageIndex}/${page.pageSize}`, method: urlObj.method },
+      { url: urlObj.url, method: urlObj.method },
       data,
       null,
       false,
