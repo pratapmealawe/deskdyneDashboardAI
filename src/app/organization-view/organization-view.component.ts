@@ -9,14 +9,10 @@ import { PolicyService } from 'src/service/policy.service';
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
   @Output() back = new EventEmitter<boolean>();
-
-  // Selected indices for Material Tabs
   selectedMainTabIndex = 0;
   selectedSubTabIndex = 0;
   selectedChildTabIndex = 0;
-
   btnPolicy: any;
-
   orgViewList = [
     { name: 'Org Details', path: 'orgDetails' },
     {
@@ -64,12 +60,7 @@ export class OrganizationViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-
-    // Filter based on policy
-    this.orgViewList = this.orgViewList.filter(
-      (item) => this.btnPolicy[item.path] !== false
-    );
-
+    this.orgViewList = this.orgViewList.filter((item) => this.btnPolicy[item.path] !== false);
     this.initializeTabs();
   }
 
@@ -77,7 +68,6 @@ export class OrganizationViewComponent implements OnInit {
     this.back.emit(true);
   }
 
-  // Initialize first tab/subtab/child tab
   private initializeTabs(): void {
     const firstMain = this.orgViewList[0];
     if (!firstMain) return;

@@ -309,9 +309,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, payload, null, false, true);
   }
 
-  B2B_fetchFilteredAllOrgs(data: any, page: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchFilteredAllOrgs;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}`, method: urlObj.method }, data, null, false, true);
+  B2B_fetchFilteredAllOrgs(data: any, page?: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_fetchFilteredAllOrgs, data, null, false, true);
   }
 
   updateOrgComplianceByAdmin(id: string, data: any) {

@@ -1,70 +1,50 @@
-<div class="bgsidepadding1" *ngIf="showSearchSection">
-    <div class="row">
-        <div class="col-12 col-md-4 col-lg-6">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">Org Name</div>
-                    <input type="text" class="form-control" placeholder="Org Name"
-                        [(ngModel)]="searchObj.organization_name">
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-4 col-lg-6">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">Location</div>
-                    <input type="text" class="form-control" placeholder="Location" [(ngModel)]="searchObj.location">
-                </div>
-            </div>
-        </div>
-        <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">POC Name</div>
-                    <input type="text" class="form-control" placeholder="POC Name"
-                        [(ngModel)]="searchObj.poc_details.poc_name">
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">POC Ph No</div>
-                    <input type="text" class="form-control" placeholder="POC Phone No"
-                        [(ngModel)]="searchObj.poc_details.poc_phoneNo">
-                </div>
-            </div>
-        </div>
-
-        <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-                <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-                    <div class="bold">POC Email</div>
-                    <input type="text" class="form-control" placeholder="POC Email"
-                        [(ngModel)]="searchObj.poc_details.poc_email">
-                </div>
-            </div>
-        </div>
-
-
-        <div class="row mt-2">
-            <div class="col-sm-12 col-md-4 col-lg-12">
-                <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchOrg()">Search</button>
-                <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">Reset</button>
-            </div>
-        </div>
-
-        <div class="mt-3" *ngIf="orgList && orgList.length > 0">
-            <div *ngFor="let org of orgList" class="cardDesign">
-                <app-organization-card [organization]="org" (view)="viewOrg($event)"></app-organization-card>
-            </div>
-        </div>
+<div class="container-fluid mt-3 p-25" *ngIf="showSearchSection">
+  <div class="row align-items-center justify-content-between px-3">
+    <div class="col-auto">
+      <h4 class="m-0 fw-semibold">Organization</h4>
     </div>
+    <div class="col d-flex justify-content-end align-items-center gap-3">
+      <div class="input-group" class="add-org text-nowrap d-none d-md-inline-flex">
+        <mat-form-field appearance="outline">
+          <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
+          <button mat-icon-button matSuffix aria-label="Search">
+            <mat-icon>search</mat-icon> </button>
+        </mat-form-field>
+      </div>
+      <button mat-raised-button color="primary" class="add-org text-nowrap d-none d-md-inline-flex" (click)="addOrg()">
+        Add Organization
+      </button>
+      <button mat-icon-button color="primary" class="add-org d-inline-flex d-md-none" (click)="addOrg()"
+        matTooltip="Add Organization" aria-label="Add Organization">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+    </div>
+    <div class="col d-inline-flex d-md-none">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
+        <button mat-icon-button matSuffix aria-label="Search">
+          <mat-icon>search</mat-icon> </button>
+      </mat-form-field>
+    </div>
+  </div>
 </div>
-<div class="bgsidepadding2" *ngIf="!showSearchSection && orgList.length > 0">
-    <app-organization-view [organization]="selectedOrg" (back)="toggleShowOrder($event)"></app-organization-view>
-</div>
-<div class="center mt-5" *ngIf="orgList.length === 0">
-    No Records Found
+<div class="container-fluid mt-3 p-25">
+  <ng-container *ngIf="showSearchSection; else viewSection">
+    <div class="mt-3" *ngIf="orgList?.length > 0; else noRecords">
+      <div class="cardDesign-2">
+        <app-organization-card [organization]="orgList" (view)="viewOrg($event)"
+          (paginationConfig)="paginationConfig($event)">
+        </app-organization-card>
+      </div>
+    </div>
+  </ng-container>
+  <ng-template #viewSection>
+    <div class="bgsidepadding2" *ngIf="selectedOrg; else noRecords">
+      <app-organization-view [organization]="selectedOrg" (back)="toggleShowOrder($event)">
+      </app-organization-view>
+    </div>
+  </ng-template>
+  <ng-template #noRecords>
+    <div class="center mt-5">No Records Found</div>
+  </ng-template>
 </div>
