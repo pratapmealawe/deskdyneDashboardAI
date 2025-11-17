@@ -39,7 +39,6 @@ export class ApiHttpService {
 
   private successCallback = (resolve: any, token: any, session_x: any) => {
     return (apiresponse: any) => {
-      // console.log('successCallback ',response)      
       if (apiresponse && apiresponse.body) {
         const encryptResponse: any = this.decryptData(apiresponse.body, token, session_x);
         this.loaderstatusService.hide();

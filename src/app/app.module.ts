@@ -14,7 +14,7 @@ import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
 import { HeaderComponent } from './header/header.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MaterialModule } from './common-components/material.module';
+import { MaterialModule } from './material.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +24,7 @@ import { MaterialModule } from './common-components/material.module';
     ConfirmationModalComponent,
     ImageCropperComponent,
     HeaderComponent,
-    ImageCropperComponent,
+    ImageCropperComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +32,6 @@ import { MaterialModule } from './common-components/material.module';
     HttpClientModule,
     FormsModule,
     NgbModule,
-    MaterialModule,
     BrowserAnimationsModule,
     MatDatepickerModule
   ],

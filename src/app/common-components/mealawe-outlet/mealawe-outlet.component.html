@@ -1,0 +1,202 @@
+<div class="outlet-settings-container mat-elevation-z2 p-3 rounded-lg bg-surface">
+    <div class="row w-100 align-items-center">
+        <div class="col-12 col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Select Cafeteria</mat-label>
+                <mat-select [(ngModel)]="selectedCafeteria" (ngModelChange)="getMealAweOutletByCafeteria()">
+                    <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe">
+                        {{ cafe.cafeteria_name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div class="col-12 col-md-4 col-lg-4 mb-3" *ngIf="mealPackages?.itemList?.length > 0">
+            <mat-checkbox color="primary" [(ngModel)]="mealPackages.showOnlyToEmployees"
+                (ngModelChange)="updateMealAweOutlet()">
+                Show only to virtual cafeteria employees
+            </mat-checkbox>
+        </div>
+        <div class="col-12 col-md-4 mb-3 text-end">
+            <button mat-raised-button color="primary" class="me-2" (click)="openMealPackageList()"
+                [disabled]="selectedCafeteria?.showVirtualCafe">
+                <mat-icon>add</mat-icon>
+                Add
+            </button>
+        </div>
+    </div>
+    <div class="container-fluid py-3">
+        <div *ngIf="mealPackages?.itemList?.length > 0; else noPackages">
+            <div class="row g-3">
+                <div class="col-12" *ngFor="let pkg of mealPackages.itemList; let i = index">
+                    <mat-card>
+                        <div class="d-flex flex-wrap align-items-center justify-content-between p-3 border-bottom">
+                            <div class="d-flex align-items-center gap-3">
+                                <img [src]="serverUrl + pkg.imageUrl" alt="{{ pkg.packageName }}"
+                                    class="rounded-2 object-cover" width="80" height="80" />
+                                <div>
+                                    <h5 class="mb-1 fw-semibold">{{ pkg.packageName }}</h5>
+                                    <div class="text-muted small">
+                                        <span>Category: {{ pkg.packageCategory }}</span> |
+                                        <span>Subcategory: {{ pkg.packageSubCategory }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <h6 class="mb-2">₹{{ pkg.packagePrice }}</h6>
+                                <mat-slide-toggle color="primary" [(ngModel)]="pkg.isActive"
+                                    (change)="changePackageStatus(pkg.isActive, pkg.masterMenuId)">
+                                    {{ pkg.isActive ? 'Active' : 'Inactive' }}
+                                </mat-slide-toggle>
+                                <div class="mt-2 d-flex gap-2 justify-content-end">
+                                    <button mat-mini-fab color="primary" (click)="pkg.editing = true">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-mini-fab color="warn" (click)="deletePackage(pkg)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="pkg.editing" class="p-3 border-bottom bg-light rounded">
+                            <h6>Edit Package Details</h6>
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Pay To Kitchen Per Meal</mat-label>
+                                        <input matInput type="number" [(ngModel)]="pkg.payToKitchenPerMeal">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Pay To Kitchen Per Meal 2</mat-label>
+                                        <input matInput type="number" [(ngModel)]="pkg.payToKitchenPerMeal2">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>DD Discount</mat-label>
+                                        <input matInput type="number" [(ngModel)]="pkg.ddDiscount">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Offer Text</mat-label>
+                                        <input matInput [(ngModel)]="pkg.offerText">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Offer Color</mat-label>
+                                        <input matInput type="color" [(ngModel)]="pkg.offerColor">
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Subsidy Type</mat-label>
+                                        <mat-select [(ngModel)]="pkg.subsidyType">
+                                            <mat-option value="percentage">Percentage</mat-option>
+                                            <mat-option value="flat">Flat</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-4">
+                                    <mat-form-field appearance="outline" class="w-100">
+                                        <mat-label>Subsidy Value</mat-label>
+                                        <input matInput type="number" [(ngModel)]="pkg.subsidyValue">
+                                    </mat-form-field>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-end mt-3 gap-2">
+                                <button mat-flat-button color="primary" (click)="updatePackage(pkg)">
+                                    Save
+                                </button>
+                                <button mat-button (click)="pkg.editing = false">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                        <mat-tab-group animationDuration="300ms">
+                            <mat-tab label="Details">
+                                <div class="row g-3 p-3">
+                                    <div class="col-md-4">
+                                        <mat-card appearance="outlined" class="p-3">
+                                            <p><strong>Package Type:</strong> {{ pkg.packageType }}</p>
+                                            <p><strong>Days:</strong> {{ pkg.days }}</p>
+                                            <p><strong>Discount:</strong> {{ pkg.discount }}%</p>
+                                            <p><strong>Priority:</strong> {{ pkg.priority }}</p>
+                                        </mat-card>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <mat-card appearance="outlined" class="p-3">
+                                            <p><strong>Subsidy Type:</strong> {{ pkg.subsidyType }}</p>
+                                            <p><strong>Subsidy Value:</strong> {{ pkg.subsidyValue }}</p>
+                                            <p><strong>DD Discount:</strong> {{ pkg.ddDiscount }}</p>
+                                            <p><strong>Offer Text:</strong> {{ pkg.offerText }}</p>
+                                        </mat-card>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <mat-card appearance="outlined" class="p-3">
+                                            <p><strong>Veg Description:</strong> {{ pkg.vegMealDescription }}</p>
+                                            <p><strong>Non-Veg Description:</strong> {{ pkg.nonVegMealDescription }}</p>
+                                        </mat-card>
+                                    </div>
+                                </div>
+                            </mat-tab>
+                            <mat-tab label="Add-ons">
+                                <div class="p-3">
+                                    <mat-table [dataSource]="pkg.addonsList" class="mat-elevation-z1 w-100">
+                                        <ng-container matColumnDef="name">
+                                            <mat-header-cell *matHeaderCellDef> Name </mat-header-cell>
+                                            <mat-cell *matCellDef="let addon"> {{ addon.addonName }} </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="price">
+                                            <mat-header-cell *matHeaderCellDef> Price </mat-header-cell>
+                                            <mat-cell *matCellDef="let addon"> ₹{{ addon.extraPrice }} </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="type">
+                                            <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                                            <mat-cell *matCellDef="let addon"> {{ addon.addOnType }} </mat-cell>
+                                        </ng-container>
+                                        <mat-header-row *matHeaderRowDef="['name','price','type']"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: ['name','price','type'];"></mat-row>
+                                    </mat-table>
+                                    <div *ngIf="!pkg.addonsList?.length" class="text-center text-muted mt-2">
+                                        No Addons Found
+                                    </div>
+                                </div>
+                            </mat-tab>
+                            <mat-tab label="Weekly Menu">
+                                <div class="p-3">
+                                    <mat-table [dataSource]="pkg.menuList" class="mat-elevation-z1 w-100">
+                                        <ng-container matColumnDef="day">
+                                            <mat-header-cell *matHeaderCellDef> Day </mat-header-cell>
+                                            <mat-cell *matCellDef="let menu"> {{ menu.dayText }} </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="menuType">
+                                            <mat-header-cell *matHeaderCellDef> Type </mat-header-cell>
+                                            <mat-cell *matCellDef="let menu"> {{ menu.menuType }} </mat-cell>
+                                        </ng-container>
+                                        <ng-container matColumnDef="desc">
+                                            <mat-header-cell *matHeaderCellDef> Description </mat-header-cell>
+                                            <mat-cell *matCellDef="let menu"> {{ menu.description }} </mat-cell>
+                                        </ng-container>
+                                        <mat-header-row *matHeaderRowDef="['day','menuType','desc']"></mat-header-row>
+                                        <mat-row *matRowDef="let row; columns: ['day','menuType','desc'];"></mat-row>
+                                    </mat-table>
+                                    <div *ngIf="!pkg.menuList?.length" class="text-center text-muted mt-2">
+                                        No Weekly Menu Found
+                                    </div>
+                                </div>
+                            </mat-tab>
+                        </mat-tab-group>
+                    </mat-card>
+                </div>
+            </div>
+        </div>
+        <ng-template #noPackages>
+            <div class="text-center text-muted py-5 fs-6">
+                No Meal Packages Available
+            </div>
+        </ng-template>
+    </div>
+</div>

@@ -9,12 +9,10 @@ import { PolicyService } from 'src/service/policy.service';
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
   @Output() back = new EventEmitter<boolean>();
-
-  selectedTab: string = 'orgDetails';
-  selectedSubTab: string = '';
-  selectedChildTab: string = '';
+  selectedMainTabIndex = 0;
+  selectedSubTabIndex = 0;
+  selectedChildTabIndex = 0;
   btnPolicy: any;
-
   orgViewList = [
     { name: 'Org Details', path: 'orgDetails' },
     {
@@ -62,54 +60,65 @@ export class OrganizationViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.orgViewList = this.orgViewList.filter(item => this.btnPolicy[item.path] !== false);
-    console.log(this.orgViewList);
-
-    this.initSubTabFor(this.selectedTab);
+    this.orgViewList = this.orgViewList.filter((item) => this.btnPolicy[item.path] !== false);
+    this.initializeTabs();
   }
 
   goBack(): void {
     this.back.emit(true);
   }
 
-  gotToTab(tab: string): void {
-    this.selectedTab = tab;
-    this.initSubTabFor(tab);
+  private initializeTabs(): void {
+    const firstMain = this.orgViewList[0];
+    if (!firstMain) return;
+
+    if (firstMain.subTabs?.length) {
+      this.selectedSubTabIndex = 0;
+      const firstSub = firstMain.subTabs[0];
+
+      if (firstSub.childTabs?.length) {
+        this.selectedChildTabIndex = 0;
+      }
+    }
   }
 
-  goToSubTab(subPath: string): void {
-    this.selectedSubTab = subPath;
-    this.initChildTabFor(subPath);
-  }
+  // When a main tab is changed
+  onMainTabChange(index: number): void {
+    this.selectedMainTabIndex = index;
+    this.selectedSubTabIndex = 0;
+    this.selectedChildTabIndex = 0;
 
-  getSubTab(): any[] {
-    const main = this.orgViewList.find(item => item.path === this.selectedTab);
-    return main?.subTabs || [];
-  }
-
-  getChildTabs(): any[] {
-    const sub = this.getSubTab().find(item => item.path === this.selectedSubTab || item.name === this.selectedSubTab);
-    return sub?.childTabs || [];
-  }
-
-  private initSubTabFor(mainPath: string): void {
-    const main = this.orgViewList.find(item => item.path === mainPath);
+    const main = this.orgViewList[index];
     if (main?.subTabs?.length) {
       const firstSub = main.subTabs[0];
-      this.selectedSubTab = firstSub.path || firstSub.name;
-      this.initChildTabFor(this.selectedSubTab);
-    } else {
-      this.selectedSubTab = '';
-      this.selectedChildTab = '';
+      if (firstSub?.childTabs?.length) {
+        this.selectedChildTabIndex = 0;
+      }
     }
   }
 
-  private initChildTabFor(subPath: string): void {
-    const sub = this.getSubTab().find(item => item.path === subPath || item.name === subPath);
+  // When a sub tab is changed
+  onSubTabChange(index: number): void {
+    this.selectedSubTabIndex = index;
+    this.selectedChildTabIndex = 0;
+
+    const main = this.orgViewList[this.selectedMainTabIndex];
+    const sub = main?.subTabs?.[index];
+
     if (sub?.childTabs?.length) {
-      this.selectedChildTab = sub.childTabs[0].path;
-    } else {
-      this.selectedChildTab = '';
+      this.selectedChildTabIndex = 0;
     }
+  }
+
+  get selectedMain(): any {
+    return this.orgViewList[this.selectedMainTabIndex];
+  }
+
+  get selectedSub(): any {
+    return this.selectedMain?.subTabs?.[this.selectedSubTabIndex];
+  }
+
+  get selectedChild(): any {
+    return this.selectedSub?.childTabs?.[this.selectedChildTabIndex];
   }
 }

@@ -5,7 +5,7 @@ import { SearchOrganizationRoutingModule } from './search-organization-routing.m
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrganizationCardModule } from '../../organization-card/organization-card.module';
 import { OrganizationViewModule } from 'src/app/organization-view/organization-view.module';
-import { MaterialModule } from 'src/app/common-components/material.module';
+import { MaterialModule } from 'src/app/material.module';
 
 @NgModule({
   declarations: [SearchOrganizationComponent],
@@ -17,7 +17,7 @@ import { MaterialModule } from 'src/app/common-components/material.module';
     FormsModule,
     MaterialModule,
     ReactiveFormsModule
-],
+  ],
   exports: [SearchOrganizationComponent],
 })
 export class SearchOrganizationModule { }

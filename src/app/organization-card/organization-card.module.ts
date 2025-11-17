@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrganizationCardComponent } from './organization-card.component';
-import { MaterialModule } from '../common-components/material.module';
+import { MaterialModule } from '../material.module';
 
 
 
@@ -13,7 +13,7 @@ import { MaterialModule } from '../common-components/material.module';
     CommonModule,
     MaterialModule
   ],
-  exports:[
+  exports: [
     OrganizationCardComponent
   ]
 })

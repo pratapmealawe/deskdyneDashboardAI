@@ -11,43 +11,29 @@ import { PolicyService } from 'src/service/policy.service';
   styleUrls: ['./search-organization.component.scss'],
 })
 export class SearchOrganizationComponent implements OnInit {
-  searchForm!: FormGroup;
   pageIndex: number = 0;
   pageSize: number = 5;
   orgList: any = [];
-  showSearchSection = true;
+  showSearchSection: boolean = true;
   showSearchFilter: boolean = true;
-  selectedOrg: any;
+  selectedOrg: any = {};
   btnPolicy: any;
   searchControl = new FormControl('')
 
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
-    private fb: FormBuilder,
     private router: Router
   ) { }
 
   ngOnInit() {
+    this.searchOrg();
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.initializeForm();
-    this.searchOrg(this.searchForm.value);
     this.searchControl.valueChanges.pipe(
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe(value => {
       this.searchOrg(value);
-    })
-  }
-
-  initializeForm() {
-    this.searchForm = this.fb.group({
-      organization_name: [''],
-      location: [''],
-      poc_name: [''],
-      poc_phoneNo: [''],
-      poc_email: ['']
-
     })
   }
 
@@ -65,13 +51,9 @@ export class SearchOrganizationComponent implements OnInit {
           poc_location: safePoc.poc_location || ''
         }
       };
-      const orgList = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        searchObj,
-      );
+      const orgList = await this.apiMainService.B2B_fetchFilteredAllOrgs(searchObj);
       if (orgList && orgList.length > 0) {
         this.orgList = orgList;
-        console.log(this.orgList);
-        
       }
     } catch (error) {
       console.log(error);
@@ -84,13 +66,13 @@ export class SearchOrganizationComponent implements OnInit {
   }
 
   toggleShowOrder(val: any) {
-    this.showSearchSection = val;
+    this.showSearchSection = true;
+    this.selectedOrg = {};
   }
 
   paginationConfig(config: any) {
     this.pageIndex = config.pageIndex;
     this.pageSize = config.pageSize;
-    // this.searchOrg(this.pageIndex, this.pageSize);
   }
 
   addOrg() {
