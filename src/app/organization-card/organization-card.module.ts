@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OrganizationCardComponent } from './organization-card.component';
+import { MaterialModule } from '../common-components/material.module';
 
 
 
@@ -9,7 +10,8 @@ import { OrganizationCardComponent } from './organization-card.component';
     OrganizationCardComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MaterialModule
   ],
   exports:[
     OrganizationCardComponent
