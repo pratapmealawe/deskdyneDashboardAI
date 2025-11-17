@@ -31,12 +31,12 @@ export class SearchOrganizationComponent implements OnInit {
   ngOnInit() {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.initializeForm();
-    this.searchOrg(this.pageIndex, this.pageSize, this.searchForm.value);
+    this.searchOrg(this.searchForm.value);
     this.searchControl.valueChanges.pipe(
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe(value => {
-      this.searchOrg(this.pageIndex, this.pageSize, value);
+      this.searchOrg(value);
     })
   }
 
@@ -51,9 +51,8 @@ export class SearchOrganizationComponent implements OnInit {
     })
   }
 
-  async searchOrg(pageIndex: number, pageSize: number, searchValue?: any) {
+  async searchOrg(searchValue?: any) {
     try {
-      const pagination = { pageIndex, pageSize };
       const safeSearchValue = searchValue || {};
       const safePoc = safeSearchValue.poc_details || {};
       const searchObj: any = {
@@ -68,10 +67,11 @@ export class SearchOrganizationComponent implements OnInit {
       };
       const orgList = await this.apiMainService.B2B_fetchFilteredAllOrgs(
         searchObj,
-        pagination
       );
       if (orgList && orgList.length > 0) {
         this.orgList = orgList;
+        console.log(this.orgList);
+        
       }
     } catch (error) {
       console.log(error);
@@ -90,7 +90,7 @@ export class SearchOrganizationComponent implements OnInit {
   paginationConfig(config: any) {
     this.pageIndex = config.pageIndex;
     this.pageSize = config.pageSize;
-    this.searchOrg(this.pageIndex, this.pageSize);
+    // this.searchOrg(this.pageIndex, this.pageSize);
   }
 
   addOrg() {
