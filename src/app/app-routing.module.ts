@@ -4,485 +4,68 @@ import { FaqModule } from './miscelleneous/faq/faq.module';
 import { accessGuard } from 'src/guards/access.guard';
 
 const routes: Routes = [
-  {
-    path: 'login',
-    loadChildren: () =>
-      import('./login/login.module').then((m) => m.LoginModule),
-  },
-  {
-    path: 'guest',
-    loadChildren: () =>
-      import('./guest/guest.module').then((m) => m.GuestModule),
-  },
-  {
-    path: 'home',
-    loadChildren: () => import('./home/home.module').then((m) => m.HomeModule),
-  },
-  {
-    path: 'outlet',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./outlet/outlet.module').then((m) => m.OutletModule),
-  },
-  {
-    path: 'addOutlet',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./outlet/add-outlet/add-outlet.module').then(
-        (m) => m.AddOutletModule
-      ),
-  },
-  {
-    path: 'vendor',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./vendor/vendor.module').then((m) => m.VendorModule),
-  },
-  {
-    path: 'searchVendor',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./vendor/search-vendor/search-vendor.module').then(
-        (m) => m.SearchVendorModule
-      ),
-  },
-  {
-    path: 'addVendorFirm',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./add-vendor-firm/add-vendor-firm.module').then(
-        (m) => m.AddVendorFirmModule
-      ),
-  },
-  {
-    path: 'searchVendorFirm',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./vendor-firm/vendor-firm.module').then(
-        (m) => m.VendorFirmModule
-      ),
-  },
-  {
-    path: 'addVendor',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./vendor/add-vendor/add-vendor.module').then(
-        (m) => m.AddVendorModule
-      ),
-  },
-  {
-    path: 'addAdmin',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./deskdyne-components/add-admin/add-admin.module').then(
-        (m) => m.AddAdminModule
-      ),
-  },
-  {
-    path: 'admin',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./deskdyne-components/admin/admin.module').then(
-        (m) => m.AdminModule
-      ),
-  },
-  {
-    path: 'faq',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./miscelleneous//faq/faq.module').then((m) => FaqModule),
-  },
-  {
-    path: 'configVariable',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./miscelleneous/config-variable/config-variable.module').then(
-        (m) => m.ConfigVariableModule
-      ),
-  },
-  {
-    path: 'configImages',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./config-images/config-images.module').then(
-        (m) => m.ConfigImagesModule
-      ),
-  },
-  {
-    path: 'configImagesGroup',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./config-images-group/config-images-group.module').then(
-        (m) => m.ConfigImagesGroupModule
-      ),
-  },
-  {
-    path: 'appVersionControl',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './miscelleneous/app-version-control/app-version-control.module'
-      ).then((m) => m.AppVersionControlModule),
-  },
-  {
-    path: 'policy',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./policy/policy/policy.module').then((m) => m.PolicyModule),
-  },
-  {
-    path: 'addPolicy',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./policy/add-policy/add-policy.module').then(
-        (m) => m.AddPolicyModule
-      ),
-  },
-  {
-    path: 'currentOrder',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./orders/orders.module').then((m) => m.OrdersModule),
-  },
-  {
-    path: 'outletMasterMenu',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./outlet-master-menu/outlet-master-menu.module').then((m) => m.OutletMasterMenuModule),
-  },
-  {
-    path: 'searchOrder',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./search-order/search-order.module').then(
-        (m) => m.SearchOrderModule
-      ),
-  },
-  {
-    path: 'b2bAddorg',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './deskdyne-components/add-organization/add-organization.module'
-      ).then((m) => m.AddOrganizationModule),
-  },
-  {
-    path: 'b2bSearchOrg',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './deskdyne-components/search-organization/search-organization.module'
-      ).then((m) => m.SearchOrganizationModule),
-  },
-  {
-    path: 'mainDashboard',
-
-    loadChildren: () =>
-      import('./deskdyne-components/main-dashboard/main-dashboard.module').then(
-        (m) => m.MainDashboardModule
-      ),
-  },
-  {
-    path: 'dashboard',
-
-    loadChildren: () =>
-      import('./deskdyne-components/dashboard/dashboard.module').then(
-        (m) => m.DashboardModule
-      ),
-  },
-  {
-    path: 'customer',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./common-components/customer/customer.module').then(
-        (m) => m.CustomerModule
-      ),
-  },
-  {
-    path: 'serverlogs',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./server-logs/server-logs.module').then(
-        (m) => m.ServerLogsModule
-      ),
-  },
-  {
-    path: 'billing',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import('./billing/billing.module').then((m) => m.BillingModule),
-  },
-
-  //orgAdmin routes
-  {
-    path: 'orgDashboard',
-
-    loadChildren: () =>
-      import('./org-components/org-dashboard/org-dashboard.module').then(
-        (m) => m.OrgDashboardModule
-      ),
-  },
-  {
-    path: 'orgMenuItems',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-menu-items/org-menu-items.module').then(
-        (m) => m.OrgMenuItemsModule
-      ),
-  },
-  {
-    path: 'orgOrders',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-orders/org-orders.module').then(
-        (m) => m.OrgOrdersModule
-      ),
-  },
-  {
-    path: 'orgPreOrders',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-pre-orders/org-pre-orders.module').then(
-        (m) => m.OrgPreOrdersModule
-      ),
-  },
-  {
-    path: 'orgSubcription',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-subscription/org-subscription.module').then(
-        (m) => m.OrgSubscriptionModule
-      ),
-  },
-  {
-    path: 'orgReviews',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-reviews/org-reviews.module').then(
-        (m) => m.OrgReviewsModule
-      ),
-  },
-  {
-    path: 'appFeedbacks',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './common-components/suggessions-feedbacks/suggessions-feedbacks.module'
-      ).then((m) => m.SuggessionsFeedbacksModule),
-  },
-  {
-    path: 'excelExport',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./common-components/excel-export/excel-export.module').then(
-        (m) => m.ExcelExportModule
-      ),
-  },
-  {
-    path: 'outletExcelExport',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./common-components/outlet-excel-export/outlet-excel-export.module').then(
-        (m) => m.OutletExcelExportModule
-      ),
-  },
-  {
-    path: 'orgReports',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-reports/org-reports.module').then(
-        (m) => m.OrgReportsModule
-      ),
-  },
-  {
-    path: 'orgVendorInfo',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-vendor-info/org-vendor-info.module').then(
-        (m) => m.OrgVendorInfoModule
-      ),
-  },
-  {
-    path: 'orgMenuCounters',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import(
-        './org-components/org-menu-counters/org-menu-counters.module'
-      ).then((m) => m.OrgMenuCountersModule),
-  },
-  {
-    path: 'orgIncidentManagement',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './org-components/org-incident-management/org-incident-management.module'
-      ).then((m) => m.OrgIncidentManagementModule),
-  },
-  {
-    path: 'orgChecklist',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./checklist-history/checklist-history.module').then(
-        (m) => m.ChecklistHistoryModule
-      ),
-  },
-  {
-    path: 'orgEmployeeList',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './org-components/org-employee-list/org-employee-list.module'
-      ).then((m) => m.OrgEmployeeListModule),
-  },
-  {
-    path: 'orgBulkOrderHistory',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './org-components/org-bulk-order-history/org-bulk-order-history.module'
-      ).then((m) => m.OrgBulkOrderHistoryModule),
-  },
-  {
-    path: 'orgManualOrders',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './org-components/org-manual-orders/org-manual-orders.module'
-      ).then((m) => m.OrgManualOrdersModule),
-  },
-  {
-    path: 'orgBilling',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/org-billing/org-billing.module').then(
-        (m) => m.OrgBillingModule
-      ),
-  },
-  {
-    path: 'viewChecklistQuestion',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './deskdyne-components/checklist-question/checklist-question.module'
-      ).then((m) => m.ChecklistQuestionModule),
-  },
-  {
-    path: 'submitChecklist',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./org-components/submit-checklist/submit-checklist.module').then(
-        (m) => m.SubmitChecklistModule
-      ),
-  },
-  {
-    path: 'checklistHistory',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./checklist-history/checklist-history.module').then(
-        (m) => m.ChecklistHistoryModule
-      ),
-  },
-  {
-    path: 'foodItem',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(
-        (m) => m.B2bFoodItemModule
-      ),
-  },
-  //deskdine routes
-  {
-    path: 'currentOrder',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import(
-        './deskdyne-components/b2b-current-orders/b2b-current-orders.module'
-      ).then((m) => m.B2bCurrentOrdersModule),
-  },
-  {
-    path: 'otherOrder',
-    canActivate: [accessGuard],
-    loadChildren: () =>
-      import(
-        './other-orders/other-orders.module'
-      ).then((m) => m.OtherOrdersModule),
-  },
-  {
-    path: 'pastOrder',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(
-        (m) => m.B2bFoodItemModule
-      ),
-  },
-  {
-    path: 'viewEnquiries',
-    canActivate: [accessGuard],
-
-    loadChildren: () =>
-      import('./deskdyne-components/org-registry/org-registry.module').then(
-        (m) => m.OrgRegistryModule
-      ),
-  },
-  {
-    path: 'consumptionOrders',
-    loadChildren: () =>
-      import('./consumption-order-details/consumption-order-details.module').then(
-        (m) => m.ConsumptionOrderDetailsModule
-      ),
-  },
-  {
-    path: '',
-    redirectTo: 'login',
-    pathMatch: 'full',
-  },
-  {
-    path: '**',
-    redirectTo: 'login',
-  },
+  { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
+  { path: 'guest', loadChildren: () => import('./guest/guest.module').then(m => m.GuestModule) },
+  { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
+  { path: 'outlet', canActivate: [accessGuard], loadChildren: () => import('./outlet/outlet.module').then(m => m.OutletModule) },
+  { path: 'addOutlet', canActivate: [accessGuard], loadChildren: () => import('./outlet/add-outlet/add-outlet.module').then(m => m.AddOutletModule) },
+  { path: 'vendor', canActivate: [accessGuard], loadChildren: () => import('./vendor/vendor.module').then(m => m.VendorModule) },
+  { path: 'searchVendor', canActivate: [accessGuard], loadChildren: () => import('./vendor/search-vendor/search-vendor.module').then(m => m.SearchVendorModule) },
+  { path: 'addVendorFirm', canActivate: [accessGuard], loadChildren: () => import('./add-vendor-firm/add-vendor-firm.module').then(m => m.AddVendorFirmModule) },
+  { path: 'searchVendorFirm', canActivate: [accessGuard], loadChildren: () => import('./vendor-firm/vendor-firm.module').then(m => m.VendorFirmModule) },
+  { path: 'addVendor', canActivate: [accessGuard], loadChildren: () => import('./vendor/add-vendor/add-vendor.module').then(m => m.AddVendorModule) },
+  { path: 'addAdmin', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/add-admin/add-admin.module').then(m => m.AddAdminModule) },
+  { path: 'admin', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/admin/admin.module').then(m => m.AdminModule) },
+  { path: 'faq', canActivate: [accessGuard], loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => FaqModule) },
+  { path: 'configVariable', canActivate: [accessGuard], loadChildren: () => import('./miscelleneous/config-variable/config-variable.module').then(m => m.ConfigVariableModule) },
+  { path: 'configImages', canActivate: [accessGuard], loadChildren: () => import('./config-images/config-images.module').then(m => m.ConfigImagesModule) },
+  { path: 'configImagesGroup', canActivate: [accessGuard], loadChildren: () => import('./config-images-group/config-images-group.module').then(m => m.ConfigImagesGroupModule) },
+  { path: 'appVersionControl', canActivate: [accessGuard], loadChildren: () => import('./miscelleneous/app-version-control/app-version-control.module').then(m => m.AppVersionControlModule) },
+  { path: 'policy', canActivate: [accessGuard], loadChildren: () => import('./policy/policy/policy.module').then(m => m.PolicyModule) },
+  { path: 'addPolicy', canActivate: [accessGuard], loadChildren: () => import('./policy/add-policy/add-policy.module').then(m => m.AddPolicyModule) },
+  { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule) },
+  { path: 'outletMasterMenu', canActivate: [accessGuard], loadChildren: () => import('./outlet-master-menu/outlet-master-menu.module').then(m => m.OutletMasterMenuModule) },
+  { path: 'searchOrder', canActivate: [accessGuard], loadChildren: () => import('./search-order/search-order.module').then(m => m.SearchOrderModule) },
+  { path: 'b2bAddorg', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/add-organization/add-organization.module').then(m => m.AddOrganizationModule) },
+  { path: 'b2bSearchOrg', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/search-organization/search-organization.module').then(m => m.SearchOrganizationModule) },
+  { path: 'mainDashboard', loadChildren: () => import('./deskdyne-components/main-dashboard/main-dashboard.module').then(m => m.MainDashboardModule) },
+  { path: 'dashboard', loadChildren: () => import('./deskdyne-components/dashboard/dashboard.module').then(m => m.DashboardModule) },
+  { path: 'customer', canActivate: [accessGuard], loadChildren: () => import('./common-components/customer/customer.module').then(m => m.CustomerModule) },
+  { path: 'serverlogs', canActivate: [accessGuard], loadChildren: () => import('./server-logs/server-logs.module').then(m => m.ServerLogsModule) },
+  { path: 'billing', canActivate: [accessGuard], loadChildren: () => import('./billing/billing.module').then(m => m.BillingModule) },
+  { path: 'orgDashboard', loadChildren: () => import('./org-components/org-dashboard/org-dashboard.module').then(m => m.OrgDashboardModule) },
+  { path: 'orgMenuItems', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-menu-items/org-menu-items.module').then(m => m.OrgMenuItemsModule) },
+  { path: 'orgOrders', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-orders/org-orders.module').then(m => m.OrgOrdersModule) },
+  { path: 'orgPreOrders', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-pre-orders/org-pre-orders.module').then(m => m.OrgPreOrdersModule) },
+  { path: 'orgSubcription', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-subscription/org-subscription.module').then(m => m.OrgSubscriptionModule) },
+  { path: 'orgReviews', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-reviews/org-reviews.module').then(m => m.OrgReviewsModule) },
+  { path: 'appFeedbacks', canActivate: [accessGuard], loadChildren: () => import('./common-components/suggessions-feedbacks/suggessions-feedbacks.module').then(m => m.SuggessionsFeedbacksModule) },
+  { path: 'excelExport', canActivate: [accessGuard], loadChildren: () => import('./common-components/excel-export/excel-export.module').then(m => m.ExcelExportModule) },
+  { path: 'outletExcelExport', canActivate: [accessGuard], loadChildren: () => import('./common-components/outlet-excel-export/outlet-excel-export.module').then(m => m.OutletExcelExportModule) },
+  { path: 'orgReports', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-reports/org-reports.module').then(m => m.OrgReportsModule) },
+  { path: 'orgVendorInfo', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-vendor-info/org-vendor-info.module').then(m => m.OrgVendorInfoModule) },
+  { path: 'orgMenuCounters', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-menu-counters/org-menu-counters.module').then(m => m.OrgMenuCountersModule) },
+  { path: 'orgIncidentManagement', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-incident-management/org-incident-management.module').then(m => m.OrgIncidentManagementModule) },
+  { path: 'orgChecklist', canActivate: [accessGuard], loadChildren: () => import('./checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
+  { path: 'orgEmployeeList', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-employee-list/org-employee-list.module').then(m => m.OrgEmployeeListModule) },
+  { path: 'orgBulkOrderHistory', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-bulk-order-history/org-bulk-order-history.module').then(m => m.OrgBulkOrderHistoryModule) },
+  { path: 'orgManualOrders', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-manual-orders/org-manual-orders.module').then(m => m.OrgManualOrdersModule) },
+  { path: 'orgBilling', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-billing/org-billing.module').then(m => m.OrgBillingModule) },
+  { path: 'viewChecklistQuestion', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/checklist-question/checklist-question.module').then(m => m.ChecklistQuestionModule) },
+  { path: 'submitChecklist', canActivate: [accessGuard], loadChildren: () => import('./org-components/submit-checklist/submit-checklist.module').then(m => m.SubmitChecklistModule) },
+  { path: 'checklistHistory', canActivate: [accessGuard], loadChildren: () => import('./checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
+  { path: 'foodItem', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
+  { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-current-orders/b2b-current-orders.module').then(m => m.B2bCurrentOrdersModule) },
+  { path: 'otherOrder', canActivate: [accessGuard], loadChildren: () => import('./other-orders/other-orders.module').then(m => m.OtherOrdersModule) },
+  { path: 'pastOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
+  { path: 'viewEnquiries', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/org-registry/org-registry.module').then(m => m.OrgRegistryModule) },
+  { path: 'consumptionOrders', loadChildren: () => import('./consumption-order-details/consumption-order-details.module').then(m => m.ConsumptionOrderDetailsModule) },
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      scrollPositionRestoration: 'enabled',
-      useHash: false,
-    }),
-  ],
-  exports: [RouterModule],
+  imports: [RouterModule.forRoot(routes, { scrollPositionRestoration: 'enabled', useHash: false })],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

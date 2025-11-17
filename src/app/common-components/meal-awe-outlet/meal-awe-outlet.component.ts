@@ -57,7 +57,7 @@ export class MealAweOutletComponent implements OnInit {
         console.log(mealAweOutlet);
         this.mealAweOutletObj = mealAweOutlet;
         console.log(this.mealAweOutletObj);
-        
+
         this.showUpdate = true;
         this.mealAweOutletObj.org_name = mealAweOutlet.org_name;
         this.mealAweOutletObj.showOnlyToEmployees =
@@ -92,7 +92,7 @@ export class MealAweOutletComponent implements OnInit {
       });
       this.mealPackageList = mealPackageList;
       this.tempMealPackage = [...this.mealPackageList];
-      
+
       let filterCluster = this.mealPackageList.map((data: any) => {
         return data.clusters[0];
       }).filter((cluster: any) => cluster !== undefined);
@@ -178,16 +178,16 @@ export class MealAweOutletComponent implements OnInit {
 
   async changePackageStatus(status: any, mealId: any, orgId: any) {
     console.log(status, mealId, orgId);
-    try {
-      await this.apiMainService.changePackageStatus(status, mealId, orgId);
-    } catch (error) {
-      console.log(error);
-    }
+    // try {
+    //   await this.apiMainService.changePackageStatus(status, mealId, orgId);
+    // } catch (error) {
+    //   console.log(error);
+    // }
   }
 
   createOutlet(type: any) {
     console.log(this.mealAweOutletObj);
-    
+
     if (type === 'add') {
       this.addOutlet(this.mealAweOutletObj);
     } else {
@@ -206,7 +206,7 @@ export class MealAweOutletComponent implements OnInit {
   }
   async updateOutlet(outlet: any) {
     console.log(outlet._id);
-    
+
     try {
       const updatedOutlet = this.apiMainService.updateMealAweOutlet(
         outlet._id,
