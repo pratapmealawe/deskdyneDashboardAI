@@ -14,8 +14,8 @@ export class OrganizationCardComponent implements  AfterViewInit {
   columns:string[]=[];
   tableDetails :string =''
   dataSource = new MatTableDataSource<any>([]);
-  tableData: any[] = []; 
-  totalRecords = 0; 
+  tableData: any[] = [];
+  totalRecords = 0;
   pageIndex: number = 0;
   pageSize: number = 5;
   pageSizeOptions = [5, 10, 20];
@@ -30,11 +30,11 @@ export class OrganizationCardComponent implements  AfterViewInit {
   }
   set organization(value: any[]) {
     this._organization = value || [];
-    this.refreshDataSource(); // refresh whenever new data arrives from parent
+    this.refreshDataSource();
   }
 
   @Output() view: EventEmitter<any> = new EventEmitter<any>();
-  @Output () paginationConfig :EventEmitter<any> = new EventEmitter<any>();
+  @Output() paginationConfig: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -46,7 +46,7 @@ export class OrganizationCardComponent implements  AfterViewInit {
     }
     if (this.sort) {
       console.log(this.sort);
-      
+
       this.dataSource.sort = this.sort;
     }
   }
@@ -58,7 +58,7 @@ export class OrganizationCardComponent implements  AfterViewInit {
 
 
   vieworg(org: any) {
-     this.view.emit(org);
+    this.view.emit(org);
   }
 
   onPageChange(event: PageEvent) {
@@ -68,39 +68,70 @@ export class OrganizationCardComponent implements  AfterViewInit {
     });
   }
 
-dataView(org: any , type:any) {
-  console.log(org, "org");
-  let keysToRemove:any[] = [];
-  this.tableDetails=  type == 'poc' ?  'POC Details' : "Cafeteria Details";
+dataView(org: any, type: any) {
+  let keysToRemove: any[] = [];
+  this.tableDetails = type === 'poc' ? 'POC Details' : 'Cafeteria Details';
   if (type === 'poc') {
     keysToRemove = ["_id", "approverDetails", "poc_id"];
   }
+  let cafeteriaOrder: string[] = [];
   if (type === 'cafeteria') {
-    keysToRemove = ["cafeteria_location", "poc_details", "_id", "accessCode","subsidy","showAdminDaily"];
+    keysToRemove = [
+      "cafeteria_location", 
+      "poc_details", 
+      "_id", 
+      "accessCode", 
+      "subsidy", 
+    ];
+
+    cafeteriaOrder = [
+      "cafeteria_name",
+      "cafeteria_id",
+      "cafeteria_city",
+      "cafeteria_gstin",
+      "address1",
+      "address2",
+      "appMenu_type",
+      "landmark",
+      "location",
+      "showAdminDaily",
+      "showEmpPolls",
+      "showVirtualCafe",
+      "showSaas",
+      "showSiteExecutive",
+      "showCompanyWallet",
+      "showchecklist",
+      "isEmployeeEmailLogin",
+      "showComplienceTracker",
+      "showConsumptionOrder"
+    ];
   }
   const filteredData = this.removeKeysFromObjects(org, keysToRemove);
-  this.columns = Object.keys(filteredData[0]);
+  if (type === 'cafeteria') {
+    const availableCols = Object.keys(filteredData[0]);
+    this.columns = cafeteriaOrder.filter(col => availableCols.includes(col));
+  } else {
+    this.columns = Object.keys(filteredData[0]);
+  }
   filteredData.forEach(row => {
     this.columns.forEach(col => {
       if (!(col in row)) row[col] = null;
     });
   });
-  console.log(this.columns,"displ");
-  
   this.selectedOrgData = filteredData;
   this.tableData = [...this.selectedOrgData];
   this.showModal = true;
 }
 
-closeModal() {
-  this.showModal = false;
-}
+  closeModal() {
+    this.showModal = false;
+  }
 
-removeKeysFromObjects(data: any[], keys: string[]) {
-  return data.map(item => {
-     const newItem = { ...item };
-     keys.forEach(k => delete newItem[k]);
-     return newItem;
-  });
-}
+  removeKeysFromObjects(data: any[], keys: string[]) {
+    return data.map(item => {
+      const newItem = { ...item };
+      keys.forEach(k => delete newItem[k]);
+      return newItem;
+    });
+  }
 }

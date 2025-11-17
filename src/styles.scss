@@ -1,5 +1,14 @@
-/* You can add global styles to this file, and also import other style files */
+@use './styles/theme/index' as *;
 @import "bootstrap-icons/font/bootstrap-icons.css";
+
+
+/* Global application base styles */
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: Roboto, sans-serif;
+}
+
 
 $primary-color1: #e62841;
 $primary-color2: #b9041c;

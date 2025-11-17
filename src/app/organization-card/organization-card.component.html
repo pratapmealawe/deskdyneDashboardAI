@@ -46,19 +46,26 @@
   </div>
 
   <div class="custom-modal-body">
-    <table mat-table [dataSource]="tableData" matSort class="mat-elevation-z8 w-100">
+    <table mat-table [dataSource]="tableData" matSort class="mat-elevation-z8 w-100 table">
       <ng-container [matColumnDef]="col" *ngFor="let col of columns" >
         <th mat-header-cell *matHeaderCellDef >
           {{ col | titlecase}}
         </th>
         <td mat-cell *matCellDef="let row">
-          {{ row[col] === true ? 'Yes' : row[col] === false ? 'No' : row[col] }}
+        <mat-chip *ngIf="row[col] === true" color="primary" selected class="yes-chip">
+           Yes
+        </mat-chip>
+        <mat-chip *ngIf="row[col] === false" color="warn" selected class="no-chip">
+           No
+        </mat-chip>
+        <span *ngIf="row[col] !== true && row[col] !== false">
+           {{ row[col] }}
+        </span>
         </td>
       </ng-container>
       <tr mat-header-row *matHeaderRowDef="columns" class="table-header"></tr>
       <tr mat-row *matRowDef="let row; columns: columns;" class="table-row"></tr>
     </table>
-    <hr />
   </div>
 </div>
 

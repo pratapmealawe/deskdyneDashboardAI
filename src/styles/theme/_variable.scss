@@ -1,0 +1,17 @@
+/* ---------------------------------------------
+   Global CSS Variables - Your Brand Colors
+----------------------------------------------*/
+
+:root {
+  --soft-cream:   #F4ECC5;
+  --bright-red:   #FF3333;
+  --royal-blue:   #0E49B5;
+  --navy-blue:    #192754;
+
+  /* Semantic tokens */
+  --color-primary:      var(--royal-blue);
+  --color-secondary:    var(--navy-blue);
+  --color-accent:       var(--bright-red);
+  --color-background:   var(--soft-cream);
+  --color-text:         #192754;
+}
