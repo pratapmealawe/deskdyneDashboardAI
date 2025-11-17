@@ -18,7 +18,8 @@ export class SearchOrganizationComponent implements OnInit {
   showSearchFilter: boolean = true;
   selectedOrg: any = {};
   btnPolicy: any;
-  searchControl = new FormControl('')
+  searchControl = new FormControl('');
+  originalOrgList:any // ma 
 
   constructor(
     private apiMainService: ApiMainService,
@@ -33,9 +34,22 @@ export class SearchOrganizationComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe(value => {
-      this.searchOrg(value);
+      this.applyLocalFilter(value);
     })
   }
+applyLocalFilter(value: any) {
+  if (!value) {
+    // restore full list
+    this.orgList = [...this.originalOrgList];
+    return;
+  }
+  const lower = value.toLowerCase();
+  // filter from ORIGINAL data
+  this.orgList = this.originalOrgList.filter((d: any) =>
+    d.organization_name?.toLowerCase().includes(lower)
+  );
+}
+
 
   async searchOrg(searchValue?: any) {
     try {
@@ -54,6 +68,7 @@ export class SearchOrganizationComponent implements OnInit {
       const orgList = await this.apiMainService.B2B_fetchFilteredAllOrgs(searchObj);
       if (orgList && orgList.length > 0) {
         this.orgList = orgList;
+        this.originalOrgList = orgList;
       }
     } catch (error) {
       console.log(error);
