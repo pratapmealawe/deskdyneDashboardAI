@@ -52,11 +52,10 @@ export class MealaweOutletComponent implements AfterViewInit {
   async getMealAweOutletByCafeteria(): Promise<void> {
     try {
       this.mealOutlet = await this.apiMainService.getMealAweOutletByCafeteria(this.cafeteriaId);
-      console.log('this.mealOutlet', this.mealOutlet._id)
       this.categories = (this.mealOutlet?.categoryConfig || []).map((c: any) => ({
         ...c,
         editing: false,
-        _previewImage: c.categoryImg ? this.serverDDUrl + c.categoryImg : null, // prepend server URL if needed
+        _previewImage: c.categoryImg ? this.serverDDUrl + c.categoryImg : null,
         _previewBanners: (c.categoryBanners || []).map((b: string) => this.serverDDUrl + b),
         _deleteBanners: [],
         _newImageFile: null,
@@ -119,11 +118,7 @@ export class MealaweOutletComponent implements AfterViewInit {
 
   async changePackageStatus(status: boolean, masterMenuId: string) {
     try {
-      await this.apiMainService.changePackageStatus({
-        status,
-        mealId: masterMenuId,
-        cafeteriaId: this.cafeteriaId
-      });
+      await this.apiMainService.changePackageStatus({ status, mealId: masterMenuId, cafeteriaId: this.cafeteriaId });
       this.toaster.success("Status updated");
       this.getMealAweOutletByCafeteria();
     } catch (error) {
@@ -174,7 +169,6 @@ export class MealaweOutletComponent implements AfterViewInit {
     } catch (error) {
       console.error("❌ Category update failed", error);
       this.toaster.error("Category update failed. No changes applied.");
-      // await this.reload();
     }
   }
 
