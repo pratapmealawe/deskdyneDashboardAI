@@ -1,52 +1,41 @@
-<div class="bgpadding1">
-  <div class="right addBtn addOutlet" *ngIf="true || btnPolicy?.addVendor" (click)="addVendor()">
-    +
-  </div>
-  <div class="row">
-    <div class="col-12 col-md-4 col-lg-6">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Vendor Name</div>
-          <input type="text" class="form-control" placeholder="Vendor Name" [(ngModel)]="searchObj.vendorName" />
-        </div>
-      </div>
+  <div class="container-fluid mt-3 p-25" >
+  <div class="row align-items-center justify-content-between px-3">
+    <div class="col-auto">
+      <h4 class="m-0 fw-semibold">Vendor</h4>
     </div>
-
-    <div class="col-12 col-md-4 col-lg-4">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Ph No</div>
-          <input type="text" class="form-control" placeholder="Vendor Phone No" [(ngModel)]="searchObj.vendorPhoneNo" />
-        </div>
+    <div class="col d-flex justify-content-end align-items-center gap-3">
+      <div class="input-group" class="add-org text-nowrap d-none d-md-inline-flex">
+        <mat-form-field appearance="outline">
+          <input matInput type="text" placeholder="Search Vendor..." [formControl]="searchControl" />
+          <button mat-icon-button matSuffix aria-label="Search">
+            <mat-icon>search</mat-icon> </button>
+        </mat-form-field>
       </div>
+      <button mat-raised-button color="primary" class="add-org text-nowrap d-none d-md-inline-flex" (click)="addVendor()">
+        Add Vendor
+      </button>
+      <button mat-icon-button color="primary" class="add-org d-inline-flex d-md-none" (click)="addVendor()"
+        matTooltip="Add Organization" aria-label="Add Organization">
+        <mat-icon>add_circle</mat-icon>
+      </button>
     </div>
-
-    <div class="col-12 col-md-4 col-lg-4">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Email</div>
-          <input type="text" class="form-control" placeholder="Vendor Email" [(ngModel)]="searchObj.vendorEmail" />
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-2">
-      <div class="col-sm-12 col-md-4 col-lg-12">
-        <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchVendor()">
-          Search
-        </button>
-        <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">
-          Reset
-        </button>
-      </div>
-    </div>
-    <div *ngIf="vendorList && vendorList.length == 0" class="center mt-5">
-      No Vendor Found
-    </div>
-    <div class="mt-3" *ngIf="vendorList && vendorList.length > 0">
-      <div *ngFor="let vendor of filteredVendorList" class="cardDesign mb-5">
-        <app-vendor-card [vendorFirm]="vendor" (deleted)="getAllVendors()"></app-vendor-card>
-      </div>
+    <div class="col d-inline-flex d-md-none">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
+        <button mat-icon-button matSuffix aria-label="Search">
+          <mat-icon>search</mat-icon> </button>
+      </mat-form-field>
     </div>
   </div>
 </div>
+   <div *ngIf="vendorList && vendorList.length === 0" class="text-center text-muted my-5">
+    No Vendor Found
+   </div>
+   <div class="d-flex flex-wrap gap-3 mt-3 ps-4 pe-4 w-auto" *ngIf="vendorList && vendorList.length > 0">
+      <div class="mt-3 w-100" *ngIf="vendorList && vendorList.length > 0">
+      <div  class="cardDesign mb-5">
+        <app-vendor-card [vendorFirm]="filteredVendorList" (deleted)="getAllVendors()"></app-vendor-card>
+      </div>
+    </div>
+   </div>
+

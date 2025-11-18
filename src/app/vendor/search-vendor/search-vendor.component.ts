@@ -1,14 +1,15 @@
 import { Component, OnInit } from '@angular/core';
+import { FormControl} from '@angular/forms';
 import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
   selector: 'app-search-vendor',
   templateUrl: 'search-vendor.component.html',
-  styleUrls: ['search-vendor.component.html'],
+  styleUrls: ['search-vendor.component.scss'],
 })
 export class SearchVendorComponent implements OnInit {
   searchObj: any = {
@@ -19,7 +20,8 @@ export class SearchVendorComponent implements OnInit {
   vendorList: any;
   orgName: any;
   btnPolicy: any;
-  filteredVendorList: any[] = []
+  filteredVendorList: any[] = [];
+  searchControl = new FormControl('')
 
   constructor(
     private apiMainService: ApiMainService,
@@ -31,6 +33,12 @@ export class SearchVendorComponent implements OnInit {
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.searchVendor();
+    this.searchControl.valueChanges.pipe(
+          debounceTime(400),
+          distinctUntilChanged()
+        ).subscribe(value => {
+          console.log(value,"val;ue ")
+        })
   }
 
   async getAllVendors() {

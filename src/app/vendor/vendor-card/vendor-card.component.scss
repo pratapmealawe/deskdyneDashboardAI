@@ -1,16 +1,13 @@
-.cafeteriaCard {
-  background-color: white;
-  margin-top: 4px;
-  border-radius: 10px;
-  padding: 10px;
-}
-
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
 /* ===== Vendor Firm ===== */
 .labelText {
   font-weight: 600;
   font-size: 14px;
   color: #444;
   /* dark grey */
+  color: black;
+    font-weight: 700;
   margin-bottom: 3px;
 }
 
@@ -22,10 +19,7 @@
 
 /* ===== Vendor Card ===== */
 .cardDesign {
-  background-color: #f9f9f9;
-  /* light grey for vendor card */
   border: 1px solid #e0dddd;
-  /* soft border */
   border-radius: 6px;
   padding: 15px;
   margin-top: 15px;
@@ -39,13 +33,7 @@
 
 /* ===== Outlet Card ===== */
 .cafeteriaCard {
-  background-color: #f3f3f3;
-  /* slightly darker grey than vendor */
-  border-left: 4px solid #bbb;
-  /* subtle left accent */
-  padding: 10px 12px;
   margin-top: 10px;
-  border-radius: 4px;
 }
 
 /* ===== Icons ===== */
@@ -62,4 +50,21 @@
 /* ===== Alignment ===== */
 .alignRight {
   text-align: right;
+}
+
+
+
+.cardDesign {
+
+  @include mixin.card-design(color.$primary-offset-color5,  #ffffff);
+}
+
+.cardDesign-row{
+      padding: 20px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.header{
+    color: var(--royal-blue);
+    font-weight: 600;
+    // text-decoration: underline;
 }

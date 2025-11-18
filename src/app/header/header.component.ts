@@ -68,7 +68,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       image: 'Outlet_white',
       imageblue: 'Outlet_blue',
       children: [
-        { name: 'Outlet Overview', route: 'outlet', showChild: true },
+        { name: 'Search Overview', route: 'outlet', showChild: true },
         { name: 'Outlet Add', route: 'addOutlet', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] },
         {
           name: 'Outlet Master Menu',

@@ -1,0 +1,15 @@
+// _card-design.scss
+
+@mixin card-design($odd-bg, $even-bg) {
+  margin: 2px 0px;
+  padding: 10px;
+  border-radius: 11px;
+
+  &:nth-child(odd) {
+    background: $odd-bg;
+  }
+
+  &:nth-child(even) {
+    background: $even-bg;
+  }
+}
