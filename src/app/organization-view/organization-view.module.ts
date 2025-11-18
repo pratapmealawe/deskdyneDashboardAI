@@ -1,3 +1,4 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -9,7 +10,6 @@ import { EmployeeListComponent } from '../common-components/employee-list/employ
 import { EmployeeWalletComponent } from '../common-components/employee-wallet/employee-wallet.component';
 import { GuestEmployeeListComponent } from '../common-components/guest-employee-list/guest-employee-list.component';
 import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
-import { MealAweOutletComponent } from '../common-components/meal-awe-outlet/meal-awe-outlet.component';
 import { MealaweOutletComponent } from '../common-components/mealawe-outlet/mealawe-outlet.component';
 import { OrgBulkMenuComponent } from '../common-components/org-bulk-menu/org-bulk-menu.component';
 import { OrgBulkSnackboxMenuComponent } from '../common-components/org-bulk-snackbox-menu/org-bulk-snackbox-menu.component';
@@ -21,10 +21,10 @@ import { OrgPredefinedSnackboxMenuComponent } from '../common-components/org-pre
 import { OutletEmployeeComponent } from '../common-components/outlet-employee/outlet-employee.component';
 import { SweetMenuModule } from '../common-components/sweet-menu/sweet-menu.module';
 import { VcEmployeeComponent } from '../common-components/vc-employee/vc-employee.component';
+import { MaterialModule } from '../material.module';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OrganizationViewComponent } from './organization-view.component';
-import { MaterialModule } from '../material.module';
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -36,7 +36,6 @@ import { MaterialModule } from '../material.module';
     OrgIndividualSnackboxMenuComponent,
     OrgPredefinedSnackboxMenuComponent,
     OrgCustomizedSnackboxMenuComponent,
-    MealAweOutletComponent,
     EmployeeListComponent,
     B2bWeeklyMenuComponent,
     OrgComplianceComponent,
@@ -55,7 +54,8 @@ import { MaterialModule } from '../material.module';
     CakeMenuModule,
     SweetMenuModule,
     LuxMenuModule,
-    MaterialModule
+    MaterialModule,
+    DragDropModule
   ],
   exports: [OrganizationViewComponent],
 })

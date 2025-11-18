@@ -1,20 +1,15 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, OnInit } from '@angular/core';
 import { AbstractControl, FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { MlApiMainService } from 'src/service/apiService/mlApiMain.service';
 
 @Component({
   selector: 'app-add-edit-package-mealawe-outlet',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatButtonModule, MatIconModule, MatDialogModule, MatCheckboxModule],
+  imports: [CommonModule, ReactiveFormsModule, MaterialModule],
   templateUrl: './add-edit-package-mealawe-outlet.component.html',
   styleUrls: ['./add-edit-package-mealawe-outlet.component.scss']
 })
@@ -42,12 +37,8 @@ export class AddEditPackageMealaweOutletComponent implements OnInit {
     this.meals = await this.mlApiMainService.getMealPackageList() as any[];
     if (!this.data.addNew) {
       let alreadyPackages = this.data.alreadyPackages;
-      console.log(this.meals.length, 'before')
       this.meals = this.meals.filter(pkg => !alreadyPackages.includes(pkg._id));
-      console.log(this.meals.length, 'after')
-    } else {
-
-    }
+    } 
     this.packageForm.get('selectedClusters')?.valueChanges.subscribe(() => {
       setTimeout(() => this.updatePackageCategories(), 100);
     });
@@ -116,8 +107,6 @@ export class AddEditPackageMealaweOutletComponent implements OnInit {
           payToKitchenPerMeal: new FormControl(meal.payToKitchenPerMeal || 0),
           payToKitchenPerMeal2: new FormControl(meal.payToKitchenPerMeal2 || 0),
           ddDiscount: new FormControl(meal.discount || 0),
-          offerColor: new FormControl(meal.offerColor || ''),
-          offerText: new FormControl(meal.offerText || ''),
           subsidyValue: new FormControl(meal.subsidyValue || 0),
           subsidyType: new FormControl(meal.subsidyType || 'flat')
         }));
@@ -153,10 +142,9 @@ export class AddEditPackageMealaweOutletComponent implements OnInit {
       if (!this.data.addNew) {
         const payload = {
           cafeteriaId: cafeteria_id,
-          itemList: mergedMeals  
+          itemList: mergedMeals
         };
         const response = await this.apiMainService.updateMealItemList(payload);
-        console.log("✅ Updated successfully:", response);
         this.closeDialog();
         return;
       }
@@ -171,11 +159,9 @@ export class AddEditPackageMealaweOutletComponent implements OnInit {
           cafeteria_location,
           cafeteria_id,
         },
-        itemList: mergedMeals 
+        itemList: mergedMeals
       };
-      console.log("📦 Creating new outlet with payload:", payload);
       const response = await this.apiMainService.saveMealAweOutlet(payload);
-      console.log("✅ Saved successfully:", response);
       this.closeDialog();
     } catch (error) {
       console.error("❌ Error saving package:", error);
