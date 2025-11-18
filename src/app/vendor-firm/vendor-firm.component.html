@@ -18,22 +18,26 @@
                                 </div>
                             </div>
 
-                            <div *ngFor="let cafeteria of vendor.outletList" class="cafeteriaCard">
+                            <div class="cafeteriaCard">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-3 p-0">
                                         <div class="labelText">Outlet Name</div>
-                                        <div class="labelData">
-                                            {{ cafeteria.outletName }}
+                                        <div class="d-flex">
+                                           <div class="labelData" *ngFor="let cafeteria of vendor.outletList" ><mat-chip> {{cafeteria.outletName}}</mat-chip>
                                         </div>
+                                        </div>
+                                       
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-1 alignRight">
-                            <i *ngIf="true || btnPolicy?.editVendor" class="bi bi-pencil-square editDeltesaveIcon me-2"
+                                <mat-icon *ngIf="true || btnPolicy?.editVendor" (click)="editVendor(vendor)" color="primary"> edit </mat-icon>
+                                <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)"  color="warn">delete</mat-icon>
+                            <!-- <i *ngIf="true || btnPolicy?.editVendor" class="bi bi-pencil-square editDeltesaveIcon me-2"
                                 (click)="editVendor(vendor)"></i>
                             <i class="bi bi-trash editDeltesaveIcon" *ngIf="true || btnPolicy?.deleteVendor"
-                                (click)="showPopup(vendor)"></i>
+                                (click)="showPopup(vendor)"></i> -->
                         </div>
                     </div>
 

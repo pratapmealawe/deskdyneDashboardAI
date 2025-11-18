@@ -1,6 +1,11 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
 .cafeteriaCard {
     background-color: white;
     margin-top: 4px;
     border-radius: 10px;
     padding:10px;
+}
+.cardDesign{
+    @include mixin.card-design(color.$primary-offset-color1);
 }

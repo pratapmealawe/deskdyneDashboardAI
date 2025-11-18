@@ -1,15 +1,13 @@
 // _card-design.scss
 
-@mixin card-design($odd-bg, $even-bg) {
-  margin: 2px 0px;
+@mixin card-design($odd-bg) {
+  margin: 10px 0px;
   padding: 10px;
   border-radius: 11px;
+  background: $odd-bg !important;
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
 
-  &:nth-child(odd) {
-    background: $odd-bg;
-  }
-
-  &:nth-child(even) {
-    background: $even-bg;
-  }
+@mixin search-input{
+  
 }

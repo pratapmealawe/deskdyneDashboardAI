@@ -18,18 +18,18 @@
 }
 
 /* ===== Vendor Card ===== */
-.cardDesign {
-  border: 1px solid #e0dddd;
-  border-radius: 6px;
-  padding: 15px;
-  margin-top: 15px;
-  transition: box-shadow 0.2s ease-in-out;
-}
+// .cardDesign {
+//   border: 1px solid #e0dddd;
+//   border-radius: 6px;
+//   padding: 15px;
+//   margin-top: 15px;
+//   transition: box-shadow 0.2s ease-in-out;
+// }
 
-.cardDesign:hover {
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
-  /* subtle hover effect */
-}
+// .cardDesign:hover {
+//   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.08);
+//   /* subtle hover effect */
+// }
 
 /* ===== Outlet Card ===== */
 .cafeteriaCard {
@@ -55,16 +55,12 @@
 
 
 .cardDesign {
-
-  @include mixin.card-design(color.$primary-offset-color5,  #ffffff);
-}
-
-.cardDesign-row{
-      padding: 20px;
+    padding: 20px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    @include mixin.card-design(color.$primary-offset-color1);
 }
+
 .header{
     color: var(--royal-blue);
     font-weight: 600;
-    // text-decoration: underline;
 }

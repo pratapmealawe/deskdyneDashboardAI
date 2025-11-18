@@ -1,10 +1,10 @@
 <div class="container-fluid ">
   <div class="row">
       <div class="row gap-3">
-        <div class="cardDesign-row" *ngFor="let firmName of pagedVendorFirm">
+        <div class="cardDesign" *ngFor="let firmName of pagedVendorFirm">
           <div class="labelText header">Vendor Firm Name</div>
           <div class="labelData mt-0 mb-1">{{ firmName?.vendorFirmName }}</div>
-               <div class="cardDesign mb-3 mt-3" *ngFor="let vendor of firmName?.vendorList">
+               <div class="mb-3 mt-3" *ngFor="let vendor of firmName?.vendorList">
           <div class="row ">
             <div class="col-md-2">
               <div class="labelText">Vendor Name</div>
