@@ -19,6 +19,12 @@
   display: table;
   width: 100%;
 }
+.mat-table-td{
+      max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 .mat-row.table-row:hover {
   background-color: #f3f9ff;
@@ -126,4 +132,13 @@ th:last-child {
 }
 .mat-elevation-z8{
   box-shadow: none;
+}
+.row-chip{
+  display: flex;gap: 12px;justify-content: center; align-items: center;
+}
+.icon{
+  color:red !important;
+}
+.icon-check{
+  color:green !important;
 }

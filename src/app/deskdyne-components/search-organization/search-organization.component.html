@@ -1,13 +1,13 @@
-<div class="container-fluid mt-3 p-25" *ngIf="showSearchSection">
+<div class="container-fluid mt-3 p-25">
   <div class="row align-items-center justify-content-between px-3">
     <div class="col-auto">
       <h4 class="m-0 fw-semibold">Organization</h4>
     </div>
     <div class="col d-flex justify-content-end align-items-center gap-3">
       <div class="input-group" class="add-org text-nowrap d-none d-md-inline-flex">
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" class="search-input">
           <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
-          <button mat-icon-button matSuffix aria-label="Search">
+          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
             <mat-icon>search</mat-icon> </button>
         </mat-form-field>
       </div>
