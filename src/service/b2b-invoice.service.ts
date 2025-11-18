@@ -47,7 +47,6 @@ export class B2bInvoiceService {
     }
 
     getVariables(order: any) {
-        console.log(order)
         var datePipe = new DatePipe("en-US");
         const currDate = new Date();
         const lastDate = new Date(currDate.getFullYear(), currDate.getMonth() + 1, 0);

@@ -1,0 +1,22 @@
+.banner-preview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.banner-item {
+    position: relative;
+    cursor: move;
+    border: 1px solid #ccc;
+    padding: 4px;
+    border-radius: 4px;
+    background: #f5f5f5;
+}
+
+.banner-item .remove-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: white;
+    border-radius: 50%;
+}
