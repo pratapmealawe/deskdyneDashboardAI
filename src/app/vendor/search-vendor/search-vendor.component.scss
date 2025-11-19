@@ -5,35 +5,14 @@
   @include mixin.card-design(color.$primary-offset-color1);
 }
 
-::ng-deep .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
-  padding-right: 1;
+.input-group {
+  width: 17%;
 }
 
-::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: white !important
+.search-icon {
+  margin-top: -5px;
 }
 
 .container-fluid {
-
-  @media (max-width: 992px) {
-    .mat-mdc-form-field {
-      flex-direction: column-reverse !important;
-      width: -webkit-fill-available !important
-    }
-
-    .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
-      padding-right: none !important
-    }
-
-    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-      background-color: white !important;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .mat-mdc-form-field {
-      flex-direction: column-reverse !important;
-      width: -webkit-fill-available !important;
-    }
-  }
+  @include mixin.mat-form-field-responsive(); 
 }

@@ -7,5 +7,31 @@
     padding:10px;
 }
 .cardDesign{
+    @include mixin.vertical-line();
     @include mixin.card-design(color.$primary-offset-color1);
+}
+.input-group {
+  width: 17%;
+}
+
+.search-icon {
+  margin-top: -5px;
+}
+.labelText {
+  font-weight: 600;
+  font-size: 14px;
+  color: #444;
+  /* dark grey */
+  color: black;
+    font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.labelData {
+  font-size: 15px;
+  color: #111;
+  /* almost black */
+}
+.container-fluid {
+  @include mixin.mat-form-field-responsive(); 
 }

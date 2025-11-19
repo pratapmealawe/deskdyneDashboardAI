@@ -13,7 +13,15 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
   styleUrls: ['vendor-card.component.scss'],
 })
 export class VendorCardComponent implements OnInit {
-  @Input() vendorFirm: any;
+  private _vendorFirm :any[]=[];
+  @Input() 
+  get vendorFirm(): any[]{
+    return this._vendorFirm;
+  }
+  set vendorFirm(value:any[]){
+    this._vendorFirm= value || [];
+    this.refreshData()
+  }
   @Output() deleted = new EventEmitter();
   btnPolicy: any;
   vendorInfo: any;
@@ -30,7 +38,10 @@ export class VendorCardComponent implements OnInit {
     private policyService: PolicyService,
     private confirmationModalService: ConfirmationModalService
   ) { }
+  refreshData(){
+    this.ngOnInit()
 
+  }
   ngOnInit(): void {
     console.log(this.vendorFirm,"vendorFirm");
     

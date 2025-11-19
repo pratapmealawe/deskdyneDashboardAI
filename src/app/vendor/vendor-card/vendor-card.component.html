@@ -4,7 +4,7 @@
         <div class="cardDesign" *ngFor="let firmName of pagedVendorFirm">
           <div class="labelText header">Vendor Firm Name</div>
           <div class="labelData mt-0 mb-1">{{ firmName?.vendorFirmName }}</div>
-               <div class="mb-3 mt-3" *ngFor="let vendor of firmName?.vendorList">
+          <div class="rows mb-3 mt-3" *ngFor="let vendor of firmName?.vendorList">
           <div class="row ">
             <div class="col-md-2">
               <div class="labelText">Vendor Name</div>
@@ -42,11 +42,13 @@
               </div>
             </div>
           </div>
+          <hr class="horizontal-line">
         </div>
         </div>
+      
       </div>
       <div class="paginator">
-      <mat-paginator [length]="vendorFirm.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)" aria-label="Select page"></mat-paginator>
+      <mat-paginator [length]="vendorFirm.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[5,10,15]" (page)="onPageChange($event)" aria-label="Select page"></mat-paginator>
       </div>
   </div>
 </div>

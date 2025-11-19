@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl} from '@angular/forms';
+import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { SearchFilterService } from 'src/service/search-filter.service';
 
 @Component({
   selector: 'app-search-vendor',
@@ -21,24 +22,40 @@ export class SearchVendorComponent implements OnInit {
   orgName: any;
   btnPolicy: any;
   filteredVendorList: any[] = [];
-  searchControl = new FormControl('')
+  filterVendorDuplicate:any[]=[];
+  searchControl = new FormControl('');
+  filteredVendor: any[] = [];
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
     private policyService: PolicyService,
-    private runtimeStorageService: RuntimeStorageService
+    private runtimeStorageService: RuntimeStorageService,
+    private searchService: SearchFilterService,
   ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.searchVendor();
     this.searchControl.valueChanges.pipe(
-          debounceTime(400),
-          distinctUntilChanged()
-        ).subscribe(value => {
-          console.log(value,"val;ue ")
-        })
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(value => {
+     const config = { keys: ['vendorFirmName'] };
+  if (value) {
+    const result = this.searchService.searchData(
+      this.filteredVendorList,
+      config,
+      value ?? ''
+    );
+
+    // FORCE NEW ARRAY REFERENCE
+    this.filterVendorDuplicate = [...result];
+  } else {
+    this.filterVendorDuplicate = [...this.filteredVendorList];
+  }
+  console.log("Updated:", this.filterVendorDuplicate);
+    });
   }
 
   async getAllVendors() {
@@ -73,6 +90,7 @@ export class SearchVendorComponent implements OnInit {
         }
 
         this.filteredVendorList = Array.from(vendorFirmMap.values());
+        this.filterVendorDuplicate = Array.from(vendorFirmMap.values());
 
         console.log(this.filteredVendorList);
       }

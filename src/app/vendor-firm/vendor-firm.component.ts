@@ -4,6 +4,8 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { FormControl } from '@angular/forms';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-vendor-firm',
@@ -22,6 +24,11 @@ export class VendorFirmComponent {
   vendorFirmInfo: any;
   showSearchSection = true;
   vendorInfo: any;
+  searchControl =  new FormControl('');
+  pageSize :number = 5;
+  pageIndex : number = 0;
+  pagedVendorFirm: any[] = [];
+
 
   constructor(
     private apiMainService: ApiMainService,
@@ -39,6 +46,8 @@ export class VendorFirmComponent {
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
+      this.pagedVendorFirm = await this.apiMainService.getAllVendorFirms();
+      console.log(this.pagedVendorFirm ,"pagee vendir ");
     } catch (error) {
       console.log('getAllVendor', error);
     }
@@ -83,5 +92,18 @@ export class VendorFirmComponent {
 
   toggleShowOrder(val: any) {
     this.showSearchSection = val;
+  }
+
+  onPageChange(event : PageEvent){
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.updateCard();
+  }
+  updateCard(){
+    if (!this.vendorList) return;
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.pagedVendorFirm = this.vendorList.slice(start, end);
+    
   }
 }
