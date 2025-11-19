@@ -139,8 +139,8 @@ export class ApiConfigService {
       updateEmployee: p('/api/updateEmployee', 'POST'),
       getMealAweOutletById: p('/api/getMealAweOutletById', 'GET'),
       updateMealAweOutlet: p('/api/updateMealAweOutlet', 'POST'),
-      getMealAweOutletByCafeteria: p('/api/getMealAweOutletByCafeteria', 'GET'), 
-      deleteMealItem: p('/api/deleteMealItem', 'POST'), 
+      getMealAweOutletByCafeteria: p('/api/getMealAweOutletByCafeteria', 'GET'),
+      deleteMealItem: p('/api/deleteMealItem', 'POST'),
       setOutletOpenedStatus: p('/api/outletOpenedStatus', 'PUT'),
       generateInvoice: p('/api/generateInvoice', 'GET'),
       changePackageStatus: p('/api/changePackageStatus', 'POST'),
@@ -272,6 +272,12 @@ export class ApiConfigService {
       deleteOutlet: p('/api/deleteOutlet', 'DELETE'),
       getConsumptionOrderByDateForDashboard: p('/api/getConsumptionOrderByDateForDashboard', 'POST'),
       updateMealItemList: p('/api/updateMealItemList', 'POST'),
+      saveMealAweOutletCategoryConfig: p('/api/saveMealAweOutletCategoryConfig', 'POST'),
+      deleteCategoryConfig: p('/api/deleteCategoryConfig', 'POST'),
+      addCategoryConfig: p('/api/addCategoryConfig', 'POST'), 
+      changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'), 
+      updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'), 
+      createDefaultCategories: p('/api/createDefaultCategories', 'POST'), 
     }
   }
 }

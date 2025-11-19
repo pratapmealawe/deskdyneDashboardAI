@@ -1214,4 +1214,28 @@ export class ApiMainService {
   deleteMealItem(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMealItem, data);
   }
+
+  saveMealAweOutletCategoryConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealAweOutletCategoryConfig, data);
+  }
+
+  addCategoryConfig(data: FormData) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addCategoryConfig, data);
+  }
+
+  deleteCategoryConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteCategoryConfig, data);
+  }
+
+  changeCategoryStatus(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.changeCategoryStatus, data);
+  }
+
+  updateMealAweOutletCategory(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateMealAweOutletCategory, data);
+  }
+
+  createDefaultCategories(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDefaultCategories, data);
+  }
 }
