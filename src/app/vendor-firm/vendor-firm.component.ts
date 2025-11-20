@@ -6,6 +6,8 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { SearchFilterService } from 'src/service/search-filter.service';
 
 @Component({
   selector: 'app-vendor-firm',
@@ -35,12 +37,30 @@ export class VendorFirmComponent {
     private router: Router,
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
-    private confirmationModalService: ConfirmationModalService
+    private confirmationModalService: ConfirmationModalService,
+    private searchService:SearchFilterService
   ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.getAllVendors()
+    this.searchControl.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged()    
+    ).subscribe(value=>{
+      const config = {keys:['vendorFirmName']};
+      if(value){
+        const result = this.searchService.searchData(
+          this.vendorList ,
+          config,
+          value ?? ''
+        )
+        this.pagedVendorFirm = [...result] 
+      }else{
+        this.pagedVendorFirm = [...this.vendorList]
+        this.updateCard()
+      }
+    })
   }
 
   async getAllVendors() {

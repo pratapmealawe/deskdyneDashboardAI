@@ -9,7 +9,7 @@ import { MatTableDataSource } from '@angular/material/table';
   templateUrl: './organization-card.component.html',
   styleUrls: ['./organization-card.component.scss'],
 })
-export class OrganizationCardComponent implements AfterViewInit {
+export class OrganizationCardComponent  {
   displayedColumns: string[] = ['Organization Name', 'Location', 'Cafeteria', 'Poc Details', 'action'];
   columns: string[] = [];
   tableDetails: string = ''
@@ -23,45 +23,41 @@ export class OrganizationCardComponent implements AfterViewInit {
   selectedOrgData: any[] = [];
   readonly dialog = inject(MatDialog);
   private _organization: any[] = [];
+  pagedOrganized:any[]=[];
   @Input()
   get organization(): any[] {
     return this._organization;
   }
   set organization(value: any[]) {
     this._organization = value || [];
-    this.refreshDataSource();
+    this.ngOnInit();
   }
   @Output() view: EventEmitter<any> = new EventEmitter<any>();
   @Output() paginationConfig: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  refreshDataSource() {
-    this.dataSource.data = this._organization;
-    this.totalRecords = this._organization.length || 0;
-    if (this.paginator) {
-      this.dataSource.paginator = this.paginator;
-    }
-    if (this.sort) {
-      this.dataSource.sort = this.sort;
-    }
+  ngOnInit(){
+     this.updatePage();
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
 
   vieworg(org: any) {
     this.view.emit(org);
   }
 
-  onPageChange(event: PageEvent) {
-    this.paginationConfig.emit({
-      pageIndex: event.pageIndex,
-      pageSize: event.pageSize,
-    });
-  }
+   onPageChange(event: any) {
+  this.pageIndex = event.pageIndex;
+  this.pageSize = event.pageSize;
+  this.updatePage();
+}
+
+updatePage() {
+  if (!this.organization) return;
+  const start = this.pageIndex * this.pageSize;
+  const end = start + this.pageSize;
+  this.pagedOrganized = this.organization.slice(start, end);
+}
 
   dataView(org: any, type: any) {
     let keysToRemove: any[] = [];

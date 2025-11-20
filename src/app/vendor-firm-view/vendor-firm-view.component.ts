@@ -13,6 +13,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   selectedSubTab: string = '';
   selectedChildTab: string = '';
   btnPolicy: any;
+  selectedTabIndex:number =0
 
   vendorViewList = [
     { name: 'VendorFirm Details', path: 'vendorFirmDetails' },
@@ -84,5 +85,10 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
     } else {
       this.selectedChildTab = '';
     }
+  }
+  //  tab implementation 
+  onTabChange(event:any){
+    const selectTab = this.vendorViewList[event.index]
+    this.gotToTab(selectTab.path)
   }
 }

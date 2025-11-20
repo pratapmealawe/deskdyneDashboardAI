@@ -4,12 +4,15 @@
 
 /* Global application base styles */
 body {
-  background: var(--color-background);
+  background-color: #f3f3f3 !important;
   color: var(--color-text);
   font-family: Roboto, sans-serif;
 }
-
-
+$white :#ffffff;
+$black :#000;
+$textPrimary:#1a1a1a;
+$error-color:red;
+$success-color:green;
 $primary-color1: #e62841;
 $primary-color2: #b9041c;
 $primary-color3: #fe8e9c;
@@ -25,10 +28,12 @@ $secondary-offset-color1: #ffd674;
 $secondary-offset-color2: #ffc947;
 $secondary-offset-color3: #ffb300;
 $card-odd: #dee2e6;
+$background-color: #f3f3f3;
 
 html {
   font-family: "Poppins-regular," "Lato" !important;
   // --ion-font-family: 'Lato' !important;
+  background: var(--color-backgroundGrey);
 }
 
 @font-face {

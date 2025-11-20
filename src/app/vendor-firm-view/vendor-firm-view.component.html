@@ -1,8 +1,31 @@
-<div class="left_arrow" (click)="goBack()" style="cursor: pointer">
+<!-- <div class="left_arrow" (click)="goBack()" style="cursor: pointer">
   <i class="bi bi-arrow-left"></i> Back
-</div>
+</div> -->
+<button mat-flat-button (click)="goBack()">
+  <mat-icon>arrow_back</mat-icon>
+  Back
+</button>
+<!-- mat tab- group -->
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)" class="custom-tabs p-3">
+  <mat-tab *ngFor="let view of vendorViewList" class="custom-tabs">
+    <ng-template mat-tab-label class="custom-tabs">
+      {{ view.name }}
+    </ng-template>
+    <ng-container *ngIf="selectedTab === view.path">
+      <!-- tab-content -->
+      <div class="row" *ngIf="getSubTab().length">
+        <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let sub of getSubTab()"
+          [ngClass]="{ tileSelected: selectedSubTab === sub.path || selectedSubTab === sub.name }"
+          (click)="goToSubTab(sub.path || sub.name)">
+          <div class="tileLabel header4 countTile">{{ sub.name }}</div>
+        </div>
+      </div>
+    </ng-container>
+  </mat-tab>
+</mat-tab-group>
 
-<div class="row bg-light rounded py-4 my-3">
+<!--  -->
+<!-- <div class="row bg-light rounded py-4 my-3">
   <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of vendorViewList"
     [ngClass]="{ tileSelected: selectedTab === view.path }" (click)="gotToTab(view.path)">
     <div class="tileLabel header4 countTile">{{ view.name }}</div>
@@ -14,7 +37,7 @@
     (click)="goToSubTab(sub.path || sub.name)">
     <div class="tileLabel header4 countTile">{{ sub.name }}</div>
   </div>
-</div>
+</div> -->
 
 
 <ng-container [ngSwitch]="selectedTab">

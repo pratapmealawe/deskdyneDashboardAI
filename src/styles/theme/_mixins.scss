@@ -87,3 +87,24 @@
   border-radius: 6px;
   padding-left: 12px;
 }
+
+
+@mixin active-mat-tab($bg: #ffffff, $radius: 8px) {
+  background-color: $bg !important;
+  border-top-left-radius: $radius;
+  border-top-right-radius: $radius;
+  z-index: 2;
+}
+
+@mixin labelText(){
+   font-size: 14px;
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 2px;
+}
+
+@mixin labelData(){
+   font-size: 15px;
+    font-weight: 500;
+    color: #212529;
+}
