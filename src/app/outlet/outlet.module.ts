@@ -9,6 +9,7 @@ import { OutletViewModule } from './outlet-view/outlet-view.module';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MaterialModule } from '../material.module';
 
 @NgModule({
   declarations: [OutletComponent],
@@ -18,9 +19,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     FormsModule,
     OutletCardModule,
     OutletViewModule,
-    MatSelectModule,
-    MatInputModule,
-    MatFormFieldModule,
+    MaterialModule
   ],
 })
 export class OutletModule {}
