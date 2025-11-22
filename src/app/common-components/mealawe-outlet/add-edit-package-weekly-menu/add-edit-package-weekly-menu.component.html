@@ -1,0 +1,148 @@
+<h2 mat-dialog-title>Manage Weekly Menu</h2>
+<mat-dialog-content class="p-3">
+    <div *ngIf="(!data.customWeeklyMenu?.length || data.customWeeklyMenu.length === 0 ) && data.selectedSource === ''">
+        <div class="row g-3">
+            <div class="col-12 col-md-3" *ngFor="let source of menuSources">
+                <button mat-raised-button [color]="source.color" class="w-100 py-2" (click)="source.action(data)">
+                    {{ source.label }}
+                </button>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="data.selectedSource" class="mt-5">
+        <h6>Select Source of Weekly Menu</h6>
+        <div *ngIf="data.selectedSource === 'mealawe'" class="mt-2">
+            <mat-form-field appearance="outline" style="min-width: 100px;">
+                <mat-label>Select Cluster</mat-label>
+                <mat-select [(ngModel)]="data.selectedClusterId" (selectionChange)="onClusterChange(data)">
+                    <mat-option *ngFor="let cluster of data.availableClusters" [value]="cluster.clusterId">
+                        {{ cluster.clusterName | uppercase }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="data.selectedSource === 'otherCafe'" class="mt-2">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Select Cafe</mat-label>
+                <mat-select [(ngModel)]="data.selectedCafeId">
+                    <mat-option *ngFor="let cafe of data.availableCafes" [value]="cafe._id">
+                        {{ cafe.cafeteria_name }} ({{ cafe.org_name }})
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="data.selectedSource === 'otherOrgCafe'" class="mt-2">
+            <mat-form-field appearance="outline" class="w-100 mb-2">
+                <mat-label>Select Organization</mat-label>
+                <mat-select [(ngModel)]="data.selectedOrgId">
+                    <mat-option *ngFor="let org of data.availableOrgs" [value]="org._id">{{ org.name }}</mat-option>
+                </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Select Cafe</mat-label>
+                <mat-select [(ngModel)]="data.selectedCafeId">
+                    <mat-option *ngFor="let cafe of data.availableOrgCafes" [value]="cafe._id">
+                        {{ cafe.cafeteria_name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
+        <div *ngIf="data.selectedSource === 'custom'" class="mt-2">
+            <h6>Create Weekly Menu</h6>
+            <div *ngFor="let week of data.customWeeklyMenu; let i = index" class="border p-2 mb-2 rounded">
+                <div class="d-flex justify-content-between align-items-center">
+                    <strong>Week {{ week.weekNumber }}</strong>
+                    <button mat-icon-button color="warn">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+                <mat-form-field appearance="outline" class="w-100 mt-2">
+                    <mat-label>Selected Menu Type</mat-label>
+                    <mat-select [(ngModel)]="week.selectedMenuType">
+                        <mat-option value="veg">Veg</mat-option>
+                        <mat-option value="nonveg">Non-Veg</mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="mt-2">
+                    <h6>Menu Items</h6>
+                    <div *ngFor="let item of week.menuList; let j = index" class="mb-2 border p-2 rounded">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong>{{ item.day }}</strong>
+                            <button mat-icon-button color="warn">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                        <mat-form-field appearance="outline" class="w-100 mb-1">
+                            <mat-label>Breakfast Description</mat-label>
+                            <input matInput [(ngModel)]="item.breakfast.description" />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="w-100 mb-1">
+                            <mat-label>Lunch Description</mat-label>
+                            <input matInput [(ngModel)]="item.lunch.description" />
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Dinner Description</mat-label>
+                            <input matInput [(ngModel)]="item.dinner.description" />
+                        </mat-form-field>
+                    </div>
+                    <button mat-raised-button color="primary">
+                        <mat-icon>add</mat-icon> Add Day
+                    </button>
+                </div>
+            </div>
+            <button mat-raised-button color="accent" class="mt-2">
+                <mat-icon>add</mat-icon> Add Week
+            </button>
+        </div>
+        <div *ngIf="data.weekMenuList?.length">
+            <mat-tab-group>
+                <mat-tab *ngFor="let week of data.weekMenuList" [label]="'Week ' + week.weekNumber">
+                    <mat-tab-group>
+                        <mat-tab *ngFor="let type of menuTypes" [label]="type">
+                            <mat-tab-group>
+                                <mat-tab *ngFor="let meal of mealTimes" [label]="meal">
+                                    <div *ngFor="let item of getMenuList(week, type, meal)"
+                                        class="border p-3 mb-3 rounded">
+                                        <div class="row g-2">
+                                            <div class="col-12 col-md-3">
+                                                <mat-form-field appearance="outline" class="w-100">
+                                                    <mat-label>Day</mat-label>
+                                                    <input matInput [value]="item.day" disabled />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-12 col-md-3"
+                                                *ngIf="data.category.categoryName === 'Breakfast'">
+                                                <mat-form-field appearance="outline" class="w-100">
+                                                    <mat-label>Breakfast</mat-label>
+                                                    <input matInput [(ngModel)]="item.breakfast.description" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-12 col-md-3"
+                                                *ngIf="data.category.categoryName  !== 'Breakfast'">
+                                                <mat-form-field appearance="outline" class="w-100">
+                                                    <mat-label>Lunch</mat-label>
+                                                    <input matInput [(ngModel)]="item.lunch.description" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col-12 col-md-3"
+                                                *ngIf="data.category.categoryName  !== 'Breakfast'">
+                                                <mat-form-field appearance="outline" class="w-100">
+                                                    <mat-label>Dinner</mat-label>
+                                                    <input matInput [(ngModel)]="item.dinner.description" />
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-tab>
+                            </mat-tab-group>
+                        </mat-tab>
+                    </mat-tab-group>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-raised-button color="primary">Save</button>
+    <button mat-stroked-button color="warn">Cancel</button>
+</mat-dialog-actions>

@@ -14,12 +14,14 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+
 const materialModules = [
   MatButtonModule,
   MatIconModule,
@@ -44,10 +46,12 @@ const materialModules = [
   MatTabsModule,
   MatCheckboxModule,
   MatSlideToggleModule,
+  MatRadioModule
 ];
 
 @NgModule({
   imports: [...materialModules],
   exports: [...materialModules]
 })
+
 export class MaterialModule { }

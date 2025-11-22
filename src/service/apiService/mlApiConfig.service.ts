@@ -332,7 +332,8 @@ export class MlApiConfigService {
       getKitchenLedgerBalance: p('/api/getKitchenLedgerBalance', 'GET'),
       getAllConfigVideos: p('/api/getAllConfigVideos', 'GET'),
       saveConfigVideo: p('/api/saveConfigVideo', 'POST'),
-      updateConfigVideo: p('/api/updateConfigVideo', 'POST'),
+      updateConfigVideo: p('/api/updateConfigVideo', 'POST'), 
+      getWeeklyMenuByCategory: p('/api/getWeeklyMenuByCategory', 'GET'), 
     };
   }
 }

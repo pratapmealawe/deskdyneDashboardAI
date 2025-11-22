@@ -1,7 +1,7 @@
 const domainUrl: string = 'http://localhost:7000';
-// const mlDomainUrl:string = 'http://localhost:5000';
+const mlDomainUrl: string = 'http://localhost:5000';
 // const domainUrl:string = 'http://mealawelbstaging-486868523.ap-southeast-1.elb.amazonaws.com:7000';
-const mlDomainUrl: string = 'http://mealawelbstaging-486868523.ap-southeast-1.elb.amazonaws.com:5000';
+// const mlDomainUrl: string = 'http://mealawelbstaging-486868523.ap-southeast-1.elb.amazonaws.com:5000';
 // const domainUrl:string = 'https://api.deskdyne.com';
 // const mlDomainUrl:string = 'https://api.mealawe.com';
 export const environment = {

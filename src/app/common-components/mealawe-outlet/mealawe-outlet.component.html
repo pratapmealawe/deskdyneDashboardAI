@@ -21,18 +21,17 @@
         <mat-tab label="Categories">
             <div class="p-3">
                 <div class="text-end mb-3 d-flex gap-2 justify-content-end">
-                    <button mat-raised-button color="primary" [disabled]="selectedCafeteria?.showVirtualCafe"
+                    <button mat-raised-button color="primary" [disabled]="!selectedCafeteria?.showVirtualCafe"
                         (click)="createCategory()">
                         <mat-icon>add</mat-icon>
                         Add Category
                     </button>
-                    <button mat-raised-button color="accent" [disabled]="selectedCafeteria?.showVirtualCafe"
+                    <button mat-raised-button color="accent" [disabled]=" !selectedCafeteria?.showVirtualCafe"
                         *ngIf="categories.length == 0" (click)="createDefaultCategories()">
                         <mat-icon>auto_fix_high</mat-icon>
                         Add Default Categories
                     </button>
                 </div>
-
                 <div *ngIf="categories.length > 0; else noCategory">
                     <div class="row g-4">
                         <div class="col-12 col-sm-6 col-md-4 col-lg-3" *ngFor="let category of categories">
@@ -47,11 +46,17 @@
                                     </mat-slide-toggle>
                                 </div>
                                 <div class="p-3 d-flex flex-column justify-content-between h-100">
-                                    <div>
-                                        <h5 class="mb-1 fw-semibold text-truncate">{{ category.categoryDisplayName }}
-                                        </h5>
-                                        <div class="text-muted small text-truncate">Category: {{ category.categoryName
-                                            }}</div>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div>
+                                            <h5 class="mb-1 fw-semibold text-truncate">{{ category.categoryDisplayName
+                                                }}</h5>
+                                            <div class="text-muted small text-truncate">Category: {{
+                                                category.categoryName }}</div>
+                                        </div>
+                                        <mat-icon matTooltip="Weekly Menu Available" color="primary"
+                                            style="font-size:20px; cursor:pointer;" (click)="openWeeklyMenu(category)">
+                                            calendar_month
+                                        </mat-icon>
                                     </div>
                                     <div class="mt-3 d-flex gap-2">
                                         <button mat-icon-button color="accent" (click)="openCategoryDialog(category)"
@@ -81,7 +86,7 @@
             <div class="p-3">
                 <div class="text-end mb-3">
                     <button mat-raised-button color="primary" (click)="createPackages()"
-                        [disabled]="selectedCafeteria?.showVirtualCafe">
+                        [disabled]=" !selectedCafeteria?.showVirtualCafe">
                         <mat-icon>add</mat-icon>
                         Add Package
                     </button>
@@ -140,6 +145,21 @@
                                                 <input matInput type="number" [(ngModel)]="pkg.ddDiscount">
                                             </mat-form-field>
                                         </div>
+                                        <div class="col-md-4">
+                                            <mat-form-field class="w-100" appearance="outline">
+                                                <mat-label>Subsidy Type</mat-label>
+                                                <mat-select [(ngModel)]="pkg.subsidyType">
+                                                    <mat-option value="flat">Flat</mat-option>
+                                                    <mat-option value="percentage">Percentage</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <mat-form-field class="w-100" appearance="outline">
+                                                <mat-label>Subsidy Value</mat-label>
+                                                <input matInput type="number" [(ngModel)]="pkg.subsidyValue">
+                                            </mat-form-field>
+                                        </div>
                                     </div>
                                     <div class="d-flex justify-content-end mt-3 gap-2">
                                         <button mat-flat-button color="primary"
@@ -154,7 +174,7 @@
                                                 <mat-card appearance="outlined" class="p-3">
                                                     <p><strong>Package Type:</strong> {{ pkg.packageType }}</p>
                                                     <p><strong>Days:</strong> {{ pkg.days }}</p>
-                                                    <p><strong>Discount:</strong> {{ pkg.discount }}%</p>
+                                                    <p><strong>Discount:</strong> {{ pkg.discount }}</p>
                                                     <p><strong>Priority:</strong> {{ pkg.priority }}</p>
                                                 </mat-card>
                                             </div>
@@ -163,7 +183,6 @@
                                                     <p><strong>Subsidy Type:</strong> {{ pkg.subsidyType }}</p>
                                                     <p><strong>Subsidy Value:</strong> {{ pkg.subsidyValue }}</p>
                                                     <p><strong>DD Discount:</strong> {{ pkg.ddDiscount }}</p>
-                                                    <p><strong>Offer Text:</strong> {{ pkg.offerText }}</p>
                                                 </mat-card>
                                             </div>
                                             <div class="col-md-4">
