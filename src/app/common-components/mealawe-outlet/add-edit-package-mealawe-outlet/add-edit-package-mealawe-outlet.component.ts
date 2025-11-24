@@ -38,7 +38,7 @@ export class AddEditPackageMealaweOutletComponent implements OnInit {
     if (!this.data.addNew) {
       let alreadyPackages = this.data.alreadyPackages;
       this.meals = this.meals.filter(pkg => !alreadyPackages.includes(pkg._id));
-    } 
+    }
     this.packageForm.get('selectedClusters')?.valueChanges.subscribe(() => {
       setTimeout(() => this.updatePackageCategories(), 100);
     });
@@ -106,7 +106,7 @@ export class AddEditPackageMealaweOutletComponent implements OnInit {
           name: new FormControl(meal.packageName || ''),
           payToKitchenPerMeal: new FormControl(meal.payToKitchenPerMeal || 0),
           payToKitchenPerMeal2: new FormControl(meal.payToKitchenPerMeal2 || 0),
-          ddDiscount: new FormControl(meal.discount || 0),
+          ddDiscount: new FormControl(meal.ddDiscount || 0),
           subsidyValue: new FormControl(meal.subsidyValue || 0),
           subsidyType: new FormControl(meal.subsidyType || 'flat')
         }));
