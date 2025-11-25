@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ToasterService } from 'src/app/toaster/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 
 @Component({
@@ -13,7 +12,6 @@ import { PolicyService } from 'src/service/policy.service';
   styleUrls: ['./outlet-card.component.scss'],
 })
 export class OutletCardComponent implements OnInit {
-  // @Input() outlet: any;
 private _outlet: any[] = [];
 searchText:string =''
 
@@ -37,21 +35,9 @@ set outlet(value: any[]) {
   outletUpdated:any[]=[]
 
   constructor(private policyService: PolicyService, private apiMainService: ApiMainService, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService) { }
-
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   console.log(this.outlet);
-
-  // }
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    console.log(this.outlet,"edwe");
     this.outletUpdated = this.outlet;
-    console.log(this.outletUpdated,"updatedd out");
-    
-    // this.outletUpdated = this.outlet
-    // this.filteredMenuList = [...this.outlet.outletList].sort(
-    //   (a, b) => (a.precedence || 0) - (b.precedence || 0)
-    // );
   }
 
   showPopup(outlet: any) {
