@@ -611,3 +611,39 @@ button.accordion-button:focus {
     gap: 10px;
     box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
 }
+
+// form group designed input 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.required-input{
+  color:red;
+
+}
+.heading{
+  font-size:23px;
+  font-weight:600;
+}
+.labelText {
+    font-size: 13px;
+    color: #6c757d;
+}
+.labelData{
+    font-size: 15px;
+    color: #212529;
+}
+
+.no-address {
+  @include no-address-style();
+}

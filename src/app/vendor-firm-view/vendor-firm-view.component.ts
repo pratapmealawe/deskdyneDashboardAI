@@ -14,6 +14,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   selectedChildTab: string = '';
   btnPolicy: any;
   selectedTabIndex:number =0
+  selectedSubTabIndex:number = 0 ;
 
   vendorViewList = [
     { name: 'VendorFirm Details', path: 'vendorFirmDetails' },
@@ -90,5 +91,10 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   onTabChange(event:any){
     const selectTab = this.vendorViewList[event.index]
     this.gotToTab(selectTab.path)
+  }
+  onTabSubChange(event:any){
+    const selectedSubTab = this.getSubTab()
+    const findIndex = selectedSubTab[event.index]
+    this.goToSubTab(findIndex.path)
   }
 }

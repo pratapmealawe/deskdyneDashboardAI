@@ -1,3 +1,21 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.cardDesign {
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
+.input-group {
+  width: 17%;
+}
+
+.search-icon {
+  margin-top: -5px;
+}
+
+.search-input{
+    @include mixin.mat-form-field-responsive(); 
+}
 .selectStyle{
     border: 1px solid #dee2e6;
     border-radius: 6px;
@@ -12,4 +30,15 @@
         padding:5px;
         width:50%;
     }
+}.cardDesign {
+  cursor: pointer;
+  // border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.cardDesign.selected-card {
+  border-color: #007bff;
+  background-color: #e7f1ff;
 }
