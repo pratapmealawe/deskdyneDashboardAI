@@ -1,4 +1,4 @@
-<div class="bgsidepadding1" *ngIf="showSearchSection">
+<!-- <div class="bgsidepadding1" *ngIf="showSearchSection">
   <div class="right addBtn addOutlet" *ngIf="true || btnPolicy?.addOutlet" (click)="addOutlet()">
     +
   </div>
@@ -41,12 +41,46 @@
       </div>
     </div>
 
-    <div class="mt-3" *ngIf="outletList && outletList.length > 0 && showSearchSection">
-      <div *ngFor="let outlet of filteredOutletList" class="cardDesign mt-3">
-        <app-outlet-card [outlet]="outlet" (view)="viewOutlet($event)"></app-outlet-card>
+ 
+  </div>
+</div> -->
+<div class="container-fluid mt-3 p-25">
+  <div class="row align-items-center justify-content-between px-3" *ngIf="showSearchSection">
+    <div class="col-auto">
+      <h4 class="m-0 fw-semibold">Outlet</h4>
+    </div>
+    <div class="col d-flex justify-content-end align-items-center gap-3">
+      <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
+        <mat-form-field appearance="outline" class="search-input">
+          <input matInput type="text" placeholder="Search outlet..."  [formControl]="searchControl"  />
+          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+            <mat-icon>search</mat-icon> </button>
+        </mat-form-field>
       </div>
+      <button mat-raised-button color="primary" class="text-nowrap d-none d-md-inline-flex" (click)="addOutlet()">
+        Add Outlet
+      </button>
+      <button mat-icon-button color="primary" class="d-inline-flex d-md-none" (click)="addOutlet()"
+        matTooltip="Add Outlet" aria-label="Add Outlet">
+        <mat-icon>add_circle</mat-icon>
+      </button>
+    </div>
+    <div class="col d-inline-flex d-md-none">
+      <mat-form-field>
+        <input matInput type="text" placeholder="Search Outlet..." />
+        <button mat-icon-button matSuffix aria-label="Search">
+          <mat-icon>search</mat-icon> </button>
+      </mat-form-field>
     </div>
   </div>
+</div> 
+<div *ngIf="outletList && outletList.length === 0" class="text-center text-muted my-5">
+    No Outlet Found
+   </div>
+<div class="p-3" *ngIf="outletList && outletList.length > 0 && showSearchSection">
+      <div class="mt-3">
+        <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
+      </div>
 </div>
 <div class="center mt-5" *ngIf="outletList.length === 0">No Records Found</div>
 <div class="bgsidepadding2" *ngIf="!showSearchSection && outletList.length > 0">

@@ -13,6 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCardModule }    from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MaterialModule } from '../material.module';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatInputModule,
     MatTooltipModule,
     MatDividerModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MaterialModule
   ]
 })
 export class VendorFirmModule { }

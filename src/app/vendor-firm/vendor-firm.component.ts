@@ -4,6 +4,10 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { FormControl } from '@angular/forms';
+import { PageEvent } from '@angular/material/paginator';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { SearchFilterService } from 'src/service/search-filter.service';
 
 @Component({
   selector: 'app-vendor-firm',
@@ -22,23 +26,48 @@ export class VendorFirmComponent {
   vendorFirmInfo: any;
   showSearchSection = true;
   vendorInfo: any;
+  searchControl =  new FormControl('');
+  pageSize :number = 5;
+  pageIndex : number = 0;
+  pagedVendorFirm: any[] = [];
+
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
-    private confirmationModalService: ConfirmationModalService
+    private confirmationModalService: ConfirmationModalService,
+    private searchService:SearchFilterService
   ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.getAllVendors()
+    this.searchControl.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged()    
+    ).subscribe(value=>{
+      const config = {keys:['vendorFirmName']};
+      if(value){
+        const result = this.searchService.searchData(
+          this.vendorList ,
+          config,
+          value ?? ''
+        )
+        this.pagedVendorFirm = [...result] 
+      }else{
+        this.pagedVendorFirm = [...this.vendorList]
+        this.updateCard()
+      }
+    })
   }
 
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
+      this.pagedVendorFirm = await this.apiMainService.getAllVendorFirms();
+      console.log(this.pagedVendorFirm ,"pagee vendir ");
     } catch (error) {
       console.log('getAllVendor', error);
     }
@@ -83,5 +112,18 @@ export class VendorFirmComponent {
 
   toggleShowOrder(val: any) {
     this.showSearchSection = val;
+  }
+
+  onPageChange(event : PageEvent){
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.updateCard();
+  }
+  updateCard(){
+    if (!this.vendorList) return;
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.pagedVendorFirm = this.vendorList.slice(start, end);
+    
   }
 }

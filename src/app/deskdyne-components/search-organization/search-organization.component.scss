@@ -1,61 +1,19 @@
+@use '/src/styles/theme/mixins' as mixin;
+
 .cardDesign-2 {
-  margin: 2px 0px;
+  margin: 2px 0;
   padding: 10px;
   border-radius: 11px;
 }
 
-.mat-mdc-form-field {
-  flex-direction: row !important;
-      max-height: 36px !important;
-}
 .input-group {
   width: 17%;
 }
-.serach-input{
-  display: flex;
-}
-.search-org {
-  display: flex;
-}
-::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix{
-  display: flex;
-  margin-top:6px;
-  padding: 0px !important;
-      min-height: 24px;
-}
-.search-icon{
-      margin-top: -5px;
+
+.search-icon {
+  margin-top: -5px;
 }
 
-::ng-deep .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
-  padding-right: 1;
-}
-
-::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-  background-color: white !important
-}
-
-.container-fluid {
-
-  @media (max-width: 992px) {
-    .mat-mdc-form-field {
-      flex-direction: column-reverse !important;
-      width: -webkit-fill-available !important
-    }
-
-    .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
-      padding-right: none !important
-    }
-
-    .mdc-text-field--filled:not(.mdc-text-field--disabled) {
-      background-color: white !important;
-    }
-  }
-
-  @media (max-width: 576px) {
-    .mat-mdc-form-field {
-      flex-direction: column-reverse !important;
-      width: -webkit-fill-available !important;
-    }
-  }
+.search-input {
+  @include mixin.mat-form-field-responsive(); 
 }

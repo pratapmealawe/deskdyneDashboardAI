@@ -4,12 +4,15 @@
 
 /* Global application base styles */
 body {
-  background: var(--color-background);
+  background-color: #f3f3f3 !important;
   color: var(--color-text);
   font-family: Roboto, sans-serif;
 }
-
-
+$white :#ffffff;
+$black :#000;
+$textPrimary:#1a1a1a;
+$error-color:red;
+$success-color:green;
 $primary-color1: #e62841;
 $primary-color2: #b9041c;
 $primary-color3: #fe8e9c;
@@ -17,6 +20,7 @@ $primary-offset-color1: #ffffff;
 $primary-offset-color2: #a4a4a4;
 $primary-offset-color3: #f3f3f3;
 $primary-offset-color4: #efefef;
+$primary-offset-color5:white;
 $secondary-color1: #88e5db;
 $secondary-color2: #60c8bc;
 $secondary-color3: #15a292;
@@ -24,10 +28,12 @@ $secondary-offset-color1: #ffd674;
 $secondary-offset-color2: #ffc947;
 $secondary-offset-color3: #ffb300;
 $card-odd: #dee2e6;
+$background-color: #f3f3f3;
 
 html {
   font-family: "Poppins-regular," "Lato" !important;
   // --ion-font-family: 'Lato' !important;
+  background: var(--color-backgroundGrey);
 }
 
 @font-face {
@@ -604,4 +610,40 @@ button.accordion-button:focus {
     justify-content: flex-start;
     gap: 10px;
     box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+// form group designed input 
+.form-group {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+
+.field-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 4px;
+}
+
+.required-input{
+  color:red;
+
+}
+.heading{
+  font-size:23px;
+  font-weight:600;
+}
+.labelText {
+    font-size: 13px;
+    color: #6c757d;
+}
+.labelData{
+    font-size: 15px;
+    color: #212529;
+}
+
+.no-address {
+  @include no-address-style();
 }

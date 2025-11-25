@@ -1,9 +1,12 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { SearchFilterService } from 'src/service/search-filter.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
@@ -23,20 +26,32 @@ export class OutletComponent implements OnInit {
   outletList: any = [];
   selectedOutlet: any;
   btnPolicy: any;
+  searchControl = new FormControl();
+  pagedOutLet: any[] = []
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
-    private sendDataToComponent: SendDataToComponent
+    private sendDataToComponent: SendDataToComponent,
+    private searchService: SearchFilterService
   ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.searchOutlet();
+    this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(value => { this.applyFilter(value) })
   }
-
+  applyFilter(value: string) {
+    const config = { keys: ['organizationName'] };
+    const v = (value || '').trim();
+    this.pagedOutLet = v
+      ? [...this.searchService.searchData(this.filteredOutletList, config, v)]
+      : [...this.filteredOutletList];
+    console.log(this.pagedOutLet,"update value ");
+  }
+  
   async searchOutlet() {
     try {
       this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
@@ -65,23 +80,13 @@ export class OutletComponent implements OnInit {
         }
 
         this.filteredOutletList = Array.from(orgMap.values());
-
-        console.log(this.filteredOutletList);
+        this.pagedOutLet = this.filteredOutletList 
       }
-      console.log(this.outletList);
-
     } catch (error) {
       console.log('seachOutlet', error);
     }
   }
 
-  resetForm() {
-    this.searchObj = {
-      outletName: '',
-      emailID: '',
-      phoneNo: '',
-    };
-  }
 
   viewOutlet(val: any) {
     this.selectedOutlet = val;

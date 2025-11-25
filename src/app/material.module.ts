@@ -21,6 +21,9 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDividerModule } from '@angular/material/divider';
 
 const materialModules = [
   MatButtonModule,
@@ -46,6 +49,11 @@ const materialModules = [
   MatTabsModule,
   MatCheckboxModule,
   MatSlideToggleModule,
+  MatRadioModule,
+  FormsModule,
+  ReactiveFormsModule,
+  MatSnackBarModule,
+  MatDividerModule,
   MatRadioModule
 ];
 

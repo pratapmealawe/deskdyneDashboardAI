@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OutletCardComponent } from './outlet-card.component';
+import { MaterialModule } from 'src/app/material.module';
 
 
 
@@ -9,7 +10,8 @@ import { OutletCardComponent } from './outlet-card.component';
     OutletCardComponent
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    MaterialModule
   ],
   exports:[
     OutletCardComponent

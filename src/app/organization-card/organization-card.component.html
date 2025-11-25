@@ -1,40 +1,33 @@
-<div class="table-responsive">
-  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 w-100">
-    <ng-container matColumnDef="Organization Name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Org Name</th>
-      <td mat-cell *matCellDef="let org">{{ org.organization_name }}</td>
-    </ng-container>
-    <ng-container matColumnDef="Location">
-      <th mat-header-cell *matHeaderCellDef>Location</th>
-      <td mat-cell *matCellDef="let org">{{ org.location }}</td>
-    </ng-container>
-    <ng-container matColumnDef="Poc Details">
-      <th mat-header-cell *matHeaderCellDef>Poc Details</th>
-      <td mat-cell *matCellDef="let org"><mat-chip (click)="dataView(org.poc_details,'poc')" class="custom-chip">poc
-          details | {{org.poc_details.length}}</mat-chip></td>
-    </ng-container>
-    <ng-container matColumnDef="Cafeteria">
-      <th mat-header-cell *matHeaderCellDef>Cafeteria</th>
-      <td mat-cell *matCellDef="let org"><mat-chip (click)="dataView(org.cafeteriaList , 'cafeteria')"
-          class="custom-chip">Cafeteria | {{org.cafeteriaList.length}}</mat-chip></td>
-    </ng-container>
-    <ng-container matColumnDef="action" stickyEnd>
-      <th mat-header-cell *matHeaderCellDef class="text-center">Action</th>
-      <td mat-cell *matCellDef="let org" class="text-center">
-        <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View">
+<div class="container-fuild">
+  <div class="cardDesign d-flex" *ngFor="let org of pagedOrganized">
+    <div class="col-md-2">
+          <div class="labelText">Organization Name</div>
+    <div class="labelData">{{org?.organization_name}}</div>
+    </div>
+    <div class="col-md-2">
+          <div class="labelText">City</div>
+    <div class="labelData">{{org?.city}}</div>
+    </div>
+    <div class="col-md-2">
+          <div class="labelText">location</div>
+    <div class="labelData">{{org?.location}}</div>
+    </div>
+    <div class="col-md-2">
+          <div class="labelText"> Cafeteria</div>
+    <div class="labelData"><mat-chip style="cursor: pointer;" (click)="dataView(org.cafeteriaList , 'cafeteria')">cafeteria | {{org.cafeteriaList.length}}</mat-chip></div>
+    </div>
+    <div class="col-md-2">
+          <div class="labelText">Poc Details</div>
+    <div class="labelData"><mat-chip  style="cursor: pointer;"  (click)="dataView(org.poc_details,'poc')">poc details | {{org.poc_details?.length}}</mat-chip></div>
+    </div>
+    <div class="col-md-2">
+      <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View">
           <mat-icon>visibility</mat-icon>
         </button>
-      </td>
-    </ng-container>
-    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="table-header"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="table-row"></tr>
-  </table>
-  <div *ngIf="dataSource.data.length === 0" class="text-center py-5 text-secondary">
-    <mat-icon style="font-size: 48px; opacity: 0.5;">inbox</mat-icon>
-    <p class="mb-0 mt-2">No records available</p>
+    </div>
   </div>
 </div>
-<mat-paginator [length]="totalRecords" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="pageSizeOptions"
+<mat-paginator [length]="organization.length|| 0" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="pageSizeOptions"
   (page)="onPageChange($event)" aria-label="Select page">
 </mat-paginator>
 

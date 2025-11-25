@@ -82,7 +82,6 @@ export class OrganizationViewComponent implements OnInit {
     }
   }
 
-  // When a main tab is changed
   onMainTabChange(index: number): void {
     this.selectedMainTabIndex = index;
     this.selectedSubTabIndex = 0;
@@ -97,7 +96,6 @@ export class OrganizationViewComponent implements OnInit {
     }
   }
 
-  // When a sub tab is changed
   onSubTabChange(index: number): void {
     this.selectedSubTabIndex = index;
     this.selectedChildTabIndex = 0;

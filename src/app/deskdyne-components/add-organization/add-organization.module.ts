@@ -5,6 +5,7 @@ import { AddOrganizationRoutingModule } from './add-organization-routing.module'
 import { AddOrganizationComponent } from './add-organization.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetGeolocationModule } from '../../set-geolocation/set-geolocation.module';
+import { MaterialModule } from 'src/app/material.module';
 
 @NgModule({
   declarations: [AddOrganizationComponent],
@@ -14,6 +15,7 @@ import { SetGeolocationModule } from '../../set-geolocation/set-geolocation.modu
     FormsModule,
     ReactiveFormsModule,
     SetGeolocationModule,
+    MaterialModule
   ],
   exports: [AddOrganizationComponent],
 })

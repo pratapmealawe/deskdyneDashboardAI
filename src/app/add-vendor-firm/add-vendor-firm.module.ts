@@ -7,6 +7,8 @@ import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { SetGeolocationModule } from 'src/app/set-geolocation/set-geolocation.module';
+import { MatButtonModule } from "@angular/material/button";
+import { MaterialModule } from '../material.module';
 
 
 @NgModule({
@@ -20,8 +22,9 @@ import { SetGeolocationModule } from 'src/app/set-geolocation/set-geolocation.mo
     ReactiveFormsModule,
     FormsModule,
     PdfuploadComponent,
-    SetGeolocationModule
-  ],
+    SetGeolocationModule,
+    MaterialModule
+],
   exports:[VendorComplianceComponent]
 })
 export class AddVendorFirmModule { }
