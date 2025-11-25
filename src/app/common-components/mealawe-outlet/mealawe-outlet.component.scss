@@ -5,3 +5,22 @@
 ::ng-deep mat-checkbox label {
     margin-bottom: 0px;
 }
+
+.employee-checkbox {
+    display: block;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 14px;
+}
+
+.checkbox-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-icon {
+    font-size: 18px;
+    color: #616161;
+    cursor: pointer;
+}
