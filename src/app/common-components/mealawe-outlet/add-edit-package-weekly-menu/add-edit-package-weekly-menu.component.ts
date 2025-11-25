@@ -18,8 +18,12 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   availableClusters: any[] = [];
   uniqueMenus: any[] = [];
   weekMenuList: any[] = [];
-  customWeeklyMenu: any[] = [];
+  cafeteriaList: any[] = [];
+  orgList: any[] = [];
   selectedSource: string = '';
+  selectedClusterId: string = '';
+  selectedCafeteria: any;
+  selectedOrg: any;
   activeWeekIndex: number = 0;
   showRequiredError: boolean = false;
   constructor(
@@ -28,23 +32,25 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     private apiMainService: ApiMainService,
     private mlApiMainService: MlApiMainService,
     private toastService: ToasterService
-  ) {
+  ) { }
 
-  }
-
-  /** BUTTON SOURCES */
   menuSources = [
     { label: 'Mealawe Menu', color: 'primary', action: (data: any) => this.loadMealaweMenu(data) },
-    { label: 'Organization Cafe', color: 'accent', action: (data: any) => this.selectedSource = 'otherCafe' },
-    { label: 'Other Org Cafe', color: 'warn', action: (data: any) => this.selectedSource = 'otherOrgCafe' },
-    { label: 'Custom Menu', color: 'success', action: (data: any) => { this.selectedSource = 'custom'; this.customWeeklyMenu = []; } }
+    { label: 'Organization Cafe', color: 'accent', action: (data: any) => this.getMealAweOutletByCafeteria() },
+    { label: 'Other Org Cafe', color: 'warn', action: (data: any) => this.getOrgCafeteriaWeeklyMenu() },
+    { label: 'Custom Menu', color: 'success', action: (data: any) => { this.selectedSource = 'custom'; this.weekMenuList = []; } }
   ];
-
   menuTypes = ['Veg', 'Non-Veg'];
   mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
 
 
   ngOnInit(): void {
+    if (this.data.cafeteriaList) {
+      this.cafeteriaList = this.data.cafeteriaList;
+    }
+    if (this.data.selectedCafeteria) {
+      this.cafeteriaList = this.cafeteriaList.filter(c => c._id !== this.data.selectedCafeteria._id);
+    }
     if (this.data?.category.weeklyMenu) {
       this.weekMenuList = this.data?.category.weeklyMenu;
       this.activeWeekIndex = this.weekMenuList.findIndex(w => w.isSelected);
@@ -52,12 +58,11 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     }
   }
 
-  /** LOAD MEAL AWE MENU */
+
   async loadMealaweMenu(data: any) {
     try {
       const res = await this.mlApiMainService.getWeeklyMenuByCategory(data.category.categoryName);
       this.selectedSource = 'mealawe';
-
       const clusters: any = await this.mlApiMainService.getAllGeoFencingList();
       this.availableClusters = clusters
         .filter((c: any) => res.clusterIds.includes(c.clusterId))
@@ -72,36 +77,29 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     }
   }
 
-  /** When cluster changes */
   onClusterChange(data: any) {
-    const matchedMenu = this.uniqueMenus.find((m: any) => m.clusterIds.includes(data.selectedClusterId));
+    const matchedMenu = this.uniqueMenus.find((m: any) => m.clusterIds.includes(this.selectedClusterId));
     this.weekMenuList = matchedMenu ? matchedMenu.weekMenuList : [];
     this.activeWeekIndex = this.weekMenuList.findIndex(w => w.isSelected);
     if (this.activeWeekIndex === -1) this.activeWeekIndex = 0;
   }
 
-  /** List of meals */
   getMenuList(week: any, type: string) {
     return type === 'veg' ? week.vegMenuList : week.nonvegMenuList;
   }
 
-  /** Show only category meal */
   getVisibleMeals(data: any) {
     if (!data?.category?.categoryName) return this.mealTimes;
     return this.mealTimes.filter(meal => meal === data.category.categoryName);
   }
 
   selectWeek(i: number) {
-    // mark only this week as selected
     this.weekMenuList.forEach((w, index) => w.isSelected = index === i);
-
-    // update active index
     this.activeWeekIndex = i;
   }
 
   addNewWeek() {
     const nextWeekNumber = this.weekMenuList.length + 1;
-
     const createEmptyMenu = () => {
       return [
         { day: 'Monday', description: '' },
@@ -113,29 +111,21 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
         { day: 'Sunday', description: '' }
       ];
     };
-
     const newWeek = {
       weekNumber: nextWeekNumber,
       isSelected: false,
       vegMenuList: createEmptyMenu(),
       nonvegMenuList: createEmptyMenu()
     };
-
     this.weekMenuList.push(newWeek);
-
-    // Auto-open the newly added week
-    this.activeWeekIndex = this.weekMenuList.length - 1;
   }
 
   saveMenu() {
     const active = this.weekMenuList.some(w => w.isSelected);
-
     if (!active) {
       this.showRequiredError = true;
       return;
     }
-
-    // VALIDATE ALL DESCRIPTIONS
     for (let week of this.weekMenuList) {
       for (let item of week.vegMenuList) {
         if (!item.description || item.description.trim() === '') {
@@ -151,6 +141,43 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
       }
     }
     this.dialogRef.close({ action: 'save', data: this.weekMenuList });
+  }
+
+
+  async getMealAweOutletByCafeteria(): Promise<void> {
+    try {
+      let value = await this.apiMainService.getMealAweOutletByCafeteria(this.selectedCafeteria._id);
+      this.selectedSource = 'otherCafe'
+      this.weekMenuList = [];
+      if (value?.categoryConfig?.length) {
+        const matchedMenu = value.categoryConfig.find((m: any) => m.categoryName === this.data.category.categoryName);
+        if (matchedMenu) {
+          this.weekMenuList = matchedMenu.weeklyMenu ?? [];
+        }
+      }
+    } catch (error) {
+      console.error("❌ Loading failed", error);
+      this.weekMenuList = [];
+    }
+  }
+
+  getCafeteriaListByOrg(): void {
+    this.cafeteriaList = this.orgList.find(e => e._id == this.selectedOrg._id).cafeteriaList || [];
+    this.selectedCafeteria = null;
+  }
+
+  async getOrgCafeteriaWeeklyMenu(): Promise<void> {
+    const orgList = await this.apiMainService.B2B_fetchFilteredAllOrgs({});
+    this.cafeteriaList = this.cafeteriaList.filter(c => c._id !== this.data.selectedCafeteria._id);
+    this.selectedSource = 'otherOrgCafe'
+    this.orgList = orgList;
+  }
+
+  resetCreateType() {
+    this.selectedSource = "";
+    this.cafeteriaList = this.cafeteriaList.filter(c => c._id !== this.data.selectedCafeteria._id);
+    this.selectedCafeteria = null;   // clears cafeteria
+    this.weekMenuList = [];
   }
 
 
