@@ -1,21 +1,21 @@
-<span class="right btn-danger btn-sm pointer right" *ngIf="true || btnPolicy?.editOrganization"
+<!-- <span class="right btn-danger btn-sm pointer right" *ngIf="true || btnPolicy?.editOrganization"
   (click)="editOrg()">EDIT</span>
 <div class="row pb-4">
   <div class="col-12  mb-3">
     <div class="row">
       <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Org Name</div>
-        <div class="labelData">{{ orgObj.organization_name }}</div>
-      </div>
+      <div class="labelText">Org Name</div>
+      <div class="labelData">{{ orgObj.organization_name }}</div>
+  </div>
       <div class="col-6 col-md-7 col-lg-4">
         <div class="labelText">Location</div>
         <div class="labelData">{{ orgObj.location }}</div>
-      </div>
+  </div>
         <div class="col-6 col-md-7 col-lg-4">
         <div class="labelText">domain</div>
         <div class="labelData">{{ orgObj.domain }}</div>
-      </div>
-    </div>
+  </div>
+</div>
   </div>
 
   <div class="col-12 mb-4 bg-light card py-4 px-2">
@@ -65,7 +65,132 @@
 
         </ol>
       </div>
-      <div *ngIf="!last" class="hr"></div>
+      </div>
+      <div *ngIf="!last" class="my-4"></div>
     </div>
   </div>
+</div>  -->
+
+<div class="container-fluid org-details py-3">
+
+  <!-- ORG DETAILS -->
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-header bg-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0 fw-bold">Organization Details</h5>
+   <button mat-raised-button color="primary" class="back-btn" (click)="editOrg()">
+   <mat-icon matSuffix>edit</mat-icon>Edit
+   </button>
+    </div>
+
+    <div class="card-body">
+      <div class="row gy-4">
+        <div class="col-12 col-md-4">
+          <div class="labelText">Organization Name</div>
+          <div class="labelData fw-semibold">{{ orgObj.organization_name }}</div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="labelText">Location</div>
+          <div class="labelData fw-semibold">{{ orgObj.location }}</div>
+        </div>
+
+        <div class="col-12 col-md-4">
+          <div class="labelText">Domain</div>
+          <div class="labelData fw-semibold">{{ orgObj.domain }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POC DETAILS -->
+  <div class="card shadow-sm mb-4 border-0">
+    <div class="card-header bg-white">
+      <h5 class="mb-0 fw-bold">POC Details</h5>
+    </div>
+
+    <div class="card-body">
+      <div *ngFor="let poc of orgObj.poc_details; let last = last" class="mb-4">
+
+        <div class="row gy-4">
+          <div class="col-12 col-md-4">
+            <div class="labelText">Name</div>
+            <div class="labelData fw-semibold">{{ poc.poc_name }}</div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="labelText">Email</div>
+            <div class="labelData fw-semibold">{{ poc.poc_email }}</div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="labelText">Phone No</div>
+            <div class="labelData fw-semibold">{{ poc.poc_phoneNo }}</div>
+          </div>
+        </div>
+
+        <!-- <hr *ngIf="!last" class="my-4"> -->
+      </div>
+    </div>
+  </div>
+
+  <!-- CAFETERIA -->
+  <div class="card shadow-sm mb-4 border-0" *ngIf="filteredOutletList.length > 0">
+    <div class="card-header bg-white">
+      <h5 class="mb-0 fw-bold">Cafeteria Details</h5>
+    </div>
+
+    <div class="card-body">
+
+      <div *ngFor="let cafe of filteredOutletList; let last = last" class="mb-4">
+        <div class="row gy-4">
+
+          <div class="col-12 col-md-4">
+            <div class="labelText">Name</div>
+            <div class="labelData fw-semibold">{{ cafe.cafeteria_name }}</div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="labelText">Address</div>
+            <div class="labelData fw-semibold">
+              {{ cafe.address1 }}, {{ cafe.address2 }}
+            </div>
+          </div>
+
+          <div class="col-12 col-md-4">
+            <div class="labelText">Location - City</div>
+            <div class="labelData fw-semibold">
+              {{ cafe.location }} - {{ cafe.cafeteria_city }}
+            </div>
+          </div>
+
+          <!-- Outlets -->
+          <div class="col-12 mt-3" *ngIf="cafe.outlets.length > 0">
+            <h6 class="fw-bold">Outlets</h6>
+
+            <ol class="ps-3">
+              <li *ngFor="let outlet of cafe.outlets" class="mb-2">
+
+                <span class="fw-semibold">{{ outlet?.outletName }}</span>
+
+                <!-- Vendors -->
+                <div class="ms-3 mt-2" *ngIf="outlet.vendors.length > 0">
+                  <ul class="mb-0">
+                    <li *ngFor="let vendor of outlet.vendors">
+                      {{ vendor?.vendorFirmName }}
+                    </li>
+                  </ul>
+                </div>
+
+              </li>
+            </ol>
+          </div>
+
+        </div>
+
+        <!-- <hr *ngIf="!last" class="my-4"> -->
+      </div>
+
+    </div>
+  </div>
+
 </div>

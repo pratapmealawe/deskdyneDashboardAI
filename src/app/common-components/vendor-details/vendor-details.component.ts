@@ -8,17 +8,14 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
   templateUrl: './vendor-details.component.html',
   styleUrls: ['./vendor-details.component.scss']
 })
-export class VendorDetailsComponent implements OnChanges, OnInit {
+export class VendorDetailsComponent implements OnInit {
   @Input() vendorObj: any;
   btnPolicy: any;
   filteredOutletList: any;
   bankDetails: any;
 
   constructor(private policyService: PolicyService, private runtimeStorageService: RuntimeStorageService, private router: Router) {
-
   }
-
-  ngOnChanges(changes: SimpleChanges): void { }
 
   editOrg() {
     this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', this.vendorObj);
