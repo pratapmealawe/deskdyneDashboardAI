@@ -26,20 +26,30 @@ export class MealaweOutletComponent implements AfterViewInit {
   mealOutlet: any = {};
   categories: any[] = [];
   packages: any[] = [];
-
+  config: any[] = [
+    { name: "SUBSCRIPTION_PLATFORM_CHARGES", label: "Subscription Platform Charges", value: 0 },
+    { name: "SUBSCRIPTION_PLATFORM_CHARGES_DISCOUNT", label: "Subscription Platform Charges Discount", value: 0 },
+    { name: "SUBSCRIPTION_DELIVERY_CHARGES", label: "Subscription Delivery Charges", value: 0 },
+    { name: "SUBSCRIPTION_DELIVERY_CHARGES_DISCOUNT", label: "Subscription Delivery Charges Discount", value: 0 },
+    { name: "SUBSCRIPTION_ECO_FRIENDLY_PACKAGING_CHARGES", label: "Subscription Eco-Friendly Packaging Charges", value: 0 },
+    { name: "SUBSCRIPTION_ECO_FRIENDLY_PACKAGING_CHARGES_DISCOUNT", label: "Subscription Eco-Friendly Packaging Charges Discount", value: 0 },
+    { name: "DELIVERY_CHARGES_GST", label: "Delivery Charges GST %", value: 0 },
+    { name: "PACKAGE_CHARGES_GST", label: "Package Charges GST %", value: 0 },
+    { name: "PLATFORM_CHARGES_GST", label: "Platform Charges GST %", value: 0 },
+    { name: "CGST_PERCENTAGE", label: "CGST %", value: 0 },
+    { name: "SGST_PERCENTAGE", label: "SGS %", value: 0 }
+  ];
   constructor(
     private apiMainService: ApiMainService,
     private modalService: MatDialog,
     private confirmationModalService: ConfirmationModalService,
     private toaster: ToasterService,
-    private cd: ChangeDetectorRef
   ) { }
 
   ngAfterViewInit(): void {
     this.cafeteriaList = [...(this.orgObj?.cafeteriaList || [])];
     if (this.cafeteriaList.length > 0) {
       this.selectedCafeteria = this.cafeteriaList[0];
-      this.cd.detectChanges();
       this.getMealAweOutletByCafeteria();
     }
   }
@@ -55,6 +65,14 @@ export class MealaweOutletComponent implements AfterViewInit {
   async getMealAweOutletByCafeteria(): Promise<void> {
     try {
       this.mealOutlet = await this.apiMainService.getMealAweOutletByCafeteria(this.cafeteriaId);
+      this.config = this.config.map(item => {
+        const found = this.mealOutlet.config.find((value: any) => value.name === item.name);
+        return {
+          ...item,
+          value: found ? found.value : item.value
+        };
+      });
+      console.log(this.mealOutlet);
       this.categories = (this.mealOutlet?.categoryConfig || []).map((c: any) => ({
         ...c,
         editing: false,
@@ -68,7 +86,6 @@ export class MealaweOutletComponent implements AfterViewInit {
         ...p,
         editing: false
       }));
-      this.cd.detectChanges();
     } catch (error) {
       console.error("❌ Loading failed", error);
       this.toaster.error("Unable to load cafeteria details");
@@ -77,10 +94,15 @@ export class MealaweOutletComponent implements AfterViewInit {
 
   async updateMealAweOutlet() {
     try {
+      const simplifiedConfig = this.config.map(item => ({
+        name: item.name,
+        value: item.value
+      }));
       const payload = {
         ...this.mealOutlet,
         itemList: this.packages,
-        categoryConfig: this.categories
+        categoryConfig: this.categories,
+        config: simplifiedConfig
       };
       await this.apiMainService.updateMealAweOutlet(this.mealOutlet?._id, payload);
       this.toaster.success("Updated successfully");
@@ -278,11 +300,12 @@ export class MealaweOutletComponent implements AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result: any) => {
-      if (result) {
+      if (result && result.action === 'save') {
         // category.customWeeklyMenu = result.customWeeklyMenu;
         // category.selectedClusterId = result.selectedClusterId;
         // category.selectedCafeId = result.selectedCafeId;
         // category.selectedOrgId = result.selectedOrgId;
+        category.weeklyMenu = result.data;
         this.updateCategory(category);
       }
     });
@@ -311,7 +334,6 @@ export class MealaweOutletComponent implements AfterViewInit {
       this.toaster.error("Update failed");
     }
   }
-
 
   closeDialog() {
     this.modalService.closeAll();
