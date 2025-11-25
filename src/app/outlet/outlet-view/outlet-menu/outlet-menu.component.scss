@@ -1,5 +1,7 @@
-@import "src/styles.scss";
 
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+@import "src/styles.scss";
 .addOutlet {
   position: absolute;
   right: 5px;
@@ -82,4 +84,16 @@
     background: $primary-color1;
 }
 
+img{
+  border-radius:8px
+}
+.typeIcon{
+  position: absolute;
+    width: 20px;
+    height: 20px;
+}
+  
 
+.rows{
+    @include mixin.card-design(color.$primary-offset-color1);
+}

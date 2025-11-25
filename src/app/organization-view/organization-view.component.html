@@ -1,15 +1,18 @@
-<div class="left_arrow" (click)="goBack()" style="cursor: pointer">
+<!-- <div class="left_arrow" (click)="goBack()" style="cursor: pointer">
   <i class="bi bi-arrow-left"></i> Back
-</div>
-
-<mat-tab-group [(selectedIndex)]="selectedMainTabIndex" (selectedIndexChange)="onMainTabChange($event)">
+</div> -->
+ <div class="add-vendor d-flex align-items-center pb-4 gap-2">
+   <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
+   <div class="heading">View Organization</div>
+ </div>
+<mat-tab-group [(selectedIndex)]="selectedMainTabIndex" (selectedIndexChange)="onMainTabChange($event)" class="custom-tabs">
   <mat-tab *ngFor="let view of orgViewList; let mainIndex = index" [label]="view.name">
     <ng-container *ngIf="selectedMainTabIndex === mainIndex">
       <mat-tab-group *ngIf="view.subTabs?.length" [(selectedIndex)]="selectedSubTabIndex"
-        (selectedIndexChange)="onSubTabChange($event)">
+        (selectedIndexChange)="onSubTabChange($event)" class="custom-tabs">
         <mat-tab *ngFor="let sub of view.subTabs; let subIndex = index" [label]="sub.name">
           <ng-container *ngIf="selectedSubTabIndex === subIndex">
-            <mat-tab-group *ngIf="sub.childTabs?.length" [(selectedIndex)]="selectedChildTabIndex">
+            <mat-tab-group *ngIf="sub.childTabs?.length" [(selectedIndex)]="selectedChildTabIndex" class="custom-tabs">
               <mat-tab *ngFor="let child of sub.childTabs; let childIndex = index" [label]="child.name">
                 <ng-container *ngIf="selectedChildTabIndex === childIndex" [ngSwitch]="child.path">
                   <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization"></app-org-bulk-menu>

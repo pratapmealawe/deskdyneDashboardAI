@@ -44,7 +44,7 @@
     </div>
   </ng-container>
   <ng-template #viewSection>
-    <div class="bgsidepadding2" *ngIf="selectedOrg; else noRecords">
+    <div class="bgsidepadding1" *ngIf="selectedOrg; else noRecords">
       <app-organization-view [organization]="selectedOrg" (back)="toggleShowOrder($event)">
       </app-organization-view>
     </div>
