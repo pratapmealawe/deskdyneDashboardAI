@@ -395,17 +395,6 @@
                   *Address Line 2 is required
                 </div>
               </div>
-              <div class="col-12 col-md-6 col-lg-2 bgpadding1">
-                <div class="labelText">AppMenu Type</div>
-                <select class="custom-select" name="menuType" formControlName="appMenu_type">
-                  <option disabled selected value>
-                    -- select app Menu Type--
-                  </option>
-                  <option [value]="item" *ngFor="let item of appmenutypelist">
-                    {{ item }}
-                  </option>
-                </select>
-              </div>
               <div class="col-12 col-md-2 col-lg-2 bgpadding1">
                 <label class="labelText form-label mb-0">Subsidy Amount</label>
                 <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
