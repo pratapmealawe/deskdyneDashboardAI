@@ -8,6 +8,21 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 (pdfMake as any).vfs = (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 
+type BreakdownMode = 'item' | 'type' | 'category' | 'mrpSplit';
+
+type MrpSplitRow = {
+  label: string;        // "MRP Items" / "Non-MRP Items"
+  gross: number;        // sum of commissionBreakup.*.gross
+  base: number;         // sum of commissionBreakup.*.base
+  commissionAmt: number; // sum of commissionBreakup.*.commissionAmt
+};
+
+type MrpSplitPdfRow = {
+  'Type': string;
+  'Gross Amount': string;
+  'Base Amount': string;
+  'Commission Amount': string;
+};
 
 export interface ItemBreakdownDialogData {
   orders: any[];
@@ -29,7 +44,7 @@ type ItemRow = { 'Item Name': string; 'Price': string; 'Quantity': number; 'Fina
 type GroupRowItemType = { 'Item Type': string; 'Quantity': number; 'Final Amount': string };
 type GroupRowCategory = { 'Category': string; 'Quantity': number; 'Final Amount': string };
 
-type AnyRow = ItemRow | GroupRowItemType | GroupRowCategory;
+type AnyRow = ItemRow | GroupRowItemType | GroupRowCategory | MrpSplitPdfRow;
 
 @Component({
   selector: 'app-item-breakdown',
@@ -80,7 +95,7 @@ export class ItemBreakdownComponent {
     return arr.slice(start, start + size);
   }
 
-  private group(orders: any[], mode: 'item' | 'type' | 'category'): GroupRow[] {
+  private group(orders: any[], mode: BreakdownMode): GroupRow[] {
     const m = new Map<string, GroupRow>();
     for (const o of orders || []) {
       for (const it of o?.itemList || []) {
@@ -101,7 +116,32 @@ export class ItemBreakdownComponent {
     return Array.from(m.values()).sort((a, b) => b.totalPrice - a.totalPrice);
   }
 
-  export(which: 'item' | 'type' | 'category') {
+  // MRP vs Non-MRP (from commissionBreakup)
+  mrpSplit = computed<MrpSplitRow[]>(() => {
+    const acc = {
+      mrp: { label: 'MRP Items', gross: 0, base: 0, commissionAmt: 0 },
+      normal: { label: 'Non-MRP Items', gross: 0, base: 0, commissionAmt: 0 },
+    };
+
+    for (const o of this.orders || []) {
+      const cb = o?.commissionBreakup;
+      if (cb?.mrp) {
+        acc.mrp.gross += Number(cb.mrp.gross || 0);
+        acc.mrp.base += Number(cb.mrp.base || 0);
+        acc.mrp.commissionAmt += Number(cb.mrp.commissionAmt || 0);
+      }
+      if (cb?.normal) {
+        acc.normal.gross += Number(cb.normal.gross || 0);
+        acc.normal.base += Number(cb.normal.base || 0);
+        acc.normal.commissionAmt += Number(cb.normal.commissionAmt || 0);
+      }
+    }
+
+    return [acc.mrp, acc.normal];
+  });
+
+
+  export(which: BreakdownMode) {
     let rows: any[] = [];
 
     if (which === 'item') {
@@ -116,29 +156,62 @@ export class ItemBreakdownComponent {
         Count: r.count,
         TotalPrice: r.totalPrice
       }));
-    } else {
+    } else if (which === 'category') {
       rows = this.byCategory().map(r => ({
         Category: r.key || '-',
         Count: r.count,
         TotalPrice: r.totalPrice
       }));
+    } else if (which === 'mrpSplit') {
+      rows = this.mrpSplit().map(r => ({
+        Type: r.label,
+        Gross: r.gross,
+        Base: r.base,
+        Commission: r.commissionAmt,
+      }));
     }
 
     // 🧮 compute totals
-    const totalCount = rows.reduce((sum, r) => sum + Number(r.Count || 0), 0);
-    const totalPrice = rows.reduce((sum, r) => sum + Number(r.TotalPrice || 0), 0);
+    const totalCount =
+      which === 'mrpSplit'
+        ? 0 // no quantity in this view
+        : rows.reduce((sum, r) => sum + Number(r.Count || 0), 0);
+
+    const totalPrice = rows.reduce((sum, r) => {
+      if (which === 'mrpSplit') {
+        return sum + Number(r.Gross || 0);  // or Commission, depends what you want
+      }
+      return sum + Number(r.TotalPrice || 0);
+    }, 0);
 
     // ➕ append a blank row + totals row for Excel readability
     rows.push({});
-    rows.push({
-      ...(which === 'item'
-        ? { Item: 'TOTAL' }
-        : which === 'type'
-          ? { ItemType: 'TOTAL' }
-          : { Category: 'TOTAL' }),
-      Count: totalCount,
-      TotalPrice: totalPrice
-    });
+    if (which === 'item') {
+      rows.push({
+        Item: 'TOTAL',
+        Count: totalCount,
+        TotalPrice: totalPrice,
+      });
+    } else if (which === 'type') {
+      rows.push({
+        ItemType: 'TOTAL',
+        Count: totalCount,
+        TotalPrice: totalPrice,
+      });
+    } else if (which === 'category') {
+      rows.push({
+        Category: 'TOTAL',
+        Count: totalCount,
+        TotalPrice: totalPrice,
+      });
+    } else if (which === 'mrpSplit') {
+      rows.push({
+        Type: 'TOTAL',
+        Gross: totalPrice, // total gross combined
+        Base: this.mrpSplit().reduce((s, r) => s + r.base, 0),
+        Commission: this.mrpSplit().reduce((s, r) => s + r.commissionAmt, 0),
+      });
+    }
 
     const title = (this.data.rangeLabel || 'Selected').replace(/[^a-z0-9-_]+/gi, '_');
     const fname =
@@ -146,20 +219,33 @@ export class ItemBreakdownComponent {
         ? `ItemBreakdown_${title}`
         : which === 'type'
           ? `ItemTypeBreakdown_${title}`
-          : `CategoryBreakdown_${title}`;
+          : which === 'category'
+            ? `CategoryBreakdown_${title}`
+            : `MrpSplitBreakdown_${title}`;
 
     this.excel.download(rows, fname);
   }
 
+
   // ---------- PDF export (revamped to match sample) ----------
-  exportPdf(which: 'item' | 'type' | 'category') {
+  exportPdf(which: BreakdownMode) {
     const rows = this.buildRowsForPdf(which);
 
     const isItem = which === 'item';
+
     const headerCells = isItem
       ? ['Item Name', 'Price', 'Quantity', 'Final Amount']
-      : [(which === 'type' ? 'Item Type' : 'Category'), 'Quantity', 'Final Amount'] as const;
-    const widths = isItem ? ['*', 60, 60, 80] : ['*', 60, 90];
+      : which === 'type'
+        ? ['Item Type', 'Quantity', 'Final Amount']
+        : which === 'category'
+          ? ['Category', 'Quantity', 'Final Amount']
+          : ['Type', 'Gross Amount', 'Base Amount', 'Commission Amount'];
+
+    const widths = isItem
+      ? ['*', 60, 60, 80]
+      : which === 'mrpSplit'
+        ? ['*', 80, 80, 90]
+        : ['*', 60, 90];
 
     const body: any[] = [];
 
@@ -189,30 +275,47 @@ export class ItemBreakdownComponent {
           { text: String(gr['Quantity'] ?? ''), alignment: 'right' },
           { text: gr['Final Amount'] ?? '-', alignment: 'right' },
         ]);
-      } else {
+      } else if (which === 'category') {
         const gr = r as GroupRowCategory;
         body.push([
           { text: gr['Category'] ?? '-', alignment: 'left' },
           { text: String(gr['Quantity'] ?? ''), alignment: 'right' },
           { text: gr['Final Amount'] ?? '-', alignment: 'right' },
         ]);
+      } else if (which === 'mrpSplit') {
+        const gr = r as MrpSplitPdfRow;
+        body.push([
+          { text: gr['Type'] ?? '-', alignment: 'left' },
+          { text: gr['Gross Amount'] ?? '-', alignment: 'right' },
+          { text: gr['Base Amount'] ?? '-', alignment: 'right' },
+          { text: gr['Commission Amount'] ?? '-', alignment: 'right' },
+        ]);
       }
     }
 
     // optional TOTAL row (works for both shapes)
     body.push([{ text: '', colSpan: headerCells.length, border: [false, false, false, false] }, ...Array(headerCells.length - 1).fill({})]);
-    const totalRow = isItem
-      ? [
-        { text: 'TOTAL', style: 'th', alignment: 'left' },
-        { text: '-', alignment: 'right' },
-        { text: String(rows.totalQty), alignment: 'right', bold: true },
-        { text: this.toINR(rows.totalAmount), alignment: 'right', bold: true },
-      ]
-      : [
-        { text: 'TOTAL', style: 'th', alignment: 'left' },
-        { text: String(rows.totalQty), alignment: 'right', bold: true },
-        { text: this.toINR(rows.totalAmount), alignment: 'right', bold: true },
-      ];
+    const totalRow =
+      which === 'item'
+        ? [
+          { text: 'TOTAL', style: 'th', alignment: 'left' },
+          { text: '-', alignment: 'right' },
+          { text: String(rows.totalQty), alignment: 'right', bold: true },
+          { text: this.toINR(rows.totalAmount), alignment: 'right', bold: true },
+        ]
+        : which === 'mrpSplit'
+          ? [
+            { text: 'TOTAL', style: 'th', alignment: 'left' },
+            { text: this.toINR(Number(rows.totalGross)), alignment: 'right', bold: true },
+            { text: this.toINR(Number(rows.totalBase)), alignment: 'right', bold: true },
+            { text: this.toINR(Number(rows.totalCommission)), alignment: 'right', bold: true },
+          ]
+          : [
+            { text: 'TOTAL', style: 'th', alignment: 'left' },
+            { text: String(rows.totalQty), alignment: 'right', bold: true },
+            { text: this.toINR(rows.totalAmount), alignment: 'right', bold: true },
+          ];
+
     body.push(totalRow);
 
     const range = this.data.header?.createdBetween || this.data.rangeLabel || 'Selected Dates (IST)';
@@ -273,10 +376,14 @@ export class ItemBreakdownComponent {
   }
 
 
-  private buildRowsForPdf(which: 'item' | 'type' | 'category') {
+  private buildRowsForPdf(which: BreakdownMode) {
     const rows: AnyRow[] = [];
     let totalQty = 0;
     let totalAmount = 0;
+
+    let totalGross = 0;
+    let totalBase = 0;
+    let totalCommission = 0;
 
     const toINR = (n: number) => this.toINR(n);
 
@@ -302,7 +409,7 @@ export class ItemBreakdownComponent {
         totalQty += r.count || 0;
         totalAmount += r.totalPrice || 0;
       }
-    } else {
+    } else if (which === 'category') {
       for (const r of this.byCategory()) {
         rows.push({
           'Category': r.key || '-',
@@ -312,10 +419,25 @@ export class ItemBreakdownComponent {
         totalQty += r.count || 0;
         totalAmount += r.totalPrice || 0;
       }
+    } else if (which === 'mrpSplit') {
+      for (const r of this.mrpSplit()) {
+        rows.push({
+          'Type': r.label,
+          'Gross Amount': toINR(r.gross),
+          'Base Amount': toINR(r.base),
+          'Commission Amount': toINR(r.commissionAmt),
+        } as MrpSplitPdfRow);
+        totalGross += r.gross || 0;
+        totalBase += r.base || 0;
+        totalCommission += r.commissionAmt || 0;
+      }
     }
 
-    return { data: rows, totalQty, totalAmount };
+    return which === 'mrpSplit'
+      ? { data: rows, totalQty, totalAmount, totalGross, totalBase, totalCommission }
+      : { data: rows, totalQty, totalAmount };
   }
+
 
   // Header block like the sample PDF (logo + meta)
   private buildPdfHeaderBlock(range: string): any {

@@ -1,16 +1,18 @@
 @import "src/styles.scss";
 
-.uploadedImage{
+
+
+.uploadedImage {
     width: 150px;
     height: 150px;
     cursor: pointer;
 }
 
-.uploadInput{
+.uploadInput {
     display: none;
 }
 
-.uploadIcon{
+.uploadIcon {
     width: 84px;
     background: $secondary-color3;
     border-radius: 5px;
@@ -24,8 +26,10 @@
     cursor: pointer;
 }
 
-.group-div,.region-div,.search-div{
-    span{
-        margin-bottom:12px;
+.group-div,
+.region-div,
+.search-div {
+    span {
+        margin-bottom: 12px;
     }
 }

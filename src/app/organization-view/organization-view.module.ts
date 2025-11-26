@@ -22,12 +22,17 @@ import { VcEmployeeComponent } from '../common-components/vc-employee/vc-employe
 import { CakeMenuComponent } from '../common-components/cake-menu/cake-menu.component';
 import { SweetMenuComponent } from '../common-components/sweet-menu/sweet-menu.component';
 import { LuxMenuComponent } from '../common-components/lux-menu/lux-menu.component';
-import { CakeMenuModule } from '../common-components/cake-menu/cake-menu.module';
-import { SweetMenuModule } from '../common-components/sweet-menu/sweet-menu.module';
-import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
 import { EmployeeWalletComponent } from '../common-components/employee-wallet/employee-wallet.component';
 import { ConsumptionOrderComponent } from '../common-components/consumption-order/consumption-order.component';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { MatListModule } from '@angular/material/list';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -47,7 +52,10 @@ import { MatChipsModule } from '@angular/material/chips';
     OutletEmployeeComponent,
     VcEmployeeComponent,
     EmployeeWalletComponent,
-    ConsumptionOrderComponent
+    ConsumptionOrderComponent,
+    CakeMenuComponent,
+    SweetMenuComponent,
+    LuxMenuComponent,
   ],
   imports: [
     CommonModule,
@@ -55,10 +63,15 @@ import { MatChipsModule } from '@angular/material/chips';
     FormsModule,
     ReactiveFormsModule,
     PdfuploadComponent,
-    CakeMenuModule,
-    SweetMenuModule,
-    LuxMenuModule,
-    MatChipsModule
+    MatChipsModule,
+    MatDialogModule,
+    MatSelectModule,
+    MatListModule,
+    MatCardModule,
+    MatIconModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule
   ],
   exports: [OrganizationViewComponent],
 })

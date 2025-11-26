@@ -20,7 +20,7 @@
                 [(ngModel)]="mealType.itemName" *ngIf="editMode">
         </div>
         <div class="col-lg-1 col-6">
-            <label class="labelText">Meal Price</label>
+            <label class="labelText">Meal Price (Exclusive of GST)</label>
             <div class="labelData" *ngIf="!editMode">{{mealType.mealPrice}}</div>
             <input [disabled]="!editMode" type="number" class="form-control" placeholder="mealType.mealPrice"
                 [(ngModel)]="mealType.mealPrice" *ngIf="editMode">
@@ -70,7 +70,7 @@
                 [(ngModel)]="mealType.deliveryTimeTo" *ngIf="editMode">
         </div>
         <div class="col-lg-3 col-6">
-            <label class="labelText">Pay Amount To Kitchen</label>
+            <label class="labelText">Pay Amount To Kitchen (Inclusive of GST)</label>
             <div class="labelData" *ngIf="!editMode">{{mealType.payAmtToKitchen}}</div>
             <input [disabled]="!editMode" type="number" class="form-control" placeholder="Pay Amount To Kitchen"
                 [(ngModel)]="mealType.payAmtToKitchen" *ngIf="editMode">

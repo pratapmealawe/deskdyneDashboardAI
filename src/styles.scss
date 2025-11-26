@@ -331,6 +331,7 @@ body {
   font-family: "Poppins-regular";
   height: 100%;
   margin: 0;
+  background: #fefefe !important;
 }
 
 .customInput {
@@ -595,4 +596,19 @@ button.accordion-button:focus {
     justify-content: flex-start;
     gap: 10px;
     box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+}
+
+// mat
+::ng-deep.mat-mdc-form-field-subscript-wrapper {
+    display: none;
+}
+
+::ng-deep.mdc-notched-outline__leading {
+    border-top-left-radius: 12px !important;
+    border-bottom-left-radius: 12px !important;
+}
+
+::ng-deep.mdc-notched-outline__trailing {
+    border-top-right-radius: 12px !important;
+    border-bottom-right-radius: 12px !important;
 }

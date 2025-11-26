@@ -20,7 +20,7 @@ export class UtilityService {
       const response = await this.apiMainService.getCurrentOutletOrdersCount();
       orderList = response;
       if (orderList && orderList.newOrder > 0 && showAlarm) {
-        const msg = 'These are some new orders placed';
+        // const msg = 'These are some new orders placed';
       }
       const self = this;
       this.currentOrderCounter = setTimeout(() => {
@@ -71,7 +71,7 @@ export class UtilityService {
       if (orderList && orderList.b2bBulk.placed > 0 && showAlarm) {
         const msg = 'These are some new orders placed';
         // this.webNotificationService.showNotification(msg);
-        this.toasterService.alarm(msg);
+        // this.toasterService.alarm(msg);
       }
       const self = this;
       this.currentOrderCounter = setTimeout(() => {

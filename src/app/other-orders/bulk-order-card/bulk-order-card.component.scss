@@ -1,49 +1,168 @@
 @import 'src/styles.scss';
 
-.bi-file-plus{
-    font-size: 23px;
-}
-.view{
-    cursor:pointer;
-}
-.order-sub-header{
-    background-color:$primary-offset-color3;
-    margin-bottom:5px;
-    padding:5px;
-    font-weight:500;
-    cursor:pointer;
-}
-.less{
-    font-size:16px;
+.order-summary-card {
+  margin-bottom: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, #f7f9fc, #ffffff);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0 4px 10px rgba(15, 23, 42, 0.14);
+    transform: translateY(-1px);
+    transition: all 150ms ease-out;
+  }
+
+  .labelText {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+  }
+
+  .labelData {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111827;
+  }
 }
 
+.order-details-card {
+  margin-top: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #f9fafb;
+
+  .mat-card-content {
+    padding-top: 8px;
+  }
+}
+
+/* Header styling inside full view */
+.details-header {
+  padding: 12px 16px !important;
+
+  .header-left {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mat-card-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #111827;
+  }
+
+  .mat-card-subtitle {
+    font-size: 12px;
+    color: #6b7280;
+  }
+}
+
+.header-actions button {
+  margin-left: 4px;
+}
+
+/* Expansion panels spacing */
+mat-expansion-panel {
+  margin-bottom: 4px;
+  background: #ffffff;
+  border-radius: 8px !important;
+}
+
+mat-expansion-panel-header {
+  min-height: 44px !important;
+
+  .mat-content {
+    align-items: center;
+  }
+
+  .mat-panel-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+  }
+}
+
+/* status chips */
+.status-chip {
+  text-transform: capitalize;
+  font-size: 11px;
+  height: 22px;
+  line-height: 22px;
+  padding: 0 10px;
+}
+
+.status-chip.green {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+}
+
+.status-chip.red {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-chip.yellow {
+  background-color: #fff8e1;
+  color: #f9a825;
+}
+
+/* Billing card */
 .bilingDiv {
-    background-image: url('~src/assets/images/cartReceipt.png');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    padding: 14px 12px 10px 12px;
+  background-image: url('~src/assets/images/cartReceipt.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  padding: 14px 12px 10px 12px;
+  line-height: 20px;
+  border-radius: 8px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.12);
+
+  .receiptText {
+    font-size: 11px;
+    font-weight: 700;
+    color: #676f8199;
+    position: relative;
+    top: -10px;
     line-height: 20px;
+  }
 
-    .receiptText {
-        font-size: 11px;
-        font-weight: 700;
-        color: #676f8199;
-        position: relative;
-        top: -10px;
-        line-height: 20px;
+  .receipt-parent {
+    display: flex;
+    flex-direction: row;
+
+    .left-div {
+      width: 50%;
     }
 
-    .receipt-parent {
-        display: flex;
-        flex-direction: row;
-    
-        .left-div {
-            width: 50%;
-        }
-    
-        .right-div {
-            width: 50%;
-            text-align: right;
-        }
+    .right-div {
+      width: 50%;
+      text-align: right;
     }
+  }
+}
+
+.view {
+  cursor: pointer;
+}
+
+.less {
+  font-size: 16px;
+}
+
+/* Make rows breathe a bit */
+.row > [class*='col-'] {
+  margin-bottom: 6px;
+}
+
+/* Action buttons block */
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  button {
+    min-width: 150px;
+  }
 }

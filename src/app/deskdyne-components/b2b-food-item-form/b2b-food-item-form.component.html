@@ -1,238 +1,179 @@
-<div class="container-fluid">
+<form class="container-fluid pt-4" [formGroup]="foodItemForm" (ngSubmit)="onSubmit()" novalidate>
   <div class="row">
-    <div class="col-12 col-md-3 col-lg-2">
-      <input
-        #f
-        type="file"
-        class="uploadInput"
-        accept="image/*"
-        capture="camera"
-        (change)="handleFileInput($event)"
-      />
-      <img
-        (click)="f.click()"
-        [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
-        class="uploadedImage"
-      />
-      <div class="uploadIcon" (click)="f.click()">
-        Upload <i class="bi bi-upload"></i>
-      </div>
+    <!-- IMAGE UPLOAD -->
+    <div class="col-12 col-md-3 col-lg-2 d-flex flex-column align-items-start">
+      <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
+        (change)="handleFileInput($event)" />
+      <img (click)="fileInput.click()" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
+        class="uploadedImage mb-2" />
+      <button type="button" mat-stroked-button color="primary" (click)="fileInput.click()">
+        <mat-icon class="me-1">file_upload</mat-icon>
+        Upload
+      </button>
     </div>
+
+    <!-- NAME -->
     <div class="col-12 col-md-4 col-lg-3">
-      <label class="labelText" for="itemName">Name</label>
-      <input
-        type="text"
-        class="form-control"
-        id="itemName"
-        [(ngModel)]="foodItemObj.itemName"
-        placeholder="Enter Item Name"
-      />
-    </div>
-    <div class="col-12 col-md-4 col-lg-3">
-      <label class="labelText" for="itemName">Packaging Cost</label>
-      <input
-        type="text"
-        class="form-control"
-        id="itemName"
-        [(ngModel)]="foodItemObj.packagingCost"
-        placeholder="Packaging Cost"
-      />
-    </div>
-    <div class="col-12 col-md-4 col-lg-4">
-      <label class="labelText" for="itemName">Packaging Description</label>
-      <input
-        type="text"
-        class="form-control"
-        id="itemName"
-        [(ngModel)]="foodItemObj.packagingDescription"
-        placeholder="Packaging Description"
-      />
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-sm-12 col-md-6 col-lg-2">
-      <label class="labelText">Item Type</label>
-      <div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{ tileSelected: foodItemObj.itemType == 'Veg' }"
-            (click)="foodItemObj.itemType = 'Veg'"
-          >
-            <span class="tileLabel header4 countTile">Veg</span>
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Item Name</mat-label>
+        <input matInput id="itemName" formControlName="itemName" placeholder="Enter Item Name" />
+        <mat-error *ngIf="f['itemName'].touched && f['itemName'].invalid">
+          <span *ngIf="f['itemName'].errors?.['required']">
+            Item name is required.
           </span>
-        </div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{ tileSelected: foodItemObj.itemType == 'NonVeg' }"
-            (click)="foodItemObj.itemType = 'NonVeg'"
-          >
-            <span class="tileLabel header4 countTile">NonVeg</span>
+          <span *ngIf="f['itemName'].errors?.['minlength']">
+            Minimum 2 characters required.
           </span>
-        </div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{ tileSelected: foodItemObj.itemType == 'Jain' }"
-            (click)="foodItemObj.itemType = 'Jain'"
-          >
-            <span class="tileLabel header4 countTile">Jain</span>
+          <span *ngIf="f['itemName'].errors?.['maxlength']">
+            Maximum 80 characters allowed.
           </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-12 col-md-6 col-lg-2 mt-1">
-      <label class="labelText" for="itemFlavour">Flavour</label>
-      <div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{ tileSelected: foodItemObj.itemFlavour == 'Sweet' }"
-            (click)="foodItemObj.itemFlavour = 'Sweet'"
-          >
-            <span class="tileLabel header4 countTile">Sweet</span>
-          </span>
-        </div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{ tileSelected: foodItemObj.itemFlavour == 'Sour' }"
-            (click)="foodItemObj.itemFlavour = 'Sour'"
-          >
-            <span class="tileLabel header4 countTile">Sour</span>
-          </span>
-        </div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{ tileSelected: foodItemObj.itemFlavour == 'Normal' }"
-            (click)="foodItemObj.itemFlavour = 'Normal'"
-          >
-            <span class="tileLabel header4 countTile">Normal</span>
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-12 col-md-6 col-lg-3 mt-1">
-      <label class="labelText" for="itemFlavour">Serving Type</label>
-      <div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{
-              tileSelected: foodItemObj.itemServingType == 'perPerson'
-            }"
-            (click)="foodItemObj.itemServingType = 'perPerson'"
-          >
-            <span class="tileLabel header4 countTile">perPerson</span>
-          </span>
-        </div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{
-              tileSelected: foodItemObj.itemServingType == 'perUnit'
-            }"
-            (click)="foodItemObj.itemServingType = 'perUnit'"
-          >
-            <span class="tileLabel header4 countTile">perUnit</span>
-          </span>
-        </div>
-        <div class="inline me-2">
-          <span
-            [ngClass]="{
-              tileSelected: foodItemObj.itemServingType == 'perQuantity'
-            }"
-            (click)="foodItemObj.itemServingType = 'perQuantity'"
-          >
-            <span class="tileLabel header4 countTile">perQuantity</span>
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="col-sm-12 col-md-6 col-lg-5 mt-1">
-      <div class="row">
-        <div class="col-6 col-md-6 col-lg-3 inline">
-          <label class="labelText" for="slab1Price">Slab 1</label>
-          <input
-            type="number"
-            class="form-control"
-            id="slab1Price"
-            [(ngModel)]="foodItemObj.slab1Price"
-            placeholder="Slab 1 price"
-          />
-        </div>
-        <div class="col-6 col-md-6 col-lg-3 inline">
-          <label class="labelText" for="slab2Price">Slab 2</label>
-          <input
-            type="number"
-            class="form-control"
-            id="slab2Price"
-            [(ngModel)]="foodItemObj.slab2Price"
-            placeholder="Slab 2 price"
-          />
-        </div>
-        <div class="col-12 col-md-6 col-lg-3 inline">
-          <label class="labelText" for="slab3Price">Slab 3</label>
-          <input
-            type="number"
-            class="form-control"
-            id="slab3Price"
-            [(ngModel)]="foodItemObj.slab3Price"
-            placeholder="Slab 3 price"
-          />
-        </div>
-        <div class="col-12 col-md-6 col-lg-3 inline">
-          <label class="labelText" for="slab4Price">Slab 4</label>
-          <input
-            type="number"
-            class="form-control"
-            id="slab4Price"
-            [(ngModel)]="foodItemObj.slab4Price"
-            placeholder="Slab 4 price"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row mt-2">
-    <div class="col-12">
-      <label class="labelText" for="itemdescription">Description</label>
-      <textarea
-        class="form-control"
-        id="itemdescription"
-        [(ngModel)]="foodItemObj.itemDescription"
-        placeholder="item description"
-      ></textarea>
+        </mat-error>
+      </mat-form-field>
     </div>
   </div>
 
-  <div class="mt-2">
-    <div
-      class="inline me-2"
-      *ngIf="editType === 'new' && true || btnPolicy?.addFoodItem"
-    >
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        (click)="addNewItem(foodItemObj)"
-      >
+  <div class="row">
+    <!-- ITEM TYPE -->
+    <div class="col-sm-12 col-md-6 col-lg-2">
+      <label class="labelText d-block mb-1">Item Type</label>
+      <div>
+        <button type="button" mat-raised-button class="me-2 mb-1"
+          [color]="f['itemType'].value === 'Veg' ? 'primary' : undefined"
+          [ngClass]="{ 'mat-button-toggle-checked': f['itemType'].value === 'Veg' }" (click)="setItemType('Veg')">
+          Veg
+        </button>
+
+        <button type="button" mat-raised-button class="me-2 mb-1"
+          [color]="f['itemType'].value === 'NonVeg' ? 'primary' : undefined" [ngClass]="{
+            'mat-button-toggle-checked': f['itemType'].value === 'NonVeg'
+          }" (click)="setItemType('NonVeg')">
+          NonVeg
+        </button>
+
+        <button type="button" mat-raised-button class="me-2 mb-1"
+          [color]="f['itemType'].value === 'Jain' ? 'primary' : undefined"
+          [ngClass]="{ 'mat-button-toggle-checked': f['itemType'].value === 'Jain' }" (click)="setItemType('Jain')">
+          Jain
+        </button>
+      </div>
+    </div>
+
+    <!-- SERVING TYPE -->
+    <div class="col-sm-12 col-md-6 col-lg-3 mt-1">
+      <label class="labelText d-block mb-1">Serving Type</label>
+      <div>
+        <button type="button" mat-raised-button class="me-2 mb-1"
+          [color]="f['itemServingType'].value === 'perPerson' ? 'primary' : undefined"
+          (click)="setServingType('perPerson')">
+          perPerson
+        </button>
+        <button type="button" mat-raised-button class="me-2 mb-1"
+          [color]="f['itemServingType'].value === 'perUnit' ? 'primary' : undefined"
+          (click)="setServingType('perUnit')">
+          perUnit
+        </button>
+        <button type="button" mat-raised-button class="me-2 mb-1"
+          [color]="f['itemServingType'].value === 'perQuantity' ? 'primary' : undefined"
+          (click)="setServingType('perQuantity')">
+          perQuantity
+        </button>
+      </div>
+    </div>
+
+    <!-- SLABS -->
+    <div class="col-sm-12 col-md-6 col-lg-5 mt-1">
+      <div class="row">
+        <div class="col-6 col-md-6 col-lg-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Slab 1</mat-label>
+            <input matInput type="number" id="slab1Price" formControlName="slab1Price" placeholder="Slab 1 price" />
+            <mat-error *ngIf="f['slab1Price'].touched && f['slab1Price'].invalid">
+              <span *ngIf="f['slab1Price'].errors?.['required']">
+                Slab 1 price is required.
+              </span>
+              <span *ngIf="f['slab1Price'].errors?.['min']">
+                Must be greater than 0.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-6 col-md-6 col-lg-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Slab 2</mat-label>
+            <input matInput type="number" id="slab2Price" formControlName="slab2Price" placeholder="Slab 2 price" />
+            <mat-error *ngIf="f['slab2Price'].touched && f['slab2Price'].invalid">
+              <span *ngIf="f['slab2Price'].errors?.['min']">
+                Must be ≥ 0.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Slab 3</mat-label>
+            <input matInput type="number" id="slab3Price" formControlName="slab3Price" placeholder="Slab 3 price" />
+            <mat-error *ngIf="f['slab3Price'].touched && f['slab3Price'].invalid">
+              <span *ngIf="f['slab3Price'].errors?.['min']">
+                Must be ≥ 0.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="col-12 col-md-6 col-lg-3">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Slab 4</mat-label>
+            <input matInput type="number" id="slab4Price" formControlName="slab4Price" placeholder="Slab 4 price" />
+            <mat-error *ngIf="f['slab4Price'].touched && f['slab4Price'].invalid">
+              <span *ngIf="f['slab4Price'].errors?.['min']">
+                Must be ≥ 0.
+              </span>
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DESCRIPTION -->
+  <div class="row mt-2">
+    <div class="col-12">
+      <mat-form-field appearance="outline" class="w-100">
+        <mat-label>Description</mat-label>
+        <textarea matInput id="itemdescription" rows="3" formControlName="itemDescription"
+          placeholder="Item description"></textarea>
+        <mat-error *ngIf="f['itemDescription'].touched && f['itemDescription'].invalid">
+          <span *ngIf="f['itemDescription'].errors?.['required']">
+            Description is required.
+          </span>
+          <span *ngIf="f['itemDescription'].errors?.['maxlength']">
+            Maximum 300 characters allowed.
+          </span>
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="mt-2 d-flex gap-2">
+    <div *ngIf="(editType === 'new' && true) || btnPolicy?.addFoodItem">
+      <button type="submit" mat-flat-button color="primary" [disabled]="foodItemForm.invalid">
         Submit
       </button>
     </div>
-    <div
-      class="inline me-2"
-      *ngIf="editType === 'edit' && true || btnPolicy?.editFoodItem"
-    >
-      <button
-        type="button"
-        class="btn btn-primary btn-sm"
-        (click)="updateFoodItem(foodItemObj)"
-      >
+
+    <div *ngIf="(editType === 'edit' && true) || btnPolicy?.editFoodItem">
+      <button type="submit" mat-flat-button color="primary" [disabled]="foodItemForm.invalid">
         Update
       </button>
     </div>
-    <div class="inline me-2">
-      <button
-        type="button"
-        class="btn btn-danger btn-sm"
-        (click)="goToPreviousPage('cancel')"
-      >
+
+    <div>
+      <button type="button" mat-stroked-button color="warn" (click)="goToPreviousPage('cancel')">
         Cancel
       </button>
     </div>
   </div>
-</div>
+</form>
