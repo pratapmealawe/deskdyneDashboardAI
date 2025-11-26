@@ -26,13 +26,6 @@ export class VendorReportComponent {
 
   orders: any[] = [];
 
-  headerConfig: CommonSelectConfig = {
-    mode: 'outlet',
-    showDateRange: true,
-    disableOrg: false,
-    maxDate: new Date(),
-    requireAll: true
-  };
 
   filteredData: any
 
@@ -443,7 +436,7 @@ export class VendorReportComponent {
   openDatewiseModal(): void {
     // Prefer limiting the datepicker between the selected filter range if you have it
     const minDate = this.filteredData?.date_from ? new Date(this.filteredData.date_from) : undefined;
-    const maxDate = this.filteredData?.date_to ? new Date(this.filteredData.date_to) : this.headerConfig.maxDate;
+    const maxDate = this.filteredData?.date_to ? new Date(this.filteredData.date_to) : undefined;
 
     const ref = this.dialog.open<DatewiseOrdersDialogComponent, DatewiseDialogData, DatewiseDialogResult>(
       DatewiseOrdersDialogComponent,

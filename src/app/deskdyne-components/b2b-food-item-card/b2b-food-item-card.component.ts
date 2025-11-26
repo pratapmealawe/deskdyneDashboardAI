@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+} from '@angular/core';
 import { ConfirmationModalService } from '../../confirmation-modal/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
 import { PolicyService } from 'src/service/policy.service';
@@ -10,10 +16,14 @@ import { PolicyService } from 'src/service/policy.service';
 })
 export class B2bFoodItemCardComponent implements OnInit {
   @Input() foodItem: any;
-  @Output() editItem = new EventEmitter();
-  @Output() deleteItem = new EventEmitter();
+  @Output() editItem = new EventEmitter<any>();
+  @Output() deleteItem = new EventEmitter<any>();
+
   imageUrl = environment.imageUrl;
   btnPolicy: any;
+
+  // optional: fallback image
+  fallbackImage = 'assets/Imageunavailable.webp';
 
   constructor(
     private confirmationModalService: ConfirmationModalService,
@@ -24,19 +34,24 @@ export class B2bFoodItemCardComponent implements OnInit {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
   }
 
-  showPopup() {
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = this.fallbackImage;
+  }
+
+  showPopup(): void {
     this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${this.foodItem.itemName}`,
+      `Are you sure you want to delete "${this.foodItem?.itemName}"?`,
       this.deleteFoodItem,
       this
     );
   }
 
-  editFoodItem() {
+  editFoodItem(): void {
     this.editItem.emit(this.foodItem);
   }
 
-  deleteFoodItem() {
+  deleteFoodItem(): void {
     this.deleteItem.emit(this.foodItem);
   }
 }

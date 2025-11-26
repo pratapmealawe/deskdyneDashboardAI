@@ -6,14 +6,14 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 export interface WalletTxnDialogData {
   vendorFirmId: string;
   kind: 'Credit' | 'Debit' | 'Transfer';
-  subsidyBalance?: number; // only for Transfer
+  subsidyBalance?: number; // only for subsidy transfer
+  dailyBalance?: number;   // only for daily transfer
+  transferSource?: 'subsidy' | 'daily'; // NEW
 }
-
 
 export interface WalletTxnDialogResult {
   success: boolean;
 }
-
 
 @Component({
   selector: 'app-wallet-txn-dialog',
@@ -36,10 +36,14 @@ export class WalletTxnDialogComponent {
     });
     // If transferring subsidy, cap by available subsidy
     console.log(data);
-    
+
     if (this.data.kind === 'Transfer') {
-      const maxSubsidy = this.data.subsidyBalance ?? 0;
-      this.form.get('amount')?.addValidators(Validators.max(maxSubsidy));
+      const max =
+        this.data.transferSource === 'daily'
+          ? (this.data.dailyBalance ?? 0)
+          : (this.data.subsidyBalance ?? 0);
+
+      this.form.get('amount')?.addValidators(Validators.max(max));
       this.form.get('amount')?.updateValueAndValidity();
     }
   }
@@ -57,12 +61,21 @@ export class WalletTxnDialogComponent {
 
     try {
       if (this.data.kind === 'Transfer') {
-        // NEW: call the dedicated transfer API
-        await this.api.moveSubsidyToWallet({
-          vendorFirmId: this.data.vendorFirmId,
-          amount: +amt.toFixed(2),
-          remark
-        });
+        if (this.data.transferSource === 'daily') {
+          // NEW: daily → wallet API
+          await this.api.moveDailyToWallet({
+            vendorFirmId: this.data.vendorFirmId,
+            amount: +amt.toFixed(2),
+            remark
+          });
+        } else {
+          // Subsidy → wallet (existing)
+          await this.api.moveSubsidyToWallet({
+            vendorFirmId: this.data.vendorFirmId,
+            amount: +amt.toFixed(2),
+            remark
+          });
+        }
       } else {
         // Existing credit/debit API
         await this.api.creditOrDebitVendorWallet({
@@ -81,4 +94,5 @@ export class WalletTxnDialogComponent {
       this.loading = false;
     }
   }
+
 }

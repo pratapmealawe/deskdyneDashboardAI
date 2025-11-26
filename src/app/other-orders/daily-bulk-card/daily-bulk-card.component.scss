@@ -1,49 +1,178 @@
 @import 'src/styles.scss';
 
-.bi-file-plus{
-    font-size: 23px;
+.daily-card {
+  background-color: #ffffff;
+  border-radius: 6px;
+  padding: 10px 12px;
+  // box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+  
+  .labelText {
+    font-size: 12px;
+    color: #6b7280;
+    margin-bottom: 2px;
+  }
+
+  .labelData {
+    font-size: 13px;
+    font-weight: 500;
+    color: #111827;
+    word-break: break-word;
+  }
+
+  .view {
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: background-color 0.15s ease-in-out;
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    .bi-file-plus {
+      font-size: 20px;
+    }
+  }
 }
-.view{
-    cursor:pointer;
+
+.daily-card--expanded {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 4px rgba(15, 23, 42, 0.12);
+
+  .expanded-header {
+    // border-bottom: 1px solid rgba(148, 163, 184, 0.4);
+    padding-bottom: 4px;
+  }
 }
-.order-sub-header{
-    background-color:$primary-offset-color3;
-    margin-bottom:5px;
-    padding:5px;
-    font-weight:500;
-    cursor:pointer;
+
+.order-sub-header {
+  background-color: $primary-offset-color3;
+  margin: 12px 0 5px;
+  padding: 6px 10px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+
+  .right {
+    margin-left: auto;
+  }
 }
-.less{
-    font-size:16px;
+
+.less {
+  font-size: 16px;
 }
 
 .bilingDiv {
-    background-image: url('~src/assets/images/cartReceipt.png');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    padding: 14px 12px 10px 12px;
+  background-image: url('~src/assets/images/cartReceipt.png');
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  padding: 14px 12px 10px 12px;
+  line-height: 20px;
+
+  .receiptText {
+    font-size: 11px;
+    font-weight: 700;
+    color: #676f8199;
+    position: relative;
+    top: -10px;
     line-height: 20px;
+  }
 
-    .receiptText {
-        font-size: 11px;
-        font-weight: 700;
-        color: #676f8199;
-        position: relative;
-        top: -10px;
-        line-height: 20px;
+  .receipt-parent {
+    display: flex;
+    flex-direction: row;
+
+    .left-div {
+      width: 50%;
     }
 
-    .receipt-parent {
-        display: flex;
-        flex-direction: row;
-    
-        .left-div {
-            width: 50%;
-        }
-    
-        .right-div {
-            width: 50%;
-            text-align: right;
-        }
+    .right-div {
+      width: 50%;
+      text-align: right;
     }
+  }
+}
+
+.orderImage img {
+  max-width: 100%;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+}
+
+/* Status badge */
+.status-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.status-placed {
+  background-color: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-accepted {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+.status-preparing {
+  background-color: #fef9c3;
+  color: #854d0e;
+}
+
+.status-readyForDelivery {
+  background-color: #ede9fe;
+  color: #5b21b6;
+}
+
+.status-delivered {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.status-cancelled {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Chips / tags */
+.chip {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.chip-delivery {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: #f3f4f6;
+  font-size: 11px;
+}
+
+/* Small helpers */
+.bgTopDownpadding1 {
+  padding: 8px 0;
+}
+
+.bgTopDownpadding2 {
+  padding: 10px 0;
 }

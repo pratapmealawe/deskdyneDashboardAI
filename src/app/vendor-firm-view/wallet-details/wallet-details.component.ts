@@ -25,6 +25,7 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
 
   walletBalance: number = 0;
   subsidyBalance: number = 0;
+  dailyBalance: number = 0;
   transactionHistoryList: VendorTransaction[] = [];
 
   // Filters
@@ -52,14 +53,16 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
     this.loadPage(true);
   }
 
-  openTxnDialog(kind: 'Credit' | 'Debit' | 'Transfer') {
+  openTxnDialog(kind: 'Credit' | 'Debit' | 'Transfer', transferSource?: 'subsidy' | 'daily') {
     const ref = this.dialog.open(WalletTxnDialogComponent, {
       width: '420px',
       disableClose: true,
       data: {
         vendorFirmId: this.vendorFirmInfo._id,
         kind,
-        subsidyBalance: kind === 'Transfer' ? this.subsidyBalance : undefined
+        transferSource, // NEW
+        subsidyBalance: transferSource === 'subsidy' ? this.subsidyBalance : undefined,
+        dailyBalance: transferSource === 'daily' ? this.dailyBalance : undefined
       }
     });
 
@@ -67,7 +70,7 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
       if (!res || !res.success) return;
       await this.getWalletBalance();
       this.loadPage(false);
-      const verb = kind === 'Transfer' ? 'Transfer' : `${kind}ed`;
+      const verb = kind === 'Transfer' ? (transferSource === 'daily' ? 'Daily balance transferred' : 'Subsidy transferred') : `${kind}ed`;
       this.snackBar.open(`${verb} successfully`, 'OK', { duration: 2500 });
     });
   }
@@ -101,6 +104,8 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
       this.walletBalance = Number.isFinite(bal) ? +bal.toFixed(2) : 0;
       const subBal = Number(wallet?.subsidy_balance ?? 0);
       this.subsidyBalance = Number.isFinite(subBal) ? +subBal.toFixed(2) : 0;
+      const dailyBal = Number(wallet?.daily_balance ?? 0);
+      this.dailyBalance = Number.isFinite(dailyBal) ? +dailyBal.toFixed(2) : 0;
     } catch (error) {
       console.log('error while fetching wallet');
     }

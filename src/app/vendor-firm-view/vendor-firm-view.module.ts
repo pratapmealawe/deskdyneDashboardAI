@@ -21,6 +21,7 @@ import { MatInputModule } from '@angular/material/input';
 import { VendorReportModule } from "../vendor-report/vendor-report.module";
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { VendorDailyReportModule } from "../vendor-daily-report/vendor-daily-report.module";
 
 @NgModule({
   declarations: [
@@ -47,8 +48,9 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatInputModule,
     MatIconModule,
     MatTooltipModule,
-    VendorReportModule
-  ],
+    VendorReportModule,
+    VendorDailyReportModule
+],
   exports: [VendorFirmViewComponent]
 })
 export class VendorFirmViewModule { }
