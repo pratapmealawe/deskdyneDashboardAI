@@ -14,20 +14,54 @@
         <div *ngIf="selectedSource === 'mealawe'" class="mt-2">
             <mat-form-field appearance="outline" style="min-width: 100px;">
                 <mat-label>Select Cluster</mat-label>
-                <mat-select [(ngModel)]="data.selectedClusterId" (selectionChange)="onClusterChange(data)" required>
+                <mat-select [(ngModel)]="selectedClusterId" (selectionChange)="onClusterChange(data)" required>
                     <mat-option *ngFor="let cluster of availableClusters" [value]="cluster.clusterId">
                         {{ cluster.clusterName | uppercase }}
                     </mat-option>
                 </mat-select>
-                <mat-error *ngIf="!data.selectedClusterId">
+                <mat-error *ngIf="!selectedClusterId">
                     Cluster selection is required
                 </mat-error>
             </mat-form-field>
         </div>
+       
+        <div *ngIf="selectedSource === 'otherCafe' ||  selectedSource === 'otherOrgCafe'" class="mt-2">
+            <mat-form-field appearance="outline" style="min-width: 100px;" *ngIf="selectedSource === 'otherOrgCafe'">
+                <mat-label>Select Organization</mat-label>
+                <mat-select [(ngModel)]="selectedOrg" (ngModelChange)="getCafeteriaListByOrg()">
+                    <mat-option *ngFor="let org of orgList" [value]="org">
+                        {{ org.organization_name }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="!selectedOrg">
+                    Organization selection is required
+                </mat-error>
+            </mat-form-field>
+            <mat-form-field appearance="outline" style="min-width: 100px;">
+                <mat-label>Select Cafeteria</mat-label>
+                <mat-select [(ngModel)]="selectedCafeteria" (ngModelChange)="getMealAweOutletByCafeteria()">
+                    <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe">
+                        {{ cafe.cafeteria_name }}
+                    </mat-option>
+                </mat-select>
+                <mat-error *ngIf="!selectedCafeteria">
+                    Cafeteria selection is required
+                </mat-error>
+            </mat-form-field>
+            <div *ngIf="selectedCafeteria && weekMenuList.length === 0"
+                class="alert alert-warning p-2 mt-2 d-flex justify-content-between align-items-center">
+                <span>
+                    This cafeteria has no weekly menu.<br>
+                    Please select another cafeteria or change the create type.
+                </span>
+                <button mat-stroked-button color="primary" (click)="resetCreateType()">
+                    Reset
+                </button>
+            </div>
+        </div>
     </div>
-    <div *ngIf="weekMenuList.length">
+    <div *ngIf="weekMenuList.length || selectedSource === 'custom'" class="mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Weekly Menu Details</h6>
             <button mat-stroked-button color="primary" (click)="addNewWeek()">
                 + Add Week
             </button>
