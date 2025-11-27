@@ -1485,9 +1485,11 @@ export class MlApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.setVerifiedMarketPlaceItemReview;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, { verified });
   }
+
   getKitchenLedgerByFirmAndTypeAndDate(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getKitchenLedgerByFirmAndTypeAndDate, body);
   }
+
   getKitchenLedgerBalance(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getKitchenLedgerBalance;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
@@ -1505,5 +1507,10 @@ export class MlApiMainService {
   updateConfigVideo(id: string, data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateConfigVideo;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
+  }
+
+  getWeeklyMenuByCategory(category: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getWeeklyMenuByCategory;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${category}`, method: urlObj.method });
   }
 }

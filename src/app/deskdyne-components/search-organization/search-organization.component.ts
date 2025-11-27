@@ -19,7 +19,7 @@ export class SearchOrganizationComponent implements OnInit {
   selectedOrg: any = {};
   btnPolicy: any;
   searchControl = new FormControl('');
-  originalOrgList:any // ma 
+  originalOrgList: any // ma 
 
   constructor(
     private apiMainService: ApiMainService,
@@ -37,18 +37,19 @@ export class SearchOrganizationComponent implements OnInit {
       this.applyLocalFilter(value);
     })
   }
-applyLocalFilter(value: any) {
-  if (!value) {
-    // restore full list
-    this.orgList = [...this.originalOrgList];
-    return;
+
+  applyLocalFilter(value: any) {
+    if (!value) {
+      // restore full list
+      this.orgList = [...this.originalOrgList];
+      return;
+    }
+    const lower = value.toLowerCase();
+    // filter from ORIGINAL data
+    this.orgList = this.originalOrgList.filter((d: any) =>
+      d.organization_name?.toLowerCase().includes(lower)
+    );
   }
-  const lower = value.toLowerCase();
-  // filter from ORIGINAL data
-  this.orgList = this.originalOrgList.filter((d: any) =>
-    d.organization_name?.toLowerCase().includes(lower)
-  );
-}
 
 
   async searchOrg(searchValue?: any) {

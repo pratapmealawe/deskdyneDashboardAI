@@ -1,4 +1,5 @@
-import { AfterViewInit, ChangeDetectorRef, Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { AfterViewInit, Component, Input, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ToasterService } from 'src/app/toaster/toaster.service';
@@ -6,7 +7,7 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { AddEditPackageCategoryComponent } from './add-edit-package-category/add-edit-package-category.component';
 import { AddEditPackageMealaweOutletComponent } from './add-edit-package-mealawe-outlet/add-edit-package-mealawe-outlet.component';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
+import { AddEditPackageWeeklyMenuComponent } from './add-edit-package-weekly-menu/add-edit-package-weekly-menu.component';
 
 @Component({
   selector: 'app-mealawe-outlet',
@@ -14,6 +15,8 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
   styleUrls: ['./mealawe-outlet.component.scss']
 })
 export class MealaweOutletComponent implements AfterViewInit {
+  @ViewChild('categoryDialog') categoryDialogTemplate!: TemplateRef<any>;
+  @ViewChild('editCategoryDialog') editCategoryDialogTemplate!: TemplateRef<any>;
   @Input() orgObj: any;
   serverUrl = environment.mlImageUrl;
   serverDDUrl = environment.imageUrl;
@@ -35,9 +38,6 @@ export class MealaweOutletComponent implements AfterViewInit {
     { name: "CGST_PERCENTAGE", label: "CGST %", value: 0 },
     { name: "SGST_PERCENTAGE", label: "SGS %", value: 0 }
   ];
-
-  @ViewChild('categoryDialog') categoryDialogTemplate!: TemplateRef<any>;
-  @ViewChild('editCategoryDialog') editCategoryDialogTemplate!: TemplateRef<any>;
   constructor(
     private apiMainService: ApiMainService,
     private modalService: MatDialog,
@@ -170,7 +170,6 @@ export class MealaweOutletComponent implements AfterViewInit {
 
   async updateCategory(cat: any) {
     if (!cat?._id) return this.toaster.error("Invalid category");
-
     try {
       const fd = new FormData();
       fd.append("cafeteriaId", this.cafeteriaId);
@@ -284,6 +283,31 @@ export class MealaweOutletComponent implements AfterViewInit {
       data: { category, serverDDUrl: this.serverDDUrl },
       autoFocus: true,
       disableClose: false
+    });
+  }
+
+  openWeeklyMenu(category: any) {
+    const dialogData: any = {
+      category,
+      cafeteriaList: this.cafeteriaList,
+      selectedCafeteria: this.selectedCafeteria
+    };
+    const dialogRef = this.modalService.open(AddEditPackageWeeklyMenuComponent, {
+      width: '1200px',
+      data: dialogData,
+      autoFocus: true,
+      disableClose: false
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result && result.action === 'save') {
+        // category.customWeeklyMenu = result.customWeeklyMenu;
+        // category.selectedClusterId = result.selectedClusterId;
+        // category.selectedCafeId = result.selectedCafeId;
+        // category.selectedOrgId = result.selectedOrgId;
+        category.weeklyMenu = result.data;
+        this.updateCategory(category);
+      }
     });
   }
 

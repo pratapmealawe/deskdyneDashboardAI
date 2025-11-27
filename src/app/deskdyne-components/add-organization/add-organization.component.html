@@ -1,4 +1,4 @@
-<div class="bgpadding1 parentDivFixedBar">
+<div class=" parentDivFixedBar">
   <div class="d-flex gap-3">
     <button mat-flat-button (click)="goBack()"> <mat-icon>arrow_back</mat-icon>Back</button>
     <div class="heading">Add New Organization
@@ -209,7 +209,7 @@
 
                   </mat-expansion-panel-header>
                   <div class="row">
-                    <div class="col-12 col-md-6 col-lg-1 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-1 ">
                       <div class="form-group">
                         <label class="field-label">POC Id<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -228,7 +228,7 @@
                   *POC Id is Required
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">POC Name<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -247,7 +247,7 @@
                   *POC Name is Required
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">POC Ph No<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -266,7 +266,7 @@
                   *POC Phone No is Required
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-3 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-3 ">
                       <div class="form-group">
                         <label class="field-label">POC Email<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -294,7 +294,7 @@
                   *Enter a Valid Email
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">POC Location<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -314,7 +314,7 @@
                 </div> -->
                       <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-1 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-1 ">
                       <div class="form-group">
                         <label class="field-label">POC Role<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -454,7 +454,7 @@
           This POC cannot be deleted as it already exists in the cafeteria list
         </div>
         <div class="modal-footer">
-          <div class="inline bgpadding1">
+          <div class="inline ">
             <button type="button" class="btn btn-primary" (click)="modal.close('Cancel')">
               Close
             </button>
@@ -617,7 +617,7 @@
                   *Landmark is required
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">Cafeteria Id<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -637,7 +637,7 @@
                   *Cafeteria Id is required
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">Aceess Code<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -663,7 +663,7 @@
                   </div>
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">Address Line 1<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -682,7 +682,7 @@
                   *Address Line 1 is required
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">Address Line 2<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -701,11 +701,11 @@
                   *Address Line 2 is required
                 </div> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
-                      <div class="form-group">
+                    <div class="col-12 col-md-6 col-lg-2 ">
+                      <!-- <div class="form-group">
                         <label class="field-label">AppMenu Type<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
-                          <mat-select>
+                          <mat-select formControlName="">
                             <mat-option disabled selected value>-- select app Menu Type--</mat-option>
                             <mat-option [value]="item" *ngFor="let item of appmenutypelist">
                               {{ item }}
@@ -715,7 +715,7 @@
                             address2
                           </mat-error>
                         </mat-form-field>
-                      </div>
+                      </div> -->
                       <!-- <div class="labelText">AppMenu Type</div>
                 <select class="custom-select" name="menuType" formControlName="appMenu_type">
                   <option disabled selected value>
@@ -726,7 +726,7 @@
                   </option>
                 </select> -->
                     </div>
-                    <div class="col-12 col-md-2 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-2 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">Subsidy Amount<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -740,7 +740,7 @@
                 <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" /> -->
                     </div>
 
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1">
+                    <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">Cafeteria GSTIN<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -753,7 +753,7 @@
                       <!-- <div class="labelText">Cafeteria GSTIN</div>
                 <input type="text" class="form-control" placeholder="GSTIN" formControlName="cafeteria_gstin" /> -->
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 bgpadding1 d-flex align-items-end">
+                    <div class="col-12 col-md-6 col-lg-2  d-flex align-items-end">
                       <mat-checkbox id="copyGstin"
                         [checked]="form.controls.cafeteriaList.at(i).controls['cafeteria_gstin'].value" color="primary"
                         (change)="getOrgGstin($event,i)">Same as organization’s GSTIN</mat-checkbox>
@@ -982,7 +982,7 @@
       <app-set-geolocation class="padding-bottom" (sendLocation)="updateLocation($event)"></app-set-geolocation>
     </div>
     <div class="modal-footer">
-      <div class="inline bgpadding1">
+      <div class="inline ">
         <button type="button" class="btn btn-primary" (click)="modal.close('add')">
           Add
         </button>
@@ -1031,7 +1031,7 @@
       </ul>
     </div>
     <div class="modal-footer">
-      <div class="inline bgpadding1">
+      <div class="inline ">
         <button type="button" class="btn btn-primary" (click)="modal.close('add')" *ngIf="pocSelected">
           Add
         </button>

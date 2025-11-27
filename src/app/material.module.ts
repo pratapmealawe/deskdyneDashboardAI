@@ -14,16 +14,17 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import {MatRadioModule} from '@angular/material/radio';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+
 const materialModules = [
   MatButtonModule,
   MatIconModule,
@@ -52,11 +53,13 @@ const materialModules = [
   FormsModule,
   ReactiveFormsModule,
   MatSnackBarModule,
-  MatDividerModule
+  MatDividerModule,
+  MatRadioModule
 ];
 
 @NgModule({
   imports: [...materialModules],
   exports: [...materialModules]
 })
+
 export class MaterialModule { }
