@@ -14,6 +14,7 @@ import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
 import { HeaderComponent } from './header/header.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MaterialModule } from './material.module';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     ConfirmationModalComponent,
     ImageCropperComponent,
     HeaderComponent,
-    ImageCropperComponent,
+    ImageCropperComponent
   ],
   imports: [
     BrowserModule,

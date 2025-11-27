@@ -1,5 +1,17 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.rows{
+    @include mixin.card-design(color.$primary-offset-color1);
+}
+
 .uploadedImage{
     width: 100px;
     height: 100px;
     // cursor: pointer;
+}
+
+.card-header {
+  border-bottom: 1px solid #f1f1f1;
+  padding-bottom: 12px;
 }

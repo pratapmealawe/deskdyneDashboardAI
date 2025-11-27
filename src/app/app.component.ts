@@ -33,7 +33,6 @@ export class AppComponent {
           this.isShowHeader =
             this.currentRoute.startsWith('/login') ||
             this.currentRoute.startsWith('/guest');
-          // console.log(this.isShowHeader);
         } else if (event instanceof NavigationError) {
           console.error('Navigation Error:', event.error);
         }

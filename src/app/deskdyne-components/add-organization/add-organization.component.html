@@ -1,13 +1,14 @@
 <div class="bgpadding1 parentDivFixedBar">
-  <div class="left_arrow" (click)="goBack()" style="cursor: pointer">
+  <!-- <div class="left_arrow" (click)="goBack()" style="cursor: pointer">
     <i class="bi bi-arrow-left"></i>
     Back
-  </div>
+  </div> -->
+  <button mat-flat-button (click)="goBack()"> <mat-icon>arrow_back</mat-icon>Back</button>
   <div [formGroup]="form">
     <div class="row">
       <div class="col-12 col-md-6 col-lg-3">
-        <div class="labelText">Org Name</div>
-        <input type="text" class="form-control" placeholder="Org Name" formControlName="organization_name" />
+        <mat-label class="labelText">Org Name</mat-label>
+        <input type="text" matInput class="form-control" placeholder="Org Name" formControlName="organization_name" />
         <div class="error-text" *ngIf="form.controls.organization_name.errors?.required && showError">
           *Org Name is Required
         </div>
@@ -224,7 +225,8 @@
             </div>
           </div>
         </ng-container>
-        <span class="addBtn me-2" (click)="add_poc_details()">Add POC</span>
+        <!-- <span class="addBtn me-2" (click)="add_poc_details()">Add POC</span> -->
+         <button mat-raised-button (click)="add_poc_details()" color="primary">Add POC </button>
       </div>
 
 
@@ -397,17 +399,6 @@
                   *Address Line 2 is required
                 </div>
               </div>
-              <div class="col-12 col-md-6 col-lg-2 bgpadding1">
-                <div class="labelText">AppMenu Type</div>
-                <select class="custom-select" name="menuType" formControlName="appMenu_type">
-                  <option disabled selected value>
-                    -- select app Menu Type--
-                  </option>
-                  <option [value]="item" *ngFor="let item of appmenutypelist">
-                    {{ item }}
-                  </option>
-                </select>
-              </div>
               <div class="col-12 col-md-2 col-lg-2 bgpadding1">
                 <label class="labelText form-label mb-0">Subsidy Amount</label>
                 <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
@@ -532,7 +523,9 @@
             </div>
           </div>
         </ng-container>
-        <span class="addBtn me-2" (click)="add_cafeteria()">Add Cafeteria</span>
+        <!-- <span class="addBtn me-2" (click)="add_cafeteria()">Add Cafeteria</span> -->
+         <button mat-raised-button (click)="add_cafeteria()" color="primary">Add Cafeteria </button>
+
       </div>
 
       <div class="row mt-1 bottomFixedBar">

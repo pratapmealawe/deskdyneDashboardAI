@@ -17,6 +17,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { OutletVendorComponent } from './outlet-vendor/outlet-vendor.component';
 import { OutletOrdersModule } from './outlet-orders/outlet-orders.module';
 import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
+import { MaterialModule } from 'src/app/material.module';
 
 @NgModule({
   declarations: [
@@ -34,10 +35,7 @@ import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
     FormsModule,
     ReactiveFormsModule,
     CustomPipeModule,
-    MatSelectModule,
-    MatInputModule,
-    MatChipsModule,
-    MatFormFieldModule,
+     MaterialModule,
     OutletOrdersModule
   ],
   exports: [OutletViewComponent, ComboPopupComponent],

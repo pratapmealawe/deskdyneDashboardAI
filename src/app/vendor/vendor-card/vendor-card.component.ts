@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -12,10 +13,23 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
   styleUrls: ['vendor-card.component.scss'],
 })
 export class VendorCardComponent implements OnInit {
-  @Input() vendorFirm: any;
+  private _vendorFirm :any[]=[];
+  @Input() 
+  get vendorFirm(): any[]{
+    return this._vendorFirm;
+  }
+  set vendorFirm(value:any[]){
+    this._vendorFirm= value || [];
+    this.refreshData()
+  }
   @Output() deleted = new EventEmitter();
   btnPolicy: any;
   vendorInfo: any;
+  pageIndex: number = 0;
+  pageSize: number = 5;
+
+  pagedVendorFirm: any[] = [];
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private router: Router,
@@ -24,9 +38,15 @@ export class VendorCardComponent implements OnInit {
     private policyService: PolicyService,
     private confirmationModalService: ConfirmationModalService
   ) { }
+  refreshData(){
+    this.ngOnInit()
 
+  }
   ngOnInit(): void {
+    console.log(this.vendorFirm,"vendorFirm");
+    
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+     this.updatePage(); 
   }
 
   editVendor(vendor: any) {
@@ -52,4 +72,17 @@ export class VendorCardComponent implements OnInit {
       this
     );
   }
+
+  onPageChange(event: any) {
+  this.pageIndex = event.pageIndex;
+  this.pageSize = event.pageSize;
+  this.updatePage();
+}
+
+updatePage() {
+  if (!this.vendorFirm) return;
+  const start = this.pageIndex * this.pageSize;
+  const end = start + this.pageSize;
+  this.pagedVendorFirm = this.vendorFirm.slice(start, end);
+}
 }

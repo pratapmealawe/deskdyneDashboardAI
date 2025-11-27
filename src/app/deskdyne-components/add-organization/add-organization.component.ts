@@ -30,7 +30,6 @@ export class AddOrganizationComponent implements OnInit {
   cafeLocation: any;
   modalAdmin: any;
   cafeteriaIndex: any;
-  appmenutypelist = [1, 2];
   btnPolicy: any;
   orgSubsidy: number = 0;
   domainList: string[] = [];
@@ -123,7 +122,6 @@ export class AddOrganizationComponent implements OnInit {
       clusterName: [''],
       address1: ['', Validators.required],
       address2: ['', Validators.required],
-      appMenu_type: [Number(1), Validators.required],
       landmark: ['', Validators.required],
       location: ['', Validators.required],
       subsidy: [0],
@@ -300,7 +298,6 @@ export class AddOrganizationComponent implements OnInit {
         cafeteria_gstin: cafe.cafeteria_gstin,
         address1: cafe.address1,
         address2: cafe.address2 ? cafe.address2 : 1,
-        appMenu_type: cafe.appMenu_type,
         landmark: cafe.landmark,
         location: cafe.location,
         clusterId: clusterdetails.clusterId,
