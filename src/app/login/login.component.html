@@ -1,4 +1,4 @@
-<div class="row w-100 mx-0 auth-page">
+<!-- <div class="row w-100 mx-0 auth-page">
     <div class="col-md-8 col-xl-6 card-wrapper">
         <div class="card">
             <div class="row">
@@ -38,4 +38,65 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+<div class="row mx-0 100vh">
+    <div class="col-12 col-lg-8 col-md-8 px-0">
+        <div class="login-img">
+            <div class="logo">
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-lg-4 col-md-4 col-sm-12 forms">
+        <div class="login-form" *ngIf="!showOTP">
+            <div class="login-title">Welcome to <span class="fw-bold">DESKDYNE!</span></div>
+            <p class="text-muted mb-0">Please login to your account.</p>
+            <form>
+                <!-- <div class="row p-3">
+                    <label for="adminID" class="form-label ps-0">Admin/User ID </label>
+                    <input type="text" name="adminID" [(ngModel)]="adminId" placeholder="Enter your ID here"
+                        class="form-control shadow-none mb-3">
+                    <button type="submit" [disabled]="!adminId" class="btn login-btn" (click)="login()">Login</button>
+                </div> -->
+                <div class="row p-3">
+
+                    <mat-form-field appearance="outline" class="w-100 px-0">
+                        <mat-label>Admin/User ID</mat-label>
+                        <input matInput type="text" name="adminID" [(ngModel)]="adminId"
+                            placeholder="Enter your ID here">
+                    </mat-form-field>
+
+                    <button type="submit" [disabled]="!adminId" class="btn login-btn" (click)="login()">
+                        Login
+                    </button>
+
+                </div>
+            </form>
+        </div>
+        <div class="otp-form" *ngIf="showOTP">
+            <div class="otp-container">
+
+                <button type="button" class="btn btn-sm btn-outline-secondary back-btn" (click)="backToLogin()">
+                    ← Back to Login
+                </button>
+
+                <h4 class="otp-title mb-2">Enter OTP</h4>
+
+                <p class="otp-subtitle text-muted mb-3">
+                    Check your registered mobile for a 6-digit code
+                </p>
+
+                <div class="otp-inputs">
+                    <input type="text" maxlength="1" class="otp-box" *ngFor="let box of otpBoxes; let i = index"
+                        [(ngModel)]="otp[i]" (input)="onInput($event, i)" (keydown)="onKeyDown($event, i)"
+                        (paste)="onPaste($event)" />
+                </div>
+
+                <button class="btn verify-btn" [disabled]="!isOTPComplete()" (click)="verifyOTP()">
+                    Verify
+                </button>
+                <!-- <div class="resend-text" [class.active]="timer === 0" (click)="timer === 0 && resendOTP()">
+                {{ timer === 0 ? 'Resend OTP' : ('Resend in ' + timer + 's') }}
+            </div> -->
+            </div>
+        </div>
+    </div>
