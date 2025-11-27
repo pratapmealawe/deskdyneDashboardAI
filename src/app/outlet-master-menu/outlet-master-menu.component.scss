@@ -1,3 +1,5 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
 @import 'src/styles.scss';
 
 .uploadInput {
@@ -61,4 +63,11 @@
     font-size: 19px;
     margin: 2px;
     background: $primary-color1;
+}
+.cardDesign{
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
+.search-input,.filter-field {
+  @include mixin.mat-form-field-responsive(); 
 }

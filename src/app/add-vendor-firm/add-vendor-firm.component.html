@@ -1,9 +1,9 @@
-<div class="bgpadding2">
+<div class="container-fluid">
     <div class="d-flex mb-4 align-items-center gap-3">
         <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
         <div class="heading">Add Vendor Firm</div>
     </div>
-    <div [formGroup]="form" class="mt-2">
+    <div [formGroup]="form" class="mt-2 pe-4 ps-4">
         <div class="row">
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="form-group">
@@ -54,7 +54,6 @@
                     <div class="d-flex align-items-center justify-content-between">
                         <h5>Bank details</h5>
                     </div>
-                    <hr>
                     <div class="col-md-3">
                         <div class="form-group">
                             <label class="field-label">Account No<span class="required-input"> * </span>
@@ -444,7 +443,7 @@
             </div>
             <div class="outlet-selected" *ngIf="selectedOutletsList.length !== 0 ">
                 <div class="d-flex" style="padding: 30px 4px;" *ngFor="let outlet of selectedOutletsList; index as i">
-                    <div class="d-flex">
+                    <div class="d-flex" style="width: 78%;">
                         <div class="col-lg-3">
                             <div class="labelText">Outlet Name</div>
                             <div class="labelData">{{ outlet.outletName }}</div>
@@ -478,21 +477,20 @@
                 </div>
             </div>
         </div>
-        <div class="d-flex align-items-center">
+        <div class="d-flex align-items-center justify-content-end">
             <!-- <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
                 Add Outlet
             </div> -->
-            <div *ngIf="isVendorEdit" class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
+            <button *ngIf="isVendorEdit"  mat-raised-button color ="primary" (click)="addComplience()">Compliance</button>
+            <!-- <div *ngIf="isVendorEdit" class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
                 Compliance
-            </div>
-            <div *ngIf="isVendorEdit" class="d-flex align-items-center mt-2 ml-2">
-                <button type="button" class="btn btn-primary btn-sm" (click)="fileInput.click()">
+            </div> -->
+            <div *ngIf="isVendorEdit" class="d-flex align-items-center ml-2">
+                <button mat-raised-button color="primary" type="button" class="btn btn-primary btn-sm" (click)="fileInput.click()">
                     {{ 'Account Enrollment Form' }}
                 </button>
-
                 <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
                     style="display: none;" />
-
                 <div *ngIf="form.controls['accountEnrollment'].value" class="text-success mt-2 ml-2">
                     {{ form.controls['accountEnrollment'].value }} <i class="bi bi-x-lg ms-1"
                         (click)="closeAccountEnroll()"></i>
@@ -539,14 +537,12 @@
                 </div>
             </div>
         </div> -->
-
-        <!-- <div class="btn btn-primary btn-sm mt-1" (click)="submit('update')"
+    
+        <button mat-raised-button color="primary"  (click)="submit('update')"
             *ngIf="showUpdate && true || btnPolicy?.editVendor">
             Update
-        </div> -->
-        <button mat-raised-button color="primary" (click)="submit('update')"
-            *ngIf="!showUpdate || btnPolicy?.addVendor">Submit</button>
-        <button *ngIf="isVendorEdit" mat-raised-button (click)="submit()">Submit</button>
+        </button>
+        <button mat-raised-button color="primary" *ngIf="!showUpdate && !btnPolicy?.editVendor" (click)="submit()">Submit</button>
     </div>
     <ng-template #outletModal let-modal>
         <div class="modal-header">

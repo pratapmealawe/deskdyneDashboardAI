@@ -9,7 +9,7 @@
 
   </div>
 
-  <div [formGroup]="form" class="container-fluid">
+  <div [formGroup]="form" class="container-fluid mt-3">
     <div class="row">
       <div class="row">
         <div class="col">
@@ -29,9 +29,19 @@
         </div> -->
         </div>
         <div class="col" *ngIf="showUpdate">
-          <label class="labelText form-label mb-0">Subsidy Amount(In Percent %)</label>
+            <div class="form-group">
+            <label class="field-label">Subsidy Amount(In Percent %)<span class="required-input"> * </span></label>
+            <mat-form-field appearance="outline" class="w-100">
+              <input matInput placeholder="Subsidy Amount" formControlName="subsidy" />
+              <mat-error *ngIf="hasError(form, 'subsidy', 'required')">
+                subsidy is required
+              </mat-error>
+            </mat-form-field>
+               <button mat-raised-button color="primary" style="width:fit-content" (click)="updateOrglevelSubsidy()">Update Subsidy</button>
+          </div>
+          <!-- <label class="labelText form-label mb-0">Subsidy Amount(In Percent %)</label>
           <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
-          <button class="btn btn-primary mt-2" (click)="updateOrglevelSubsidy()">Update Subsidy</button>
+          <button class="btn btn-primary mt-2" (click)="updateOrglevelSubsidy()">Update Subsidy</button> -->
         </div>
         <div class="col">
           <div class="form-group">
@@ -942,7 +952,7 @@
           </button>
           <button mat-raised-button color="primary" class="me-2" (click)="addOrg()"
             *ngIf="(!showUpdate && true) || btnPolicy?.addOrganization">
-            Add
+            Add Organization
           </button>
 
           <!-- <button type="button" class="btn btn-primary btn-sm me-2" (click)="addOrg()"
