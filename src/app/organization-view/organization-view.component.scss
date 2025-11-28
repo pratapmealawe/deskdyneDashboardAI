@@ -3,7 +3,8 @@
 @use '/src/styles.scss' as color;
 
 ::ng-deep mat-tab-header {
-    margin-bottom: 37px;
+    // margin-bottom: 37px;
+        border-bottom: 1px solid #d0d0d0;
 }
 
 .custom-tabs {

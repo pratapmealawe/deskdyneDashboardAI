@@ -82,7 +82,7 @@
 
 @mixin vertical-line(){
   border-left-width: thick;
-  border-left-style: groove;
+  border-left-style: solid;
   border-left-color: var(--color-primary);
   border-radius: 6px;
   padding-left: 12px;

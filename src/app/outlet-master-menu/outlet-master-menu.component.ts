@@ -467,6 +467,7 @@ export class OutletMasterMenuComponent implements OnInit {
           } else if (result === 'update') {
             this.updateMenu(this.menuId);
           }
+          this.resetValues();
         },
         (reason) => {
           console.log(`Model Dismissed`);
@@ -610,5 +611,9 @@ export class OutletMasterMenuComponent implements OnInit {
     this.form.patchValue({ itemContains: itemContains });
     console.log(this.form.value);
 
+  }
+  // 
+  goBack(){
+    
   }
 }
