@@ -1,9 +1,114 @@
+<div class="container-fluid">
+  <div class="row align-items-center mb-4">
+    <div class="col-md-6 d-flex align-items-center gap-2">
+      <button mat-flat-button (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
+      </button>
+      <div>Menu Items</div>
+    </div>
+    <div class="col-md-6 d-flex justify-content-end align-items-center gap-3 flex-wrap">
+      <mat-form-field appearance="outline" class="search-input">
+        <mat-icon matPrefix>search</mat-icon>
+        <input matInput placeholder="Search items..." />
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-icon matPrefix>filter_list</mat-icon>
+        <mat-select placeholder="All Categories">
+          <mat-option value="all">All Categories</mat-option>
+          <mat-option value="mrp">MRP</mat-option>
+          <mat-option value="daily">Daily</mat-option>
+          <mat-option value="thalis">Thalis</mat-option>
+          <mat-option value="fastfood">Fast Food</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <button mat-raised-button color="primary" (click)="open()">
+        Add New Item
+      </button>
+    </div>
+  </div>
+</div>
+
+
 <div class="bgsidepadding1">
-  <!-- <div class="labelText">Add Menu Items</div> -->
+  <!-- <div class="labelText">Add Menu Items</div>
   <div class="ms-2 addBtn inline" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
     +
-  </div>
+  </div> -->
   <div class="mt-2">
+    <div class="container-fluid" *ngFor="let group of groupedMenuList">
+
+      <!-- <h2 class="text-xl font-bold mb-4">{{ group.category }}</h2> -->
+       <div class="text-xl">{{group.category}} </div>
+
+      <mat-card class="p-3 mb-3 shadow-sm cardDesign" *ngFor="let item of group.items; let i = index">
+        <div class="row align-items-center" >
+
+          <!-- Product Image -->
+          <div class="col-md-2 w-auto d-none d-md-block">
+            <img class="img-fluid rounded" [src]="displayImgUrl + item.imageUrl" alt="product" />
+          </div>
+
+          <!-- Details Grid -->
+          <div class="col-md-10">
+            <div class="row g-3">
+
+              <!-- Item Details -->
+              <div class="col-sm-6 col-md-3">
+                <small class="text-muted d-block">Item Name</small>
+                <div class="d-flex align-items-center gap-2">
+                  <div >
+                    <!-- Veg Icon -->
+                    <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
+                    <!-- Non-Veg Icon -->
+                    <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
+
+                  </div>
+                  <span class="fw-semibold">{{ item.itemName }}</span>
+                </div>
+
+                <small class="text-muted d-block mt-2">Category</small>
+                <span class="fw-medium">{{ item.category }}</span>
+
+                <small class="text-muted d-block mt-2">Precedence</small>
+                <span class="fw-medium">{{ item.precedence }}</span>
+              </div>
+
+              <!-- Price & Description -->
+              <div class="col-sm-6 col-md-3">
+                <small class="text-muted d-block">Price</small>
+                <span class="fw-semibold">{{ item.price }}</span>
+
+                <small class="text-muted d-block mt-2">Description</small>
+                <span class="fw-medium">{{ item.description }}</span>
+              </div>
+
+              <!-- Subsidy -->
+              <div class="col-sm-6 col-md-3">
+                <small class="text-muted d-block">Subsidy Amt</small>
+                <span class="fw-semibold">{{ item.subsidy }}</span>
+              </div>
+
+              <!-- Actions -->
+              <div class="col-sm-6 col-md-3 d-flex align-items-center gap-3">
+                <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu" (click)="showPopup(item, i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+
+                <mat-checkbox checked [checked]="item.isActive" color="primary"
+                  (change)="showPopupForItemActivation(item, $event)">Active</mat-checkbox>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </mat-card>
+
+    </div>
 
     <div *ngFor="let group of groupedMenuList">
       <!-- Category Heading -->
