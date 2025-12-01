@@ -32,7 +32,19 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
         }
       ],
     },
-    { name: 'Order Report', path: 'vendorFirmReport' },
+    { name: 'Order Report', 
+      path: 'orderReport',
+      subTabs: [
+        {
+          name: 'Outlet Report',
+          path: 'vendorFirmReport'
+        },
+        {
+          name: 'Daily Report',
+          path: 'vendorFirmDailyReport'
+        }
+      ],
+     },
   ];
 
   ngOnChanges(changes: SimpleChanges): void {

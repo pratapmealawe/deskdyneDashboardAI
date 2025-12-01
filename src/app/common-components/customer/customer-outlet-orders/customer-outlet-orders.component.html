@@ -1,42 +1,185 @@
-<div>
-    <div *ngIf="filteredList.length > 0">
-        <div class="topDiv row">
-            <div class="col-lg-4">
-                <div class="navigationBtns">
-                    <button class="btn btn-dark btn-sm me-4" (click)="previous(page)"
-                        [disabled]="page === 1">Previous</button>
-                    <span class="labelText">Showing {{pageFirstEntry}} to {{pageLastEntry}}</span>
-                    <button class="btn btn-dark btn-sm ms-4" (click)="next(page)"
-                        [disabled]="paginationOver && page === lastPage">Next</button>
-                </div>
-            </div>
-            <div class="col-lg-4">
+<div class="customer-outlet-orders" *ngIf="userDetails">
 
-                <div class="totalDiv">
-                    <div class="leftDiv">
-                        <span>Total Items: </span>
-                        <span>{{ filteredList.length}} </span>
-                    </div>
-                    <div class="verticalHr"></div>
-                    <div class="rightDiv">
-                        <span>&#8377; {{totalAmount}}</span>
-                    </div>
+    <!-- Filters + totals -->
+    <mat-card class="mb-3 p-3 filter-card">
+        <div class="row g-3 align-items-end">
+            <!-- Date range -->
+            <div class="col-12 col-md-4">
+                <form [formGroup]="dateForm">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Date range</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input matStartDate placeholder="From" formControlName="dateFrom" />
+                            <input matEndDate placeholder="To" formControlName="dateTo" />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                </form>
+            </div>
+
+            <!-- Apply button for date range -->
+            <div class="col-6 col-md-2">
+                <button mat-stroked-button color="primary" (click)="applyDateRange()">
+                    Apply
+                </button>
+            </div>
+
+            <!-- Search by order no -->
+            <div class="col-12 col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Search by Order No</mat-label>
+                    <input matInput type="number" [(ngModel)]="orderNoSearch" (input)="applyFilters()"
+                        placeholder="Enter order no" />
+                    <mat-icon matSuffix>search</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <!-- Status filter -->
+            <div class="col-12">
+                <div class="d-flex align-items-center justify-content-between flex-wrap mb-1">
+                    <div class="status-filter-label">Status Filter</div>
+                </div>
+
+                <mat-chip-listbox class="status-filter-chips" [(ngModel)]="selectedStatus"
+                    (ngModelChange)="applyFilters()" [multiple]="false">
+                    <mat-chip-option [value]="'all'" [ngClass]="['status-chip-filter', 'all']">
+                        All
+                    </mat-chip-option>
+
+                    <mat-chip-option *ngFor="let s of statusList" [value]="s" [ngClass]="['status-chip-filter', s]">
+                        {{ orderStatusMapper[s] || s }}
+                    </mat-chip-option>
+                </mat-chip-listbox>
+            </div>
+
+            <!-- Totals -->
+            <div class="col-12 col-md-8 mt-2">
+                <div class="d-flex flex-wrap gap-2">
+                    <mat-chip-listbox>
+                        <mat-chip> Total Orders: {{ filteredList.length }} </mat-chip>
+                        <mat-chip> Wallet Used: ₹{{ totalWalletUsed | number : '1.2-2' }} </mat-chip>
+                        <mat-chip> Amount Paid: ₹{{ totalAmountPaid | number : '1.2-2' }} </mat-chip>
+                        <mat-chip color="primary" selected>
+                            Total Paid (Wallet + Amount): ₹{{ totalAmount | number : '1.2-2' }}
+                        </mat-chip>
+                    </mat-chip-listbox>
                 </div>
             </div>
-            <div class="col-lg-4 ">
-                <button (click)="excelExport()" class="btn btn-success excelBtn"> <i class="bi bi-file-earmark-excel"></i> Excel
-                    Export</button>
+
+            <!-- Buttons -->
+            <div class="col-12 col-md-4 text-md-end text-start mt-2 mt-md-0">
+                <button mat-flat-button color="accent" (click)="excelExport()" [disabled]="filteredList.length === 0">
+                    <mat-icon class="me-1">file_download</mat-icon>
+                    Excel Export
+                </button>
             </div>
         </div>
-        <div *ngIf="filteredList.length > 0" class="mt-3">
-            <ul *ngFor="let order of filteredList" class="list-group">
-                <li class="list-group-item">
-                    <app-order-card [order]="order"></app-order-card>
-                </li>
-            </ul>
-        </div>
-        <div *ngIf="filteredList.length <= 0" class="mt-3">
-            <p>No Orders Found</p>
-        </div>
+    </mat-card>
+
+    <!-- Orders cards -->
+    <div>
+        <ng-container *ngIf="filteredList.length > 0; else noOrders">
+            <div class="row g-3">
+                <div class="col-12" *ngFor="let row of pagedList">
+                    <mat-card class="order-card">
+                        <div class="order-card-inner">
+                            <!-- LEFT SIDE: header / meta -->
+                            <div class="order-left">
+                                <mat-card-header>
+                                    <div mat-card-avatar class="order-avatar">
+                                        {{ row.customerName?.[0] || 'C' }}
+                                    </div>
+                                    <div class="order-header-text">
+                                        <mat-card-title>
+                                            Order #{{ row.orderNo }}
+                                        </mat-card-title>
+                                        <mat-card-subtitle>
+                                            Token #{{ row.tokenNo || '-' }} •
+                                            {{ row.orderDate | date: 'MMM d, y, h:mm a' }}
+                                        </mat-card-subtitle>
+                                    </div>
+
+                                    <span class="status-chip" [ngClass]="row.orderstatus">
+                                        {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
+                                    </span>
+                                </mat-card-header>
+
+                                <!-- Customer & order details -->
+                                <div class="order-meta small text-muted mt-2">
+                                    <div><strong>Customer:</strong> {{ row.customerName }}</div>
+                                    <div><strong>Mobile:</strong> {{ row.customerPhoneNo }}</div>
+                                    <div>
+                                        <strong>Org:</strong>
+                                        {{ row.organizationDetails?.organization_name || '-' }}
+                                    </div>
+                                    <div>
+                                        <strong>Cafe:</strong>
+                                        {{ row.cafeteriaDetails?.cafeteria_name || '-' }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT SIDE: items + amounts -->
+                            <div class="order-right">
+                                <!-- Items -->
+                                <div class="mt-1">
+                                    <strong>Items:</strong>
+                                    <div class="item-list mt-1">
+                                        <div class="item-row" *ngFor="let i of row.itemList">
+                                            <div class="item-name">
+                                                {{ i.itemName }} <span *ngIf="i.count">x{{ i.count }}</span>
+                                            </div>
+                                            <div class="item-price">
+                                                ₹{{ i.price | number : '1.2-2' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Amounts -->
+                                <div class="amounts-grid mt-2">
+                                    <div>
+                                        <div class="label">Item Amount</div>
+                                        <div class="value">₹{{ row.itemAmount | number : '1.2-2' }}</div>
+                                    </div>
+                                    <div>
+                                        <div class="label">Wallet Used</div>
+                                        <div class="value">
+                                            ₹{{ row.moneyWalletPointsUsed || 0 | number : '1.2-2' }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="label">Amount Paid</div>
+                                        <div class="value">
+                                            ₹{{ row.amount || 0 | number : '1.2-2' }}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div class="label">Total (Wallet + Amount)</div>
+                                        <div class="value total">
+                                            ₹{{ (row.amount || 0) + (row.moneyWalletPointsUsed || 0) | number : '1.2-2'
+                                            }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card>
+                </div>
+            </div>
+
+            <!-- Paginator -->
+            <mat-paginator [length]="filteredList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+                [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)">
+            </mat-paginator>
+        </ng-container>
+
+        <ng-template #noOrders>
+            <div class="p-3 text-center text-muted">
+                No orders found for selected filters.
+            </div>
+        </ng-template>
     </div>
+
 </div>

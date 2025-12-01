@@ -24,6 +24,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
 
 const materialModules = [
   MatButtonModule,
@@ -54,7 +55,8 @@ const materialModules = [
   ReactiveFormsModule,
   MatSnackBarModule,
   MatDividerModule,
-  MatRadioModule
+  MatNativeDateModule,
+  MatListModule,
 ];
 
 @NgModule({

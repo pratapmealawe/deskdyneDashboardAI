@@ -1,0 +1,46 @@
+.bgpadding1 {
+  padding: 16px;
+}
+
+.filter-card {
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.feedback-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; // ⬅️ space between cards
+}
+
+.feedback-card {
+  border-radius: 12px;
+  padding: 4px 8px;
+}
+
+.labelText {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #757575;
+}
+
+.labelData {
+  font-size: 0.95rem;
+  color: #212121;
+  word-break: break-word;
+}
+
+.comment-text {
+  max-height: 4.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ack-edit {
+  border-top: 1px solid #eee;
+  padding-top: 8px;
+}
+
+mat-paginator {
+  margin-top: 16px;
+}

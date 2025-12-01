@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-organization-card',
@@ -15,6 +16,7 @@ export class OrganizationCardComponent  {
   tableDetails: string = ''
   dataSource = new MatTableDataSource<any>([]);
   tableData: any[] = [];
+  imageUrl= environment.imageUrl;
   totalRecords = 0;
   pageIndex: number = 0;
   pageSize: number = 5;

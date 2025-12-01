@@ -4,6 +4,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -36,8 +37,9 @@ export class VendorFirmComponent {
     private apiMainService: ApiMainService,
     private router: Router,
     private policyService: PolicyService,
-    private runtimeStorageService: RuntimeStorageService,
+    private localStorageService: LocalStorageService,
     private confirmationModalService: ConfirmationModalService,
+    private runtimeStorageService: RuntimeStorageService,
     private searchService:SearchFilterService
   ) { }
 
@@ -74,8 +76,7 @@ export class VendorFirmComponent {
   }
 
   editVendor(vendor: any) {
-    // this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
-    // this.router.navigate(['/addVendorFirm']);
+    this.localStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
     this.showSearchSection = false;
     this.vendorInfo = vendor;
   }
@@ -101,7 +102,7 @@ export class VendorFirmComponent {
 
 
   resetForm() {
-    this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', {});
+    this.localStorageService.setCacheData('VENDOR_FIRM_EDIT', {});
   }
 
   addVendor() {

@@ -10,16 +10,6 @@
         </div>
 
     </div>
-
-    <!-- Sub Tabs -->
-    <!-- <div class="row" *ngIf="getSubTab().length">
-  <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let sub of getSubTab()"
-    [ngClass]="{ tileSelected: selectedSubTab === sub.path || selectedSubTab === sub.name }"
-    (click)="goToSubTab(sub.path || sub.name)">
-    <div class="tileLabel header4 countTile">{{ sub.name }}</div>
-  </div>
-</div> -->
-
 </div>
 
 <div class="bgpadding2">
@@ -190,16 +180,16 @@
                     [disabled]="paginationOver && page === lastPage">Next</button>
             </div>
             <div *ngIf="filteredList.length > 0" class="mt-3">
-                <ul *ngFor="let order of filteredList " class="list-group">
-                    <li class="list-group-item">
+                <div *ngFor="let order of filteredList " class="list-group">
+                    <div class="">
                         <app-bulk-order-card [orderInput]="order"
                             *ngIf="(order.orderType === 'bulkMeals' || order.orderType === 'individualMeals' || order.orderType === 'bulkSnacks' || order.orderType === 'individualSnacks' || order.orderType === 'predefinedSnackbox' || order.orderType === 'customSnackbox') && b2bSelectedStatus && selectedTab === 'bulkOrders'"></app-bulk-order-card>
                         <app-daily-bulk-card *ngIf="order.orderType === 'dailyBulk' && selectedTab === 'adminOrders'"
                             [orderInput]="order"></app-daily-bulk-card>
                         <app-emp-poll-card *ngIf="order.orderType === 'empPolls' && selectedTab === 'employeePoll'" [day]="day"
                             [orderInput]="order"></app-emp-poll-card>
-                    </li>
-                </ul>
+                    </div>
+                </div>
             </div>
         </div>
 

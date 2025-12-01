@@ -244,7 +244,7 @@ export class AddOutletComponent implements OnInit {
         ...this.form.value,
       };
       console.log(finalObj);
-      const formData = this.objectToFormData(finalObj);
+      let formData = this.objectToFormData(finalObj);
       if (this.uploadedImageFile) {
         formData.append('image', this.uploadedImageFile);
       }
