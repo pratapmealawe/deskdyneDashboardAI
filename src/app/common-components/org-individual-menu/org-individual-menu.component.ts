@@ -1,32 +1,93 @@
-import { Component, Input, ViewChild } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { environment } from 'src/environments/environment';
+import {
+  Component,
+  Input,
+  OnInit,
+  TemplateRef,
+  ViewChild,
+} from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { environment } from 'src/environments/environment';
+
+interface Org {
+  _id: string;
+  organization_name: string;
+}
+
+interface IndMenuItem {
+  itemName: string;
+  imageUrl: string;
+  itemFlavour: string;
+  itemType: 'Veg' | 'NonVeg' | 'Jain';
+  itemServingType: 'perUnit' | 'perPerson' | 'perQuantity';
+  servingQuantity?: number;
+  servingQuantityUnit?: string;
+  itemDescription: string;
+
+  slab1Price: number;
+  slab2Price: number;
+  slab3Price: number;
+  slab4Price: number;
+
+  payAmtToKitchen: number;
+  mainMenuItemId: string;
+
+  edit?: boolean;
+}
+
+interface IndMenuMeta {
+  moq?: number;
+  slabLimit1?: number;
+  slabLimit2?: number;
+  slabLimit3?: number;
+  dateLimit1?: number;
+  dateLimit2?: number;
+  dateLimit3?: number;
+  slab1DeliveryPrice?: number;
+  slab2DeliveryPrice?: number;
+  slab3DeliveryPrice?: number;
+  slab4DeliveryPrice?: number;
+  itemList?: IndMenuItem[];
+}
 
 @Component({
   selector: 'app-org-individual-menu',
   templateUrl: './org-individual-menu.component.html',
-  styleUrls: ['./org-individual-menu.component.scss']
+  styleUrls: ['./org-individual-menu.component.scss'],
 })
-export class OrgIndividualMenuComponent {
-  @Input() orgObj: any;
-  @ViewChild("content") content: any;
-  bulkMenuList: any;
-  editAddCombo: boolean = false;
-  menuSearchText: any = '';
-  searchText: any = '';
-  imageUrl: any = environment.imageUrl;
-  changesMade = false;
-  editMode = false;
-  indMenuFetched: any;
-  slabEditMode = false;
-  foodItemList: any;
-  orgChoices:any;
-  orgSelected:any
-  index:any;
+export class OrgIndividualMenuComponent implements OnInit {
+  @Input() orgObj!: Org;
+  @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
-  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal,private confirmationModalService: ConfirmationModalService) { }
+  bulkMenuList: IndMenuItem[] = [];
+  indMenuFetched: IndMenuMeta = {};
+
+  menuSearchText = '';
+  searchText = '';
+
+  imageUrl = environment.imageUrl;
+
+  slabEditMode = false;
+  changesMade = false;
+
+  foodItemList: any[] = [];
+  orgChoices: Org[] = [];
+  orgSelected: string | null = null;
+
+  selectedFoodItems: any[] = [];
+
+  // for looping slab fields in template
+  slabFields = [
+    { key: 'slab1Price' as const, label: 'Slab 1' },
+    { key: 'slab2Price' as const, label: 'Slab 2' },
+    { key: 'slab3Price' as const, label: 'Slab 3' },
+    { key: 'slab4Price' as const, label: 'Slab 4' },
+  ];
+
+  constructor(
+    private api: ApiMainService,
+    private dialog: MatDialog
+  ) {}
 
   ngOnInit(): void {
     this.fetchOrgChoices();
@@ -34,132 +95,109 @@ export class OrgIndividualMenuComponent {
     this.getAllB2BFoodItemList();
   }
 
-  async copyOrgMenu(){
+  async copyOrgMenu(): Promise<void> {
+    if (!this.orgSelected) return;
     try {
-      if(this.orgSelected){
-        const menuItems = await this.ddApiMainService.B2B_fetchIndividualMenu(this.orgSelected);
-        console.log(menuItems)
-        this.indMenuFetched = menuItems;
-        if (this.indMenuFetched) {
-          this.bulkMenuList = menuItems.itemList ? menuItems.itemList : [];
-        }
-      }
+      const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMenu(
+        this.orgSelected
+      );
+      this.indMenuFetched = menuItems || {};
+      this.bulkMenuList = menuItems.itemList || [];
     } catch (error) {
-      console.log(error)
+      console.error(error);
     }
   }
 
-  async fetchOrgChoices() {
+  async fetchOrgChoices(): Promise<void> {
     try {
-      const orgChoices = await this.ddApiMainService.getOrgList();
-      if (orgChoices && orgChoices.length > 0) {
-        this.orgChoices = orgChoices;
-        console.log(orgChoices)
-      }
+      const orgChoices = await this.api.getOrgList();
+      this.orgChoices = orgChoices || [];
     } catch (error) {
-      console.log('cafeteria fetch error', error)
+      console.error('org fetch error', error);
     }
   }
 
-  async getIndividualMenu() {
+  async getIndividualMenu(): Promise<void> {
+    if (!this.orgObj?._id) return;
     try {
-      console.log(this.orgObj._id)
-      const menuItems = await this.ddApiMainService.B2B_fetchIndividualMenu(this.orgObj._id);
-      this.indMenuFetched = menuItems;
-      if (this.indMenuFetched) {
-        this.bulkMenuList = menuItems.itemList ? menuItems.itemList : [];
-      }
+      const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMenu(
+        this.orgObj._id
+      );
+      this.indMenuFetched = menuItems || {};
+      this.bulkMenuList = menuItems.itemList || [];
     } catch (error) {
-      console.log(error)
+      console.error(error);
     }
   }
 
-  async getAllB2BFoodItemList() {
+  async getAllB2BFoodItemList(): Promise<void> {
     try {
-      this.foodItemList = await this.ddApiMainService.getAllB2BFooditems();
+      this.foodItemList = await this.api.getAllB2BFooditems();
     } catch (e) {
-      console.log('error while fetching food itmem')
+      console.error('error while fetching food items');
     }
   }
 
-  editFoodItem(foodItem: any) {
+  editFoodItem(foodItem: IndMenuItem): void {
     foodItem.edit = true;
     this.changesMade = true;
   }
 
-  deleteFoodItem() {
-    this.bulkMenuList.splice(this.index,1);
-    if(this.bulkMenuList.length === 0){
-      this.editBulkMenu();
-    }
-  }
-
-   showPopup(foodItem: any, i: any) {
-    this.index = i;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${foodItem.itemName} Item`,
-      this.deleteFoodItem,
-      this
-    );
-  }
-
-  onItemPriceBlur(item: any) {
-
-  }
-
-  addB2BFoodItem() {
-    this.editMode = true;
+  onDeleteItem(index: number, foodItem: IndMenuItem): void {
+    const ok = confirm(`Are you sure, you want to delete ${foodItem.itemName} item?`);
+    if (!ok) return;
+    this.bulkMenuList.splice(index, 1);
     this.changesMade = true;
-    this.open();
   }
 
-  open() {
-    this.foodItemList = [...this.foodItemList].map(ele => { ele.selected = false; return ele; })
-    this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl', windowClass: 'menuModel' })
-      .result.then((result) => {
-        console.log(`Closed with: ${result}`, this.foodItemList);
+  toggleSlabEdit(): void {
+    this.slabEditMode = !this.slabEditMode;
+    this.changesMade = true;
+  }
+
+  openAddItemDialog(): void {
+    // clear selection
+    this.selectedFoodItems = [];
+    this.dialog
+      .open(this.itemDialog, {
+        width: '900px',
+        autoFocus: false,
+      })
+      .afterClosed()
+      .subscribe((result) => {
         if (result === 'add') {
-          this.prepareB2BMenuList(this.foodItemList);
+          this.prepareB2BMenuList(this.selectedFoodItems);
         }
-      }, (reason) => {
-        console.log(`Model Dismissed`);
       });
   }
 
-  prepareB2BMenuList(fooditemList: any) {
-    [...fooditemList].forEach((fooditem:any)=>{
-      if (fooditem.selected) {
-        this.bulkMenuList.push({
-          itemName: fooditem.itemName,
-          imageUrl: fooditem.imageUrl,
-          itemFlavour: fooditem.itemFlavour,
-          itemType: fooditem.itemType,
-          itemServingType: fooditem.itemServingType,
-          itemDescription: fooditem.itemDescription,
-          slab1Price: fooditem.slab1Price,
-          slab2Price: fooditem.slab2Price,
-          slab3Price: fooditem.slab3Price,
-          slab4Price: fooditem.slab4Price,
-          payAmtToKitchen: fooditem.payAmtToKitchen,
-          mainMenuItemId: fooditem._id,
-          packagingCost: fooditem.packagingCost,
-          packagingDescription: fooditem.packagingDescription,
-          edit: true
-        });
-      }
-    })
-    
-    console.log(this.bulkMenuList)
+  prepareB2BMenuList(selected: any[]): void {
+    const newItems: IndMenuItem[] = selected.map((fooditem) => ({
+      itemName: fooditem.itemName,
+      imageUrl: fooditem.imageUrl,
+      itemFlavour: fooditem.itemFlavour,
+      itemType: fooditem.itemType,
+      itemServingType: fooditem.itemServingType,
+      itemDescription: fooditem.itemDescription,
+      slab1Price: fooditem.slab1Price,
+      slab2Price: fooditem.slab2Price,
+      slab3Price: fooditem.slab3Price,
+      slab4Price: fooditem.slab4Price,
+      payAmtToKitchen: fooditem.payAmtToKitchen,
+      mainMenuItemId: fooditem._id,
+      servingQuantity: fooditem.servingQuantity,
+      servingQuantityUnit: fooditem.servingQuantityUnit,
+      edit: true,
+    }));
+
+    this.bulkMenuList = [...this.bulkMenuList, ...newItems];
+    this.changesMade = true;
   }
 
-  // editSlabs(){
-  //   this.slabEditMode = true;
-  // }
-
-  async editBulkMenu() {
+  async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName:this.orgObj.organization_name,
-      companyId:this.orgObj._id,
+      companyName: this.orgObj.organization_name,
+      companyId: this.orgObj._id,
       moq: this.indMenuFetched.moq,
       slabLimit1: this.indMenuFetched.slabLimit1,
       slabLimit2: this.indMenuFetched.slabLimit2,
@@ -167,41 +205,39 @@ export class OrgIndividualMenuComponent {
       dateLimit1: this.indMenuFetched.dateLimit1,
       dateLimit2: this.indMenuFetched.dateLimit2,
       dateLimit3: this.indMenuFetched.dateLimit3,
-      itemList: [...this.bulkMenuList]
+      slab1DeliveryPrice: this.indMenuFetched.slab1DeliveryPrice ?? 0,
+      slab2DeliveryPrice: this.indMenuFetched.slab2DeliveryPrice ?? 0,
+      slab3DeliveryPrice: this.indMenuFetched.slab3DeliveryPrice ?? 0,
+      slab4DeliveryPrice: this.indMenuFetched.slab4DeliveryPrice ?? 0,
+      itemList: [...this.bulkMenuList],
     };
+
     try {
-      await this.ddApiMainService.B2B_saveIndMenu(bulkMenuObj);
-      this.editMode = false;
+      await this.api.B2B_saveIndMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      this.getIndividualMenu();
+      await this.getIndividualMenu();
     } catch (e) {
-      console.log('error while saving kitchen')
+      console.error('error while saving individual menu');
     }
   }
 
-  disableSave() {
-    console.log('disableSave ###',)
-    let disable = false;
-    if (this.bulkMenuList.length === 0) {
-      disable = true;
-    } else {
-      this.bulkMenuList.forEach((ele: any) => {
-        if (!ele.itemName || !ele.itemDescription) {
-          disable = true
-        }
-        if (!ele.itemPrice) {
-          disable = true
-        }
-        if (!ele.tasteOfRegion) {
-          disable = true
-        }
-        if (ele.itemServingType === 'perQuantity' && (!ele.servingQuantity || !ele.servingQuantityUnit)) {
-          disable = true
-        }
-      });
-    }
-    return disable;
-  }
+  disableSave(): boolean {
+    if (!this.bulkMenuList.length) return true;
 
+    return this.bulkMenuList.some((item) => {
+      if (!item.itemName || !item.itemDescription) {
+        return true;
+      }
+      if (
+        item.slab1Price == null ||
+        item.slab2Price == null ||
+        item.slab3Price == null ||
+        item.slab4Price == null
+      ) {
+        return true;
+      }
+      return false;
+    });
+  }
 }

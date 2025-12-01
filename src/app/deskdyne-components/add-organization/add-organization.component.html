@@ -13,6 +13,15 @@
     <div class="row">
       <div class="row">
         <div class="col">
+          <div class="col-12 col-md-2 col-lg-2 image-div">
+            <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+              (change)="handleFileInput($event)" />
+            <img (click)="f.click()" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
+              class="uploadedImage" />
+            <div class="uploadIcon" (click)="f.click()">
+              Upload <i class="bi bi-upload"></i>
+            </div>
+          </div>
           <div class="form-group">
             <label class="field-label">Org Name<span class="required-input"> * </span></label>
             <mat-form-field appearance="outline" class="w-100">
@@ -29,7 +38,7 @@
         </div> -->
         </div>
         <div class="col" *ngIf="showUpdate">
-            <div class="form-group">
+          <div class="form-group">
             <label class="field-label">Subsidy Amount(In Percent %)<span class="required-input"> * </span></label>
             <mat-form-field appearance="outline" class="w-100">
               <input matInput placeholder="Subsidy Amount" formControlName="subsidy" />
@@ -37,7 +46,8 @@
                 subsidy is required
               </mat-error>
             </mat-form-field>
-               <button mat-raised-button color="primary" style="width:fit-content" (click)="updateOrglevelSubsidy()">Update Subsidy</button>
+            <button mat-raised-button color="primary" style="width:fit-content" (click)="updateOrglevelSubsidy()">Update
+              Subsidy</button>
           </div>
           <!-- <label class="labelText form-label mb-0">Subsidy Amount(In Percent %)</label>
           <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
@@ -472,10 +482,10 @@
         <div class="cardDesign">
           <div class="d-flex justify-content-between align-items-center">
             <div>Cafeteria List</div>
-            <div class="d-flex justify-content-end">     
+            <div class="d-flex justify-content-end">
               <button mat-raised-button (click)="add_cafeteria()" color="primary"><mat-icon>storefront </mat-icon>Add
-            Cafeteria </button>
-          </div>
+                Cafeteria </button>
+            </div>
           </div>
           <ng-container *ngFor="let control of cafeteria.controls; let i = index">
             <div [formGroupName]="i" style="margin: 10px 0px;">
@@ -508,6 +518,11 @@
                       <mat-checkbox formControlName="showSaas">Show Outlet</mat-checkbox>
                       <!-- <div class="labelText">Show Outlet</div>
                 <input type="checkbox" formControlName="showSaas"> -->
+                    </div>
+
+
+                    <div class="col-3">
+                      <mat-checkbox formControlName="showQrCode">Show QR Code</mat-checkbox>
                     </div>
 
                     <!-- <div class="col-3">

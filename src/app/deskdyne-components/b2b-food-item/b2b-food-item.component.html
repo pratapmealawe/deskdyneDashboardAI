@@ -1,65 +1,63 @@
-<div class="container-fluid">
-  <span
-    class="addBtn"
-    (click)="addFooditem()"
-    *ngIf="!editMode && true || btnPolicy?.addFoodItem"
-    >+</span
-  >
-  <div *ngIf="!editMode">
-    <div class="row">
-      <div class="col-12 col-md-4 col-lg-6">
-        <div class="row">
-          <div class="col-12 col-md-6 col-lg-6 bgpadding1">
-            <div class="bold">Item Name</div>
-            <input
-              type="text"
-              class="form-control"
-              placeholder="Item Name"
-              [(ngModel)]="searchText"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <button
-      type="button"
-      class="btn btn-primary btn-sm me-2"
-      (click)="searchText = ''"
-    >
-      Reset
-    </button>
-    <div class="row" *ngIf="foodItemList.length > 0 && !editMode">
-      <div *ngIf="foodItemList.length > 0">
-        <div
-          *ngFor="let item of foodItemList | filter : searchText : 'itemName'"
-          class="cardDesign mt-2"
-        >
-          <app-b2b-food-item-card
-            [foodItem]="item"
-            (deleteItem)="deleteFoodItem($event)"
-            (editItem)="editFoodItem($event)"
-          ></app-b2b-food-item-card>
-        </div>
-        <!-- <div class="center mt-2">
-                    <button class="filterbox btn btn-primary btn-sm" (click)="previous(page)"
-                        [disabled]="page === 1">Previous</button>
-                    <div class="filterbox">{{page}} of {{totalpage}}</div>
-                    <button class="filterbox btn btn-success btn-sm" (click)="next(page)"
-                        [disabled]="page === totalpage">Next</button>
-                </div> -->
-      </div>
+<div class="container-fluid b2b-food-item">
 
-      <div class="center" *ngIf="foodItemList.length === 0">
-        No Records Found for this filter
+  <!-- HEADER + SEARCH (LIST MODE) -->
+  <div class="mb-3" *ngIf="!editMode">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+      <h2 class="mb-0">Food Items</h2>
+
+      <button mat-flat-button color="primary" (click)="addFooditem()" *ngIf="btnPolicy?.addFoodItem !== false">
+        <mat-icon class="me-1">add</mat-icon>
+        Add Food Item
+      </button>
+    </div>
+
+    <div class="row mt-3">
+      <div class="col-12 col-md-4 col-lg-3">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Search</mat-label>
+          <input matInput placeholder="Search by item name" [(ngModel)]="searchText"
+            (ngModelChange)="onSearchChange($event)" />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
       </div>
     </div>
   </div>
 
-  <div class="bgpadding1" *ngIf="editMode">
-    <app-b2b-food-item-form
-      [editType]="editType"
-      [editfoodItemObj]="editfoodItemObj"
-      (gotoPreviousState)="gotoPreviousState($event)"
-    ></app-b2b-food-item-form>
+  <!-- LIST MODE -->
+  <div *ngIf="!editMode">
+    <div class="row">
+      <div class="col-12" *ngIf="pagedFoodItems.length > 0; else noRecords">
+        <div *ngFor="let item of pagedFoodItems" class="mt-2">
+          <app-b2b-food-item-card [foodItem]="item" (deleteItem)="deleteFoodItem($event)"
+            (editItem)="editFoodItem($event)"></app-b2b-food-item-card>
+        </div>
+
+        <!-- MATERIAL PAGINATOR -->
+        <div class="mt-3 d-flex justify-content-end">
+          <mat-paginator [length]="filteredLength" [pageSize]="pageSize" [pageIndex]="pageIndex"
+            [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noRecords>
+      <div class="center mt-3">
+        No records found for this filter
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- EDIT / ADD MODE -->
+  <div class="" *ngIf="editMode">
+    <mat-card class="mainFoodCard">
+      <div class="topDiv">
+        <h2 class="mb-0">
+          {{ editType === 'edit' ? 'Edit Food Item' : 'Add Food Item' }}
+        </h2>
+      </div>
+      <app-b2b-food-item-form  [editType]="editType" [editfoodItemObj]="editfoodItemObj"
+        (gotoPreviousState)="gotoPreviousState($event)"></app-b2b-food-item-form>
+    </mat-card>
   </div>
 </div>

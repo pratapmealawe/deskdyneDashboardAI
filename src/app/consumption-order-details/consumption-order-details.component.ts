@@ -46,7 +46,7 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
     private confirmationModalService: ConfirmationModalService,
     private excel: ExcelService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
@@ -162,39 +162,39 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
   }
 
   // === CANCEL: All items in an order ===
-onCancelAll(order: any) {
-  const reason = (window.prompt('Enter cancel reason for all items') || '').trim();
-  if (!reason) return; // user aborted
+  onCancelAll(order: any) {
+    const reason = (window.prompt('Enter cancel reason for all items') || '').trim();
+    if (!reason) return; // user aborted
 
-  this.orderDate = order.orderDate;
-  this.statusPayload = {
-    orderDate: this.orderDate,
-    status: 'cancelled',
-    cancelReason: reason,
-    adminName: this.adminName,
-    adminMobile: this.adminMobile
-  };
+    this.orderDate = order.orderDate;
+    this.statusPayload = {
+      orderDate: this.orderDate,
+      status: 'cancelled',
+      cancelReason: reason,
+      adminName: this.adminName,
+      adminMobile: this.adminMobile
+    };
 
-  this.updateConsumptionOrderStatus(); // will refetch via filterOrders()
-}
+    this.updateConsumptionOrderStatus(); // will refetch via filterOrders()
+  }
 
-// === CANCEL: Single item ===
-onCancelItem(order: any, meal: any) {
-  const reason = (window.prompt(`Enter cancel reason for "${meal?.itemName}"`) || '').trim();
-  if (!reason) return; // user aborted
+  // === CANCEL: Single item ===
+  onCancelItem(order: any, meal: any) {
+    const reason = (window.prompt(`Enter cancel reason for "${meal?.itemName}"`) || '').trim();
+    if (!reason) return; // user aborted
 
-  this.orderDate = order.orderDate;
-  this.statusPayload = {
-    orderDate: this.orderDate,
-    status: 'cancelled',
-    itemId: meal._id,
-    cancelReason: reason,
-    adminName: this.adminName,
-    adminMobile: this.adminMobile
-  };
+    this.orderDate = order.orderDate;
+    this.statusPayload = {
+      orderDate: this.orderDate,
+      status: 'cancelled',
+      itemId: meal._id,
+      cancelReason: reason,
+      adminName: this.adminName,
+      adminMobile: this.adminMobile
+    };
 
-  this.updateConsumptionSingleMealStatus(); // will refetch via filterOrders()
-}
+    this.updateConsumptionSingleMealStatus(); // will refetch via filterOrders()
+  }
 
   async updateConsumptionOrderStatus() {
     try {

@@ -3,6 +3,7 @@ import { FormBuilder, FormArray, Validators, FormGroup, AbstractControl } from '
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { log } from 'console';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
@@ -343,11 +344,13 @@ export class AddVendorFirmComponent {
 
   async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {
     try {
+      console.log( 'getOutletByCafeteriaList', { cafeteriaName, cafeteriaCity, organization } );
       this.outletByCafeteriaList = await this.apiMainService.getOutletByCafeteria(
         cafeteriaName,
         cafeteriaCity,
         organization
       );
+      console.log(this.outletByCafeteriaList);
     } catch (error) {
       console.log('getOutletByCafeteriaList', error);
     }
@@ -368,6 +371,8 @@ export class AddVendorFirmComponent {
   }
 
   getSelectedOutlets() {
+    console.log(this.outletByCafeteriaList);
+    
     this.outletByCafeteriaList.forEach((elm: any) => {
       if (elm.isChecked) {
         const exists = this.selectedOutletsList.some((outlet: any) => outlet.outletId === elm._id);

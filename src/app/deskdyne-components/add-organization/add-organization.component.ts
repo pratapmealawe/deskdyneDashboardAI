@@ -1,7 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import {  Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NavigationEnd, Router } from '@angular/router';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -34,6 +36,9 @@ export class AddOrganizationComponent implements OnInit {
   domainList: string[] = [];
   showDelete = false;
   orgInfo: any;
+  imageUrl: any;
+  uploadedImageFile: any;
+
   panelOpenState = false;
   constructor(
     private apiMainService: ApiMainService,
@@ -103,6 +108,7 @@ export class AddOrganizationComponent implements OnInit {
       showEmpPolls: [false],
       showVirtualCafe: [false],
       showSaas: [false],
+      showQrCode: [false],
       showSiteExecutive: [false],
       showCompanyWallet: [false],
       showchecklist: [false],
@@ -244,6 +250,8 @@ export class AddOrganizationComponent implements OnInit {
     this.orgInfo = org;
     let clusterdetails: any = {};
     this.orgSubsidy = org.subsidy;
+    this.imageUrl = environment.imageUrl + org.organizationLogoUrl;
+
     // this.customerLocation = org.customerLocation;
     this.form.patchValue({
       organization_name: org.organization_name,
@@ -284,6 +292,7 @@ export class AddOrganizationComponent implements OnInit {
         showEmpPolls: cafe.showEmpPolls,
         showVirtualCafe: cafe.showVirtualCafe,
         showSaas: cafe.showSaas,
+        showQrCode: cafe.showQrCode,
         showSiteExecutive: cafe.showSiteExecutive,
         showCompanyWallet: cafe.showCompanyWallet,
         showchecklist: cafe.showchecklist,
@@ -370,6 +379,48 @@ export class AddOrganizationComponent implements OnInit {
           console.log(`Model Dismissed`);
         }
       );
+  }
+
+  handleFileInput($event: any) {
+    if ($event && $event.target && $event.target.files) {
+      const file: File = $event.target.files[0];
+      if (file) {
+        const fileName = file.name;
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = async (_event) => {
+          const imageUrl = reader.result;
+          try {
+            const modalRef: NgbModalRef = this.modalService.open(
+              ImageCropperComponent,
+              {
+                ariaLabelledBy: 'modal-basic-title',
+                size: 'xl',
+                backdrop: 'static',
+                centered: true,
+              }
+            );
+            modalRef.result.then(
+              (result: any) => {
+                if (result && result.croppedImages) {
+                  this.uploadedImageFile = result.croppedImages.file;
+                  this.imageUrl = result.croppedImages.resizeDataUrl;
+                }
+              },
+              (reason: any) => {
+                console.log(`Model Dismissed`);
+              }
+            );
+            modalRef.componentInstance.uploadedImageUrl = imageUrl;
+            modalRef.componentInstance.imageWidth = 150;
+            modalRef.componentInstance.imageHeight = 150;
+            modalRef.componentInstance.aspectRatio = 1;
+          } catch (e) {
+            console.log('error while changes kitchen opened status ', e);
+          }
+        };
+      }
+    }
   }
 
   toggleMap(index: any) {
@@ -512,18 +563,41 @@ export class AddOrganizationComponent implements OnInit {
       });
     });
   }
+
   async updateOrg() {
     try {
       if (!this.form.valid) {
         this.showError = true;
         return;
       }
-      console.log(this.form.getRawValue());
 
-      await this.apiMainService.B2B_org_update(
-        this.form.getRawValue(),
-        this.viewOrg._id
-      );
+      const raw = this.form.getRawValue();
+      const formData = new FormData();
+
+      // Simple fields
+      formData.append('organization_name', raw.organization_name);
+      formData.append('location', raw.location);
+      formData.append('domain', raw.domain);
+      formData.append('city', raw.city);
+      formData.append('gstin', raw.gstin || '');
+      formData.append('organizationLogoUrl', raw.organizationLogoUrl || '');
+
+      // Boolean as string
+      formData.append('isEmpIdRequired', String(raw.isEmpIdRequired));
+
+      // Complex fields as JSON
+      formData.append('poc_details', JSON.stringify(raw.poc_details || {}));
+      formData.append('org_address', JSON.stringify(raw.org_address || {}));
+      formData.append('cafeteriaList', JSON.stringify(raw.cafeteriaList || []));
+      formData.append('subsidy', raw.subsidy || 0);
+
+      // Image
+      if (this.uploadedImageFile) {
+        formData.append('image', this.uploadedImageFile); // name must match upload.single("image")
+      }
+
+      await this.apiMainService.B2B_org_update(formData, this.viewOrg._id);
+
       this.clearRunTimeStorage();
       this.router.navigate(['b2bSearchOrg']);
     } catch (error) {

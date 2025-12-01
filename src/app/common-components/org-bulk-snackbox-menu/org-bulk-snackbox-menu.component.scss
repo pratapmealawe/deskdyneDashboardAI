@@ -1,99 +1,232 @@
-@import "/src/styles.scss";
+@import '/src/styles.scss';
 
-.menuWrapper{
-    input, select{
-        border:1px solid #dee2e6;
-        border-radius:6px;
-    }
-}
+.menuWrapper {
+    padding: 1rem 0;
 
-.kitchenMenuImage{
-    width: 55px;
-}
-
-.itemModal{
-    max-width: 80% !important;
-}
-.addFoodItem{
-    // position: absolute;
-    // right: 5px;
-    // top: 116px;
-    float: right;
-}
-.cardDesign{
-    margin: 1px 2px;
-    padding: 4px 2px;
-    border-radius: 6px;
-    // box-shadow: 1px 2px 3px;
-    label{
-        font-size: 10px;
-        font-weight: bold;
-        padding: 0px 6px 0 0;
-        margin-bottom:0;
-    }
-    div{
-        font-size: 12px;
-    }
-    input{
+    .mat-form-field {
         width: 100%;
     }
-    .prepTime{
-        width:20%;
-    }
-}
-.maxPrice{
-    width:25% !important;
 }
 
-.editDeltesaveIcon{
-    display: inline-block;
-    font-size: 20px;
-    padding: 5px 5px;
-    cursor:pointer;
-}
-
-.saveDisabled{
-    background: #808483 !important;
-}
-
-.itemCheckbox{
-    display: flex;
-    flex-direction: row;
-    line-height:25px;
-    .firstside{
-        width: 33%;
-        .checkbox {
-            width: initial;
-        }
-    }
-    .secondside{
-        width: 33%;
-        .checkbox {
-            width: initial;
-        }
-    }
-    .checkbox {
-        width: initial;
-    }
-}
-.uploadedImage{
-    width: 150px;
-    height: 150px;
-    cursor: pointer;
-}
-.uploadInput{
-    display: none;
-}
-.uploadIcon{
-    width: 84px;
-    background: $secondary-color3;
-    border-radius: 5px;
-    text-align: center;
-    color: white;
-    position: relative;
-    top: -15px;
-    left: 30px;
+/* Normal inputs styled like mat */
+.dd-input {
+    width: 100%;
+    padding: 6px 10px;
     font-size: 13px;
-    padding: 4px 0px;
-    cursor: pointer;
-}  
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.23);
+    background-color: #fff;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:focus {
+        border-color: #3f51b5;
+        box-shadow: 0 0 0 1px rgba(63, 81, 181, 0.2);
+    }
+}
+
+.dd-input-sm {
+    max-width: 90px;
+}
+
+.top-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+
+    .org-field {
+        max-width: 320px;
+    }
+
+    .spacer {
+        flex: 1;
+    }
+
+    .add-btn {
+        margin-left: auto;
+    }
+}
+
+.slab-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    align-items: flex-end;
+}
+
+.search-row {
+    margin-bottom: 0.5rem;
+
+    .search-field {
+        max-width: 320px;
+    }
+}
+
+.kitchenMenuImage {
+    width: 55px;
+    height: 55px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.item-card {
+    margin-bottom: 0.75rem;
+    padding: 0.75rem;
+
+    .item-card-main {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+    }
+
+    .item-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .item-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .label {
+        font-size: 11px;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 2px;
+    }
+
+    .description {
+        font-size: 12px;
+    }
+
+    .type-flavour {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 12px;
+    }
+
+    .type-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+
+        &.veg {
+            border: 1px solid #0f9d58;
+            background-color: #0f9d58;
+        }
+
+        &.nonveg {
+            border: 1px solid #d32f2f;
+            background-color: #d32f2f;
+        }
+    }
+
+    .jain-badge {
+        font-size: 11px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .flavour {
+        font-size: 11px;
+        opacity: 0.8;
+    }
+
+    .item-card-secondary {
+        margin-top: 0.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .serving {
+        min-width: 150px;
+
+        .quantity-edit {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 4px;
+        }
+    }
+
+    .price-grid {
+        flex: 1;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 0.5rem;
+
+        .price-cell {
+            font-size: 12px;
+
+            &.wide {
+                grid-column: span 2;
+            }
+        }
+    }
+}
+
+/* Dialog item list */
+.item-list {
+    max-height: 60vh;
+    overflow: auto;
+
+    .list-item {
+        display: flex;
+        gap: 1rem;
+        font-size: 12px;
+        align-items: flex-start;
+        padding: 4px 0;
+        flex-wrap: wrap;
+
+        .name {
+            font-weight: 600;
+            word-break: break-word;
+        }
+
+        .slabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+        }
+
+        .slab-pill {
+            padding: 2px 6px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .meta {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .list-item {
+            flex-direction: column;
+        }
+    }
+}
+
+.submit-row {
+    margin-top: 1rem;
+}
+
+.no-items {
+    text-align: center;
+    margin-top: 3rem;
+    opacity: 0.7;
+}

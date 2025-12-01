@@ -1,111 +1,160 @@
 <div class="bgpadding1">
-  <div class="labelText mt-2">Feedback List</div>
-  <div *ngIf="feedbacklist.length > 0">
-    <div
-      class="row"
-      *ngFor="let feedback of feedbacklist; index as i"
-      class="row cardDesign"
-    >
-      <div class="col-12 col-md-4 col-lg-3">
-        <div class="row">
-          <div class="col-6 col-md-5 col-lg-5">
-            <div class="labelText">Name</div>
-            <div class="labelData">{{ feedback.feedbackFrom_name }}</div>
-          </div>
-          <div class="col-6 col-md-7 col-lg-7">
-            <div class="labelText">Phone</div>
-            <div class="labelData">{{ feedback.feedbackFrom_phoneNo }}</div>
-          </div>
-        </div>
-      </div>
 
-    
+  <!-- Header + filters -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between w-100 gap-3">
+    <h2 class="page-title mb-1">Feedback List</h2>
 
-      <div class="col-12 col-md-4 col-lg-3">
-        <div class="row">
-          <div class="col-6 col-md-5 col-lg-5">
-            <div class="labelText">UserType</div>
-            <div class="labelData">{{ feedback.feedbackFrom_userType }}</div>
-          </div>
-          <div class="col-6 col-md-7 col-lg-7">
-            <div class="labelText">Feedback Type</div>
-            <div class="labelData">{{ feedback.feedbackType }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4 col-lg-6">
-        <div class="row">
-          <div class="col-6 col-md-5 col-lg-8">
-            <div class="labelText">Comment</div>
-            <div class="labelData">{{ feedback.feedbackComment }}</div>
-          </div>
-          <div class="col-6 col-md-7 col-lg-4">
-            <div class="labelText">
-              Submit date:
-              <span class="labelData">{{
-                feedback.submitDate | date : "d/M/yy"
-              }}</span>
-            </div>
-            <button
-              class="btn btn-primary btn-sm"
-              *ngIf="!feedback.acknowledged && true || btnPolicy?.feedbackAcknowledge"
-              (click)="acknowledge(feedback)"
-            >
-              Acknowledge
-            </button>
-            <button
-              class="btn btn-outline-success btn-sm"
-              *ngIf="feedback.acknowledged"
-            >
-              Acknowledged
-            </button>
-          </div>
-        </div>
-      </div>
-
-        <div class="col-12 col-md-4 col-lg-3">
-        <div class="row">
-          <div class="col-6 col-md-5 col-lg-5">
-            <div class="labelText">Organization Name</div>
-            <div class="labelData">{{ feedback?.orgName }}</div>
-          </div>
-          <div class="col-6 col-md-5 col-lg-5">
-            <div class="labelText">Employee Id</div>
-            <div class="labelData">{{ feedback?.empId }}</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-12 col-md-4 col-lg-3">
-        <div class="row">
-          <div class="col-6 col-md-5 col-lg-5">
-            <div class="labelText">Order Type</div>
-            <div class="labelData">{{ feedback.orderType }}</div>
-          </div>
-          <div class="col-6 col-md-5 col-lg-5">
-            <div class="labelText">Order No</div>
-            <div class="labelData">{{ feedback.orderNo }}</div>
-          </div>
-        </div>
-      </div>
+    <div class="filter-inputs">
+      <mat-form-field appearance="outline" class="filter-field w-100">
+        <mat-label>Search</mat-label>
+        <input matInput [ngModel]="searchText" (input)="searchFilter($event)"
+          placeholder="Search by name, phone, org, empId, order no..." />
+        <button *ngIf="searchText" matSuffix mat-icon-button (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
     </div>
-    <button
-      *ngIf="nextOn"
-      type="button"
-      class="btn btn-primary btn-sm mt-2 me-2"
-      (click)="getMore()"
-    >
-      Next Page
-    </button>
-    <button
-      *ngIf="nextOn"
-      type="button"
-      class="btn btn-primary btn-sm mt-2"
-      (click)="getLess()"
-    >
-      Previous Page
-    </button>
   </div>
-  <div class="center" *ngIf="feedbacklist.length === 0">No Records Found</div>
+
+  <!-- Feedback list -->
+  <div *ngIf="pagedFeedback.length > 0; else noRecords">
+    <div class="feedback-list">
+      <mat-card class="feedback-card" *ngFor="let feedback of pagedFeedback; index as i">
+        <mat-card-content>
+          <div class="row g-3">
+            <!-- Left: basic info -->
+            <div class="col-12 col-md-4">
+              <div class="mb-2 d-flex align-items-center justify-content-between">
+                <div>
+                  <div class="labelText">Name</div>
+                  <div class="labelData">
+                    {{ feedback.feedbackFrom_name || '-' }}
+                  </div>
+                </div>
+                <mat-chip-set>
+                  <mat-chip [color]="feedback.acknowledgeStatus ? 'primary' : 'warn'" class="status-chip">
+                    {{ feedback.acknowledgeStatus }}
+                  </mat-chip>
+                </mat-chip-set>
+              </div>
+
+              <div class="mt-1">
+                <div class="labelText">Phone</div>
+                <div class="labelData">
+                  {{ feedback.feedbackFrom_phoneNo || '-' }}
+                </div>
+              </div>
+
+              <div class="mt-1">
+                <div class="labelText">User Type</div>
+                <div class="labelData">
+                  {{ feedback.feedbackFrom_userType || '-' }}
+                </div>
+              </div>
+            </div>
+
+            <!-- Middle: feedback details -->
+            <div class="col-12 col-md-5">
+              <div class="mb-2">
+                <div class="labelText">Feedback Type</div>
+                <div class="labelData">
+                  {{ feedback.feedbackType || '-' }}
+                </div>
+              </div>
+
+              <div class="mb-2">
+                <div class="labelText">Comment</div>
+                <div class="labelData text-wrap comment-text">
+                  {{ feedback.feedbackComment || '-' }}
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-6">
+                  <div class="labelText">Organization</div>
+                  <div class="labelData">
+                    {{ feedback?.orgName || '-' }}
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="labelText">Employee Id</div>
+                  <div class="labelData">
+                    {{ feedback?.empId || '-' }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right: order + dates + actions -->
+            <div class="col-12 col-md-3">
+              <div class="mb-2">
+                <div class="labelText">
+                  Submit date
+                </div>
+                <div class="labelData">
+                  {{ feedback.submitDate | date: 'd/M/yy, h:mm a' }}
+                </div>
+              </div>
+
+              <div class="row mb-2">
+                <div class="col-6">
+                  <div class="labelText">Order Type</div>
+                  <div class="labelData">
+                    {{ feedback.orderType || '-' }}
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="labelText">Order No</div>
+                  <div class="labelData">
+                    {{ feedback.orderNo || '-' }}
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex flex-wrap gap-2 mt-2">
+                <button mat-stroked-button color="primary" *ngIf="!feedback.acknowledged"
+                  (click)="startAcknowledge(feedback)">
+                  <mat-icon class="me-1" fontIcon="check_circle"></mat-icon>
+                  Acknowledge
+                </button>
+
+                <button mat-flat-button color="accent" *ngIf="feedback.acknowledged" disabled>
+                  <mat-icon class="me-1" fontIcon="done_all"></mat-icon>
+                  {{ feedback.acknowledgeStatus || 'Acknowledged' }}
+                </button>
+              </div>
+
+              <!-- Inline acknowledge edit form -->
+              <div *ngIf="feedback._isEditing" class="ack-edit mt-3">
+                <mat-form-field appearance="outline" class="w-100 mb-2">
+                  <mat-label>Comment</mat-label>
+                  <textarea matInput rows="3" [(ngModel)]="feedback._commentDraft"
+                    placeholder="Add your response for the user"></textarea>
+                </mat-form-field>
+
+                <div class="d-flex justify-content-end gap-2">
+                  <button mat-button (click)="cancelAcknowledge(feedback)">
+                    Cancel
+                  </button>
+                  <button mat-flat-button color="primary" (click)="saveAcknowledge(feedback)">
+                    Save
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Material paginator (frontend-side pagination) -->
+    <mat-paginator [length]="filteredFeedback.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+      [pageSizeOptions]="[10, 15, 25, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+    </mat-paginator>
+  </div>
+
+  <ng-template #noRecords>
+    <div class="center text-muted mt-4">No Records Found</div>
+  </ng-template>
 </div>
