@@ -5,7 +5,6 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-// import { DdApiMainService } from 'src/service/apiService/ddApiMain.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
@@ -24,7 +23,7 @@ export class AddOrganizationComponent implements OnInit {
   showUpdate: boolean = false;
   adminSelected: any = [];
   roleList = ['poc', 'admin', 'superAdmin'];
-  // roleList = ['poc', 'superAdmin'];
+
   pocSelected: any;
   cafeSelected: any;
   showError: boolean = false;
@@ -40,6 +39,7 @@ export class AddOrganizationComponent implements OnInit {
   imageUrl: any;
   uploadedImageFile: any;
 
+  panelOpenState = false;
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
@@ -642,4 +642,9 @@ export class AddOrganizationComponent implements OnInit {
       console.log(error);
     }
   }
+  //  hasError for validations 
+  hasError(form:FormGroup , controlName :string , error :string):boolean{
+    return false
+  }
 }
+
