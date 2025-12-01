@@ -1,72 +1,112 @@
-<div class="container-fluid" *ngIf="!isViewCustomer">
-    <h3>Users</h3>
-    <div class="container-fluid">
-        <div class="row mb-4 mt-3 p-3 bg-light rounded">
+<div class="container-fluid mainUserDiv pb-4" *ngIf="!isViewCustomer">
+    <div class="headerDiv mb-3">
+        <h2 class="page-title ">Users</h2>
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search users</mat-label>
+            <input matInput (input)="searchFilter($event)" [value]="searchText"
+                placeholder="Search by name, phone, or email" />
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+    </div>
+
+    <mat-card class="mb-3 filter-card">
+        <div class="row g-3 align-items-end">
             <!-- Organization Selection -->
-            <div class="col-12 col-md-3">
-                <label class="labelText">Organization</label>
-                <select class="form-select" [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin.role === 'ORGADMIN'"
-                    (change)="setOrgDetails()">
-                    <option selected disabled value="">Select Organization</option>
-                    <option *ngFor="let option of orglist" [value]="option._id">
-                        {{ option.organization_name }}
-                    </option>
-                </select>
+            <div class="col-12 col-md-6">
+                <mat-form-field appearance="outline" class="select-field">
+                    <mat-label>Organization</mat-label>
+                    <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role === 'ORGADMIN'"
+                        (selectionChange)="submitFilter()">
+                        <mat-option [value]="''" disabled>Select Organization</mat-option>
+                        <mat-option *ngFor="let option of orglist" [value]="option._id">
+                            {{ option.organization_name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
             </div>
 
-            <div class="col-12 col-md-3 submitBtnDiv">
-                <button (click)="submitFilter()" class="btn btn-primary">Submit</button>
+            <!-- Search -->
+            <div class="col-12 col-md-6 text-md-end">
+                <!-- Export buttons -->
+                <div class="d-flex justify-content-end mb-2" *ngIf="filteredCustomerList?.length">
+                    <button mat-stroked-button class="me-2" (click)="exportToExcel()">
+                        <mat-icon class="me-1">grid_on</mat-icon>
+                        Export Excel
+                    </button>
+
+                    <button mat-stroked-button color="warn" (click)="exportToPdf()">
+                        <mat-icon class="me-1">picture_as_pdf</mat-icon>
+                        Export PDF
+                    </button>
+                </div>
             </div>
         </div>
-    </div>
+    </mat-card>
 
-    <div class="row">
-        <div class="col-12 col-md-4">
-            <div class="searchDiv">
-                <i class="bi bi-search"></i>
-                <input type="text" (input)="searchFilter($event)" class="form-control" placeholder="Search"
-                    aria-label="Search Filter" aria-describedby="basic-addon2" />
-            </div>
-        </div>
-    </div>
+    <!-- List -->
+    <ng-container *ngIf="filteredCustomerList?.length; else noUsers">
+        <div class="row g-3">
+            <div class="col-12" *ngFor="let user of pagedCustomerList">
+                <mat-card class="user-card">
+                    <div class="row align-items-center">
+                        <div class="col-12 col-md-3 mb-2 mb-md-0">
+                            <div class="labelText">Name</div>
+                            <div class="labelData fw-semibold">
+                                {{ user?.userName || '-' }}
+                            </div>
+                        </div>
 
-    <div class="mt-2 pb-4" *ngIf="filteredCustomerList.length > 0">
-        <!-- <div class="row btnIconDiv">
-      <button (click)="changeDataView()" class="btn iconBtn " *ngIf="!isChartShow"><i
-          class="bi bi-graph-down"></i></button>
-      <button (click)="changeDataView()" class="btn iconBtn " *ngIf="isChartShow"><i class="bi bi-table"></i></button>
-    </div> -->
-        <div *ngFor="let user of filteredCustomerList" class="cardDesign my-1">
-            <div class="row w-full">
-                <div class="col-md-2">
-                    <div class="labelText">Name</div>
-                    <div class="labelData">{{ user?.userName }}</div>
-                </div>
-                <div class="col-md-2">
-                    <div class="labelText">Phone No</div>
-                    <div class="labelData">{{ user?.phoneNo }}</div>
-                </div>
-                <div class="col-md-3">
-                    <div class="labelText">Email</div>
-                    <div class="labelData">
-                        {{ user?.email }}
+                        <div class="col-12 col-md-2 mb-2 mb-md-0">
+                            <div class="labelText">Phone No</div>
+                            <div class="labelData">
+                                {{ user?.phoneNo || '-' }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-3 mb-2 mb-md-0">
+                            <div class="labelText">Email</div>
+                            <div class="labelData text-truncate">
+                                {{ user?.email || '-' }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-3 mb-2 mb-md-0">
+                            <div class="labelText">Employee Info</div>
+                            <div class="labelData text-truncate">
+                                {{ user?.employeeInfo?.org_name || '-' }} |
+                                {{ user?.employeeInfo?.empId || '-' }}
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-1 text-md-end mt-2 mt-md-0">
+                            <button mat-icon-button color="primary" (click)="viewCustomer(user)"
+                                matTooltip="View details">
+                                <mat-icon>visibility</mat-icon>
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="labelText">Employee Info</div>
-                    <div class="labelData">{{ user?.employeeInfo?.org_name }} | {{user?.employeeInfo?.empId}}</div>
-                </div>
-                <div class="col-2  inline right pointer header3" ><i
-                        class="bi bi-eye editDeltesaveIcon" (click)="viewCustomer(user)"></i>
-                </div>
+                </mat-card>
             </div>
         </div>
-    </div>
-    <div class="center labelText mt-2" *ngIf="filteredCustomerList.length == 0">
-        No Users found
-    </div>
+
+        <!-- Pagination -->
+        <div class="mt-3 d-flex justify-content-end">
+            <mat-paginator [length]="filteredCustomerList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+                [pageSizeOptions]="[5, 10, 20, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </ng-container>
+
+    <!-- No users -->
+    <ng-template #noUsers>
+        <div class="center labelText mt-2 text-muted">
+            No users found
+        </div>
+    </ng-template>
 </div>
 
-<ng-container *ngIf="isViewCustomer" >
+<!-- Detail view -->
+<ng-container *ngIf="isViewCustomer">
     <app-customer-view [userDetails]="selectedUser" (backBtnEmitter)="backBtnPress()"></app-customer-view>
 </ng-container>

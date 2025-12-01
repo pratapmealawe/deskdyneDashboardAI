@@ -20,10 +20,11 @@
 </mat-tab-group>
 <ng-container [ngSwitch]="selectedTab">
   <app-vendor-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-details>
-  <app-vendor-report *ngSwitchCase="'vendorFirmReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-report>
 </ng-container>
 
 <ng-container [ngSwitch]="selectedSubTab">
   <app-wallet-details *ngSwitchCase="'walletDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-wallet-details>
   <app-ledger-details *ngSwitchCase="'ledgerDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-ledger-details>
+  <app-vendor-report *ngSwitchCase="'vendorFirmReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-report>
+  <app-vendor-daily-report *ngSwitchCase="'vendorFirmDailyReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-daily-report>
 </ng-container>

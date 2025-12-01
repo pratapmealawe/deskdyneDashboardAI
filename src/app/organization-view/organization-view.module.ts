@@ -4,12 +4,10 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
 import { B2bWeeklyMenuComponent } from '../common-components/b2b-weekly-menu/b2b-weekly-menu.component';
-import { CakeMenuModule } from '../common-components/cake-menu/cake-menu.module';
 import { ConsumptionOrderComponent } from '../common-components/consumption-order/consumption-order.component';
 import { EmployeeListComponent } from '../common-components/employee-list/employee-list.component';
 import { EmployeeWalletComponent } from '../common-components/employee-wallet/employee-wallet.component';
 import { GuestEmployeeListComponent } from '../common-components/guest-employee-list/guest-employee-list.component';
-import { LuxMenuModule } from '../common-components/lux-menu/lux-menu.module';
 import { MealaweOutletComponent } from '../common-components/mealawe-outlet/mealawe-outlet.component';
 import { OrgBulkMenuComponent } from '../common-components/org-bulk-menu/org-bulk-menu.component';
 import { OrgBulkSnackboxMenuComponent } from '../common-components/org-bulk-snackbox-menu/org-bulk-snackbox-menu.component';
@@ -19,12 +17,15 @@ import { OrgIndividualMenuComponent } from '../common-components/org-individual-
 import { OrgIndividualSnackboxMenuComponent } from '../common-components/org-individual-snackbox-menu/org-individual-snackbox-menu.component';
 import { OrgPredefinedSnackboxMenuComponent } from '../common-components/org-predefined-snackbox-menu/org-predefined-snackbox-menu.component';
 import { OutletEmployeeComponent } from '../common-components/outlet-employee/outlet-employee.component';
-import { SweetMenuModule } from '../common-components/sweet-menu/sweet-menu.module';
-import { VcEmployeeComponent } from '../common-components/vc-employee/vc-employee.component';
 import { MaterialModule } from '../material.module';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OrganizationViewComponent } from './organization-view.component';
+import { VcEmployeeComponent } from '../common-components/vc-employee/vc-employee.component';
+import { CakeMenuComponent } from '../common-components/cake-menu/cake-menu.component';
+import { SweetMenuComponent } from '../common-components/sweet-menu/sweet-menu.component';
+import { LuxMenuComponent } from '../common-components/lux-menu/lux-menu.component';
+
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -44,6 +45,9 @@ import { OrganizationViewComponent } from './organization-view.component';
     EmployeeWalletComponent,
     ConsumptionOrderComponent,
     MealaweOutletComponent,
+    CakeMenuComponent,
+    SweetMenuComponent,
+    LuxMenuComponent,
   ],
   imports: [
     CommonModule,
@@ -51,9 +55,6 @@ import { OrganizationViewComponent } from './organization-view.component';
     FormsModule,
     ReactiveFormsModule,
     PdfuploadComponent,
-    CakeMenuModule,
-    SweetMenuModule,
-    LuxMenuModule,
     MaterialModule,
     DragDropModule
   ],

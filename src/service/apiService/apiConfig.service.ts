@@ -8,10 +8,9 @@ export class ApiConfigService {
   private baseUrl: string = environment.serverUrl;
   apiEndPointObj: any;
   constructor() {
-    this.init2();
+    this.init();
   }
-
-  private init2() {
+  private init() {
     const p = (path: string, method: string) => ({ url: `${this.baseUrl}${path}`, method });
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
@@ -216,6 +215,8 @@ export class ApiConfigService {
       checkUserWallet: p('/api/checkUserWallet', 'POST'),
       fetchPastOutletOrdersbysearchObj: p('/api/fetchPastOutletOrdersbysearchObj', 'POST'),
       fetchCompletedOutletOrdersbysearchObj: p('/api/fetchCompletedOutletOrdersbysearchObj', 'POST'),
+      fetchDailyBulkOrdersbysearchObj: p('/api/fetchDailyBulkOrdersbysearchObj', 'POST'),
+      fetchDailyBulkOrdersbyOrgId: p('/api/fetchDailyBulkOrdersbyOrgId', 'POST'),
       getOrg: p('/api/getOrg', 'GET'),
       getStaticTotalCountsByOrg: p('/api/getStaticTotalCountsByOrg', 'GET'),
       searchOutletByCafeId: p('/api/searchOutletByCafeId', 'GET'),
@@ -254,6 +255,7 @@ export class ApiConfigService {
       cancelPidge3PLOrder: p('/api/cancelPidge3PLOrder', 'PUT'),
       cancelShadowFaxTask: p('/api/cancelShadowFaxTask', 'PUT'),
       updateB2BDailyManualDelivery: p('/api/updateB2BDailyManualDelivery', 'PUT'),
+      updateB2BManualDelivery: p('/api/updateB2BManualDelivery', 'GET'),
       trackDeliveryTask: p('/api/trackdeliveryTask', 'GET'),
       getVendorById: p('/api/getVendorById', 'GET'),
       cancelPorterTask: p('/api/cancelPorterTask', 'PUT'),
@@ -278,6 +280,17 @@ export class ApiConfigService {
       changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'), 
       updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'), 
       createDefaultCategories: p('/api/createDefaultCategories', 'POST'), 
+      moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
     }
   }
+  // private generateOneLineApi(): string[] {
+  //   const result: string[] = [];
+  //   Object.entries(this.apiEndPointObj).forEach(([key, value]) => {
+  //     const endpoint = value as { url: string; method: string };
+  //     const path = endpoint.url.replace(this.baseUrl, '');
+  //     result.push(`${key}: p('${path}', '${endpoint.method}')`);
+  //   });
+  //   return result;
+  // }
 }
+

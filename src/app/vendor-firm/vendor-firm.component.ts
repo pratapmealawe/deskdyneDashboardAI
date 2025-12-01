@@ -8,6 +8,7 @@ import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { SearchFilterService } from 'src/service/search-filter.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
 
 @Component({
   selector: 'app-vendor-firm',
@@ -38,7 +39,8 @@ export class VendorFirmComponent {
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
     private confirmationModalService: ConfirmationModalService,
-    private searchService:SearchFilterService
+    private searchService:SearchFilterService,
+    private localStorageService: LocalStorageService,
   ) { }
 
   ngOnInit(): void {
@@ -74,8 +76,7 @@ export class VendorFirmComponent {
   }
 
   editVendor(vendor: any) {
-    // this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
-    // this.router.navigate(['/addVendorFirm']);
+    this.localStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
     this.showSearchSection = false;
     this.vendorInfo = vendor;
   }
@@ -101,7 +102,7 @@ export class VendorFirmComponent {
 
 
   resetForm() {
-    this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', {});
+    this.localStorageService.setCacheData('VENDOR_FIRM_EDIT', {});
   }
 
   addVendor() {

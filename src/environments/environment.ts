@@ -14,6 +14,6 @@ export const environment = {
   fileUrl: domainUrl + '/api/pdfs/',
   googleAPIkey: 'AIzaSyCtIAU1RAa32Y9at1VnmL-fa79AP0NPreQ',
   envName: 'Devlopment',
-  api_secret_key: 'fFwzsLH3ynmfXqSSY2KPlTdv0WjzZlFm'
-  // api_secret_key: 'Xs7dRTbaqPkcxHp5WcriK8CHUnVXbWMg',
+  // api_secret_key: 'fFwzsLH3ynmfXqSSY2KPlTdv0WjzZlFm'
+  api_secret_key: 'Xs7dRTbaqPkcxHp5WcriK8CHUnVXbWMg',
 };

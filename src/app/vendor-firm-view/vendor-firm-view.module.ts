@@ -10,6 +10,7 @@ import { WalletTxnDialogComponent } from './wallet-txn-dialog/wallet-txn-dialog.
 
 import { VendorReportModule } from "../vendor-report/vendor-report.module";
 import { MaterialModule } from '../material.module';
+import { VendorDailyReportModule } from "../vendor-daily-report/vendor-daily-report.module";
 
 @NgModule({
   declarations: [
@@ -23,8 +24,9 @@ import { MaterialModule } from '../material.module';
     CommonModule,
     VendorFirmViewRoutingModule,
     MaterialModule,
-    VendorReportModule
-  ],
+    VendorReportModule,
+    VendorDailyReportModule
+],
   exports: [VendorFirmViewComponent]
 })
 export class VendorFirmViewModule { }
