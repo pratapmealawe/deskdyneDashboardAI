@@ -54,6 +54,7 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'Guest Employee', path: 'guestEmployeeList' },
     { name: 'Compliance', path: 'organizationCompliance' },
     { name: 'Employee wallet', path: 'employeeWallet' },
+    { name: 'QR Employee', path: 'qrEmployee' },
   ];
 
   constructor(private policyService: PolicyService) { }
