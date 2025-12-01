@@ -12,9 +12,7 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
-import { UtilityService } from 'src/service/utility.service';
 
 @Component({
   selector: 'app-header',
@@ -134,7 +132,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Search Order', route: 'searchOrder', showChild: true },
       ],
     },
-   
+
     {
       name: 'Users',
       showParent: true,
@@ -270,7 +268,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       image: 'Dashbaord_white',
       imageblue: 'Dashbaord_blue',
     },
-     {
+    {
       name: 'Consumption Orders',
       showParent: true,
       route: 'consumptionOrders',
@@ -401,7 +399,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private runtimeStorageService: RuntimeStorageService,
-    private utilityService: UtilityService,
     private offcanvasService: NgbOffcanvas,
     private suggestionsFeedbackService: SuggestionsFeedbackService
   ) {
@@ -411,8 +408,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
 
       if (event instanceof NavigationEnd) {
-        console.log(event.url);
-
         this.currentRoute = event.url;
         this.breadCrumbText = event.url;
         const url = event.url.replace('/', '');
@@ -505,9 +500,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const adminId = this.localStorageService.getCacheData('ADMIN_ID');
     try {
       const adminProfile = await this.apiMainService.getadminprofile(adminId);
-
-      console.log(adminProfile);
-
       if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
         if (this.adminProfile.role == 'ORGADMIN' || this.adminProfile.role == 'HYPERPURE_ADMIN' || this.adminProfile.role == 'HYPERPURE_POC') {
@@ -583,6 +575,26 @@ export class HeaderComponent implements OnInit, OnDestroy {
     } catch (error) {
       console.log(error);
     }
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+
+    let parts = name.trim().split(' ');
+    if (parts.length === 1) {
+      return parts[0].charAt(0).toUpperCase();
+    }
+
+    return (
+      parts[0].charAt(0).toUpperCase() +
+      parts[1].charAt(0).toUpperCase()
+    );
+  }
+
+  getAvatarColor(name: string): string {
+    const colors = ['#192754', '#FF6B6B', '#17C964', '#FFB020', '#9333EA'];
+    let index = name.length % colors.length;
+    return colors[index];
   }
 
   ngOnDestroy(): void {

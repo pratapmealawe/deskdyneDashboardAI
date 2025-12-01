@@ -1,23 +1,26 @@
-<nav class="navbar fixed-top navbar-dark bg-dark mb-5">
+<nav class="navbar fixed-top py-0">
   <div class="container-fluid">
     <span class="navbar-brand mb-0 h1" style="flex: 1">
-      <img src="/assets/images/menu-burger.svg" class="menu-burger" alt="" (click)="openEnd()" />
+      <span class="menu-burger" (click)="openEnd()"><i class="bi bi-list"></i></span>
       <span class="company-name">
         <ng-container *ngIf="!isOrgAdmin">
-          <img src="assets/images/deskdyneLogo.png" alt="deskdyneLogo" style="width: 10%" />
+          <img class="deskdyneLogo" src="assets/images/DeskDyne-Logo-black.png" alt="deskdyneLogo" />
         </ng-container>
         <ng-container *ngIf="isOrgAdmin">
           {{ orgDetails.organization_name }}
         </ng-container>
       </span>
     </span>
-    <span style="color: white; flex: 1">{{ breadCrumbText }}</span>
-    <span>
+    <span class="breadCrumbText">{{ breadCrumbText }}</span>
+    <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
+      [src]="imageUrl + adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile" />
+    <span *ngIf="!adminProfile.imageUrl" [style.background]="getAvatarColor(adminProfile.name)"
+      class="initials-avatar pointer" [ngbPopover]="popOverBody" popoverTitle="Admin Profile">
+      {{ getInitials(adminProfile.name) }}
+    </span>
+    <span class="profile-info ml-2" [ngbPopover]="popOverBody" popoverTitle="Admin Profile">
       <span class="name">{{ adminProfile.name }}</span>
-      <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
-        [src]="imageUrl + adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile" />
-      <span [ngbPopover]="popOverBody" popoverTitle="Admin Profile" *ngIf="!adminProfile.imageUrl"
-        class="img-span pointer"><i class="bi bi-person"></i></span>
+      <span class="role">{{ adminProfile.role }}</span>
     </span>
   </div>
 </nav>
@@ -26,7 +29,9 @@
   <div class="offcanvas-header">
     <h1 class="offcanvas-title">
       <ng-container *ngIf="!isOrgAdmin">
-        <img src="assets/images/deskdyneLogo.png" alt="deskdyneLogo" style="width: 50%; height: 50%" />
+        <div class="d-flex justify-content-center align-items-center">
+          <img class="centered-logo" src="assets/images/deskdyneLogo.png" alt="deskdyneLogo" />
+        </div>
       </ng-container>
       <ng-container *ngIf="isOrgAdmin">
         {{ orgDetails.organization_name }}
@@ -40,26 +45,26 @@
           <div class="orgbutton d-flex align-items-center justify-content-between"
             [ngClass]="{ 'active-link': selectedIndex === i }" (click)="selectLink(link, i)">
             <div class="d-flex align-items-center flex-wrap gap-2">
-              <img *ngIf="selectedIndex === i" [src]="'assets/images/SideNavbar/' + link.imageblue + '.svg'"
-                alt="Active Icon" style="margin-right: 10px; width: 20px; height: 20px" />
+              <img *ngIf="selectedIndex === i" [src]="'assets/images/SideNavbar/' + link.image + '.svg'"
+                alt="Active Icon" class="sidebar-icon" />
               <img *ngIf="selectedIndex !== i" [src]="'assets/images/SideNavbar/' + link.image + '.svg'"
-                alt="Inactive Icon" style="margin-right: 10px; width: 20px; height: 20px" />
+                alt="Inactive Icon" class="sidebar-icon" />
               <span>{{ link.name }}</span>
             </div>
             <div class="badge" *ngIf="link.showBadge && (link.count | async) ">
               <span>{{link.count | async}}</span>
             </div>
-            <div class="plusMinus" *ngIf="link.children">
-              <i class="bi" [ngClass]="openChildSectionIndex === i ? 'bi-dash' : 'bi-plus'"></i>
+            <div *ngIf="link.children">
+              <i class="bi" [ngClass]="openChildSectionIndex === i ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
             </div>
           </div>
           <div *ngIf="link.children && openChildSectionIndex === i">
             <div *ngFor="let childLink of link.children; let j = index">
               <div *ngIf="childLink.showChild" class="childMenuStyle" type="button"
                 (click)="selectChildLink(childLink.route, i, j)" [ngClass]="{
-                  'active-link':
-                    openChildSectionIndex === i && childSelectedIndex === j
-                }">
+        'active-link': openChildSectionIndex === i && childSelectedIndex === j
+      }">
+                <i class="bi bi-circle child-dot"></i>
                 {{ childLink.name }}
               </div>
             </div>
