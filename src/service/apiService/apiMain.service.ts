@@ -236,7 +236,7 @@ export class ApiMainService {
 
   gettfeedbacklist(pageNumber: number, filter: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.gettfeedbacklist;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${filter.orgId}/${filter.outletId}/${pageNumber}`, method: urlObj.method });
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${filter.outletId}/${pageNumber}`, method: urlObj.method });
   }
 
   saveAppVersion(data: any) {
@@ -695,14 +695,7 @@ export class ApiMainService {
 
   feedbackacknowledge(id: string, payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.feedbackacknowledge;
-<<<<<<< HEAD
-    return this.apiHttpService.REQUEST(
-      { url: urlObj.url + `/${id}`, method: urlObj.method },
-      payload
-    );
-=======
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
->>>>>>> upstream/staging
   }
 
   getAdminDailyBulkOrders(payload: any) {
@@ -826,6 +819,37 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
+
+
+  qrEmployeeAdd(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.qrEmployeeAdd, body);
+  }
+
+  addQrEmployeeList(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addQrEmployeeList, body);
+  }
+
+  qrEmployeeByCafeId(cafeId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.qrEmployeeByCafeId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  deleteQrEmployee(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteQrEmployee;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getQrEmployeeByPhoneNo(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getQrEmployeeByPhoneNo;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
+  }
+
+  updateQrEmployee(id: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateQrEmployee;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+
 
   vcEmployeeAdd(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.vcEmployeeAdd, body);
@@ -1214,12 +1238,12 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.moveSubsidyToWallet, body);
   }
 
-  moveDailyToWallet(body:any) {
+  moveDailyToWallet(body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.moveDailyToWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
 
-  deleteOutlet(id:any) {
+  deleteOutlet(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteOutlet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }

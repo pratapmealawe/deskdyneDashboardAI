@@ -179,6 +179,13 @@ export class ApiConfigService {
       updateOutletEmployee: p('/api/updateOutletEmployee', 'POST'),
       getOutletEmployeeByPhoneNo: p('/api/getOutletEmployeeByPhoneNo', 'GET'),
       verifyOutletEmployeeByPhoneNo: p('/api/verifyOutletEmployeeByPhoneNo', 'GET'),
+      qrEmployeeAdd: p('/api/qrEmployeeAdd', 'POST'),
+      qrEmployeeByCafeId: p('/api/qrEmployeeByCafeId', 'GET'),
+      addQrEmployeeList: p('/api/addQrEmployeeList', 'POST'),
+      deleteQrEmployee: p('/api/deleteQrEmployee', 'DELETE'),
+      updateQrEmployee: p('/api/updateQrEmployee', 'POST'),
+      getQrEmployeeByPhoneNo: p('/api/getQrEmployeeByPhoneNo', 'GET'),
+      verifyQrEmployeeByPhoneNo: p('/api/verifyQrEmployeeByPhoneNo', 'GET'),
       vcEmployeeAdd: p('/api/vcEmployeeAdd', 'POST'),
       vcEmployeeByOrgId: p('/api/vcEmployeeByOrgId', 'GET'),
       employeeWalletByOrgId: p('/api/employeeWalletByOrgId', 'GET'),
@@ -281,7 +288,6 @@ export class ApiConfigService {
       updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'), 
       createDefaultCategories: p('/api/createDefaultCategories', 'POST'), 
       moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
-      getConsumptionOrderByDateForDashboard: p('/api/getConsumptionOrderByDateForDashboard', 'POST')
     }
   }
   // private generateOneLineApi(): string[] {

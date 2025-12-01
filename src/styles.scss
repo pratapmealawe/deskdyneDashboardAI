@@ -1,13 +1,6 @@
 @use './styles/theme/index' as *;
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
-
-/* Global application base styles */
-body {
-  background-color: #f3f3f3 !important;
-  color: var(--color-text);
-  font-family: Roboto, sans-serif;
-}
 $white :#ffffff;
 $black :#000;
 $textPrimary:#1a1a1a;
@@ -346,7 +339,8 @@ body {
   font-family: "Poppins-regular";
   height: 100%;
   margin: 0;
-  background: #fefefe !important;
+  background-color: #f3f3f3 !important;
+  color: var(--color-text);
 }
 
 .customInput {

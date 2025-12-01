@@ -20,11 +20,13 @@ import { VcEmployeeComponent } from '../common-components/vc-employee/vc-employe
 import { CakeMenuComponent } from '../common-components/cake-menu/cake-menu.component';
 import { SweetMenuComponent } from '../common-components/sweet-menu/sweet-menu.component';
 import { LuxMenuComponent } from '../common-components/lux-menu/lux-menu.component';
-import { MaterialModule } from '../material.module';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OrganizationViewComponent } from './organization-view.component';
 import { MealaweOutletComponent } from '../common-components/mealawe-outlet/mealawe-outlet.component';
+import { MaterialModule } from '../material.module';
+import { QrEmployeeComponent } from '../common-components/qr-employee/qr-employee.component';
+import { QRCodeModule } from 'angularx-qrcode';
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -47,6 +49,7 @@ import { MealaweOutletComponent } from '../common-components/mealawe-outlet/meal
     SweetMenuComponent,
     LuxMenuComponent,
     MealaweOutletComponent,
+    QrEmployeeComponent
   ],
   imports: [
     CommonModule,
@@ -55,7 +58,8 @@ import { MealaweOutletComponent } from '../common-components/mealawe-outlet/meal
     ReactiveFormsModule,
     PdfuploadComponent,
     MaterialModule,
-    DragDropModule
+    DragDropModule,
+    QRCodeModule
   ],
   exports: [OrganizationViewComponent],
 })

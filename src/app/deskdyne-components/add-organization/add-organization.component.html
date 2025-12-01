@@ -6,6 +6,14 @@
   <button mat-flat-button (click)="goBack()"> <mat-icon>arrow_back</mat-icon>Back</button>
   <div [formGroup]="form">
     <div class="row">
+      <div class="col-12 col-md-2 col-lg-2 image-div">
+        <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+          (change)="handleFileInput($event)" />
+        <img (click)="f.click()" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'" class="uploadedImage" />
+        <div class="uploadIcon" (click)="f.click()">
+          Upload <i class="bi bi-upload"></i>
+        </div>
+      </div>
       <div class="col-12 col-md-6 col-lg-3">
         <mat-label class="labelText">Org Name</mat-label>
         <input type="text" matInput class="form-control" placeholder="Org Name" formControlName="organization_name" />

@@ -242,8 +242,7 @@
 
     <div class="item-list">
       <mat-selection-list [(ngModel)]="selectedFoodItems">
-        <mat-list-option *ngFor="let foodItem of foodItemList | filter: searchText : 'itemName'"
-                         [value]="foodItem">
+        <mat-list-option *ngFor="let foodItem of foodItemList | filter: searchText : 'itemName'" [value]="foodItem">
           <div class="list-item">
             <div class="name">{{ foodItem.itemName }}</div>
 
