@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -51,19 +51,19 @@ export class AddOrganizationComponent implements OnInit {
     private fb: FormBuilder
   ) {
     this.form = this.fb.group({
-      organization_name: ['', Validators.required],
+      organization_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)],],
       location: ['', Validators.required],
       domain: [''],
       city: ['', Validators.required],
-      gstin: ['', Validators.required],
+      gstin: ['', [Validators.required, Validators.pattern('^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$'),],],
       poc_details: this.fb.array([]),
       org_address: this.fb.group({
-        addressLine1: ['', Validators.required],
-        addressLine2: ['', Validators.required],
-        addressLine3: ['', Validators.required],
+        addressLine1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120),],],
+        addressLine2: ['', [Validators.maxLength(120)]],
+        addressLine3: ['', [Validators.maxLength(80)]],  // Landmark field
       }),
       cafeteriaList: this.fb.array([]),
-      subsidy: [0],
+      subsidy: [0, [Validators.min(0), Validators.max(100), Validators.pattern('^\\d+(\\.\\d{1,2})?$')],],
       isEmpIdRequired: [true, Validators.required],
     });
   }
@@ -93,17 +93,17 @@ export class AddOrganizationComponent implements OnInit {
 
   new_admin_details(): FormGroup {
     return this.fb.group({
-      admin_name: ['', Validators.required],
-      admin_phoneNo: ['', Validators.required],
-      admin_email: ['', [Validators.required, Validators.email]],
-      admin_location: ['', Validators.required],
+    admin_name: [ '',[Validators.required, Validators.minLength(3),Validators.maxLength(80),Validators.pattern(/^[A-Za-z ]+$/)]],
+    admin_phoneNo: ['',[Validators.required,Validators.pattern(/^[6-9][0-9]{9}$/) ]],
+    admin_email: ['',[Validators.required, Validators.email, Validators.maxLength(80)]],
+    admin_location: ['', Validators.required],
     });
   }
 
   new_cafeteria(): FormGroup {
     let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
-      accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/)]],
+      accessCode: ['',[ Validators.minLength(1),Validators.maxLength(4),Validators.pattern(/^[0-9]+$/)]],
       showAdminDaily: [false],
       showEmpPolls: [false],
       showVirtualCafe: [false],
@@ -115,37 +115,32 @@ export class AddOrganizationComponent implements OnInit {
       isEmployeeEmailLogin: [false],
       showComplienceTracker: [false],
       showConsumptionOrder: [false],
-      cafeteria_name: ['', Validators.required],
-      cafeteria_id: [id, Validators.required,],
+      cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+      cafeteria_id: [id, Validators.required],
       cafeteria_city: ['', Validators.required],
-      cafeteria_gstin: [''],
-      cafeteria_location: this.fb.group({
-        lat: ['', Validators.required],
-        lng: ['', Validators.required],
-      }),
+      cafeteria_gstin: ['',Validators.pattern(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$/)],
+      cafeteria_location: this.fb.group({lat: ['', Validators.required], lng: ['', Validators.required],}),
       clusterId: [''],
       clusterName: [''],
-      address1: ['', Validators.required],
-      address2: ['', Validators.required],
-      landmark: ['', Validators.required],
+      address1: [ '',[Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
+      address2: ['', [Validators.maxLength(120)]],
+      landmark: ['', [Validators.maxLength(80)]],
       location: ['', Validators.required],
-      subsidy: [0],
-      poc_details: this.fb.group({
-        poc_id: ['', Validators.required],
-        poc_name: ['', Validators.required],
-        poc_phoneNo: ['', Validators.required],
-        poc_email: [''],
-        poc_location: [''],
-        poc_role: ['', Validators.required],
-        approverPriceLimit: [''],
-        approverCountLimit: [''],
-        approverDetails: this.fb.group({
-          approver_id: [''],
-          approver_name: [''],
-          approver_phoneNo: [''],
-          approver_email: [''],
-          approver_location: [''],
-          approver_role: [''],
+      subsidy: [0, [Validators.min(0), Validators.max(100)]],
+      poc_details: this.fb.group({poc_id: ['', Validators.required],poc_name: [ '', [Validators.required, Validators.minLength(3), Validators.maxLength(80)] ],
+      poc_phoneNo: ['',[Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)] ],
+      poc_email: [ '',[Validators.required, Validators.email, Validators.maxLength(80)]],
+      poc_location: ['', Validators.required],
+      poc_role: ['', Validators.required],
+      approverPriceLimit: [''],
+      approverCountLimit: [''],
+      approverDetails: this.fb.group({
+      approver_id: [''],
+      approver_name: ['',[Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
+      approver_phoneNo: ['',Validators.pattern(/^[6-9][0-9]{9}$/)],
+      approver_email: ['', Validators.email],
+      approver_location: [''],
+      approver_role: [''],
         }),
       }),
     });
@@ -154,16 +149,15 @@ export class AddOrganizationComponent implements OnInit {
   new_poc_details(): FormGroup {
     return this.fb.group({
       poc_id: ['', Validators.required],
-      poc_name: ['', Validators.required],
-      poc_phoneNo: ['', Validators.required],
-      poc_email: ['', [Validators.required, Validators.email]],
+      poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
+      poc_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
+      poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
       poc_location: ['', Validators.required],
       poc_role: ['', Validators.required],
       approverDetails: this.fb.group({
-        approver_id: [{ value: '', disabled: true }],
-        approver_name: [{ value: '', disabled: true }],
-        approver_phoneNo: [{ value: '', disabled: true }],
-        approver_email: [{ value: '', disabled: true }],
+        approver_id: [{ value: '', disabled: true }], approver_name: [{ value: '', disabled: true }, [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
+        approver_phoneNo: [{ value: '', disabled: true }, Validators.pattern(/^[6-9][0-9]{9}$/)],
+        approver_email: [{ value: '', disabled: true }, Validators.email],
         approver_location: [{ value: '', disabled: true }],
         approver_role: [{ value: '', disabled: true }],
       }),
@@ -177,7 +171,6 @@ export class AddOrganizationComponent implements OnInit {
       .map(domain => domain.trim())
       .filter(domain => domain !== '');
     this.form.get('domain')?.patchValue(this.domainList)
-
   }
 
   add_admin_details() {
@@ -643,8 +636,10 @@ export class AddOrganizationComponent implements OnInit {
     }
   }
   //  hasError for validations 
-  hasError(form:FormGroup , controlName :string , error :string):boolean{
-    return false
+  hasError(form: FormGroup | AbstractControl, controlPath: string, error: string) {
+    const control = form.get(controlPath);
+    return control && control.hasError(error)
   }
+
 }
 

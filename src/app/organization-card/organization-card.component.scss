@@ -174,3 +174,40 @@ th:last-child {
 .content{
   width:12%
 }
+/* Remove fixed width so items can shrink/grow naturally */
+.content {
+  width: auto !important;
+  flex: 1;
+  min-width: 150px;   /* ensures good wrapping */
+}
+
+/* Make the whole card responsive */
+.cardDesign {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Push the visibility icon to the right */
+.content.action-btn {
+  flex: 0 0 auto;
+  margin-left: auto !important;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .cardDesign {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .content {
+    min-width: 100% !important;
+  }
+
+  .content.action-btn {
+    align-self: flex-end;
+    margin-left: 0 !important;
+  }
+}

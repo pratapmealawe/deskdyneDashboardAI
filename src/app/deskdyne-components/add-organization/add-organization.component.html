@@ -31,11 +31,6 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <!-- <mat-label class="labelText">Org Name</mat-label>
-        <input type="text" matInput class="form-control" placeholder="Org Name" formControlName="organization_name" />
-        <div class="error-text" *ngIf="form.controls.organization_name.errors?.required && showError">
-          *Org Name is Required
-        </div> -->
         </div>
         <div class="col" *ngIf="showUpdate">
           <div class="form-group">
@@ -49,9 +44,6 @@
             <button mat-raised-button color="primary" style="width:fit-content" (click)="updateOrglevelSubsidy()">Update
               Subsidy</button>
           </div>
-          <!-- <label class="labelText form-label mb-0">Subsidy Amount(In Percent %)</label>
-          <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" />
-          <button class="btn btn-primary mt-2" (click)="updateOrglevelSubsidy()">Update Subsidy</button> -->
         </div>
         <div class="col">
           <div class="form-group">
@@ -63,12 +55,8 @@
               </mat-error>
             </mat-form-field>
           </div>
-          <!-- <div class="labelText">Domain</div>
-        <input type="text" placeholder="e.g., example.com, test.org, mydomain.net" formControlName="domain"
-          class="form-control" (blur)="processDomains()" /> -->
         </div>
       </div>
-      <!-- address lines -->
       <div class="mt-2" formGroupName="org_address">
         <div class="row">
           <div>
@@ -81,15 +69,6 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <!--  -->
-            <!-- <div class="labelText">Address Line 1</div>
-            <input type="text" class="form-control" placeholder="Line 1" formControlName="addressLine1" />
-            <div class="error-text" *ngIf="
-              form.controls.org_address.controls.addressLine1.errors
-                ?.required && showError
-            ">
-              *Line 1 is required
-            </div> -->
           </div>
         </div>
         <div class="row">
@@ -103,14 +82,6 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <!-- <div class="labelText">Address Line 2</div>
-            <input type="text" class="form-control" placeholder="Line 2" formControlName="addressLine2" />
-            <div class="error-text" *ngIf="
-              form.controls.org_address.controls.addressLine2.errors
-                ?.required && showError
-            ">
-              *Line 2 is required
-            </div> -->
           </div>
           <div class="col">
             <div class="form-group">
@@ -122,18 +93,9 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <!-- <div class="labelText">Address Line 3</div>
-            <input type="text" class="form-control" placeholder="Line 3" formControlName="addressLine3" />
-            <div class="error-text" *ngIf="
-              form.controls.org_address.controls.addressLine3.errors
-                ?.required && showError
-            ">
-              *Line 3 is required
-            </div> -->
           </div>
         </div>
       </div>
-      <!-- locations  -->
       <div [formGroup]="form">
         <div class="row">
           <div class="col">
@@ -146,12 +108,6 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <!--  -->
-            <!-- <div class="labelText">Location</div>
-        <input type="text" class="form-control" placeholder="Location" formControlName="location" />
-        <div class="error-text" *ngIf="form.controls.location.errors?.required && showError">
-          *Location is Required
-        </div> -->
           </div>
           <div class="col">
             <div class="form-group">
@@ -163,12 +119,6 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <!--  -->
-            <!-- <div class="labelText">GSTIN</div>
-        <input type="text" class="form-control" placeholder="GSTIN" formControlName="gstin" />
-        <div class="error-text" *ngIf="form.controls.gstin.errors?.required && showError">
-          *GSTIN is Required
-        </div> -->
           </div>
           <div class="col">
             <div class="form-group">
@@ -180,11 +130,6 @@
                 </mat-error>
               </mat-form-field>
             </div>
-            <!-- <div class="labelText">City</div>
-        <input type="text" class="form-control" placeholder="City" formControlName="city" />
-        <div class="error-text" *ngIf="form.controls.city.errors?.required && showError">
-          *City is Required
-        </div> -->
           </div>
         </div>
         <div class="row">
@@ -193,13 +138,6 @@
           </div>
         </div>
       </div>
-      <!-- <ng-container *ngIf="poc.controls.length > 0">
-        <div class="d-flex w-100 align-items-center">
-          <hr class="flex-grow-1" />
-          <span class="mx-2">poc List</span>
-          <hr class="flex-grow-1" />
-        </div>
-      </ng-container> -->
       <div formArrayName="poc_details">
         <div class="cardDesign">
           <div class="d-flex justify-content-between align-items-center">
@@ -229,14 +167,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">POC Id</div>
-                <input type="text" class="form-control" placeholder="POC Id" formControlName="poc_id" />
-                <div class="error-text" *ngIf="
-                  form.controls.poc_details.at(i).controls.poc_id.errors
-                    ?.required && showError
-                ">
-                  *POC Id is Required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
@@ -248,14 +178,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">POC Name</div>
-                <input type="text" class="form-control" placeholder="POC Name" formControlName="poc_name" />
-                <div class="error-text" *ngIf="
-                  form.controls.poc_details.at(i).controls.poc_name.errors
-                    ?.required && showError
-                ">
-                  *POC Name is Required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
@@ -267,14 +189,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">POC Ph No</div>
-                <input type="number" class="form-control" placeholder="POC Phone No" formControlName="poc_phoneNo" />
-                <div class="error-text" *ngIf="
-                  form.controls.poc_details.at(i).controls.poc_phoneNo.errors
-                    ?.required && showError
-                ">
-                  *POC Phone No is Required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-3 ">
                       <div class="form-group">
@@ -289,20 +203,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">POC Email</div>
-                <input type="text" class="form-control" placeholder="POC Email" formControlName="poc_email" />
-                <div class="error-text" *ngIf="
-                  form.controls.poc_details.at(i).controls.poc_email.errors
-                    ?.required && showError
-                ">
-                  *POC Email is Required
-                </div>
-                <div class="error-text" *ngIf="
-                  form.controls.poc_details.at(i).controls.poc_email.errors
-                    ?.email && showError
-                ">
-                  *Enter a Valid Email
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
@@ -314,15 +214,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">POC Location</div>
-                <input type="text" class="form-control" placeholder="POC Location" formControlName="poc_location" />
-                <div class="error-text" *ngIf="
-                  form.controls.poc_details.at(i).controls.poc_location.errors
-                    ?.required && showError
-                ">
-                  *POC Location is Required
-                </div> -->
-                      <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-1 ">
                       <div class="form-group">
@@ -338,20 +229,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">POC Role</div>
-                <select class="custom-select" name="role" formControlName="poc_role">
-                  <option disabled selected value>-- select role --</option>
-                  <option [value]="item" *ngFor="let item of roleList">
-                    {{ item }}
-                  </option>
-                </select>
-                <div class="error-text" *ngIf="
-                  form.controls.poc_details.at(i).controls.poc_role.errors
-                    ?.required && showError
-                ">
-                  *POC Role is Required
-                </div> -->
-                      <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-1 bgpadding3">
                       <div>
@@ -368,8 +245,7 @@
                             <input matInput placeholder="Approver Id" formControlName="approver_id" />
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">Approver Id</div>
-                  <input type="text" class="form-control" placeholder="Approver Id" formControlName="approver_id" /> -->
+
                       </div>
                       <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -378,8 +254,6 @@
                             <input matInput placeholder="Approver Name" formControlName="approver_name" />
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">Approver Name</div>
-                  <input type="text" class="form-control" placeholder="Approver Name" formControlName="approver_name" /> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -388,9 +262,6 @@
                             <input matInput placeholder="Approver Phone No" formControlName="approver_phoneNo" />
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">Approver Ph No</div>
-                  <input type="number" class="form-control" placeholder="Approver Phone No"
-                    formControlName="approver_phoneNo" /> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-3">
                         <div class="form-group">
@@ -399,9 +270,6 @@
                             <input matInput placeholder="Approver Email" formControlName="approver_email" />
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">Approver Email</div>
-                  <input type="text" class="form-control" placeholder="Approver Email"
-                    formControlName="approver_email" /> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -410,10 +278,6 @@
                             <input matInput placeholder="Approver Location" formControlName="approver_location" />
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">Approver Location</div>
-                  <input type="text" class="form-control" placeholder="Approver Location"
-                    formControlName="approver_location" /> -->
-                        <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-1">
                         <div class="form-group">
@@ -426,14 +290,6 @@
                             </mat-select>
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">Approver Role</div>
-                  <select class="custom-select" name="role" formControlName="approver_role">
-                    <option disabled selected value>-- select role --</option>
-                    <option [value]="item" *ngFor="let item of roleList">
-                      {{ item }}
-                    </option>
-                  </select> -->
-                        <!-- <i class="bi bi-plus" (click)="add_poc_details()"></i> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-1 bgpadding2">
                         <div class="d-flex align-items-center">
@@ -471,13 +327,6 @@
           </div>
         </div>
       </ng-template>
-      <!-- <ng-container *ngIf="cafeteria.controls.length > 0">
-        <div class="d-flex w-100 align-items-center">
-          <hr class="flex-grow-1" />
-          <span class="mx-2">Cafeteria List</span>
-          <hr class="flex-grow-1" />
-        </div>
-      </ng-container> -->
       <div class="mt-2" formArrayName="cafeteriaList">
         <div class="cardDesign">
           <div class="d-flex justify-content-between align-items-center">
@@ -498,61 +347,31 @@
                   </mat-expansion-panel-header>
                   <div class="row">
                     <div class="col-3">
-                      <!-- <div class="labelText">Show Admin Daily Card</div> -->
                       <mat-checkbox formControlName="showAdminDaily">Show Admin Daily Card</mat-checkbox>
-                      <!-- <input type="checkbox" formControlName="showAdminDaily" /> -->
-
                     </div>
                     <div class="col-3">
                       <mat-checkbox formControlName="showEmpPolls">Show Emp Poll Card</mat-checkbox>
-                      <!-- <div class="labelText">Show Emp Poll Card</div>
-                <input type="checkbox" formControlName="showEmpPolls" /> -->
-
                     </div>
                     <div class="col-3">
                       <mat-checkbox formControlName="showVirtualCafe">Show Virtual Cafeteria</mat-checkbox>
-                      <!-- <div class="labelText">Show Virtual Cafeteria</div>
-                <input type="checkbox" formControlName="showVirtualCafe"> -->
                     </div>
                     <div class="col-3">
                       <mat-checkbox formControlName="showSaas">Show Outlet</mat-checkbox>
-                      <!-- <div class="labelText">Show Outlet</div>
-                <input type="checkbox" formControlName="showSaas"> -->
                     </div>
-
-
                     <div class="col-3">
                       <mat-checkbox formControlName="showQrCode">Show QR Code</mat-checkbox>
                     </div>
-
-                    <!-- <div class="col-3">
-              <div class="labelText">Show Site Executive</div>
-              <input type="checkbox" formControlName="showSiteExecutive">
-            </div> -->
                     <div class="col-3">
                       <mat-checkbox formControlName="showCompanyWallet">Show Company Wallet</mat-checkbox>
-                      <!-- <div class="labelText">Show Company Wallet</div>
-                <input type="checkbox" formControlName="showCompanyWallet"> -->
                     </div>
-
-                    <!-- <div class="col-3">
-              <div class="labelText">Show Checklist</div>
-              <input type="checkbox" formControlName="showchecklist">
-            </div> -->
                     <div class="col-3">
                       <mat-checkbox formControlName="showComplienceTracker">Show compliance Tracker</mat-checkbox>
-                      <!-- <div class="labelText">Show compliance Tracker</div>
-                <input type="checkbox" formControlName="showComplienceTracker"> -->
                     </div>
                     <div class="col-3">
                       <mat-checkbox formControlName="showConsumptionOrder">Show Consumption Order</mat-checkbox>
-                      <!-- <div class="labelText">Show Consumption Order</div>
-                <input type="checkbox" formControlName="showConsumptionOrder"> -->
                     </div>
                     <div class="col-3">
                       <mat-checkbox formControlName="isEmployeeEmailLogin">Is Employee Email Login</mat-checkbox>
-                      <!-- <div class="labelText">Is Employee Email Login</div>
-                <input type="checkbox" formControlName="isEmployeeEmailLogin"> -->
                     </div>
                   </div>
                   <div class="row">
@@ -566,14 +385,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Cafeteria Name</div>
-                <input type="text" class="form-control" placeholder="Cafeteria Name" formControlName="cafeteria_name" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.cafeteria_name
-                    .errors?.required && showError
-                ">
-                  *Cafeteria Name is required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                       <div class="form-group">
@@ -585,14 +396,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Cafeteria City</div>
-                <input type="text" class="form-control" placeholder="Cafeteria City" formControlName="cafeteria_city" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.cafeteria_city
-                    .errors?.required && showError
-                ">
-                  *Cafeteria City is required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                       <div class="form-group">
@@ -604,14 +407,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Location</div>
-                <input type="text" class="form-control" placeholder="Location" formControlName="location" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.location.errors
-                    ?.required && showError
-                ">
-                  *Location is required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-3">
                       <div class="form-group">
@@ -623,14 +418,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Landmark</div>
-                <input type="text" class="form-control" placeholder="Landmark" formControlName="landmark" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.landmark.errors
-                    ?.required && showError
-                ">
-                  *Landmark is required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
@@ -642,15 +429,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Cafeteria Id</div>
-                <input type="text" class="form-control" placeholder="Cafeteria Id" formControlName="cafeteria_id"
-                  readonly />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.cafeteria_id.errors
-                    ?.required && showError
-                ">
-                  *Cafeteria Id is required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
@@ -662,21 +440,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Aceess Code</div>
-                <input type="text" class="form-control" placeholder="Aceess Code" formControlName="accessCode" />
-
-                <div class="error-text"
-                  *ngIf="showError && form.controls.cafeteriaList.at(i).get('accessCode').touched">
-                  <div *ngIf="form.controls.cafeteriaList.at(i).get('accessCode').hasError('pattern')">
-                    *Must be 1–4 digits only
-                  </div>
-                  <div *ngIf="form.controls.cafeteriaList.at(i).get('accessCode').hasError('minlength')">
-                    *At least 1 digit required
-                  </div>
-                  <div *ngIf="form.controls.cafeteriaList.at(i).get('accessCode').hasError('maxlength')">
-                    *No more than 4 digits allowed
-                  </div>
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
@@ -688,14 +451,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Address Line 1</div>
-                <input type="text" class="form-control" placeholder="Address Line 1" formControlName="address1" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.address1.errors
-                    ?.required && showError
-                ">
-                  *Address Line 1 is required
-                </div> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
@@ -708,38 +463,6 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Address Line 2</div>
-                <input type="text" class="form-control" placeholder="Address Line 2" formControlName="address2" />
-                <div class="error-text" *ngIf="
-                  form.controls.cafeteriaList.at(i).controls.address2.errors
-                    ?.required && showError">
-                  *Address Line 2 is required
-                </div> -->
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
-                      <!-- <div class="form-group">
-                        <label class="field-label">AppMenu Type<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <mat-select formControlName="">
-                            <mat-option disabled selected value>-- select app Menu Type--</mat-option>
-                            <mat-option [value]="item" *ngFor="let item of appmenutypelist">
-                              {{ item }}
-                            </mat-option>
-                          </mat-select>
-                          <mat-error *ngIf="hasError(form, 'address2', 'required')">
-                            address2
-                          </mat-error>
-                        </mat-form-field>
-                      </div> -->
-                      <!-- <div class="labelText">AppMenu Type</div>
-                <select class="custom-select" name="menuType" formControlName="appMenu_type">
-                  <option disabled selected value>
-                    -- select app Menu Type--
-                  </option>
-                  <option [value]="item" *ngFor="let item of appmenutypelist">
-                    {{ item }}
-                  </option>
-                </select> -->
                     </div>
                     <div class="col-12 col-md-2 col-lg-2 ">
                       <div class="form-group">
@@ -751,10 +474,7 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <label class="labelText form-label mb-0">Subsidy Amount</label>
-                <input type="number" class="form-control" placeholder="Subsidy Amount" formControlName="subsidy" /> -->
                     </div>
-
                     <div class="col-12 col-md-6 col-lg-2 ">
                       <div class="form-group">
                         <label class="field-label">Cafeteria GSTIN<span class="required-input"> * </span></label>
@@ -765,25 +485,16 @@
                           </mat-error>
                         </mat-form-field>
                       </div>
-                      <!-- <div class="labelText">Cafeteria GSTIN</div>
-                <input type="text" class="form-control" placeholder="GSTIN" formControlName="cafeteria_gstin" /> -->
                     </div>
                     <div class="col-12 col-md-6 col-lg-2  d-flex align-items-end">
                       <mat-checkbox id="copyGstin"
                         [checked]="form.controls.cafeteriaList.at(i).controls['cafeteria_gstin'].value" color="primary"
                         (change)="getOrgGstin($event,i)">Same as organization’s GSTIN</mat-checkbox>
-                      <!-- <label>
-                  <input type="checkbox" id="copyGstin"
-                    [checked]="form.controls.cafeteriaList.at(i).controls['cafeteria_gstin'].value"
-                    (change)="getOrgGstin($event,i)">
-                  Same as organization’s GSTIN
-                </label> -->
                     </div>
                     <div class="row">
                       <div class="col-12 col-md-4 col-lg-4 pt-5">
                         <button mat-raised-button color="primary" (click)="updateCafelevelSubsidy(i)">Update Subsidy
                           cafe</button>
-                        <!-- <button class="btn btn-primary" (click)="updateCafelevelSubsidy(i)">Update Subsidy cafe</button> -->
                       </div>
                     </div>
                   </div>
@@ -799,14 +510,6 @@
                             </mat-error>
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">POC Id</div>
-                  <input type="text" class="form-control" placeholder="poc id" formControlName="poc_id" readonly />
-                  <div class="error-text" *ngIf="
-                    form.controls.cafeteriaList.at(i).controls.poc_details
-                      .controls.poc_id.errors?.required && showError
-                  ">
-                    *POC Id is required
-                  </div> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -818,14 +521,6 @@
                             </mat-error>
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">POC Role</div>
-                  <input type="text" class="form-control" placeholder="poc role" formControlName="poc_role" readonly />
-                  <div class="error-text" *ngIf="
-                    form.controls.cafeteriaList.at(i).controls.poc_details
-                      .controls.poc_role.errors?.required && showError
-                  ">
-                    *POC Role is required
-                  </div> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -837,14 +532,6 @@
                             </mat-error>
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">POC Name</div>
-                  <input type="text" class="form-control" placeholder="poc name" formControlName="poc_name" readonly />
-                  <div class="error-text" *ngIf="
-                    form.controls.cafeteriaList.at(i).controls.poc_details
-                      .controls.poc_name.errors?.required && showError
-                  ">
-                    *POC Name is required
-                  </div> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -856,15 +543,6 @@
                             </mat-error>
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">POC Phone No</div>
-                  <input type="number" class="form-control" placeholder="poc phoneNo" formControlName="poc_phoneNo"
-                    readonly />
-                  <div class="error-text" *ngIf="
-                    form.controls.cafeteriaList.at(i).controls.poc_details
-                      .controls.poc_phoneNo.errors?.required && showError
-                  ">
-                    *POC Phone No is required
-                  </div> -->
                       </div>
                       <div class="d-flex justify-content-end">
                         <button mat-raised-button
@@ -876,14 +554,6 @@
                           *ngIf="form.controls.cafeteriaList.at(i).controls.poc_details.controls.poc_id.value"
                           (click)="addApprover(i); cafe_selected(i)">Change POC</button>
                       </div>
-                      <!-- <div>
-                    <span class="addBtn pointer" *ngIf="!form.controls.cafeteriaList.at(i).controls.poc_details
-                      .controls.poc_id.value" (click)="addApprover(i); cafe_selected(i)">Add POC</span>
-                  </div>
-                  <div>
-                    <span class="addBtn pointer" *ngIf="form.controls.cafeteriaList.at(i).controls.poc_details
-                      .controls.poc_id.value" (click)="addApprover(i); cafe_selected(i)">Change POC</span>
-                  </div> -->
                     </div>
                   </div>
                   <div formGroupName="cafeteria_location">
@@ -898,15 +568,6 @@
                             </mat-error>
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">lat</div>
-                  <input type="text" class="form-control" placeholder="lat" formControlName="lat" readonly />
-                  <div class="error-text" *ngIf="
-                    form.controls.cafeteriaList.at(i).controls
-                      .cafeteria_location.controls.lat.errors?.required &&
-                    showError
-                  ">
-                    *Lat is required
-                  </div> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-2">
                         <div class="form-group">
@@ -918,33 +579,11 @@
                             </mat-error>
                           </mat-form-field>
                         </div>
-                        <!-- <div class="labelText">lng</div>
-                  <input type="number" class="form-control" placeholder="lng" formControlName="lng" readonly />
-                  <div class="error-text" *ngIf="
-                    form.controls.cafeteriaList.at(i).controls
-                      .cafeteria_location.controls.lng.errors?.required &&
-                    showError
-                  ">
-                    *Lng is required
-                  </div> -->
                       </div>
                       <div class="col-12 col-md-6 col-lg-2 bgpadding2">
                         <button mat-raised-button color="primary" (click)="toggleMap(i)">GeoLocation</button>
-                        <!-- <div>
-                    <span class="addBtn pointer" (click)="toggleMap(i)">GeoLocation</span>
-                  </div> -->
                       </div>
                     </div>
-                    <!-- <div class="col-12 col-md-6 col-lg-2 bgpadding2">
-                <div>
-                  <span class="addBtn pointer" (click)="toggleMap(i)">GeoLocation</span>
-                </div>
-              </div> -->
-                    <!-- <div class="col-12 col-md-6 col-lg-2 bgpadding2">
-                <div>
-                  <span class="addBtn pointer" (click)="addApprover(i); cafe_selected(i)">Add POC</span>
-                </div>
-              </div> -->
                   </div>
                 </mat-expansion-panel>
               </mat-accordion>
@@ -969,19 +608,6 @@
             *ngIf="(!showUpdate && true) || btnPolicy?.addOrganization">
             Add Organization
           </button>
-
-          <!-- <button type="button" class="btn btn-primary btn-sm me-2" (click)="addOrg()"
-            *ngIf="!showUpdate && true || btnPolicy?.addOrganization">
-            Add
-          </button>
-          <button type="button" class="btn btn-secondary btn-sm me-2" (click)="updateOrg()"
-            *ngIf="showUpdate && true || btnPolicy?.editOrganization">
-            Update
-          </button>
-          <button type="button" class="btn btn-success btn-sm me-2" (click)="resetForm()">
-            Reset
-          </button>
-          <button class="btn btn-danger btn-sm" (click)="back()">Cancel</button> -->
         </div>
       </div>
     </div>
@@ -1012,11 +638,6 @@
       </button>
     </div>
     <div class="modal-body">
-      <!-- <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-6">
-                <input type="text" class="fullheight form-control" [(ngModel)]="searchText" placeholder="Search item">
-            </div>
-        </div> -->
       <ul class="list-group labelText mt-1">
         <ng-container>
           <li class="list-group-item" *ngFor="let admin of form.controls['poc_details'].getRawValue()">
