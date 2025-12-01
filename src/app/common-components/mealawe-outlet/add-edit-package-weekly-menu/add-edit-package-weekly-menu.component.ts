@@ -36,8 +36,8 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
 
   menuSources = [
     { label: 'Mealawe Menu', color: 'primary', action: (data: any) => this.loadMealaweMenu(data) },
-    { label: 'Organization Cafe', color: 'accent', action: (data: any) => this.getMealAweOutletByCafeteria() },
-    { label: 'Other Org Cafe', color: 'warn', action: (data: any) => this.getOrgCafeteriaWeeklyMenu() },
+    { label: 'Organization Cafe', color: 'accent', action: (data: any) => { this.selectedSource = 'otherCafe'; this.getMealAweOutletByCafeteria() } },
+    { label: 'Other Org Cafe', color: 'warn', action: (data: any) => { this.selectedSource = 'otherOrgCafe'; this.getOrgCafeteriaWeeklyMenu(); } },
     { label: 'Custom Menu', color: 'success', action: (data: any) => { this.selectedSource = 'custom'; this.weekMenuList = []; } }
   ];
   menuTypes = ['Veg', 'Non-Veg'];
@@ -147,7 +147,6 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   async getMealAweOutletByCafeteria(): Promise<void> {
     try {
       let value = await this.apiMainService.getMealAweOutletByCafeteria(this.selectedCafeteria._id);
-      this.selectedSource = 'otherCafe'
       this.weekMenuList = [];
       if (value?.categoryConfig?.length) {
         const matchedMenu = value.categoryConfig.find((m: any) => m.categoryName === this.data.category.categoryName);
@@ -169,7 +168,7 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   async getOrgCafeteriaWeeklyMenu(): Promise<void> {
     const orgList = await this.apiMainService.B2B_fetchFilteredAllOrgs({});
     this.cafeteriaList = this.cafeteriaList.filter(c => c._id !== this.data.selectedCafeteria._id);
-    this.selectedSource = 'otherOrgCafe'
+    this.selectedSource = 'otherOrgCafe';
     this.orgList = orgList;
   }
 

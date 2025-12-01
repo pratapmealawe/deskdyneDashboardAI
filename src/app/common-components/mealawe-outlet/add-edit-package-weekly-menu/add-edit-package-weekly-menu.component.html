@@ -24,9 +24,10 @@
                 </mat-error>
             </mat-form-field>
         </div>
-       
+
         <div *ngIf="selectedSource === 'otherCafe' ||  selectedSource === 'otherOrgCafe'" class="mt-2">
-            <mat-form-field appearance="outline" style="min-width: 100px;" *ngIf="selectedSource === 'otherOrgCafe'">
+            <mat-form-field class="me-3" appearance="outline" style="min-width: 100px;"
+                *ngIf="selectedSource === 'otherOrgCafe'">
                 <mat-label>Select Organization</mat-label>
                 <mat-select [(ngModel)]="selectedOrg" (ngModelChange)="getCafeteriaListByOrg()">
                     <mat-option *ngFor="let org of orgList" [value]="org">
