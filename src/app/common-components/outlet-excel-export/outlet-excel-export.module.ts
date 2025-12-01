@@ -6,6 +6,7 @@ import { OutletExcelExportComponent } from './outlet-excel-export.component';
 import { FormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { OrderCardModule } from 'src/app/order-card/order-card.module';
+import { CommonOutletCafeSelectModule } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { OrderCardModule } from 'src/app/order-card/order-card.module';
     FormsModule,
     OutletExcelExportRoutingModule,
     HighchartsChartModule,
-    OrderCardModule
+    OrderCardModule,
+    CommonOutletCafeSelectModule
   ],
   providers: [DatePipe]
 })

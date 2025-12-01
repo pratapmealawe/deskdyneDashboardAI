@@ -6,6 +6,7 @@ import { ExcelService } from 'src/service/excel.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import * as Highcharts from 'highcharts';
+import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
 
 interface Filter {
   orgId: string;
@@ -25,6 +26,12 @@ export class OutletExcelExportComponent implements OnInit {
   orgDetails: any = {};
   orgAdmin: any;
   cafeList: any[] = [];
+  headerConfig: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: true,
+    requireAll: true
+  };
 
   filterObj: Filter = {
     orgId: '',
@@ -53,9 +60,8 @@ export class OutletExcelExportComponent implements OnInit {
 
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
-
+    this.headerConfig.defaultOrgId = this.orgAdmin?.orgDetails?._id;
     this.initializeDates();
-
     this.getOrgList();
   }
 
@@ -243,5 +249,18 @@ export class OutletExcelExportComponent implements OnInit {
 
     this.isShowChart = true
     this.updateStatusFlag = true;
+  }
+
+  filterSubmitted(event: any) {
+    console.log(event, "event");
+    if (event) {
+      const body = {
+        cafeteriaName: event.cafeteria_name,
+        organizationName: event.org_name,
+        fromDate: event.date_from,
+        toDate: event.date_to,
+      }
+      this.getOutletByFilter(body);
+    }
   }
 }
