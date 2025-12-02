@@ -20,7 +20,7 @@
     <div class="content">
       <div class="labelText"> Cafeteria</div>
       <div class="labelData"><mat-chip style="cursor: pointer;"
-          (click)="dataView(org.cafeteriaList , 'cafeteria')">cafeteria | {{org.cafeteriaList.length}}</mat-chip></div>
+          (click)="dataView(org?.cafeteriaList , 'cafeteria')">cafeteria | {{org?.cafeteriaList?.length || 0}}</mat-chip></div>
     </div>
     <div class="content">
       <div class="labelText">Poc Details</div>

@@ -200,30 +200,63 @@ export class AddOrganizationComponent implements OnInit {
   removeAdmin(index: any) {
     this.form.controls['admin_details'].removeAt(index);
   }
+removePOC(index: number) {
 
-  removePOC(index: any) {
+  const pocArray = this.form.get('poc_details') as FormArray;
+  const selectedPocId = pocArray.at(index).get('poc_id')?.value;
 
-    let status = this.checkPocIdExists(this.orgInfo.cafeteriaList, this.form.controls['poc_details'].value[index].poc_id);
-    if (status) {
-      this.modalService
-        .open(this.pocContent, {
-          ariaLabelledBy: 'modal-basic-title',
-          size: 'md',
-          windowClass: 'menuModel',
-          centered: true
-        })
-        .result.then(
-          (result) => {
-          },
-          (reason) => {
-            console.log(`Model Dismissed`);
-          }
-        );
-    }
-    else {
-      this.form.controls['poc_details'].removeAt(index);
-    }
+  const isUsedInCafe = this.orgInfo?.cafeteriaList?.some(
+    (cafe: any) => cafe.poc_details?.poc_id === selectedPocId
+  );
+
+  // Rule 1: At least one POC must exist
+  if (pocArray.length === 1) {
+    this.openPocModal();
+    return;
   }
+
+  // Rule 2: Cannot delete if this POC is assigned in cafeteria
+  if (isUsedInCafe) {
+    this.openPocModal();
+    return;
+  }
+
+  // Otherwise delete normally
+  pocArray.removeAt(index);
+}
+
+openPocModal() {
+  this.modalService.open(this.pocContent, {
+    ariaLabelledBy: 'modal-basic-title',
+    size: 'md',
+    windowClass: 'menuModel',
+    centered: true
+  });
+}
+
+  // removePOC(index: any) {
+
+  //   let status = this.checkPocIdExists(this.orgInfo.cafeteriaList, this.form.controls['poc_details'].value[index].poc_id);
+  //   if (status) {
+  //     this.modalService
+  //       .open(this.pocContent, {
+  //         ariaLabelledBy: 'modal-basic-title',
+  //         size: 'md',
+  //         windowClass: 'menuModel',
+  //         centered: true
+  //       })
+  //       .result.then(
+  //         (result) => {
+  //         },
+  //         (reason) => {
+  //           console.log(`Model Dismissed`);
+  //         }
+  //       );
+  //   }
+  //   else {
+  //     this.form.controls['poc_details'].removeAt(index);
+  //   }
+  // }
 
   removeApprover(index: any) {
     this.form.controls['poc_details']

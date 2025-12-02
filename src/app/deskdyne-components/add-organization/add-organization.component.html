@@ -1,4 +1,4 @@
-<div class=" parentDivFixedBar">
+<div class="container-fluid" style="padding-bottom: 70px;">
   <div class="d-flex gap-3">
     <button mat-flat-button (click)="goBack()" class="back-btn">
       <mat-icon>arrow_back</mat-icon>
@@ -10,165 +10,164 @@
   <div [formGroup]="form" class="container-fluid mt-3">
     <div class="row">
       <div class="main-s">
-  <div class="main">
-      <div class="row">
-        <div class="d-flex flex-wrap flex-column flex-sm-row">
-          <div class="col-12 col-md-3">
-            <mat-card class="d-flex flex-column align-items-center p-3">
-              <div class="w-100 d-flex justify-content-center mb-3">
-                <img [src]="imageUrl || 'assets/images/dummyUpload.png'" (click)="fileInput.click()"
-                  class="rounded img-fluid border"
-                  style="width: 8rem; height: 8rem; object-fit: cover; cursor: pointer;" />
+        <div class="main">
+          <div class="row">
+            <div class="d-flex flex-wrap flex-column flex-sm-row">
+              <div class="col-12 col-md-3">
+                <div class="d-flex flex-column align-items-center p-3">
+                  <div class="w-100 d-flex justify-content-center mb-3">
+                    <img [src]="imageUrl || 'assets/images/dummyUpload.png'" (click)="fileInput.click()"
+                      style="width: 8rem; height: 8rem; object-fit: cover; cursor: pointer;" />
+                  </div>
+                  <input #fileInput type="file" accept="image/*" (change)="handleFileInput($event)" hidden />
+                  <button mat-raised-button color="primary" (click)="fileInput.click()" class="w-100">
+                    Upload <mat-icon>upload</mat-icon>
+                  </button>
+                </div>
               </div>
-              <input #fileInput type="file" accept="image/*" (change)="handleFileInput($event)" hidden />
-              <button mat-raised-button color="primary" (click)="fileInput.click()" class="w-100">
-                Upload <mat-icon>upload</mat-icon>
-              </button>
-            </mat-card>
-          </div>
-        </div>
-      </div>
-      <div>
-        <div class="row">
-          <div class="col">
-            <div class="form-group">
-              <label class="field-label">Org Name<span class="required-input"> * </span></label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="Org Name" formControlName="organization_name" appOnlyAlpha />
-                <mat-error *ngIf="hasError(form, 'organization_name', 'required')">
-                  organization_name is required
-                </mat-error>
-              </mat-form-field>
+              <mat-checkbox color="primary" formControlName="isEmpIdRequired" color="primary">Is Emp Id Required
+              </mat-checkbox>
             </div>
           </div>
-          <div class="col" *ngIf="showUpdate">
-            <div class="form-group">
-              <label class="field-label">Subsidy Amount(In Percent %)<span class="required-input"> * </span></label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="Subsidy Amount" formControlName="subsidy" />
-                <mat-error *ngIf="hasError(form, 'subsidy', 'required')">
-                  subsidy is required
-                </mat-error>
-              </mat-form-field>
-              <button mat-raised-button color="primary" style="width:fit-content"
-                (click)="updateOrglevelSubsidy()">Update
-                Subsidy</button>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <label class="field-label">Domain</label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="e.g., example.com, test.org, mydomain.net" formControlName="domain" />
-                <mat-error *ngIf="hasError(form, 'domain', 'required')">
-                  domain is required
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="mt-2" formGroupName="org_address">
-        <div class="row">
           <div>
-            <div class="form-group">
-              <label class="field-label">Address Line 1<span class="required-input"> * </span></label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="Line 1" formControlName="addressLine1" />
-                <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('required')">
-                  Address Line 1 is required
-                </mat-error>
+            <div class="row mt-3">
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">Org Name<span class="required-input"> * </span></label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="Org Name" formControlName="organization_name" appOnlyAlpha />
+                    <mat-error *ngIf="hasError(form, 'organization_name', 'required')">
+                      organization_name is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">Location<span class="required-input"> * </span></label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="Location" formControlName="location" appAlphaNumeric />
+                    <mat-error *ngIf="hasError(form, 'location', 'required')">
+                      location is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">City<span class="required-input"> * </span></label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="City" formControlName="city" />
+                    <mat-error *ngIf="hasError(form, 'city', 'required')">
+                      city is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
 
-                <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('minlength')">
-                  Minimum 5 characters required
-                </mat-error>
-
-                <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('maxlength')">
-                  Maximum 120 characters allowed
-                </mat-error>
-              </mat-form-field>
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div class="form-group">
-              <label class="field-label">Address Line 2</label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="Line 2" formControlName="addressLine2" appAlphaNumeric />
-                <mat-error *ngIf="form.get('org_address.addressLine2')?.hasError('minlength')">
-                  Minimum 5 characters required
-                </mat-error>
+          <div class="mt-2" formGroupName="org_address">
+            <div class="row">
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">Address Line 1<span class="required-input"> * </span></label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="Line 1" formControlName="addressLine1" />
+                    <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('required')">
+                      Address Line 1 is required
+                    </mat-error>
 
-                <mat-error *ngIf="form.get('org_address.addressLine2')?.hasError('maxlength')">
-                  Maximum 120 characters allowed
-                </mat-error>
-              </mat-form-field>
+                    <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('minlength')">
+                      Minimum 5 characters required
+                    </mat-error>
+
+                    <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('maxlength')">
+                      Maximum 120 characters allowed
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">Address Line 2</label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="Line 2" formControlName="addressLine2" appAlphaNumeric />
+                    <mat-error *ngIf="form.get('org_address.addressLine2')?.hasError('minlength')">
+                      Minimum 5 characters required
+                    </mat-error>
+
+                    <mat-error *ngIf="form.get('org_address.addressLine2')?.hasError('maxlength')">
+                      Maximum 120 characters allowed
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">Address Line 3</label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="Line 3" formControlName="addressLine3" appAlphaNumeric />
+                    <mat-error *ngIf="form.get('org_address.addressLine3')?.hasError('minlength')">
+                      Minimum 5 characters required
+                    </mat-error>
+
+                    <mat-error *ngIf="form.get('org_address.addressLine3')?.hasError('maxlength')">
+                      Maximum 120 characters allowed
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+
             </div>
           </div>
-          <div class="col">
-            <div class="form-group">
-              <label class="field-label">Address Line 3</label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="Line 3" formControlName="addressLine3" appAlphaNumeric />
-                <mat-error *ngIf="form.get('org_address.addressLine3')?.hasError('minlength')">
-                  Minimum 5 characters required
-                </mat-error>
+          <div [formGroup]="form">
+            <div class="row">
+              <div class="col" *ngIf="showUpdate">
+                <div class="form-group">
+                  <label class="field-label">Subsidy Amount(In Percent %)<span class="required-input"> * </span></label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="Subsidy Amount" formControlName="subsidy" appOnlyNumber />
+                    <mat-error *ngIf="hasError(form, 'subsidy', 'required')">
+                      subsidy is required
+                    </mat-error>
+                  </mat-form-field>
+                  <button mat-raised-button color="primary" style="width:fit-content"
+                    (click)="updateOrglevelSubsidy()">Update
+                    Subsidy</button>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">Domain</label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="e.g., example.com, test.org, mydomain.net" formControlName="domain" />
+                    <mat-error *ngIf="hasError(form, 'domain', 'required')">
+                      domain is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col">
+                <div class="form-group">
+                  <label class="field-label">GSTIN<span class="required-input"> * </span></label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput placeholder="GSTIN" formControlName="gstin" />
+                    <mat-error *ngIf="hasError(form, 'gstin', 'required')">
+                      gstin is required
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
 
-                <mat-error *ngIf="form.get('org_address.addressLine3')?.hasError('maxlength')">
-                  Maximum 120 characters allowed
-                </mat-error>
-              </mat-form-field>
             </div>
+
           </div>
         </div>
       </div>
-      <div [formGroup]="form">
-        <div class="row">
-          <div class="col">
-            <div class="form-group">
-              <label class="field-label">Location<span class="required-input"> * </span></label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="Location" formControlName="location" appAlphaNumeric />
-                <mat-error *ngIf="hasError(form, 'location', 'required')">
-                  location is required
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <label class="field-label">GSTIN<span class="required-input"> * </span></label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="GSTIN" formControlName="gstin" />
-                <mat-error *ngIf="hasError(form, 'gstin', 'required')">
-                  gstin is required
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </div>
-          <div class="col">
-            <div class="form-group">
-              <label class="field-label">City<span class="required-input"> * </span></label>
-              <mat-form-field appearance="outline" class="w-100">
-                <input matInput placeholder="City" formControlName="city" />
-                <mat-error *ngIf="hasError(form, 'city', 'required')">
-                  city is required
-                </mat-error>
-              </mat-form-field>
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-6 col-md-6 col-lg-3 d-flex align-items-center">
-            <mat-checkbox color="primary" formControlName="isEmpIdRequired" color="primary">Is Emp Id Required
-            </mat-checkbox>
-          </div>
-        </div>
-      </div>
-      </div>
-      </div>
-    
+
       <div formArrayName="poc_details">
         <div class="cardDesign">
           <div class="d-flex justify-content-between align-items-center">
@@ -178,33 +177,32 @@
                 POC</button></div>
           </div>
           <ng-container *ngFor="let control of poc.controls; let i = index">
-            <div [formGroupName]="i" style="margin: 10px 0px;">
-              <mat-accordion>
+            <div [formGroupName]="i" style="margin: 10px 0px;" class="d-flex gap-5 align-items-center">
+              <mat-accordion class="fill-available-width">
                 <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
                   <mat-expansion-panel-header>
-                    <mat-panel-title class="d-flex justify-content-between align-items-center"> 
+                    <mat-panel-title class="d-flex justify-content-between align-items-center">
                       <div class="title">
-                            {{control.get('poc_name')?.value?.trim()|| control.get('poc_id')?.value?.trim()||
-                      '--- New POC --- ' }}
+                        {{control.get('poc_name')?.value?.trim()|| control.get('poc_id')?.value?.trim()||
+                        '--- New POC --- ' }}
                       </div>
-                      <div class="remove-icon">
-                           <mat-icon color="warn" (click)="removePOC(i)">delete</mat-icon>
-                      </div>
+
                     </mat-panel-title>
                   </mat-expansion-panel-header>
-                  <div class="row">
-                    <div class="col-12 col-md-6 col-lg-1 ">
+                  <div class="d-flex flex-wrap gap-3 g-0">
+                    <div class="">
                       <div class="form-group">
                         <label class="field-label">POC Id<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
                           <input matInput placeholder="POC Id" formControlName="poc_id" />
-                          <mat-error *ngIf="control.get('poc_id')?.hasError('required')  && (control.get('poc_id')?.touched || control.get('poc_id')?.dirty)">
+                          <mat-error
+                            *ngIf="control.get('poc_id')?.hasError('required')  && (control.get('poc_id')?.touched || control.get('poc_id')?.dirty)">
                             POC Id is required
                           </mat-error>
                         </mat-form-field>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
+                    <div class="">
                       <div class="form-group">
                         <label class="field-label">POC Name<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -216,7 +214,7 @@
                         </mat-form-field>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
+                    <div class="">
                       <div class="form-group">
                         <label class="field-label">POC Ph No<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -232,7 +230,7 @@
                         </mat-form-field>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-3 ">
+                    <div class="">
                       <div class="form-group">
                         <label class="field-label">POC Email<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -247,7 +245,7 @@
                         </mat-form-field>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
+                    <div class="">
                       <div class="form-group">
                         <label class="field-label">POC Location<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -259,7 +257,7 @@
                         </mat-form-field>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-1 ">
+                    <div class="">
                       <div class="form-group">
                         <label class="field-label">POC Role<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
@@ -275,58 +273,53 @@
                         </mat-form-field>
                       </div>
                     </div>
-                    <div class="col-12 col-md-6 col-lg-1 bgpadding3">
-                      <div>
-                        <mat-icon color="warn" (click)="removePOC(i)">delete</mat-icon>
-                      </div>
-                    </div>
                   </div>
                   <div formGroupName="approverDetails">
-                    <div class="row">
-                      <div class="col-12 col-md-6 col-lg-1">
+                    <div class="d-flex flew-wrap gap-3">
+                      <div class="">
                         <div class="form-group">
-                          <label class="field-label">Approver Id<span class="required-input"> * </span></label>
+                          <label class="field-label">Approver Id</label>
                           <mat-form-field appearance="outline" class="w-100">
                             <input matInput placeholder="Approver Id" formControlName="approver_id" />
                           </mat-form-field>
                         </div>
 
                       </div>
-                      <div class="col-12 col-md-6 col-lg-2">
+                      <div class="">
                         <div class="form-group">
-                          <label class="field-label">Approver Name<span class="required-input"> * </span></label>
+                          <label class="field-label">Approver Name</label>
                           <mat-form-field appearance="outline" class="w-100">
                             <input matInput placeholder="Approver Name" formControlName="approver_name" />
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="col-12 col-md-6 col-lg-2">
+                      <div class="">
                         <div class="form-group">
-                          <label class="field-label">Approver Ph No<span class="required-input"> * </span></label>
+                          <label class="field-label">Approver Ph No</label>
                           <mat-form-field appearance="outline" class="w-100">
                             <input matInput placeholder="Approver Phone No" formControlName="approver_phoneNo" />
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="col-12 col-md-6 col-lg-3">
+                      <div class="">
                         <div class="form-group">
-                          <label class="field-label">Approver Email<span class="required-input"> * </span></label>
+                          <label class="field-label">Approver Email</label>
                           <mat-form-field appearance="outline" class="w-100">
                             <input matInput placeholder="Approver Email" formControlName="approver_email" />
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="col-12 col-md-6 col-lg-2">
+                      <div class="">
                         <div class="form-group">
-                          <label class="field-label">Approver Location<span class="required-input"> * </span></label>
+                          <label class="field-label">Approver Location</label>
                           <mat-form-field appearance="outline" class="w-100">
                             <input matInput placeholder="Approver Location" formControlName="approver_location" />
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="col-12 col-md-6 col-lg-1">
+                      <div class="">
                         <div class="form-group">
-                          <label class="field-label">Approver Role<span class="required-input"> * </span></label>
+                          <label class="field-label">Approver Role</label>
                           <mat-form-field appearance="outline" class="w-100">
                             <mat-select formControlName="approver_role">
                               <mat-option [value]="item" *ngFor="let item of roleList">
@@ -336,7 +329,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="col-12 col-md-6 col-lg-1 bgpadding2">
+                      <div class="d-flex g-0">
                         <div class="d-flex align-items-center">
                           <mat-icon color="primary" (click)="addApprover(i); poc_selected(i)">add</mat-icon>
                           <mat-icon color="warn" (click)="removeApprover(i)">delete</mat-icon>
@@ -347,8 +340,9 @@
                   </div>
                 </mat-expansion-panel>
               </mat-accordion>
-
-
+              <div class="remove-icon">
+                <mat-icon color="warn" (click)="removePOC(i)">delete</mat-icon>
+              </div>
             </div>
           </ng-container>
         </div>
@@ -373,250 +367,190 @@
           </div>
         </div>
       </ng-template>
-      <div class="mt-2" formArrayName="cafeteriaList">
+
+      <div class="cafeteria-container" formArrayName="cafeteriaList">
         <div class="cardDesign">
-          <div class="d-flex justify-content-between align-items-center">
+          <div class="cafeteria-header">
             <div>Cafeteria List</div>
-            <div class="d-flex justify-content-end">
-              <button mat-raised-button class="responsive-btn" (click)="add_cafeteria()"
-                color="primary"><mat-icon>storefront </mat-icon>Add
-                Cafeteria </button>
-            </div>
+            <button mat-raised-button color="primary" (click)="add_cafeteria()">
+              <mat-icon>storefront</mat-icon> Add Cafeteria
+            </button>
           </div>
           <ng-container *ngFor="let control of cafeteria.controls; let i = index">
-            <div [formGroupName]="i" style="margin: 10px 0px;">
-              <mat-accordion>
-                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+            <div [formGroupName]="i" style="margin: 10px 0px;" class="d-flex gap-5 align-items-center">
+              <mat-accordion class="fill-available-width">
+                <mat-expansion-panel>
                   <mat-expansion-panel-header>
-                    <mat-panel-title> {{control.get('cafeteria_name')?.value?.trim()||
-                      control.get('poc_id')?.value?.trim()||
-                      '--- New Cafeteria --- ' }}
+                    <mat-panel-title>
+                      {{ control.get('cafeteria_name')?.value?.trim() ||
+                      control.get('poc_id')?.value?.trim() ||
+                      '--- New Cafeteria ---' }}
                     </mat-panel-title>
                   </mat-expansion-panel-header>
-                  <div class="d-flex flex-wrap gap-2 ">
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showAdminDaily">Show Admin Daily
-                        Card</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showEmpPolls">Show Emp Poll Card</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showVirtualCafe">Show Virtual
-                        Cafeteria</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showSaas">Show Outlet</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showQrCode">Show QR Code</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showCompanyWallet">Show Company
-                        Wallet</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showComplienceTracker">Show compliance
-                        Tracker</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="showConsumptionOrder">Show Consumption
-                        Order</mat-checkbox>
-                    </div>
-                    <div>
-                      <mat-checkbox color="primary" formControlName="isEmployeeEmailLogin">Is Employee Email
-                        Login</mat-checkbox>
-                    </div>
+                  <div class="checkbox-grid">
+                    <mat-checkbox formControlName="showAdminDaily">Show Admin Daily Card</mat-checkbox>
+                    <mat-checkbox formControlName="showEmpPolls">Show Emp Poll Card</mat-checkbox>
+                    <mat-checkbox formControlName="showVirtualCafe">Show Virtual Cafeteria</mat-checkbox>
+                    <mat-checkbox formControlName="showSaas">Show Outlet</mat-checkbox>
+                    <mat-checkbox formControlName="showQrCode">Show QR Code</mat-checkbox>
+                    <mat-checkbox formControlName="showCompanyWallet">Show Company Wallet</mat-checkbox>
+                    <mat-checkbox formControlName="showComplienceTracker">Show Compliance Tracker</mat-checkbox>
+                    <mat-checkbox formControlName="showConsumptionOrder">Show Consumption Order</mat-checkbox>
+                    <mat-checkbox formControlName="isEmployeeEmailLogin">Is Employee Email Login</mat-checkbox>
                   </div>
-                  <div class="row">
-                    <div class="col-12 col-md-6 col-lg-3">
-                      <div class="form-group">
-                        <label class="field-label">Cafeteria Name<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Cafeteria Name" formControlName="cafeteria_name" />
-                          <mat-error *ngIf="hasError(form, 'cafeteria_name', 'required')">
-                            POC role required
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-3">
-                      <div class="form-group">
-                        <label class="field-label">Cafeteria City<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Cafeteria City" formControlName="cafeteria_city" />
-                          <mat-error *ngIf="hasError(form, 'cafeteria_city', 'required')">
-                            Cafeteria City is required
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-3">
-                      <div class="form-group">
-                        <label class="field-label">Location<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Location" formControlName="location" />
-                          <mat-error *ngIf="hasError(form, 'cafeteria_city', 'required')">
-                            Location is required
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-3">
-                      <div class="form-group">
-                        <label class="field-label">Landmark<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Landmark" formControlName="landmark" />
-                          <mat-error *ngIf="hasError(form, 'landmark', 'required')">
-                            Landmark is required
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
-                      <div class="form-group">
-                        <label class="field-label">Cafeteria Id<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Cafeteria Id" formControlName="cafeteria_id" readonly />
-                          <mat-error *ngIf="hasError(form, 'cafeteria_id', 'required')">
-                            Cafeteria Id is required
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
-                      <div class="form-group">
-                        <label class="field-label">Aceess Code<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Aceess Code" formControlName="accessCode" />
-                          <mat-error *ngIf="hasError(form, 'accessCode', 'minlength')">
-                            At least 1 digit required
-                          </mat-error>
-                          <mat-error *ngIf="hasError(form, 'accessCode', 'pattern')">
-                            Must be 1–4 digits only
-                          </mat-error>
-                          <mat-error *ngIf="hasError(form, 'accessCode', 'maxlength')">
-                            No more than 4 digits allowed
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
-                      <div class="form-group">
-                        <label class="field-label">Address Line 1<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Address Line 1" formControlName="address1" />
-                          <mat-error *ngIf="hasError(form, 'address1', 'required')">
-                            address1
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6 col-lg-2 ">
-                      <div class="form-group">
-                        <label class="field-label">Address Line 2<span class="required-input"> * </span></label>
-                        <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="Address Line 1" placeholder="Address Line 2"
-                            formControlName="address2" />
-                          <mat-error *ngIf="hasError(form, 'address2', 'required')">
-                            address2
-                          </mat-error>
-                        </mat-form-field>
-                      </div>
+                  <div class="grid-4">
+                    <div class="field">
+                      <label>Cafeteria Name <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="cafeteria_name" placeholder="Cafeteria Name" />
+                        <mat-error *ngIf="control.get('cafeteria_name')?.hasError('required')">
+                             Cafeteria name is required
+                        </mat-error>
+                      </mat-form-field>
                     </div>
 
-                    <div class="row">
-                      <div class="d-flex flex-wrap flex-column">
-                        <div class="form-group">
-                          <label class="field-label">Cafeteria GSTIN<span class="required-input"> * </span></label>
-                          <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="GSTIN" formControlName="cafeteria_gstin" />
-                            <mat-error *ngIf="hasError(form, 'cafeteria_gstin', 'required')">
-                              cafeteria_gstin
-                            </mat-error>
-                          </mat-form-field>
-                        </div>
-                        <mat-checkbox color="primary" id="copyGstin"
-                          [checked]="form.controls.cafeteriaList.at(i).controls['cafeteria_gstin'].value"
-                          color="primary" (change)="getOrgGstin($event,i)">Same as organization’s GSTIN</mat-checkbox>
+                    <div class="field">
+                      <label>Cafeteria City <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="cafeteria_city" placeholder="Cafeteria City" />
+                        <mat-error *ngIf="control.get('cafeteria_city')?.hasError('required')">
+                          Cafeteria City is required
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="field">
+                      <label>Location <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="location" placeholder="Location" />
+                        <mat-error *ngIf="control.get('location')?.hasError('required')">
+                          Location is required
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="field">
+                      <label>Landmark <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="landmark" placeholder="Landmark" />
+                        <mat-error *ngIf="control.get('landmark')?.hasError('required')">
+                          Landmark is required
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="field">
+                      <label>Cafeteria ID <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="cafeteria_id" readonly />
+                        <mat-error *ngIf="control.get('cafeteria_id')?.hasError('required')">
+                          Cafeteria ID is required
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                  </div>
+                  <div class="grid-4">
+                    <div class="field">
+                      <label>Access Code</label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="accessCode" placeholder="Access Code" appOnlyNumber />
+                        <mat-error *ngIf="control.get('accessCode')?.hasError('required')">
+                          Must be 1–4 digits
+                        </mat-error>
+                        <mat-error *ngIf="control.get('accessCode')?.hasError('required')">
+                          Max 4 digits allowed
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+
+                    <div class="field">
+                      <label>Address Line 1 <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="address1" placeholder="Line 1" appAlphaNumeric />
+                        <mat-error *ngIf="control.get('address1')?.hasError('required')">
+                          Address Line 1 is required
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                    <div class="field">
+                      <label>Address Line 2 <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="address2" placeholder="Line 2" appAlphaNumeric />
+                        <mat-error *ngIf="hasError(form,'address2','required')">
+                          Address Line 2 is required
+                        </mat-error>
+                      </mat-form-field>
+                    </div>
+                    <div class="field">
+                      <label>Cafeteria GSTIN </label>
+                      <div class="subsidy-row">
+                        <mat-form-field appearance="outline" class="full">
+                          <input matInput formControlName="cafeteria_gstin" placeholder="GSTIN" />
+                          <mat-error *ngIf="hasError(form,'cafeteria_gstin','required')">
+                            GSTIN is required
+                          </mat-error>
+                        </mat-form-field>
+                        <mat-checkbox (change)="getOrgGstin($event,i)">
+                          Same as Org GSTIN
+                        </mat-checkbox>
                       </div>
-                      <div class="d-flex">
-                        <div class="form-group">
-                          <label class="field-label">Subsidy Amount<span class="required-input"> * </span></label>
-                          <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="Subsidy Amount" formControlName="subsidy" />
-                            <mat-error *ngIf="hasError(form, 'subsidy', 'required')">
-                              subsidy
-                            </mat-error>
-                          </mat-form-field>
-                        </div>
-                        <button mat-raised-button color="primary" class="responsive-btn"
-                          (click)="updateCafelevelSubsidy(i)">Update Subsidy
-                          cafe</button>
+
+                    </div>
+                    <div class="field">
+                      <label>Subsidy Amount</label>
+                      <div class="subsidy-row">
+                        <mat-form-field appearance="outline" class="full">
+                          <input matInput formControlName="subsidy" appOnlyNumber placeholder="Subsidy Amount"
+                            appOnlyNumber />
+                          <mat-error *ngIf="hasError(form,'subsidy','required')">
+                            Subsidy required
+                          </mat-error>
+                        </mat-form-field>
+                        <button mat-raised-button color="primary" class="update-btn"
+                          (click)="updateCafelevelSubsidy(i)">
+                          Update
+                        </button>
                       </div>
                     </div>
                   </div>
-                  <div formGroupName="poc_details">
-                    <div class="row">
-                      <div class="col-12 col-md-6 col-lg-2">
-                        <div class="form-group">
-                          <label class="field-label">POC Id<span class="required-input"> * </span></label>
-                          <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="poc id" formControlName="poc_id" readonly />
-                            <mat-error *ngIf="hasError(form, 'poc_id', 'required')">
-                              POC Id is Required
-                            </mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6 col-lg-2">
-                        <div class="form-group">
-                          <label class="field-label">POC Role<span class="required-input"> * </span></label>
-                          <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="poc role" formControlName="poc_role" readonly />
-                            <mat-error *ngIf="hasError(form, 'poc_id', 'required')">
-                              POC Role is required
-                            </mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6 col-lg-2">
-                        <div class="form-group">
-                          <label class="field-label">POC Name<span class="required-input"> * </span></label>
-                          <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="poc name" formControlName="poc_name" readonly />
-                            <mat-error *ngIf="hasError(form, 'poc_id', 'required')">
-                              POC Name is required
-                            </mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6 col-lg-2">
-                        <div class="form-group">
-                          <label class="field-label">POC Phone No<span class="required-input"> * </span></label>
-                          <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="poc phoneNo" formControlName="poc_phoneNo" readonly />
-                            <mat-error *ngIf="hasError(form, 'poc_id', 'required')">
-                              POC Phone No is required
-                            </mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
-                      <div class="col-12 col-md-6 col-lg-2 d-flex align-items-center">
-                        <button mat-raised-button color="primary"
-                          *ngIf="!form.controls.cafeteriaList.at(i).controls.poc_details.controls.poc_id.value"
-                          (click)="addApprover(i);cafe_selected(i)">Add POC</button>
-                      </div>
-                      <div class="col-12 col-md-6 col-lg-2">
-                        <button mat-raised-button color="primary"
-                          *ngIf="form.controls.cafeteriaList.at(i).controls.poc_details.controls.poc_id.value"
-                          (click)="addApprover(i); cafe_selected(i)">Change POC</button>
-                      </div>
+                  <div formGroupName="poc_details" class="grid-4 mt-4">
+                    <div class="field">
+                      <label>POC ID <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="poc_id" readonly  placeholder="poc id"/>
+                      </mat-form-field>
                     </div>
-                    <mat-error *ngIf="form.get('poc_details')?.hasError('minLengthArray')">
-                      At least one POC is required.
-                    </mat-error>
+
+                    <div class="field">
+                      <label>POC Role <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="poc_role" readonly placeholder="poc role" />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="field">
+                      <label>POC Name <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="poc_name" readonly placeholder="poc name" />
+                      </mat-form-field>
+                    </div>
+
+                    <div class="field">
+                      <label>POC Phone No <span class="required-input">*</span></label>
+                      <mat-form-field appearance="outline" class="full">
+                        <input matInput formControlName="poc_phoneNo" readonly placeholder="poc phone no" />
+                      </mat-form-field>
+                    </div>
+
+                    <button mat-raised-button color="primary"
+                      *ngIf="!form.controls.cafeteriaList.at(i).controls.poc_details.controls.poc_id.value"
+                      (click)="addApprover(i);cafe_selected(i)">Add POC</button>
+                    <button mat-raised-button color="primary"
+                      *ngIf="form.controls.cafeteriaList.at(i).controls.poc_details.controls.poc_id.value"
+                      (click)="addApprover(i); cafe_selected(i)">Change POC</button>
+
                   </div>
+
                   <div formGroupName="cafeteria_location">
                     <div class="row">
                       <div class="col-12 col-md-6 col-lg-2">
@@ -649,6 +583,9 @@
                       At least one cafeteria entry is required.
                     </mat-error>
                   </div>
+                  <mat-error *ngIf="form.get('poc_details')?.hasError('minLengthArray')">
+                    At least one POC is required.
+                  </mat-error>
                 </mat-expansion-panel>
               </mat-accordion>
             </div>
@@ -663,12 +600,12 @@
           </button>
           <button mat-raised-button color="primary" class="responsive-btn" (click)="updateOrg()"
             *ngIf="(showUpdate && true) || btnPolicy?.editOrganization" [disabled]="form.invalid">
-            <mat-icon>add_business</mat-icon>
+            <mat-icon>system_update_alt</mat-icon>
             Update
           </button>
           <button mat-raised-button color="primary" class="responsive-btn" (click)="addOrg()" [disabled]="form.invalid"
             *ngIf="(!showUpdate && true) || btnPolicy?.addOrganization">
-            <mat-icon>add_business</mat-icon>
+            <mat-icon>add</mat-icon>
             Add Organization
           </button>
         </div>
