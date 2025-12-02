@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -56,17 +56,27 @@ export class AddOrganizationComponent implements OnInit {
       domain: [''],
       city: ['', Validators.required],
       gstin: ['', [Validators.required, Validators.pattern('^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$'),],],
-      poc_details: this.fb.array([]),
+      poc_details: this.fb.array([], this.minArrayLength(1)),
       org_address: this.fb.group({
         addressLine1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120),],],
         addressLine2: ['', [Validators.maxLength(120)]],
         addressLine3: ['', [Validators.maxLength(80)]],  // Landmark field
       }),
-      cafeteriaList: this.fb.array([]),
+      cafeteriaList: this.fb.array([], this.minArrayLength(1)),
       subsidy: [0, [Validators.min(0), Validators.max(100), Validators.pattern('^\\d+(\\.\\d{1,2})?$')],],
-      isEmpIdRequired: [true, Validators.required],
+      isEmpIdRequired: [, Validators.required],
     });
   }
+
+  minArrayLength(min: number): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      const array = control as FormArray;
+      return array && array.length >= min
+        ? null
+        : { minLengthArray: true };
+    };
+  }
+
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -93,17 +103,17 @@ export class AddOrganizationComponent implements OnInit {
 
   new_admin_details(): FormGroup {
     return this.fb.group({
-    admin_name: [ '',[Validators.required, Validators.minLength(3),Validators.maxLength(80),Validators.pattern(/^[A-Za-z ]+$/)]],
-    admin_phoneNo: ['',[Validators.required,Validators.pattern(/^[6-9][0-9]{9}$/) ]],
-    admin_email: ['',[Validators.required, Validators.email, Validators.maxLength(80)]],
-    admin_location: ['', Validators.required],
+      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
+      admin_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
+      admin_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
+      admin_location: ['', Validators.required],
     });
   }
 
   new_cafeteria(): FormGroup {
     let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
-      accessCode: ['',[ Validators.minLength(1),Validators.maxLength(4),Validators.pattern(/^[0-9]+$/)]],
+      accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/)]],
       showAdminDaily: [false],
       showEmpPolls: [false],
       showVirtualCafe: [false],
@@ -118,29 +128,30 @@ export class AddOrganizationComponent implements OnInit {
       cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
       cafeteria_id: [id, Validators.required],
       cafeteria_city: ['', Validators.required],
-      cafeteria_gstin: ['',Validators.pattern(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$/)],
-      cafeteria_location: this.fb.group({lat: ['', Validators.required], lng: ['', Validators.required],}),
+      cafeteria_gstin: ['', Validators.pattern(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$/)],
+      cafeteria_location: this.fb.group({ lat: ['', Validators.required], lng: ['', Validators.required], }),
       clusterId: [''],
       clusterName: [''],
-      address1: [ '',[Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
+      address1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
       address2: ['', [Validators.maxLength(120)]],
       landmark: ['', [Validators.maxLength(80)]],
       location: ['', Validators.required],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
-      poc_details: this.fb.group({poc_id: ['', Validators.required],poc_name: [ '', [Validators.required, Validators.minLength(3), Validators.maxLength(80)] ],
-      poc_phoneNo: ['',[Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)] ],
-      poc_email: [ '',[Validators.required, Validators.email, Validators.maxLength(80)]],
-      poc_location: ['', Validators.required],
-      poc_role: ['', Validators.required],
-      approverPriceLimit: [''],
-      approverCountLimit: [''],
-      approverDetails: this.fb.group({
-      approver_id: [''],
-      approver_name: ['',[Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-      approver_phoneNo: ['',Validators.pattern(/^[6-9][0-9]{9}$/)],
-      approver_email: ['', Validators.email],
-      approver_location: [''],
-      approver_role: [''],
+      poc_details: this.fb.group({
+        poc_id: ['', Validators.required], poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+        poc_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
+        poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
+        poc_location: ['', Validators.required],
+        poc_role: ['', Validators.required],
+        approverPriceLimit: [''],
+        approverCountLimit: [''],
+        approverDetails: this.fb.group({
+          approver_id: [''],
+          approver_name: ['', [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
+          approver_phoneNo: ['', Validators.pattern(/^[6-9][0-9]{9}$/)],
+          approver_email: ['', Validators.email],
+          approver_location: [''],
+          approver_role: [''],
         }),
       }),
     });
@@ -182,6 +193,7 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   add_poc_details() {
+    this.panelOpenState = true
     this.poc.push(this.new_poc_details());
   }
 
@@ -190,9 +202,9 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   removePOC(index: any) {
+
     let status = this.checkPocIdExists(this.orgInfo.cafeteriaList, this.form.controls['poc_details'].value[index].poc_id);
     if (status) {
-
       this.modalService
         .open(this.pocContent, {
           ariaLabelledBy: 'modal-basic-title',
@@ -207,9 +219,7 @@ export class AddOrganizationComponent implements OnInit {
             console.log(`Model Dismissed`);
           }
         );
-
     }
-
     else {
       this.form.controls['poc_details'].removeAt(index);
     }

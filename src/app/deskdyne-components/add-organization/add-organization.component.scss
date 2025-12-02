@@ -1,5 +1,6 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles.scss' as color;
+@import 'src/styles.scss';
 
 .addBtn {
     font-size: 12px;
@@ -10,6 +11,7 @@
     height: 100px;
     cursor: pointer;
 }
+
 .uploadInput{
     display: none;
 }
@@ -65,6 +67,76 @@
     }
 }
 
-.cardDesign {
+.cardDesign , .list-group {
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
+
+
+.addOutlet{
+    position: absolute;
+    right: 5px;
+    top: 100px;
+}
+.labelText{
+    font-size:13px;
+}
+.uploadedImage{
+    width: 100px;
+    height: 100px;
+    cursor: pointer;
+}
+.uploadInput{
+    display: none;
+}
+.uploadIcon{
+    width: 84px;
+    background: $secondary-color3;
+    border-radius: 5px;
+    text-align: center;
+    color: white;
+    position: relative;
+    top: -15px;
+    left: 8px;
+    font-size: 13px;
+    padding: 4px 0px;
+    cursor: pointer;
+}
+
+.mainCheckDiv {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    background: #f8f8f8;
+    border-radius: 16px;
+    padding: 16px 20px;
+    height: fit-content;
+    width: fit-content;
+
+    label {
+        margin: 0;
+    }
+}
+
+.responsive-btn {
+  font-size: clamp(0.75rem, 2vw, 1rem) !important;
+  mat-icon {
+    font-size: clamp(16px, 3vw, 18px)  !important;
+  }
+}
+
+.heading{
+    font-size:clamp(20px , 2vw , 1rem) !important;
+    display: flex;
+    align-items: center;
+}
+.list-grou-item{
+        border: none !important;
+}
+
+mat-icon{
+    cursor: pointer !important;
+}
+.main{
   @include mixin.card-design(color.$primary-offset-color1);
 }

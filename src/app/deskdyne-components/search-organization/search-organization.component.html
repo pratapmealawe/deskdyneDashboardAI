@@ -1,5 +1,5 @@
 <div class="container-fluid pe-4 ps-4">
-  <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between" *ngIf="showSearchSection">
+  <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-4" *ngIf="showSearchSection">
     <div class="g-0">
       <h4 class="m-0 fw-semibold">Organization</h4>
     </div>
@@ -11,12 +11,8 @@
             <mat-icon>search</mat-icon> </button>
         </mat-form-field>
       </div>
-      <button mat-raised-button color="primary" class="text-nowrap d-none d-md-inline-flex" (click)="addOrg()">
+      <button mat-raised-button color="primary" class="text-nowrap" (click)="addOrg()">
         Add Organization
-      </button>
-      <button mat-icon-button color="primary" class="d-inline-flex d-md-none" (click)="addOrg()" matTooltip="Add Vendor"
-        aria-label="Add Vendor">
-        <mat-icon>add_circle</mat-icon>
       </button>
     </div>
     <div class="d-inline-flex d-md-none w-100">
