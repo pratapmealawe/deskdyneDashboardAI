@@ -20,8 +20,15 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 })
 export class OutletExcelExportComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts;
+  isAdmin: boolean = false;
   orgDetails: any = {};
   orgAdmin: any;
+  headerConfigAdmin: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: false,
+    requireAll: true
+  }
   headerConfig: CommonSelectConfig = {
     mode: 'outlet',
     showDateRange: true,
@@ -53,6 +60,9 @@ export class OutletExcelExportComponent implements OnInit {
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.headerConfig.defaultOrgId = this.orgAdmin?.orgDetails?._id;
+    if(this.orgAdmin){
+      this.isAdmin = this.orgAdmin.role === 'ADMIN';
+    }
   }
 
   async getOutletByFilter(body: any) {

@@ -1,7 +1,11 @@
 <div class="container-fluid">
     <h3 class="mb-0 pb-3">Outlet Orders</h3>
-    <div>
+    <div *ngIf="!isAdmin">
         <app-common-outlet-cafe-select [config]="headerConfig"
+            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+    </div>
+    <div *ngIf="isAdmin">
+        <app-common-outlet-cafe-select [config]="headerConfigAdmin"
             (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
     </div>
     <div *ngIf="filteredOrderList.length > 0" class="pb-4">
