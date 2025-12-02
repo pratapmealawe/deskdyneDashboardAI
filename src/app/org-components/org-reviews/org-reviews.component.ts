@@ -1,17 +1,10 @@
-import { ChangeDetectorRef, Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
 import * as Highcharts from 'highcharts';
 import Drilldown from 'highcharts/modules/drilldown';
+import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
 Drilldown(Highcharts);
-
-interface filter {
-  orgId: string;
-  outletId: string;
-  fromDate: string;
-  toDate: string;
-}
 
 @Component({
   selector: 'app-org-reviews',
@@ -19,22 +12,28 @@ interface filter {
   styleUrls: ['./org-reviews.component.scss'],
 })
 export class OrgReviewsComponent implements OnInit, OnChanges {
-    Highcharts: typeof Highcharts = Highcharts;
-  @Input() adminOrg: any
+  @Input() adminOrg: any;
+  Highcharts: typeof Highcharts = Highcharts;
   orglist: any = [];
+  isAdmin: boolean = false;
   orgDetails: any;
-  feedbackList: any[] = [];
-  filteredFeedbackList: any[] = [];
+  reviewList: any[] = [];
   expandedItems: boolean[] = [];
-  filterObj: filter = {
-    orgId: '',
-    outletId: '',
-    fromDate: '',
-    toDate: '',
-  };
+  headerConfig: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: true,
+    requireAll: true
+  }
+  headerConfigAdmin: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: false,
+    requireAll: true
+  }
   orgAdmin: any;
-  outletList: any[] = []
-  isChartShow: boolean = false
+  outletList: any[] = [];
+  isChartShow: boolean = false;
 
   // Chart
   chartOptionsPie: Highcharts.Options = {
@@ -75,14 +74,14 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       {
         type: 'pie',
         name: 'Ratings',
-        data: [], 
+        data: [],
       },
     ],
     drilldown: {
-      series: [], 
+      series: [],
     },
   };
- updateStatusFlag: boolean = false;
+  updateStatusFlag: boolean = false;
   oneToOneStatusFlag: boolean = true;
   initialStatusData: any[] = [];
   drilldownFlag = false;
@@ -90,128 +89,52 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private searchService: SearchFilterService,
   ) { }
 
   ngOnInit() {
-    this.initFunc()
+    this.setInitials();
+    console.log(this.adminOrg, "adminOrg");
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
-      this.initFunc()
+      this.setInitials();
     }
   }
 
-  initFunc() {
+  setInitials() {
     this.orgAdmin = this.adminOrg ? { role: "ORGADMIN", orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.getOrgList();
+    this.isAdmin = this.orgAdmin?.role == 'ORGADMIN' ? false : true;
+    if (!this.isAdmin) {
+      this.headerConfig.defaultOrgId = this.orgAdmin.orgDetails?._id;
+    }
+  }
+
+  async getfeedbacklistByfilter(payload: any) {
+    try {
+      this.isChartShow = false
+      const reviewList = await this.apiMainService.getfeedbacklistByfilter(payload);
+      this.reviewList = [...reviewList];
+      console.log(this.reviewList,"review list");
+      // if (feedbackList && feedbackList.length > 0) {
+      //   this.feedbackList = [...this.feedbackList, ...feedbackList];
+      //   this.filteredFeedbackList = [
+      //     ...this.filteredFeedbackList,
+      //     ...feedbackList,
+      //   ];
+      //   this.expandedItems = new Array(this.feedbackList.length).fill(true);
+      // }
+    } catch (e) {
+      console.log('Error while fetching config variables ', e);
+    }
   }
 
   toggleFeedback(index: number) {
     this.expandedItems[index] = !this.expandedItems[index];
   }
 
-  getMore() {
-    this.getfeedbacklistByfilter();
-  }
-
-  searchFilter(e: any) {
-    const searchText = e.target.value;
-
-    const config = {
-      keys: ['feedbackFrom_name', 'outletName'],
-    };
-
-    this.filteredFeedbackList = this.searchService.searchData(
-      this.feedbackList,
-      config,
-      searchText
-    );
-  }
-
-  setOrgDetails() {
-    this.orgDetails = this.orglist.find((org: any) => {
-      return org._id == this.filterObj?.orgId;
-    });
-
-    this.filterObj.outletId = '';
-    this.getOutlets()
-  }
-
-  async getfeedbacklistByfilter() {
-    try {
-      this.isChartShow = false
-      const feedbackList = await this.apiMainService.getfeedbacklistByfilter(this.filterObj);
-
-      if (feedbackList && feedbackList.length > 0) {
-        this.feedbackList = [...this.feedbackList, ...feedbackList];
-        this.filteredFeedbackList = [
-          ...this.filteredFeedbackList,
-          ...feedbackList,
-        ];
-        this.expandedItems = new Array(this.feedbackList.length).fill(true);
-      } 
-
-      // console.log(feedbackList);
-      
-    } catch (e) {
-      console.log('Error while fetching config variables ', e);
-    }
-  }
-
-  async getOrgList() {
-    try {
-      let page = 1;
-      let searchObj = {
-        countOnly: false,
-      };
-      let data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        searchObj,
-        page
-      );
-      this.orglist = data;
-      this.getInitialVlaues();
-      this.getOutlets()
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async getOutlets() {
-    let searchObj = {
-      orgId: this.orgAdmin.role === 'ORGADMIN' ? this.orgAdmin?.orgDetails._id : this.orgDetails?._id
-    };
-    try {
-      const data = await this.apiMainService.searchOutletByOrgId(
-        searchObj
-      );
-
-      this.outletList = [...data];
-
-      this.getfeedbacklistByfilter()
-    } catch (err) {
-      console.error('Error fetching orders:', err);
-    }
-  }
-
-
-  getInitialVlaues() {
-    if (this.orgAdmin.role === 'ORGADMIN') {
-      this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
-      this.setOrgDetails();
-    }
-  }
-
-  onCafeChange() {
-    this.feedbackList = [];
-    this.filteredFeedbackList = [];
-    this.getfeedbacklistByfilter()
-  }
-
   changeDataView() {
-
-    if(!this.isChartShow) {
+    if (!this.isChartShow) {
       this.generateDrilldownChartData()
     } else {
       this.isChartShow = false
@@ -226,8 +149,8 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       Record<string, Record<string, number>>
     > = {};
 
-    this.filteredFeedbackList.forEach((feedback) => {
-      feedback.itemlist.forEach((item:any) => {
+    this.reviewList.forEach((feedback) => {
+      feedback.itemlist.forEach((item: any) => {
         const rating = item.starRatingKitchen ?? 0;
         const itemName = item.itemName;
         const containsList = item.itemContains || [];
@@ -241,14 +164,14 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
         ratingItemContains[rating] = ratingItemContains[rating] || {};
         ratingItemContains[rating][itemName] =
           ratingItemContains[rating][itemName] || {};
-        containsList.forEach((sub:any) => {
+        containsList.forEach((sub: any) => {
           const subName = sub.name;
           ratingItemContains[rating][itemName][subName] =
             (ratingItemContains[rating][itemName][subName] || 0) + 1;
         });
       });
     });
-    
+
     const totalItemsAcrossAllRatings = Object.values(ratingTotals).reduce(
       (acc, cnt) => acc + cnt,
       0
@@ -261,15 +184,15 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
         name: `${numericKey} star${numericKey !== 1 ? 's' : ''}`,
         y: percentage,
         count: count,
-        drilldown: `rating-${numericKey}`, 
+        drilldown: `rating-${numericKey}`,
       };
     });
 
     const firstLevelDrill: any[] = [];
     Object.keys(ratingItemCount).forEach((ratingKey) => {
       const ratingNum = Number(ratingKey);
-      const itemMap = ratingItemCount[ratingNum]; 
-      const itemTotal = ratingTotals[ratingNum]; 
+      const itemMap = ratingItemCount[ratingNum];
+      const itemTotal = ratingTotals[ratingNum];
 
       const dataArray: any[] = Object.keys(itemMap).map((itemName) => {
         const cnt = itemMap[itemName];
@@ -345,5 +268,17 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
     this.isChartShow = true;
     this.updateStatusFlag = true;
     this.drilldownFlag = true;
+  }
+
+  excelExport(){}
+  downloadPdf(){}
+  filterSubmitted(event: any) {
+    const body = {
+      orgId: event.org_id,
+      outletId: event.outlet_id,
+      fromDate: event.date_from,
+      toDate: event.date_to,
+    };
+    this.getfeedbacklistByfilter(body);
   }
 }
