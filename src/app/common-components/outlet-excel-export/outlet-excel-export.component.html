@@ -1,80 +1,50 @@
 <div class="container-fluid">
-    <div class="row">
-        <div class="col-md-6">
-            <h3>Outlet Order Export</h3>
-        </div>
+    <h3 class="mb-0 pb-3">Outlet Orders</h3>
+    <div *ngIf="!isAdmin">
+        <app-common-outlet-cafe-select [config]="headerConfig"
+            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
     </div>
-
-    <div class="container-fluid">
-        <div class="row mb-4 mt-2 p-3 bg-light rounded ">
-            <div class="col-md-3">
-                <label class="labelText">Organization</label>
-                <select class="form-select" [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin.role === 'ORGADMIN'"
-                    (change)="setOrgDetails()">
-                    <option selected disabled value="">Select Organization</option>
-                    <option *ngFor="let option of orglist" [value]="option._id">
-                        {{ option.organization_name }}
-                    </option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label class="labelText">Cafeteria</label>
-                <select class="form-select" [(ngModel)]="filterObj.cafeId" [disabled]="!orgDetails">
-                    <option selected disabled value="">Select Cafeteria</option>
-                    <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
-                        {{ option.cafeteria_name }}
-                    </option>
-                </select>
-            </div>
-
-            <div class="col-md-3">
-                <label class="labelText">From Date</label>
-                <input type="date" [(ngModel)]="filterObj.fromDate" class="form-control" />
-            </div>
-
-            <div class="col-md-3">
-                <label class="labelText">To Date</label>
-                <input type="date" [(ngModel)]="filterObj.toDate" class="form-control" />
-            </div>
-
-            <div class="col-md-3 pt-4">
-                <button (click)="filterOrders()" class="btn btn-primary w-100">Search</button>
-            </div>
-        </div>
+    <div *ngIf="isAdmin">
+        <app-common-outlet-cafe-select [config]="headerConfigAdmin"
+            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
     </div>
-
     <div *ngIf="filteredOrderList.length > 0" class="pb-4">
-        <div class="row mb-4">
-            <div class="col-lg-3">
-                <button (click)="excelExport()" class="btn btn-success"> <i class="bi bi-file-earmark-excel"></i> Excel
-                    Export</button>
-            </div>
-            <div class="col-lg-6">
-                <div class="totalDiv">
-                    <div class="leftDiv">
-                        <span>Total Items: </span>
-                        <span>{{ filteredOrderList.length}} </span>
-                    </div>
-                    <div class="verticalHr"></div>
-                    <div class="rightDiv">
-                        <span>&#8377; {{totalAmount}}</span>
-                    </div>
+        <div class="row my-2 align-items-center">
+            <div class="col-12 col-md-8">
+                <div class="d-flex flex-wrap gap-2">
+                    <mat-chip-listbox>
+                        <mat-chip> Total Orders: {{ filteredOrderList.length }} </mat-chip>
+                        <mat-chip> Wallet Used: ₹{{ totalWalletUsed | number : '1.2-2' }} </mat-chip>
+                        <mat-chip> Amount Paid: ₹{{ totalAmountPaid | number : '1.2-2' }} </mat-chip>
+                        <mat-chip color="primary" selected>
+                            Total Paid (Wallet + Amount): ₹{{ totalAmount | number : '1.2-2' }}
+                        </mat-chip>
+                    </mat-chip-listbox>
                 </div>
             </div>
-            <div class="col-lg-3">
-                <button (click)="changeDataView()" class="btn iconBtn " *ngIf="!isShowChart"><i
-                        class="bi bi-graph-down"></i></button>
-                <button (click)="changeDataView()" class="btn iconBtn " *ngIf="isShowChart"><i
-                        class="bi bi-table"></i></button>
+            <div class="col-12 col-md-4 d-flex justify-content-end gap-2 mt-2 mt-md-0">
+
+                <button mat-mini-fab class="excel-btn" matTooltip="Excel Export" (click)="excelExport()">
+                    <mat-icon>table_chart</mat-icon>
+                </button>
+                <button mat-mini-fab color="primary" (click)="downloadPdf()" matTooltip="Download PDF">
+                    <mat-icon>picture_as_pdf</mat-icon>
+                </button>
+
+                <button mat-mini-fab color="primary" (click)="changeDataView()" matTooltip="Change View"
+                    class="btn iconBtn">
+                    <i class="bi" [ngClass]="isShowChart ? 'bi-table' : 'bi-graph-down'"></i>
+                </button>
+
             </div>
         </div>
         <ng-container *ngIf="!isShowChart">
-            <ul *ngFor="let order of filteredOrderList" class="list-group">
-                <li class="list-group-item">
-                    <app-order-card [order]="order"></app-order-card>
-                </li>
-            </ul>
+            <div *ngFor="let order of paginatedList">
+                <app-org-outlet-orders [order]="order"></app-org-outlet-orders>
+            </div>
+            <mat-paginator [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 20, 50]"
+                [length]="estimatedTotal" (page)="onPageChange($event)">
+            </mat-paginator>
         </ng-container>
         <div class="row my-1" *ngIf="isShowChart">
             <div class="col-12">
