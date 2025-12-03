@@ -67,7 +67,7 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.addOutletMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
   }
-  
+
   addQrOutletMenu(outlet: any, outletId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.addQrOutletMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
@@ -324,8 +324,9 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, payload, null, false, true);
   }
 
-  B2B_fetchFilteredAllOrgs(data: any, page?: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_fetchFilteredAllOrgs, data, null, false, true);
+  B2B_fetchFilteredAllOrgs(data: any, page: any = 1) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchFilteredAllOrgs;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}`, method: urlObj.method }, data);
   }
 
   updateOrgComplianceByAdmin(id: string, data: any) {
@@ -854,6 +855,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addQrEmployeeList, body);
   }
 
+  updateEmployeeQrCode(phoneNo: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployeeQrCode
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method }, body);
+  }
+
   qrEmployeeByCafeId(cafeId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.qrEmployeeByCafeId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
@@ -1315,6 +1321,6 @@ export class ApiMainService {
 
   changeQrMealTypeActivation(id: any, isActive: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.changeQrMealTypeActivation
-    return this.apiHttpService.REQUEST( { url: urlObj.url + `/${id}`, method: urlObj.method }, isActive);
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, isActive);
   }
 }

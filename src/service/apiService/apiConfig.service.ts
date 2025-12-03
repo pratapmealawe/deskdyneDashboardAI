@@ -187,6 +187,7 @@ export class ApiConfigService {
       qrEmployeeAdd: p('/api/qrEmployeeAdd', 'POST'),
       qrEmployeeByCafeId: p('/api/qrEmployeeByCafeId', 'GET'),
       addQrEmployeeList: p('/api/addQrEmployeeList', 'POST'),
+      updateEmployeeQrCode: p('/api/updateEmployeeQrCode', 'POST'),
       deleteQrEmployee: p('/api/deleteQrEmployee', 'DELETE'),
       updateQrEmployee: p('/api/updateQrEmployee', 'POST'),
       getQrEmployeeByPhoneNo: p('/api/getQrEmployeeByPhoneNo', 'GET'),

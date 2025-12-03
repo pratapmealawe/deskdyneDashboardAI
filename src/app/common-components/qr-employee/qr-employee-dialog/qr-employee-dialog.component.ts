@@ -105,7 +105,7 @@ export class QrEmployeeDialogComponent implements OnInit {
         // const parts = dataUrl.split(',');
         // this.qrPngBase64 = parts[1] || ''; // store only base64
         this.qrPngBase64 = dataUrl; // store full data URL
-        console.log('QR PNG base64:', dataUrl);
+        // console.log('QR PNG base64:', dataUrl);
 
       })
       .catch(err => {
