@@ -8,6 +8,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { REGEX } from 'src/shared/constants/regex';
 
 @Component({
   selector: 'app-add-organization',
@@ -55,7 +56,7 @@ export class AddOrganizationComponent implements OnInit {
       location: ['', Validators.required],
       domain: [''],
       city: ['', Validators.required],
-      gstin: ['', [Validators.required, Validators.pattern('^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$'),],],
+      gstin: ['', [Validators.required, Validators.pattern(REGEX.GSTIN),],],
       poc_details: this.fb.array([], this.minArrayLength(1)),
       org_address: this.fb.group({
         addressLine1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120),],],
@@ -63,8 +64,8 @@ export class AddOrganizationComponent implements OnInit {
         addressLine3: ['', [Validators.maxLength(80)]],  // Landmark field
       }),
       cafeteriaList: this.fb.array([], this.minArrayLength(1)),
-      subsidy: [0, [Validators.min(0), Validators.max(100), Validators.pattern('^\\d+(\\.\\d{1,2})?$')],],
-      isEmpIdRequired: [, Validators.required],
+      subsidy: [0, [Validators.min(0), Validators.max(100), Validators.pattern(REGEX.SUBSIDY)],],
+      isEmpIdRequired: [true, Validators.required],
     });
   }
 
@@ -103,8 +104,8 @@ export class AddOrganizationComponent implements OnInit {
 
   new_admin_details(): FormGroup {
     return this.fb.group({
-      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-      admin_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
+      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+      admin_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
       admin_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
       admin_location: ['', Validators.required],
     });
@@ -113,7 +114,7 @@ export class AddOrganizationComponent implements OnInit {
   new_cafeteria(): FormGroup {
     let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
-      accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/)]],
+      accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(REGEX.ACCESS_CODE)]],
       showAdminDaily: [false],
       showEmpPolls: [false],
       showVirtualCafe: [false],
@@ -128,7 +129,7 @@ export class AddOrganizationComponent implements OnInit {
       cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
       cafeteria_id: [id, Validators.required],
       cafeteria_city: ['', Validators.required],
-      cafeteria_gstin: ['', Validators.pattern(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$/)],
+      cafeteria_gstin: ['', Validators.pattern(REGEX.GSTIN)],
       cafeteria_location: this.fb.group({ lat: ['', Validators.required], lng: ['', Validators.required], }),
       clusterId: [''],
       clusterName: [''],
@@ -138,36 +139,55 @@ export class AddOrganizationComponent implements OnInit {
       location: ['', Validators.required],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       poc_details: this.fb.group({
-        poc_id: ['', Validators.required], poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
-        poc_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
-        poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
-        poc_location: ['', Validators.required],
-        poc_role: ['', Validators.required],
+        poc_id: [{ value: '', disabled: true }, Validators.required],
+        poc_name: [{ value: '', disabled: true }, [
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(80),
+          Validators.pattern(REGEX.NAME)
+        ]],
+        poc_phoneNo: [{ value: '', disabled: true }, [
+          Validators.required,
+          Validators.pattern(REGEX.PHONE)
+        ]],
+        poc_email: [{ value: '', disabled: true }, [
+          Validators.required,
+          Validators.email,
+          Validators.maxLength(80)
+        ]],
+        poc_location: [{ value: '', disabled: true }, Validators.required],
+        poc_role: [{ value: '', disabled: true }, Validators.required],
+        // poc_id: ['', Validators.required], poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+        // poc_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
+        // poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
+        // poc_location: ['', Validators.required],
+        // poc_role: ['', Validators.required],
         approverPriceLimit: [''],
         approverCountLimit: [''],
         approverDetails: this.fb.group({
           approver_id: [''],
-          approver_name: ['', [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-          approver_phoneNo: ['', Validators.pattern(/^[6-9][0-9]{9}$/)],
+          approver_name: ['', [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+          approver_phoneNo: ['', Validators.pattern(REGEX.PHONE)],
           approver_email: ['', Validators.email],
           approver_location: [''],
           approver_role: [''],
         }),
       }),
+      
     });
   }
 
   new_poc_details(): FormGroup {
     return this.fb.group({
       poc_id: ['', Validators.required],
-      poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-      poc_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
+      poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+      poc_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
       poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
       poc_location: ['', Validators.required],
       poc_role: ['', Validators.required],
       approverDetails: this.fb.group({
-        approver_id: [{ value: '', disabled: true }], approver_name: [{ value: '', disabled: true }, [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-        approver_phoneNo: [{ value: '', disabled: true }, Validators.pattern(/^[6-9][0-9]{9}$/)],
+        approver_id: [{ value: '', disabled: true }], approver_name: [{ value: '', disabled: true }, [Validators.minLength(3), Validators.maxLength(80)]],
+        approver_phoneNo: [{ value: '', disabled: true }, Validators.pattern(REGEX.PHONE)],
         approver_email: [{ value: '', disabled: true }, Validators.email],
         approver_location: [{ value: '', disabled: true }],
         approver_role: [{ value: '', disabled: true }],

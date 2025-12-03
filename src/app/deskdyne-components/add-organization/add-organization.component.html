@@ -39,6 +39,12 @@
                     <mat-error *ngIf="hasError(form, 'organization_name', 'required')">
                       organization_name is required
                     </mat-error>
+                     <mat-error *ngIf="hasError(form, 'organization_name', 'minlength')">
+                      organization_name is minlength
+                    </mat-error>
+                     <mat-error *ngIf="hasError(form, 'organization_name', 'maxlength')">
+                      organization_name is maxlength
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </div>
@@ -77,11 +83,9 @@
                     <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('required')">
                       Address Line 1 is required
                     </mat-error>
-
                     <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('minlength')">
                       Minimum 5 characters required
                     </mat-error>
-
                     <mat-error *ngIf="form.get('org_address.addressLine1')?.hasError('maxlength')">
                       Maximum 120 characters allowed
                     </mat-error>
@@ -96,7 +100,6 @@
                     <mat-error *ngIf="form.get('org_address.addressLine2')?.hasError('minlength')">
                       Minimum 5 characters required
                     </mat-error>
-
                     <mat-error *ngIf="form.get('org_address.addressLine2')?.hasError('maxlength')">
                       Maximum 120 characters allowed
                     </mat-error>
@@ -111,16 +114,12 @@
                     <mat-error *ngIf="form.get('org_address.addressLine3')?.hasError('minlength')">
                       Minimum 5 characters required
                     </mat-error>
-
                     <mat-error *ngIf="form.get('org_address.addressLine3')?.hasError('maxlength')">
                       Maximum 120 characters allowed
                     </mat-error>
                   </mat-form-field>
                 </div>
               </div>
-            </div>
-            <div class="row">
-
             </div>
           </div>
           <div [formGroup]="form">
@@ -158,16 +157,16 @@
                     <mat-error *ngIf="hasError(form, 'gstin', 'required')">
                       gstin is required
                     </mat-error>
+                    <mat-error *ngIf="hasError(form,'gstin','pattern')">
+                      GSTIN pattern not matching
+                    </mat-error>
                   </mat-form-field>
                 </div>
               </div>
-
             </div>
-
           </div>
         </div>
       </div>
-
       <div formArrayName="poc_details">
         <div class="cardDesign">
           <div class="d-flex justify-content-between align-items-center">
@@ -194,7 +193,7 @@
                       <div class="form-group">
                         <label class="field-label">POC Id<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="POC Id" formControlName="poc_id" />
+                          <input matInput placeholder="POC Id" formControlName="poc_id" appOnlyNumber/>
                           <mat-error
                             *ngIf="control.get('poc_id')?.hasError('required')  && (control.get('poc_id')?.touched || control.get('poc_id')?.dirty)">
                             POC Id is required
@@ -210,7 +209,6 @@
                           <mat-error *ngIf="control.get('poc_name')?.hasError('required')">
                             POC Name is required
                           </mat-error>
-
                         </mat-form-field>
                       </div>
                     </div>
@@ -218,7 +216,7 @@
                       <div class="form-group">
                         <label class="field-label">POC Ph No<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
-                          <input matInput placeholder="POC Phone No" formControlName="poc_phoneNo" />
+                          <input matInput placeholder="POC Phone No" formControlName="poc_phoneNo" appOnlyNumber/>
                           <mat-error *ngIf="control.get('poc_phoneNo')?.hasError('required')">
                             POC Phone Number is required
                           </mat-error>
@@ -261,7 +259,7 @@
                       <div class="form-group">
                         <label class="field-label">POC Role<span class="required-input"> * </span></label>
                         <mat-form-field appearance="outline" class="w-100">
-                          <mat-select formControlName="poc_role">
+                          <mat-select formControlName="poc_role" placeholder="POC role">
                             <mat-option [value]="item" *ngFor="let item of roleList">
                               {{ item }}
                             </mat-option>
@@ -297,7 +295,7 @@
                         <div class="form-group">
                           <label class="field-label">Approver Ph No</label>
                           <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="Approver Phone No" formControlName="approver_phoneNo" />
+                            <input matInput placeholder="Approver Phone No" formControlName="approver_phoneNo" appOnlyNumber />
                           </mat-form-field>
                         </div>
                       </div>
@@ -388,23 +386,29 @@
                     </mat-panel-title>
                   </mat-expansion-panel-header>
                   <div class="checkbox-grid">
-                    <mat-checkbox formControlName="showAdminDaily">Show Admin Daily Card</mat-checkbox>
-                    <mat-checkbox formControlName="showEmpPolls">Show Emp Poll Card</mat-checkbox>
-                    <mat-checkbox formControlName="showVirtualCafe">Show Virtual Cafeteria</mat-checkbox>
-                    <mat-checkbox formControlName="showSaas">Show Outlet</mat-checkbox>
-                    <mat-checkbox formControlName="showQrCode">Show QR Code</mat-checkbox>
-                    <mat-checkbox formControlName="showCompanyWallet">Show Company Wallet</mat-checkbox>
-                    <mat-checkbox formControlName="showComplienceTracker">Show Compliance Tracker</mat-checkbox>
-                    <mat-checkbox formControlName="showConsumptionOrder">Show Consumption Order</mat-checkbox>
-                    <mat-checkbox formControlName="isEmployeeEmailLogin">Is Employee Email Login</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showAdminDaily">Show Admin Daily Card</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showEmpPolls">Show Emp Poll Card</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showVirtualCafe">Show Virtual Cafeteria</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showSaas">Show Outlet</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showQrCode">Show QR Code</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showCompanyWallet">Show Company Wallet</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showComplienceTracker">Show Compliance Tracker</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="showConsumptionOrder">Show Consumption Order</mat-checkbox>
+                    <mat-checkbox color="primary" formControlName="isEmployeeEmailLogin">Is Employee Email Login</mat-checkbox>
                   </div>
                   <div class="grid-4">
                     <div class="field">
                       <label>Cafeteria Name <span class="required-input">*</span></label>
                       <mat-form-field appearance="outline" class="full">
-                        <input matInput formControlName="cafeteria_name" placeholder="Cafeteria Name" />
+                        <input matInput formControlName="cafeteria_name" placeholder="Cafeteria Name" appAlphaNumeric/>
                         <mat-error *ngIf="control.get('cafeteria_name')?.hasError('required')">
                              Cafeteria name is required
+                        </mat-error>
+                          <mat-error *ngIf="control.get('cafeteria_name')?.hasError('minlength')">
+                             Cafeteria name is minlength must be 
+                        </mat-error>
+                          <mat-error *ngIf="control.get('cafeteria_name')?.hasError('maxlength')">
+                             Cafeteria name is maxlength
                         </mat-error>
                       </mat-form-field>
                     </div>
@@ -412,7 +416,7 @@
                     <div class="field">
                       <label>Cafeteria City <span class="required-input">*</span></label>
                       <mat-form-field appearance="outline" class="full">
-                        <input matInput formControlName="cafeteria_city" placeholder="Cafeteria City" />
+                        <input matInput formControlName="cafeteria_city" placeholder="Cafeteria City" appAlphaNumeric/>
                         <mat-error *ngIf="control.get('cafeteria_city')?.hasError('required')">
                           Cafeteria City is required
                         </mat-error>
@@ -422,7 +426,7 @@
                     <div class="field">
                       <label>Location <span class="required-input">*</span></label>
                       <mat-form-field appearance="outline" class="full">
-                        <input matInput formControlName="location" placeholder="Location" />
+                        <input matInput formControlName="location" placeholder="Location" appAlphaNumeric/>
                         <mat-error *ngIf="control.get('location')?.hasError('required')">
                           Location is required
                         </mat-error>
@@ -432,7 +436,7 @@
                     <div class="field">
                       <label>Landmark <span class="required-input">*</span></label>
                       <mat-form-field appearance="outline" class="full">
-                        <input matInput formControlName="landmark" placeholder="Landmark" />
+                        <input matInput formControlName="landmark" placeholder="Landmark" appAlphaNumeric />
                         <mat-error *ngIf="control.get('landmark')?.hasError('required')">
                           Landmark is required
                         </mat-error>
@@ -454,10 +458,13 @@
                       <label>Access Code</label>
                       <mat-form-field appearance="outline" class="full">
                         <input matInput formControlName="accessCode" placeholder="Access Code" appOnlyNumber />
-                        <mat-error *ngIf="control.get('accessCode')?.hasError('required')">
-                          Must be 1–4 digits
+                        <mat-error *ngIf="control.get('accessCode')?.hasError('minlength')">
+                          access code length 1 minlength
                         </mat-error>
-                        <mat-error *ngIf="control.get('accessCode')?.hasError('required')">
+                        <mat-error *ngIf="control.get('accessCode')?.hasError('maxlength')">
+                          access code length 4 maxlength
+                        </mat-error>
+                        <mat-error *ngIf="control.get('accessCode')?.hasError('pattern')">
                           Max 4 digits allowed
                         </mat-error>
                       </mat-form-field>
@@ -489,8 +496,11 @@
                           <mat-error *ngIf="hasError(form,'cafeteria_gstin','required')">
                             GSTIN is required
                           </mat-error>
+                          <mat-error *ngIf="hasError(form,'cafeteria_gstin','pattern')">
+                              GSTIN pattern not matching
+                          </mat-error>
                         </mat-form-field>
-                        <mat-checkbox (change)="getOrgGstin($event,i)">
+                        <mat-checkbox color="primary" (change)="getOrgGstin($event,i)">
                           Same as Org GSTIN
                         </mat-checkbox>
                       </div>
@@ -501,7 +511,7 @@
                       <div class="subsidy-row">
                         <mat-form-field appearance="outline" class="full">
                           <input matInput formControlName="subsidy" appOnlyNumber placeholder="Subsidy Amount"
-                            appOnlyNumber />
+                            appAlphaNumeric />
                           <mat-error *ngIf="hasError(form,'subsidy','required')">
                             Subsidy required
                           </mat-error>
@@ -517,7 +527,7 @@
                     <div class="field">
                       <label>POC ID <span class="required-input">*</span></label>
                       <mat-form-field appearance="outline" class="full">
-                        <input matInput formControlName="poc_id" readonly  placeholder="poc id"/>
+                        <input matInput formControlName="poc_id" readonly  placeholder="poc id" />
                       </mat-form-field>
                     </div>
 

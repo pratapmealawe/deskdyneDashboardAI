@@ -3,148 +3,163 @@
 @import 'src/styles.scss';
 
 .addBtn {
-    font-size: 12px;
+  font-size: 12px;
 }
 
-.uploadedImage{
-    width: 100px;
-    height: 100px;
-    cursor: pointer;
+.uploadedImage {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
 }
 
-.uploadInput{
-    display: none;
+.uploadInput {
+  display: none;
 }
-.uploadIcon{
-    width: 84px;
-    // background: $secondary-color3;
-    border-radius: 5px;
-    text-align: center;
-    color: white;
-    position: relative;
-    top: -15px;
-    left: 8px;
-    font-size: 13px;
-    padding: 4px 0px;
-    cursor: pointer;
+
+.uploadIcon {
+  width: 84px;
+  // background: $secondary-color3;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  position: relative;
+  top: -15px;
+  left: 8px;
+  font-size: 13px;
+  padding: 4px 0px;
+  cursor: pointer;
 }
 
 .addressMap {
-    width: 100%;
-    height: 500px;
+  width: 100%;
+  height: 500px;
 }
 
-.padding-bottom{
-    padding-bottom:100px;
+.padding-bottom {
+  padding-bottom: 100px;
 }
 
-.radio{
-    height: 10px;
-    width: 10px;
-    border: 1px solid;
-    border-radius: 50%;
-    &.red{
-        background-color:#e62841;
-    }
+.radio {
+  height: 10px;
+  width: 10px;
+  border: 1px solid;
+  border-radius: 50%;
+
+  &.red {
+    background-color: #e62841;
+  }
 }
 
-.radioCol{
-    display:flex;
-    align-items:center;
+.radioCol {
+  display: flex;
+  align-items: center;
 }
+
 .cardDesign {
-    margin: 2px 0px;
-    padding: 10px;
-    border-radius: 11px;
+  margin: 2px 0px;
+  padding: 10px;
+  border-radius: 11px;
 
-    // box-shadow: 1px 2px 3px;
-    &:nth-child(odd) {
-        background: #a4a4a4;
-    }
+  // box-shadow: 1px 2px 3px;
+  &:nth-child(odd) {
+    background: #a4a4a4;
+  }
 
-    &:nth-child(even) {
-        background: #e0dddd;
-    }
+  &:nth-child(even) {
+    background: #e0dddd;
+  }
 }
 
-.cardDesign , .list-group {
+.cardDesign,
+.list-group {
   @include mixin.card-design(color.$primary-offset-color1);
 }
 
 
 
-.addOutlet{
-    position: absolute;
-    right: 5px;
-    top: 100px;
+.addOutlet {
+  position: absolute;
+  right: 5px;
+  top: 100px;
 }
-.labelText{
-    font-size:13px;
+
+.labelText {
+  font-size: 13px;
 }
-.uploadedImage{
-    width: 100px;
-    height: 100px;
-    cursor: pointer;
+
+.uploadedImage {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
 }
-.uploadInput{
-    display: none;
+
+.uploadInput {
+  display: none;
 }
-.uploadIcon{
-    width: 84px;
-    background: $secondary-color3;
-    border-radius: 5px;
-    text-align: center;
-    color: white;
-    position: relative;
-    top: -15px;
-    left: 8px;
-    font-size: 13px;
-    padding: 4px 0px;
-    cursor: pointer;
+
+.uploadIcon {
+  width: 84px;
+  background: $secondary-color3;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  position: relative;
+  top: -15px;
+  left: 8px;
+  font-size: 13px;
+  padding: 4px 0px;
+  cursor: pointer;
 }
 
 .mainCheckDiv {
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    background: #f8f8f8;
-    border-radius: 16px;
-    padding: 16px 20px;
-    height: fit-content;
-    width: fit-content;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 16px 20px;
+  height: fit-content;
+  width: fit-content;
 
-    label {
-        margin: 0;
-    }
+  label {
+    margin: 0;
+  }
 }
 
 .responsive-btn {
   font-size: clamp(0.75rem, 2vw, 1rem) !important;
+
   mat-icon {
-    font-size: clamp(16px, 3vw, 18px)  !important;
+    font-size: clamp(16px, 3vw, 18px) !important;
   }
 }
 
-.heading{
-    font-size:clamp(20px , 2vw , 1rem) !important;
-    display: flex;
-    align-items: center;
-}
-.list-grou-item{
-        border: none !important;
+.heading {
+  font-size: clamp(20px, 2vw, 1rem) !important;
+  display: flex;
+  align-items: center;
 }
 
-mat-icon{
-    cursor: pointer !important;
+.list-grou-item {
+  border: none !important;
 }
-.main{
+
+mat-icon {
+  cursor: pointer !important;
+}
+
+.main {
   @include mixin.card-design(color.$primary-offset-color1);
 }
+
 .fill-available-width {
   width: -webkit-fill-available;
-  width: fill-available; /* for compatibility */
-  width: stretch; /* fallback for some browsers */
+  width: fill-available;
+  /* for compatibility */
+  width: stretch;
+  /* fallback for some browsers */
 }
+
 .cafeteria-container {
   margin-top: 1rem;
   display: flex;
@@ -159,21 +174,21 @@ mat-icon{
 }
 
 .cafeteria-card {
-    display: flex;
-    gap:5rem;
-    align-items: center;
+  display: flex;
+  gap: 5rem;
+  align-items: center;
 }
 
 .checkbox-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 0.5rem 1rem;
   margin-bottom: 1rem;
 }
 
 .grid-4 {
   display: grid;
-  grid-template-columns:  repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1rem;
   align-items: center;
   margin-top: 1rem;
@@ -214,7 +229,8 @@ mat-icon{
 }
 
 .update-btn {
-  height: 56px; /* matches mat-input height */
+  height: 56px;
+  /* matches mat-input height */
 }
 
 /* Mobile: stack input + button */
@@ -222,7 +238,12 @@ mat-icon{
   .subsidy-row {
     grid-template-columns: 1fr;
   }
+
   .update-btn {
     width: 100%;
   }
+}
+
+::ng-deep .mat-mdc-checkbox .mdc-label {
+  margin: 0 !important;
 }
