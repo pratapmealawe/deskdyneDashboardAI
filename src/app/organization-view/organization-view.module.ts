@@ -27,6 +27,7 @@ import { MealaweOutletComponent } from '../common-components/mealawe-outlet/meal
 import { MaterialModule } from '../material.module';
 import { QrEmployeeComponent } from '../common-components/qr-employee/qr-employee.component';
 import { QRCodeModule } from 'angularx-qrcode';
+import { OrgOutletOrdersComponent } from '../common-components/org-outlet-orders/org-outlet-orders.component';
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -38,6 +39,7 @@ import { QRCodeModule } from 'angularx-qrcode';
     OrgIndividualSnackboxMenuComponent,
     OrgPredefinedSnackboxMenuComponent,
     OrgCustomizedSnackboxMenuComponent,
+    OrgOutletOrdersComponent,
     EmployeeListComponent,
     B2bWeeklyMenuComponent,
     OrgComplianceComponent,
@@ -61,6 +63,6 @@ import { QRCodeModule } from 'angularx-qrcode';
     DragDropModule,
     QRCodeModule
   ],
-  exports: [OrganizationViewComponent],
+  exports: [OrganizationViewComponent, OrgOutletOrdersComponent],
 })
 export class OrganizationViewModule { }

@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder } from '@angular/forms';
+import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -8,6 +8,8 @@ import { PolicyService } from 'src/service/policy.service';
 import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { categoryList } from 'src/config/food-category.config';
+import { Router } from '@angular/router';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-outlet-master-menu',
@@ -67,6 +69,8 @@ export class OutletMasterMenuComponent implements OnInit {
   ];
   groupedMenuList: any;
   categoryList = categoryList;
+  pageSize: number = 5;
+  pageIndex: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -74,7 +78,8 @@ export class OutletMasterMenuComponent implements OnInit {
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
-    private sendDataToComponent: SendDataToComponent
+    private sendDataToComponent: SendDataToComponent,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -172,19 +177,20 @@ export class OutletMasterMenuComponent implements OnInit {
     }
   }
 
+
   createForm() {
     this.form = this.fb.group({
-      itemName: [''],
-      price: [''],
-      isActive: [''],
-      itemType: ['Veg'],
-      subsidy: [''],
-      precedence: [''],
-      description: [''],
+      itemName: ['', [Validators.required, Validators.minLength(2)]],
+      price: ['', [Validators.required, Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      isActive: [true],
+      itemType: ['', Validators.required],
+      subsidy: ['', [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
+      precedence: ['', [Validators.pattern(/^[0-9]+$/)]],
+      description: ['', [Validators.required,Validators.maxLength(250)]],
       itemContains: [[]],
-      mealTimingInfo: [[]],
-      category: [''],
-      energyValue: [10],
+      mealTimingInfo: ['',[Validators.required]],
+      category: ['', Validators.required],
+      energyValue: [''],
       nutritionList: this.fb.array([
         this.fb.group({
           nutritionName: [''],
@@ -194,6 +200,40 @@ export class OutletMasterMenuComponent implements OnInit {
       ])
     });
   }
+  nutritionHasError(index: number, controlName: string, errorName: string) {
+    const control = (this.form.get('nutritionList') as FormArray)
+      .at(index)
+      .get(controlName);
+
+    return control?.hasError(errorName) && (control.touched || control.dirty);
+  }
+  hasError(controlName: string, errorName: string) {
+    const control = this.form.get(controlName);
+    return control?.hasError(errorName) && (control.touched || control.dirty);
+  }
+
+  // createForm() {
+  //   this.form = this.fb.group({
+  //     itemName: ['',[Validators.required]],
+  //     price: ['',[Validators.required]],
+  //     isActive: [''],
+  //     itemType: ['Veg',[Validators.required]],
+  //     subsidy: [''],
+  //     precedence: [''],
+  //     description: [''],
+  //     itemContains: [[]],
+  //     mealTimingInfo: [[]],
+  //     category: [''],
+  //     energyValue: [10],
+  //     nutritionList: this.fb.array([
+  //       this.fb.group({
+  //         nutritionName: [''],
+  //         nutritionValue: [''],
+  //         nutritionUnit: ['']
+  //       })
+  //     ])
+  //   });
+  // }
 
   preventInvalidNumber(e: KeyboardEvent) {
     const invalidKeys = ['-', '+', 'e', 'E'];
@@ -340,7 +380,7 @@ export class OutletMasterMenuComponent implements OnInit {
       console.log('updateMenu ####', formData)
       const res = await this.apiMainService.updateOutletMasterMenu(this.menuId, formData);
       console.log(res);
-      
+
       if (res && res._id) {
         this.fetchOutletMasterMenus();
       }
@@ -615,5 +655,11 @@ export class OutletMasterMenuComponent implements OnInit {
   // 
   goBack(){
     
+  }
+  // paginator logic 
+  onPageChanges(event: PageEvent) {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex
+
   }
 }

@@ -18,7 +18,7 @@ export class OutletViewComponent implements OnInit {
     { name: 'Menu', path: 'outlet-menu' },
     { name: 'Past Orders', path: 'outlet-orders' },
     { name: 'Reviews', path: 'outlet-feedback' },
-    { name: 'Vendor', path: 'outlet-vendor' },
+    // { name: 'Vendor', path: 'outlet-vendor' },
     // { name: 'Complience', path: 'outlet-compliance' },
   ];
   selectedTab = 'outlet-details';

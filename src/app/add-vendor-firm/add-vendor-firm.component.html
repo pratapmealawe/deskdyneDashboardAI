@@ -254,10 +254,10 @@
                                             </span></label>
                                         <mat-form-field appearance="outline" class="input">
                                             <input matInput placeholder="lat" formControlName="lat" readonly />
-                                            <mat-error *ngIf="hasSubError(['address','lat'],'required')">
+                                            <mat-error *ngIf="hasSubError(['address','geolocation','lat'],'required')">
                                                 Vendor firm lat is required.
                                             </mat-error>
-                                            <mat-error *ngIf="hasSubError(['address','lat'],'pattern')">
+                                            <mat-error *ngIf="hasSubError(['address','geolocation','lat'],'pattern')">
                                                 Vendor firm lat is pattern.
                                             </mat-error>
                                         </mat-form-field>
@@ -270,10 +270,10 @@
                                             </span></label>
                                         <mat-form-field appearance="outline" class="input">
                                             <input matInput placeholder="lng" formControlName="lng" readonly />
-                                            <mat-error *ngIf="hasSubError(['address','lng'],'required')">
+                                            <mat-error *ngIf="hasSubError(['address','geolocation','lng'],'required')">
                                                 Vendor firm lng is required.
                                             </mat-error>
-                                            <mat-error *ngIf="hasSubError(['address','lng'],'pattern')">
+                                            <mat-error *ngIf="hasSubError(['address','geolocation','lng'],'pattern')">
                                                 Vendor firm lng is pattern.
                                             </mat-error>
                                         </mat-form-field>
@@ -286,7 +286,8 @@
 
                             </div>
                             <div class="submit d-flex justify-content-end p-4">
-                                <button mat-stroked-button color="primary" [disabled]="!this.form.get('address').valid" (click)="submitAddress()"> submit
+                                <button mat-stroked-button color="primary" [disabled]="!this.form.get('address').valid"
+                                    (click)="submitAddress()"> submit
                                 </button>
                             </div>
                         </div>
@@ -400,11 +401,11 @@
                                         </span></label>
                                     <mat-form-field appearance="outline" class="input">
                                         <input matInput formControlName="poc_email" placeholder="Email" />
-                                        <mat-error *ngIf="hasSubError(['poc_details','poc_name'],'required')">
-                                            Vendor firm poc_name is required.
+                                        <mat-error *ngIf="hasSubError(['poc_details','poc_email'],'required')">
+                                            Vendor firm poc_email is required.
                                         </mat-error>
-                                        <mat-error *ngIf="hasSubError(['poc_details','poc_name'],'pattern')">
-                                            Vendor firm poc_name is pattern.
+                                        <mat-error *ngIf="hasSubError(['poc_details','poc_email'],'pattern')">
+                                            Vendor firm poc_email is pattern.
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
@@ -428,7 +429,8 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end p-3">
-                    <button mat-stroked-button color="primary" [disabled]="!this.form.get('poc_details').valid" (click)="submitPocDetails()"> Submit</button>
+                    <button mat-stroked-button color="primary" [disabled]="!this.form.get('poc_details').valid"
+                        (click)="submitPocDetails()"> Submit</button>
                 </div>
             </div>
         </ng-template>
@@ -481,12 +483,13 @@
             <!-- <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
                 Add Outlet
             </div> -->
-            <button *ngIf="isVendorEdit"  mat-raised-button color ="primary" (click)="addComplience()">Compliance</button>
+            <button *ngIf="isVendorEdit" mat-raised-button color="primary" (click)="addComplience()">Compliance</button>
             <!-- <div *ngIf="isVendorEdit" class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
                 Compliance
             </div> -->
             <div *ngIf="isVendorEdit" class="d-flex align-items-center ml-2">
-                <button mat-raised-button color="primary" type="button" class="btn btn-primary btn-sm" (click)="fileInput.click()">
+                <button mat-raised-button color="primary" type="button" class="btn btn-primary btn-sm"
+                    (click)="fileInput.click()">
                     {{ 'Account Enrollment Form' }}
                 </button>
                 <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
@@ -537,12 +540,13 @@
                 </div>
             </div>
         </div> -->
-    
-        <button mat-raised-button color="primary"  (click)="submit('update')"
+
+        <button mat-raised-button color="primary" (click)="submit('update')"
             *ngIf="showUpdate && true || btnPolicy?.editVendor">
             Update
         </button>
-        <button mat-raised-button color="primary" *ngIf="!showUpdate && !btnPolicy?.editVendor" (click)="submit()">Submit</button>
+        <button mat-raised-button color="primary" *ngIf="!showUpdate && !btnPolicy?.editVendor"
+            (click)="submit()">Submit</button>
     </div>
     <ng-template #outletModal let-modal>
         <div class="modal-header">
