@@ -1,49 +1,3 @@
-<!-- <div class="bgsidepadding1" *ngIf="showSearchSection">
-  <div class="right addBtn addOutlet" *ngIf="true || btnPolicy?.addOutlet" (click)="addOutlet()">
-    +
-  </div>
-  <div class="row">
-    <div class="col-12 col-md-4 col-lg-6">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Outlet Name</div>
-          <input type="text" class="form-control" placeholder="Org Name" [(ngModel)]="searchObj.outletName" />
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-4">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Ph No</div>
-          <input type="text" class="form-control" placeholder="POC Phone No" [(ngModel)]="searchObj.phoneNo" />
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-4">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Email</div>
-          <input type="text" class="form-control" placeholder="POC Email" [(ngModel)]="searchObj.emailID" />
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-2">
-      <div class="col-sm-12 col-md-4 col-lg-12">
-        <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchOutlet()">
-          Search
-        </button>
-        <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">
-          Reset
-        </button>
-      </div>
-    </div>
-
- 
-  </div>
-</div> -->
 <div class="container-fluid mt-3 p-25">
   <div class="row align-items-center justify-content-between px-3" *ngIf="showSearchSection">
     <div class="col-auto">
@@ -52,7 +6,7 @@
     <div class="col d-flex justify-content-end align-items-center gap-3">
       <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
         <mat-form-field appearance="outline" class="search-input">
-          <input matInput type="text" placeholder="Search outlet..."  [formControl]="searchControl"  />
+          <input matInput type="text" placeholder="Search outlet..." [formControl]="searchControl" />
           <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
             <mat-icon>search</mat-icon> </button>
         </mat-form-field>
@@ -73,16 +27,16 @@
       </mat-form-field>
     </div>
   </div>
-</div> 
+</div>
 <div *ngIf="outletList && outletList.length === 0" class="text-center text-muted my-5">
-    No Outlet Found
-   </div>
+  No Outlet Found
+</div>
 <div class="p-3" *ngIf="outletList && outletList.length > 0 && showSearchSection">
-      <div class="mt-3">
-        <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
-      </div>
+  <div class="mt-3">
+    <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
+  </div>
 </div>
 <div class="center mt-5" *ngIf="outletList.length === 0">No Records Found</div>
-<div class="bgsidepadding2" *ngIf="!showSearchSection && outletList.length > 0">
+<div class="" *ngIf="!showSearchSection && outletList.length > 0">
   <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
 </div>

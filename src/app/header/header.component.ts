@@ -593,7 +593,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   getAvatarColor(name: string): string {
     const colors = ['#192754', '#FF6B6B', '#17C964', '#FFB020', '#9333EA'];
-    let index = name.length % colors.length;
+    let index = name?.length % colors?.length;
     return colors[index];
   }
 

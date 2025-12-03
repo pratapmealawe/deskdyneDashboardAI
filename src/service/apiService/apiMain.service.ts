@@ -67,6 +67,16 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.addOutletMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
   }
+  
+  addQrOutletMenu(outlet: any, outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addQrOutletMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
+  }
+
+  createQrMenu(outlet: any, outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.createQrMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
+  }
 
   updateOutlet(id: any, payload: any, imgIndex?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutlet;
@@ -264,6 +274,11 @@ export class ApiMainService {
   deleteOutletMenu(utletid: any, menuId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteOutletMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${utletid}/${menuId}`, method: urlObj.method });
+  }
+
+  deleteQrMenuItem(outletid: any, mealType: any, menuId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteQrMenuItem;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletid}/${mealType}/${menuId}`, method: urlObj.method });
   }
 
   deleteOutletMasterMenu(menuId: any) {
@@ -478,6 +493,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}` + `/${menuId}`, method: urlObj.method }, menuObj);
   }
 
+  updateQrMenu(outletId: any, menuId: any, menuObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateQrMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}` + `/${menuId}`, method: urlObj.method }, menuObj);
+  }
+
   updateOutletMasterMenu(menuId: any, menuObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOutletMasterMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${menuId}`, method: urlObj.method }, menuObj);
@@ -485,6 +505,11 @@ export class ApiMainService {
 
   changeMenuActivation(outletId: any, menuId: any, menuObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.changeMenuActivation;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}` + `/${menuId}`, method: urlObj.method }, menuObj);
+  }
+
+  changeQrMenuActivation(outletId: any, menuId: any, menuObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changeQrMenuActivation;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}` + `/${menuId}`, method: urlObj.method }, menuObj);
   }
 
@@ -1282,5 +1307,14 @@ export class ApiMainService {
 
   createDefaultCategories(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDefaultCategories, data);
+  }
+
+  getQrMenuList(filter: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getQrMenuList, filter);
+  }
+
+  changeQrMealTypeActivation(id: any, isActive: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changeQrMealTypeActivation
+    return this.apiHttpService.REQUEST( { url: urlObj.url + `/${id}`, method: urlObj.method }, isActive);
   }
 }

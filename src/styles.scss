@@ -609,7 +609,7 @@ button.accordion-button:focus {
 
 // mat
 ::ng-deep.mat-mdc-form-field-subscript-wrapper {
-    display: none;
+    // display: none;
 }
 
 ::ng-deep.mdc-notched-outline__leading {
@@ -655,4 +655,8 @@ button.accordion-button:focus {
 
 .no-address {
   @include no-address-style();
+}
+
+.mdc-label {
+  margin-bottom: 0px;
 }

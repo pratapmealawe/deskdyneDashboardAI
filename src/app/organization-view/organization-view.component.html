@@ -1,8 +1,9 @@
 <div class="add-vendor d-flex align-items-center pb-4 gap-3">
-   <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
-   <div class="heading">View Organization</div>
- </div>
-<mat-tab-group [(selectedIndex)]="selectedMainTabIndex" (selectedIndexChange)="onMainTabChange($event)" class="custom-tabs">
+  <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
+  <div class="heading">View Organization</div>
+</div>
+<mat-tab-group [(selectedIndex)]="selectedMainTabIndex" (selectedIndexChange)="onMainTabChange($event)"
+  class="custom-tabs">
   <mat-tab *ngFor="let view of orgViewList; let mainIndex = index" [label]="view.name">
     <ng-container *ngIf="selectedMainTabIndex === mainIndex">
       <mat-tab-group *ngIf="view.subTabs?.length" [(selectedIndex)]="selectedSubTabIndex"
