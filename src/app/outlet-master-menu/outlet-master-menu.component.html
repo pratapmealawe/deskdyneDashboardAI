@@ -1,11 +1,7 @@
-<div class="container-fluid">
-  <div class="row align-items-center mb-4">
+<div class="container-fluid pe-4 ps-4">
+  <div class="d-flex flex-column flex-sm-row align-items-center">
     <div class="col-md-6 d-flex align-items-center gap-2">
-      <button mat-flat-button (click)="goBack()">
-        <mat-icon>arrow_back</mat-icon>
-        Back
-      </button>
-      <div>Menu Items</div>
+      <div class="text-bold fs-3 ">Outlet Master Menu</div>
     </div>
     <div class="col-md-6 d-flex justify-content-end align-items-center gap-3 flex-wrap">
       <mat-form-field appearance="outline" class="search-input">
@@ -27,374 +23,250 @@
       </button>
     </div>
   </div>
-</div>
 
-
-<div class="bgsidepadding1">
-  <!-- <div class="labelText">Add Menu Items</div>
-  <div class="ms-2 addBtn inline" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
-    +
-  </div> -->
-  <div class="mt-2">
-    <div class="container-fluid" *ngFor="let group of groupedMenuList">
-
-      <!-- <h2 class="text-xl font-bold mb-4">{{ group.category }}</h2> -->
-       <div class="text-xl">{{group.category}} </div>
-
-      <mat-card class="p-3 mb-3 shadow-sm cardDesign" *ngFor="let item of group.items; let i = index">
-        <div class="row align-items-center" >
-
-          <!-- Product Image -->
-          <div class="col-md-2 w-auto d-none d-md-block">
-            <img class="img-fluid rounded" [src]="displayImgUrl + item.imageUrl" alt="product" />
-          </div>
-
-          <!-- Details Grid -->
-          <div class="col-md-10">
-            <div class="row g-3">
-
-              <!-- Item Details -->
-              <div class="col-sm-6 col-md-3">
-                <small class="text-muted d-block">Item Name</small>
-                <div class="d-flex align-items-center gap-2">
-                  <div >
-                    <!-- Veg Icon -->
-                    <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
-                    <!-- Non-Veg Icon -->
-                    <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
-
-                  </div>
-                  <span class="fw-semibold">{{ item.itemName }}</span>
-                </div>
-
-                <small class="text-muted d-block mt-2">Category</small>
-                <span class="fw-medium">{{ item.category }}</span>
-
-                <small class="text-muted d-block mt-2">Precedence</small>
-                <span class="fw-medium">{{ item.precedence }}</span>
+<div  *ngFor="let group of groupedMenuList">
+  <div class="text-xl">{{group.category}} </div>
+  <mat-card class="cardDesign" *ngFor="let item of group.items; let i = index">
+    <div class="main-content">
+      <div class="main-subContent">
+        <img class="img-fluid rounded" [src]="displayImgUrl + item.imageUrl" alt="product" />
+      </div>
+      <div class="main-contents">
+        <div class="content">
+          <div class="div">
+            <div class="labelText">Item Name</div>
+            <div class="d-flex align-items-center gap-2 labelData">
+              <div>
+                <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
+                <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
               </div>
-
-              <!-- Price & Description -->
-              <div class="col-sm-6 col-md-3">
-                <small class="text-muted d-block">Price</small>
-                <span class="fw-semibold">{{ item.price }}</span>
-
-                <small class="text-muted d-block mt-2">Description</small>
-                <span class="fw-medium">{{ item.description }}</span>
-              </div>
-
-              <!-- Subsidy -->
-              <div class="col-sm-6 col-md-3">
-                <small class="text-muted d-block">Subsidy Amt</small>
-                <span class="fw-semibold">{{ item.subsidy }}</span>
-              </div>
-
-              <!-- Actions -->
-              <div class="col-sm-6 col-md-3 d-flex align-items-center gap-3">
-                <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu" (click)="showPopup(item, i)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-
-                <mat-checkbox checked [checked]="item.isActive" color="primary"
-                  (change)="showPopupForItemActivation(item, $event)">Active</mat-checkbox>
-              </div>
-
+              {{ item.itemName }}
             </div>
           </div>
+          <div class="div">
+            <div class="labelText">Category</div>
+            <div class="labelData">{{ item.category }}</div>
+          </div>
+          <div class="div">
+            <div class="labelText">Price</div>
+            <div class="labelData">{{ item.price }}</div>
+          </div>
+          <div class="div">
+            <div class="labelText">Description</div>
+            <div class="labelData">{{ item.description || '-' }}</div>
+          </div>
+          <div class="div">
+            <div class="labelText">Subsidy Amt</div>
+            <div class="labelData">{{ item.subsidy }}</div>
+          </div>
+          <div class="div">
+            <div class="labelText">Precedence</div>
+            <div class="labelData">{{ item.precedence }}</div>
+          </div>
+
+
+
+
+
+
 
         </div>
-      </mat-card>
-
-    </div>
-
-    <div *ngFor="let group of groupedMenuList">
-      <!-- Category Heading -->
-      <h4 class="mt-3 mb-2 category-heading">{{ group.category }}</h4>
-
-      <!-- Items under this category -->
-      <div class="row cardDesign" *ngFor="let item of group.items; let i = index">
-        <div class="col-sm-12 col-md-6 col-lg-2">
-          <img [src]="displayImgUrl + item.imageUrl" class="uploadedImage" />
-        </div>
-        <div class="col-sm-12 col-md-10 col-lg-10">
-          <!-- your existing card content -->
-          <div class="row">
-            <div class="col-12 col-md-4 col-lg-4">
-              <div class="row">
-                <div class="col-6 col-md-8 col-lg-8">
-                  <div class="labelText">ItemName</div>
-                  <div class="labelData">{{ item.itemName }}</div>
-                </div>
-                <div class="col-6 col-md-4 col-lg-4">
-                  <div *ngIf="item.itemType === 'Veg'" class="vegIcon typeIcon inline"></div>
-                  <div *ngIf="item.itemType === 'NonVeg'" class="nonvegIcon typeIcon inline"></div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-12 col-md-4 col-lg-4">
-              <div class="row">
-                <div class="col-6 col-md-5 col-lg-8">
-                  <div class="labelText">Price</div>
-                  <div class="labelData">{{ item.price }}</div>
-                </div>
-                <!-- <div class="col-6 col-md-7 col-lg-4">
-                                <div class="labelText">Priority</div>
-                                <div class="labelData">{{item.priority}}</div>
-                            </div> -->
-              </div>
-            </div>
-
-            <div class="col-12 col-md-4 col-lg-4">
-              <div class="row">
-                <div class="col-6 col-md-5 col-lg-5">
-                  <div class="labelText">Subsidy Amt</div>
-                  <div class="labelData">{{ item.subsidy }}</div>
-                </div>
-                <div class="col-6 col-md-7 col-lg-6 d-flex justify-content-between">
-                  <i class="bi bi-pencil-square" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)"></i>
-                  <i *ngIf="true || btnPolicy?.deleteMenu" class="bi bi-trash editDeltesaveIcon"
-                    (click)="showPopup(item, i)"></i>
-                  <div>
-                    <input class="me-1" type="checkbox" [checked]="item.isActive"
-                      (change)="showPopupForItemActivation(item, $event)" />
-                    <label class="labelText form-label">Active</label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="col-12 col-md-4 col-lg-4 mt-3">
-              <div class="row">
-                <div class="col-6 col-md-7 col-lg-5" *ngIf="item.category">
-                  <div class="labelText">Category</div>
-                  <div class="labelData">{{ item.category }}</div>
-                </div>
-                <div class="col-6 col-md-5 col-lg-8">
-                  <div class="labelText">Precedence</div>
-                  <div class="labelData">{{ item.precedence }}</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- <div class="col-12 col-md-4 col-lg-4">
-            <div class="row">
-              <div class="col-6 col-md-7 col-lg-4">
-                <div class="labelText">Is Active</div>
-                <div class="labelData">{{ item.isActive }}</div>
-              </div>
-            </div>
-          </div> -->
-
-            <div class="col-12 col-md-4 col-lg-4 mt-3">
-              <div class="row">
-                <div class="col-6 col-md-7 col-lg-12">
-                  <div class="labelText">Description</div>
-                  <div class="labelData">{{ item.description }}</div>
-                </div>
-              </div>
-            </div>
-            <!-- (rest of your card fields remain the same) -->
-          </div>
+        <div class="action-btn ">
+          <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu" (click)="showPopup(item, i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+          <mat-checkbox [checked]="item.isActive" color="primary" (change)="showPopupForItemActivation(item, $event)">
+            Active
+          </mat-checkbox>
         </div>
       </div>
     </div>
-  </div>
-  <div class="center labelText mt-2" *ngIf="filteredMenuList.length==0">No items found</div>
-  <ng-template #content let-modal>
-    <div class="modal-header">
-      <div class="header2 bold" id="modal-basic-title" *ngIf="!showUpdateBtn">Add Menu Item</div>
-      <div class="header2 bold" id="modal-basic-title" *ngIf="showUpdateBtn">Edit Menu Item</div>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-        <span aria-hidden="true">&times;</span>
-      </button>
-    </div>
-    <div class="modal-body">
-      <div [formGroup]="form">
-        <div class="row">
-          <div class="col-12 col-md-6 col-lg-12">
-            <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
+  </mat-card>
+</div>
+<mat-paginator [length]="filteredMenuList.length" [pageSize]="pageSize" [pageSizeOptions]="[5,10,15,20]"
+  [pageIndex]="pageIndex" (page)="onPageChanges($event)"></mat-paginator>
+
+<div class="center labelText mt-2" *ngIf="filteredMenuList.length==0">No items found</div>
+<ng-template #content let-modal>
+  <div class="container-fluid p-3">
+    <div mat-dialog-title class="fs-5 fw-semibold d-flex justify-content-between"><span>Add Menu Item</span> <mat-icon
+        (click)="modal.close()">close</mat-icon> </div>
+    <div mat-dialog-content class="mt-3">
+      <form [formGroup]="form">
+        <div class="row g-4">
+          <div class="upload-box col-md-4 text-center d-flex flex-column align-items-center">
+            <input #fileInput type="file" class="d-none" accept="image/*" capture="camera"
               (change)="handleFileInput($event)" />
-            <img class="uploadedImage" [src]="
-                showUpdateBtn
-                  ? displayImgUrl + imageUrl
-                  : imageUrl
-                  ? imageUrl
-                  : 'assets/images/dummyUpload.png'
-              " *ngIf="!imageReplaced" />
-            <img class="uploadedImage" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
-              *ngIf="imageReplaced" />
-            <div class="uploadIcon" (click)="f.click()">
-              Upload <i class="bi bi-upload"></i>
-            </div>
-            <!-- <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
-          (change)="handleFileInput($event)" />
-        <img (click)="f.click()" [src]="imageUrl ? displayImgUrl + imageUrl : 'assets/images/dummyUpload.png'" class="uploadedImage" />
-        <div class="uploadIcon" (click)="f.click()">
-          Upload <i class="bi bi-upload"></i>
-        </div> -->
-          </div>
-          <!-- <div class="col-12 col-md-6 col-lg-4">
-            <label class="labelText form-label">Category</label>
-            <select class="custom-select" name="role" formControlName="category" (change)="setCategory($event)">
-              <option disabled selected value>-- select category --</option>
-              <option [value]="cat.name" *ngFor="let cat of outletObj.category">
-                {{ cat.name }}
-              </option>
-            </select>
-          </div> -->
-          <div class="col-12 col-md-6 col-lg-4" *ngIf="categorySelected">
-            <label class="labelText form-label">Sub Category</label>
-            <select class="custom-select" name="role" formControlName="subCategory">
-              <option disabled selected value>-- select sub category --</option>
-              <option [value]="subcat" *ngFor="let subcat of subcategoryList">
-                {{ subcat }}
-              </option>
-            </select>
-          </div>
-          <div class="col-12 col-md-6 col-lg-4">
-            <label class="labelText form-label">Name</label>
-            <input type="text" class="form-control" placeholder="Name" formControlName="itemName" />
-          </div>
-
-          <div class="col-12 col-md-6 col-lg-4">
-            <label class="labelText form-label">Price</label>
-            <input type="number" min="1" (keydown)="preventInvalidNumber($event)"
-              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Price"
-              formControlName="price" />
-          </div>
-          <div class="col-12 col-md-6 col-lg-4">
-            <label class="labelText form-label">Subsidy Amount (In Rupess ₹)</label>
-            <input type="number" min="1" (keydown)="preventInvalidNumber($event)"
-              (paste)="preventInvalidPaste($event, 'decimal')" class="form-control" placeholder="Subsidy Amount"
-              formControlName="subsidy" />
-          </div>
-
-          <div class="col-subsidysm-12 col-md-6 col-lg-4">
-            <label class="labelText">Item Type</label>
-            <div>
-              <input class="me-1" type="radio" id="itemTypeVeg" formControlName="itemType" value="Veg" />
-              <label class="labelText form-label" for="itemTypeVeg">Veg</label>
-              <input class="me-1 ms-3" type="radio" id="itemTypeNonVeg" formControlName="itemType" value="NonVeg" />
-              <label class="labelText form-label" for="itemTypeNonVeg">NonVeg</label>
-            </div>
-          </div>
-
-          <div class="col-sm-12 col-md-6 col-lg-4 mt-2">
-            <input class="me-1" type="checkbox" id="isActive" formControlName="isActive"
-              [checked]="form.controls['isActive'].value" (change)="checkStatus($event,'')" />
-            <label class="labelText form-label" for="isActive">Active</label>
-          </div>
-          <!-- <div class="col-sm-12 col-md-6 col-lg-4">
-            <input class="me-1" type="checkbox" id="doNotChangeInFuture" formControlName="doNotChangeInFuture" />
-            <label class="labelText form-label" for="doNotChangeInFuture">Do Not Change subsidy In Future</label>
-          </div> -->
-
-
-          <div class="col-sm-12 mt-2">
-            <label class="labelText form-label" for="description">Description</label>
-            <input class="form-control me-1" type="text" id="description" formControlName="description" />
-            <button (click)="defineDescription()" class="createCombo mt-3">
-              {{showUpdateBtn ? 'Edit Combo Description':'Create Combo Description'}}
+            <mat-card class="upload-preview w-100 py-4 d-flex flex-column justify-content-center align-items-center"
+              style="height: 90%; cursor: pointer;" (click)="fileInput.click()">
+              <img *ngIf="imageUrl" [src]="showUpdateBtn? displayImgUrl + imageUrl : imageUrl"
+                class="uploadedImage mb-2" style="height: auto; width:auto" />
+              <ng-container *ngIf="!imageUrl">
+                <mat-icon class="mb-2" style="font-size: 48px; color: gray;">image</mat-icon>
+                <span>Upload Image</span>
+              </ng-container>
+            </mat-card>
+            <button mat-raised-button color="primary" class="mt-3" (click)="fileInput.click()">
+              <mat-icon>upload</mat-icon>
+              Upload
             </button>
           </div>
 
-          <div class="col-12 col-md-6 col-lg-4">
+          <div class="col-md-8">
+            <div class="form-group mb-3">
+              <label class="field-label">Item Name <span class="required-input">*</span></label>
+              <mat-form-field appearance="outline" class="w-100">
+                <input matInput placeholder="Enter item name" formControlName="itemName" />
+                <mat-error *ngIf="hasError('itemName', 'required')">Item Name is required</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="field-label">Price (₹) <span class="required-input">*</span></label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput type="number" placeholder="0.00" formControlName="price" />
+                    <mat-error *ngIf="hasError('price', 'required')">Price is required</mat-error>
+                  </mat-form-field>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label class="field-label">Subsidy Amount (₹)</label>
+                  <mat-form-field appearance="outline" class="w-100">
+                    <input matInput type="number" placeholder="0.00" formControlName="subsidy" />
+                  </mat-form-field>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <label class="field-label d-block">Item Type <span class="required-input">*</span></label>
+              <mat-radio-group class="d-flex gap-4" formControlName="itemType" color="primary">
+                <mat-radio-button value="veg">Veg</mat-radio-button>
+                <mat-radio-button value="non-veg">Non-Veg</mat-radio-button>
+              </mat-radio-group>
+              <mat-error *ngIf="hasError('itemType', 'required')">Item Type is required</mat-error>
+            </div>
+          </div>
+
+        </div>
+        <div class="form-group">
+          <label class="field-label">Description<span class="required-input">*</span></label>
+          <mat-form-field appearance="outline" class="w-100">
+            <textarea matInput rows="3" placeholder="Add a short description" formControlName="description"></textarea>
+            <mat-hint align="end">{{ form.get('description')?.value?.length || 0 }}/250</mat-hint>
+            <mat-error *ngIf="hasError('description', 'maxlength')">Description maxlength must be 250 character
+              long</mat-error>
+            <mat-error *ngIf="hasError('description', 'required')">Description is required</mat-error>
+          </mat-form-field>
+        </div>
+        <div class="form-group">
+          <label class="field-label">Select Meal Time <span class="required-input">*</span></label>
+          <mat-chip-listbox class="mt-2" formControlName="mealTimingInfo">
+            <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
+              <div class="chip-option">
+                <div class="title">{{ chip?.mealType }}</div>
+              </div>
+            </mat-chip-option>
+          </mat-chip-listbox>
+          <div style="font-size:12px">
+            <mat-error *ngIf="hasError('mealTimingInfo', 'required')">meal timing info</mat-error>
+          </div>
+        </div>
+        <!-- <button (click)="defineDescription()" class="createCombo mt-3">
+              {{showUpdateBtn ? 'Edit Combo Description':'Create Combo Description'}}
+            </button> -->
+        <div class="form-group w-50 mt-2 mb-2">
+          <label class="field-label">Precedence</label>
+          <mat-form-field appearance="outline" class="w-100">
+            <input matInput type="number" placeholder="Precedence" id="precedence" formControlName="precedence" min="1"
+              (keydown)="preventInvalidNumber($event)" (paste)="preventInvalidPaste($event)" />
+          </mat-form-field>
+        </div>
+        <!-- <div class="col-12 col-md-6 col-lg-4">
             <label class="labelText form-label" for="precedence">Precedence</label>
             <input class="form-control me-1" type="number" placeholder="Precedence" id="precedence"
               formControlName="precedence" min="1" (keydown)="preventInvalidNumber($event)"
               (paste)="preventInvalidPaste($event)" />
+          </div> -->
+        <div class="form-group">
+          <label class="field-label">Select Category <span class="required-input">*</span></label>
+          <mat-chip-listbox class="mt-2" formControlName="category">
+            <mat-chip-option value="mainCourse" selected>Main Course</mat-chip-option>
+            <mat-chip-option value="fastFood">Fast Food</mat-chip-option>
+            <mat-chip-option value="thali">Thali</mat-chip-option>
+            <mat-chip-option value="snacks">Snacks</mat-chip-option>
+          </mat-chip-listbox>
+          <div style="font-size:12px">
+            <mat-error *ngIf="hasError('category', 'required')" class="d-block mt-1"> Category is required</mat-error>
           </div>
-
-          <div class="col-sm-12 mt-2">
-            <label class="labelText form-label" for="description">Select MealTime</label>
-            <mat-chip-listbox formControlName="mealTimingInfo" aria-label="Type selection" multiple>
-              <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
-                <div class="chip-option">
-                  <div class="title">{{ chip?.mealType }}</div>
-                </div>
-              </mat-chip-option>
-            </mat-chip-listbox>
-          </div>
-
-          <div class="col-sm-12 mt-2">
-            <label class="labelText form-label" for="description">Select Category</label>
-            <mat-chip-listbox formControlName="category" aria-label="Type selection">
-              <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
-                <div class="chip-option">
-                  <div class="title">{{ chip?.title }}</div>
-                </div>
-              </mat-chip-option>
-            </mat-chip-listbox>
-          </div>
-
-          <div class="col-12">
-            <label class="labelText form-label">Nutrition Information</label>
-            <div class="col-12">
-              <label class="labelText form-label">Energy Value (kcal)</label>
-              <input type="number" class="form-control" placeholder="Energy Value" formControlName="energyValue" />
-            </div>
-            <div class="col-12" [formArrayName]="'nutritionList'">
-              <label class="labelText">Nutrition List:</label>
-              <div class="row"
-                *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first ; let last = last"
-                [formGroupName]="i">
-                <div class="col-md-3">
-                  <label class="form-label">Nutrition Name</label>
-                  <select class="form-control" formControlName="nutritionName" placeholder="Nutrition Name">
-                    <option value="Protein">Protein</option>
-                    <option value="Fat">Fat</option>
-                  </select>
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Nutrition Value</label>
-                  <input type="number" class="form-control" formControlName="nutritionValue"
-                    placeholder="Nutrition Value" />
-                </div>
-                <div class="col-md-3">
-                  <label class="form-label">Nutrition Unit</label>
-                  <select class="form-control" formControlName="nutritionUnit" placeholder="Nutrition Unit">
-                    <option value="gm">gm</option>
-                    <option value="ml">ml</option>
-                  </select>
-                </div>
-
-
-                <div class="col-sm-2 col-md-2 col-lg-2">
-                  <span *ngIf="last" class='addtnc' (click)="addNutritionLists()">+</span>
-                  <span *ngIf="!first" class='removetnc' (click)="removenNutritionLists(i)">-</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
         </div>
-      </div>
+        <div class="mt-5">
+          <h4 class="fw-semibold">Nutrition Information</h4>
+          <div class="form-group mt-3 w-50">
+            <label class="field-label">Energy Value (kcal)</label>
+            <mat-form-field appearance="outline" class="w-100">
+              <input matInput type="number" placeholder="e.g. 350" formControlName="energyValue" />
+            </mat-form-field>
+          </div>
+          <button mat-button color="primary" class="mt-2" (click)="addNutritionLists()">
+            <mat-icon>add_circle_outline</mat-icon> Add
+            Nutrition Item </button>
+          <div formArrayName="nutritionList">
+            <div class="nutrition-row" *ngFor="let poc of nutrition_Lists.controls; let i = index" [formGroupName]="i">
+
+              <!-- Nutrition Name -->
+              <div class="form-group">
+                <label class="field-label">Nutrition Name</label>
+                <mat-form-field appearance="outline" class="w-100">
+                  <input matInput placeholder="Nutrition Name" formControlName="nutritionName" />
+                  <mat-error *ngIf="nutritionHasError(i, 'nutritionName', 'required')">
+                    Nutrition Name is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Nutrition Value</label>
+                <mat-form-field appearance="outline" class="w-100">
+                  <input matInput placeholder="Nutrition Value" formControlName="nutritionValue" />
+                  <mat-error *ngIf="nutritionHasError(i, 'nutritionValue', 'required')">
+                    Nutrition Value is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <div class="form-group">
+                <label class="field-label">Nutrition Unit</label>
+                <mat-form-field appearance="outline" class="w-100">
+                  <input matInput placeholder="Nutrition Unit" formControlName="nutritionUnit" />
+                  <mat-error *ngIf="nutritionHasError(i, 'nutritionUnit', 'required')">
+                    Nutrition Unit is required
+                  </mat-error>
+                </mat-form-field>
+              </div>
+              <!-- Delete -->
+              <div class="d-flex justify-content-end" style="height: 80px;">
+                <button mat-icon-button color="warn" (click)="removenNutritionLists(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </form>
     </div>
-    <div class="modal-footer">
-      <div class="inline bgpadding1">
-        <button class="btn-primary btn-sm btn me-2 mt-2" (click)="modal.close('add')" *ngIf="!showUpdateBtn">
-          Submit
-        </button>
-        <button class="btn-success btn-sm btn me-2 mt-2" (click)="modal.close('update')" *ngIf="showUpdateBtn">
-          Update
-        </button>
-      </div>
-    </div>
-  </ng-template>
-  <ng-template #comboContent let-modal>
-    <div class="modal-header">
-      <div class="header2 bold" id="modal-basic-title">Create Combo</div>
-      <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-        <span aria-hidden="true">&times;</span>
+    <div mat-dialog-actions class="d-flex justify-content-end mt-4 gap-2">
+      <button mat-stroked-button>Cancel</button>
+      <button mat-raised-button color="primary" (click)="modal.close('add')" *ngIf="!showUpdateBtn"
+        [disabled]="!form.valid && (displayImgUrl ||  imageUrl)">Submit</button>
+      <button mat-raised-button color="primary" (click)="modal.close('update')" *ngIf="showUpdateBtn"
+        [disabled]="!form.valid && (displayImgUrl ||  imageUrl)">
+        Update
       </button>
     </div>
-    <div class="modal-body">
-      <app-combo-popup [itemContains]="form.value.itemContains"
-        (comboout)="comboout($event); modal.dismiss('cancel')"></app-combo-popup>
-    </div>
-  </ng-template>
+  </div>
+</ng-template>
 </div>

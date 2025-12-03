@@ -398,18 +398,16 @@ export class AddVendorFirmComponent {
     this.router.navigate(['/searchVendorFirm']);
   }
 
+hasError(form: FormGroup, controlName: string, error: string) {
+  const c = form.get(controlName);
+  return c?.hasError(error) && (c.touched || c.dirty);
+}
 
-  hasError(form: FormGroup, control: string, error: string) {
-    return form.get(control)?.hasError(error);
-  }
-  hasSubErrors(form: AbstractControl<any>, control: string, error: string) {
-    return form.get(control)?.hasError(error);
-  }
+hasSubError(path: string[], error: string) {
+  const c = this.form.get(path);
+  return c?.hasError(error) && (c.touched || c.dirty);
+}
 
-
-  hasSubError(controlPath: string | string[], errorName: string) {
-    return this.form.get(controlPath)?.hasError(errorName);
-  }
   isEditPoc :number | null = null;
   submitPocDetails() {
     const pocDetails = this.form.get('poc_details')?.value;

@@ -19,8 +19,8 @@ export class OrganizationCardComponent  {
   imageUrl= environment.imageUrl;
   totalRecords = 0;
   pageIndex: number = 0;
-  pageSize: number = 5;
-  pageSizeOptions = [5, 10, 20];
+  pageSize: number = 10;
+  pageSizeOptions = [10, 15, 20];
   showModal: boolean = false;
   selectedOrgData: any[] = [];
   readonly dialog = inject(MatDialog);

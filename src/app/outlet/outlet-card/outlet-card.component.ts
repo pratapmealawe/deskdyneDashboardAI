@@ -30,7 +30,7 @@ set outlet(value: any[]) {
   btnPolicy: any;
   filteredMenuList: any;
   outletInfo:any
-  pageSize :number = 5
+  pageSize :number = 10
   pageIndex:number = 0
   outletUpdated:any[]=[]
 
