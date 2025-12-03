@@ -18,6 +18,7 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   isAdmin: boolean = false;
   orgDetails: any;
   reviewList: any[] = [];
+  paginatedReviewList: any[] = [];
   expandedItems: boolean[] = [];
   headerConfig: CommonSelectConfig = {
     mode: 'outlet',
@@ -85,6 +86,10 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   oneToOneStatusFlag: boolean = true;
   initialStatusData: any[] = [];
   drilldownFlag = false;
+  //pagination
+  page: number = 1;
+  pageSize: number = 10;
+  pageIndex: number = 0;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -115,15 +120,8 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       this.isChartShow = false
       const reviewList = await this.apiMainService.getfeedbacklistByfilter(payload);
       this.reviewList = [...reviewList];
-      console.log(this.reviewList,"review list");
-      // if (feedbackList && feedbackList.length > 0) {
-      //   this.feedbackList = [...this.feedbackList, ...feedbackList];
-      //   this.filteredFeedbackList = [
-      //     ...this.filteredFeedbackList,
-      //     ...feedbackList,
-      //   ];
-      //   this.expandedItems = new Array(this.feedbackList.length).fill(true);
-      // }
+      this.addPagination();
+      console.log(this.paginatedReviewList, "review list");
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
@@ -247,8 +245,6 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       });
     });
 
-    // console.log(firstLevelDrill)
-
     // 5. Put everything into chartOptionsPie
     this.chartOptionsPie = {
       ...this.chartOptionsPie,
@@ -270,8 +266,21 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
     this.drilldownFlag = true;
   }
 
-  excelExport(){}
-  downloadPdf(){}
+  excelExport() { }
+  downloadPdf() { }
+
+  addPagination() {
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.paginatedReviewList = this.reviewList.slice(start, end);
+  }
+
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.addPagination();
+  }
+
   filterSubmitted(event: any) {
     const body = {
       orgId: event.org_id,

@@ -1,1 +1,66 @@
-<p>org-order works!</p>
+<div class="customer-outlet-orders">
+    <ng-container *ngIf="order">
+        <mat-card class="order-card mb-3">
+            <div class="order-card-inner">
+                <!-- LEFT SIDE: header / meta -->
+                <div class="order-left">
+                    <mat-card-header>
+                        <div mat-card-avatar class="order-avatar">
+                            {{ order?.feedbackFrom_name ? order?.feedbackFrom_name[0].toUpperCase() : 'C' }}
+                        </div>
+                        <div class="order-header-text">
+                            <mat-card-title>
+                                {{ order?.feedbackFrom_name || 'Customer' }}
+                            </mat-card-title>
+                            <mat-card-subtitle>
+                                Order No: {{ order.feedbackOrderNo }} <i class="bi bi-dot"></i>
+                                {{ order.SubmitedDate | date: 'MMM d, y, h:mm a' }}
+                            </mat-card-subtitle>
+                        </div>
+
+                        <ng-conatiner *ngIf="order.rating; else noRating" class="rating-box"
+                            [ngClass]="ratingClass[order.rating]">
+                            <div class="stars">
+                                <ng-container *ngFor="let filled of getStarsArray(order.rating)">
+                                    <i class="bi" [ngClass]="filled ? 'bi-star-fill filled' : 'bi-star'"></i>
+                                </ng-container>
+                            </div>
+
+                            <div *ngIf="order.rating;" class="rating-text">
+                                <span>{{ order.rating }}/5 {{ ratingLabel[order.rating] }}</span>
+                            </div>
+                        </ng-conatiner>
+                        <ng-template #noRating>
+                            <div class="rating-box skipped">
+                                <div class="stars">
+                                    <ng-container *ngFor="let star of [1,2,3,4,5]">
+                                        <i class="bi bi-star"></i>
+                                    </ng-container>
+                                </div>
+
+                                <div class="rating-text">
+                                    <span>0/5 Skipped</span>
+                                </div>
+                            </div>
+                        </ng-template>
+                    </mat-card-header>
+                </div>
+
+                <!-- RIGHT SIDE: items + amounts -->
+                <div class="order-right">
+                    <div class="order-meta small">
+                        <ng-container *ngIf="order?.feedback; else noFeedback"><strong>{{order?.feedback}}</strong>
+                        </ng-container>
+                        <ng-template #noFeedback>
+                            <div><strong>No Feedback Given</strong></div>
+                        </ng-template>
+                    </div>
+                    <!-- Items -->
+                    <div class="item-single-line" [title]="getItemListString(order)">
+                        <strong>Items: </strong>{{ getItemListString(order) }}
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+    </ng-container>
+</div>

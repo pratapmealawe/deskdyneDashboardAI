@@ -28,11 +28,17 @@
         </button>
       </div>
     </div>
-    <div class="mt-2" *ngIf="reviewList.length > 0">
+    <div class="mt-2" *ngIf="paginatedReviewList.length > 0">
       <ng-container *ngIf="!isChartShow">
-        <div class="feedback-container" *ngFor="let feedback of reviewList; let i = index">
-          <!-- read only component here -->
+
+        <div class="feedback-container" *ngFor="let feedback of paginatedReviewList; let i = index">
+          <app-org-order [order]="feedback"></app-org-order>
         </div>
+        <!-- Paginator -->
+        <mat-paginator [length]="reviewList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+          [pageSizeOptions]="[10, 15, 25, 50]" (page)="onPageChange($event)">
+        </mat-paginator>
+
       </ng-container>
       <div class="row" *ngIf="isChartShow">
         <div class="col-12">
