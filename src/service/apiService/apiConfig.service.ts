@@ -15,6 +15,8 @@ export class ApiConfigService {
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
+      addQrOutletMenu: p('/api/addQrOutletMenu', 'POST'),
+      createQrMenu: p('/api/createQrMenu', 'POST'),
       addOutletMasterMenu: p('/api/addOutletMasterMenu', 'POST'),
       verifyOTP: p('/authadmin/verifyOTP', 'POST'),
       logout: p('/authadmin/logout', 'GET'),
@@ -67,6 +69,7 @@ export class ApiConfigService {
       getCurrentOutletOrdersList: p('/api/getCurrentOutletOrdersList', 'GET'),
       gettfeedbacklist: p('/api/getFeedbackListOutletById', 'GET'),
       deleteOutletMenu: p('/api/deleteOutletMenu', 'DELETE'),
+      deleteQrMenuItem: p('/api/deleteQrMenuItem', 'DELETE'),
       deleteOutletMasterMenu: p('/api/deleteOutletMasterMenu', 'DELETE'),
       updateComplianceByAdmin: p('/api/updateComplianceByAdmin', 'POST'),
       updateProfileApproval: p('/api/updateProfileApproval', 'POST'),
@@ -114,8 +117,10 @@ export class ApiConfigService {
       deleteIncident: p('/api/deleteIncident', 'DELETE'),
       getfeedbacklistByfilter: p('/api/getfeedbacklistByfilter', 'POST'),
       updateOutletMenu: p('/api/updateOutletMenu', 'POST'),
+      updateQrMenu: p('/api/updateQrMenu', 'POST'),
       updateOutletMasterMenu: p('/api/updateOutletMasterMenu', 'PUT'),
       changeMenuActivation: p('/api/changeMenuActivation', 'PUT'),
+      changeQrMenuActivation: p('/api/changeQrMenuActivation', 'POST'),
       changeMasterMenuActivation: p('/api/changeMasterMenuActivation', 'PUT'),
       getGuestEmployeelistByOrgId: p('/api/getGuestEmployeelist', 'GET'),
       deleteGuestEmployee: p('/api/deleteGuestEmployee', 'DELETE'),
@@ -182,6 +187,7 @@ export class ApiConfigService {
       qrEmployeeAdd: p('/api/qrEmployeeAdd', 'POST'),
       qrEmployeeByCafeId: p('/api/qrEmployeeByCafeId', 'GET'),
       addQrEmployeeList: p('/api/addQrEmployeeList', 'POST'),
+      updateEmployeeQrCode: p('/api/updateEmployeeQrCode', 'POST'),
       deleteQrEmployee: p('/api/deleteQrEmployee', 'DELETE'),
       updateQrEmployee: p('/api/updateQrEmployee', 'POST'),
       getQrEmployeeByPhoneNo: p('/api/getQrEmployeeByPhoneNo', 'GET'),
@@ -288,6 +294,8 @@ export class ApiConfigService {
       updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'), 
       createDefaultCategories: p('/api/createDefaultCategories', 'POST'), 
       moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
+      getQrMenuList: p('/api/getQrMenuList', 'POST'),
+      changeQrMealTypeActivation: p('/api/changeQrMealTypeActivation', 'POST'),
     }
   }
   // private generateOneLineApi(): string[] {

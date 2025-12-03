@@ -4,6 +4,7 @@ import { OutletOrdersComponent } from './outlet-orders.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { FormsModule } from '@angular/forms';
 import { OrderCardModule } from 'src/app/order-card/order-card.module';
+import { MaterialModule } from 'src/app/material.module';
 
 
 
@@ -15,7 +16,8 @@ import { OrderCardModule } from 'src/app/order-card/order-card.module';
     CommonModule,
     FormsModule,
     HighchartsChartModule,
-    OrderCardModule
+    OrderCardModule,
+    MaterialModule
   ], 
   exports: [OutletOrdersComponent]
 })

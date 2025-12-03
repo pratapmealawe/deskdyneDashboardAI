@@ -3,32 +3,29 @@
         <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
         <div class="heading">View Outlet</div>
     </div>
-<mat-tab-group [(selectedIndex)]="selectedtab" (selectedTabChange)="onTabChange($event)"  class="custom-tabs">
-    <mat-tab *ngFor="let view of outletViewList" [label]="view.name"  class="custom-tabs">
-        <ng-container [ngSwitch]="view.path">
-            <app-outlet-details
-                *ngSwitchCase="'outlet-details'"
-                [outletObj]="outlet">
-            </app-outlet-details>
+    <mat-tab-group [(selectedIndex)]="selectedtab" (selectedTabChange)="onTabChange($event)" class="custom-tabs">
+        <mat-tab *ngFor="let view of outletViewList" [label]="view.name" class="custom-tabs">
+            <!-- Tab Content -->
+            <ng-container [ngSwitch]="view.path">
+                <app-outlet-details *ngSwitchCase="'outlet-details'" [outletObj]="outlet">
+                </app-outlet-details>
 
-            <app-outlet-menu
-                *ngSwitchCase="'outlet-menu'"
-                [outletObj]="outlet"
-                (back)="updateOutlet($event)"
-                (dataToParent)="receiveData($event)">
-            </app-outlet-menu>
+                <app-outlet-menu *ngSwitchCase="'outlet-menu'" [outletObj]="outlet" (back)="updateOutlet($event)" (dataToParent)="receiveData($event)">
+                </app-outlet-menu>
 
-            <app-outlet-orders
-                *ngSwitchCase="'outlet-orders'"
-                [outletObj]="outlet">
-            </app-outlet-orders>
+                <app-qr-menu *ngSwitchCase="'qr-menu'" [outletObj]="outlet" (back)="updateOutlet($event)" (dataToParent)="receiveData($event)">
+                </app-qr-menu>
 
-            <app-outlet-feedback
-                *ngSwitchCase="'outlet-feedback'"
-                [outletObj]="outlet">
-            </app-outlet-feedback>
-            <div *ngSwitchDefault>No Component Found</div>
-        </ng-container>
-    </mat-tab>
-</mat-tab-group>
+                <app-outlet-orders *ngSwitchCase="'outlet-orders'" [outletObj]="outlet">
+                </app-outlet-orders>
+
+                <app-outlet-feedback *ngSwitchCase="'outlet-feedback'" [outletObj]="outlet">
+                </app-outlet-feedback>
+
+                <div *ngSwitchDefault>No Component Found</div>
+
+            </ng-container>
+        </mat-tab>
+    </mat-tab-group>
+
 </div>
