@@ -13,18 +13,18 @@ export class OrgOrderComponent {
     0: "Skipped",
     1: "Very Bad",
     2: "Bad",
-    3: "Neutral",
+    3: "Average",
     4: "Good",
-    5: "Very Good"
+    5: "Excellent"
   };
 
   ratingClass: any = {
     0: "skipped",
     1: "very-bad",
     2: "bad",
-    3: "neutral",
+    3: "average",
     4: "good",
-    5: "very-good"
+    5: "excellent"
   };
 
   getStarsArray(rating: number) {

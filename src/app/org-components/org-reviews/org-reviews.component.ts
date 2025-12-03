@@ -4,6 +4,13 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 import * as Highcharts from 'highcharts';
 import Drilldown from 'highcharts/modules/drilldown';
 import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(pdfMake as any).vfs =
+  (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 Drilldown(Highcharts);
 
 @Component({
@@ -98,7 +105,6 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
 
   ngOnInit() {
     this.setInitials();
-    console.log(this.adminOrg, "adminOrg");
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -121,7 +127,6 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       const reviewList = await this.apiMainService.getfeedbacklistByfilter(payload);
       this.reviewList = [...reviewList];
       this.addPagination();
-      console.log(this.paginatedReviewList, "review list");
     } catch (e) {
       console.log('Error while fetching config variables ', e);
     }
@@ -187,60 +192,82 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
     });
 
     const firstLevelDrill: any[] = [];
-    Object.keys(ratingItemCount).forEach((ratingKey) => {
+    Object.keys(ratingItemCount || {}).forEach((ratingKey) => {
       const ratingNum = Number(ratingKey);
-      const itemMap = ratingItemCount[ratingNum];
-      const itemTotal = ratingTotals[ratingNum];
+
+      const itemMap = ratingItemCount[ratingNum] || {};
+      const itemTotal = ratingTotals[ratingNum] || 0;
+
+      if (!itemTotal || Object.keys(itemMap).length === 0) return;
 
       const dataArray: any[] = Object.keys(itemMap).map((itemName) => {
-        const cnt = itemMap[itemName];
-        const pct = (cnt / itemTotal) * 100;
+        const cnt = itemMap[itemName] || 0;
+        const pct = itemTotal ? (cnt / itemTotal) * 100 : 0;
+
+        const hasContains =
+          ratingItemContains &&
+          ratingItemContains[ratingNum] &&
+          ratingItemContains[ratingNum][itemName];
+
         return {
           name: itemName,
           y: pct,
           count: cnt,
-          drilldown: ratingItemContains[ratingNum][itemName]
-            ? `rating-${ratingNum}-${itemName}`
-            : null,
+          drilldown: hasContains ? `rating-${ratingNum}-${itemName}` : null
         };
       });
 
-      firstLevelDrill.push({
-        id: `rating-${ratingNum}`,
-        name: `Items with ${ratingNum} star${ratingNum !== 1 ? 's' : ''}`,
-        type: 'pie',
-        data: dataArray,
-      });
+      if (dataArray.length > 0) {
+        firstLevelDrill.push({
+          id: `rating-${ratingNum}`,
+          name: `Items with ${ratingNum} star${ratingNum !== 1 ? 's' : ''}`,
+          type: 'pie',
+          data: dataArray
+        });
+      }
     });
 
     const secondLevelDrill: any[] = [];
     Object.keys(ratingItemContains).forEach((ratingKey) => {
       const ratingNum = Number(ratingKey);
-      const itemsUnderRating = ratingItemContains[ratingNum]; // { itemName → { subName → count } }
+      const itemsUnderRating = ratingItemContains[ratingNum];
 
-      Object.keys(itemsUnderRating).forEach((itemName) => {
-        const subMap = itemsUnderRating[itemName]; // { subName → count }
+      const safeItemsUnderRating = itemsUnderRating || {};
+
+      Object.keys(safeItemsUnderRating).forEach((itemName) => {
+        const subMap = safeItemsUnderRating[itemName] || {};   // fallback to empty object
+        const subKeys = Object.keys(subMap);
+
+        // If no sub items → skip safely
+        if (subKeys.length === 0) return;
+
         const totalSubItems = Object.values(subMap).reduce(
-          (acc, c) => acc + c,
+          (acc: number, c: any) => acc + (Number(c) || 0),
           0
         );
 
-        const dataArray: any[] = Object.keys(subMap).map((subName) => {
-          const cnt = subMap[subName];
+        // Avoid division by zero
+        if (totalSubItems === 0) return;
+
+        const dataArray: any[] = subKeys.map((subName) => {
+          const cnt = Number(subMap[subName]) || 0;
           const pct = (cnt / totalSubItems) * 100;
+
           return {
             name: subName,
             y: pct,
             count: cnt,
-            drilldown: null, // no further drilldown
+            drilldown: null
           };
         });
+
+        if (dataArray.length === 0) return;
 
         secondLevelDrill.push({
           id: `rating-${ratingNum}-${itemName}`,
           name: `Components of ${itemName}`,
           type: 'pie',
-          data: dataArray,
+          data: dataArray
         });
       });
     });
@@ -266,8 +293,179 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
     this.drilldownFlag = true;
   }
 
-  excelExport() { }
-  downloadPdf() { }
+  async excelExport() {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Reviews');
+
+    // ------------------------------------------------------------------
+    //                     TABLE COLUMN DEFINITIONS
+    // ------------------------------------------------------------------
+    worksheet.columns = [
+      { header: 'Order No', key: 'feedbackOrderNo', width: 12 },
+      { header: 'User Name', key: 'feedbackFrom_name', width: 15 },
+      { header: 'Submitted Date', key: 'submitedDate', width: 20 },
+      { header: 'Rating', key: 'rating', width: 10 },
+      { header: 'Feedback', key: 'feedback', width: 30 },
+      { header: 'Items', key: 'items', width: 30 },
+    ];
+
+    // ------------------------------------------------------------------
+    //                        HEADER ROW
+    // ------------------------------------------------------------------
+    const headerRow = worksheet.getRow(0);
+    headerRow.values = [
+      "",
+      ...worksheet.columns.map(col => col.header as string)
+    ];
+    headerRow.font = { bold: true };
+
+    // ------------------------------------------------------------------
+    //                        DATA ROWS
+    // ------------------------------------------------------------------
+    this.reviewList.forEach(order => {
+      const items = (order.itemList || order.itemlist || [])
+        .map((i: any) => `${i.itemName} x${i.count}`)
+        .join(', ');
+
+      worksheet.addRow({
+        feedbackOrderNo: order.feedbackOrderNo,
+        feedbackFrom_name: order.feedbackFrom_name || '-',
+        submitedDate: new Date(order.SubmitedDate).toLocaleDateString('en-IN'),
+        rating: order.rating || 0,
+        feedback: order.feedback || 'Skipped',
+        items,
+      });
+    });
+
+    // ------------------------------------------------------------------
+    //                      TABLE BORDERS
+    // ------------------------------------------------------------------
+    worksheet.eachRow((row) => {
+      row.eachCell(cell => {
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+    });
+
+    // ------------------------------------------------------------------
+    //                      SAVE EXCEL FILE
+    // ------------------------------------------------------------------
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+
+    const filename = `reviews_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    saveAs(blob, filename);
+  }
+
+  downloadPdf() {
+    const title = `Outlet Review Report`;
+    const orgName = this.orgAdmin?.orgDetails?.organization_name || '-';
+    const cafeteria = this.orgAdmin?.cafeDetails[0]?.cafeteria_name || '-';
+    const outlet = this.orgAdmin?.outletName || '-';
+
+    const documentDefinition: any = {
+      pageSize: 'A4',
+      pageMargins: [30, 30, 30, 30],
+
+      content: [
+        // ------------------------------------------------------------
+        //                      TITLE SECTION
+        // ------------------------------------------------------------
+        {
+          text: title,
+          style: 'title',
+          alignment: 'center',
+          margin: [0, 0, 0, 10]
+        },
+
+        // ------------------------------------------------------------
+        //                     ORG DETAILS
+        // ------------------------------------------------------------
+        {
+          columns: [
+            {
+              width: '*',
+              text: [
+                { text: 'Organization: ', bold: true },
+                `${orgName}\n`,
+                { text: 'Cafeteria: ', bold: true },
+                `${cafeteria}\n`,
+                { text: 'Outlet: ', bold: true },
+                `${outlet}\n`,
+              ],
+              margin: [0, 0, 0, 10]
+            }
+          ]
+        },
+
+        // ------------------------------------------------------------
+        //                   TABLE OF REVIEWS
+        // ------------------------------------------------------------
+        {
+          style: 'tableStyle',
+          table: {
+            widths: ['auto', '*', '*', 'auto', '*', '*'],
+            headerRows: 1,
+            body: [
+              [
+                { text: 'Order No', bold: true },
+                { text: 'User Name', bold: true },
+                { text: 'Submitted Date', bold: true },
+                { text: 'Rating', bold: true },
+                { text: 'Feedback', bold: true },
+                { text: 'Items', bold: true },
+              ],
+
+              ...this.reviewList.map(order => {
+                const items = (order.itemList || order.itemlist || [])
+                  .map((i: any) => `${i.itemName} x${i.count}`)
+                  .join(', ');
+
+                return [
+                  order.feedbackOrderNo || '-',
+                  order.feedbackFrom_name || '-',
+                  new Date(order.SubmitedDate).toLocaleDateString('en-IN'),
+                  order.rating ?? 0,
+                  order.feedback || 'Skipped',
+                  items
+                ];
+              })
+            ]
+          },
+
+          layout: {
+            fillColor: (rowIndex: number) => (rowIndex === 0 ? '#eeeeee' : null),
+            hLineWidth: () => 0.7,
+            vLineWidth: () => 0.7,
+          }
+        }
+      ],
+
+      // ------------------------------------------------------------
+      //                   PDF STYLES
+      // ------------------------------------------------------------
+      styles: {
+        title: {
+          fontSize: 18,
+          bold: true,
+          margin: [0, 0, 0, 10]
+        },
+        tableStyle: {
+          margin: [0, 10, 0, 0]
+        }
+      }
+    };
+
+    pdfMake.createPdf(documentDefinition).download(
+      `reviews_${new Date().toISOString().slice(0, 10)}.pdf`
+    );
+  }
 
   addPagination() {
     const start = this.pageIndex * this.pageSize;
