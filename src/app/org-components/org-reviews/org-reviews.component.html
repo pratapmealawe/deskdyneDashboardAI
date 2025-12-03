@@ -1,157 +1,61 @@
 <div class="container-fluid">
-  <h3>Reviews</h3>
-  <div class="container-fluid">
-    <div class="row mb-4 mt-3 p-3 bg-light rounded">
-      <!-- Organization Selection -->
-      <div class="col-12 col-md-3">
-        <label for="organization" class="labelText d-block">Organization</label>
-        <select class="form-select" [(ngModel)]="filterObj.orgId" [disabled]="this.orgAdmin.role === 'ORGADMIN'"
-          (change)="setOrgDetails()">
-          <option selected disabled value="">Select Organization</option>
-          <option *ngFor="let option of orglist" [value]="option._id">
-            {{ option.organization_name }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Cafeteria Selection -->
-      <div class="col-12 col-md-3">
-        <label for="cafeteria" class="labelText d-block">Outlet</label>
-        <select [disabled]="!orgDetails" class="form-select" [(ngModel)]="filterObj.outletId" (change)="onCafeChange()">
-          <option selected disabled value="">Select Outlet</option>
-          <option *ngFor="let option of outletList" [value]="option._id">
-            {{ option.outletName }}
-          </option>
-        </select>
-      </div>
-      <div class="col-12 col-md-3">
-        <label for="fromDate" class="labelText d-block">From Date</label>
-        <input type="date" [(ngModel)]="filterObj.fromDate" class="form-control" (change)="getfeedbacklistByfilter()" />
-
-      </div>
-
-      <!-- To Date -->
-      <div class="col-12 col-md-3">
-        <label for="toDate" class="labelText d-block">To Date</label>
-        <input type="date" [(ngModel)]="filterObj.toDate" class="form-control" (change)="getfeedbacklistByfilter()" />
-      </div>
-
-      <div class="col-12 col-md-3">
-        <label class="labelText d-block">Search</label>
-        <div class="searchDiv">
-          <i class="bi bi-search"></i>
-          <input type="text" (input)="searchFilter($event)" class="form-control" placeholder="Search"
-            aria-label="Search Filter" aria-describedby="basic-addon2" />
+  <h3 class="mb-0 pb-4">Reviews</h3>
+  <div *ngIf="isAdmin">
+    <app-common-outlet-cafe-select [config]="headerConfigAdmin"
+      (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+  </div>
+  <div *ngIf="!isAdmin">
+    <app-common-outlet-cafe-select [config]="headerConfig"
+      (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+  </div>
+  <div *ngIf="reviewList.length > 0" class="pb-4">
+    <div class="row my-2 align-items-center">
+      <div class="col-12 col-md-8">
+        <div class="d-flex flex-wrap gap-2">
         </div>
       </div>
+      <div class="col-12 col-md-4 d-flex justify-content-end gap-2 mt-2 mt-md-0">
+
+        <button mat-mini-fab class="excel-btn" matTooltip="Excel Export" (click)="excelExport()">
+          <mat-icon>table_chart</mat-icon>
+        </button>
+        <button mat-mini-fab color="primary" (click)="downloadPdf()" matTooltip="Download PDF">
+          <mat-icon>picture_as_pdf</mat-icon>
+        </button>
+
+        <button mat-mini-fab color="primary" (click)="changeDataView()" matTooltip="Change View" class="btn iconBtn">
+          <i class="bi" [ngClass]="isChartShow ? 'bi-table' : 'bi-graph-down'"></i>
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="mt-2" *ngIf="filteredFeedbackList.length > 0">
-    <div class="row btnIconDiv">
-      <button (click)="changeDataView()" class="btn iconBtn " *ngIf="!isChartShow"><i
-          class="bi bi-graph-down"></i></button>
-      <button (click)="changeDataView()" class="btn iconBtn " *ngIf="isChartShow"><i class="bi bi-table"></i></button>
-    </div>
-    <ng-container *ngIf="!isChartShow">
-      <div class="row customCard list-group mb-2" *ngFor="let feedback of filteredFeedbackList; let i = index">
-        <div class="list-group-item">
-          <div class="row">
-            <div style="cursor: pointer" class="bgTopDownpadding1 d-flex align-items-center justify-content-between p-2"
-              (click)="toggleFeedback(i)">
-              <div class="d-flex align-items-center gap-4 flex-wrap">
-                <div class="d-flex align-items-center">
-                  <div class="labelText">User Name :</div>
-                  <div class="labelData">{{ feedback.feedbackFrom_name }}</div>
-                </div>
-                <div class="d-flex align-items-center">
-                  <div class="labelText">Outlet Name :</div>
-                  <div class="labelData">{{ feedback.outletName }}</div>
-                </div>
-              </div>
-              <span class="right">
-                <i class="bi bi-chevron-down" *ngIf="!expandedItems[i]"></i>
-                <i class="bi bi-chevron-up" *ngIf="expandedItems[i]"></i>
-              </span>
+    <div class="mt-2" *ngIf="paginatedReviewList.length > 0">
+      <ng-container *ngIf="!isChartShow">
+
+        <div class="feedback-container" *ngFor="let feedback of paginatedReviewList; let i = index">
+          <app-org-order [order]="feedback"></app-org-order>
+        </div>
+        <!-- Paginator -->
+        <mat-paginator [length]="reviewList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+          [pageSizeOptions]="[10, 15, 25, 50]" (page)="onPageChange($event)">
+        </mat-paginator>
+
+      </ng-container>
+      <div class="row" *ngIf="isChartShow">
+        <div class="col-12">
+          <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
+            <highcharts-chart *ngIf="reviewList.length > 0" [Highcharts]="Highcharts" [options]="chartOptionsPie"
+              [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
+              style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+
+            <div class="h-100 d-flex justify-content-center align-items-center pt-2">
+              <p *ngIf="reviewList.length <= 0">No Data Found</p>
             </div>
-            <ng-container *ngIf="expandedItems[i]">
-              <ng-container *ngFor="let item of feedback.itemlist; index as k">
-                <div class="cardDesignfeddback">
-                  <ng-container *ngIf="item?.itemContains?.length > 0">
-                    <div class="feedbackCard">
-                      <div>
-                        <div class="labelText">Menu Name</div>
-                        <div class="labelData">{{ item.itemName }}</div>
-                      </div>
-                      <div class="d-flex w-100 align-items-center">
-                        <hr class="flex-grow-1" />
-                        <span class="mx-2">Menu Contains</span>
-                        <hr class="flex-grow-1" />
-                      </div>
-                      <ng-container *ngFor="let itemContent of item.itemContains; index as ic">
-                        <div class="cardDesign">
-                          <div class="row">
-                            <div class="col-4 col-md-4 col-lg-4">
-                              <div class="labelText">Contain Name</div>
-                              <div class="labelData">{{ itemContent.name }}</div>
-                            </div>
-                            <div class="col-4 col-md-4 col-lg-4">
-                              <div class="labelText">Ratings</div>
-                              <div class="labelData">
-                                {{ itemContent.starRatingKitchen }}
-                              </div>
-                            </div>
-                            <ng-container *ngIf="itemContent.kitchenFeedback">
-                              <div class="col-4 col-md-4 col-lg-4">
-                                <div class="labelText">Feedback</div>
-                                <div class="labelData">
-                                  {{ itemContent.kitchenFeedback }}
-                                </div>
-                              </div>
-                            </ng-container>
-                          </div>
-                        </div>
-                      </ng-container>
-                    </div>
-                  </ng-container>
-                  <ng-container *ngIf="item?.itemContains?.length == 0">
-                    <div class="d-flex flex-row items-center gap-4">
-                      <div>
-                        <div class="labelText">Menu Name</div>
-                        <div class="labelData">{{ item.itemName }}</div>
-                      </div>
-                      <div>
-                        <div class="labelText">Ratings</div>
-                        <div class="labelData">{{ item.starRatingKitchen }}</div>
-                      </div>
-                      <div *ngIf="item.kitchenFeedback">
-                        <div class="labelText">Ratings</div>
-                        <div class="labelData">{{ item.kitchenFeedback }}</div>
-                      </div>
-                    </div>
-                  </ng-container>
-                </div>
-              </ng-container>
-            </ng-container>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-    <div class="row" *ngIf="isChartShow">
-      <div class="col-12">
-        <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
-          <highcharts-chart *ngIf="filteredFeedbackList.length > 0" [Highcharts]="Highcharts"
-            [options]="chartOptionsPie" [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
-            style="width: 100%; height: 400px; display: block">
-          </highcharts-chart>
-
-          <div class="h-100 d-flex justify-content-center align-items-center pt-2">
-            <p *ngIf="filteredFeedbackList.length <= 0">No Data Found</p>
           </div>
         </div>
       </div>
     </div>
+    <div class="center labelText mt-2" *ngIf="reviewList.length == 0">
+      No Reviews found
+    </div>
   </div>
-  <div class="center labelText mt-2" *ngIf="filteredFeedbackList.length == 0">
-    No Reviews found
-  </div>
-</div>
