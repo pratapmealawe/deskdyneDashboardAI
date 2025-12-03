@@ -412,6 +412,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.breadCrumbText = event.url;
         const url = event.url.replace('/', '');
         this.setBreadcrumb(url);
+        this.setActiveStateFromRoute(event.url);
         // alert(event.url);
       }
 
@@ -429,7 +430,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
     this.suggestionsFeedbackService.fetchAllEnquiries();
     this.getInReviewIncidents();
-
+    this.setActiveStateFromRoute(this.router.url);
     // this.pollingSub = interval(30_000).subscribe(() => {
     //   this.getInReviewIncidents();
     // });
@@ -445,6 +446,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error fetching incidents:', error);
+    }
+  }
+
+  setActiveStateFromRoute(url: string): void {
+    this.selectedIndex = -1;
+    this.openChildSectionIndex = -1;
+    this.childSelectedIndex = -1;
+
+    const currentPath = url.split('?')[0];
+
+    for (let i = 0; i < this.finalNavOption.length; i++) {
+      const nav = this.finalNavOption[i];
+
+      if (nav.children && nav.children.length > 0) {
+        for (let j = 0; j < nav.children.length; j++) {
+          const child = nav.children[j];
+          if (child.route && currentPath.includes(child.route)) {
+            this.openChildSectionIndex = i;
+            this.childSelectedIndex = j;
+            return;
+          }
+        }
+      }
+      else if (nav.route && currentPath.includes(nav.route)) {
+        this.selectedIndex = i;
+        return;
+      }
     }
   }
 
@@ -592,9 +620,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   getAvatarColor(name: string): string {
-    const colors = ['#192754', '#FF6B6B', '#17C964', '#FFB020', '#9333EA'];
-    let index = name?.length % colors?.length;
-    return colors[index];
+    if (name) {
+      const colors = ['#192754', '#FF6B6B', '#17C964', '#FFB020', '#9333EA'];
+      let index = name.length % colors.length;
+      return colors[index];
+    } else {
+      return '#192754'
+    }
   }
 
   ngOnDestroy(): void {

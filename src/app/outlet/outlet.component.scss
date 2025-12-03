@@ -13,3 +13,6 @@
 .search-input{
     @include mixin.mat-form-field-responsive(); 
 }
+.input-group , .search-input{
+    width: -webkit-fill-available !important;
+}

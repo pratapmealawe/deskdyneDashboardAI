@@ -1,39 +1,38 @@
-<div class="row card-wrapper p-2">
-  <div class="outlet-card col-lg-12 col-md-10 col-9" *ngFor="let outlet of outletUpdated">
-    <div class="col-md-3">
+<div class="container-fuild pe-3 ps-3">
+  <div class="outlet-card" *ngFor="let outlet of outletUpdated">
+    <div>
       <div class="labelText">Organization Name</div>
       <div class="labelData">{{ outlet?.organizationName }}</div>
     </div>
-    <div class="rows col-md-12" *ngFor="let outlet of outlet.outletList">
-      <div class="row">
-        <div class="col-12 col-md-4 col-lg-12">
-          <div class="row p-3">
-            <div class="col-6 col-md-5 col-lg-2">
-              <div class="labelText">Outlet Name</div>
-              <div class="labelData" >{{ outlet.outletName }}</div>
-            </div>
-            <div class="col-6 col-md-2 col-lg-1">
-              <div class="labelText">Opened</div>
-              <div class="labelData"> <mat-chip [ngClass]="outlet.outletOpened ? 'green' : 'red'"> {{ (outlet.outletOpened ? 'true' : 'false') | titlecase }}</mat-chip></div>
-            </div>
-            <div class="col-6 col-md-2 col-lg-1">
-              <div class="labelText">Subsidy</div>
-              <div class="labelData">&#8377; {{ outlet?.subsidy }}</div>
-            </div>
-            <div class="col-6 col-md-2 col-lg-1">
-              <div class="labelText">Precedence</div>
-              <div class="labelData">{{ outlet?.precedence }}</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-5">
-              <div class="labelText ">Outlet Description</div>
-              <div class="labelData desc" [matTooltip]="outlet.outletDescription" [matTooltipPosition]="'below'">{{ outlet.outletDescription }}</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-1">
-              <div class="d-flex align-items-center gap-2">
-              <mat-icon *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(outlet)" color="primary"> visibility </mat-icon>
-              <mat-icon (click)="showPopup(outlet)" color="warn"> delete </mat-icon>
-              </div>
-            </div>
+    <div class="rows" *ngFor="let outlet of outlet.outletList">
+      <div class="d-flex flex-wrap p-3">
+        <div class="col-6 col-md-5 col-lg-2">
+          <div class="labelText">Outlet Name</div>
+          <div class="labelData">{{ outlet.outletName }}</div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+          <div class="labelText">Opened</div>
+          <div class="labelData"> <mat-chip [ngClass]="outlet.outletOpened ? 'green' : 'red'"> {{ (outlet.outletOpened ?
+              'true' : 'false') | titlecase }}</mat-chip></div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+          <div class="labelText">Subsidy</div>
+          <div class="labelData">&#8377; {{ outlet?.subsidy }}</div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+          <div class="labelText">Precedence</div>
+          <div class="labelData">{{ outlet?.precedence }}</div>
+        </div>
+        <div class="col-6 col-md-6 col-lg-5">
+          <div class="labelText ">Outlet Description</div>
+          <div class="labelData desc" [matTooltip]="outlet.outletDescription" [matTooltipPosition]="'below'">{{
+            outlet.outletDescription }}</div>
+        </div>
+        <div class="col-6 col-md-6 col-lg-1">
+          <div class="d-flex align-items-center gap-2">
+            <mat-icon *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(outlet)" color="primary"> visibility
+            </mat-icon>
+            <mat-icon (click)="showPopup(outlet)" color="warn"> delete </mat-icon>
           </div>
         </div>
       </div>
@@ -42,5 +41,6 @@
   <div class="empty-outlet d-flex justify-content-center mb-2 align-items-center" *ngIf="outlet.length == 0">
     <h6>No data found</h6>
   </div>
-   <mat-paginator [length]="outlet.length || 0"  [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)" ></mat-paginator>
+  <mat-paginator [length]="outlet.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+    [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)"></mat-paginator>
 </div>

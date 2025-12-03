@@ -1,0 +1,88 @@
+<div class="customer-outlet-orders">
+    <ng-container *ngIf="order">
+        <mat-card class="order-card mb-3">
+            <div class="order-card-inner">
+                <!-- LEFT SIDE: header / meta -->
+                <div class="order-left">
+                    <mat-card-header>
+                        <div mat-card-avatar class="order-avatar">
+                            {{ order.customerName ? order.customerName[0].toUpperCase() : 'C' }}
+                        </div>
+                        <div class="order-header-text">
+                            <mat-card-title>
+                                Order #{{ order.orderNo }}
+                            </mat-card-title>
+                            <mat-card-subtitle>
+                                Token #{{ order.tokenNo || '-' }} •
+                                {{ order.orderDate | date: 'MMM d, y, h:mm a' }}
+                            </mat-card-subtitle>
+                        </div>
+
+                        <span class="status-chip" [ngClass]="order.orderstatus">
+                            {{ orderStatusMapper[order.orderstatus] || order.orderstatus }}
+                        </span>
+                    </mat-card-header>
+
+                    <!-- Customer & order details -->
+                    <div class="order-meta small text-muted mt-2">
+                        <div><strong>Customer:</strong> {{ order.customerName }}</div>
+                        <div><strong>Mobile:</strong> {{ order.customerPhoneNo }}</div>
+                        <div>
+                            <strong>Org:</strong>
+                            {{ order.organizationDetails?.organization_name || '-' }}
+                        </div>
+                        <div>
+                            <strong>Cafe:</strong>
+                            {{ order.cafeteriaDetails?.cafeteria_name || '-' }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT SIDE: items + amounts -->
+                <div class="order-right">
+                    <!-- Items -->
+                    <div class="mt-1">
+                        <strong>Items:</strong>
+                        <div class="item-list mt-1">
+                            <div class="item-order" *ngFor="let i of order.itemList">
+                                <div class="item-name">
+                                    {{ i.itemName }} <span *ngIf="i.count">x{{ i.count }}</span>
+                                </div>
+                                <div class="item-price">
+                                    ₹{{ i.price | number : '1.2-2' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amounts -->
+                    <div class="amounts-grid mt-2">
+                        <div>
+                            <div class="label">Item Amount</div>
+                            <div class="value">₹{{ order.itemAmount | number : '1.2-2' }}</div>
+                        </div>
+                        <div>
+                            <div class="label">Wallet Used</div>
+                            <div class="value">
+                                ₹{{ order.moneyWalletPointsUsed || 0 | number : '1.2-2' }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="label">Amount Paid</div>
+                            <div class="value">
+                                ₹{{ order.amount || 0 | number : '1.2-2' }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="label">Total (Wallet + Amount)</div>
+                            <div class="value total">
+                                ₹{{ (order.amount || 0) + (order.moneyWalletPointsUsed || 0) | number : '1.2-2'
+                                }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+    </ng-container>
+</div>

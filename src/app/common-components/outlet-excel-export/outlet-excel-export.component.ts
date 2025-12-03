@@ -1,18 +1,17 @@
-import { DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
 import * as Highcharts from 'highcharts';
+import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { PageEvent } from '@angular/material/paginator';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-interface Filter {
-  orgId: string;
-  cafeId: string;
-  fromDate: string;
-  toDate: string;
-}
+(pdfMake as any).vfs =
+  (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 
 @Component({
   selector: 'app-outlet-excel-export',
@@ -21,141 +20,371 @@ interface Filter {
 })
 export class OutletExcelExportComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts;
-  orglist: any[] = [];
+  isAdmin: boolean = false;
   orgDetails: any = {};
   orgAdmin: any;
-  cafeList: any[] = [];
-
-  filterObj: Filter = {
-    orgId: '',
-    cafeId: '',
-    fromDate: '',
-    toDate: '',
+  headerConfigAdmin: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: false,
+    requireAll: true
+  }
+  headerConfig: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: true,
+    requireAll: true
   };
-
+  fromDate = '';
+  toDate = '';
   filteredOrderList: any[] = []
-  orderStatusMapper: any = orderStatusMapper
-
+  totalAmountPaid = 0;
+  totalWalletUsed = 0;
+  totalAmount = 0;
+  orderStatusMapper: any = orderStatusMapper;
   // Chart
   chartOptions!: Highcharts.Options;
-
   updateStatusFlag: boolean = false;
   oneToOneStatusFlag: boolean = true;
-  isShowChart: boolean = false
-  totalAmount: any
+  isShowChart: boolean = false;
+  //pagination
+  pageSize = 10;
+  pageIndex = 0;
+  estimatedTotal = 0;
+  paginatedList: any[] = [];
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
-    private excelService: ExcelService,
     private localStorageService: LocalStorageService,
-    private datePipe: DatePipe,
   ) { }
 
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
-
-    this.initializeDates();
-
-    this.getOrgList();
-  }
-
-  private initializeDates(): void {
-    const today = new Date();
-    const iso = today.toISOString().substring(0, 10);
-    this.filterObj.fromDate = iso;
-    this.filterObj.toDate = iso;
-  }
-
-  async getOrgList() {
-    try {
-      const data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        { countOnly: false },
-        1
-      );
-      this.orglist = data;
-      this.setInitialData();
-    } catch (error) {
-      console.error(error);
+    this.headerConfig.defaultOrgId = this.orgAdmin?.orgDetails?._id;
+    if(this.orgAdmin){
+      this.isAdmin = this.orgAdmin.role === 'ADMIN';
     }
-  }
-
-  setInitialData() {
-    if (this.orgAdmin.role === 'ORGADMIN') {
-      this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
-      this.setOrgDetails();
-    }
-  }
-
-  setOrgDetails() {
-    const org = this.orglist.find(o => o._id === this.filterObj.orgId);
-    this.cafeList = org?.cafeteriaList ?? [];
-  }
-
-  filterOrders(): void {
-    const org = this.orglist.find(o => o._id === this.filterObj.orgId);
-    const cafe = this.cafeList.find(c => c.cafeteria_id === this.filterObj.cafeId);
-
-    if (!org || !cafe) {
-      console.warn('Organization or Cafeteria not selected!');
-      return;
-    }
-
-    const body = {
-      cafeteriaName: cafe.cafeteria_name,
-      organizationName: org.organization_name,
-      fromDate: new Date(this.filterObj.fromDate),
-      toDate: new Date(this.filterObj.toDate),
-    };
-
-    this.getOutletByFilter(body);
   }
 
   async getOutletByFilter(body: any) {
-    this.isShowChart = false
+    this.isShowChart = false;
+    this.totalAmountPaid = 0;
+    this.totalWalletUsed = 0;
+    this.totalAmount = 0;
     try {
       const res = await this.apiMainService.fetchOutletOrdersbysearchObj(body);
-
-      this.filteredOrderList = res
-
+      // const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
+      this.filteredOrderList = res;
       this.totalAmount = this.filteredOrderList.reduce((sum, order) => {
         const amount = Number(order.amount) || 0;
         const walletPoints = Number(order.moneyWalletPointsUsed) || 0;
+        this.totalWalletUsed += walletPoints;
+        this.totalAmountPaid += amount
         return sum + amount + walletPoints;
       }, 0);
+      this.pageIndex = 0;
+      this.updatePaginatedList();
 
     } catch (err: any) {
       console.error('Error fetching outlet orders', err);
     }
   }
 
+  updatePaginatedList() {
+    const startIndex = this.pageIndex * this.pageSize;
+    const endIndex = startIndex + this.pageSize;
+
+    this.paginatedList = this.filteredOrderList.slice(startIndex, endIndex);
+    this.estimatedTotal = this.filteredOrderList.length;
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePaginatedList();
+  }
+
   async excelExport() {
-    const exportData = this.filteredOrderList.map(order => {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Outlet Orders');
+    // ------------------------------------------------------------------
+    //                      TABLE COLUMN DEFINITIONS
+    // ------------------------------------------------------------------
+    worksheet.columns = [
+      { header: 'Order No', key: 'orderNo', width: 12 },
+      { header: 'Token No', key: 'tokenNo', width: 10 },
+      { header: 'Order Date', key: 'orderDate', width: 18 },
+      { header: 'Status', key: 'status', width: 16 },
+      { header: 'Customer Name', key: 'customerName', width: 20 },
+      { header: 'Customer Mobile', key: 'customerPhoneNo', width: 16 },
+      { header: 'Customer Email', key: 'customerEmail', width: 24 },
+      { header: 'Org Name', key: 'orgName', width: 22 },
+      { header: 'Cafe Name', key: 'cafeName', width: 18 },
+      { header: 'Items', key: 'items', width: 40 },
+      { header: 'Item Amount (₹)', key: 'itemAmount', width: 16 },
+      { header: 'Subsidy Amount (₹)', key: 'subsidyAmount', width: 18 },
+      { header: 'Wallet Used (₹)', key: 'walletUsed', width: 16 },
+      { header: 'Amount Paid (₹)', key: 'amountPaid', width: 16 },
+    ];
+
+    // ------------------------------------------------------------------
+    //                   HEADER ROW (NOW ROW 5 CORRECTLY)
+    // ------------------------------------------------------------------
+    const headerRowIndex = 0;
+    const headerRow = worksheet.getRow(headerRowIndex);
+
+    // Map headers from column definitions
+    headerRow.values = [
+      "",
+      ...worksheet.columns.map(c => c.header || "")
+    ] as ExcelJS.CellValue[];
+
+    // ------------------------------------------------------------------
+    //                         DATA ROWS
+    // ------------------------------------------------------------------
+    let rowIndex = headerRowIndex;
+
+    let totalItemAmount = 0;
+    let totalSubsidy = 0;
+    let totalWalletUsed = 0;
+    let totalAmountPaid = 0;
+
+    this.filteredOrderList.forEach(order => {
+      const walletUsed = Number(order.moneyWalletPointsUsed) || 0;
+      const amountPaid = Number(order.amount) || 0;
+      const itemAmount = Number(order.itemAmount) || 0;
+      const subsidyAmount = Number(order.subsidyAmount) || 0;
+
       const items = (order.itemList || [])
         .map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`)
         .join('; ');
-      return {
-        'Order No': order.orderNo,
-        'Order Date': new Date(order.orderDate).toLocaleString(),
-        'Status': this.orderStatusMapper[order.orderstatus] || order.orderstatus,
-        'Customer Name': order.customerName,
-        'Customer Mobile': order.customerPhoneNo,
-        'Customer Email': order.customerEmail,
-        'Org Name': order.organizationDetails.organization_name,
-        'Cafe Name': order.cafeteriaDetails.cafeteria_name,
-        'Items': items,
-        'Total Amount (₹)': order.itemAmount,
-        'Subsidy Amount (₹)': order.subsidyAmount,
-        'Paid Amount (₹)': order.amount,
-      };
-    })
 
-    this.excelService.download(exportData, `outlet_order_${this.filterObj.fromDate}_TO_${this.filterObj.toDate}`)
+      const row = worksheet.addRow({
+        orderNo: order.orderNo,
+        tokenNo: order.tokenNo || '-',
+        orderDate: new Date(order.orderDate).toLocaleString('en-IN'),
+        status: this.orderStatusMapper[order.orderstatus] || order.orderstatus,
+        customerName: order.customerName,
+        customerPhoneNo: order.customerPhoneNo,
+        customerEmail: order.customerEmail,
+        orgName: order.organizationDetails?.organization_name,
+        cafeName: order.cafeteriaDetails?.cafeteria_name,
+        items,
+        itemAmount,
+        subsidyAmount,
+        walletUsed,
+        amountPaid,
+      });
+
+      // Numeric formatting
+      row.getCell('K').numFmt = '#,##0.00';
+      row.getCell('L').numFmt = '#,##0.00';
+      row.getCell('M').numFmt = '#,##0.00';
+      row.getCell('N').numFmt = '#,##0.00';
+
+      // Totals
+      totalItemAmount += itemAmount;
+      totalSubsidy += subsidyAmount;
+      totalWalletUsed += walletUsed;
+      totalAmountPaid += amountPaid;
+
+      rowIndex++;
+    });
+
+    // ------------------------------------------------------------------
+    //                          TOTALS ROW
+    // ------------------------------------------------------------------
+    const totalsRow = worksheet.addRow({
+      orderNo: 'Totals',
+      itemAmount: totalItemAmount,
+      subsidyAmount: totalSubsidy,
+      walletUsed: totalWalletUsed,
+      amountPaid: totalAmountPaid,
+    });
+
+    totalsRow.font = { bold: true };
+    totalsRow.getCell('A').alignment = { horizontal: 'right' };
+
+    totalsRow.getCell('K').numFmt = '#,##0.00';
+    totalsRow.getCell('L').numFmt = '#,##0.00';
+    totalsRow.getCell('M').numFmt = '#,##0.00';
+    totalsRow.getCell('N').numFmt = '#,##0.00';
+
+    // ------------------------------------------------------------------
+    //                        TABLE BORDERS
+    // ------------------------------------------------------------------
+    worksheet.eachRow((row, rIndex) => {
+      if (rIndex >= headerRowIndex) {
+        row.eachCell(cell => {
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            left: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            bottom: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            right: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+          };
+        });
+      }
+    });
+
+    // ------------------------------------------------------------------
+    //                      SAVE EXCEL FILE
+    // ------------------------------------------------------------------
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+
+    const filename = `outlet_orders_${new Date().toISOString().slice(0, 10)}.xlsx`;
+    saveAs(blob, filename);
+  }
+
+  downloadPdf() {
+
+    if (!this.filteredOrderList.length) return;
+
+    // ---------------------------------------------------------
+    //           TABLE HEADERS (12 columns total)
+    // ---------------------------------------------------------
+    const tableHeaders = [
+      { text: 'Order No', bold: true },
+      { text: 'Token', bold: true },
+      { text: 'Date', bold: true },
+      { text: 'Status', bold: true },
+      { text: 'Customer Name', bold: true },
+      { text: 'Mobile', bold: true },
+      { text: 'Email', bold: true },
+      { text: 'Items', bold: true },
+      { text: 'Item Amt (₹)', bold: true },
+      { text: 'Subsidy (₹)', bold: true },
+      { text: 'Wallet (₹)', bold: true },
+      { text: 'Paid (₹)', bold: true }
+    ];
+
+    const body: any[] = [];
+    body.push(tableHeaders);
+
+    let totalItemAmount = 0;
+    let totalSubsidy = 0;
+    let totalWalletUsed = 0;
+    let totalAmountPaid = 0;
+
+    // ---------------------------------------------------------
+    //                       DATA ROWS
+    // ---------------------------------------------------------
+    this.filteredOrderList.forEach(order => {
+      const walletUsed = Number(order.moneyWalletPointsUsed) || 0;
+      const amountPaid = Number(order.amount) || 0;
+      const itemAmount = Number(order.itemAmount) || 0;
+      const subsidyAmount = Number(order.subsidyAmount) || 0;
+
+      const items = (order.itemList || [])
+        .map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`)
+        .join('; ');
+
+      body.push([
+        order.orderNo || '',
+        order.tokenNo || '',
+        new Date(order.orderDate).toLocaleString('en-IN') || '',
+        this.orderStatusMapper[order.orderstatus] || order.orderstatus || '',
+        order.customerName || '',
+        order.customerPhoneNo || '',
+        order.customerEmail || '',
+        items || '',
+        itemAmount.toFixed(2),
+        subsidyAmount.toFixed(2),
+        walletUsed.toFixed(2),
+        amountPaid.toFixed(2)
+      ]);
+
+      totalItemAmount += itemAmount;
+      totalSubsidy += subsidyAmount;
+      totalWalletUsed += walletUsed;
+      totalAmountPaid += amountPaid;
+    });
+
+    // ---------------------------------------------------------
+    //                       TOTALS ROW (12 columns)
+    // ---------------------------------------------------------
+    body.push([
+      { text: 'Totals', bold: true, colSpan: 8, alignment: 'right' },
+      {}, {}, {}, {}, {}, {}, {},      // total 8 columns merged
+      { text: totalItemAmount.toFixed(2), bold: true },
+      { text: totalSubsidy.toFixed(2), bold: true },
+      { text: totalWalletUsed.toFixed(2), bold: true },
+      { text: totalAmountPaid.toFixed(2), bold: true }
+    ]);
+
+    // ---------------------------------------------------------
+    //                 COMMON HEADER VALUES
+    // ---------------------------------------------------------
+    const dateStr = new Date().toISOString().slice(0, 10);
+
+    const orgName =
+      this.filteredOrderList[0]?.organizationDetails?.organization_name ||
+      'All Organizations';
+
+    const cafeteria =
+      this.filteredOrderList[0]?.cafeteriaDetails?.cafeteria_name ||
+      'All Cafeterias';
+
+    // ---------------------------------------------------------
+    //                 PDF DOCUMENT STRUCTURE
+    // ---------------------------------------------------------
+    const docDefinition: any = {
+      pageOrientation: 'landscape',
+      pageMargins: [15, 15, 15, 15],
+
+      content: [
+        { text: 'Outlet Orders Report', style: 'header' },
+        { text: `Organization: ${orgName}`, style: 'subheader' },
+        { text: `Cafeteria: ${cafeteria}`, style: 'subheader' },
+        { text: `Generated on: ${dateStr}`, style: 'subheader', margin: [0, 0, 0, 10] },
+
+        {
+          table: {
+            headerRows: 1,
+            widths: [
+              40, 35, 70, 55, 80, 60, 90, '*', 60, 55, 55, 55
+            ],
+            body
+          },
+          layout: {
+            fillColor: (rowIndex: number) => (rowIndex === 0 ? '#2E75B6' : null),
+            paddingLeft: () => 3,
+            paddingRight: () => 3,
+            paddingTop: () => 3,
+            paddingBottom: () => 3,
+            hLineColor: () => '#999999',
+            vLineColor: () => '#999999'
+          }
+        }
+      ],
+
+      styles: {
+        header: {
+          fontSize: 15,
+          bold: true,
+          margin: [0, 0, 0, 6]
+        },
+        subheader: {
+          fontSize: 10,
+          color: '#555'
+        }
+      },
+
+      defaultStyle: {
+        fontSize: 8,
+        color: '#000'
+      }
+    };
+
+    (pdfMake as any)
+      .createPdf(docDefinition)
+      .download(`OutletOrders_${dateStr}.pdf`);
   }
 
   changeDataView() {
     if (!this.isShowChart) {
-      this.generateChartData()
-      // console.log(this.filteredOrderList)
+      this.generateChartData();
     } else {
       this.isShowChart = false
     }
@@ -243,5 +472,37 @@ export class OutletExcelExportComponent implements OnInit {
 
     this.isShowChart = true
     this.updateStatusFlag = true;
+  }
+
+  filterSubmitted(event: any) {
+    if (event) {
+      const body = {
+        cafeteriaName: event.cafeteria_name,
+        organizationName: event.org_name,
+        fromDate: event.date_from,
+        toDate: event.date_to,
+      }
+      const body1 = {
+        outletId: event.org_id,
+        fromDate: event.date_from,
+        toDate: event.date_to,
+      }
+      this.getOutletByFilter(body);
+      this.fromDate = this.convertDate(event.date_from);
+      this.toDate = this.convertDate(event.date_to);
+    }
+  }
+
+  convertDate(dateInput: any): string {
+    const date = new Date(dateInput);
+    const istOffsetMs = 5.5 * 60 * 60 * 1000;
+    const istDate = new Date(date.getTime() + istOffsetMs);
+
+    const dd = String(istDate.getDate()).padStart(2, '0');
+    const mm = String(istDate.getMonth() + 1).padStart(2, '0');  // 0-based month
+    const yyyy = istDate.getFullYear();
+
+    return `${dd}/${mm}/${yyyy}`;
+
   }
 }

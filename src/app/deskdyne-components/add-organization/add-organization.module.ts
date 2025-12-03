@@ -6,16 +6,20 @@ import { AddOrganizationComponent } from './add-organization.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetGeolocationModule } from '../../set-geolocation/set-geolocation.module';
 import { MaterialModule } from 'src/app/material.module';
+import { OnlyAlphaDirective, OnlyNumberDirective, AlphaNumericDirective } from 'src/shared/constants/input.directive';
 
 @NgModule({
-  declarations: [AddOrganizationComponent],
+  declarations: [AddOrganizationComponent, OnlyAlphaDirective,
+        OnlyNumberDirective,
+        AlphaNumericDirective],
   imports: [
     CommonModule,
     AddOrganizationRoutingModule,
     FormsModule,
     ReactiveFormsModule,
     SetGeolocationModule,
-    MaterialModule
+    MaterialModule,
+   
   ],
   exports: [AddOrganizationComponent],
 })
