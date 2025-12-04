@@ -35,7 +35,9 @@
   display: flex;
   flex-direction: column;
 }
-
+.search-input{
+    @include mixin.mat-form-field-responsive(); 
+}
 .labelText {
   font-size: 13px;
   font-weight: 600;
