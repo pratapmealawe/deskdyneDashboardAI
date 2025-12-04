@@ -35,7 +35,7 @@ export class CustomerComponent implements OnInit {
   orglist: any[] = [];
   orgDetails: any = {};
   orgAdmin: any;
-
+  isOrgAdmin: boolean = false;
   isViewCustomer: boolean = false;
   selectedUser: any;
 
@@ -72,6 +72,7 @@ export class CustomerComponent implements OnInit {
   // 👉 On init: if ORGADMIN use their org, else first org from list
   setInitialData() {
     if (this.orgAdmin?.role === 'ORGADMIN') {
+      this.isOrgAdmin = true;
       this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
     } else if (this.orglist.length) {
       this.filterObj.orgId = this.orglist[0]._id;

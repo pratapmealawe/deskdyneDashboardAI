@@ -79,7 +79,7 @@
                             </div>
                         </div>
 
-                        <div class="col-12 col-md-1 text-md-end mt-2 mt-md-0">
+                        <div *ngIf="!isOrgAdmin" class="col-12 col-md-1 text-md-end mt-2 mt-md-0">
                             <button mat-icon-button color="primary" (click)="viewCustomer(user)"
                                 matTooltip="View details">
                                 <mat-icon>visibility</mat-icon>
