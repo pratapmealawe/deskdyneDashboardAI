@@ -26,7 +26,7 @@
               <div class="labelData">{{ vendor.isOutletAccess ? "Outlet" : vendor.isDailyAndBulkAccess ? "Daily & Bulk"
                 : "NONE" }}</div>
             </div>
-            <div class="col-md-1 alignRight d-flex gap-3">
+            <div class="col-md-2 alignRight d-flex gap-3">
               <mat-icon *ngIf="true || btnPolicy?.editVendor" (click)="editVendor(vendor)" color="primary"> edit </mat-icon>
               <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)"  color="warn">delete</mat-icon>
             </div>
@@ -34,7 +34,7 @@
           <div  class="cafeteriaCard">
             <div class="row">
                  <div class="labelText">Outlet Name</div>
-              <div class="col-md-3 d-flex gap-4 flex-wrap">
+              <div class="col-md-3 d-flex gap-4 w-100 flex-wrap">
                 <div class="labelData" *ngFor="let cafeteria of vendor.outletList">
                   <mat-chip > {{cafeteria.outletName}}</mat-chip>
                 </div>
