@@ -114,10 +114,20 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   }
 
   setInitials() {
-    this.orgAdmin = this.adminOrg ? { role: "ORGADMIN", orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.isAdmin = this.orgAdmin?.role == 'ORGADMIN' ? false : true;
-    if (!this.isAdmin) {
-      this.headerConfig.defaultOrgId = this.orgAdmin.orgDetails?._id;
+     // if Admin is logged in
+    if (this.adminOrg) {
+      this.headerConfig = {
+        ...this.headerConfig,
+        defaultOrgId: this.adminOrg?._id,
+      };
+    }
+    //if OrgAdmin is logged in
+    this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
+    if (this.orgAdmin?.role === 'ORGADMIN') {
+      this.headerConfig = {
+        ...this.headerConfig,
+        defaultOrgId: this.orgAdmin?.orgDetails?._id,
+      };
     }
   }
 

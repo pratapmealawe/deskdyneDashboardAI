@@ -1,4 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -14,22 +15,27 @@ interface filter {
   styleUrls: ['./org-menu-counters.component.scss'],
 })
 export class OrgMenuCountersComponent implements OnInit, OnChanges {
-  @Input() adminOrg: any
+  @Input() adminOrg: any;
   outletList: any[] = [];
   filteredOutletList: any[] = [];
   searchObj: filter = {
     orgId: '',
   };
-  // Stores admin details fetched from local storage
+  headerConfig: CommonSelectConfig = {
+    mode: 'cafeteria',
+    showDateRange: false,
+    disableOrg: true,
+    requireAll: true
+  }
   orgAdmin: any;
   imageUrl: any = environment.imageUrl;
   selectedOutlet: any = null;
   filteredMenuList: any[] = [];
-  cafeteria_id: any
-  cafeList: any[] = []
-  filteredCafeList: any[] = []
-  orgDetails: any
-  outletOrderData: any[] = []
+  cafeteria_id: any;
+  cafeList: any[] = [];
+  filteredCafeList: any[] = [];
+  orgDetails: any;
+  outletOrderData: any[] = [];
 
   constructor(
     private apiMainService: ApiMainService,
@@ -38,29 +44,40 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    this.initFunc()
+    this.setInitials();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
-      this.initFunc()
+      this.setInitials();
     }
   }
 
-  initFunc() {
+  setInitials() {
+    // if Admin is logged in
+    if (this.adminOrg) {
+      this.headerConfig = {
+        ...this.headerConfig,
+        defaultOrgId: this.adminOrg._id,
+      };
+    }
+    //if OrgAdmin is logged in
     this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
+    if (this.orgAdmin?.role === 'ORGADMIN') {
+      this.headerConfig = {
+        ...this.headerConfig,
+        defaultOrgId: this.orgAdmin?.orgDetails?._id,
+      };
+    }
     this.getOrgDetailsById();
   }
-
 
   async getOrgDetailsById() {
     try {
       const res = await this.apiMainService.getOrg(this.orgAdmin?.orgDetails?._id)
-      this.orgDetails = res
+      this.orgDetails = res;
       if (res?.cafeteriaList.length > 0) {
-        this.cafeList = res?.cafeteriaList
-        this.cafeteria_id = this.cafeList[0]?.cafeteria_id
-        this.getOutlets()
+        this.cafeList = res?.cafeteriaList;
       }
     } catch (err: any) {
       console.log(err);
@@ -75,12 +92,11 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
 
     this.filteredCafeList = merged
 
-    if(this.filteredCafeList.length > 0) {
-      this.filteredOutletList  = this.filteredCafeList.find((item:any) => item?.cafeteria_id === this.cafeteria_id)?.outlets
+    if (this.filteredCafeList.length > 0) {
+      this.filteredOutletList = this.filteredCafeList.find((item: any) => item?.cafeteria_id === this.cafeteria_id)?.outlets
+      console.log(this.filteredOutletList, "filteredOutletList");
     }
   }
-
-
 
   async getOutlets() {
     const searchObj = {
@@ -88,9 +104,8 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
     }
     try {
       const data = await this.apiMainService.searchOutletByOrgId(searchObj)
-
       this.outletList = [...data];
-      this.getMatchedOutlets()
+      this.getMatchedOutlets();
     } catch (err) {
       console.error('Error fetching orders:', err);
     }
@@ -99,12 +114,6 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
   showOutletDetails(outlet: any) {
     this.selectedOutlet = outlet;
     this.filteredMenuList = [...outlet.menuList];
-  }
-
-  getStars(rating: number) {
-    return Array(5)
-      .fill(false)
-      .map((_, i) => i < rating);
   }
 
   toggleReadMore(index: number) {
@@ -139,7 +148,8 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
     }
   }
 
-  fetchData() {
-    this.getOutlets()
+  filterSubmitted(event: any) {
+    this.cafeteria_id = event.cafeteria_id;
+    this.getOutlets();
   }
 }
