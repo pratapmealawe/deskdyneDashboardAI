@@ -6,6 +6,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import { MatDialog } from '@angular/material/dialog';
 @Component({
   selector: 'app-vendor-compliance',
   templateUrl: './vendor-compliance.component.html',
@@ -13,6 +14,8 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 })
 export class VendorComplianceComponent implements OnInit {
   @Input() venderDetails: any;
+  orgDetails: any;
+  isAdmin: boolean = false;
   profileApproval: any;
   compliance: any = {};
   imageUrl = environment.imageUrl;
@@ -50,6 +53,10 @@ export class VendorComplianceComponent implements OnInit {
   panFileStatus = false;
   selectedMerchantFile: any;
   orgVendorInfo: any;
+  previewObj: { title: string; url: SafeResourceUrl | string } = {
+    title: '',
+    url: ''
+  };
   @ViewChild('fssaiNoRef') fssaiNoField!: ElementRef;
   @ViewChild('aadharNo') aadharNoField!: ElementRef;
   @ViewChild('panNoRef') panNoField!: ElementRef;
@@ -58,14 +65,21 @@ export class VendorComplianceComponent implements OnInit {
   @ViewChild('fssaiFileRef') fssaiFileRef!: ElementRef;
   @ViewChild('adhaarFileRef') adhaarFileRef!: ElementRef;
   @ViewChild('panFileRef') panFileRef!: ElementRef;
+  @ViewChild('previewModal') previewModal: any;
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private modalService: NgbModal, private policyService: PolicyService, private localStorageService: LocalStorageService) {
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer,
+    private modalService: NgbModal, private policyService: PolicyService,
+    private localStorageService: LocalStorageService, private matDialog: MatDialog) {
     this.access = this.policyService.getCurrentButtonPolicy();
   }
 
 
   ngOnInit() {
     // this.profileApproval = this.venderDetails.profileApproval;
+    this.orgDetails = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    if (this.orgDetails) {
+      this.isAdmin = this.orgDetails.role === 'ADMIN';
+    }
     this.orgVendorInfo = this.localStorageService.getCacheData('ORG_VENDOR_INFO');
     if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
@@ -546,6 +560,7 @@ export class VendorComplianceComponent implements OnInit {
       console.error('Invalid file URL provided for download:', fileUrl);
     }
   }
+  
   DeleteFile(file: any) {
     if (file == 'fssailic') {
       this.compliance.fssaiFileUrl = null;
@@ -594,4 +609,22 @@ export class VendorComplianceComponent implements OnInit {
       this.compliance.selfDeclarationFileUrl = null;
     }
   }
+
+  viewFile(url: any, title: string) {
+    this.previewObj.url = '';
+    this.previewObj.title = '';
+    if (url) {
+      this.previewObj.url = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      this.previewObj.title = title;
+      const dialogRef = this.matDialog.open(this.previewModal, {
+        width: '400px',
+        maxWidth: '95vw',
+        autoFocus: false,
+        panelClass: 'custom-dialog-container',
+      });
+      dialogRef.afterClosed().subscribe(result => {
+      });
+    }
+  }
+
 }
