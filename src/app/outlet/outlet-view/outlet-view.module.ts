@@ -18,6 +18,7 @@ import { OutletVendorComponent } from './outlet-vendor/outlet-vendor.component';
 import { OutletOrdersModule } from './outlet-orders/outlet-orders.module';
 import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
 import { MaterialModule } from 'src/app/material.module';
+import { QrMenuComponent } from './qr-menu/qr-menu.component';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { MaterialModule } from 'src/app/material.module';
     OutletComplianceComponent,
     ComboPopupComponent,
     OutletVendorComponent,
+    QrMenuComponent,
   ],
   imports: [
     CommonModule,

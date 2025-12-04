@@ -24,7 +24,6 @@ import { MaterialModule } from './material.module';
     ConfirmationModalComponent,
     ImageCropperComponent,
     HeaderComponent,
-    ImageCropperComponent
   ],
   imports: [
     BrowserModule,

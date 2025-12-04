@@ -656,3 +656,7 @@ button.accordion-button:focus {
 .no-address {
   @include no-address-style();
 }
+
+.mdc-label {
+  margin-bottom: 0px;
+}
