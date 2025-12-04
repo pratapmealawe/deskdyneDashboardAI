@@ -323,5 +323,8 @@ isAddVendorValid(): boolean {
     this.selectedAddressList.length > 0
   );
 }
+toggleCheckbox(outlet: any) {
+  outlet.isChecked = !outlet.isChecked;
+}
 
 }

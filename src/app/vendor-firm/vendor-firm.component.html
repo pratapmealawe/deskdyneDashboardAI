@@ -1,5 +1,5 @@
 <div class="container-fluid mt-3 p-25" *ngIf="showSearchSection">
-  <div class="row align-items-center justify-content-between px-3" >
+  <div class="row align-items-center justify-content-between px-3">
     <div class="col-auto">
       <h4 class="m-0 fw-semibold">Vendor Firm</h4>
     </div>
@@ -20,66 +20,68 @@
       </button>
     </div>
     <div class="col d-inline-flex d-md-none">
-        <mat-form-field appearance="outline" class="search-input">
-          <input matInput type="text" placeholder="Search vendor firm..." [formControl]="searchControl" />
-          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-            <mat-icon>search</mat-icon> </button>
-        </mat-form-field>
+      <mat-form-field appearance="outline" class="search-input">
+        <input matInput type="text" placeholder="Search vendor firm..." [formControl]="searchControl" />
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+          <mat-icon>search</mat-icon> </button>
+      </mat-form-field>
     </div>
   </div>
-</div> 
-<div  *ngIf="showSearchSection">
-    <div class="row">
-        <div *ngIf="vendorList && vendorList.length == 0" class="center mt-5">
-            No Vendor Firm Found
-        </div>
-        <div  style="padding: 15px 30px;" *ngIf="vendorList && vendorList.length > 0">
-            <div *ngFor="let vendor of  pagedVendorFirm" class="cardDesign">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-11">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="labelText">Vendor Firm Name</div>
-                                    <div class="labelData">{{ vendor.vendorFirmName }}</div>
-                                </div>
-                                <div class="col-md-3">
-                                  <div class="labelText">Vendor Firm Email</div>
-                                  <div class="labelData">{{vendor.vendorFirmEmail}}</div>
-                                </div>
-                                <div class="col-md-3">
-                                  <div class="labelText">Vendor Phone Number</div>
-                                  <div class="labelData">{{vendor.vendorFirmPhoneNo}}</div>
-                                </div>
-                            </div>
-
-                            <div class="cafeteriaCard">
-                                <div class="row">
-                                    <div class="col-md-3 p-0">
-                                        <div class="labelText">Outlet Name</div>
-                                        <div class="d-flex gap-2 flex-wrap w-100">
-                                           <div class="labelData" *ngFor="let cafeteria of vendor.outletList" ><mat-chip> {{cafeteria.outletName}}</mat-chip>
-                                        </div>
-                                        </div>
-                                       
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-1 d-flex align-items-center gap-3">
-                                <mat-icon *ngIf="true || btnPolicy?.editVendor" (click)="editVendor(vendor)" color="primary"> visibility </mat-icon>
-                                <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)"  color="warn">delete</mat-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="paginator">
-                <mat-paginator [length]="vendorList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[3,5,10,15]" (page)="onPageChange($event)" aria-label="Select page"></mat-paginator>
-            </div>
-        </div>
+</div>
+<div *ngIf="showSearchSection">
+  <div class="row">
+    <div *ngIf="vendorList && vendorList.length == 0" class="center mt-5">
+      No Vendor Firm Found
     </div>
+    <div style="padding: 15px 30px;" *ngIf="vendorList && vendorList.length > 0">
+      <div *ngFor="let vendor of  pagedVendorFirm" class="cardDesign">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-md-11">
+              <div class="row">
+                <div class="col-md-3">
+                  <div class="labelText">Vendor Firm Name</div>
+                  <div class="labelData">{{ vendor.vendorFirmName }}</div>
+                </div>
+                <div class="col-md-3">
+                  <div class="labelText">Vendor Firm Email</div>
+                  <div class="labelData">{{vendor.vendorFirmEmail}}</div>
+                </div>
+                <div class="col-md-3">
+                  <div class="labelText">Vendor Phone Number</div>
+                  <div class="labelData">{{vendor.vendorFirmPhoneNo}}</div>
+                </div>
+              </div>
+              <div class="cafeteriaCard">
+                <div class="row">
+                  <div class="col-md-3 p-0">
+                    <div class="labelText">Outlet Name</div>
+                    <div class="d-flex gap-2 flex-wrap w-100">
+                      <div class="labelData" *ngFor="let cafeteria of vendor.outletList">
+                        <mat-chip>{{cafeteria?.outletName ? cafeteria.outletName : 'NA'}}</mat-chip>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-1 d-flex align-items-center gap-3">
+              <mat-icon *ngIf="true || btnPolicy?.editVendor" (click)="editVendor(vendor)" color="primary"> visibility
+              </mat-icon>
+              <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)"
+                color="warn">delete</mat-icon>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="paginator">
+        <mat-paginator [length]="vendorList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+          [pageSizeOptions]="[3,5,10,15]" (page)="onPageChange($event)" aria-label="Select page"></mat-paginator>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="bgpadding1" *ngIf="!showSearchSection">
-    <app-vendor-firm-view [vendor]="vendorInfo" (back)="toggleShowOrder($event)"></app-vendor-firm-view>
+  <app-vendor-firm-view [vendor]="vendorInfo" (back)="toggleShowOrder($event)"></app-vendor-firm-view>
 </div>

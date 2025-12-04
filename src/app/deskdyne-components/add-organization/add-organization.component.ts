@@ -78,10 +78,8 @@ export class AddOrganizationComponent implements OnInit {
     };
   }
 
-
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-
     const cacheOrg = this.runtimeStorageService.getCacheData('VIEW_ORG');
     if (cacheOrg && cacheOrg._id) {
       this.viewOrg = cacheOrg;
@@ -134,34 +132,17 @@ export class AddOrganizationComponent implements OnInit {
       clusterId: [''],
       clusterName: [''],
       address1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
-      address2: ['', [Validators.maxLength(120)]],
-      landmark: ['', [Validators.maxLength(80)]],
+      address2: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
+      landmark: ['', [ Validators.required ,Validators.maxLength(80)]],
       location: ['', Validators.required],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       poc_details: this.fb.group({
         poc_id: [{ value: '', disabled: true }, Validators.required],
-        poc_name: [{ value: '', disabled: true }, [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(80),
-          Validators.pattern(REGEX.NAME)
-        ]],
-        poc_phoneNo: [{ value: '', disabled: true }, [
-          Validators.required,
-          Validators.pattern(REGEX.PHONE)
-        ]],
-        poc_email: [{ value: '', disabled: true }, [
-          Validators.required,
-          Validators.email,
-          Validators.maxLength(80)
-        ]],
+        poc_name: [{ value: '', disabled: true }, [Validators.required,Validators.minLength(3), Validators.maxLength(80),Validators.pattern(REGEX.NAME)]],
+        poc_phoneNo: [{ value: '', disabled: true }, [ Validators.required, Validators.pattern(REGEX.PHONE) ]],
+        poc_email: [{ value: '', disabled: true }, [Validators.required, Validators.email, Validators.maxLength(80) ]],
         poc_location: [{ value: '', disabled: true }, Validators.required],
         poc_role: [{ value: '', disabled: true }, Validators.required],
-        // poc_id: ['', Validators.required], poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
-        // poc_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
-        // poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
-        // poc_location: ['', Validators.required],
-        // poc_role: ['', Validators.required],
         approverPriceLimit: [''],
         approverCountLimit: [''],
         approverDetails: this.fb.group({
@@ -291,24 +272,20 @@ openPocModal() {
   getOrgGstin(event: any, i: any) {
     const cafeteriaArray = this.form.get('cafeteriaList') as FormArray;
     const cafeteriaGroup = cafeteriaArray.at(i) as FormGroup;
-
-    const gstinValue = event.target.checked
-      ? this.form.get('gstin')?.value
-      : '';
-
-    cafeteriaGroup.patchValue({ cafeteria_gstin: gstinValue });
-    console.log(cafeteriaGroup);
-
+    const control = cafeteriaGroup.get('cafeteria_gstin');
+    const gstinValue = event.checked ? this.form.get('gstin')?.value : '';
+    control?.patchValue(gstinValue);
+    control?.markAsDirty();
+    control?.markAsTouched();
+    control?.updateValueAndValidity();
   }
 
+
   patchFormValue(org: any) {
-    console.log("org", org);
     this.orgInfo = org;
     let clusterdetails: any = {};
     this.orgSubsidy = org.subsidy;
     this.imageUrl = environment.imageUrl + org.organizationLogoUrl;
-
-    // this.customerLocation = org.customerLocation;
     this.form.patchValue({
       organization_name: org.organization_name,
       location: org.location,
@@ -320,6 +297,8 @@ openPocModal() {
     });
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
       if (cafe.clusterId) {
+        console.log(cafe,"cafe");
+        
         clusterdetails = {
           clusterId: cafe.clusterId,
           clusterName: cafe.clusterName,

@@ -3,13 +3,14 @@
         <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
         <div class="heading">Add Vendor Firm</div>
     </div>
-    <div [formGroup]="form" class="mt-2 pe-4 ps-4">
+    <div [formGroup]="form" class="mt-2 ">
         <div class="row">
             <div class="col-12 col-md-6 col-lg-4">
                 <div class="form-group">
                     <label class="field-label">Vendor Firm Name <span class="required-input"> * </span></label>
                     <mat-form-field appearance="outline" class="input">
-                        <input matInput placeholder="Enter Vendor Firm Name" formControlName="vendorFirmName" />
+                        <input matInput placeholder="Enter Vendor Firm Name" formControlName="vendorFirmName"
+                            appOnlyNumber />
                         <mat-error *ngIf="hasError(form,'vendorFirmName','required')">
                             Vendor firm name is required.
                         </mat-error>
@@ -37,7 +38,8 @@
                 <div class="form-group">
                     <label class="field-label">Vendor Firm PhoneNo <span class="required-input"> * </span></label>
                     <mat-form-field appearance="outline" class="input">
-                        <input matInput placeholder="Enter Vendor Firm PhoneNo" formControlName="vendorFirmPhoneNo" />
+                        <input matInput placeholder="Enter Vendor Firm PhoneNo" formControlName="vendorFirmPhoneNo"
+                            appOnlyAlpha />
                         <mat-error *ngIf="hasError(form,'vendorFirmPhoneNo','required')">
                             Vendor firm phone is required.
                         </mat-error>
@@ -128,7 +130,8 @@
         <div class="row mt-4">
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <h5>Address List</h5>
-                <button mat-raised-button color="primary" (click)="openAddressTemplate()">Add Address </button>
+                <button mat-raised-button color="primary" (click)="openAddressTemplate()" class="responsive-btn">Add
+                    Address </button>
             </div>
             <div class="no-address" *ngIf="addressList.length === 0">
                 <p>No address added yet.</p>
@@ -429,8 +432,7 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end p-3">
-                    <button mat-stroked-button color="primary" [disabled]="!this.form.get('poc_details').valid"
-                        (click)="submitPocDetails()"> Submit</button>
+                    <button mat-stroked-button color="primary" [disabled]="!this.form.get('poc_details').valid" (click)="submitPocDetails()"> Submit</button>
                 </div>
             </div>
         </ng-template>
@@ -443,109 +445,56 @@
                 <p>No outlet added yet.</p>
                 <small>Click on <strong>"Add Outlet"</strong> to add a new outlet.</small>
             </div>
-            <div class="outlet-selected" *ngIf="selectedOutletsList.length !== 0 ">
-                <div class="d-flex" style="padding: 30px 4px;" *ngFor="let outlet of selectedOutletsList; index as i">
-                    <div class="d-flex" style="width: 78%;">
-                        <div class="col-lg-3">
+            <div class="outlet-selected" *ngIf="selectedOutletsList.length !== 0">
+                <div class="outlet-card" *ngFor="let outlet of selectedOutletsList; index as i">
+                    <div class="outlet-grid">
+                        <div class="grid-item">
                             <div class="labelText">Outlet Name</div>
                             <div class="labelData">{{ outlet.outletName }}</div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="grid-item">
                             <div class="labelText">Outlet Type</div>
                             <div class="labelData">{{ outlet.outletType }}</div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="grid-item">
                             <div class="labelText">Description</div>
                             <div class="labelData">{{ outlet.outletDescription }}</div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="grid-item">
                             <div class="labelText">Organization</div>
-                            <div class="labelData">
-                                {{ outlet.organizationDetails.organization_name }}
-                            </div>
+                            <div class="labelData">{{ outlet.organizationDetails.organization_name }}</div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="grid-item">
                             <div class="labelText">Cafeteria Name</div>
-                            <div class="labelData">
-                                {{ outlet.cafeteriaDetails.cafeteria_name }}
-                            </div>
+                            <div class="labelData">{{ outlet.cafeteriaDetails.cafeteria_name }}</div>
                         </div>
-                        <div class="col-lg-3">
+                        <div class="grid-item delete-btn justify-content-end">
                             <mat-icon (click)="deleteOutlet(i)" color="warn">delete</mat-icon>
                         </div>
-
                     </div>
-
                 </div>
             </div>
         </div>
-        <div class="d-flex align-items-center justify-content-end">
-            <!-- <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
-                Add Outlet
-            </div> -->
-            <button *ngIf="isVendorEdit" mat-raised-button color="primary" (click)="addComplience()">Compliance</button>
-            <!-- <div *ngIf="isVendorEdit" class="btn btn-success btn-sm mt-2 ml-2" (click)="addComplience()">
-                Compliance
-            </div> -->
-            <div *ngIf="isVendorEdit" class="d-flex align-items-center ml-2">
-                <button mat-raised-button color="primary" type="button" class="btn btn-primary btn-sm"
-                    (click)="fileInput.click()">
-                    {{ 'Account Enrollment Form' }}
-                </button>
-                <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
-                    style="display: none;" />
-                <div *ngIf="form.controls['accountEnrollment'].value" class="text-success mt-2 ml-2">
-                    {{ form.controls['accountEnrollment'].value }} <i class="bi bi-x-lg ms-1"
-                        (click)="closeAccountEnroll()"></i>
-                </div>
+        <div class="d-flex align-items-center justify-content-end gap-2">
+            <button *ngIf="isVendorEdit" mat-raised-button color="primary" (click)="addComplience()"
+                class="responsive-btn">Compliance</button>
+            <button mat-raised-button color="primary" type="button" class="responsive-btn" *ngIf="isVendorEdit"
+                (click)="fileInput.click()">
+                {{ 'Account Enrollment Form' }}
+            </button>
+            <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
+                style="display: none;" />
+            <div *ngIf="form.controls['accountEnrollment'].value" class="text-success mt-2 ml-2">
+                {{ form.controls['accountEnrollment'].value }} <i class="bi bi-x-lg ms-1"
+                    (click)="closeAccountEnroll()"></i>
             </div>
         </div>
         <br />
-        <!-- <div class="mt-1" *ngFor="let outlet of selectedOutletsList; index as i">
-            <div class="row card-wrapper">
-                <div class="col-lg-10">
-                    <div class="row">
-                        <div class="col-12 col-md-4 col-lg-12">
-                            <div class="row">
-                                <div class="col-lg-3">
-                                    <div class="labelText">Outlet Name</div>
-                                    <div class="labelData">{{ outlet.outletName }}</div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <div class="labelText">Outlet Type</div>
-                                    <div class="labelData">{{ outlet.outletType }}</div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <div class="labelText">Description</div>
-                                    <div class="labelData">{{ outlet.outletDescription }}</div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <div class="labelText">Organization</div>
-                                    <div class="labelData">
-                                        {{ outlet.organizationDetails.organization_name }}
-                                    </div>
-                                </div>
-                                <div class="col-lg-3">
-                                    <div class="labelText">Cafeteria Name</div>
-                                    <div class="labelData">
-                                        {{ outlet.cafeteriaDetails.cafeteria_name }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-2">
-                    <i class="bi bi-trash" (click)="deleteOutlet(i)"></i>
-                </div>
-            </div>
-        </div> -->
-
-        <button mat-raised-button color="primary" (click)="submit('update')"
+        <button mat-raised-button color="primary" class="responsive-btn" (click)="submit('update')"
             *ngIf="showUpdate && true || btnPolicy?.editVendor">
             Update
         </button>
-        <button mat-raised-button color="primary" *ngIf="!showUpdate && !btnPolicy?.editVendor"
+        <button mat-raised-button color="primary" class="responsive-btn" *ngIf="!showUpdate && !btnPolicy?.editVendor"
             (click)="submit()">Submit</button>
     </div>
     <ng-template #outletModal let-modal>
@@ -577,26 +526,22 @@
                 </select>
             </div>
             <div class="mt-3" *ngIf="showModalOutletList">
-                <div *ngFor="let outlet of outletByCafeteriaList" class="cardDesign">
-                    <div class="row card-wrapper">
-                        <div class="col-12 col-md-4 col-lg-12">
-                            <div class="row">
-                                <div class="col-6 col-md-5 col-lg-2">
-                                    <input mdbCheckbox [(ngModel)]="outlet.isChecked" type="checkbox" />
-                                </div>
-                                <div class="col-6 col-md-5 col-lg-3">
-                                    <div class="labelText">outlet Name</div>
-                                    <div class="labelData">{{ outlet.outletName }}</div>
-                                </div>
-                                <div class="col-6 col-md-7 col-lg-3">
-                                    <div class="labelText">outlet type</div>
-                                    <div class="labelData">{{ outlet.outletType }}</div>
-                                </div>
-                                <div class="col-6 col-md-7 col-lg-4">
-                                    <div class="labelText">description</div>
-                                    <div class="labelData">{{ outlet.outletDescription }}</div>
-                                </div>
-                            </div>
+                <div *ngFor="let outlet of outletByCafeteriaList">
+                    <div class="row">
+                        <div class="col-6 col-md-5 col-lg-2">
+                            <mat-checkbox [(ngModel)]="outlet.isChecked"></mat-checkbox>
+                        </div>
+                        <div class="col-6 col-md-5 col-lg-3">
+                            <div class="labelText">outlet Name</div>
+                            <div class="labelData">{{ outlet.outletName }}</div>
+                        </div>
+                        <div class="col-6 col-md-7 col-lg-3">
+                            <div class="labelText">outlet type</div>
+                            <div class="labelData">{{ outlet.outletType }}</div>
+                        </div>
+                        <div class="col-6 col-md-7 col-lg-4">
+                            <div class="labelText">description</div>
+                            <div class="labelData">{{ outlet.outletDescription }}</div>
                         </div>
                     </div>
                 </div>
@@ -606,7 +551,6 @@
             </div>
         </div>
     </ng-template>
-
     <ng-template #complianceModal let-modal>
         <div class="modal-header">
             <h4 class="modal-title" id="modal-basic-title">Compliance</h4>
@@ -618,7 +562,6 @@
             <app-vendor-compliance [venderDetails]="selectedVendorFirm"></app-vendor-compliance>
         </div>
     </ng-template>
-
     <ng-template #geolocation let-modal>
         <div class="modal-header">
             <h4 class="modal-title" id="modal-basic-title">Geolocation</h4>
@@ -637,5 +580,4 @@
             </div>
         </div>
     </ng-template>
-
 </div>
