@@ -146,7 +146,7 @@
       [length]="vendorList.length" (page)="onPageChange($event)">
     </mat-paginator>
   </div>
-  <div class="center labelText mt-2" *ngIf="vendorList.length == 0">
-    No Vendor Info found
-  </div>
+  <mat-card class="center labelText py-2 rounded-4 mt-4" *ngIf="vendorList.length == 0">
+    No Menu Items Found
+  </mat-card>
 </div>

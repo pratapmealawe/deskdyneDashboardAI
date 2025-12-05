@@ -1,6 +1,6 @@
 <div class="container-fluid">
   <div class="row">
-    <div class="col-md-8 d-flex align-items-baseline gap-2">
+    <div class="col-md-8 d-flex align-items-baseline gap-2 pb-4">
       <button *ngIf="selectedOutlet" mat-flat-button (click)="backToMainPage()">
         <mat-icon>arrow_back</mat-icon>
         Back
@@ -22,12 +22,12 @@
     </div>
   </div>
 
-  <div *ngIf="!selectedOutlet" class="row mb-4 mt-3 p-3 bg-light rounded">
+  <div *ngIf="!selectedOutlet" class="row mb-2">
     <app-common-outlet-cafe-select [config]="headerConfig"
       (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
   </div>
 
-  <div class="py-4 container-fluid px-0" *ngIf="filteredOutletList.length > 0">
+  <div class="container-fluid p-4 bg-light" *ngIf="filteredOutletList.length > 0">
     <!-- All Outlets -->
     <div class="row" *ngIf="!selectedOutlet">
       <div class="col-md-4" *ngFor="let outlet of filteredOutletList; let i = index">
@@ -115,7 +115,7 @@
     </div>
   </div>
 
-  <div class="center labelText mt-2" *ngIf="filteredOutletList.length == 0">
+  <mat-card class="center labelText py-2 rounded-4 mt-4" *ngIf="filteredOutletList.length == 0">
     No Outlets Found
-  </div>
+  </mat-card>
 </div>

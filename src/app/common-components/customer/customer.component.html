@@ -10,39 +10,37 @@
         </div>
     </div>
 
-    <mat-card class="mb-3 filter-card">
-        <div class="row g-3 align-items-end">
-            <!-- Organization Selection -->
-            <div class="col-12 col-md-6">
-                <mat-form-field appearance="outline" class="select-field">
-                    <mat-label>Organization</mat-label>
-                    <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role === 'ORGADMIN' || isDisabled"
-                        (selectionChange)="submitFilter()">
-                        <mat-option [value]="''" disabled>Select Organization</mat-option>
-                        <mat-option *ngFor="let option of orglist" [value]="option._id">
-                            {{ option.organization_name }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
+    <div class="row g-3 align-items-end mb-3">
+        <!-- Organization Selection -->
+        <div class="col-12 col-md-6">
+            <mat-form-field appearance="outline" class="select-field">
+                <mat-label>Organization</mat-label>
+                <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role === 'ORGADMIN' || isDisabled"
+                    (selectionChange)="submitFilter()">
+                    <mat-option [value]="''" disabled>Select Organization</mat-option>
+                    <mat-option *ngFor="let option of orglist" [value]="option._id">
+                        {{ option.organization_name }}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+        </div>
 
-            <!-- Search -->
-            <div class="col-12 col-md-6 text-md-end">
-                <!-- Export buttons -->
-                <div class="d-flex justify-content-end mb-2" *ngIf="filteredCustomerList?.length">
-                    <button mat-stroked-button class="me-2" (click)="exportToExcel()">
-                        <mat-icon class="me-1">grid_on</mat-icon>
-                        Export Excel
-                    </button>
+        <!-- Search -->
+        <div class="col-12 col-md-6 text-md-end">
+            <!-- Export buttons -->
+            <div class="d-flex justify-content-end mb-2" *ngIf="filteredCustomerList?.length">
+                <button mat-stroked-button class="me-2" (click)="exportToExcel()">
+                    <mat-icon class="me-1">grid_on</mat-icon>
+                    Export Excel
+                </button>
 
-                    <button mat-stroked-button color="warn" (click)="exportToPdf()">
-                        <mat-icon class="me-1">picture_as_pdf</mat-icon>
-                        Export PDF
-                    </button>
-                </div>
+                <button mat-stroked-button color="warn" (click)="exportToPdf()">
+                    <mat-icon class="me-1">picture_as_pdf</mat-icon>
+                    Export PDF
+                </button>
             </div>
         </div>
-    </mat-card>
+    </div>
 
     <!-- List -->
     <ng-container *ngIf="filteredCustomerList?.length; else noUsers">
@@ -100,9 +98,9 @@
 
     <!-- No users -->
     <ng-template #noUsers>
-        <div class="center labelText mt-2 text-muted">
+        <mat-card class="center labelText py-2 rounded-4 mt-4">
             No users found
-        </div>
+        </mat-card>
     </ng-template>
 </div>
 
