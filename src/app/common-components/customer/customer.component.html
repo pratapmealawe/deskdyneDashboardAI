@@ -1,13 +1,13 @@
 <div class="container-fluid mainUserDiv pb-4" *ngIf="!isViewCustomer">
     <div class="headerDiv mb-3">
         <h2 class="page-title ">Users</h2>
-        <mat-form-field appearance="outline" class="search-field">
-            <mat-label>Search users</mat-label>
-            <input matInput (input)="searchFilter($event)" [value]="searchText"
-                placeholder="Search by name, phone, or email" />
-            <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-
+        <div class="input-group text-nowrap d-none d-md-inline-flex">
+            <mat-form-field appearance="outline" class="search-input">
+                <input matInput (input)="searchFilter($event)" [value]="searchText"
+                    placeholder="Search by name, phone, or email" />
+                <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+        </div>
     </div>
 
     <mat-card class="mb-3 filter-card">

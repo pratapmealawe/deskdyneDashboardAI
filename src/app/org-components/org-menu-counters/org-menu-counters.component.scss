@@ -1,5 +1,16 @@
 @use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+
+.input-group {
+    width: 17%;
+}
+
+.search-icon {
+    margin-top: -5px;
+}
+
+.search-input {
+    @include mixin.mat-form-field-responsive();
+}
 
 .backColor {
   background: #faf9f6;
@@ -93,38 +104,4 @@
 .icon-small {
   width: 15px;
   height: 15px;
-}
-
-.input-group {
-  width: 17%;
-}
-
-.search-icon {
-  margin-top: -5px;
-}
-
-::ng-deep .search-input .mat-mdc-form-field-subscript-wrapper {
-  display: none !important;
-}
-
-::ng-deep .search-input .mat-mdc-form-field-flex {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  min-height: 34px !important;
-  height: 34px !important;
-}
-
-::ng-deep .search-input .mat-mdc-form-field-infix {
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-  min-height: 30px !important;
-}
-
-::ng-deep .search-input .mat-mdc-input-element {
-  padding: 0 !important;
-  margin: 0 !important;
-  height: 32px !important;
-  line-height: 30px !important;
 }

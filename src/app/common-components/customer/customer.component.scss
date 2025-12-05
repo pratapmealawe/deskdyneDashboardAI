@@ -1,3 +1,17 @@
+@use '/src/styles/theme/mixins' as mixin;
+
+.input-group {
+  width: 17%;
+}
+
+.search-icon {
+  margin-top: -5px;
+}
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
+}
+
 .headerDiv {
   display: flex;
   align-items: center;
