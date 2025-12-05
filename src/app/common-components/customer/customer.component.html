@@ -3,7 +3,7 @@
         <h2 class="page-title ">Users</h2>
         <div class="input-group text-nowrap d-none d-md-inline-flex">
             <mat-form-field appearance="outline" class="search-input">
-                <input matInput (input)="searchFilter($event)" [value]="searchText"
+                <input matInput (input)="searchFilter($event)" (input)="searchFilter($event)" [value]="searchText"
                     placeholder="Search by name, phone, or email" />
                 <mat-icon matSuffix>search</mat-icon>
             </mat-form-field>
@@ -16,7 +16,7 @@
             <div class="col-12 col-md-6">
                 <mat-form-field appearance="outline" class="select-field">
                     <mat-label>Organization</mat-label>
-                    <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role === 'ORGADMIN'"
+                    <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role === 'ORGADMIN' || isDisabled"
                         (selectionChange)="submitFilter()">
                         <mat-option [value]="''" disabled>Select Organization</mat-option>
                         <mat-option *ngFor="let option of orglist" [value]="option._id">

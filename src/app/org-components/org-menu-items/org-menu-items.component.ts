@@ -1,6 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import * as Highcharts from 'highcharts';
+import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 
@@ -13,30 +14,29 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 })
 export class OrgMenuItemsComponent implements OnInit, OnChanges {
   Highcharts: typeof Highcharts = Highcharts;
-
   @Input() adminOrg: any
-
   maxDate: Date = new Date();
-
-
-
   updateFlag: boolean = false;
   oneToOneFlag: boolean = true;
-
   orgAdmin: any;
-
   initialData: any[] = [];
-
   dateGroup!: FormGroup;
-
   chartOptions!: Highcharts.Options;
   updateOrdersFlag: boolean = false;
   oneToOneOrdersFlag: boolean = true;
-
-  cafeteria_id: any
-  cafeList: any[] = []
-  orgDetails: any
-  outletOrderData: any[] = []
+  cafeteria_id: any;
+  cafeList: any[] = [];
+  orgDetails: any;
+  outletOrderData: any[] = [];
+  filterObj: any = {
+    orgId: '',
+  };
+  headerConfig: CommonSelectConfig = {
+    mode: 'outlet',
+    disableOrg: true,
+    showDateRange: true,
+    requireAll: true
+  }
 
   constructor(
     private apiMainService: ApiMainService,
@@ -60,39 +60,18 @@ export class OrgMenuItemsComponent implements OnInit, OnChanges {
 
   initFunc() {
     this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.getOrgDetailsById();
-    this.maxDate.setDate(this.maxDate.getDate());
-    this.maxDate.setHours(23, 59, 59, 999);
-    this.fetchData()
-  }
-
-  buildPayload() {
-    return {
-      startDate: this.dateGroup.value.start,
-      endDate: this.dateGroup.value.end,
-      orgId: this.orgAdmin.orgDetails._id,
-      cafeteria_name: this.cafeList.find(c => c.cafeteria_id === this.cafeteria_id)
-        ?.cafeteria_name,
-    };
-  }
-
-  async getOrgDetailsById() {
-    try {
-      const res = await this.apiMainService.getOrg(this.orgAdmin?.orgDetails?._id)
-      this.orgDetails = res
-      if (res?.cafeteriaList.length > 0) {
-        this.cafeList = res?.cafeteriaList
-        this.cafeteria_id = this.cafeList[0]?.cafeteria_id
-      }
-    } catch (err: any) {
-      console.log(err);
+    if (this.orgAdmin?.role === 'ORGADMIN') {
+      this.headerConfig = {
+        ...this.headerConfig,
+        defaultOrgId: this.orgAdmin?.orgDetails?._id,
+      };
+      this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
     }
   }
 
   async getOrgTotalOrdersStatusWiseData() {
-    const data = this.buildPayload()
     try {
-      const res = await this.apiMainService.getOrgTotalOrdersStatusWiseData(data)
+      const res = await this.apiMainService.getOrgTotalOrdersStatusWiseData(this.filterObj)
       console.log(res);
 
       this.outletOrderData = res

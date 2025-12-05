@@ -13,7 +13,7 @@
     <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
       <mat-tab label="Dashboard">
         <div class="py-3">
-          <app-org-dashboard [adminOrg]="orgSelected"></app-org-dashboard>
+          <app-org-dashboard [adminOrg]="orgSelected" [isOrgSelected]="isOrgSelected"></app-org-dashboard>
         </div>
       </mat-tab>
       <mat-tab label="Menu Items">
@@ -31,6 +31,11 @@
           <app-org-reviews [adminOrg]="orgSelected"></app-org-reviews>
         </div>
       </mat-tab>
+      <mat-tab label="Users">
+        <div class="py-3">
+          <app-customer [adminOrg]="orgSelected"></app-customer>
+        </div>
+      </mat-tab>
       <mat-tab label="Vendor Info">
         <div class="py-3">
           <app-org-vendor-info [adminOrg]="orgSelected"></app-org-vendor-info>
@@ -39,16 +44,6 @@
       <mat-tab label="Menu Counters">
         <div class="py-3">
           <app-org-menu-counters [adminOrg]="orgSelected"></app-org-menu-counters>
-        </div>
-      </mat-tab>
-      <mat-tab label="Bulk Order History">
-        <div class="py-3">
-          <app-org-bulk-order-history [adminOrg]="orgSelected"></app-org-bulk-order-history>
-        </div>
-      </mat-tab>
-      <mat-tab label="Billing">
-        <div class="py-3">
-          <app-billing [adminOrg]="orgSelected"></app-billing>
         </div>
       </mat-tab>
     </mat-tab-group>
