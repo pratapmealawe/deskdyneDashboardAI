@@ -1,12 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnlyNumberDirective, AlphaNumericDirective, OnlyAlphaDirective } from './common-directives.directive';
+import { AutoTooltipDirective } from './auto-tooltip.directive';
 
 @NgModule({
   declarations: [
     OnlyAlphaDirective,
     OnlyNumberDirective,
-    AlphaNumericDirective
+    AlphaNumericDirective,
+    AutoTooltipDirective
   ],
   imports: [
     CommonModule
@@ -14,7 +16,8 @@ import { OnlyNumberDirective, AlphaNumericDirective, OnlyAlphaDirective } from '
   exports: [
     OnlyAlphaDirective,
     OnlyNumberDirective,
-    AlphaNumericDirective
+    AlphaNumericDirective,
+    AutoTooltipDirective
   ]
 })
 export class DirectivesModule {}

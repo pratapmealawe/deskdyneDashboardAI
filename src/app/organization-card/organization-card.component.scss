@@ -1,6 +1,8 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles.scss' as color;
 
+/* -------------------- ORGANIZATION CARD -------------------- */
+
 .org-image-div {
   width: 80px;
   height: 80px;
@@ -10,111 +12,49 @@
   .org-image {
     width: 100%;
     height: 100%;
-    // object-fit: contain;
   }
 }
 
-.table-header {
-  background-color: color.$primary-offset-color1;
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 13px;
-  color: color.$textPrimary;
+.cardDesign {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
 
-  th.mat-header-cell {
-    border-bottom: none;
-    padding: 12px;
+  @include mixin.vertical-line();
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
+.content {
+  flex: 1;
+  min-width: 150px;
+}
+
+.content.action-btn {
+  flex: 0 0 auto;
+  margin-left: auto !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .cardDesign {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .content {
+    min-width: 100% !important;
+  }
+  .content.action-btn {
+    align-self: flex-end;
+    margin-left: 0 !important;
   }
 }
-.mat-row.table-row {
-  background-color: color.$white;
-  transition: all 0.2s ease-in-out;
-  border-radius: 6px;
-  box-shadow: 8px 1px 3px rgba(0, 0, 0, 0.08);
-  margin-bottom: 10px;
-  display: table;
-  width: 100%;
-}
-.mat-table-td{
-  max-width: 150px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
-.mat-row.table-row:hover {
-  background-color: color.$primary-offset-color2;
-}
+/* -------------------- MODAL -------------------- */
 
-.mat-cell,
-.mat-header-cell {
-  padding: 12px 16px;
-  font-size: 13px;
-}
-table.mat-mdc-table {
-  border-spacing: 0 8px;
-  border-collapse: separate !important;
-  background-color: transparent;
-  padding: 6px;
-
-}
-.text-center {
-  text-align: center;
-}
-.custom-chip {
-  background-color: color.$primary-offset-color1 !important;
-  color: color.$black;
-  cursor: pointer;
-}
-.mat-table {
-  border-radius: 8px;
-  overflow: hidden !important;
-}
-td:last-child {
-  background-color: color.$white !important;
-}
-th.mat-header-cell:first-of-type,
-td.mat-cell:first-of-type,
-td.mat-footer-cell:first-of-type {
-  padding-left: 24px;
-  border-top-left-radius: 9px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-}
-th.mat-header-cell:last-of-type,
-td.mat-cell:last-of-type,
-td.mat-footer-cell:last-of-type {
-  padding-right: 24px;
-  border-top-right-radius: 9px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-}
-.table-row {
-  border-radius: 12px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 3px, rgba(0, 0, 0, 0.23) 0px 0px 5px;
-}
-td:first-child,
-th:first-child {
-  border-radius: 10px 0 0 10px;
-}
-td:last-child,
-th:last-child {
-  border-radius: 0 10px 10px 0;
-}
-:host ::ng-deep .mat-row {
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-}
-:host ::ng-deep .mat-row:hover {
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
-  transform: translateY(-2px);
-  transition: all 0.2s ease-in-out;
-}
-
-// 
 .custom-backdrop {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  inset: 0;
   background: rgba(0,0,0,0.5);
   z-index: 998;
 }
@@ -131,6 +71,7 @@ th:last-child {
   box-shadow: 0px 4px 16px rgba(0,0,0,0.3);
   z-index: 999;
 }
+
 .custom-modal-body {
   max-height: 400px;
   overflow-y: auto;
@@ -143,11 +84,80 @@ th:last-child {
   cursor: pointer;
   font-size: 20px;
 }
-.mat-elevation-z8{
-  box-shadow: none;
+
+/* -------------------- TABLE -------------------- */
+
+.table-header {
+  background-color: color.$primary-offset-color1;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 13px;
+  color: color.$textPrimary;
+
+  th.mat-header-cell {
+    border-bottom: none;
+    padding: 12px;
+  }
 }
-.row-chip{
-  display: flex;gap: 12px;justify-content: center; align-items: center;
+
+.mat-elevation-z8 {
+  box-shadow: none !important;
+}
+
+.mat-row.table-row {
+  background-color: color.$white;
+  transition: 0.2s ease-in-out;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  display: table;
+  width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 3px, 
+              rgba(0, 0, 0, 0.23) 0px 0px 5px;
+
+  &:hover {
+    background-color: color.$primary-offset-color2;
+    transform: translateY(-2px);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  }
+}
+
+.mat-table-td {
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-cell,
+.mat-header-cell {
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+table.mat-mdc-table {
+  border-spacing: 0 8px;
+  border-collapse: separate !important;
+  background: transparent;
+  padding: 6px;
+}
+
+/* Rounded Edges */
+td:first-child,
+th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+td:last-child,
+th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+/* Yes/No Icons */
+.row-chip {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
 }
 
 .icon {
@@ -156,58 +166,4 @@ th:last-child {
 
 .icon-check {
   color: color.$success-color !important;
-}
-
-.cardDesign {
-  flex-wrap: wrap;
-  // display: flex;
-  // gap: 16px;
-  // align-items: center;
-  @include mixin.vertical-line();
-  @include mixin.card-design(color.$primary-offset-color1);
-}
-
-.icon-click {
-  cursor: pointer;
-}
-
-.content{
-  width:12%
-}
-/* Remove fixed width so items can shrink/grow naturally */
-.content {
-  width: auto !important;
-  flex: 1;
-  min-width: 150px;   /* ensures good wrapping */
-}
-
-/* Make the whole card responsive */
-.cardDesign {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  align-items: center;
-}
-
-/* Push the visibility icon to the right */
-.content.action-btn {
-  flex: 0 0 auto;
-  margin-left: auto !important;
-}
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-  .cardDesign {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .content {
-    min-width: 100% !important;
-  }
-
-  .content.action-btn {
-    align-self: flex-end;
-    margin-left: 0 !important;
-  }
 }

@@ -1,6 +1,8 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { Component, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { FormBuilder, FormArray, Validators, FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { log } from 'console';
@@ -31,7 +33,7 @@ export class AddVendorFirmComponent {
   showSelectCafeteriaOption = true;
   selectedVendorFirm: any;
   vendorLocation: any
-
+  dialogRef!: MatDialogRef<any>;
   @ViewChild('outletModal') outlet: any;
   @ViewChild('complianceModal') compliance: any;
   @ViewChild('geolocation') geolocation: any;
@@ -41,6 +43,9 @@ export class AddVendorFirmComponent {
   pocDetails: any = []
 
   btnPolicy: any;
+  pocBtn:string = 'Submit';
+  cafeterialist:any;
+
 
   constructor(
     private fb: FormBuilder,
@@ -64,6 +69,8 @@ export class AddVendorFirmComponent {
   async getOrgList() {
     try {
       this.orgList = await this.apiMainService.getOrgList();
+      console.log(this.orgList,"roglist");
+      
     } catch (error) {
       console.log('getOrgList', error);
     }
@@ -104,47 +111,12 @@ export class AddVendorFirmComponent {
     });
   }
 
-  // get pocDetails(): FormArray {
-  //   return this.form.get('poc_details') as FormArray;
-  // }
-
-  // get addressList(): FormArray {
-  //   return this.form.get('address') as FormArray;
-  // }
-
-  addPocDetail() {
-    // this.pocDetails.push(this.fb.group({
-    //   poc_id: ['', Validators.required],
-    //   poc_name: [''],
-    //   poc_phoneNo: [''],
-    //   poc_email: [''],
-    //   poc_location: [''],
-    // }));
-  }
   onFileSelected(event: any) {
-
     const file = event.target.files[0];
     if (file) {
       this.form.get('accountEnrollment')?.setValue(file.name);
     }
-
   }
-
-
-
-  // addAddress() {
-  //   this.addressList.push(this.fb.group({
-  //     address1: [''],
-  //     address2: [''],
-  //     landmark: [''],
-  //     location: [''],
-  //     geolocation: this.fb.group({
-  //       lat: [''],
-  //       lng: [''],
-  //     })
-  //   }));
-  // }
-
   toggleMap(index?: any) {
     this.modalService
       .open(this.geolocation, {
@@ -159,13 +131,6 @@ export class AddVendorFirmComponent {
             lat: this.vendorLocation.latlng.lat,
             lng: this.vendorLocation.latlng.lng,
           });
-          // if (result === 'add') {
-          //   if (result && result.lat && result.lng) {
-          //     this.patchVendorLocation();
-
-          //   }
-
-          // }
         },
         (reason) => {
           console.log(`Model Dismissed`);
@@ -183,18 +148,6 @@ export class AddVendorFirmComponent {
       lng: this.vendorLocation.latlng.lng,
     });
   }
-  // async patchVendorLocation(index: any) {
-  //   const addressArray = this.form.get('address') as FormArray;
-  //   const addressGroup = addressArray.at(index) as FormGroup;
-
-  //   const geoControl = addressGroup.get('geolocation');
-  //   if (geoControl && this.vendorLocation?.latlng) {
-  //     geoControl.patchValue({
-  //       lat: this.vendorLocation.latlng.lat,
-  //       lng: this.vendorLocation.latlng.lng,
-  //     });
-  //   }
-  // }
 
   removeAddress(index: number) {
     this.addressList.splice(index, 1);
@@ -244,14 +197,7 @@ export class AddVendorFirmComponent {
       this.showUpdate = true;
       this.selectedOutletsList = firm.outletList;
       this.patchVendorFirmAndBank(firm);
-      // this.form.patchValue({
-      //   vendorFirmName: firm.vendorFirmName,
-      //   vendorFirmEmail: firm.vendorFirmEmail,
-      //   vendorFirmPhoneNo: firm.vendorFirmPhoneNo,
-      // });
-
       if (firm.poc_details?.length) {
-        // this.pocDetails.clear();
         firm.poc_details.forEach((poc: any, index: number) => {
           if (index !== 0 || this.pocDetails.length === 0) {
             this.pocDetails.push(this.fb.group(poc));
@@ -260,7 +206,6 @@ export class AddVendorFirmComponent {
       }
 
       if (firm.address?.length) {
-        // this.addressList.clear();
         firm.address.forEach((addr: any, index: number) => {
           const addressGroup = this.fb.group({
             address1: [addr.address1 || ''],
@@ -277,23 +222,10 @@ export class AddVendorFirmComponent {
             this.addressList.push(addressGroup.value);
           }
         });
-
-
-
-        // this.addressList.clear();
-        // firm.address.forEach((addr: any, index: number) => {
-        //   if (index !== 0 || this.addressList.length === 0) {
-        //     this.addressList.push(this.fb.group(addr));
-        //   }
-        // });
       }
       if (firm.accountEnrollment) {
         this.form.get('accountEnrollment').setValue(firm.accountEnrollment);
       }
-
-      // if (firm.bank_details) {
-      //   this.form.get('bank_details').setValue(firm.bank_details);
-      // }
     }
   }
 
@@ -329,18 +261,33 @@ export class AddVendorFirmComponent {
     }
   }
 
-  getOrgName(org: any) {
+  getOrgName(org: MatSelectChange) {
     this.showCafeteria = true;
-    if (org && org.target) {
-      this.orgName = org.target.value;
+    if (org && org) {
+      this.orgName = org.value;
+      const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
+      this.cafeterialist = cafes?.cafeteriaList ?? []
     }
   }
 
-  selectCafeteria(event: any) {
-    let [cafeteriaName, cafeteriaCity, organization] = event.target.value.split(',');
-    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organization);
-    this.showModalOutletList = true;
-  }
+selectCafeteria(event: MatSelectChange) {
+  const value = event.value;
+  console.log(event.value , "value ");
+  const cafeteriaName = value.cafeteria_name;
+  const cafeteriaCity = value.cafeteria_city;
+  const cafeteriaId = event.value.cafeteria_id;
+  const organizationName = this.orgList.find((org: any) =>
+    org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
+  )?.organization_name;
+  console.log("Organization Name:", organizationName);
+
+  // const { cafeteriaName, cafeteriaCity, organization } = value;
+  console.log(cafeteriaName, cafeteriaCity, organizationName ,"cafeteriaName, cafeteriaCity, organization");
+  
+  this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
+  this.showModalOutletList = true;
+}
+
 
   async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {
     try {
@@ -356,9 +303,9 @@ export class AddVendorFirmComponent {
     }
   }
 
-  addOutlet() {
-    this.modalService.open(this.outlet, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
-  }
+  // addOutlet() {
+  //   this.modalService.open(this.outlet, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  // }
   addressTemplate() {
     this.modalService.open(this.address, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
@@ -371,8 +318,6 @@ export class AddVendorFirmComponent {
   }
 
   getSelectedOutlets() {
-    console.log(this.outletByCafeteriaList);
-    
     this.outletByCafeteriaList.forEach((elm: any) => {
       if (elm.isChecked) {
         const exists = this.selectedOutletsList.some((outlet: any) => outlet.outletId === elm._id);
@@ -427,13 +372,12 @@ hasSubError(path: string[], error: string) {
   editPoc(index: number) {
     this.isEditPoc = index;
     const value = this.pocDetails[index]
-    this.form.get('poc_details').patchValue(value)
+    this.form.get('poc_details').patchValue(value);
     this.addPoc();
   }
 
-
-
   isEditIndex: number | null = null
+  isEditIndexPoc:number | null = null;
   submitAddress() {
     const addressData = this.form.get('address')?.value;
     if (this.isEditIndex !== null) {
@@ -449,12 +393,40 @@ hasSubError(path: string[], error: string) {
     this.form.get('address').reset()
     this.addressTemplate()
   }
+  openPOCTemplate(){
+    this.isEditIndexPoc = null;
+    this.form.get('poc_details').reset()
+    this.addPoc()
+  }
+  editPOC(i:number){
+    this.isEditIndexPoc = i ;
+    this.pocBtn = 'Update';
+    const value = this.pocDetails[i];
+    this.form.get('poc_details').patchValue(value);
+    this.addPoc();
+  }
   editAddress(i: number) {
     this.isEditIndex = i;
     const value = this.addressList[i]
     this.form.get('address').patchValue(value);
     this.addressTemplate();
   }
+  closeDialog() {
+    this.dialogRef.close();
+  }
+
+@ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
+
+addOutlet() {
+  if (!this.outletDialog) {
+    console.error('TemplateRef outletDialog is not available');
+    return;
+  }
+  this.dialog.open(this.outletDialog, {
+    width: '1000px',
+    disableClose: false
+  });
+}
 
 
 }

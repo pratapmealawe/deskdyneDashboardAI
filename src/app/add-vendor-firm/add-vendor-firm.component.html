@@ -78,10 +78,10 @@
                             <mat-form-field appearance="outline" class="input">
                                 <input matInput placeholder="Enter IFSC Code" formControlName="ifsc" />
                                 <mat-error *ngIf="hasSubError(['bank_details', 'ifsc'],'required')">
-                                    Vendor firm ifsc is required.
+                                    Vendor firm IFSC is required.
                                 </mat-error>
                                 <mat-error *ngIf="hasSubError(['bank_details', 'ifsc'],'pattern')">
-                                    Vendor firm ifsc is pattern.
+                                    Vendor firm IFSC is pattern.
                                 </mat-error>
                             </mat-form-field>
                         </div>
@@ -92,7 +92,7 @@
                             <mat-form-field appearance="outline" class="input">
                                 <input matInput placeholder="Enter UPI ID" formControlName="upi" />
                                 <mat-error *ngIf="hasSubError(['bank_details', 'upi'],'pattern')">
-                                    Vendor firm upi is pattern.
+                                    Vendor firm UPI is pattern.
                                 </mat-error>
                             </mat-form-field>
                         </div>
@@ -104,7 +104,7 @@
                             <mat-form-field appearance="outline" class="input">
                                 <input matInput placeholder="Enter Account Holder Name" formControlName="accountName" />
                                 <mat-error *ngIf="hasSubError(['bank_details', 'accountName'],'required')">
-                                    Vendor firm accountName is required.
+                                    Vendor firm account name is required.
                                 </mat-error>
                             </mat-form-field>
                         </div>
@@ -199,6 +199,12 @@
                                             <mat-error *ngIf="hasSubError(['address','address1'],'pattern')">
                                                 Vendor firm address1 is pattern.
                                             </mat-error>
+                                            <mat-error *ngIf="hasSubError(['address','address1'],'minlength')">
+                                                Minlength must be be 5
+                                            </mat-error>
+                                            <mat-error *ngIf="hasSubError(['address','address1'],'maxlength')">
+                                                Maxlength must be 80
+                                            </mat-error>
                                         </mat-form-field>
                                     </div>
                                 </div>
@@ -214,6 +220,12 @@
                                             </mat-error>
                                             <mat-error *ngIf="hasSubError(['address','address2'],'pattern')">
                                                 Vendor firm address2 is pattern.
+                                            </mat-error>
+                                            <mat-error *ngIf="hasSubError(['address','address2'],'minlength')">
+                                                Minlength must be 5
+                                            </mat-error>
+                                            <mat-error *ngIf="hasSubError(['address','address2'],'maxlength')">
+                                                Maxlength must be 80
                                             </mat-error>
                                         </mat-form-field>
                                     </div>
@@ -301,7 +313,7 @@
         <div class="row mt-3">
             <div class="d-flex align-items-center justify-content-between mb-4">
                 <h5>POC Details</h5>
-                <button mat-raised-button color="primary" (click)="addPoc()"> Add POC </button>
+                <button mat-raised-button color="primary" (click)="openPOCTemplate()"> Add POC </button>
             </div>
             <div class="no-address" *ngIf="pocDetails.length === 0">
                 <p>No POC added yet.</p>
@@ -338,7 +350,7 @@
 
                     </div>
                     <div class="col-lg-3 d-flex align-items-center" style="width:5%">
-                        <mat-icon color="primary" (click)="editPoc(i)">edit</mat-icon>
+                        <mat-icon color="primary" (click)="editPOC(i)">edit</mat-icon>
                         <mat-icon class="ms-2" color="warn" (click)="removePocDetail(i)">delete</mat-icon>
                     </div>
                 </div>
@@ -360,10 +372,10 @@
                                     <mat-form-field appearance="outline" class="input">
                                         <input matInput formControlName="poc_id" placeholder="POC ID" />
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_id'],'required')">
-                                            Vendor firm poc_id is required.
+                                            Vendor firm POC ID is required.
                                         </mat-error>
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_id'],'pattern')">
-                                            Vendor firm poc_id is pattern.
+                                            Vendor firm POC ID is pattern.
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
@@ -375,10 +387,10 @@
                                     <mat-form-field appearance="outline" class="input">
                                         <input matInput formControlName="poc_name" placeholder="POC Name" />
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_name'],'required')">
-                                            Vendor firm poc_name is required.
+                                            Vendor firm POC name is required.
                                         </mat-error>
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_name'],'pattern')">
-                                            Vendor firm poc_name is pattern.
+                                            Vendor firm POC name is pattern.
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
@@ -390,10 +402,10 @@
                                     <mat-form-field appearance="outline" class="input">
                                         <input matInput formControlName="poc_phoneNo" placeholder="Phone Number" />
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_phoneNo'],'required')">
-                                            Vendor firm poc_phoneNo is required.
+                                            Vendor firm POC phone no is required.
                                         </mat-error>
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_phoneNo'],'pattern')">
-                                            Vendor firm poc_phoneNo is pattern.
+                                            Vendor firm POC phone no is pattern.
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
@@ -405,10 +417,10 @@
                                     <mat-form-field appearance="outline" class="input">
                                         <input matInput formControlName="poc_email" placeholder="Email" />
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_email'],'required')">
-                                            Vendor firm poc_email is required.
+                                            Vendor firm POC email is required.
                                         </mat-error>
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_email'],'pattern')">
-                                            Vendor firm poc_email is pattern.
+                                            Vendor firm POC email is pattern.
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
@@ -420,10 +432,10 @@
                                     <mat-form-field appearance="outline" class="input">
                                         <input matInput formControlName="poc_location" placeholder="Location" />
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_location'],'required')">
-                                            Vendor firm poc_location is required.
+                                            Vendor firm POC location is required.
                                         </mat-error>
                                         <mat-error *ngIf="hasSubError(['poc_details','poc_location'],'pattern')">
-                                            Vendor firm poc_location is pattern.
+                                            Vendor firm POC location is pattern.
                                         </mat-error>
                                     </mat-form-field>
                                 </div>
@@ -432,7 +444,8 @@
                     </div>
                 </div>
                 <div class="d-flex justify-content-end p-3">
-                    <button mat-stroked-button color="primary" [disabled]="!this.form.get('poc_details').valid" (click)="submitPocDetails()"> Submit</button>
+                    <button mat-stroked-button color="primary" [disabled]="!this.form.get('poc_details').valid"
+                        (click)="submitPocDetails()"> {{pocBtn}}</button>
                 </div>
             </div>
         </ng-template>
@@ -469,7 +482,7 @@
                             <div class="labelData">{{ outlet.cafeteriaDetails.cafeteria_name }}</div>
                         </div>
                         <div class="grid-item delete-btn justify-content-end">
-                            <mat-icon (click)="deleteOutlet(i)" color="warn">delete</mat-icon>
+                            <mat-icon (click)="deleteOutlet(i)" color="warn" appAutoTooltip>delete</mat-icon>
                         </div>
                     </div>
                 </div>
@@ -497,60 +510,62 @@
         <button mat-raised-button color="primary" class="responsive-btn" *ngIf="!showUpdate && !btnPolicy?.editVendor"
             (click)="submit()">Submit</button>
     </div>
-    <ng-template #outletModal let-modal>
-        <div class="modal-header">
-            <h4 class="modal-title" id="modal-basic-title">Outlet List</h4>
-            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-                <span aria-hidden="true">&times;</span>
+
+    <ng-template #outletModal>
+        <div class="heading">
+            <div mat-dialog-title>Outlet List</div>
+            <button mat-icon-button mat-dialog-close>
+                <mat-icon>close</mat-icon>
             </button>
         </div>
-        <div class="modal-body">
-            <div class="selectParent">
-                <select class="inline selectStyle" (change)="getOrgName($event)">
-                    <option>select organization</option>
-                    <option *ngFor="let org of orgList" value="{{ org.organization_name }}">
-                        {{ org.organization_name }}
-                    </option>
-                </select>
-                <select class="inline selectStyle" (change)="selectCafeteria($event)" *ngIf="showCafeteria">
-                    <option>Select Cafetereria</option>
-                    <ng-container *ngFor="let org of orgList">
-                        <ng-container *ngIf="orgName == org.organization_name">
-                            <option *ngFor="let cafeteria of org.cafeteriaList" value="{{ cafeteria.cafeteria_name }},{{
-                cafeteria.cafeteria_city
-              }},{{ org.organization_name }}">
-                                {{ cafeteria.cafeteria_name }}-{{ cafeteria.cafeteria_city }}
-                            </option>
-                        </ng-container>
-                    </ng-container>
-                </select>
+        <mat-dialog-content class="pe-3 ps-3">
+            <div class="d-flex gap-3 justify-content-between">
+                <div class="field w-100">
+                    <label>Select Organization</label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-select (selectionChange)="getOrgName($event)">
+                            <mat-option *ngFor="let org of orgList" [value]="org.organization_name">
+                                {{ org.organization_name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="field w-100">
+                    <label>Select Cafeteria</label>
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-select [disabled]="!orgName" (selectionChange)="selectCafeteria($event)">
+                            <mat-option *ngFor="let cafeteria of cafeterialist "
+                                [value]="cafeteria">
+                                {{ cafeteria.cafeteria_name }} - {{ cafeteria.cafeteria_city }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
             </div>
             <div class="mt-3" *ngIf="showModalOutletList">
-                <div *ngFor="let outlet of outletByCafeteriaList">
-                    <div class="row">
-                        <div class="col-6 col-md-5 col-lg-2">
-                            <mat-checkbox [(ngModel)]="outlet.isChecked"></mat-checkbox>
+                <div *ngFor="let outlet of outletByCafeteriaList" class="py-2">
+                    <div class="row align-items-center">
+                        <div class="col-2">
+                            <mat-checkbox #confirmed [(ngModel)]="outlet.isChecked" color="primary"></mat-checkbox>
                         </div>
-                        <div class="col-6 col-md-5 col-lg-3">
-                            <div class="labelText">outlet Name</div>
-                            <div class="labelData">{{ outlet.outletName }}</div>
+                        <div class="col-3">
+                            <b>{{ outlet.outletName }}</b>
                         </div>
-                        <div class="col-6 col-md-7 col-lg-3">
-                            <div class="labelText">outlet type</div>
-                            <div class="labelData">{{ outlet.outletType }}</div>
+                        <div class="col-3">
+                            {{ outlet.outletType }}
                         </div>
-                        <div class="col-6 col-md-7 col-lg-4">
-                            <div class="labelText">description</div>
-                            <div class="labelData">{{ outlet.outletDescription }}</div>
+                        <div class="col-4 text-wrap">
+                            {{ outlet.outletDescription }}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="btn btn-primary btn-sm mt-2" (click)="getSelectedOutlets()">
-                Add
-            </div>
-        </div>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end" class="p-3">
+            <button mat-flat-button color="primary" (click)="getSelectedOutlets()"  >Add</button>
+        </mat-dialog-actions>
     </ng-template>
+  
     <ng-template #complianceModal let-modal>
         <div class="modal-header">
             <h4 class="modal-title" id="modal-basic-title">Compliance</h4>

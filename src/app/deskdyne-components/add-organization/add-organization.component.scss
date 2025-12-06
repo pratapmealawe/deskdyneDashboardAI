@@ -240,3 +240,37 @@ mat-icon {
 ::ng-deep .mat-mdc-checkbox .mdc-label {
   margin: 0 !important;
 }
+.modal-container {
+  width: 100%; 
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  align-items: center;
+}
+
+.modal-body {
+  width: 100%;
+}
+
+.approver-item {
+  width: 100%;
+
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+
+/* Responsive: stack columns on small screens */
+@media(max-width: 600px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}

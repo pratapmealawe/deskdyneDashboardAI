@@ -72,6 +72,6 @@
     </div>
   </div>
 </div>
-<div class="bgpadding1" *ngIf="!showSearchSection">
+<div *ngIf="!showSearchSection">
   <app-vendor-firm-view [vendor]="vendorInfo" (back)="toggleShowOrder($event)"></app-vendor-firm-view>
 </div>

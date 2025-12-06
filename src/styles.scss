@@ -662,6 +662,7 @@ button.accordion-button:focus {
   font-size: clamp(0.75rem, 2vw, 1rem) !important;
 
   mat-icon {
+    cursor: pointer;
     font-size: clamp(16px, 3vw, 18px) !important;
   }
 }
