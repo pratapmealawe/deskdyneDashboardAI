@@ -3,195 +3,256 @@
     <button *ngIf="!editMode && access" type="button" mat-raised-button
       (click)="editMode = true" color="primary"><mat-icon>edit</mat-icon>Edit</button>
   </div>
-  <div class="row">
-    <div *ngIf="!editMode" class="col-sm-6 col-md-6 col-lg-6 mt-2 mb-4 p-0">
-      <!-- <div class="labelText">Compliance Status: <span class="labelData">{{profileApproval}}</span></div> -->
-    </div>
-    <div *ngIf="editMode" class="col-sm-6 col-md-6 col-lg-6 mt-2 mb-4">
-      <!-- <div class="labelText">Compliance Status: <span class="labelData">{{profileApproval}}</span></div> -->
-    </div>
-  </div>
 
   <ng-container *ngIf="!editMode">
-    <div class="row" *ngIf="compliance.fssaiFileUrl">
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Fssai No: <span class="labelData">{{compliance.fssaiNo}}</span></div>
-        <div class="labelText">Fssai Expiry Date: <span class="labelData">{{compliance.fssaiExpiryDate}}</span></div>
+    <div class="row border-bottom pb-2" *ngIf="compliance?.fssaiFileUrl">
+      <div class="col-sm-6 col-md-6 col-lg-6">
+        <div class="labelText">Fssai No: <br />
+          <span class="labelData">{{compliance?.fssaiNo}}</span>
+        </div>
+        <div class="labelText">Fssai Expiry Date: <span class="labelData">{{compliance?.fssaiExpiryDate}}</span></div>
       </div>
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.fssaiFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.fssaiFileUrl)">Download</button>
+      <div class="col-sm-6 col-md-6 col-lg-6">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.fssaiFileUrl, 'Fssai')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+
+          <button *ngIf="isAdmin" mat-raised-button color="primary" (click)="downloadFile(compliance?.fssaiFileUrl)">
+            <mat-icon class="me-1">download</mat-icon>
+            Download
+          </button>
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.siteFssaiFileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance?.siteFssaiFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Site FSSAI No: <span class="labelData">{{compliance.siteFssaiNo}}</span></div>
+        <div class="labelText">Site FSSAI No: <br /><span class="labelData">{{compliance?.siteFssaiNo}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.siteFssaiFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.siteFssaiFileUrl)">Download</button>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="compliance.shopActLicenseFileUrl">
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Shop Act License No: <span class="labelData">{{compliance.shopActLicenseNo}}</span></div>
-      </div>
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.shopActLicenseFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm"
-            (click)="downloadFile(compliance.shopActLicenseFileUrl)">Download</button>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="compliance.aadharFileUrl">
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Aadhar No: <span class="labelData">{{compliance.adhaar}}</span></div>
-      </div>
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.aadharFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.aadharFileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.siteFssaiFileUrl, 'Site FSSAI No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.siteFssaiFileUrl)">
+            <mat-icon class="me-1">download</mat-icon>
+            Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.udyamAadharFileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance?.shopActLicenseFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Udyam Aadhar No: <span class="labelData">{{compliance.udyamAadharNo}}</span></div>
+        <div class="labelText">Shop Act License No: <br /><span
+            class="labelData">{{compliance?.shopActLicenseNo}}</span>
+        </div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.udyamAadharFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.udyamAadharFileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2"
+            (click)="viewFile(compliance?.shopActLicenseFileUrl, 'Shop Act License No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.shopActLicenseFileUrl)"><mat-icon class="me-1">download</mat-icon>
+            Download</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row border-bottom pb-2" *ngIf="compliance?.aadharFileUrl">
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="labelText">Aadhar No: <br /><span class="labelData">{{compliance?.adhaar}}</span></div>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.aadharFileUrl, 'Aadhar No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.aadharFileUrl)"><mat-icon
+              class="me-1">download</mat-icon>Download</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row border-bottom pb-2" *ngIf="compliance?.udyamAadharFileUrl">
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="labelText">Udyam Aadhar No: <br /><span class="labelData">{{compliance?.udyamAadharNo}}</span></div>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.udyamAadharFileUrl, 'Udyam Aadhar No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.udyamAadharFileUrl)"><mat-icon
+              class="me-1">download</mat-icon>Download</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row border-bottom pb-2" *ngIf="compliance?.TradeLicUrl">
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="labelText">Trade License Number: <br /><span class="labelData">{{compliance?.tradeLicNumber}}</span>
+        </div>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.TradeLicUrl, 'Trade License No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.TradeLicUrl)"><mat-icon class="me-1">download</mat-icon>Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.TradeLicUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance?.pfFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Trade License Number: <span class="labelData">{{compliance.tradeLicNumber}}</span></div>
+        <div class="labelText">PF No: <br /><span class="labelData">{{compliance?.pfno}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.TradeLicUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.TradeLicUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.pfFileUrl, 'PF No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.pfFileUrl)"><mat-icon class="me-1">download</mat-icon>Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.pfFileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance?.ESIFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">PF No: <span class="labelData">{{compliance.pfno}}</span></div>
+        <div class="labelText">ESI No: <br /><span class="labelData">{{compliance?.ESIFileno}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.pfFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.pfFileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.ESIFileUrl, 'ESI No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.ESIFileUrl)"><mat-icon class="me-1">download</mat-icon>Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.ESIFileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance.esiT3FileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">ESI No: <span class="labelData">{{compliance.ESIFileno}}</span></div>
+        <div class="labelText">ESI T3 Number: <br /><span class="labelData">{{compliance.esiT3Number}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.ESIFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.ESIFileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.esiT3FileUrl, 'ESI T3 No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.esiT3FileUrl)"><mat-icon class="me-1">download</mat-icon>Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.esiT3FileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance?.GSTFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">ESI T3 Number: <span class="labelData">{{compliance.esiT3Number}}</span></div>
+        <div class="labelText">Gst Number: <br /><span class="labelData">{{compliance?.gstNumber}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.esiT3FileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.esiT3FileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.GSTFileUrl, 'GST No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.GSTFileUrl)"><mat-icon class="me-1">download</mat-icon>Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.GSTFileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance?.PanCardFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Gst Number: <span class="labelData">{{compliance.gstNumber}}</span></div>
+        <div class="labelText">Pan Card Number: <br /><span class="labelData">{{compliance?.panNumber}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.GSTFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.GSTFileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.PanCardFileUrl, 'Pan Card No')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.PanCardFileUrl)"><mat-icon
+              class="me-1">download</mat-icon>Download</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="row border-bottom pb-2" *ngIf="compliance?.pestconFileUrl">
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="labelText">Pest Control: <br /></div>
+      </div>
+      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2" (click)="viewFile(compliance?.pestconFileUrl, 'Pest Control')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.pestconFileUrl)"><mat-icon
+              class="me-1">download</mat-icon>Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.PanCardFileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance.cancelledChequeFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Pan Card Number: <span class="labelData">{{compliance.panNumber}}</span></div>
+        <div class="labelText">Cancelled Cheque: <br /><span class="labelData">File Attached</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.PanCardFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.PanCardFileUrl)">Download</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="compliance.pestconFileUrl">
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Pest Control :</div>
-      </div>
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.pestconFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm" (click)="downloadFile(compliance.pestconFileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2"
+            (click)="viewFile(compliance?.cancelledChequeFileUrl, 'Cancelled Cheque')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary"
+            (click)="downloadFile(compliance?.cancelledChequeFileUrl)"><mat-icon
+              class="me-1">download</mat-icon>Download</button>
 
         </div>
       </div>
     </div>
 
-    <div class="row" *ngIf="compliance.cancelledChequeFileUrl">
+    <div class="row border-bottom pb-2" *ngIf="compliance?.selfDeclarationFileUrl">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Cancelled Cheque: <span class="labelData">File Attached</span></div>
+        <div class="labelText">Self declaration: <br /><span class="labelData">File Attached</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.cancelledChequeFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm"
-            (click)="downloadFile(compliance.cancelledChequeFileUrl)">Download</button>
-
-        </div>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="compliance.selfDeclarationFileUrl">
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Self declaration: <span class="labelData">File Attached</span></div>
-      </div>
-      <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="pdf-preview">
-          <iframe [src]="compliance.selfDeclarationFileUrl" type="application/pdf"></iframe>
-          <button class="btn btn-success btn-sm"
-            (click)="downloadFile(compliance.selfDeclarationFileUrl)">Download</button>
+        <div class="d-flex justify-content-center align-items-center h-100">
+          <button mat-raised-button class="me-2"
+            (click)="viewFile(compliance?.selfDeclarationFileUrl, 'Self declaration')">
+            <mat-icon class="me-1">visibility</mat-icon>
+            View
+          </button>
+          <button *ngIf="isAdmin" mat-raised-button color="primary" (click)="downloadFile(compliance?.selfDeclarationFileUrl)"><mat-icon
+              class="me-1">download</mat-icon>Download</button>
         </div>
       </div>
     </div>
@@ -200,91 +261,93 @@
   <ng-container *ngIf="!editMode">
     <div class="row" *ngIf="!compliance.fssaiFileUrl && compliance.fssaiNo">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Fssai No: <span class="labelData">{{compliance.fssaiNo}}</span></div>
+        <div class="labelText">Fssai No: <br /><span class="labelData">{{compliance.fssaiNo}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.siteFssaiFileUrl && compliance.siteFssaiNo">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Site FSSAI No: <span class="labelData">{{compliance.siteFssaiNo}}</span></div>
+        <div class="labelText">Site FSSAI No: <br /><span class="labelData">{{compliance.siteFssaiNo}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.shopActLicenseFileUrl && compliance.shopActLicenseNo">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Shop Act License No: <span class="labelData">{{compliance.shopActLicenseNo}}</span></div>
+        <div class="labelText">Shop Act License No: <br /><span class="labelData">{{compliance.shopActLicenseNo}}</span>
+        </div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.aadharFileUrl && compliance.adhaar">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Aadhar No: <span class="labelData">{{compliance.adhaar}}</span></div>
+        <div class="labelText">Aadhar No: <br /><span class="labelData">{{compliance.adhaar}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.udyamAadharFileUrl && compliance.udyamAadharNo">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Udyam Aadhar No: <span class="labelData">{{compliance.udyamAadharNo}}</span></div>
+        <div class="labelText">Udyam Aadhar No: <br /><span class="labelData">{{compliance.udyamAadharNo}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.TradeLicUrl && compliance.tradeLicNumber">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Trade License Number: <span class="labelData">{{compliance.tradeLicNumber}}</span></div>
+        <div class="labelText">Trade License Number: <br /><span class="labelData">{{compliance.tradeLicNumber}}</span>
+        </div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.pfFileUrl && compliance.pfno">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">PF No: <span class="labelData">{{compliance.pfno}}</span></div>
+        <div class="labelText">PF No: <br /><span class="labelData">{{compliance.pfno}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.ESIFileUrl && compliance.ESIFileno">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">ESI No: <span class="labelData">{{compliance.ESIFileno}}</span></div>
+        <div class="labelText">ESI No: <br /><span class="labelData">{{compliance.ESIFileno}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.esiT3FileUrl && compliance.esiT3Number">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">ESI T3 Number: <span class="labelData">{{compliance.esiT3Number}}</span></div>
+        <div class="labelText">ESI T3 Number: <br /><span class="labelData">{{compliance.esiT3Number}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.GSTFileUrl && compliance.gstNumber">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Gst Number: <span class="labelData">{{compliance.gstNumber}}</span></div>
+        <div class="labelText">Gst Number: <br /><span class="labelData">{{compliance.gstNumber}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.PanCardFileUrl && compliance.panNumber">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Pan Card Number: <span class="labelData">{{compliance.panNumber}}</span></div>
+        <div class="labelText">Pan Card Number: <br /><span class="labelData">{{compliance.panNumber}}</span></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="!compliance.pestconFileUrl && compliance.pestconNumber">
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-        <div class="labelText">Pest Control : </div>
+        <div class="labelText">Pest Control: <br /></div>
       </div>
       <div class="col-sm-6 col-md-6 col-lg-6 mt-2"></div>
     </div>
 
     <div class="row" *ngIf="compliance.comment">
       <div class="col-sm-12 col-md-12 col-lg-12 mt-2">
-        <div class="labelText">Comment: <span class="labelData">{{compliance.comment}}</span></div>
+        <div class="labelText">Comment: <br /><span class="labelData">{{compliance.comment}}</span></div>
       </div>
     </div>
   </ng-container>
@@ -602,7 +665,6 @@
     </div>
   </ng-container>
 
-
   <div class="row">
     <div class="col-sm-12 col-md-12 col-lg-12">
       <div *ngIf="editMode">
@@ -631,4 +693,16 @@
       </div> -->
     </div>
   </div>
+
+  <ng-template #previewModal let-dialogRef="dialogRef">
+    <div class="dialog-header">
+      <h4 class="dialog-title">{{ previewObj.title || 'Preview' }}</h4>
+      <button mat-icon-button mat-dialog-close class="dialog-close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    <div class="dialog-content">
+      <iframe [src]="previewObj.url" type="application/pdf"></iframe>
+    </div>
+  </ng-template>
 </div>

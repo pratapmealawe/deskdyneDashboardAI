@@ -1,3 +1,17 @@
+@use '/src/styles/theme/mixins' as mixin;
+
+.input-group {
+  width: 17%;
+}
+
+.search-icon {
+  margin-top: -5px;
+}
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
+}
+
 .headerDiv {
   display: flex;
   align-items: center;
@@ -10,12 +24,6 @@
 
 .page-title {
   font-weight: 600;
-}
-
-.filter-card {
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
 }
 
 .search-field {

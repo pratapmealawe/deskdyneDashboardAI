@@ -1,41 +1,37 @@
-<div class="container-fluid px-4">
+<div class="container-fluid">
   <div class="row">
-    <div class="col-md-8 d-flex align-items-baseline gap-2">
-      <button (click)="backToMainPage()" *ngIf="selectedOutlet" class="backBtn">
-        &#8592;
+    <div class="col-md-8 d-flex align-items-baseline gap-2 pb-4">
+      <button *ngIf="selectedOutlet" mat-flat-button (click)="backToMainPage()">
+        <mat-icon>arrow_back</mat-icon>
+        Back
       </button>
       <h3 class="m-0">
         {{ selectedOutlet ? "Outlet Details" : "Menu Counters" }}
       </h3>
     </div>
-
-
-  </div>
-
-  <div class="row mb-4 mt-3 p-3 bg-light rounded">
     <div class="col-md-4">
-      <label class="labelText">Cafeteria</label>
-      <select [disabled]="selectedOutlet" class="form-select" [(ngModel)]="cafeteria_id" (change)="fetchData()">
-        <option selected disabled value="">Select Cafeteria</option>
-        <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
-          {{ option.cafeteria_name }}
-        </option>
-      </select>
-    </div>
-    <div class="col-md-4">
-      <label class="labelText">Search</label>
-      <div class="searchDiv">
-        <i class="bi bi-search"></i>
-        <input type="text" class="form-control" (input)="searchFilter($event)"
-          [placeholder]="selectedOutlet ? 'Search Menu...' : 'Search Outlets...'" />
+      <div class="col d-flex justify-content-end align-items-center">
+        <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
+          <mat-form-field appearance="outline" class="search-input">
+            <input matInput type="text" placeholder="Search outlet cafe..." (input)="searchFilter($event)" />
+            <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+              <mat-icon>search</mat-icon> </button>
+          </mat-form-field>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="py-4 container-fluid px-0" *ngIf="filteredOutletList.length > 0">
+  <div *ngIf="!selectedOutlet" class="row mb-2">
+    <app-common-outlet-cafe-select [config]="headerConfig"
+      (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+  </div>
+
+  <div class="container-fluid p-4 bg-light" *ngIf="filteredOutletList.length > 0">
+    <!-- All Outlets -->
     <div class="row" *ngIf="!selectedOutlet">
       <div class="col-md-4" *ngFor="let outlet of filteredOutletList; let i = index">
-        <div class="card customCard backColor shadow-sm">
+        <div class="card customCard backColor shadow-sm mb-3">
           <img class="w-100 outlet-image" [src]="
               outlet.imageUrl
                 ? imageUrl + outlet.imageUrl
@@ -47,21 +43,7 @@
               <h5 class="card-title text-truncate m-0">
                 {{ outlet?.outletName }}
               </h5>
-              <img [src]="
-                  outlet?.outletType === 'Veg'
-                    ? 'assets/icon/veg.svg'
-                    : 'assets/icon/nonveg.svg'
-                " alt="type" class="icon-small" />
             </div>
-
-            <!-- Rating Section -->
-            <p class="rating mt-2">
-              <ng-container *ngFor="let star of getStars(outlet?.rating)">
-                <img [src]="
-                    star ? 'assets/icon/starOn.svg' : 'assets/icon/starOff.svg'
-                  " alt="star" class="star-icon" />
-              </ng-container>
-            </p>
 
             <!-- Read More Description -->
             <p class="card-text text-muted">
@@ -77,7 +59,7 @@
             </p>
 
             <div class="d-flex justify-content-between align-items-center">
-              <button (click)="showOutletDetails(outlet)" class="btn btn-primary">
+              <button (click)="showOutletDetails(outlet)" class="btn btn-outline-primary btn-sm">
                 View Menu List
               </button>
               <span *ngIf="outlet?.outletDescription.length > 100" class="read-more" (click)="toggleReadMore(i)">
@@ -89,7 +71,7 @@
       </div>
     </div>
 
-    <!-- Selected Outlet Details -->
+    <!-- Selected Outlet -->
     <div *ngIf="selectedOutlet">
       <div class="card customCard backColor mb-5 p-4">
         <h4 class="mb-2">Cafeteria Details</h4>
@@ -133,7 +115,7 @@
     </div>
   </div>
 
-  <div class="center labelText mt-2" *ngIf="filteredOutletList.length == 0">
+  <mat-card class="center labelText py-2 rounded-4 mt-4" *ngIf="filteredOutletList.length == 0">
     No Outlets Found
-  </div>
+  </mat-card>
 </div>

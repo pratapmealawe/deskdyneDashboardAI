@@ -12,6 +12,7 @@ export class DashboardComponent implements OnInit {
 
   orglist: any = [];
   orgSelected: any = null;
+  isOrgSelected: boolean = false;
 
 
   constructor(private apiMainService: ApiMainService, private router: Router, private ref: ChangeDetectorRef) {
@@ -24,7 +25,8 @@ export class DashboardComponent implements OnInit {
 
   changeOrganization(e: any) {
     const id = e.value
-    this.orgSelected = this.orglist.find((item: any) => item._id === id)
+    this.orgSelected = this.orglist.find((item: any) => item._id === id);
+    this.isOrgSelected = true;
   }
 
 

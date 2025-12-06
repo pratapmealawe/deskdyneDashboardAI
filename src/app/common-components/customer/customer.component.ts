@@ -1,5 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
@@ -23,7 +22,9 @@ interface Filter {
   templateUrl: './customer.component.html',
   styleUrls: ['./customer.component.scss']
 })
-export class CustomerComponent implements OnInit {
+export class CustomerComponent implements OnInit, OnChanges {
+  @Input() adminOrg: any;
+  isDisabled: boolean = false;
   customerList: any[] = [];
   filteredCustomerList: any[] = [];
   pagedCustomerList: any[] = [];
@@ -35,7 +36,7 @@ export class CustomerComponent implements OnInit {
   orglist: any[] = [];
   orgDetails: any = {};
   orgAdmin: any;
-
+  isOrgAdmin: boolean = false;
   isViewCustomer: boolean = false;
   selectedUser: any;
 
@@ -48,8 +49,13 @@ export class CustomerComponent implements OnInit {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService,
-    private router: Router
   ) { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
+      this.setInitialData();
+    }
+  }
 
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
@@ -69,14 +75,16 @@ export class CustomerComponent implements OnInit {
     }
   }
 
-  // 👉 On init: if ORGADMIN use their org, else first org from list
+  // 👉 On init: if ORGADMIN use their org, else will need to select manually
   setInitialData() {
-    if (this.orgAdmin?.role === 'ORGADMIN') {
-      this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
-    } else if (this.orglist.length) {
-      this.filterObj.orgId = this.orglist[0]._id;
+    if (this.adminOrg) {
+      this.filterObj.orgId = this.adminOrg._id;
+      this.isDisabled = true;
     }
-
+    if (this.orgAdmin?.role === 'ORGADMIN') {
+      this.isOrgAdmin = true;
+      this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
+    }
     if (this.filterObj.orgId) {
       this.setOrgDetails();
       this.getCustomerProfileList(); // load org-wise data
@@ -87,8 +95,19 @@ export class CustomerComponent implements OnInit {
     this.orgDetails = this.orglist.find(
       (org: any) => org._id === this.filterObj?.orgId
     );
+    console.log(this.filterObj?.orgId, "this.filterObj?.orgId");
   }
 
+   onKeyEvent(event: any) {
+    if (event.key === "Escape") {
+      (event.target as HTMLInputElement).value = '';
+      this.filteredCustomerList = [...this.customerList];
+    }
+
+    if (event.key === "Enter") {
+      this.searchFilter(event);
+    }
+  }
   searchFilter(e: any) {
     this.searchText = e.target.value || '';
     const config = { keys: ['userName', 'phoneNo', 'email'] };

@@ -1,7 +1,7 @@
 <div class="container-fluid py-3 dashboardContainer">
   <h3>Dashboard</h3>
 
-  <ng-container *ngIf="orgAdmin.role === 'ORGADMIN'">
+  <ng-container *ngIf="orgAdmin.role === 'ORGADMIN' || isOrgSelected">
     <app-main-dashboard [orgAdmin]="orgAdmin"></app-main-dashboard>
   </ng-container>
 
