@@ -1,6 +1,7 @@
 <div class="container-fluid">
   <div class="align-items-center justify-content-between">
-    <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between pe-1 ps-3" *ngIf="showSearchSection">
+    <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between pe-1 ps-3"
+      *ngIf="showSearchSection">
       <div class="g-0">
         <h4 class="m-0 fw-semibold">Outlet</h4>
       </div>
@@ -34,7 +35,7 @@
   No Outlet Found
 </div>
 <div *ngIf="outletList && outletList.length > 0 && showSearchSection">
-    <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
+  <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
 </div>
 <div class="center mt-5" *ngIf="outletList.length === 0">No Records Found</div>
 <div class="" *ngIf="!showSearchSection && outletList.length > 0">

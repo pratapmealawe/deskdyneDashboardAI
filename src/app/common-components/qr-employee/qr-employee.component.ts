@@ -6,7 +6,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ExcelService } from 'src/service/excel.service';
 import { QrEmployeeDialogComponent, QrEmployeeDialogData } from './qr-employee-dialog/qr-employee-dialog.component';
-import * as QRCode from 'qrcode';
 import { PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -162,29 +161,6 @@ export class QrEmployeeComponent implements OnInit {
     }
   }
 
-  private async generateQrDataUrl(emp: any): Promise<string> {
-    const payload = {
-      organization_id: this.orgObj._id,
-      organization_name: this.orgObj.organization_name,
-      cafeteria_id: this.selectedCafeteriaId,
-      cafeteria_name: this.selectedCafeteriaName,
-      employeeId: emp.employeeId,
-      employeeName: emp.employeeName,
-      employeePhoneNo: emp.employeePhoneNo,
-      employeeEmail: emp.employeeEmail
-    };
-
-    const data = JSON.stringify(payload);
-
-    try {
-      // returns: "data:image/png;base64,...."
-      return await QRCode.toDataURL(data, { errorCorrectionLevel: 'M' });
-    } catch (err) {
-      console.error('Bulk QR generation failed', err);
-      return '';
-    }
-  }
-
   // ---------- ADD / EDIT (SINGLE) USING DIALOG ----------
 
   openAddDialog(): void {
@@ -214,7 +190,6 @@ export class QrEmployeeComponent implements OnInit {
       try {
         const res = await this.apiMainService.addQrEmployeeList(payload);
         if (res && res.length > 0) {
-            await this.regenerateAndUpdateQrCodes(res);
           this.snackBar.open('Employee added successfully', 'Close', { duration: 2500 });
           this.getEmployeeListByCafeId();
         }
@@ -338,8 +313,6 @@ export class QrEmployeeComponent implements OnInit {
 
 
     for (const emp of this.employeesFA.value) {
-      const qrCodeDataUrl = await this.generateQrDataUrl(emp); // 🔥 PNG base64 data URL
-
       employeesPayload.push({
         organization_name: this.orgObj.organization_name,
         organization_id: this.orgObj._id,
@@ -349,15 +322,13 @@ export class QrEmployeeComponent implements OnInit {
         employeeId: emp.employeeId,
         employeePhoneNo: emp.employeePhoneNo,
         employeeEmail: emp.employeeEmail,
-        qrCode: qrCodeDataUrl  // 🔥 same as dialog: full data URL string
+        qrCode: ""  
       });
     }
 
     try {
       const res = await this.apiMainService.addQrEmployeeList(employeesPayload);
       if (res && res.length > 0) {
-          await this.regenerateAndUpdateQrCodes(res);
-
         this.snackBar.open('Employees added successfully', 'Close', { duration: 2500 });
         this.getEmployeeListByCafeId();
         this.hideBulkForm();
@@ -664,50 +635,4 @@ export class QrEmployeeComponent implements OnInit {
     const fileName = `Card_${employee.employeeName}.pdf`;
     pdfMake.createPdf(docDefinition).download(fileName);
   }
-
-  // ---------- QR REGEN AFTER CREATE ----------
-  private async regenerateAndUpdateQrCodes(createdEmployees: any[]): Promise<void> {
-    if (!createdEmployees || !createdEmployees.length) return;
-
-    try {
-      const tasks = createdEmployees.map(async (emp: any) => {
-        // Safely pick values from response
-        const customerProfile = emp.customerProfile || {};
-        const user = emp.user || {};
-
-        const payload = {
-          organization_id: this.orgObj?._id,
-          organization_name: this.orgObj?.organization_name,
-          cafeteria_id: this.selectedCafeteriaId,
-          cafeteria_name: this.selectedCafeteriaName,
-
-          // basic employee info (fallback between response/body fields)
-          employeeId: customerProfile?.employeeInfo?.empId,
-          employeeName: customerProfile?.userName,
-          employeePhoneNo: customerProfile?.phoneNo,
-          employeeEmail: customerProfile?.email,
-
-          // 🔥 extra info from response
-          customerProfileId: customerProfile?._id,
-          loginId: customerProfile?.loginId || user?._id,
-        };
-
-        console.log(payload)
-        const data = JSON.stringify(payload);
-        const qrcodeDataUrl = await QRCode.toDataURL(data, { errorCorrectionLevel: 'M' });
-
-        return this.apiMainService.updateEmployeeQrCode(
-          emp.employeePhoneNo,                     // or emp._id / customerProfile._id etc.
-          { qrCode: qrcodeDataUrl }               // 👈 as you mentioned: {qrcode: "..."}
-        );
-      });
-
-      await Promise.all(tasks);
-    } catch (err) {
-      console.error('Failed to regenerate/update QR codes', err);
-      // not blocking UX, just log – you can add snackbar if needed
-    }
-  }
-
-
 }
