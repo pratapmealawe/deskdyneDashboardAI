@@ -53,6 +53,9 @@ import { MatDividerModule } from '@angular/material/divider';
     MatDatepickerModule,
     MatNativeDateModule,
     MatDividerModule
+  ],
+  exports: [
+    CustomerComponent,
   ]
 })
 export class CustomerModule { }

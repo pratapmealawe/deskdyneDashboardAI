@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { debounceTime, Subject } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
@@ -25,27 +25,30 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     countOnly: 0,
   };
   selectedVendor: any;
-  expandedItems: boolean[] = [];
-  filteredVendorList: any[] = [];
+  // pagination
+  pageSize = 10;
+  pageIndex = 0;
+  paginatedVendorList: any[] = [];
 
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService,
-    public modalService: NgbModal
+    public modalService: NgbModal,
+    private matDialog: MatDialog
   ) { }
 
   ngOnInit(): void {
-    this.initFunc()
+    this.setInitials();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
-      this.initFunc()
+      this.setInitials();
     }
   }
 
-  initFunc() {
+  setInitials() {
     this.orgDetails = this.adminOrg ? this.adminOrg : this.localStorageService.getCacheData('ADMIN_PROFILE')?.orgDetails;
     this.getVendorByOrgId();
   }
@@ -54,11 +57,10 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     this.vendorData.orgId = this.orgDetails?._id;
     try {
       const data = await this.apiMainService.searchVendorByOrgId(this.vendorData);
-      console.log(data);
-
+      if (!data) return;
       this.vendorList = data;
-      this.filteredVendorList = data.length === 0 ? [] : data;
-      this.expandedItems = new Array(this.vendorList.length).fill(true);
+      const startIndex = this.pageIndex * this.pageSize;
+      this.paginatedVendorList = this.vendorList.slice(startIndex, startIndex + this.pageSize);
     } catch (error) {
       console.error('Error fetching vendors:', error);
     }
@@ -66,16 +68,27 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
 
   addComplience(event: any, vendorData: any) {
     event.stopPropagation();
-    this.localStorageService.setCacheData('ORG_VENDOR_INFO',vendorData);
+    this.localStorageService.setCacheData('ORG_VENDOR_INFO', vendorData);
     this.selectedVendor = vendorData;
-    this.modalService.open(this.compliance, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
+
+    const dialogRef = this.matDialog.open(this.compliance, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '80vh',
+      autoFocus: false,
     });
+    dialogRef.afterClosed().subscribe(() => { });
   }
 
-  toggleVendor(index: number) {
-    this.expandedItems[index] = !this.expandedItems[index];
+  onKeyEvent(event: any) {
+    if (event.key === "Escape") {
+      (event.target as HTMLInputElement).value = '';
+      this.paginatedVendorList = [...this.vendorList];
+    }
+
+    if (event.key === "Enter") {
+      this.searchFilter(event);
+    }
   }
 
   searchFilter(e: any) {
@@ -89,10 +102,17 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
       ],
     };
 
-    this.filteredVendorList = this.searchService.searchData(
+    this.paginatedVendorList = this.searchService.searchData(
       this.vendorList,
       config,
       searchText
     );
+  }
+
+  onPageChange(event: any) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    const startIndex = this.pageIndex * this.pageSize;
+    this.paginatedVendorList = this.vendorList.slice(startIndex, startIndex + this.pageSize);
   }
 }

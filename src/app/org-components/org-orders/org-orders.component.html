@@ -57,7 +57,7 @@
     </div>
   </div>
 
-  <div *ngIf="filteredOrderList.length === 0" class="text-center">
-    No Records Found
-  </div>
+  <mat-card *ngIf="filteredOrderList.length === 0" class="text-center py-2 mt-2 rounded-4">
+    No Orders Found
+  </mat-card>
 </div>

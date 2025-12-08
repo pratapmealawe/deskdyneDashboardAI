@@ -1,3 +1,17 @@
+@use '/src/styles/theme/mixins' as mixin;
+
+.input-group {
+    width: 17%;
+}
+
+.search-icon {
+    margin-top: -5px;
+}
+
+.search-input {
+    @include mixin.mat-form-field-responsive();
+}
+
 .backColor {
   background: #faf9f6;
 }
@@ -10,18 +24,18 @@
 }
 
 .searchDiv {
-    position: relative;
+  position: relative;
 
-    i {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translate(0px, -50%);
-    }
+  i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translate(0px, -50%);
+  }
 
-    input {
-        padding-left: 35px;
-    }
+  input {
+    padding-left: 35px;
+  }
 }
 
 .menu-img {
@@ -74,6 +88,7 @@
 
 .read-more:hover {
   text-decoration: underline;
+  color: #007bff;
 }
 
 .text-right {
