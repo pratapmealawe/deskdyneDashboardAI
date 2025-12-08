@@ -251,5 +251,15 @@ export class OutletEmployeeComponent implements OnInit {
       console.log(error)
     }
   }
-
+    cancelMultipleEmployee() {
+        this.showMultipleEmployeeForm = false;
+        this.showAddMoreForm = true;
+        this.showRemoveForm = false;
+        this.fileName = null
+        // if (this.fileInputRef) {
+        //     this.fileInputRef.nativeElement.value = '';
+        // }
+        // this.employeeForm?.reset();
+        // this.uploadedEmployeeList = [];
+    }
 }
