@@ -50,12 +50,6 @@
             </mat-form-field>
         </div>
     </div>
-
-    <!-- QR preview -->
-    <div class="mt-4 text-center" *ngIf="qrData">
-        <div class="labelText mb-1">QR Preview</div>
-        <qrcode [qrdata]="qrData" [width]="180" [errorCorrectionLevel]="'M'" (qrCodeURL)="onCodeURL($event)"></qrcode>
-    </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">

@@ -392,3 +392,94 @@
     height: 56px;
   }
 }
+
+.menu-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.75rem 1rem;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb; // light grey border
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.06); // very soft shadow
+}
+
+.category-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.category-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #22c55e; // green dot
+}
+
+.category-name {
+  font-weight: 600;
+  color: #111827; // dark text
+}
+
+.time-text {
+  font-weight: 400;
+  font-size: 12px;
+  color: #6b7280;
+  margin-left: 4px;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.control-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 120px;
+}
+
+.control-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #9ca3af;
+  margin-bottom: 2px;
+}
+
+/* Light “pill” radios */
+.pill-radio-group .mat-radio-button {
+  margin-right: 6px;
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #f3f4f6; // light grey bg
+  color: #111827;
+}
+
+.pill-radio-group .mat-radio-button .mat-radio-label-content {
+  padding: 0; // avoid double padding
+}
+
+.pill-radio-group .mat-radio-button.mat-radio-checked {
+  background: #4f46e5; // your primary
+  color: #ffffff;
+}
+
+/* Checkbox pill */
+.toggle-checkbox {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #f3f4f6;
+}
+
+.category-count {
+  font-size: 13px;
+  font-weight: 500;
+  color: #4b5563;
+}

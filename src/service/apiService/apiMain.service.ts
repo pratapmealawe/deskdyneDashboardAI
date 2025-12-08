@@ -1323,4 +1323,14 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.changeQrMealTypeActivation
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, isActive);
   }
+
+  changeCategoryMenuType(id: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changeCategoryMenuType
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+  changePaidType(id: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changePaidType
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
 }

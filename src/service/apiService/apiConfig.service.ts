@@ -296,6 +296,8 @@ export class ApiConfigService {
       moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
       getQrMenuList: p('/api/getQrMenuList', 'POST'),
       changeQrMealTypeActivation: p('/api/changeQrMealTypeActivation', 'POST'),
+      changeCategoryMenuType: p('/api/changeCategoryMenuType', 'POST'),
+      changePaidType: p('/api/changePaidType', 'POST'),
     }
   }
   // private generateOneLineApi(): string[] {
