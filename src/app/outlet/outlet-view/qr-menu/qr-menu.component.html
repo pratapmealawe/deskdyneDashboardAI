@@ -1,12 +1,7 @@
 <div class="pt-3 pb-3 outlet-menu container-fluid">
   <!-- TOP ACTIONS -->
   <div class="d-flex justify-content-between align-items-center mb-2">
-    <button
-      mat-raised-button
-      color="primary"
-      *ngIf="true || btnPolicy?.addMenu"
-      (click)="open(); resetValues()"
-    >
+    <button mat-raised-button color="primary" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
       Add Menu
     </button>
     <!-- Master Menu removed -->
@@ -17,19 +12,9 @@
     <div class="col-12 col-md-6">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Search item</mat-label>
-        <input
-          matInput
-          placeholder="Search by name..."
-          [(ngModel)]="searchTermMenu"
-          (input)="applyMenuFilters()"
-        />
-        <button
-          *ngIf="searchTermMenu"
-          matSuffix
-          mat-icon-button
-          aria-label="Clear"
-          (click)="searchTermMenu=''; applyMenuFilters()"
-        >
+        <input matInput placeholder="Search by name..." [(ngModel)]="searchTermMenu" (input)="applyMenuFilters()" />
+        <button *ngIf="searchTermMenu" matSuffix mat-icon-button aria-label="Clear"
+          (click)="searchTermMenu=''; applyMenuFilters()">
           <mat-icon>close</mat-icon>
         </button>
       </mat-form-field>
@@ -39,10 +24,7 @@
       <!-- Meal type filter -->
       <mat-form-field appearance="outline" class="w-100 mb-2">
         <mat-label>Filter by meal type</mat-label>
-        <mat-select
-          [(value)]="selectedMealTypeFilter"
-          (selectionChange)="applyMenuFilters()"
-        >
+        <mat-select [(value)]="selectedMealTypeFilter" (selectionChange)="applyMenuFilters()">
           <mat-option value="">All meal types</mat-option>
           <mat-option *ngFor="let mt of mealTypeOptions" [value]="mt">
             {{ mt }}
@@ -58,6 +40,7 @@
     <div *ngFor="let group of groupedMenuList" class="menu-category">
       <!-- MealType header -->
       <div class="menu-category-header">
+        <!-- Left: MealType + time -->
         <div class="category-pill">
           <span class="category-dot"></span>
           <span class="category-name">
@@ -68,14 +51,37 @@
           </span>
         </div>
 
-        <div class="d-flex align-items-center gap-3">
-          <mat-checkbox
-            [checked]="group.isMealTypeActive"
-            (change)="onMealTypeActivationToggle(group, $event)"
-          >
-            Enable
-          </mat-checkbox>
+        <!-- Right: controls -->
+        <div class="header-controls">
+          <!-- Menu Type -->
+          <div class="control-block">
+            <div class="control-label">Menu Mode</div>
+            <mat-radio-group class="pill-radio-group" [value]="group.categoryMenuType"
+              (change)="ToggleCategoryMenuType(group, $event)">
+              <mat-radio-button value="dynamic">Dynamic</mat-radio-button>
+              <mat-radio-button value="fixed">Fixed</mat-radio-button>
+            </mat-radio-group>
+          </div>
 
+          <!-- Paid Type -->
+          <div class="control-block">
+            <div class="control-label">Paid By</div>
+            <mat-radio-group class="pill-radio-group" [value]="group.paidType" (change)="TogglePaidType(group, $event)">
+              <mat-radio-button value="company">Company</mat-radio-button>
+              <mat-radio-button value="user">User</mat-radio-button>
+            </mat-radio-group>
+          </div>
+
+          <!-- Enable -->
+          <div class="control-block">
+            <div class="control-label">Status</div>
+            <mat-checkbox class="toggle-checkbox" [checked]="group.isMealTypeActive"
+              (change)="onMealTypeActivationToggle(group, $event)">
+              Enable
+            </mat-checkbox>
+          </div>
+
+          <!-- Count -->
           <span class="category-count">
             {{ group.items.length }} item{{ group.items.length > 1 ? 's' : '' }}
           </span>
@@ -83,22 +89,13 @@
       </div>
 
       <!-- Items under this mealType -->
-      <mat-card
-        class="menu-item-card"
-        *ngFor="let item of group.items; let i = index"
-      >
+      <mat-card class="menu-item-card" *ngFor="let item of group.items; let i = index">
         <div class="menu-item-card-inner">
           <!-- LEFT: image + veg/nonveg -->
           <div class="menu-thumb">
             <img [src]="displayImgUrl + item.imageUrl" class="menu-thumb-img" />
-            <span
-              *ngIf="item.itemType === 'Veg'"
-              class="typeIcon veg-indicator vegIcon"
-            ></span>
-            <span
-              *ngIf="item.itemType === 'NonVeg'"
-              class="typeIcon nonveg-indicator nonvegIcon"
-            ></span>
+            <span *ngIf="item.itemType === 'Veg'" class="typeIcon veg-indicator vegIcon"></span>
+            <span *ngIf="item.itemType === 'NonVeg'" class="typeIcon nonveg-indicator nonvegIcon"></span>
           </div>
 
           <!-- MIDDLE: content -->
@@ -110,37 +107,24 @@
                   {{ item.itemName || 'Unnamed item' }}
                 </div>
                 <!-- Description -->
-                <div
-                  class="menu-desc"
-                  *ngIf="item.description"
-                  [matTooltip]="item.description"
-                >
+                <div class="menu-desc" *ngIf="item.description" [matTooltip]="item.description">
                   {{ item.description }}
                 </div>
               </div>
 
               <div class="menu-active-chip d-none d-md-block">
-                <mat-checkbox
-                  color="primary"
-                  [checked]="item.isActive"
-                  (change)="showPopupForItemActivation(item, $event)"
-                >
+                <mat-checkbox color="primary" [checked]="item.isActive"
+                  (change)="onItemActiveToggle(group, item, $event)">
                   Active
                 </mat-checkbox>
               </div>
             </div>
 
-            <!-- Meta row: price / subsidy / precedence -->
+            <!-- Meta row: price / precedence -->
             <div class="menu-meta-row">
               <div class="meta-block">
                 <div class="meta-label">Price</div>
                 <div class="meta-value">₹{{ item.price }}</div>
-              </div>
-              <div class="meta-block">
-                <div class="meta-label">Subsidy</div>
-                <div class="meta-value">
-                  ₹{{ item.subsidy || 0 }}
-                </div>
               </div>
               <div class="meta-block">
                 <div class="meta-label">Precedence</div>
@@ -152,11 +136,8 @@
 
             <!-- Active checkbox on mobile -->
             <div class="menu-active-chip d-md-none mt-2">
-              <mat-checkbox
-                color="primary"
-                [checked]="item.isActive"
-                (change)="showPopupForItemActivation(item, $event)"
-              >
+              <mat-checkbox color="primary" [checked]="item.isActive"
+                (change)="onItemActiveToggle(group, item, $event)">
                 Active
               </mat-checkbox>
             </div>
@@ -165,36 +146,20 @@
           <!-- RIGHT: actions -->
           <div class="menu-actions">
             <!-- COPY -->
-            <button
-              mat-icon-button
-              color="primary"
-              class="me-1"
-              (click)="copyMenu(group, item)"
-              matTooltip="Copy menu item"
-            >
+            <button mat-icon-button color="primary" class="me-1" (click)="copyMenu(group, item)"
+              matTooltip="Copy menu item">
               <mat-icon>content_copy</mat-icon>
             </button>
 
             <!-- EDIT -->
-            <button
-              mat-icon-button
-              color="primary"
-              class="me-1"
-              *ngIf="true || btnPolicy?.editMenu"
-              (click)="edit(group, item, i)"
-              matTooltip="Edit item"
-            >
+            <button mat-icon-button color="primary" class="me-1" *ngIf="true || btnPolicy?.editMenu"
+              (click)="edit(group, item, i)" matTooltip="Edit item">
               <mat-icon>edit</mat-icon>
             </button>
 
             <!-- DELETE -->
-            <button
-              mat-icon-button
-              color="warn"
-              *ngIf="true || btnPolicy?.deleteMenu"
-              (click)="showPopup(group, item, i)"
-              matTooltip="Delete item"
-            >
+            <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu"
+              (click)="showPopup(group, item, i)" matTooltip="Delete item">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -204,13 +169,8 @@
 
     <!-- PAGINATOR (group-wise) -->
     <div class="mt-3">
-      <mat-paginator
-        [length]="allGroups.length"
-        [pageSize]="menuPageSize"
-        [pageIndex]="menuPageIndex"
-        [pageSizeOptions]="[5, 10, 20, 50]"
-        (page)="onMenuPageChange($event)"
-      >
+      <mat-paginator [length]="allGroups.length" [pageSize]="menuPageSize" [pageIndex]="menuPageIndex"
+        [pageSizeOptions]="[5, 10, 20, 50]" (page)="onMenuPageChange($event)">
       </mat-paginator>
     </div>
   </div>
@@ -230,36 +190,22 @@
         <div class="row">
           <!-- IMAGE -->
           <div class="col-12 col-md-6 col-lg-12">
-            <input
-              #fileInput
-              type="file"
-              class="uploadInput"
-              accept="image/*"
-              capture="camera"
-              (change)="handleFileInput($event)"
-            />
-            <img
-              class="uploadedImage"
-              [src]="
+            <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
+              (change)="handleFileInput($event)" />
+            <img class="uploadedImage" [src]="
                 showUpdateBtn
                   ? displayImgUrl + imageUrl
                   : imageUrl
                   ? imageUrl
                   : 'assets/images/dummyUpload.png'
-              "
-              *ngIf="!imageReplaced"
-            />
-            <img
-              class="uploadedImage"
-              [src]="
+              " *ngIf="!imageReplaced" />
+            <img class="uploadedImage" [src]="
                 imageUrl
                   ? uploadStatus
                     ? imageUrl
                     : displayImgUrl + imageUrl
                   : 'assets/images/dummyUpload.png'
-              "
-              *ngIf="imageReplaced"
-            />
+              " *ngIf="imageReplaced" />
             <div class="uploadIcon" (click)="fileInput.click()">
               Upload <i class="bi bi-upload"></i>
             </div>
@@ -269,15 +215,8 @@
           <div class="col-12 col-md-6 col-lg-4">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Name</mat-label>
-              <input
-                matInput
-                type="text"
-                placeholder="Name"
-                formControlName="itemName"
-              />
-              <mat-error
-                *ngIf="f['itemName'].hasError('required') && f['itemName'].touched"
-              >
+              <input matInput type="text" placeholder="Name" formControlName="itemName" />
+              <mat-error *ngIf="f['itemName'].hasError('required') && f['itemName'].touched">
                 Item name is required
               </mat-error>
               <mat-error *ngIf="f['itemName'].hasError('maxlength')">
@@ -289,42 +228,13 @@
           <div class="col-12 col-md-6 col-lg-4">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Price</mat-label>
-              <input
-                matInput
-                type="number"
-                min="1"
-                (keydown)="preventInvalidNumber($event)"
-                (paste)="preventInvalidPaste($event, 'decimal')"
-                placeholder="Price"
-                formControlName="price"
-              />
-              <mat-error
-                *ngIf="f['price'].hasError('required') && f['price'].touched"
-              >
+              <input matInput type="number" min="1" (keydown)="preventInvalidNumber($event)"
+                (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Price" formControlName="price" />
+              <mat-error *ngIf="f['price'].hasError('required') && f['price'].touched">
                 Price is required
               </mat-error>
               <mat-error *ngIf="f['price'].hasError('min') && f['price'].touched">
                 Price must be at least 1
-              </mat-error>
-            </mat-form-field>
-          </div>
-
-          <div class="col-12 col-md-6 col-lg-4">
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Subsidy Amount (₹)</mat-label>
-              <input
-                matInput
-                type="number"
-                min="0"
-                (keydown)="preventInvalidNumber($event)"
-                (paste)="preventInvalidPaste($event, 'decimal')"
-                placeholder="Subsidy Amount"
-                formControlName="subsidy"
-              />
-              <mat-error
-                *ngIf="f['subsidy'].hasError('min') && f['subsidy'].touched"
-              >
-                Subsidy cannot be negative
               </mat-error>
             </mat-form-field>
           </div>
@@ -338,20 +248,10 @@
           </div>
 
           <!-- ACTIVE / DO NOT CHANGE -->
-          <div
-            class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-center mt-3"
-          >
-            <mat-checkbox formControlName="isActive">
+          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-center mt-3">
+            <!-- <mat-checkbox formControlName="isActive" >
               Active
-            </mat-checkbox>
-          </div>
-
-          <div
-            class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-center mt-3"
-          >
-            <mat-checkbox formControlName="doNotChangeInFuture">
-              Do Not Change Subsidy In Future
-            </mat-checkbox>
+            </mat-checkbox> -->
           </div>
 
           <!-- DESCRIPTION -->
@@ -369,18 +269,9 @@
           <div class="col-12 col-md-6 col-lg-4 mt-3">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Precedence</mat-label>
-              <input
-                matInput
-                type="number"
-                min="0"
-                placeholder="Precedence"
-                formControlName="precedence"
-                (keydown)="preventInvalidNumber($event)"
-                (paste)="preventInvalidPaste($event)"
-              />
-              <mat-error
-                *ngIf="f['precedence'].hasError('min') && f['precedence'].touched"
-              >
+              <input matInput type="number" min="0" placeholder="Precedence" formControlName="precedence"
+                (keydown)="preventInvalidNumber($event)" (paste)="preventInvalidPaste($event)" />
+              <mat-error *ngIf="f['precedence'].hasError('min') && f['precedence'].touched">
                 Precedence cannot be negative
               </mat-error>
             </mat-form-field>
@@ -391,16 +282,11 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Meal Type</mat-label>
               <mat-select formControlName="mealType">
-                <mat-option
-                  *ngFor="let chip of outletObj?.mealTiming"
-                  [value]="chip.mealType"
-                >
+                <mat-option *ngFor="let chip of outletObj?.mealTiming" [value]="chip.mealType">
                   {{ chip.mealType }}
                 </mat-option>
               </mat-select>
-              <mat-error
-                *ngIf="f['mealType'].hasError('required') && f['mealType'].touched"
-              >
+              <mat-error *ngIf="f['mealType'].hasError('required') && f['mealType'].touched">
                 Meal type is required
               </mat-error>
             </mat-form-field>
@@ -409,18 +295,11 @@
           <div class="col-sm-12 col-md-4 mt-3">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Accept Order From</mat-label>
-              <input
-                matInput
-                type="time"
-                formControlName="acceptOrderFrom"
-                readonly
-              />
-              <mat-error
-                *ngIf="
+              <input matInput type="time" formControlName="acceptOrderFrom" readonly />
+              <mat-error *ngIf="
                   f['acceptOrderFrom'].hasError('required') &&
                   f['acceptOrderFrom'].touched
-                "
-              >
+                ">
                 Start time is required
               </mat-error>
             </mat-form-field>
@@ -429,18 +308,11 @@
           <div class="col-sm-12 col-md-4 mt-3">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Accept Order Till</mat-label>
-              <input
-                matInput
-                type="time"
-                formControlName="acceptOrderTill"
-                readonly
-              />
-              <mat-error
-                *ngIf="
+              <input matInput type="time" formControlName="acceptOrderTill" readonly />
+              <mat-error *ngIf="
                   f['acceptOrderTill'].hasError('required') &&
                   f['acceptOrderTill'].touched
-                "
-              >
+                ">
                 End time is required
               </mat-error>
             </mat-form-field>
@@ -451,23 +323,14 @@
             <label class="labelText form-label mb-1">
               Select Category
             </label>
-            <mat-chip-listbox
-              formControlName="category"
-              aria-label="Type selection"
-            >
-              <mat-chip-option
-                *ngFor="let chip of categoryList"
-                [value]="chip.value"
-              >
+            <mat-chip-listbox formControlName="category" aria-label="Type selection">
+              <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
                 <div class="chip-option">
                   <div class="title">{{ chip?.title }}</div>
                 </div>
               </mat-chip-option>
             </mat-chip-listbox>
-            <div
-              class="text-danger small mt-1"
-              *ngIf="f['category'].invalid && f['category'].touched"
-            >
+            <div class="text-danger small mt-1" *ngIf="f['category'].invalid && f['category'].touched">
               Category is required
             </div>
           </div>
@@ -479,22 +342,12 @@
       <button mat-button mat-dialog-close>
         Cancel
       </button>
-      <button
-        mat-raised-button
-        color="primary"
-        *ngIf="!showUpdateBtn"
-        [disabled]="form.invalid"
-        [mat-dialog-close]="'add'"
-      >
+      <button mat-raised-button color="primary" *ngIf="!showUpdateBtn" [disabled]="form.invalid"
+        [mat-dialog-close]="'add'">
         Submit
       </button>
-      <button
-        mat-raised-button
-        color="accent"
-        *ngIf="showUpdateBtn"
-        [disabled]="form.invalid"
-        [mat-dialog-close]="'update'"
-      >
+      <button mat-raised-button color="accent" *ngIf="showUpdateBtn" [disabled]="form.invalid"
+        [mat-dialog-close]="'update'">
         Update
       </button>
     </mat-dialog-actions>

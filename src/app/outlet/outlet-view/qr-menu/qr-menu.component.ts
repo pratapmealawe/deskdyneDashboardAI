@@ -12,6 +12,7 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
@@ -83,7 +84,8 @@ export class QrMenuComponent implements OnInit, OnChanges {
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
     private sendDataToComponent: SendDataToComponent,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -174,6 +176,8 @@ export class QrMenuComponent implements OnInit, OnChanges {
         groups.push({
           id: doc._id,
           mealType: doc.mealType,
+          categoryMenuType: doc.categoryMenuType,
+          paidType: doc.paidType,
           acceptOrderFrom: doc.acceptOrderFrom,
           acceptOrderTill: doc.acceptOrderTill,
           isMealTypeActive: doc.isMealTypeActive,
@@ -206,13 +210,72 @@ export class QrMenuComponent implements OnInit, OnChanges {
   // ===== MEALTYPE ON/OFF =====
   async onMealTypeActivationToggle(group: any, event: any) {
     const checked = event.checked;
+    const prev = group.isMealTypeActive;
     group.isMealTypeActive = checked;
 
     try {
-      const res = await this.apiMainService.changeQrMealTypeActivation(group.id, { checked })
+      await this.apiMainService.changeQrMealTypeActivation(group.id, { checked });
+      this.snackBar.open(
+        `"${group.mealType}" is now ${checked ? 'enabled' : 'disabled'} for ordering.`,
+        'Close',
+        { duration: 2500 }
+      );
     } catch (err) {
       console.log('Error changing mealType active flag', err);
-      group.isMealTypeActive = !checked;
+      group.isMealTypeActive = prev;
+      this.snackBar.open('Failed to update meal status. Please try again.', 'Close', {
+        duration: 2500,
+      });
+    }
+  }
+
+
+  // ===== MENUTYPE ON/OFF =====
+  async ToggleCategoryMenuType(group: any, event: any) {
+    const newType = event.value;
+    const prev = group.categoryMenuType;
+    group.categoryMenuType = newType;
+
+    try {
+      await this.apiMainService.changeCategoryMenuType(group.id, { categoryMenuType: newType });
+
+      const msg =
+        newType === 'fixed'
+          ? `Menu mode set to FIXED for "${group.mealType}". Only one item can be active.`
+          : `Menu mode set to DYNAMIC for "${group.mealType}". Multiple items can be active.`;
+
+      this.snackBar.open(msg, 'Close', { duration: 3000 });
+    } catch (err) {
+      console.log('Error changing category menu type', err);
+      group.categoryMenuType = prev;
+      this.snackBar.open('Failed to update menu mode. Please try again.', 'Close', {
+        duration: 2500,
+      });
+    }
+  }
+
+
+  // ===== MENUTYPE ON/OFF =====
+  async TogglePaidType(group: any, event: any) {
+    const newPaidType = event.value;
+    const prev = group.paidType;
+    group.paidType = newPaidType;
+
+    try {
+      await this.apiMainService.changePaidType(group.id, { paidType: newPaidType });
+
+      const msg =
+        newPaidType === 'company'
+          ? `Paid type set to COMPANY for "${group.mealType}".`
+          : `Paid type set to USER for "${group.mealType}".`;
+
+      this.snackBar.open(msg, 'Close', { duration: 2500 });
+    } catch (err) {
+      console.log('Error changing paid type', err);
+      group.paidType = prev;
+      this.snackBar.open('Failed to update paid type. Please try again.', 'Close', {
+        duration: 2500,
+      });
     }
   }
 
@@ -242,13 +305,11 @@ export class QrMenuComponent implements OnInit, OnChanges {
       acceptOrderFrom: ['', [Validators.required]],
       acceptOrderTill: ['', [Validators.required]],
       price: [null, [Validators.required, Validators.min(1)]],
-      subsidy: [0, [Validators.min(0)]],
       category: ['', Validators.required],
       itemType: ['Veg', Validators.required],
       precedence: [0, [Validators.min(0)]],
-      isActive: [false],
+      isActive: [{value:false, disabled: true}],
       description: ['', [Validators.maxLength(200)]],
-      doNotChangeInFuture: [false],
     });
   }
 
@@ -289,12 +350,10 @@ export class QrMenuComponent implements OnInit, OnChanges {
       acceptOrderFrom: group?.acceptOrderFrom || '',
       acceptOrderTill: group?.acceptOrderTill || '',
       price: item.price,
-      subsidy: item.subsidy ? item.subsidy : 0,
       category: item.category,
       itemType: item.itemType,
       precedence: item.precedence,
       isActive: item.isActive,
-      doNotChangeInFuture: item.doNotChangeInFuture,
       description: item.description,
     });
   }
@@ -356,14 +415,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
       return;
     }
 
-    if (
-      typeof this.form.value.subsidy === 'undefined' ||
-      this.form.value.subsidy === null ||
-      this.form.value.subsidy === ''
-    ) {
-      this.form.patchValue({ subsidy: 0 });
-    }
-
     try {
       const formData = new FormData();
 
@@ -376,11 +427,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
       formData.append('isActive', this.form.value.isActive);
       formData.append('itemName', this.form.value.itemName);
       formData.append('price', this.form.value.price);
-      formData.append('subsidy', this.form.value.subsidy ?? 0);
-      formData.append(
-        'doNotChangeInFuture',
-        this.form.value.doNotChangeInFuture ?? false
-      );
       formData.append('category', this.form.value.category);
       formData.append('mealType', this.form.value.mealType || '');
       formData.append('acceptOrderFrom', this.form.value.acceptOrderFrom || '');
@@ -418,10 +464,8 @@ export class QrMenuComponent implements OnInit, OnChanges {
     // restore some sensible defaults
     this.form.patchValue({
       itemType: 'Veg',
-      subsidy: 0,
       precedence: 0,
       isActive: false,
-      doNotChangeInFuture: false,
     });
   }
 
@@ -444,16 +488,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
       );
       formData.append('itemName', this.form.value.itemName);
       formData.append('price', this.form.value.price);
-      formData.append(
-        'subsidy',
-        this.form.value.subsidy ? this.form.value.subsidy : 0
-      );
-      formData.append(
-        'doNotChangeInFuture',
-        this.form.value.doNotChangeInFuture
-          ? this.form.value.doNotChangeInFuture
-          : false
-      );
       formData.append('category', this.form.value.category);
       formData.append('mealType', this.form.value.mealType || '');
       formData.append('acceptOrderFrom', this.form.value.acceptOrderFrom || '');
@@ -497,11 +531,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
       formData.append('isActive', item.isActive ?? false);
       formData.append('itemName', item.itemName || '');
       formData.append('price', item.price);
-      formData.append('subsidy', item.subsidy ?? 0);
-      formData.append(
-        'doNotChangeInFuture',
-        item.doNotChangeInFuture ?? false
-      );
       formData.append('category', item.category || '');
       formData.append('mealType', group.mealType || '');
       formData.append('acceptOrderFrom', group.acceptOrderFrom || '');
@@ -543,24 +572,91 @@ export class QrMenuComponent implements OnInit, OnChanges {
     }
   }
 
-  async changeMenuActivation(checked: any) {
-    const menu = this.menuInfo;
+  async changeMenuActivation(menu: any, checked: boolean, showToast: boolean = true) {
+  const prev = menu.isActive;
+  menu.isActive = checked;
 
-    menu.isActive = checked;
+  const menuObj = { isActive: checked };
 
-    const menuObj = {
-      isActive: checked,
-    };
-
+  try {
     await this.apiMainService.changeQrMenuActivation(
       this.outletObj._id,
       menu._id,
       menuObj
     );
 
-    // After activation change, refresh to be safe
-    await this.init();
+    if (showToast) {
+      this.snackBar.open(
+        `Item "${menu.itemName}" ${checked ? 'activated' : 'deactivated'} successfully.`,
+        'Close',
+        { duration: 2500 }
+      );
+    }
+  } catch (err) {
+    console.log('Error updating item activation', err);
+    menu.isActive = prev;
+
+    if (showToast) {
+      this.snackBar.open('Failed to update item status. Please try again.', 'Close', {
+        duration: 2500,
+      });
+    }
+
+    throw err;
   }
+}
+
+
+  async onItemActiveToggle(group: any, menu: any, event: any) {
+    const checked = event.checked;
+
+    // DYNAMIC: simple toggle
+    if (group.categoryMenuType === 'dynamic') {
+      await this.changeMenuActivation(menu, checked);
+      return;
+    }
+
+    // FIXED mode
+    if (!checked) {
+      // Just turning this one OFF
+      await this.changeMenuActivation(menu, false);
+      return;
+    }
+
+    // Turning ON in FIXED mode: only one active allowed
+    const alreadyActive = (group.items || []).filter(
+      (i: any) => i.isActive && i._id !== menu._id
+    );
+
+    try {
+      // Deactivate all other active items in this group
+      for (const other of alreadyActive) {
+        await this.changeMenuActivation(other, false, false);
+        other.isActive = false;
+      }
+
+      // Activate selected one
+      await this.changeMenuActivation(menu, true, false);
+      menu.isActive = true;
+
+      this.snackBar.open(
+        `Fixed mode: Activated "${menu.itemName}". Other active items in "${group.mealType}" were turned off.`,
+        'Close',
+        { duration: 3000 }
+      );
+    } catch (err) {
+      console.log('Error applying fixed-mode activation', err);
+
+      // Revert UI state
+      menu.isActive = false;
+      alreadyActive.forEach((o: any) => (o.isActive = true));
+
+      this.snackBar.open('Failed to update active item. Please try again.', 'Close', {
+        duration: 3000,
+      });
+    }
+  }
+
 
   showPopup(group: any, item: any, i: any) {
     this.groupItem = group
@@ -572,11 +668,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
     );
   }
 
-  showPopupForItemActivation(menu: any, event: any) {
-    this.menuInfo = menu;
-    this.eventInfo = event.checked;
-      this.changeMenuActivation(event.checked)
-  }
 
   // MAT DIALOG OPENERS
   open() {
