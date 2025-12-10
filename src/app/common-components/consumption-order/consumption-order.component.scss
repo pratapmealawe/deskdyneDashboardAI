@@ -18,7 +18,14 @@
   line-height: 1;
   margin-left: 8px;
 }
+.page-container {
+  padding: 24px;
+  background: #f0f2f5;
+}
 
+mat-card {
+  margin-bottom: 24px;
+}
 /* layout for fields */
 .form-grid {
   display: flex;

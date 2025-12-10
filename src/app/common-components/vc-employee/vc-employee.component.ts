@@ -221,6 +221,7 @@ export class VcEmployeeComponent implements OnInit {
           }
         })
       }
+      this.showMultipleEmployeeForm = true;
       this.showRemoveForm = true;
       this.showAddMoreForm = false;
     } catch (error) {

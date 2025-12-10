@@ -1,10 +1,11 @@
-<div class="container-fuild d-flex flex-column gap-3">
+<div class="page-container">
     <mat-card class="p-3">
         <mat-card-title>Select Cafeteria</mat-card-title>
-        <mat-radio-group color="primary"  [(ngModel)]="selectedCafeteria">
-        <mat-radio-button *ngFor="let cafeteria of orgObj.cafeteriaList" [id]="cafeteria._id" name="CafeteriaName" [value]="cafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
+        <mat-radio-group color="primary" [(ngModel)]="selectedCafeteria">
+            <mat-radio-button *ngFor="let cafeteria of orgObj.cafeteriaList" [id]="cafeteria._id" name="CafeteriaName" [value]="cafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
         </mat-radio-group>
     </mat-card>
+     <div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="24px"></div>
     <mat-card fxFlex class="p-3">
         <mat-card-title class="d-flex justify-content-between align-items-center mb-2">
             <div>Entry Consumption Menu</div>
@@ -125,6 +126,7 @@
             </div>
         </ng-container>
     </mat-card>
+    </div>
     <ng-template #content let-modal>
         <div class="dialog-header p-4">
             <div mat-dialog-title>Update Consumption Menu</div>

@@ -325,3 +325,8 @@ mat-icon {
   justify-content: center;
   align-items: center;
 }
+.highlight-panel {
+  background-color: #fff3cd !important;  /* light yellow */
+  transition: background-color 0.4s ease-in-out;
+  border-radius: 6px;
+}

@@ -1,8 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatRadioChange } from '@angular/material/radio';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ToasterService } from 'src/app/toaster/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { GoogleMapService } from 'src/service/google-map.service';
@@ -39,6 +41,7 @@ export class AddOrganizationComponent implements OnInit {
   orgInfo: any;
   imageUrl: any;
   uploadedImageFile: any;
+  selectApprover:any
 
   panelOpenState = false;
   constructor(
@@ -49,22 +52,23 @@ export class AddOrganizationComponent implements OnInit {
     private modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toaster: ToasterService,
   ) {
     this.form = this.fb.group({
-      organization_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)],],
+      organization_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)],],
       location: ['', Validators.required],
       domain: [''],
       city: ['', Validators.required],
       gstin: ['', [Validators.required, Validators.pattern(REGEX.GSTIN),],],
       poc_details: this.fb.array([], this.minArrayLength(1)),
       org_address: this.fb.group({
-        addressLine1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120),],],
-        addressLine2: ['', [Validators.maxLength(120)]],
-        addressLine3: ['', [Validators.maxLength(80)]],  // Landmark field
+        addressLine1: ['', [Validators.required, Validators.minLength(5),],],
+        addressLine2: ['', []],
+        addressLine3: ['', []],  // Landmark field
       }),
       cafeteriaList: this.fb.array([], this.minArrayLength(1)),
-      subsidy: [0, [Validators.min(0), Validators.max(100), Validators.pattern(REGEX.SUBSIDY)],],
+      subsidy: [0, [Validators.min(0), Validators.pattern(REGEX.SUBSIDY)],],
       isEmpIdRequired: [true, Validators.required],
     });
   }
@@ -102,9 +106,9 @@ export class AddOrganizationComponent implements OnInit {
 
   new_admin_details(): FormGroup {
     return this.fb.group({
-      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.pattern(REGEX.NAME)]],
       admin_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
-      admin_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
+      admin_email: ['', [Validators.required, Validators.email, ]],
       admin_location: ['', Validators.required],
     });
   }
@@ -124,15 +128,15 @@ export class AddOrganizationComponent implements OnInit {
       isEmployeeEmailLogin: [false],
       showComplienceTracker: [false],
       showConsumptionOrder: [false],
-      cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+      cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
       cafeteria_id: [id, Validators.required],
       cafeteria_city: ['', Validators.required],
       cafeteria_gstin: ['', Validators.pattern(REGEX.GSTIN)],
       cafeteria_location: this.fb.group({ lat: ['', Validators.required], lng: ['', Validators.required], }),
       clusterId: [''],
       clusterName: [''],
-      address1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
-      address2: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
+      address1: ['', [Validators.required, Validators.minLength(5)]],
+      address2: ['', [Validators.required, Validators.minLength(5)]],
       landmark: ['', [ Validators.required ,Validators.maxLength(80)]],
       location: ['', Validators.required],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
@@ -140,7 +144,7 @@ export class AddOrganizationComponent implements OnInit {
         poc_id: [{ value: '', disabled: true }, Validators.required],
         poc_name: [{ value: '', disabled: true }, [Validators.required,Validators.minLength(3), Validators.maxLength(80),Validators.pattern(REGEX.NAME)]],
         poc_phoneNo: [{ value: '', disabled: true }, [ Validators.required, Validators.pattern(REGEX.PHONE) ]],
-        poc_email: [{ value: '', disabled: true }, [Validators.required, Validators.email, Validators.maxLength(80) ]],
+        poc_email: [{ value: '', disabled: true }, [Validators.required, Validators.email, ]],
         poc_location: [{ value: '', disabled: true }, Validators.required],
         poc_role: [{ value: '', disabled: true }, Validators.required],
         approverPriceLimit: [''],
@@ -396,7 +400,7 @@ openPocModal() {
   }
 
   addApprover(index: any) {
-       console.log(index,"idndd");
+    this.adminSelected = this.form.controls['poc_details'].at(index).value;
     this.modalService
       .open(this.content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -554,17 +558,19 @@ openPocModal() {
       });
   }
 selectedOption: any = null;
-
-  pushAdmin(admin: any) {
-    console.log(admin,"gigigii");
-    
-    this.adminSelected = admin;
+selectedApprover:any;
+  pushAdmin(admin: MatRadioChange) {
+    this.adminSelected = admin.value;
   }
 
   async addOrg() {
-    console.log(this.form.value);
-
     try {
+      this.markAllFieldsAsTouched(this.form);
+      if (this.form.invalid) {
+        this.scrollToFirstInvalidField();
+        return;
+      }
+
       if (!this.form.valid) {
         this.showError = true;
         return;
@@ -608,11 +614,16 @@ selectedOption: any = null;
 
   async updateOrg() {
     try {
+      this.markAllFieldsAsTouched(this.form);
+      if (this.form.invalid) {
+        this.scrollToFirstInvalidField();
+        return;
+      }
+
       if (!this.form.valid) {
         this.showError = true;
         return;
       }
-
       const raw = this.form.getRawValue();
       const formData = new FormData();
 
@@ -702,6 +713,46 @@ selectedOption: any = null;
     String(p.poc_role || '').trim()
   ).length;
   }
+
+  markAllFieldsAsTouched(control: AbstractControl|null):void {
+  if (!control) return;
+
+  if (control instanceof FormGroup) {
+    Object.keys(control.controls).forEach(key => {
+      const child = control.get(key);
+      this.markAllFieldsAsTouched(child);
+    });
+  }
+
+  else if (control instanceof FormArray) {
+    control.controls.forEach(child => this.markAllFieldsAsTouched(child));
+  }
+
+  else if (control instanceof FormControl) {
+    control.markAsTouched({ onlySelf: true });
+    control.markAsDirty({ onlySelf: true });
+    control.updateValueAndValidity({ onlySelf: true });
+  }
+}
+
+
+scrollToFirstInvalidField(): void {
+  setTimeout(() => {
+     const firstInvalid = document.querySelector('.ng-invalid') as HTMLElement | null;
+    if (!firstInvalid) return;
+    firstInvalid.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+    });
+    this.toaster.error('Please correct the errors in the form before submitting.');
+    firstInvalid.focus();
+  });
+}
+
+selectApprovers(i:number){
+  this.addApprover(i)
+  this.poc_selected(i)
+}
 
 }
 

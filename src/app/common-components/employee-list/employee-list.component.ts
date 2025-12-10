@@ -93,7 +93,7 @@ export class EmployeeListComponent {
         this.showMultipleEmployeeForm = true;
     }
     onCafeteriaChange(event: any) {
-        console.log('radio change event', event.target.checked);
+        // console.log('radio change event', event.target.checked);
         this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
         this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     }

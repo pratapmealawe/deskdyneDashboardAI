@@ -1,11 +1,8 @@
 <div class="page-container">
   <mat-card class="p-3">
     <mat-card-title>Select Cafeteria</mat-card-title>
-    <mat-radio-group color="primary" >
-      <div *ngFor="let cafeteria of orgObj.cafeteriaList">
-        <mat-radio-button [id]="cafeteria._id" name="CafeteriaName" [value]="cafeteria"
-                [(ngModel)]="selectedCafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
-      </div>
+    <mat-radio-group color="primary"   [(ngModel)]="selectedCafeteria" >
+       <mat-radio-button *ngFor="let cafeteria of orgObj.cafeteriaList" [id]="cafeteria._id" name="CafeteriaName" [value]="cafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
     </mat-radio-group>
   </mat-card>
   <div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="24px">
