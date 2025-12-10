@@ -396,6 +396,7 @@ openPocModal() {
   }
 
   addApprover(index: any) {
+       console.log(index,"idndd");
     this.modalService
       .open(this.content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -404,6 +405,8 @@ openPocModal() {
       })
       .result.then(
         (result) => {
+          console.log(index,"idndd");
+          
           if (result === 'add') {
             this.patchSelectedAdmins(index);
           } else if (result === 'addCafe') {
@@ -411,6 +414,7 @@ openPocModal() {
           }
         },
         (reason) => {
+           console.log(index,"idndd");
           console.log(`Model Dismissed`);
         }
       );
@@ -549,8 +553,11 @@ openPocModal() {
         approver_role: this.adminSelected.approverDetails.approver_role,
       });
   }
+selectedOption: any = null;
 
   pushAdmin(admin: any) {
+    console.log(admin,"gigigii");
+    
     this.adminSelected = admin;
   }
 
@@ -681,6 +688,19 @@ openPocModal() {
   hasError(form: FormGroup | AbstractControl, controlPath: string, error: string) {
     const control = form.get(controlPath);
     return control && control.hasError(error)
+  }
+
+  get filledPocCount(): number {
+    const pocDetails = this.form.controls['poc_details']?.value;
+    if (!pocDetails || !Array.isArray(pocDetails)) return 0;
+    return pocDetails.filter(p =>
+    String(p.poc_id || '').trim() &&
+    String(p.poc_name || '').trim() &&
+    String(p.poc_phoneNo || '').trim() &&
+    String(p.poc_email || '').trim() &&
+    String(p.poc_location || '').trim() &&
+    String(p.poc_role || '').trim()
+  ).length;
   }
 
 }

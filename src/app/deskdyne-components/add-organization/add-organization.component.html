@@ -194,9 +194,9 @@
 
                     </mat-panel-title>
                   </mat-expansion-panel-header>
-                  <div class="d-flex align-items-center flex-wrap" style="gap:2.5rem;">
-                    <div class="d-flex flex-wrap gap-3">
-                      <div class="">
+                  <div class="container-fluid">
+                    <div class="row g-3">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">POC Id<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -208,7 +208,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">POC Name<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -225,7 +225,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">POC Ph No<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -239,7 +239,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">POC Email<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -254,7 +254,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">POC Location<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -266,7 +266,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">POC Role<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -283,13 +283,17 @@
                         </div>
                       </div>
                     </div>
-                    <div class="remove-icon ">
-                      <mat-icon color="warn" (click)="removePOC(i)">delete</mat-icon>
+                    <div class="remove-icon mb-3 ">
+                        <span class="approver-warn " (click)="removePOC(i)"> Delete </span>
                     </div>
                   </div>
+              
                   <div formGroupName="approverDetails">
-                    <div class="d-flex flex-wrap gap-3">
-                      <div class="">
+                    <div *ngIf="filledPocCount < 2" class="text-danger mt-1">
+                      Please fill the POC details first (minimum 2 POCs required) to Add Approver.
+                    </div>
+                    <div class="row g-3 " *ngIf="filledPocCount >= 2">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">Approver Id</label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -298,7 +302,7 @@
                         </div>
 
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">Approver Name</label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -306,7 +310,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">Approver Ph No</label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -315,7 +319,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">Approver Email</label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -323,7 +327,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">Approver Location</label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -331,7 +335,7 @@
                           </mat-form-field>
                         </div>
                       </div>
-                      <div class="">
+                      <div class="col-12 col-sm-6 col-lg-4">
                         <div class="form-group">
                           <label class="field-label">Approver Role</label>
                           <mat-form-field appearance="outline" class="w-100">
@@ -344,9 +348,9 @@
                         </div>
                       </div>
                       <div class="d-flex g-0">
-                        <div class="d-flex align-items-center">
-                          <mat-icon color="primary" (click)="addApprover(i); poc_selected(i)">gesture_select</mat-icon>
-                          <mat-icon color="warn" (click)="removeApprover(i)">remove</mat-icon>
+                        <div class="d-flex align-items-center"  >
+                          <span class="approver" (click)="addApprover(i); poc_selected(i)"> Select Approver </span>
+                          <span class="approver-warn"  (click)="removeApprover(i)"> Clear </span>
                         </div>
                       </div>
                     </div>
@@ -383,7 +387,7 @@
         <div class="cardDesign">
           <div class="cafeteria-header">
             <div>Cafeteria List</div>
-            <button mat-raised-button color="primary" (click)="add_cafeteria()">
+            <button mat-raised-button color="primary" class="add-cafe responsive-btn" (click)="add_cafeteria()">
               <mat-icon>storefront</mat-icon> Add Cafeteria
             </button>
           </div>
@@ -399,6 +403,14 @@
                     </mat-panel-title>
                   </mat-expansion-panel-header>
                   <div class="checkbox-grid">
+                    <div
+                      *ngFor="let cb of ['showAdminDaily','showEmpPolls','showVirtualCafe','showSaas','showQrCode','showCompanyWallet','showComplienceTracker','showConsumptionOrder','isEmployeeEmailLogin']">
+                      <mat-checkbox color="primary" [formControlName]="cb">
+                        {{ cb | titlecase }}
+                      </mat-checkbox>
+                    </div>
+                  </div>
+                    <!-- <div class="checkbox-grid">
                     <mat-checkbox color="primary" formControlName="showAdminDaily">Show Admin Daily Card</mat-checkbox>
                     <mat-checkbox color="primary" formControlName="showEmpPolls">Show Emp Poll Card</mat-checkbox>
                     <mat-checkbox color="primary" formControlName="showVirtualCafe">Show Virtual
@@ -412,7 +424,7 @@
                       Order</mat-checkbox>
                     <mat-checkbox color="primary" formControlName="isEmployeeEmailLogin">Is Employee Email
                       Login</mat-checkbox>
-                  </div>
+                  </div>  -->
                   <div class="grid-4">
                     <div class="field">
                       <label>Cafeteria Name <span class="required-input">*</span></label>
@@ -681,23 +693,33 @@
         <h4 class="modal-title">Add Approver</h4>
         <mat-icon (click)="modal.dismiss('cancel')">close</mat-icon>
       </div>
-      <div class="modal-body">
-        <mat-radio-group [(ngModel)]="adminSelected" (ngModelChange)="pushAdmin($event)">
-          <ng-container *ngFor="let admin of form.controls['poc_details'].getRawValue()">
-            <mat-radio-button *ngIf="admin.poc_phoneNo !== pocSelected.poc_phoneNo" class="radio-btn" [value]="admin">
-              <div class="approver-item d-flex align-items-center">
-                <div class="admin-grid">
-                  <div>{{ admin.poc_id }}</div>
-                  <div>{{ admin.poc_name }}</div>
-                  <div>{{ admin.poc_email }}</div>
-                  <div>{{ admin.poc_location }}</div>
-                  <div>{{ admin.poc_phoneNo }}</div>
-                </div>
+      <ul>
+        <ng-container>
+          <li class="list-group-item" *ngFor="let admin of form.controls['poc_details'].getRawValue()">
+            <div class="row row align-items-center admin-row "  (click)="pushAdmin(admin)">
+              <div class="col-6 col-md-6 col-lg-1 radioCol">
+                <mat-radio-button [checked]="adminSelected.poc_id === admin.poc_id" color="primary" (change)="pushAdmin(admin)">
+                </mat-radio-button>
               </div>
-            </mat-radio-button>
-          </ng-container>
-        </mat-radio-group>
-      </div>
+              <div class="col-6 col-md-6 col-lg-2 ellipsis">
+                {{ admin.poc_id }}
+              </div>
+              <div class="col-6 col-md-6 col-lg-2 ellipsis">
+                {{ admin.poc_name }}
+              </div>
+              <div class="col-6 col-md-6 col-lg-2 ellipsis">
+                {{ admin.poc_email }}
+              </div>
+              <div class="col-6 col-md-6 col-lg-2 ellipsis">
+                {{ admin.poc_location }}
+              </div>
+              <div class="col-6 col-md-6 col-lg-2 ellipsis">
+                {{ admin.poc_phoneNo }}
+              </div>
+            </div>
+          </li>
+        </ng-container>
+      </ul>
       <div class="modal-footer">
         <button mat-raised-button color="primary" (click)="modal.close('add')" *ngIf="pocSelected">
           Add

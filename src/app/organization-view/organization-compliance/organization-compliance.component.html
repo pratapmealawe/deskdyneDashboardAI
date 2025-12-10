@@ -3,6 +3,7 @@
         <button *ngIf="!editMode && access" type="button" class="btn btn-primary btn-sm"
             (click)="editMode = true">Edit</button>
     </div>
+    <mat-card style="margin: 20px 0px; padding: 20px;">
     <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
             <div *ngIf="!editMode" class="labelText">
@@ -21,11 +22,13 @@
             <ng-container *ngIf="compliance.GSTFileUrl">
                 <div *ngIf="compliance.GSTFileUrl" class="pdf-preview">
                     <iframe [src]="compliance.GSTFileUrl" type="application/pdf"></iframe>
-                    <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('GSTFile')">Delete</button>
+                    <button *ngIf="editMode" mat-raised-button color="primary" class="cancel-btn" (click)="DeleteFile('GSTFile')">Delete</button>
                 </div>
             </ng-container>
         </div>
     </div>
+       </mat-card>
+       <mat-card style="margin: 20px 0px;padding: 20px;">
     <div class="row">
         <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
             <div *ngIf="!editMode" class="labelText">
@@ -50,6 +53,7 @@
             </ng-container>
         </div>
     </div>
+          </mat-card>
     <div class="row">
         <div class="col-sm-12 col-md-12 col-lg-12">
             <!-- <div *ngIf="!editMode" class="labelText">
@@ -83,12 +87,12 @@
                         (click)="updateProfileApproval('pending')">Pending</button>
                 </div>
             </div>
-            <div *ngIf="editMode">
+            <div *ngIf="editMode" class="d-flex justify-content-end gap-2">
                 <div class="inline">
-                    <button type="button" class="btn btn-primary btn-sm me-2" (click)="saveImages()">Save</button>
+                    <button color="primary" mat-raised-button (click)="saveImages()"><mat-icon>save</mat-icon>Save</button>
                 </div>
                 <div class="inline">
-                    <button type="button" class="btn btn-danger btn-sm" (click)="cancelEdit()">Cancel</button>
+                    <button color="warn" mat-raised-button (click)="cancelEdit()"><mat-icon>close</mat-icon>Cancel</button>
                 </div>
             </div>
         </div>

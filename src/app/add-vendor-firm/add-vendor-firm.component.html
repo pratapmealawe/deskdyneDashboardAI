@@ -10,7 +10,7 @@
                     <label class="field-label">Vendor Firm Name <span class="required-input"> * </span></label>
                     <mat-form-field appearance="outline" class="input">
                         <input matInput placeholder="Enter Vendor Firm Name" formControlName="vendorFirmName"
-                            appOnlyNumber />
+                            appOnlyAlpha />
                         <mat-error *ngIf="hasError(form,'vendorFirmName','required')">
                             Vendor firm name is required.
                         </mat-error>
@@ -39,7 +39,7 @@
                     <label class="field-label">Vendor Firm PhoneNo <span class="required-input"> * </span></label>
                     <mat-form-field appearance="outline" class="input">
                         <input matInput placeholder="Enter Vendor Firm PhoneNo" formControlName="vendorFirmPhoneNo"
-                            appOnlyAlpha />
+                            appOnlyNumber />
                         <mat-error *ngIf="hasError(form,'vendorFirmPhoneNo','required')">
                             Vendor firm phone is required.
                         </mat-error>
@@ -61,7 +61,7 @@
                             <label class="field-label">Account No<span class="required-input"> * </span>
                             </label>
                             <mat-form-field appearance="outline" class="input">
-                                <input matInput placeholder="Enter Account Number" formControlName="accountNo" />
+                                <input matInput placeholder="Enter Account Number" formControlName="accountNo" appOnlyNumber/>
                                 <mat-error *ngIf="hasSubError(['bank_details', 'accountNo'],'required')">
                                     Vendor firm accountNo is required.
                                 </mat-error>

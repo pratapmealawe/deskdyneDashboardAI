@@ -16,7 +16,7 @@ import { DirectivesModule } from 'src/shared/directives/common-directives.direct
     ReactiveFormsModule,
     SetGeolocationModule,
     MaterialModule,
-   DirectivesModule
+    DirectivesModule
   ],
   exports: [AddOrganizationComponent],
 })

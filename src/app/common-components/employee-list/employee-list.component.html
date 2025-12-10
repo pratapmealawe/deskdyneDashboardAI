@@ -41,25 +41,67 @@
           <div class="form-group">
             <label class="form-label"> Employee Name</label>
             <mat-form-field appearance="outline">
-              <input matInput [(ngModel)]="employee.employeeName" />
+              <input matInput [(ngModel)]="employee.employeeName"  appOnlyAlpha required  maxlength="40" minlength="3" #empName="ngModel"/>
+               <mat-error *ngIf="empName.invalid && (empName.dirty || empName.touched)">
+                    <ng-container *ngIf="empName.errors?.['required']">
+                           Employee Name  is required.
+                    </ng-container>
+                    <ng-container *ngIf="empName.errors?.['maxlength']">
+                          Maximum 10 digits allowed.
+                    </ng-container>
+                    <ng-container  *ngIf="empName.errors?.['appOnlyAlpha']">
+                        Only Alpha are allowed.
+                    </ng-container>
+                </mat-error>
             </mat-form-field>
           </div>
           <div class="form-group">
             <label class="form-label">Employee ID</label>
             <mat-form-field appearance="outline">
-              <input matInput [(ngModel)]="employee.employeeId" />
+              <input matInput [(ngModel)]="employee.employeeId" maxlength="10" minlength="1" appOnlyNumber #empId="ngModel"/>
+               <mat-error *ngIf="empId.invalid && (empId.dirty || empId.touched)">
+                    <ng-container *ngIf="empId.errors?.['required']">
+                           Employee Id  is required.
+                    </ng-container>
+                    <ng-container *ngIf="empId.errors?.['maxlength']">
+                          Maximum 10 digits allowed.
+                    </ng-container>
+                    <ng-container *ngIf="empId.errors?.['minlength']">
+                          Minimum 2 digits allowed.
+                    </ng-container>
+                    <ng-container  *ngIf="empId.errors?.['appOnlyNumber']">
+                        Only Number are allowed.
+                    </ng-container>
+                </mat-error>
             </mat-form-field>
           </div>
           <div class="form-group">
             <label class="form-label">Employee Phone No</label>
             <mat-form-field appearance="outline">
-              <input matInput type="number" [(ngModel)]="employee.employeePhoneNo" />
+              <input matInput type="number" [(ngModel)]="employee.employeePhoneNo" #empPhoneNo="ngModel" required maxlength="10"  appOnlyNumber/>
+              <mat-error *ngIf="empPhoneNo.invalid && (empPhoneNo.dirty || empPhoneNo.touched)">
+                    <ng-container *ngIf="empPhoneNo.errors?.['required']">
+                           Employee Phone No  is required.
+                    </ng-container>
+                    <ng-container *ngIf="empPhoneNo.errors?.['maxlength']">
+                          Maximum 10 digits allowed.
+                    </ng-container>
+                
+                    <ng-container  *ngIf="empPhoneNo.errors?.['appOnlyNumber']">
+                        Only Number are allowed.
+                    </ng-container>
+                </mat-error>
             </mat-form-field>
           </div>
           <div class="form-group">
             <label class="form-label">Employee Email</label>
             <mat-form-field appearance="outline">
-              <input matInput type="email" [(ngModel)]="employee.employeeEmail" />
+              <input matInput type="email" [(ngModel)]="employee.employeeEmail"  #empEmail="ngModel" required />
+              <mat-error *ngIf="empEmail.invalid && (empEmail.dirty || empEmail.touched)">
+                    <ng-container *ngIf="empEmail.errors?.['required']">
+                           Employee Id  is required.
+                    </ng-container>
+                </mat-error>
             </mat-form-field>
           </div>
           <div class="button-container d-flex justify-content-end align-items-center gap-2">
@@ -76,7 +118,7 @@
             </button>
           </div>
         </div>
-        <div class="actions" fxLayout="row" fxLayoutAlign="end" fxLayoutGap="12px" class="d-flex gap-2">
+        <div  class="d-flex gap-2">
           <button mat-raised-button color="primary"  (click)="submitMultipleEmployee()">Submit</button>
           <button mat-stroked-button color="warn" (click)="cancelMultipleEmployee()">
             Cancel

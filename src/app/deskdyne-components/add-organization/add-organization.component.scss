@@ -267,10 +267,61 @@ mat-icon {
   gap: 8px;
   width: 100%;
 }
-
+.approver{
+  text-decoration: underline;
+  color:blue;
+  cursor:pointer;
+}
+.approver-warn{
+  text-decoration: underline;
+  color:red;
+  margin-left:8px;
+    cursor:pointer;
+}
 /* Responsive: stack columns on small screens */
 @media(max-width: 600px) {
   .admin-grid {
     grid-template-columns: 1fr;
   }
+}
+@media (max-width: 360px) {
+  .grid-4 {
+  grid-template-columns: repeat(auto-fill, minmax(103px, 1fr));
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-pointer:hover mat-icon {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+.admin-row {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 16px;
+}
+
+.admin-info {
+  display: grid;
+  grid-template-columns: 100px 150px 250px 100px 150px;
+  width: 100%;
+}
+.add-cafe{
+   font-size: clamp(9px, 2vw, 1rem) !important;
+}
+.admin-row .ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* ensures ellipsis works in Bootstrap grid */
+}
+
+.radioCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
