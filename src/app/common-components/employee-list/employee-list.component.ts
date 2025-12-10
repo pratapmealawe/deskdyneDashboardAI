@@ -93,7 +93,7 @@ export class EmployeeListComponent {
         this.showMultipleEmployeeForm = true;
     }
     onCafeteriaChange(event: any) {
-        console.log('radio change event', event.target.checked);
+        // console.log('radio change event', event.target.checked);
         this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
         this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     }
@@ -248,11 +248,24 @@ export class EmployeeListComponent {
                     }
                 })
             }
+            this.showMultipleEmployeeForm = true;
             this.showRemoveForm = true;
             this.showAddMoreForm = false;
         } catch (error) {
             console.log(error)
         }
+    }
+
+    cancelMultipleEmployee() {
+        this.showMultipleEmployeeForm = false;
+        this.showAddMoreForm = true;
+        this.showRemoveForm = false;
+        this.fileName = null
+        // if (this.fileInputRef) {
+        //     this.fileInputRef.nativeElement.value = '';
+        // }
+        // this.employeeForm?.reset();
+        // this.uploadedEmployeeList = [];
     }
 
 }

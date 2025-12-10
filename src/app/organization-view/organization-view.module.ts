@@ -28,6 +28,7 @@ import { MaterialModule } from '../material.module';
 import { QrEmployeeComponent } from '../common-components/qr-employee/qr-employee.component';
 import { QRCodeModule } from 'angularx-qrcode';
 import { OrgOutletOrdersComponent } from '../common-components/org-outlet-orders/org-outlet-orders.component';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -61,7 +62,8 @@ import { OrgOutletOrdersComponent } from '../common-components/org-outlet-orders
     PdfuploadComponent,
     MaterialModule,
     DragDropModule,
-    QRCodeModule
+    QRCodeModule,
+    DirectivesModule
   ],
   exports: [OrganizationViewComponent, OrgOutletOrdersComponent],
 })

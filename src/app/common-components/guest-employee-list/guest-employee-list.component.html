@@ -1,3 +1,172 @@
+<div class="page-container">
+  <mat-card class="p-3">
+    <mat-card-title>Select Cafeteria</mat-card-title>
+    <mat-radio-group color="primary" class="d-flex gap-2" [(ngModel)]="selectedCafeteria">
+      <div *ngFor="let cafeteria of orgObj.cafeteriaList" >
+        <mat-radio-button [id]="cafeteria._id" [value]="cafeteria"
+                 (change)="onCafeteriaChange($event)" >{{cafeteria.cafeteria_name}}</mat-radio-button>
+      </div>
+    </mat-radio-group>
+  </mat-card>
+  <div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="24px">
+    <mat-card fxFlex class="p-3">
+      <mat-card-title class="d-flex justify-content-between align-items-center mb-2">
+        <div>Manual Employee Entry</div>
+        <button mat-raised-button color="primary" (click)="addMultipleEmployee()" *ngIf="!showMultipleEmployeeForm">
+          Add Multiple Employee
+        </button>
+      </mat-card-title>
+      <ng-container *ngIf="showMultipleEmployeeForm">
+        <div class="entry-grid d-flex gap-2" *ngFor="let employee of addMultipleEmploeeList; index as i">
+        <div class="form-group">
+            <label class="form-label"> Employee Name</label>
+            <mat-form-field appearance="outline">
+                <input matInput [(ngModel)]="employee.employeeName" appOnlyAlpha required maxlength="40" minlength="3" #empName="ngModel"/>
+                 <mat-error *ngIf="empName.invalid && (empName.dirty || empName.touched)">
+                    <ng-container *ngIf="empName.errors?.['required']">
+                           Employee Name  is required.
+                    </ng-container>
+                    <ng-container *ngIf="empName.errors?.['maxlength']">
+                          Maximum 10 digits allowed.
+                    </ng-container>
+                    <ng-container  *ngIf="empName.errors?.['appOnlyAlpha']">
+                        Only Alpha are allowed.
+                    </ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Employee ID</label>
+            <mat-form-field appearance="outline">
+                <input matInput [(ngModel)]="employee.employeeId"  #empId="ngModel" required minlength="3" maxlength="10" name="employeeId" appOnlyNumber />
+                <mat-error *ngIf="empId.invalid && (empId.dirty || empId.touched)">
+                    <ng-container *ngIf="empId.errors?.['required']">
+                        Employee ID is required.
+                    </ng-container>
+                    <ng-container *ngIf="empId.errors?.['minlength']">
+                        Minimum 3 digits required.
+                    </ng-container>
+                    <ng-container *ngIf="empId.errors?.['maxlength']">
+                        Maximum 10 digits allowed.
+                    </ng-container>
+                    <ng-container *ngIf="empId.errors?.['onlyNumber']">
+                        Only numbers are allowed.
+                    </ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Employee Phone No</label>
+            <mat-form-field appearance="outline">
+                <input matInput type="number" [(ngModel)]="employee.employeePhoneNo"  #empPhoneNo="ngModel" required  maxlength="10" name="employeePhoneNo" appOnlyNumber/>
+                <mat-error *ngIf="empPhoneNo.invalid && (empPhoneNo.dirty || empPhoneNo.touched)">
+                    <ng-container *ngIf="empPhoneNo.errors?.['required']">
+                        Employee Phone No is required.
+                    </ng-container>
+                    <ng-container *ngIf="empPhoneNo.errors?.['maxlength']">
+                        Maximum 10 digits allowed.
+                    </ng-container>
+                    <ng-container  *ngIf="empPhoneNo.errors?.['onlyNumber']">
+                        Only numbers are allowed.
+                    </ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Employee Email</label>
+            <mat-form-field appearance="outline">
+                <input matInput type="email" [(ngModel)]="employee.employeeEmail" #empEmail="ngModel"  required />
+                 <mat-error *ngIf="empEmail.invalid && (empEmail.dirty || empEmail.touched)">
+                    <ng-container *ngIf="empEmail.errors?.['required']">
+                           Employee Email is required.
+                    </ng-container>
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Employee Expiry(choose date)</label>
+            <mat-form-field appearance="outline">
+                <input matInput [matDatepicker]="picker" required [(ngModel)]="employee.expiry" #empExp="ngModel"/>
+                <mat-hint>MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matIconSuffix [for]="picker">
+                    <mat-icon matDatepickerToggleIcon>keyboard_arrow_down</mat-icon>
+                </mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+                 <mat-error *ngIf="empExp.invalid && (empExp.dirty || empExp.touched)">
+                    <ng-container *ngIf="empExp.errors?.['required']">
+                           Employee Expiry date is required.
+                    </ng-container>
+              
+                </mat-error>
+            </mat-form-field>
+        </div>
+        <div class="button-container d-flex justify-content-end align-items-center gap-2">
+            <ng-container *ngIf="i > 0 && i == addMultipleEmploeeList.length - 1">
+                <button mat-icon-button color="primary" (click)="addMoreEmployee()">
+                    <mat-icon>add</mat-icon>
+                </button>
+            </ng-container>
+            <button mat-icon-button color="primary" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">
+                <mat-icon>add</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" *ngIf="showRemoveForm" (click)="removeEmployeeForm(i)">
+                <mat-icon>remove</mat-icon>
+            </button>
+        </div>
+        </div>
+        <div class="actions" *ngIf="showMultipleEmployeeForm" class="d-flex gap-2">
+            <button mat-raised-button color="primary" (click)="submitMultipleGuestEmployee()">Submit</button>
+            <button mat-stroked-button color="warn" (click)="cancelMultipleEmployee()">Cancel</button>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!showMultipleEmployeeForm">
+        <div class="no-address" *ngIf="guestEmployeeList?.length == 0">
+          <p>No employee added yet.</p>
+          <small>Click on <strong>"Add Multiple Employee"</strong> to add a new
+            employee.</small>
+        </div>
+      </ng-container>
+      <ng-container *ngIf="!showMultipleEmployeeForm">
+        <div *ngFor="let employee of guestEmployeeList; index as i">
+          <div  *ngIf="employee.cafeteria_id == selectedCafeteriaId" class="w-100">
+              <div class="d-flex w-100 gap-3 mt-2 flex-wrap">
+                <div  class="item">
+                  <div class="labelText">Employee ID</div>
+                  <div class="labelData">{{ employee.employeeId }}</div>
+                </div>
+                <div  class="item">
+                  <div class="labelText">Employee Name</div>
+                  <div class="labelData">{{ employee.employeeName }}</div>
+                </div>
+                <div  class="item">
+                  <div class="labelText">Phone No</div>
+                  <div class="labelData">{{ employee.employeePhoneNo }}</div>
+                </div>
+                <div  class="item">
+                  <div class="labelText">Employee Email</div>
+                  <div class="labelData">{{ employee.employeeEmail }}</div>
+                </div>
+                <div  class="item">
+                  <div class="labelText">Cafeteria</div>
+                  <div class="labelData">{{ employee.cafeteria_name }}</div>
+                </div>
+                <div class="col d-flex justify-content-end align-items-center gap-2">
+                  <button mat-icon-button color="primary" (click)="editGuestEmployee(employee)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                    <button mat-icon-button color="warn" (click)="deleteGuestEmployee(employee)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+            
+              </div>
+          </div>
+        </div>
+      </ng-container>
+    </mat-card>
+  </div>
+</div>
+
 <div class="container-fluid">
     <div *ngFor="let cafeteria of orgObj.cafeteriaList">
         <div>
@@ -10,18 +179,6 @@
         Employee
     </div>
     <ng-container *ngIf="showMultipleEmployeeForm">
-        <!-- <div class="container file-input-container">
-            <div class="row justify-content-center">
-                <div class="col-md-6">
-                    <span class="styled-heading mb-4">Upload Employee List</span>
-                    <div class="custom-file">
-                        <input type="file" (change)="onFileChange($event)" class="custom-file-input" id="fileInput"
-                            accept=".xlsx, .xls" />
-                        <label class="custom-file-label" for="fileInput">{{ fileName || 'Choose file'}}</label>
-                    </div>
-                </div>
-            </div>
-        </div> -->
         <div *ngFor="let employee of addMultipleEmploeeList; index as i">
             <div class="right addMultipleEmployee" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">+</div>
             <ng-container *ngIf="i>0 && i == addMultipleEmploeeList.length-1">
@@ -56,12 +213,8 @@
             </div>
         </div>
         <div class="inline bgpadding1" *ngIf="showMultipleEmployeeForm">
-            <button type="button" class="btn btn-primary btn-sm" (click)="submitMultipleGuestEmployee()">Submit</button>
-            <button type="button" class="btn btn-danger btn-sm cancel"
-                (click)="showMultipleEmployeeForm=false; showAddMoreForm=true; showRemoveForm=false">Cancel</button>
-            <div class="error-text" *ngIf="disableSubmit">
-                *Please fill all above fields
-            </div>
+            <button  mat-raised-button color="primary" (click)="submitMultipleGuestEmployee()">Submit</button>
+            <button  mat-raised-button color="warn" (click)="showMultipleEmployeeForm=false; showAddMoreForm=true; showRemoveForm=false">Cancel</button>
         </div>
     </ng-container>
     <ng-container *ngIf="!showMultipleEmployeeForm">

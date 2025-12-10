@@ -8,11 +8,11 @@
         <mat-form-field appearance="outline" class="search-input">
           <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
           <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-            <mat-icon>search</mat-icon> </button>
+            <mat-icon appAutoTooltip>search</mat-icon> </button>
         </mat-form-field>
       </div>
       <button mat-raised-button color="primary" class="text-nowrap" (click)="addOrg()">
-          <mat-icon>add</mat-icon>
+          <mat-icon appAutoTooltip>add</mat-icon>
         Add Organization
       </button>
     </div>

@@ -8,6 +8,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { SetGeolocationModule } from 'src/app/set-geolocation/set-geolocation.module';
 import { MaterialModule } from '../material.module';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { MaterialModule } from '../material.module';
     FormsModule,
     PdfuploadComponent,
     SetGeolocationModule,
-    MaterialModule
+    MaterialModule,
+    DirectivesModule
 ],
   exports:[VendorComplianceComponent]
 })

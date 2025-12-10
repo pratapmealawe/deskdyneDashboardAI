@@ -14,6 +14,7 @@ import { MatCardModule }    from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MaterialModule } from '../material.module';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { MaterialModule } from '../material.module';
     MatTooltipModule,
     MatDividerModule,
     MatPaginatorModule,
-    MaterialModule
+    MaterialModule,
+    DirectivesModule
   ]
 })
 export class VendorFirmModule { }
