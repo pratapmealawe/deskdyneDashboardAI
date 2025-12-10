@@ -15,6 +15,7 @@ export class OrganizationViewComponent implements OnInit {
   btnPolicy: any;
   orgViewList = [
     { name: 'Org Details', path: 'orgDetails' },
+    { name: 'Compliance', path: 'organizationCompliance' },
     {
       name: 'Bulk Menu Section',
       path: 'bulkMenuSection',
@@ -52,7 +53,6 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'Outlet Employee', path: 'outletEmployee' },
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
     { name: 'Guest Employee', path: 'guestEmployeeList' },
-    { name: 'Compliance', path: 'organizationCompliance' },
     { name: 'Employee wallet', path: 'employeeWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];

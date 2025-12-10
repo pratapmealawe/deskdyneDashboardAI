@@ -1333,4 +1333,24 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.changePaidType
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
+
+  getByOrgIdAndCafeteriaIdAndDate(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getByOrgIdAndCafeteriaIdAndDate
+    return this.apiHttpService.REQUEST(urlObj, payload);
+  }
+
+  createAuditReport(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.createAuditReport
+    return this.apiHttpService.REQUEST(urlObj, body);
+  }
+
+  updateAuditReport(id: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateAuditReport
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+  deleteAuditReport(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteAuditReport
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
 }
