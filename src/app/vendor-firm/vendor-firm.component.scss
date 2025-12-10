@@ -1,42 +1,89 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles.scss' as color;
 
-.cafeteriaCard {
-  background-color: white;
-  margin-top: 4px;
-  border-radius: 10px;
-  padding: 10px;
+.vendor-wrapper {
+  padding: 15px 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.cardDesign {
+.vendor-card {
   @include mixin.vertical-line();
   @include mixin.card-design(color.$primary-offset-color1);
 }
 
-.input-group {
-  width: 17%;
+.vendor-grid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: flex-start;
 }
 
-.search-icon {
-  margin-top: -5px;
+.vendor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
 }
 
 .labelText {
+  font-size: 13px;
   font-weight: 600;
-  font-size: 14px;
-  color: #444;
-  /* dark grey */
-  color: black;
-  font-weight: 700;
-  margin-bottom: 3px;
+  opacity: 0.8;
 }
 
 .labelData {
   font-size: 15px;
-  color: #111;
-  /* almost black */
+  font-weight: 500;
 }
 
-.container-fluid {
-  @include mixin.mat-form-field-responsive();
+
+.outlet-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.outlet-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.vendor-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  height: -webkit-fill-available;
+}
+
+.paginator {
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .vendor-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vendor-actions {
+    justify-content: flex-start;
+  }
 }

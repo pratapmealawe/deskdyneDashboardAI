@@ -655,11 +655,21 @@ button.accordion-button:focus {
   font-size: 15px;
   color: #212529;
 }
-
 .no-address {
   @include no-address-style();
 }
-
 .mdc-label {
   margin-bottom: 0px;
+}
+.responsive-btn {
+  font-size: clamp(0.75rem, 2vw, 1rem) !important;
+
+  mat-icon {
+    cursor: pointer;
+    font-size: clamp(16px, 3vw, 18px) !important;
+  }
+}
+
+mat-error{
+  font-size: clamp(0.75rem, 2vw, 0rem) !important;
 }

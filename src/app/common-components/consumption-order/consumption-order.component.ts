@@ -89,7 +89,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   }
 
   onCafeteriaChange(event: any) {
-    console.log('radio change event', event.target.checked);
+    // console.log('radio change event', event.target.checked);
     this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
     this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
@@ -126,7 +126,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   }
 
   editConsumption(mealInfo: any, selectedCafeteriaId: any) {
-    this.modalRef = this.modalService.open(this.content);
+    this.modalRef = this.modalService.open(this.content,{ariaLabelledBy: 'modal-basic-title',size: 'xl',});
     console.log(mealInfo);
     this.consumptionMenuId = mealInfo._id;
     this.cafeOriginalId = selectedCafeteriaId;
@@ -211,5 +211,5 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
 
     this.showMultipleConsumptionForm = false;
   }
-
+  
 }

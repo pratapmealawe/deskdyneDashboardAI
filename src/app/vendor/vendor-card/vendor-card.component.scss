@@ -1,28 +1,10 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles.scss' as color;
-/* ===== Vendor Firm ===== */
-.labelText {
-  font-weight: 600;
-  font-size: 14px;
-  color: #444;
-  /* dark grey */
-  color: black;
-    font-weight: 700;
-  margin-bottom: 3px;
-}
 
-.labelData {
-  font-size: 15px;
-  color: #111;
-  /* almost black */
-}
-
-/* ===== Outlet Card ===== */
 .cafeteriaCard {
   margin-top: 10px;
 }
 
-/* ===== Icons ===== */
 .editDeltesaveIcon {
   cursor: pointer;
   color: #555;
@@ -33,12 +15,9 @@
   color: #000;
 }
 
-/* ===== Alignment ===== */
 .alignRight {
   text-align: right;
 }
-
-
 
 .cardDesign {
     padding: 20px;

@@ -395,5 +395,7 @@ export class EmployeeWalletComponent {
 
     }
   }
-
+cancelMultipleEmployee(){
+  
+}
 }
