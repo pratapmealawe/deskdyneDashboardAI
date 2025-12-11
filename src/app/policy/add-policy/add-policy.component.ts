@@ -67,6 +67,7 @@ export class AddPolicyComponent {
       otherOrder: false,
       configImages: false,
       configImagesGroup: false,
+      auditReport: false,
     },
     button_policies: {
       addOutlet: false,

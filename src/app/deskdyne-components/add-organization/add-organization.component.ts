@@ -41,7 +41,7 @@ export class AddOrganizationComponent implements OnInit {
   orgInfo: any;
   imageUrl: any;
   uploadedImageFile: any;
-  selectApprover:any
+  selectApprover: any
 
   panelOpenState = false;
   constructor(
@@ -108,7 +108,7 @@ export class AddOrganizationComponent implements OnInit {
     return this.fb.group({
       admin_name: ['', [Validators.required, Validators.minLength(3), Validators.pattern(REGEX.NAME)]],
       admin_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
-      admin_email: ['', [Validators.required, Validators.email, ]],
+      admin_email: ['', [Validators.required, Validators.email,]],
       admin_location: ['', Validators.required],
     });
   }
@@ -137,14 +137,14 @@ export class AddOrganizationComponent implements OnInit {
       clusterName: [''],
       address1: ['', [Validators.required, Validators.minLength(5)]],
       address2: ['', [Validators.required, Validators.minLength(5)]],
-      landmark: ['', [ Validators.required ,Validators.maxLength(80)]],
+      landmark: ['', [Validators.required, Validators.maxLength(80)]],
       location: ['', Validators.required],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       poc_details: this.fb.group({
         poc_id: [{ value: '', disabled: true }, Validators.required],
-        poc_name: [{ value: '', disabled: true }, [Validators.required,Validators.minLength(3), Validators.maxLength(80),Validators.pattern(REGEX.NAME)]],
-        poc_phoneNo: [{ value: '', disabled: true }, [ Validators.required, Validators.pattern(REGEX.PHONE) ]],
-        poc_email: [{ value: '', disabled: true }, [Validators.required, Validators.email, ]],
+        poc_name: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+        poc_phoneNo: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(REGEX.PHONE)]],
+        poc_email: [{ value: '', disabled: true }, [Validators.required, Validators.email,]],
         poc_location: [{ value: '', disabled: true }, Validators.required],
         poc_role: [{ value: '', disabled: true }, Validators.required],
         approverPriceLimit: [''],
@@ -158,7 +158,7 @@ export class AddOrganizationComponent implements OnInit {
           approver_role: [''],
         }),
       }),
-      
+
     });
   }
 
@@ -205,39 +205,39 @@ export class AddOrganizationComponent implements OnInit {
   removeAdmin(index: any) {
     this.form.controls['admin_details'].removeAt(index);
   }
-removePOC(index: number) {
+  removePOC(index: number) {
 
-  const pocArray = this.form.get('poc_details') as FormArray;
-  const selectedPocId = pocArray.at(index).get('poc_id')?.value;
+    const pocArray = this.form.get('poc_details') as FormArray;
+    const selectedPocId = pocArray.at(index).get('poc_id')?.value;
 
-  const isUsedInCafe = this.orgInfo?.cafeteriaList?.some(
-    (cafe: any) => cafe.poc_details?.poc_id === selectedPocId
-  );
+    const isUsedInCafe = this.orgInfo?.cafeteriaList?.some(
+      (cafe: any) => cafe.poc_details?.poc_id === selectedPocId
+    );
 
-  // Rule 1: At least one POC must exist
-  if (pocArray.length === 1) {
-    this.openPocModal();
-    return;
+    // Rule 1: At least one POC must exist
+    if (pocArray.length === 1) {
+      this.openPocModal();
+      return;
+    }
+
+    // Rule 2: Cannot delete if this POC is assigned in cafeteria
+    if (isUsedInCafe) {
+      this.openPocModal();
+      return;
+    }
+
+    // Otherwise delete normally
+    pocArray.removeAt(index);
   }
 
-  // Rule 2: Cannot delete if this POC is assigned in cafeteria
-  if (isUsedInCafe) {
-    this.openPocModal();
-    return;
+  openPocModal() {
+    this.modalService.open(this.pocContent, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'md',
+      windowClass: 'menuModel',
+      centered: true
+    });
   }
-
-  // Otherwise delete normally
-  pocArray.removeAt(index);
-}
-
-openPocModal() {
-  this.modalService.open(this.pocContent, {
-    ariaLabelledBy: 'modal-basic-title',
-    size: 'md',
-    windowClass: 'menuModel',
-    centered: true
-  });
-}
 
   // removePOC(index: any) {
 
@@ -301,8 +301,8 @@ openPocModal() {
     });
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
       if (cafe.clusterId) {
-        console.log(cafe,"cafe");
-        
+        console.log(cafe, "cafe");
+
         clusterdetails = {
           clusterId: cafe.clusterId,
           clusterName: cafe.clusterName,
@@ -409,8 +409,8 @@ openPocModal() {
       })
       .result.then(
         (result) => {
-          console.log(index,"idndd");
-          
+          console.log(index, "idndd");
+
           if (result === 'add') {
             this.patchSelectedAdmins(index);
           } else if (result === 'addCafe') {
@@ -418,7 +418,7 @@ openPocModal() {
           }
         },
         (reason) => {
-           console.log(index,"idndd");
+          console.log(index, "idndd");
           console.log(`Model Dismissed`);
         }
       );
@@ -457,7 +457,7 @@ openPocModal() {
             modalRef.componentInstance.uploadedImageUrl = imageUrl;
             modalRef.componentInstance.imageWidth = 150;
             modalRef.componentInstance.imageHeight = 150;
-            modalRef.componentInstance.aspectRatio = 1;
+            modalRef.componentInstance.aspectRatio = 1 / 2;
           } catch (e) {
             console.log('error while changes kitchen opened status ', e);
           }
@@ -557,8 +557,8 @@ openPocModal() {
         approver_role: this.adminSelected.approverDetails.approver_role,
       });
   }
-selectedOption: any = null;
-selectedApprover:any;
+  selectedOption: any = null;
+  selectedApprover: any;
   pushAdmin(admin: MatRadioChange) {
     this.adminSelected = admin.value;
   }
@@ -705,54 +705,54 @@ selectedApprover:any;
     const pocDetails = this.form.controls['poc_details']?.value;
     if (!pocDetails || !Array.isArray(pocDetails)) return 0;
     return pocDetails.filter(p =>
-    String(p.poc_id || '').trim() &&
-    String(p.poc_name || '').trim() &&
-    String(p.poc_phoneNo || '').trim() &&
-    String(p.poc_email || '').trim() &&
-    String(p.poc_location || '').trim() &&
-    String(p.poc_role || '').trim()
-  ).length;
+      String(p.poc_id || '').trim() &&
+      String(p.poc_name || '').trim() &&
+      String(p.poc_phoneNo || '').trim() &&
+      String(p.poc_email || '').trim() &&
+      String(p.poc_location || '').trim() &&
+      String(p.poc_role || '').trim()
+    ).length;
   }
 
-  markAllFieldsAsTouched(control: AbstractControl|null):void {
-  if (!control) return;
+  markAllFieldsAsTouched(control: AbstractControl | null): void {
+    if (!control) return;
 
-  if (control instanceof FormGroup) {
-    Object.keys(control.controls).forEach(key => {
-      const child = control.get(key);
-      this.markAllFieldsAsTouched(child);
+    if (control instanceof FormGroup) {
+      Object.keys(control.controls).forEach(key => {
+        const child = control.get(key);
+        this.markAllFieldsAsTouched(child);
+      });
+    }
+
+    else if (control instanceof FormArray) {
+      control.controls.forEach(child => this.markAllFieldsAsTouched(child));
+    }
+
+    else if (control instanceof FormControl) {
+      control.markAsTouched({ onlySelf: true });
+      control.markAsDirty({ onlySelf: true });
+      control.updateValueAndValidity({ onlySelf: true });
+    }
+  }
+
+
+  scrollToFirstInvalidField(): void {
+    setTimeout(() => {
+      const firstInvalid = document.querySelector('.ng-invalid') as HTMLElement | null;
+      if (!firstInvalid) return;
+      firstInvalid.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      this.toaster.error('Please correct the errors in the form before submitting.');
+      firstInvalid.focus();
     });
   }
 
-  else if (control instanceof FormArray) {
-    control.controls.forEach(child => this.markAllFieldsAsTouched(child));
+  selectApprovers(i: number) {
+    this.addApprover(i)
+    this.poc_selected(i)
   }
-
-  else if (control instanceof FormControl) {
-    control.markAsTouched({ onlySelf: true });
-    control.markAsDirty({ onlySelf: true });
-    control.updateValueAndValidity({ onlySelf: true });
-  }
-}
-
-
-scrollToFirstInvalidField(): void {
-  setTimeout(() => {
-     const firstInvalid = document.querySelector('.ng-invalid') as HTMLElement | null;
-    if (!firstInvalid) return;
-    firstInvalid.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-    });
-    this.toaster.error('Please correct the errors in the form before submitting.');
-    firstInvalid.focus();
-  });
-}
-
-selectApprovers(i:number){
-  this.addApprover(i)
-  this.poc_selected(i)
-}
 
 }
 

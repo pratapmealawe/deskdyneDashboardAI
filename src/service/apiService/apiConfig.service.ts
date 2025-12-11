@@ -289,15 +289,19 @@ export class ApiConfigService {
       updateMealItemList: p('/api/updateMealItemList', 'POST'),
       saveMealAweOutletCategoryConfig: p('/api/saveMealAweOutletCategoryConfig', 'POST'),
       deleteCategoryConfig: p('/api/deleteCategoryConfig', 'POST'),
-      addCategoryConfig: p('/api/addCategoryConfig', 'POST'), 
-      changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'), 
-      updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'), 
-      createDefaultCategories: p('/api/createDefaultCategories', 'POST'), 
+      addCategoryConfig: p('/api/addCategoryConfig', 'POST'),
+      changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'),
+      updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'),
+      createDefaultCategories: p('/api/createDefaultCategories', 'POST'),
       moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
       getQrMenuList: p('/api/getQrMenuList', 'POST'),
       changeQrMealTypeActivation: p('/api/changeQrMealTypeActivation', 'POST'),
       changeCategoryMenuType: p('/api/changeCategoryMenuType', 'POST'),
       changePaidType: p('/api/changePaidType', 'POST'),
+      getByOrgIdAndCafeteriaIdAndDate: p('/api/getByOrgIdAndCafeteriaIdAndDate', 'POST'),
+      createAuditReport: p('/api/createAuditReport', 'POST'),
+      updateAuditReport: p('/api/updateAuditReport', 'PUT'),
+      deleteAuditReport: p('/api/deleteAuditReport', 'DELETE'),
     }
   }
   // private generateOneLineApi(): string[] {

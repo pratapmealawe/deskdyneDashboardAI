@@ -1,0 +1,18 @@
+<div class="header d-flex justify-content-between align-items-center mb-2">
+    <h2 mat-dialog-title class="m-0">PDF Preview</h2>
+    <div class="d-flex align-items-center gap-2">
+        <button mat-raised-button color="primary" (click)="download()">
+            <mat-icon>download</mat-icon> Download
+        </button>
+        <button mat-icon-button (click)="close()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+</div>
+
+<mat-dialog-content class="p-0" style="height: 80vh; overflow: hidden;">
+    <iframe *ngIf="pdfUrl" [src]="pdfUrl" width="100%" height="100%" frameborder="0"></iframe>
+    <div *ngIf="!pdfUrl" class="d-flex justify-content-center align-items-center h-100">
+        <p>No PDF URL provided.</p>
+    </div>
+</mat-dialog-content>

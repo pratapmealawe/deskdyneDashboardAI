@@ -120,11 +120,23 @@
               </div>
             </div>
 
-            <!-- Meta row: price / precedence -->
+            <!-- Meta row: price / subsidy / precedence -->
             <div class="menu-meta-row">
               <div class="meta-block">
                 <div class="meta-label">Price</div>
                 <div class="meta-value">₹{{ item.price }}</div>
+              </div>
+              <div class="meta-block">
+                <div class="meta-label">Subsidy</div>
+                <div class="meta-value">
+                  ₹{{ item.subsidy || 0 }}
+                </div>
+              </div>
+              <div class="meta-block">
+                <div class="meta-label">Max Quantity</div>
+                <div class="meta-value">
+                  {{ item.maxQuantity || 1 }}
+                </div>
               </div>
               <div class="meta-block">
                 <div class="meta-label">Precedence</div>
@@ -239,6 +251,29 @@
             </mat-form-field>
           </div>
 
+          <div class="col-12 col-md-6 col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Subsidy Amount (₹)</mat-label>
+              <input matInput type="number" min="0" (keydown)="preventInvalidNumber($event)"
+                (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Subsidy Amount"
+                formControlName="subsidy" />
+              <mat-error *ngIf="f['subsidy'].hasError('min') && f['subsidy'].touched">
+                Subsidy cannot be negative
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-12 col-md-6 col-lg-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Max Quantity</mat-label>
+              <input matInput type="number" min="0" (keydown)="preventInvalidNumber($event)"
+                (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Max Quantity"
+                formControlName="maxQuantity" />
+              <mat-error *ngIf="f['maxQuantity'].hasError('min') && f['maxQuantity'].touched">
+                maxQuantity cannot be negative
+              </mat-error>
+            </mat-form-field>
+          </div>
           <!-- ITEM TYPE -->
           <div class="col-sm-12 col-md-6 col-lg-4 mt-3">
             <mat-radio-group formControlName="itemType" class="d-flex gap-3">
@@ -248,10 +283,10 @@
           </div>
 
           <!-- ACTIVE / DO NOT CHANGE -->
-          <div class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-center mt-3">
-            <!-- <mat-checkbox formControlName="isActive" >
+          <div *ngIf="showUpdateBtn" class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-center mt-3">
+            <mat-checkbox formControlName="isActive" >
               Active
-            </mat-checkbox> -->
+            </mat-checkbox>
           </div>
 
           <!-- DESCRIPTION -->
