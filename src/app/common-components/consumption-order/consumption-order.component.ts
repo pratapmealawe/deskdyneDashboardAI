@@ -169,9 +169,11 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   }
 
   async submitMultipleConsumption() {
+    console.log(this.addMultipleConsumptionList ,"sss");
+    
     const hasInvalid = this.addMultipleConsumptionList.some(
       (consumption: any) =>
-        !consumption.itemName || !consumption.mealPrice || !consumption.selctedmealtype || !consumption.minGuarantees
+        !consumption.itemName || !consumption.mealPrice  || !consumption.minGuarantees
     );
     if (hasInvalid) {
       this.disableSubmit = true;

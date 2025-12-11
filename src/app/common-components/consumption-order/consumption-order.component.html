@@ -107,10 +107,10 @@
                             <div class="labelText">Price (Incl. GST)</div>
                             <div class="labelData">{{ mealTypeItem.mealPrice }}</div>
                         </div>
-                        <div class="col">
+                        <!-- <div class="col">
                             <div class="labelText">Type</div>
                             <div class="labelData">{{ mealTypeItem.selctedmealtype }}</div>
-                        </div>
+                        </div> -->
                         <div class="col">
                             <div class="labelText">Min Guarantees</div>
                             <div class="labelData">{{ mealTypeItem.minGuarantees }}</div>
@@ -118,8 +118,6 @@
                         <div class="info col d-flex gap-2 align-items-center justify-content-end">
                             <mat-icon class="action-icon" color="primary"
                                 (click)="editConsumption(mealTypeItem, consumptionItem.cafeteria_orignal_id)">edit</mat-icon>
-                            <!-- <mat-icon class="action-icon" color="warn"
-                            (click)="deleteConsumption(consumptionItem)">delete</mat-icon> -->
                         </div>
                     </div>
                 </div>
@@ -154,12 +152,12 @@
                         <input matInput type="number" formControlName="minGuarantees" />
                     </mat-form-field>
                 </div>
-                <mat-label class="mt-8">Select MealType</mat-label>
+                <!-- <mat-label class="mt-8">Select MealType</mat-label>
                 <mat-chip-listbox multiple formControlName="selctedmealtype" class="chip-list">
                     <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
                         {{ chip.mealType }}
                     </mat-chip-option>
-                </mat-chip-listbox>
+                </mat-chip-listbox> -->
             </form>
         </mat-dialog-content>
         <mat-dialog-actions class="actions d-flex justify-content-end gap-2 p-3">

@@ -9,7 +9,8 @@
 
 .vendor-card {
  @include mixin.vertical-line();
-    @include mixin.card-design(color.$primary-offset-color1);
+  margin: 0 !important;
+  @include mixin.card-design(color.$primary-offset-color1);
 }
 
 .vendor-grid {
