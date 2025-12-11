@@ -17,7 +17,7 @@
                 <div class="d-flex flex-column align-items-center p-3">
                   <div class="w-100 d-flex justify-content-center mb-3">
                     <img [src]="imageUrl || 'assets/images/dummyUpload.png'" (click)="fileInput.click()"
-                      style="width: 8rem; height: 8rem; object-fit: cover; cursor: pointer;" />
+                      style="width: 8rem; height: 5rem; cursor: pointer;" />
                   </div>
                   <input #fileInput type="file" accept="image/*" (change)="handleFileInput($event)" hidden />
                   <button mat-raised-button color="primary" (click)="fileInput.click()" class="w-100">
@@ -53,7 +53,7 @@
                 <div class="form-group">
                   <label class="field-label">Location<span class="required-input"> * </span></label>
                   <mat-form-field appearance="outline" class="w-100">
-                    <input matInput placeholder="Location" formControlName="location"  />
+                    <input matInput placeholder="Location" formControlName="location" />
                     <mat-error *ngIf="hasError(form, 'location', 'required')">
                       Location is required
                     </mat-error>
@@ -97,7 +97,7 @@
                 <div class="form-group">
                   <label class="field-label">Address Line 2</label>
                   <mat-form-field appearance="outline" class="w-100">
-                    <input matInput placeholder="Line 2" formControlName="addressLine2"  />
+                    <input matInput placeholder="Line 2" formControlName="addressLine2" />
                     <mat-error *ngIf="form.get('org_address.addressLine2')?.hasError('minlength')">
                       Minimum 5 characters required
                     </mat-error>
@@ -111,7 +111,7 @@
                 <div class="form-group">
                   <label class="field-label">Address Line 3</label>
                   <mat-form-field appearance="outline" class="w-100">
-                    <input matInput placeholder="Line 3" formControlName="addressLine3"  />
+                    <input matInput placeholder="Line 3" formControlName="addressLine3" />
                     <mat-error *ngIf="form.get('org_address.addressLine3')?.hasError('minlength')">
                       Minimum 5 characters required
                     </mat-error>
@@ -185,7 +185,7 @@
           <ng-container *ngFor="let control of poc.controls; let i = index">
             <div [formGroupName]="i" style="margin: 10px 0px;" class="d-flex gap-5 align-items-center">
               <mat-accordion class="fill-available-width">
-                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" >
+                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
                   <mat-expansion-panel-header>
                     <mat-panel-title class="d-flex justify-content-between align-items-center">
                       <div class="title">
@@ -257,7 +257,7 @@
                         <div class="form-group">
                           <label class="field-label">POC Location<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="POC Location" formControlName="poc_location"  />
+                            <input matInput placeholder="POC Location" formControlName="poc_location" />
                             <mat-error *ngIf="control.get('poc_location')?.hasError('required')">
                               Location is required
                             </mat-error>
@@ -283,10 +283,10 @@
                       </div>
                     </div>
                     <div class="remove-icon mb-3 ">
-                        <span class="approver-warn " (click)="removePOC(i)"> Delete </span>
+                      <span class="approver-warn " (click)="removePOC(i)"> Delete </span>
                     </div>
                   </div>
-              
+
                   <div formGroupName="approverDetails">
                     <div *ngIf="filledPocCount < 2" class="text-danger mt-1">
                       Please fill the POC details first (minimum 2 POCs required) to Add Approver.
@@ -347,9 +347,9 @@
                         </div>
                       </div>
                       <div class="d-flex g-0">
-                        <div class="d-flex align-items-center"  >
+                        <div class="d-flex align-items-center">
                           <span class="approver" (click)="selectApprovers(i)"> Select Approver </span>
-                          <span class="approver-warn"  (click)="removeApprover(i)"> Clear </span>
+                          <span class="approver-warn" (click)="removeApprover(i)"> Clear </span>
                         </div>
                       </div>
                     </div>
@@ -638,11 +638,11 @@
             Cancel
           </button>
           <button mat-raised-button color="primary" class="responsive-btn" (click)="updateOrg()"
-            *ngIf="(showUpdate && true) || btnPolicy?.editOrganization" >
+            *ngIf="(showUpdate && true) || btnPolicy?.editOrganization">
             <mat-icon>system_update_alt</mat-icon>
             Update
           </button>
-          <button mat-raised-button color="primary" class="responsive-btn" (click)="addOrg()" 
+          <button mat-raised-button color="primary" class="responsive-btn" (click)="addOrg()"
             *ngIf="(!showUpdate && true) || btnPolicy?.addOrganization">
             <mat-icon>add</mat-icon>
             Add Organization
@@ -675,33 +675,33 @@
         <mat-icon (click)="modal.dismiss('cancel')">close</mat-icon>
       </div>
       <div mt-3 mb-3>
-      <mat-radio-group [(ngModel)]="selectedApprover" color="primary">
-        <ng-container *ngFor="let admin of form.controls['poc_details'].value">
-          <div class="row p-3" *ngIf="pocSelected?.poc_id !== admin.poc_id">
-            <div class="col-1">
-              <mat-radio-button (change)="pushAdmin($event)" [value]="admin" class="radio-item">
-              </mat-radio-button>
+        <mat-radio-group [(ngModel)]="selectedApprover" color="primary">
+          <ng-container *ngFor="let admin of form.controls['poc_details'].value">
+            <div class="row p-3" *ngIf="pocSelected?.poc_id !== admin.poc_id">
+              <div class="col-1">
+                <mat-radio-button (change)="pushAdmin($event)" [value]="admin" class="radio-item">
+                </mat-radio-button>
+              </div>
+              <div class="col d-flex gap-2 align-items-center">
+                <div class="col ellipsis">
+                  {{ admin.poc_id }}
+                </div>
+                <div class="col ellipsis">
+                  {{ admin.poc_name }}
+                </div>
+                <div class="col ellipsis">
+                  {{ admin.poc_email }}
+                </div>
+                <div class="col ellipsis">
+                  {{ admin.poc_location }}
+                </div>
+                <div class="col ellipsis">
+                  {{ admin.poc_phoneNo }}
+                </div>
+              </div>
             </div>
-            <div class="col d-flex gap-2 align-items-center">
-              <div class="col ellipsis">
-                {{ admin.poc_id }}
-              </div>
-              <div class="col ellipsis">
-                {{ admin.poc_name }}
-              </div>
-              <div class="col ellipsis">
-                {{ admin.poc_email }}
-              </div>
-              <div class="col ellipsis">
-                {{ admin.poc_location }}
-              </div>
-              <div class="col ellipsis">
-                {{ admin.poc_phoneNo }}
-              </div>
-            </div>
-          </div>
-        </ng-container>
-      </mat-radio-group>
+          </ng-container>
+        </mat-radio-group>
       </div>
       <div class="modal-footer">
         <button mat-raised-button color="primary" (click)="modal.close('add')" *ngIf="pocSelected">
