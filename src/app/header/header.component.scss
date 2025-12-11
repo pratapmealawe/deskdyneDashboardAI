@@ -16,6 +16,11 @@
     height: 50px;
   }
 
+  .orgLogo {
+    width: 70px;
+    height: 30px;
+  }
+
   .breadCrumbText {
     flex: 1;
     color: black;
@@ -212,10 +217,9 @@
 }
 
 @media only screen and (max-width: 600px) {
-
-  .name,
-  .company-name {
-    display: none;
+  .initials-avatar {
+    width: 25px;
+    height: 25px;
   }
 }
 
@@ -223,4 +227,9 @@
   .offcanvas-title {
     font-size: 1.2rem;
   }
+}
+
+.sideOrgLogo {
+  width: 150px;
+  height: 80px;
 }

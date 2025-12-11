@@ -305,10 +305,12 @@ export class QrMenuComponent implements OnInit, OnChanges {
       acceptOrderFrom: ['', [Validators.required]],
       acceptOrderTill: ['', [Validators.required]],
       price: [null, [Validators.required, Validators.min(1)]],
+      subsidy: [0, [Validators.min(0)]],
+      maxQuantity: [1, [Validators.min(1)]],
       category: ['', Validators.required],
       itemType: ['Veg', Validators.required],
       precedence: [0, [Validators.min(0)]],
-      isActive: [{value:false, disabled: true}],
+      isActive: [false],
       description: ['', [Validators.maxLength(200)]],
     });
   }
@@ -344,12 +346,15 @@ export class QrMenuComponent implements OnInit, OnChanges {
   }
 
   patchFormValue(group: any, item: any) {
+    console.log(item)
     this.form.patchValue({
       itemName: item.itemName,
       mealType: group?.mealType || '',
       acceptOrderFrom: group?.acceptOrderFrom || '',
       acceptOrderTill: group?.acceptOrderTill || '',
       price: item.price,
+      subsidy: item.subsidy ? item.subsidy : 0,
+      maxQuantity: item.maxQuantity ? item.maxQuantity : 1,
       category: item.category,
       itemType: item.itemType,
       precedence: item.precedence,
@@ -414,10 +419,20 @@ export class QrMenuComponent implements OnInit, OnChanges {
       this.form.markAllAsTouched();
       return;
     }
+        if (
+      typeof this.form.value.subsidy === 'undefined' ||
+      this.form.value.subsidy === null ||
+      this.form.value.subsidy === ''
+    ) {
+      this.form.patchValue({ subsidy: 0 });
+    }
+
 
     try {
       const formData = new FormData();
 
+      console.log(this.form.value);
+      
       if (this.imageUrl) {
         formData.append('image', this.uploadedImageFile);
       }
@@ -427,6 +442,8 @@ export class QrMenuComponent implements OnInit, OnChanges {
       formData.append('isActive', this.form.value.isActive);
       formData.append('itemName', this.form.value.itemName);
       formData.append('price', this.form.value.price);
+      formData.append('subsidy', this.form.value.subsidy ?? 0);
+      formData.append('maxQuantity', this.form.value.maxQuantity ?? 1);
       formData.append('category', this.form.value.category);
       formData.append('mealType', this.form.value.mealType || '');
       formData.append('acceptOrderFrom', this.form.value.acceptOrderFrom || '');
@@ -464,6 +481,8 @@ export class QrMenuComponent implements OnInit, OnChanges {
     // restore some sensible defaults
     this.form.patchValue({
       itemType: 'Veg',
+      subsidy: 0,
+      maxQuantity: 1,
       precedence: 0,
       isActive: false,
     });
@@ -488,6 +507,8 @@ export class QrMenuComponent implements OnInit, OnChanges {
       );
       formData.append('itemName', this.form.value.itemName);
       formData.append('price', this.form.value.price);
+      formData.append('subsidy', this.form.value.subsidy ? this.form.value.subsidy : 0);
+      formData.append('maxQuantity', this.form.value.maxQuantity ? this.form.value.maxQuantity : 0);
       formData.append('category', this.form.value.category);
       formData.append('mealType', this.form.value.mealType || '');
       formData.append('acceptOrderFrom', this.form.value.acceptOrderFrom || '');
@@ -531,6 +552,8 @@ export class QrMenuComponent implements OnInit, OnChanges {
       formData.append('isActive', item.isActive ?? false);
       formData.append('itemName', item.itemName || '');
       formData.append('price', item.price);
+      formData.append('subsidy', item.subsidy ?? 0);
+      formData.append('maxQuantity', item.maxQuantity ?? 1);
       formData.append('category', item.category || '');
       formData.append('mealType', group.mealType || '');
       formData.append('acceptOrderFrom', group.acceptOrderFrom || '');

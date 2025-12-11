@@ -178,7 +178,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     this.adminId = admin?._id ?? null;
 
     console.log(admin);
-    
+
     this.form.patchValue({
       name: (admin?.name ?? '') as string,
       phoneNo: (admin?.phoneNo ?? '') as string,
@@ -188,8 +188,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
       orgId: (admin?.orgDetails?._id ?? '') as string,
       cafeIds: Array.isArray(admin?.cafeDetails)
         ? admin.cafeDetails
-            .map((c: any) => (c?.cafeteria_id))
-            .filter(Boolean)
+          .map((c: any) => (c?.cafeteria_id))
+          .filter(Boolean)
         : [],
     });
 
@@ -254,7 +254,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
                 this.imageUrl = result.croppedImages.resizeDataUrl as string;
               }
             },
-            () => {}
+            () => { }
           );
         } catch (e) {
           console.log('Error opening cropper modal', e);
@@ -287,7 +287,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     this.submitting = true;
 
     const val = this.form.getRawValue();
-    
+
     const formData = new FormData();
 
     if (this.uploadedImageFile) formData.append('image', this.uploadedImageFile);
@@ -299,6 +299,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
 
     // OrgDetails / CafeDetails as per role
     const org = this.orgList.find((o) => o._id === val.orgId) || null;
+
     if (val.role === 'ORGADMIN' || val.role === 'HYPERPURE_ADMIN' || val.role === 'HYPERPURE_POC') {
       if (org) formData.append('orgDetails', JSON.stringify(org));
     }

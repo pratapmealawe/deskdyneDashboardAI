@@ -165,6 +165,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       imageblue: 'Incident reporting_blue',
     },
     {
+      name: 'Audit Report',
+      showParent: true,
+      route: 'auditReport',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
+    },
+    {
       name: 'Submit CheckList',
       route: 'submitChecklist',
       showParent: true,
@@ -346,6 +353,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       imageblue: 'Food items_blue',
     },
     {
+      name: 'Audit Report',
+      showParent: true,
+      route: 'auditReport',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
+    },
+    {
       name: 'Incident Management',
       showParent: true,
       route: 'orgIncidentManagement',
@@ -400,6 +414,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectedIndexpar: number = 0;
   selectedIndexchild: number = 0;
   pollingSub!: Subscription;
+  orgLogo!: any
 
   constructor(
     private router: Router,
@@ -438,9 +453,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.suggestionsFeedbackService.fetchAllEnquiries();
     this.getInReviewIncidents();
     this.setActiveStateFromRoute(this.router.url);
-    // this.pollingSub = interval(30_000).subscribe(() => {
-    //   this.getInReviewIncidents();
-    // });
+    this.pollingSub = interval(30_000).subscribe(() => {
+      this.getInReviewIncidents();
+    });
   }
 
   async getInReviewIncidents() {
@@ -539,9 +554,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.adminProfile = adminProfile;
         if (this.adminProfile.role == 'ORGADMIN' || this.adminProfile.role == 'HYPERPURE_ADMIN' || this.adminProfile.role == 'HYPERPURE_POC') {
           this.isOrgAdmin = true;
+          // this.orgLogo = this.adminProfile.orgDetails.organizationLogoUrl;
           this.orgDetails = JSON.parse(
             JSON.stringify(this.adminProfile.orgDetails)
           );
+
           this.finalNavOption = this.orgOptions;
           // this.router.navigate(['/org-dashboard']);
         } else {

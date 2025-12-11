@@ -1,5 +1,6 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles.scss' as color;
+
 .vendor-wrapper {
   padding: 15px 30px;
   display: flex;
@@ -8,8 +9,7 @@
 }
 
 .vendor-card {
- @include mixin.vertical-line();
-  margin: 0 !important;
+  @include mixin.vertical-line();
   @include mixin.card-design(color.$primary-offset-color1);
 }
 
@@ -36,9 +36,11 @@
   display: flex;
   flex-direction: column;
 }
-.search-input{
-    @include mixin.mat-form-field-responsive(); 
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
 }
+
 .labelText {
   font-size: 13px;
   font-weight: 600;

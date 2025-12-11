@@ -7,11 +7,13 @@
           <img class="deskdyneLogo" src="assets/images/DeskDyne-Logo-black.png" alt="deskdyneLogo" />
         </ng-container>
         <ng-container *ngIf="isOrgAdmin">
-          {{ orgDetails.organization_name }}
+          <img class="orgLogo" *ngIf="orgDetails.organizationLogoUrl" [src]="imageUrl + orgDetails.organizationLogoUrl"
+            alt="orgLogo" />
+          <span *ngIf="!orgDetails.organizationLogoUrl">{{ orgDetails.organization_name }}</span>
         </ng-container>
       </span>
     </span>
-    <span class="breadCrumbText">{{ breadCrumbText }}</span>
+    <!-- <span class="breadCrumbText">{{ breadCrumbText }}</span> -->
     <img placement="bottom-right" class="profileImg pointer mr-2" *ngIf="adminProfile.imageUrl"
       [src]="imageUrl + adminProfile.imageUrl" [ngbPopover]="popOverBody" popoverTitle="Admin Profile" />
     <span *ngIf="!adminProfile.imageUrl" [style.background]="getAvatarColor(adminProfile.name)"
@@ -34,7 +36,9 @@
         </div>
       </ng-container>
       <ng-container *ngIf="isOrgAdmin">
-        {{ orgDetails.organization_name }}
+        <img class="sideOrgLogo" *ngIf="orgDetails.organizationLogoUrl"
+          [src]="imageUrl + orgDetails.organizationLogoUrl" alt="orgLogo" />
+        <span *ngIf="!orgDetails.organizationLogoUrl">{{ orgDetails.organization_name }}</span>
       </ng-container>
     </h1>
   </div>
