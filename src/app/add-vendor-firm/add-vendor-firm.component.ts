@@ -78,7 +78,7 @@ export class AddVendorFirmComponent {
 
   createForm() {
     this.form = this.fb.group({
-      vendorFirmName: ['', [Validators.required, Validators.pattern(REGEX.NAME)]],
+      vendorFirmName: ['', [Validators.required]],
       vendorFirmEmail: ['', [Validators.required, Validators.pattern(REGEX.EMAIL)]],
       vendorFirmPhoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
       bank_details: this.fb.group({
@@ -91,7 +91,7 @@ export class AddVendorFirmComponent {
       poc_details:
         this.fb.group({
           poc_id: ['', [Validators.required, Validators.pattern(REGEX.ID)]],
-          poc_name: ['', [Validators.required, Validators.pattern(REGEX.NAME)]],
+          poc_name: ['', [Validators.required]],
           poc_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
           poc_email: ['', [Validators.required, Validators.pattern(REGEX.EMAIL)]],
           poc_location: ['', [Validators.required, Validators.pattern(REGEX.LOCATION)]]
