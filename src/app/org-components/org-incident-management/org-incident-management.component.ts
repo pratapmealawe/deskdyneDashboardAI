@@ -13,14 +13,6 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
-interface Filter {
-  orgId: string;
-  cafeteria_id: string;
-  vendorId: string;
-  fromDate: string;
-  toDate: string;
-}
-
 export interface SubmittedByInfo {
   name: string;
   id: string;
@@ -92,13 +84,7 @@ export class OrgIncidentManagementComponent implements OnInit {
   searchText = '';
   isFilterApplied = false;
 
-  filterObj: Filter = {
-    orgId: '',
-    cafeteria_id: '',
-    vendorId: '',
-    fromDate: '',
-    toDate: '',
-  };
+  filterObj: any
 
   incidentObj = {} as IncidentManagement;
   incidentForm!: FormGroup;
@@ -108,8 +94,6 @@ export class OrgIncidentManagementComponent implements OnInit {
   statusList: Array<
     'created' | 'acknowledged' | 'inReview' | 'blocked' | 'resolved'
   > = ['created', 'acknowledged', 'inReview', 'blocked', 'resolved'];
-  cafeList: any[] = [];
-  orglist: any[] = [];
   orgDetailsForm: any;
   adminList: any[] = [];
   showSiteUser = false;
@@ -148,7 +132,6 @@ export class OrgIncidentManagementComponent implements OnInit {
     }
 
     this.initIncidentForm();
-    this.getOrgList();
   }
 
   initIncidentForm() {
@@ -211,61 +194,10 @@ export class OrgIncidentManagementComponent implements OnInit {
     this.getIncidentListByFilter();
   }
 
-  async getOrgList() {
-    try {
-      const data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        { countOnly: false },
-        1
-      );
-      this.orglist = data;
-      this.setInitialData();
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   setInitialData() {
     if (this.orgAdmin?.role === 'ORGADMIN') {
       this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
-      this.setOrgDetails();
-      this.formOrgChange();
     }
-
-    if (this.orgAdmin?.role === 'SITEEXE') {
-      this.orglist = this.orglist.filter((item: any) =>
-        this.orgAdmin?.siteExecutiveDetails?.orgDetails.some(
-          (a: any) => a._id === item._id
-        )
-      );
-    }
-  }
-
-  setOrgDetails() {
-    const orgDetails = this.orglist.find(
-      (org: any) => org._id === this.filterObj?.orgId
-    );
-
-    if (!orgDetails) return;
-
-    if (this.orgAdmin?.role === 'SITEEXE') {
-      this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
-        this.orgAdmin?.siteExecutiveDetails?.cafeDetails.some(
-          (a: any) => a.cafeteria_id === item.cafeteria_id
-        )
-      );
-    } else {
-      this.cafeList = orgDetails.cafeteriaList || [];
-    }
-
-    this.filterObj.cafeteria_id = '';
-    this.getIncidentListByFilter();
-  }
-
-  formOrgChange() {
-    this.orgDetailsForm = this.orglist.find(
-      (org: any) =>
-        org._id === this.incidentForm.get('orgDetails.orgId')?.value
-    );
   }
 
   async getIncidentListByFilter() {
@@ -429,16 +361,16 @@ export class OrgIncidentManagementComponent implements OnInit {
     this.isSubmitting = true;
     const formValue = this.incidentForm.getRawValue() as IncidentManagement;
 
-    const selectedOrg = this.orglist.find(
-      (item: any) => item._id === formValue.orgDetails.orgId
-    );
-    formValue.orgDetails.orgName = selectedOrg?.organization_name;
+    // const selectedOrg = this.orglist.find(
+    //   (item: any) => item._id === formValue.orgDetails.orgId
+    // );
+    // formValue.orgDetails.orgName = selectedOrg?.organization_name;
 
-    formValue.cafeteriaDetails.cafeName =
-      selectedOrg?.cafeteriaList.find(
-        (item: any) =>
-          item.cafeteria_id === formValue.cafeteriaDetails.cafeteria_id
-      )?.cafeteria_name;
+    // formValue.cafeteriaDetails.cafeName =
+    //   selectedOrg?.cafeteriaList.find(
+    //     (item: any) =>
+    //       item.cafeteria_id === formValue.cafeteriaDetails.cafeteria_id
+    //   )?.cafeteria_name;
 
     formValue.submittedByInfo = {
       name: this.orgAdmin?.name,
@@ -499,8 +431,6 @@ export class OrgIncidentManagementComponent implements OnInit {
       data: {
         mode,
         incident,
-        orgList: this.orglist,
-        cafeList: this.cafeList,
         filterObj: this.filterObj,
       },
     });

@@ -459,6 +459,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getReportHistoryByfilter, data);
   }
 
+  getChecklistReportByOutletId(outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getChecklistReportByOutletId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method });
+  }
+
   getfeedbacklistByfilter(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getfeedbacklistByfilter, data);
   }
@@ -1240,6 +1245,11 @@ export class ApiMainService {
   getImageGroupConfigById(id: string) {
     const urlObj = this.apiConfigService.apiEndPointObj.getImageGroupConfigById;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getImageGroupConfigByName(name: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getImageGroupConfigByName;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${name}`, method: urlObj.method });
   }
 
   getMealAweOutletByCafeteria(id: string) {

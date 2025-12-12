@@ -1,153 +1,94 @@
-<div class="container-fluid">
-  <h3>CheckList History</h3>
-  <div class="container-fluid">
-    <div class="row mb-4 mt-3 p-3 bg-light rounded">
-      <!-- Organization Selection -->
-      <div class="col-12 col-md-3">
-        <label for="organization" class="labelText d-block">Organization</label>
-        <select
-          class="form-select"
-          [(ngModel)]="filterObj.orgId"
-          [disabled]="this.orgAdmin.role === 'ORGADMIN'"
-          (change)="setOrgDetails()"
-        >
-          <option selected disabled value="">Select Organization</option>
-          <option *ngFor="let option of orglist" [value]="option._id">
-            {{ option.organization_name }}
-          </option>
-        </select>
-      </div>
-
-      <!-- Cafeteria Selection -->
-      <div class="col-12 col-md-3">
-        <label for="cafeteria" class="labelText d-block">Cafeteria</label>
-        <select
-          [disabled]="cafeList.length <= 0"
-          class="form-select"
-          [(ngModel)]="filterObj.cafeteria_id"
-          (change)="clearList()"
-        >
-          <option selected disabled value="">Select Cafeteria</option>
-          <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
-            {{ option.cafeteria_name }}
-          </option>
-        </select>
-      </div>
-      <div class="col-12 col-md-3">
-        <label for="fromDate" class="labelText d-block">From Date</label>
-        <input
-          type="date"
-          [(ngModel)]="filterObj.fromDate"
-          class="form-control"
-          (change)="getReportHistoryByfilter()"
-        />
-      </div>
-
-      <!-- To Date -->
-      <div class="col-12 col-md-3">
-        <label for="toDate" class="labelText d-block">To Date</label>
-        <input
-          type="date"
-          [(ngModel)]="filterObj.toDate"
-          class="form-control"
-          (change)="getReportHistoryByfilter()"
-        />
-      </div>
-
-      <div class="col-12 col-md-3">
-        <label for="exampleFormControlInput2" class="labelText d-block"
-          >Search</label
-        >
-
-      <div class="searchDiv">
-        <i class="bi bi-search"></i>
-        <input
-          type="text"
-          (input)="searchFilter($event)"
-          class="form-control"
-          placeholder="Search"
-          aria-label="Search Filter"
-          aria-describedby="basic-addon2"
-        />
-        </div>
-      </div>
-    </div>
-  </div>
-
+<div class="admin-header">
   <div>
-    <div class="container mt-2" *ngIf="filteredReportHistory.length > 0">
-      <div
-        class="row customCard list-group mb-2"
-        *ngFor="let Report of filteredReportHistory; let i = index"
-      >
-        <div class="list-group-item">
-          <div class="row">
-            <div
-              class="bgTopDownpadding1 d-flex align-items-center justify-content-between p-2"
-            >
-              <div class="d-flex align-items-center gap-4 flex-wrap">
-                <div class="d-flex align-items-center">
-                  <div class="labelText">Submited User :</div>
-                  <div class="labelData">{{ Report.SubmitedBy }}</div>
+    <h4 class="m-0 fw-semibold">
+      CheckList History
+    </h4>
+  </div>
+</div>
+
+
+<div class="container-fluid">
+  <mat-card class="mb-3">
+    <app-common-outlet-cafe-select [config]="headerConfig" (submitted)="filterSubmitted($event)">
+    </app-common-outlet-cafe-select>
+  </mat-card>
+
+  <mat-card *ngIf="filteredReportHistory.length > 0" class="">
+    <div class="container-fluid p-0">
+
+      <!-- Search if needed can go here, reused existing searchFilter method -->
+      <div class="d-flex justify-content-end mb-2">
+        <mat-form-field appearance="outline" class="dense-input" style="width: 250px;">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput (keyup)="searchFilter($event)" placeholder="Search User">
+        </mat-form-field>
+      </div>
+
+      <mat-accordion multi="true">
+        <mat-expansion-panel *ngFor="let report of filteredReportHistory" class="mb-2 report-panel" hideToggle>
+
+          <mat-expansion-panel-header>
+            <div class="d-flex align-items-center justify-content-between w-100 pe-3">
+              <div class="d-flex flex-wrap gap-4 align-items-center">
+                <div class="info-group">
+                  <span class="label">Submitted By:</span>
+                  <span class="value">{{ report.SubmitedBy }}</span>
                 </div>
-                <div class="d-flex align-items-center">
-                  <div class="labelText">Submited Date :</div>
-                  <div class="labelData">
-                    {{ Report.SubmitedDate | date : "dd/MM/yyyy" }}
-                  </div>
+                <div class="info-group">
+                  <span class="label">Date:</span>
+                  <span class="value">{{ report.SubmitedDate | date : "dd/MM/yyyy" }}</span>
                 </div>
               </div>
-              <div class="right" style="cursor: pointer">
-                <i
-                  class="bi bi-pencil-square"
-                  *ngIf="isToday(Report.SubmitedDate)"
-                  (click)="editChecklist(Report)"
-                ></i>
-                <span class="arrow ms-3" (click)="toggleFeedback(i)">
-                  <i class="bi bi-chevron-down" *ngIf="!expandedItems[i]"></i>
-                  <i class="bi bi-chevron-up" *ngIf="expandedItems[i]"></i>
-                </span>
+
+              <div class="actions d-flex align-items-center gap-3">
+                <button mat-icon-button *ngIf="isToday(report.SubmitedDate)"
+                  (click)="$event.stopPropagation(); editChecklist(report)" matTooltip="Edit Checklist">
+                  <mat-icon color="primary">edit</mat-icon>
+                </button>
+                <!-- Custom toggle icon to mimic design if needed, or default -->
+                <mat-icon>expand_more</mat-icon>
               </div>
             </div>
-            <ng-container *ngIf="expandedItems[i]">
-              <ng-container
-                *ngFor="let item of Report.checklist_questions; index as k"
-              >
-                <div class="cardDesignfeddback">
-                  <div class="d-flex flex-row items-center gap-4">
-                    <div>
-                      <div class="labelText">Question</div>
-                      <div class="labelData">{{ item.checklistQuestion }}</div>
-                    </div>
-                    <div>
-                      <div class="labelText">Selected</div>
-                      <div class="labelData">{{ item.selected }}</div>
-                    </div>
-                    <div *ngIf="item.comment != ''">
-                      <div class="labelText">Comment</div>
-                      <div class="labelData">{{ item.comment }}</div>
-                    </div>
-                  </div>
+          </mat-expansion-panel-header>
+
+          <div class="pt-3">
+            <div *ngIf="!report.checklist_questions || report.checklist_questions.length === 0"
+              class="text-muted fst-italic">
+              No questions recorded.
+            </div>
+
+            <div class="question-grid">
+              <div *ngFor="let item of report.checklist_questions" class="question-card">
+                <div class="q-row">
+                  <span class="q-label">Question:</span>
+                  <span class="q-text">{{ item.checklistQuestion }}</span>
                 </div>
-              </ng-container>
-            </ng-container>
+                <div class="q-row">
+                  <span class="q-label">Selected:</span>
+                  <mat-icon *ngIf="item.selected" class="text-success small-icon">check_circle</mat-icon>
+                  <mat-icon *ngIf="!item.selected" class="text-secondary small-icon">cancel</mat-icon>
+                </div>
+                <div class="q-row" *ngIf="item.comment">
+                  <span class="q-label">Comment:</span>
+                  <span class="q-text text-muted">{{ item.comment }}</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-      <button
-        type="button"
-        *ngIf="nextOn"
-        class="btn btn-primary btn-sm mt-2"
-        (click)="getMore()"
-      >
-        Load More
-      </button>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <mat-paginator [length]="totalLength" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
+        (page)="onPageChange($event)" showFirstLastButtons aria-label="Select page">
+      </mat-paginator>
+
     </div>
-    <div
-      class="center labelText mt-2"
-      *ngIf="filteredReportHistory.length == 0"
-    >
+  </mat-card>
+
+  <div class="center labelText mt-2" *ngIf="filteredReportHistory.length == 0">
+    <mat-card class="p-4 text-center text-muted">
       No History found
-    </div>
+    </mat-card>
   </div>
 </div>

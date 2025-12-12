@@ -109,6 +109,7 @@ export class ApiConfigService {
       updateChecklistReports: p('/api/updateChecklistReports', 'PUT'),
       deletechecklistReport: p('/api/deleteOutletMenu', 'DELETE'),
       getReportHistoryByfilter: p('/api/getReportHistoryByfilter', 'POST'),
+      getChecklistReportByOutletId: p('/api/getChecklistReportByOutletId', 'GET'),
       createIncident: p('/api/createIncident', 'POST'),
       getAllIncidents: p('/api/getAllIncidents', 'GET'),
       getIncidentsByDateAndFilters: p('/api/getIncidentsByDateAndFilters', 'POST'),
@@ -302,6 +303,7 @@ export class ApiConfigService {
       createAuditReport: p('/api/createAuditReport', 'POST'),
       updateAuditReport: p('/api/updateAuditReport', 'PUT'),
       deleteAuditReport: p('/api/deleteAuditReport', 'DELETE'),
+      getImageGroupConfigByName: p('/api/getImageGroupConfigByName', 'GET'),
     }
   }
   // private generateOneLineApi(): string[] {

@@ -17,14 +17,12 @@
   <div class="container-fluid">
     <!-- FILTER CARD -->
     <mat-card class="mb-3">
-      <mat-card-content>
-        <app-common-outlet-cafe-select [config]="headerConfig"
-          (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
-      </mat-card-content>
+      <app-common-outlet-cafe-select [config]="headerConfig"
+        (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
     </mat-card>
 
     <!-- INCIDENT LIST -->
-    <div *ngIf="pagedIncidentList.length > 0; else noRecords">
+    <div *ngIf="pagedIncidentList.length > 0; else noRecords" class="incident-page">
       <div class="d-flex gap-2 mt-3 justify-content-end">
         <button mat-raised-button color="primary" *ngIf="
             orgAdmin?.role === 'ORGADMIN' &&
@@ -35,7 +33,7 @@
           Add Incident
         </button>
       </div>
-      <div class="incident-list mt-3">
+      <div class="incident-list mt-3 ">
         <mat-card class="incident-card mb-2" *ngFor="let incident of pagedIncidentList">
           <mat-card-content>
             <div class="row g-2 align-items-center">
@@ -60,7 +58,7 @@
               <div class="col-6 col-md-2">
                 <div class="labelText">Date</div>
                 <div class="labelData">
-                  {{ incident?.createdAt | date : 'dd/MM/yyyy' }}
+                  {{ incident?.createdAt | date : 'MMM d, y, h:mm:ss a' }}
                 </div>
                 <div class="labelText mt-1">Status</div>
                 <mat-chip class="status-chip" [ngClass]="incident.status" selected>
@@ -100,21 +98,10 @@
               </div>
 
               <div class="col-12 col-md-1 d-flex justify-content-md-end mt-2 mt-md-0">
-                <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editIncident"
-                  (click)="editIncident(incident)" matTooltip="Edit Incident">
-                  <mat-icon>edit</mat-icon>
+                <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteIncident"
+                  (click)="deleteIncident(incident)" matTooltip="Delete Incident">
+                  <mat-icon>delete</mat-icon>
                 </button>
-                <!--
-              <button
-                mat-icon-button
-                color="warn"
-                *ngIf="true || btnPolicy?.deleteIncident"
-                (click)="deleteIncident(incident)"
-                matTooltip="Delete Incident"
-              >
-                <mat-icon>delete</mat-icon>
-              </button>
-              -->
               </div>
             </div>
           </mat-card-content>
