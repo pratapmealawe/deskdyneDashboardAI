@@ -136,7 +136,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     this.form.controls.orgId.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((orgId) => {
       const org = this.orgList.find((o) => o._id === orgId) || null;
       this.cafeteriaOptions = org?.cafeteriaList || [];
-      if (this.form.controls.role.value === 'HYPERPURE_POC') {
+      if (this.form.controls.role.value === 'HYPERPURE_POC' || this.form.controls.role.value === 'SITEEXE') {
         this.form.controls.cafeIds.setValue([]);
         this.form.controls.cafeIds.updateValueAndValidity();
       }
@@ -161,7 +161,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     if (role === 'ORGADMIN' || role === 'HYPERPURE_ADMIN') {
       orgCtrl.addValidators([Validators.required]);
       cafeCtrl.setValue([]); // N/A
-    } else if (role === 'HYPERPURE_POC') {
+    } else if (role === 'HYPERPURE_POC' || role === 'SITEEXE') {
       orgCtrl.addValidators([Validators.required]);
       cafeCtrl.addValidators([requiredArray()]);
     } else {
@@ -300,11 +300,11 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     // OrgDetails / CafeDetails as per role
     const org = this.orgList.find((o) => o._id === val.orgId) || null;
 
-    if (val.role === 'ORGADMIN' || val.role === 'HYPERPURE_ADMIN' || val.role === 'HYPERPURE_POC') {
+    if (val.role === 'ORGADMIN' || val.role === 'HYPERPURE_ADMIN' || val.role === 'HYPERPURE_POC' || val.role === 'SITEEXE') {
       if (org) formData.append('orgDetails', JSON.stringify(org));
     }
 
-    if (val.role === 'HYPERPURE_POC') {
+    if (val.role === 'HYPERPURE_POC' || val.role === 'SITEEXE') {
       const cafes = (org?.cafeteriaList || []).filter((c) => val.cafeIds.includes(c.cafeteria_id));
       const cafeDetails = cafes.map((c) => ({
         cafeteria_name: c.cafeteria_name,

@@ -2,28 +2,32 @@
 @use '/src/styles.scss' as color;
 
 .admin-header {
-    @include mixin.responsive-header;
-    background-color: transparent;
+  @include mixin.responsive-header;
+  background-color: transparent;
 }
 
 .header-actions {
-    @include mixin.responsive-flex-wrapper(1rem);
-    flex-grow: 1;
-    justify-content: flex-end;
+  @include mixin.responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
 
-    .input-wrapper {
-        min-width: 200px;
+  .input-wrapper {
+    min-width: 200px;
 
-        @media(max-width: 768px) {
-            width: 100%;
-            display: block !important;
-        }
+    @media(max-width: 768px) {
+      width: 100%;
+      display: block !important;
     }
+  }
 }
 
-
 .search-input {
-    @include mixin.mat-form-field-responsive();
+  @include mixin.mat-form-field-responsive();
+}
+
+mat-card {
+  padding: 15px;
+  border-radius: 12px;
 }
 
 .incident-page {
@@ -71,6 +75,7 @@
       padding-inline: 10px;
     }
   }
+
 
   .status-chip {
     font-size: 0.75rem;

@@ -3,15 +3,9 @@ import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
+import { CommonSelectConfig, SubmitPayload } from '../common-outlet-cafe-select/common-outlet-cafe-select.component';
 
-// Interface for defining filter object structure
-interface filter {
-  orgId: string;
-  cafeteria_id: string;
-  fromDate: string;
-  toDate: string;
-  page: number;
-}
+
 
 @Component({
   selector: 'app-checklist-history',
@@ -19,145 +13,123 @@ interface filter {
   styleUrls: ['./checklist-history.component.scss'],
 })
 export class ChecklistHistoryComponent implements OnInit {
-  // Holds the selected organization's details
-  orgDetails: any = null;
-  // Stores the list of all organizations
-  orglist: any[] = [];
-  cafeList: any[] = [];
-  // Stores checklist report history based on applied filters
+  // Stores checklist report history
   reportHistory: any[] = [];
   // Stores the filtered report history for search functionality
   filteredReportHistory: any[] = [];
-  // Array to track expanded/collapsed state of each item
-  expandedItems: boolean[] = [];
+
+  // Pagination properties
+  totalLength = 0;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions = [5, 10, 25, 100];
+
   // Filter object used for API calls
-  filterObj: filter = {
-    orgId: '',
-    cafeteria_id: '',
+  filterObj: any = {
+    outlet_id: '',
     fromDate: new Date().toISOString().split('T')[0],
     toDate: '',
     page: 1,
   };
-  // Stores admin details fetched from local storage
-  orgAdmin: any;
-  // Controls the visibility of the "Load More" button
-  nextOn: boolean = false;
+  adminProfile: any;
+
+  headerConfig: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: true,
+    disableOrg: true,
+    requireAll: true,
+    defaultOrgId: '',
+  };
+
+  filterData?: SubmitPayload;
 
   constructor(
     public apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
-    this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.getOrgList();
+    this.adminProfile = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.headerConfig.defaultOrgId = this.adminProfile?.orgDetails?._id || '';
   }
 
-  // Fetch the list of all organizations
-  // Set initial values based on admin role
-  async getOrgList() {
-    try {
-      let page = 1;
-      let searchObj = { countOnly: false };
-      let data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        searchObj,
-        page
-      );
-      this.orglist = data;
-      this.getInitialValues();
-    } catch (error) {
-      console.log(error);
+  filterSubmitted(data: SubmitPayload) {
+    this.filterData = data;
+    this.filterObj.outlet_id = data.outlet_id;
+
+    if (data.date_from) {
+      this.filterObj.fromDate = data.date_from.split('T')[0];
     }
-  }
-
-  // If the logged-in user is an Org Admin, auto-select their organization
-  // Otherwise, fetch report history using filters
-  getInitialValues() {
-    if (this.orgAdmin.role === 'ORGADMIN') {
-      this.filterObj.orgId = this.orgAdmin?.orgDetails?._id;
-      this.setOrgDetails();
-    } else if (this.orgAdmin.role === 'SITEEXE') {
-      this.orglist = this.orglist.filter((item: any) =>
-        this.orgAdmin?.siteExecutiveDetails?.orgDetails.some(
-          (a: any) => a._id === item._id
-        )
-      );
-      this.getReportHistoryByfilter();
-    } else {
-      this.getReportHistoryByfilter();
+    if (data.date_to) {
+      this.filterObj.toDate = data.date_to.split('T')[0];
     }
-  }
 
-  // Find the selected organization based on the filter
-  // Reset cafe ID and clear list
-  setOrgDetails() {
-    let orgDetails = this.orglist.find((org: any) => {
-      return org._id == this.filterObj?.orgId;
-    });
-
-    if (this.orgAdmin.role === 'SITEEXE') {
-      this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
-        this.orgAdmin?.siteExecutiveDetails?.cafeDetails.some(
-          (a: any) => a.cafeteria_id === item.cafeteria_id
-        )
-      );
-    } else {
-      this.cafeList = orgDetails.cafeteriaList;
-    }
-    this.filterObj.cafeteria_id = '';
-    this.clearList();
-  }
-
-  // Clear the list and fetch fresh data
-  clearList() {
-    this.reportHistory = [];
+    // Reset to first page on new filter
+    this.pageIndex = 0;
     this.filterObj.page = 1;
     this.getReportHistoryByfilter();
   }
 
-  // Toggle visibility of feedback
-  toggleFeedback(index: number) {
-    this.expandedItems[index] = !this.expandedItems[index];
-  }
+  async getReportHistoryByfilter() {
+    if (!this.filterObj.outlet_id) return;
 
-  // Fetch data based on applied filters
-  // Determine if "Load More" button should be shown
-  // Append the fetched data to existing list
-  // Initialize expansion state for each item
-  async getReportHistoryByfilter(isClear = false) {
-    if (!isClear) {
-      this.reportHistory = [];
-      this.filteredReportHistory = [];
-      this.filterObj.page = 1;
-    }
+    this.reportHistory = [];
+    this.filteredReportHistory = [];
+
+    // Sync filterObj page with material paginator (1-based vs 0-based if api uses 1-based)
+    // Assuming API uses 1-based indexing
+    this.filterObj.page = this.pageIndex + 1;
 
     try {
       const data = await this.apiMainService.getReportHistoryByfilter(
         this.filterObj
       );
 
-      this.nextOn = data.length > 0;
-      this.reportHistory = [...this.reportHistory, ...data];
-      this.filteredReportHistory = [...this.reportHistory];
-      this.expandedItems = new Array(this.reportHistory.length).fill(true);
+      // API might return just the array, or an object with count. 
+      // Based on previous code `data.length > 0`, it seems to be an array.
+      // If backend doesn't return total count, we have to fake it or rely on "load more" style
+      // but user asked for frontend pagination style. 
+      // If valid array:
+      if (Array.isArray(data)) {
+        this.reportHistory = data;
+        this.filteredReportHistory = [...this.reportHistory];
+
+        // Logic to guess total length if API doesn't provide it:
+        // If we got a full page, assume there might be more.
+        // But for standard Paginator, we need a length.
+        // If API doesn't provide count, we can only set length to (page * size) + (more ? size : 0)
+        // OR, we just stick to this simple view but using Paginator controls event if length is unknown.
+
+        // Let's assume for now we set a high number if data exists, to allow "Next".
+        if (data.length >= this.pageSize) {
+          this.totalLength = (this.pageIndex + 2) * this.pageSize; // Allow next page
+        } else {
+          this.totalLength = (this.pageIndex * this.pageSize) + data.length;
+        }
+      }
+
     } catch (e) {
       console.log('Error while fetching data', e);
     }
   }
 
-  // Increment the page number to fetch the next set of data
-  getMore() {
-    this.filterObj.page++;
-    this.getReportHistoryByfilter(true);
+  onPageChange(e: any) {
+    this.pageIndex = e.pageIndex;
+    this.pageSize = e.pageSize;
+    this.getReportHistoryByfilter();
   }
 
-  // Define search configuration (searching by key)
-  // Perform search on mainlist
+  // Search local list
   searchFilter(e: any) {
-    const searchText = e.target.value;
-    const config = { keys: ['SubmitedBy'] };
+    const searchText = (e.target.value || '').trim();
+    if (!searchText) {
+      this.filteredReportHistory = [...this.reportHistory];
+      return;
+    }
+
+    const config = { keys: ['SubmitedBy' /*, 'SubmitedDate'*/] };
     this.filteredReportHistory = this.searchService.searchData(
       this.reportHistory,
       config,
@@ -171,10 +143,8 @@ export class ChecklistHistoryComponent implements OnInit {
 
   isToday(dateString: string | Date): boolean {
     if (!dateString) return false;
-
     const reportDate = new Date(dateString);
     const today = new Date();
-
     return (
       reportDate.getFullYear() === today.getFullYear() &&
       reportDate.getMonth() === today.getMonth() &&

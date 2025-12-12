@@ -1,19 +1,96 @@
-.checkbox {
-  margin-left: 0px !important;
-  position: relative;
+@use "/src/styles/theme/mixins" as mixin;
+@use "/src/styles.scss" as color;
+
+.input {
+  @include mixin.mat-form-field-responsive();
 }
 
-.searchDiv {
-    position: relative;
 
-    i {
-        position: absolute;
-        left: 10px;
-        top: 50%;
-        transform: translate(0px, -50%);
+.admin-header {
+  @include mixin.responsive-header;
+  background-color: transparent;
+}
+
+.header-actions {
+  @include mixin.responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
+}
+
+.submit-checklist-wrapper {
+  // padding: 10px 5px;
+
+  mat-card {
+    padding: 15px;
+    border-radius: 12px;
+  }
+
+  .section-title {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+
+    .search-field {
+      min-width: 220px;
+
+      @media (max-width: 768px) {
+        width: 100%;
+      }
+    }
+  }
+
+  .questions-list {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 60vh;
+    overflow-y: auto;
+  }
+
+  .question-row {
+    padding: 10px 8px;
+    border-radius: 8px;
+    border: 1px solid #e2e2e2;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      align-items: flex-start;
+      justify-content: space-between;
+    }
+  }
+
+  .question-main {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1;
+  }
+
+  .question-text {
+    .labelText {
+      @include mixin.labelText;
     }
 
-    input {
-        padding-left: 35px;
+    .labelData {
+      @include mixin.labelData;
     }
+  }
+
+  .question-comment {
+    flex: 0 0 300px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+    }
+  }
 }

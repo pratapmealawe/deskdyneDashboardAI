@@ -1,5 +1,53 @@
-<div class="col-12 card-wrapper">
-    <marquee>Welcome</marquee>
-</div>
-    
+<div class="container-fluid home-container p-4">
+    <!-- Header Section -->
+    <div class="row text-center mb-3">
+        <div class="col-12">
+            <h1 class="welcome-title mb-2">Welcome to DeskDyne!</h1>
+            <p class="welcome-subtitle">One stop solution for all your corporate meal needs!</p>
+        </div>
+    </div>
 
+    <!-- Clients Section -->
+    <div class="row align-items-center mb-4 clients-section">
+        <div class="col-md-3 text-md-start text-center mb-4 mb-md-0 section-header">
+            <h2 class="clients-title">Our Top<br>Clients</h2>
+            <p class="clients-subtitle mt-3">Trusted by leading<br>enterprises across India</p>
+        </div>
+        <div class="col-md-9">
+            <div class="row align-items-center logo-grid">
+                <div class="col-6 col-md-3 col-lg-2 mb-4 text-center" *ngFor="let logo of clientLogos">
+                    <div class="logo-wrapper">
+                        <img [src]="logo" alt="Client Logo" class="img-fluid client-logo"
+                            (error)="hideClientLogo($event)">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Section -->
+    <div class="row mb-5">
+        <div class="col-12 text-center mb-4">
+            <h3 class="gallery-title">Photo Gallery</h3>
+        </div>
+        <div class="col-12">
+            <div class="swiper-wrapper-container" *ngIf="carouselImages.length > 0; else noImages">
+                <swiper-container #swiper navigation="false" pagination="false" pagination-clickable="false"
+                    autoplay-delay="3000" space-between="20" slides-per-view="1" centered-slides="false"
+                    breakpoints='{"640": {"slidesPerView": 2}, "1024": {"slidesPerView": 3}, "1280": {"slidesPerView": 4}}'>
+
+                    <swiper-slide *ngFor="let imgUrl of carouselImages">
+                        <div class="slide-content">
+                            <img [src]="imageUrl + imgUrl" alt="Gallery Image" class="gallery-image">
+                        </div>
+                    </swiper-slide>
+                </swiper-container>
+            </div>
+            <ng-template #noImages>
+                <div class="text-center text-muted p-5 bg-light rounded">
+                    <p>Loading gallery images...</p>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>
