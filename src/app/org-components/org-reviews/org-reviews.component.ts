@@ -114,7 +114,7 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   }
 
   setInitials() {
-     // if Admin is logged in
+    // if Admin is logged in
     if (this.adminOrg) {
       this.headerConfig = {
         ...this.headerConfig,
@@ -127,6 +127,12 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
       this.headerConfig = {
         ...this.headerConfig,
         defaultOrgId: this.orgAdmin?.orgDetails?._id,
+      };
+    }
+    if (!this.adminOrg && this.orgAdmin?.role !== 'ORGADMIN') {
+      this.isAdmin = true;
+      this.headerConfig = {
+        ...this.headerConfigAdmin
       };
     }
   }
