@@ -67,6 +67,8 @@ export class AddPolicyComponent {
       otherOrder: false,
       configImages: false,
       configImagesGroup: false,
+      eventPopup: false,
+      addEventPopup: false,
     },
     button_policies: {
       addOutlet: false,
@@ -115,6 +117,8 @@ export class AddPolicyComponent {
       addIncident: false,
       editIncident: false,
       deleteIncident: false,
+      eventPopup: Boolean,
+      addEventPopup: Boolean,
     },
   };
   routeKeys: any;

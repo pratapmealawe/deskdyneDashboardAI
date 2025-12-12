@@ -9,6 +9,8 @@ const routes: Routes = [
   { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
   { path: 'outlet', canActivate: [accessGuard], loadChildren: () => import('./outlet/outlet.module').then(m => m.OutletModule) },
   { path: 'addOutlet', canActivate: [accessGuard], loadChildren: () => import('./outlet/add-outlet/add-outlet.module').then(m => m.AddOutletModule) },
+  { path: 'eventPopup', canActivate: [accessGuard], loadChildren: () => import('./event-popup/event-popup.module').then(m => m.EventPopupModule) },
+  { path: 'addEventPopup', canActivate: [accessGuard], loadChildren: () => import('./event-popup/add-event/add-event.module').then(m => m.AddEventModule) },
   { path: 'vendor', canActivate: [accessGuard], loadChildren: () => import('./vendor/vendor.module').then(m => m.VendorModule) },
   { path: 'searchVendor', canActivate: [accessGuard], loadChildren: () => import('./vendor/search-vendor/search-vendor.module').then(m => m.SearchVendorModule) },
   { path: 'addVendorFirm', canActivate: [accessGuard], loadChildren: () => import('./add-vendor-firm/add-vendor-firm.module').then(m => m.AddVendorFirmModule) },

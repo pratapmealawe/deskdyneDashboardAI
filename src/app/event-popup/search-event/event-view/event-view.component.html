@@ -1,0 +1,23 @@
+<div class="container-fluid">
+    <div class="d-flex mb-3 align-items-center gap-3">
+        <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
+        <div class="heading">View Events</div>
+    </div>
+    <mat-tab-group [(selectedIndex)]="selectedtab" (selectedTabChange)="onTabChange($event)" class="custom-tabs">
+        <mat-tab *ngFor="let view of eventViewList" [label]="view.name" class="custom-tabs">
+            <ng-container [ngSwitch]="view.path">
+
+                <app-event-details *ngSwitchCase="'outlet-details'" [eventObj]="event"></app-event-details>
+
+                <app-event-menu *ngSwitchCase="'outlet-menu'" [eventObj]="event"></app-event-menu>
+
+                <app-event-orders *ngSwitchCase="'outlet-orders'" [eventObj]="event"></app-event-orders>
+
+                <app-event-reviews *ngSwitchCase="'outlet-feedback'" [eventObj]="event"></app-event-reviews>
+
+                <div *ngSwitchDefault>No Component Found</div>
+
+            </ng-container>
+        </mat-tab>
+    </mat-tab-group>
+</div>

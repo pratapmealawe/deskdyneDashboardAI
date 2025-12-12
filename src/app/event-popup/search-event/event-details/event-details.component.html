@@ -1,0 +1,99 @@
+<div class="rows pt-3 pb-3">
+
+    <div class="card-header d-flex justify-content-between">
+        <div class="heading">{{ eventObj.outletName }}</div>
+        <button mat-raised-button color="primary" (click)="editOrg()"><mat-icon>edit</mat-icon>Edit</button>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-12 pt-4">
+        <div class="row pt-2">
+            <div class="col-1">
+                <img style="border-radius: 8px;" [src]="
+            eventObj?.cardImage
+              ? imageUrl + eventObj.cardImage
+              : 'assets/images/dummyUpload.png'
+          " class="uploadedImage" />
+            </div>
+            <div class="col-10">
+                <div class="labelText">Outlet Description</div>
+                <div class="labelData">{{ eventObj.outletDescription }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-12">
+        <div class="row py-3 px-2">
+            <div class="col-6 col-md-5 col-lg-4">
+                <div class="labelText">Organization Name</div>
+                <div class="labelData">
+                    {{ eventObj.organizationDetails.organization_name }}
+                </div>
+            </div>
+            <div class="col-6 col-md-7 col-lg-4">
+                <div class="labelText">City</div>
+                <div class="labelData">{{ eventObj.organizationDetails.city }}</div>
+            </div>
+            <div class="col-6 col-md-7 col-lg-4">
+                <div class="labelText">Location</div>
+                <div class="labelData">
+                    {{ eventObj.organizationDetails.location }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4 col-lg-12">
+        <div class="row py-3 px-2">
+            <div class="col-6 col-md-5 col-lg-4">
+                <div class="labelText">Cafeteria Name</div>
+                <div class="labelData">
+                    {{ eventObj.cafeteriaDetails.cafeteria_name }}
+                </div>
+            </div>
+            <div class="col-6 col-md-7 col-lg-4">
+                <div class="labelText">Cafeteria City</div>
+                <div class="labelData">
+                    {{ eventObj.cafeteriaDetails.cafeteria_city }}
+                </div>
+            </div>
+            <div class="col-6 col-md-7 col-lg-4">
+                <div class="labelText">Landmark</div>
+                <div class="labelData">{{ eventObj.cafeteriaDetails.landmark }}</div>
+            </div>
+            <div class="col-6 col-md-5 col-lg-4">
+                <div class="labelText">Cafeteria Name</div>
+                <div class="labelData">{{ eventObj.cafeteriaDetails.location }}</div>
+            </div>
+            <div class="col-6 col-md-7 col-lg-4">
+                <div class="labelText">Cafeteria City</div>
+                <div class="labelData">{{ eventObj.cafeteriaDetails.address1 }}</div>
+            </div>
+            <div class="col-6 col-md-7 col-lg-4">
+                <div class="labelText">Location</div>
+                <div class="labelData">{{ eventObj.cafeteriaDetails.address2 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="row py-3 px-2">
+            <div class="col-lg-2 mb-2">
+                <div class="bg-light rounded px-2">
+                    <div class="labelText">Outlet Dates</div>
+                    <div class="labelData">
+                        {{ eventObj.outletStartDate | date: "dd-MM-yyyy" }} -
+                        {{ eventObj.outletEndDate | date: "dd-MM-yyyy" }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-10">
+                <div class="labelText">Banner Images</div>
+                <div class="preview-box">
+                    <div *ngFor="let banner of eventObj?.bannerImages">
+                        <img [src]="imageUrl + banner" class="bannerImages" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>

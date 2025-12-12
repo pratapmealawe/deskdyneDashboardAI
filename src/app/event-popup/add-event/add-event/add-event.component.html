@@ -1,0 +1,249 @@
+<div class="container-fluid">
+    <div class="d-flex align-items-center mb-3 gap-3">
+        <button type="button" mat-flat-button (click)="back()">
+            <mat-icon>arrow_back</mat-icon>Back
+        </button>
+
+        <div class="heading mb-0">
+            {{ showUpdate ? 'Edit Event' : 'Add Event' }}
+        </div>
+    </div>
+    <form [formGroup]="eventform" (ngSubmit)="onSubmit()">
+
+        <mat-card class="mb-3">
+            <mat-card-content class="pt-3">
+                <!-- IMAGE & CHECKBOXE -->
+                <div class="row pe-3">
+                    <div class="col-12 col-md-3 image-div pe-0">
+                        <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
+                            (change)="handleFileInput($event)" />
+
+                        <mat-card class="image-card" (click)="fileInput.click()">
+                            <img [src]="imageUrl || 'assets/images/dummyUpload.png'" class="uploadedImage" />
+                            <div class="uploadIcon">
+                                <mat-icon>upload</mat-icon>
+                                <span>Upload Outlet Image</span>
+                            </div>
+                        </mat-card>
+                    </div>
+                    <div class="col-12 col-md-9">
+                        <div class="mainCheckDiv mb-2">
+                            <mat-checkbox formControlName="outletOpened">
+                                Outlet Opened
+                            </mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <!-- OUTLET & COMISSION DETAILS -->
+                <div class="row mt-3">
+                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Outlet Name</mat-label>
+                            <input matInput placeholder="Outlet Name" formControlName="outletName" />
+                            <mat-error *ngIf="f['outletName'].invalid && (f['outletName'].touched || showError)">
+                                *Outlet name is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <!-- OUTLET TYPE REMOVED HERE -->
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Outlet Description</mat-label>
+                            <input matInput placeholder="Outlet Description" formControlName="outletDescription" />
+                            <mat-error
+                                *ngIf="f['outletDescription'].invalid && (f['outletDescription'].touched || showError)">
+                                *Outlet description is required
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Commission Percentage (%)</mat-label>
+                            <input matInput type="number" formControlName="vendorCommissionPercentage"
+                                placeholder="Enter Commission %" />
+                            <mat-error *ngIf="
+                f['vendorCommissionPercentage'].invalid &&
+                (f['vendorCommissionPercentage'].touched || showError)
+              ">
+                                *Vendor Commission is required (0-100)
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>MRP Commission Percentage (%)</mat-label>
+                            <input matInput type="number" formControlName="MRPCommissionPercentage"
+                                placeholder="Enter MRP Commission %" />
+                            <mat-error *ngIf="
+                f['MRPCommissionPercentage'].invalid &&
+                (f['MRPCommissionPercentage'].touched || showError)
+              ">
+                                *MRP Commission is required (0-100)
+                            </mat-error>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Subsidy Amount (in %)</mat-label>
+                            <input matInput type="number" formControlName="subsidy" placeholder="Subsidy Amount" />
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Precedence</mat-label>
+                            <input matInput type="number" formControlName="precedence" />
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- EVENT DATE RANGE -->
+                <div class="row mt-3">
+                    <div class="col-12 col-md-6 col-lg-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Event Date range</mat-label>
+                            <mat-date-range-input [rangePicker]="picker" [min]="minDate" [max]="maxDate">
+                                <input matStartDate placeholder="From" formControlName="outletStartDate" />
+                                <input matEndDate placeholder="To" formControlName="outletEndDate" />
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                    </div>
+                </div>
+                <!-- BANNER IMAGE -->
+                <div class="row my-3 px-3">
+                    <div class="col-12 col-md-12 banner-div">
+
+                        <div class="banner-inner">
+
+                            <label class="fw-bold banner-title">Banner Images</label>
+
+                            <input #bannerInput type="file" multiple accept="image/*"
+                                (change)="onBannerFilesSelected($event)" style="display: none" />
+
+                            <button type="button" mat-raised-button color="primary" class="upload-banner-btn"
+                                (click)="bannerInput.click()">
+                                <mat-icon>upload</mat-icon>
+                                Upload Banner Images
+                            </button>
+
+                            <!-- PREVIEW INSIDE THE SAME BOX -->
+                            <div class="preview-container mt-3">
+                                <div class="preview-box" *ngFor="let img of bannerPreviewUrls; let i = index">
+                                    <img [src]="img" class="banner-thumb" />
+                                    <button type="button" class="delete-btn" (click)="removeBannerImage(i)">
+                                        <mat-icon>close</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <!-- <div class="d-flex justify-content-end">
+                    <button mat-stroked-button color="primary" type="button" (click)="updateOutletLevelSubsidy()"
+                        [disabled]="!showUpdate || !selectedOutlet">
+                        Update Subsidy
+                    </button>
+                </div> -->
+            </mat-card-content>
+        </mat-card>
+
+        <!-- ORG + CAFETERIA CARD -->
+        <mat-card class="mb-3">
+            <mat-card-content>
+                <div class="row">
+                    <div class="col-12 col-md-4 mb-2">
+                        <button mat-raised-button color="primary" type="button" (click)="openOrgList()">
+                            {{
+                            showUpdate
+                            ? 'Change Organization & Cafeteria'
+                            : 'Select Organization & Cafeteria'
+                            }}
+                        </button>
+                    </div>
+                </div>
+
+                <mat-card class="cardDesign mt-2" *ngIf="seletedCafetria">
+                    <div class="row card-wrapper">
+                        <div class="col-12">
+                            <div class="row">
+                                <div class="col-6 col-md-3">
+                                    <div class="labelText">Organization Name</div>
+                                    <div class="labelData">
+                                        {{ seletedCafetria.organizationDetails.organization_name }}
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="labelText">Organization City</div>
+                                    <div class="labelData">
+                                        {{ seletedCafetria.organizationDetails.city }}
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="labelText">Cafeteria Name</div>
+                                    <div class="labelData">
+                                        {{ seletedCafetria.cafeteriaDetails.cafeteria_name }}
+                                    </div>
+                                </div>
+                                <div class="col-6 col-md-3">
+                                    <div class="labelText">Cafeteria City</div>
+                                    <div class="labelData">
+                                        {{ seletedCafetria.cafeteriaDetails.cafeteria_city }} - {{
+                                        seletedCafetria?.cafeteriaDetails?.location }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card>
+            </mat-card-content>
+        </mat-card>
+
+        <!-- ACTION BUTTONS -->
+        <div class="mt-3 d-flex gap-2">
+            <button *ngIf="showUpdate" mat-stroked-button color="accent" type="button" (click)="back()">Cancel</button>
+
+            <button *ngIf=" showUpdate && (btnPolicy?.editOutlet ?? true)" mat-raised-button color="primary"
+                type="button" (click)="onSubmit('update')" [disabled]="eventform.invalid || !seletedCafetria">
+                Update
+            </button>
+
+            <button *ngIf="!showUpdate && (btnPolicy?.addOutlet ?? true)" mat-raised-button color="primary"
+                type="submit" [disabled]="eventform.invalid || !seletedCafetria">
+                Submit
+            </button>
+        </div>
+
+    </form>
+</div>
+
+<!-- ORG + CAFETERIA MAT DIALOG TEMPLATE -->
+<ng-template #contentOrg let-dialogRef="dialogRef">
+    <h2 mat-dialog-title>Select Organization & Cafeteria</h2>
+
+    <mat-dialog-content>
+        <div class="org-list">
+            <div class="org-item" *ngFor="let org of formattedOrgList" (click)="selectedOrgCafeteria = org.key"
+                [ngClass]="{ selected: selectedOrgCafeteria === org.key }">
+                <mat-radio-button [checked]="selectedOrgCafeteria === org.key"
+                    (click)="$event.stopPropagation(); selectedOrgCafeteria = org.key">
+                    {{ org.key }}
+                </mat-radio-button>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
+        <button mat-raised-button color="primary" type="button" (click)="dialogRef.close('add')"
+            [disabled]="!selectedOrgCafeteria">
+            Add
+        </button>
+    </mat-dialog-actions>
+</ng-template>
