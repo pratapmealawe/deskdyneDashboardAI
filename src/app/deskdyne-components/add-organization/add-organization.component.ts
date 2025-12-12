@@ -119,7 +119,7 @@ export class AddOrganizationComponent implements OnInit {
 
   new_admin_details(): FormGroup {
     return this.fb.group({
-      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.pattern(REGEX.NAME)]],
+      admin_name: ['', [Validators.required, Validators.minLength(3)]],
       admin_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
       admin_email: ['', [Validators.required, Validators.email,]],
       admin_location: ['', Validators.required],
@@ -155,7 +155,7 @@ export class AddOrganizationComponent implements OnInit {
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       poc_details: this.fb.group({
         poc_id: [{ value: '', disabled: true }, Validators.required],
-        poc_name: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+        poc_name: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
         poc_phoneNo: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(REGEX.PHONE)]],
         poc_email: [{ value: '', disabled: true }, [Validators.required, Validators.email,]],
         poc_location: [{ value: '', disabled: true }, Validators.required],
@@ -164,7 +164,7 @@ export class AddOrganizationComponent implements OnInit {
         approverCountLimit: [''],
         approverDetails: this.fb.group({
           approver_id: [''],
-          approver_name: ['', [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+          approver_name: ['', [Validators.minLength(3), Validators.maxLength(80)]],
           approver_phoneNo: ['', Validators.pattern(REGEX.PHONE)],
           approver_email: ['', Validators.email],
           approver_location: [''],
@@ -178,7 +178,7 @@ export class AddOrganizationComponent implements OnInit {
   new_poc_details(): FormGroup {
     return this.fb.group({
       poc_id: ['', Validators.required],
-      poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+      poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
       poc_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
       poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
       poc_location: ['', Validators.required],
@@ -413,7 +413,13 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   addApprover(index: any) {
-    this.adminSelected = this.form.controls['poc_details'].at(index).value;
+    // this.adminSelected = this.form.controls['poc_details'].at(index).value;
+    const pocArray = this.form.get('poc_details') as FormArray;
+    if (!pocArray || !pocArray.at(index)) {
+      console.error("Invalid index or poc_details FormArray not initialized");
+      return;
+    }
+    this.adminSelected = pocArray.at(index).value;
     this.modalService
       .open(this.content, {
         ariaLabelledBy: 'modal-basic-title',

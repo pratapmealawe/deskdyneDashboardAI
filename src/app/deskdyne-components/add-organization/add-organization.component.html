@@ -211,7 +211,7 @@
                         <div class="form-group">
                           <label class="field-label">POC Name<span class="required-input"> * </span></label>
                           <mat-form-field appearance="outline" class="w-100">
-                            <input matInput placeholder="POC Name" formControlName="poc_name" appOnlyAlpha />
+                            <input matInput placeholder="POC Name" formControlName="poc_name"  />
                             <mat-error *ngIf="control.get('poc_name')?.hasError('required')">
                               POC Name is required
                             </mat-error>
@@ -360,7 +360,7 @@
           </ng-container>
         </div>
       </div>
-      <ng-template #pocContent let-modal>
+      <ng-template #pocContent let-modal let-message="message">
         <div class="modal-header">
           <h4 class="modal-title" id="modal-basic-title">Alert</h4>
           <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
@@ -369,6 +369,7 @@
         </div>
         <div class="modal-body">
           This POC cannot be deleted as it already exists in the cafeteria list
+          {{message}}
         </div>
         <div class="modal-footer">
           <div class="inline ">
@@ -533,7 +534,7 @@
                       </div>
 
                     </div>
-                    <div class="field">
+                    <div class="field"  *ngIf="showUpdate">
                       <label>Subsidy Amount</label>
                       <div class="subsidy-row">
                         <mat-form-field appearance="outline" class="full">

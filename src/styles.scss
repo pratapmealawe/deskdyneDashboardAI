@@ -673,3 +673,6 @@ button.accordion-button:focus {
 mat-error{
   font-size: clamp(0.75rem, 2vw, 0rem) !important;
 }
+ mat-icon {
+    cursor: pointer;
+}
