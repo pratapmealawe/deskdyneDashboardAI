@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
@@ -14,7 +13,34 @@ export class AddPolicyComponent {
   policyObj: any = {
     policy_name: '',
     policy_description: '',
-    route_policies: {
+    route_policies: {},
+    button_policies: {},
+  };
+
+  routeKeys: string[] = [];
+  buttonKeys: string[] = [];
+
+  policyArr: any[] = [];
+  editMode = false;
+  showErrorMsg = false;
+  policyId: string | null = null;
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private policyService: PolicyService,
+    private runtimeStorage: RuntimeStorageService,
+    private router: Router
+  ) { }
+
+  ngOnInit(): void {
+    this.policyId = this.runtimeStorage.getCacheData('VIEW_POLICY');
+    this.initializeDefaultPolicy();
+    this.loadPolicies();
+  }
+
+  initializeDefaultPolicy() {
+    // Default structure
+    const defaultPolicy = {
       outlet: false,
       addOutlet: false,
       vendor: false,
@@ -67,171 +93,93 @@ export class AddPolicyComponent {
       otherOrder: false,
       configImages: false,
       configImagesGroup: false,
+      auditReport: false,
       eventPopup: false,
       addEventPopup: false,
-    },
-    button_policies: {
-      addOutlet: false,
-      editOutlet: false,
-      deleteOutlet: false,
-      viewOutlet: false,
-      addOutletCategory: false,
-      addMenu: false,
-      editMenu: false,
-      deleteMenu: false,
-      addVendor: false,
-      editVendor: false,
-      deleteVendor: false,
-      addPolicy: false,
-      editPolicy: false,
-      deletePolicy: false,
-      addAdmin: false,
-      editAdmin: false,
-      deleteAdmin: false,
-      addOrganization: false,
-      editOrganization: false,
-      deleteOrganization: false,
-      viewOrganization: false,
-      bulkMenuSection: false,
-      mealAweOutlet: false,
-      b2bWeeklyMenu: false,
-      employeeList: false,
-      guestEmployeeList: false,
-      organizationCompliance: false,
-      addFaq: false,
-      editFaq: false,
-      deleteFaq: false,
-      addVariable: false,
-      editVariable: false,
-      deleteVariable: false,
-      addAppVersion: false,
-      editAppVersion: false,
-      deleteAppVersion: false,
-      addChecklist: false,
-      editChecklist: false,
-      deleteChecklist: false,
-      addFoodItem: false,
-      editFoodItem: false,
-      deleteFoodItem: false,
-      feedbackAcknowledge: false,
-      addIncident: false,
-      editIncident: false,
-      deleteIncident: false,
-      eventPopup: Boolean,
-      addEventPopup: Boolean,
-    },
-  };
-  routeKeys: any;
-  buttonKeys: any;
-  policyArr: any;
-  showErrorMsg: Boolean = false;
-  editMode: Boolean = false;
-  policyId: any;
-  btnPolicy: any;
+    };
 
-  constructor(
-    private apiMainService: ApiMainService,
-    private policyService: PolicyService,
-    private runtimeStorageService: RuntimeStorageService,
-    private router: Router
-  ) { }
+    this.policyObj.route_policies = { ...defaultPolicy };
+    this.policyObj.button_policies = { ...defaultPolicy };
 
-  ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.routeKeys = Object.keys(this.policyObj.route_policies);
     this.buttonKeys = Object.keys(this.policyObj.button_policies);
-    this.policyId = this.runtimeStorageService.getCacheData('VIEW_POLICY');
-    this.getAllPolicy(this.policyId);
   }
 
-  editPolicy(id: any) {
-    this.editMode = true;
-    const arr = this.policyArr.filter((el: any) => el._id == id);
-    if (arr && arr.length > 0) {
-      Object.keys(this.policyObj.button_policies).forEach(
-        (key: keyof typeof this.policyObj.button_policies) => {
-          if (!arr[0].button_policies[key]) {
-            arr[0].button_policies[key] = this.policyObj.button_policies[key];
-          }
-        }
-      );
-      this.policyObj = arr[0];
-      //use Object.assign
+  async loadPolicies() {
+    try {
+      const response: any = await this.apiMainService.getAllPolicy();
+      this.policyArr = response || [];
+
+      if (this.policyId) {
+        this.editPolicy(this.policyId);
+      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
-  async updatePolicy() {
+  editPolicy(id: string) {
+    this.editMode = true;
+
+    const policy = this.policyArr.find((p) => p._id === id);
+    if (policy) {
+      // Ensure backward compatibility (missing keys get added)
+      Object.assign(this.policyObj.route_policies, policy.route_policies);
+      Object.assign(this.policyObj.button_policies, policy.button_policies);
+
+      this.policyObj.policy_name = policy.policy_name;
+      this.policyObj.policy_description = policy.policy_description;
+    }
+  }
+
+  async addPolicy() {
+    if (!this.policyObj.policy_name || !this.policyObj.policy_description) {
+      this.showErrorMsg = true;
+      return;
+    }
+
+    this.showErrorMsg = false;
+
     try {
-      const id = this.policyId;
-      const policy = await this.apiMainService.updatePolicy(id, this.policyObj);
+      await this.apiMainService.addPolicy(this.policyObj);
       this.router.navigate(['policy']);
     } catch (error) {
       console.log(error);
     }
   }
 
-  async getAllPolicy(id: any) {
-    // this.policyArr = this.localStorageService.getCacheData('POLICIES');
-    // if (id) {
-    //   this.editPolicy(id);
-    // }
+  async updatePolicy() {
     try {
-      const policyArr: any = await this.apiMainService.getAllPolicy();
-      if (policyArr && policyArr.length > 0) {
-        this.policyArr = policyArr;
-        if (id) {
-          this.editPolicy(id);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  async addPolicy() {
-    try {
-      if (
-        this.policyObj.policy_name === '' ||
-        this.policyObj.policy_description === ''
-      ) {
-        this.showErrorMsg = true;
-        return;
-      } else {
-        this.showErrorMsg = false;
-        const res = await this.apiMainService.addPolicy(this.policyObj);
-        this.router.navigate(['policy']);
-      }
+      await this.apiMainService.updatePolicy(this.policyId, this.policyObj);
+      this.router.navigate(['policy']);
     } catch (error) {
       console.log(error);
     }
   }
 
   showReferencePolicy(event: any) {
-    const id = event.target.value;
-    const arr = this.policyArr.filter((el: any) => el._id == id);
-    if (arr && arr.length > 0) {
-      Object.keys(this.policyObj.button_policies).forEach((key: any) => {
-        if (!arr[0].button_policies[key]) {
-          arr[0].button_policies[key] = this.policyObj.button_policies[key];
-        }
-      });
-      this.policyObj = arr[0];
+    const policyId = event.value;
+    const policy = this.policyArr.find((p) => p._id === policyId);
+
+    if (policy) {
+      this.policyObj.route_policies = { ...policy.route_policies };
+      this.policyObj.button_policies = { ...policy.button_policies };
     }
+  }
+
+  selectAllRoutes() {
+    Object.keys(this.policyObj.route_policies).forEach(
+      (key) => (this.policyObj.route_policies[key] = true)
+    );
+  }
+
+  selectAllButtons() {
+    Object.keys(this.policyObj.button_policies).forEach(
+      (key) => (this.policyObj.button_policies[key] = true)
+    );
   }
 
   cancelPolicy() {
     this.router.navigate(['policy']);
-  }
-
-  selectAllRoutes() {
-    Object.keys(this.policyObj.route_policies).forEach((key: any) => {
-      this.policyObj.route_policies[key] = true;
-    });
-  }
-
-  selectAllPolicy() {
-    Object.keys(this.policyObj.button_policies).forEach((key: any) => {
-      this.policyObj.button_policies[key] = true;
-    });
   }
 }

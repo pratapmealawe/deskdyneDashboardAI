@@ -48,6 +48,7 @@ const routes: Routes = [
   { path: 'orgVendorInfo', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-vendor-info/org-vendor-info.module').then(m => m.OrgVendorInfoModule) },
   { path: 'orgMenuCounters', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-menu-counters/org-menu-counters.module').then(m => m.OrgMenuCountersModule) },
   { path: 'orgIncidentManagement', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-incident-management/org-incident-management.module').then(m => m.OrgIncidentManagementModule) },
+  { path: 'auditReport', canActivate: [accessGuard], loadChildren: () => import('./org-components/audit-report/audit-report.module').then(m => m.AuditReportModule) },
   { path: 'orgChecklist', canActivate: [accessGuard], loadChildren: () => import('./checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
   { path: 'orgEmployeeList', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-employee-list/org-employee-list.module').then(m => m.OrgEmployeeListModule) },
   { path: 'orgBulkOrderHistory', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-bulk-order-history/org-bulk-order-history.module').then(m => m.OrgBulkOrderHistoryModule) },

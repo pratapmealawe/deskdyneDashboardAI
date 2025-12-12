@@ -2,12 +2,14 @@ import { Component, Input, ViewChild } from "@angular/core";
 import { ApiMainService } from "src/service/apiService/apiMain.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { FormArray, FormBuilder, Validators } from "@angular/forms";
+import { DirectivesModule } from "src/shared/directives/common-directives.directives.modules";
+// import { DirectivesModule } from "src/shared/directives/common-directives.directives.modules";
 // import { ExcelService } from "src/service/excel.service";
 
 @Component({
     selector: 'app-guest-employee-list',
     templateUrl: 'guest-employee-list.component.html',
-    styleUrls: ['guest-employee-list.component.scss']
+    styleUrls: ['guest-employee-list.component.scss'],
 })
 
 export class GuestEmployeeListComponent {
@@ -135,7 +137,7 @@ export class GuestEmployeeListComponent {
         this.showMultipleEmployeeForm = false;
     }
     onCafeteriaChange(event: any) {
-        console.log('radio change event', event.target.checked);
+        // console.log('radio change event', event);
         if (this.selectedCafeteria) {
             this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
             this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
@@ -266,4 +268,10 @@ export class GuestEmployeeListComponent {
 //             console.log(error)
 //         }
 // }
+
+cancelMultipleEmployee(){
+    this.showMultipleEmployeeForm=false; 
+    this.showAddMoreForm=true; 
+    this.showRemoveForm=false;
+}
 }

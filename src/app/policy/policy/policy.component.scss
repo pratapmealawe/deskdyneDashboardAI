@@ -1,0 +1,52 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.admin-header {
+  @include mixin.responsive-header;
+  background-color: transparent;
+}
+
+.header-actions {
+  @include mixin.responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
+
+  .input-wrapper {
+    min-width: 200px;
+
+    @media (max-width: 768px) {
+      width: 100%;
+      display: block !important;
+    }
+  }
+}
+
+.policy-wrapper {
+  padding-bottom: 0.75rem;
+}
+
+.cardDesign {
+  @include mixin.vertical-line();
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
+.labelText {
+  @include mixin.labelText;
+}
+
+.labelData {
+  @include mixin.labelData;
+}
+
+.edit {
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
+}

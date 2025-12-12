@@ -63,7 +63,7 @@ export class OutletOrdersComponent implements OnInit {
     });
 
     console.log(this.outletObj);
-    
+
 
     if (this.outletObj) {
       this.onSubmit(); // load initial data for today
@@ -106,7 +106,7 @@ export class OutletOrdersComponent implements OnInit {
     try {
       this.loading = true;
       console.log(body);
-      
+
       const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
       this.orders = res || [];
       this.buildStatusOptions();
@@ -142,6 +142,10 @@ export class OutletOrdersComponent implements OnInit {
         (o) => o.orderstatus === this.selectedStatus
       );
     }
+
+    // this.filteredOrders = this.orders.filter(
+    //   (o) => o.isPosOrder
+    // );
 
     // reset paginator
     this.pageIndex = 0;

@@ -1,31 +1,97 @@
+<div class="admin-header">
+  <div>
+    <h4 class="m-0 fw-semibold">Policy</h4>
+  </div>
+
+  <div class="header-actions">
+    <!-- SEARCH FIELD -->
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <input
+          matInput
+          type="text"
+          placeholder="Search policy..."
+          [formControl]="searchControl"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          aria-label="Search"
+          class="search-icon"
+        >
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <!-- ADD BUTTON -->
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="addPolicy()"
+      *ngIf="true || btnPolicy?.addPolicy"
+    >
+      <mat-icon>add_circle</mat-icon>
+      Add Policy
+    </button>
+  </div>
+</div>
+
 <div class="container-fluid mt-2 policy-wrapper">
-  <div class="row">
-    <div class="mt-2" *ngIf="policyArr && policyArr.length > 0">
-      <div *ngFor="let policy of policyArr" class="cardDesign">
-        <div class="row">
-          <div class="col-4 col-md-4 col-lg-4 labelData">
-            {{ policy.policy_name }}
-          </div>
-          <div class="col-5 col-md-5 col-lg-4 labelData">
-            {{ policy.policy_description }}
-          </div>
-          <div class="col-3 col-md-3 col-lg-4">
-            <div class="edit alignRight">
-              <i
-                class="bi bi-pencil-square bgsidepadding5 pointer"
+  <!-- NO RECORDS -->
+  <div *ngIf="filteredPolicyArr && filteredPolicyArr.length === 0" class="center mt-5">
+    No Records Found
+  </div>
+
+  <!-- LIST -->
+  <div class="row" *ngIf="filteredPolicyArr && filteredPolicyArr.length > 0">
+    <div class="mt-2">
+      <div *ngFor="let policy of filteredPolicyArr" class="cardDesign mb-2">
+        <div class="container-fluid">
+          <div class="row align-items-center">
+            <div class="col-md-10 col-9">
+              <div class="row">
+                <div class="col-md-4 col-12 mb-2 mb-md-0">
+                  <div class="labelText">Policy Name</div>
+                  <div class="labelData">
+                    {{ policy.policy_name }}
+                  </div>
+                </div>
+                <div class="col-md-8 col-12">
+                  <div class="labelText">Description</div>
+                  <div class="labelData">
+                    {{ policy.policy_description }}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="col-md-2 col-3 d-flex align-items-center gap-3 justify-content-end"
+            >
+              <mat-icon
                 *ngIf="true || btnPolicy?.editPolicy"
                 (click)="editPolicy(policy._id)"
-              ></i>
-              <i
+                color="primary"
+                class="edit"
+                matTooltip="Edit"
+              >
+                edit
+              </mat-icon>
+
+              <mat-icon
                 *ngIf="true || btnPolicy?.deletePolicy"
-                class="bi bi-trash-fill pointer"
                 (click)="confirmDelete(policy._id)"
-              ></i>
+                color="warn"
+                class="edit"
+                matTooltip="Delete"
+              >
+                delete
+              </mat-icon>
             </div>
           </div>
         </div>
       </div>
     </div>
-    <div *ngIf="noRecords">No Records Found</div>
   </div>
 </div>

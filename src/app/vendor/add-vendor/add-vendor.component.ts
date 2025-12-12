@@ -120,20 +120,16 @@ export class AddVendorCommponent {
     return formData;
   }
 
-  async changeVendorFirm(e: MatSelectChange | number) {
-    let id: number | string;
-
-    if (e instanceof Object && 'value' in e) {
-      id = e.value;              // MatSelectChange
-    } else {
-      id = e;                    // number
-    }
-    this.getVendorFirmById(id);
-    const vendorFirm = this.vendorList.find((item: any) => item?._id === id)
-    if (vendorFirm?.outletList.length > 0) {
-      this.outletByCafeteriaList = vendorFirm?.outletList
-    } else {
-      this.outletByCafeteriaList = []
+    async changeVendorFirm(e: any) {
+    this.getVendorFirmById(e.value);
+    console.log(e.value , "ghjgdug" , e);
+    this.vendorId = e.value
+    if (e.value) {
+      // const id = typeof e === "string" ? e : e.value
+      const vendorFirm = this.vendorList.find((item: any) => item?._id === e.value)
+      if (vendorFirm?.outletList.length > 0) {
+        this.outletByCafeteriaList = vendorFirm?.outletList
+      }
     }
   }
 
@@ -322,6 +318,9 @@ isAddVendorValid(): boolean {
     this.selectedOutletsList.length > 0 &&
     this.selectedAddressList.length > 0
   );
+}
+toggleCheckbox(outlet: any) {
+  outlet.isChecked = !outlet.isChecked;
 }
 
 }

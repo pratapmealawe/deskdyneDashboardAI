@@ -1,13 +1,16 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
-import { AbstractControl, FormArray, FormBuilder, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { MatRadioChange } from '@angular/material/radio';
 import { NavigationEnd, Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ToasterService } from 'src/app/toaster/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { REGEX } from 'src/shared/constants/regex';
 
 @Component({
   selector: 'app-add-organization',
@@ -38,8 +41,22 @@ export class AddOrganizationComponent implements OnInit {
   orgInfo: any;
   imageUrl: any;
   uploadedImageFile: any;
+  selectApprover: any
 
   panelOpenState = false;
+  checkboxOptions = [
+  { key: 'showAdminDaily', label: 'Show Admin Daily Card' },
+  { key: 'showEmpPolls', label: 'Show Emp Poll Card' },
+  { key: 'showVirtualCafe', label: 'Show Virtual Cafeteria' },
+  { key: 'showSaas', label: 'Show Outlet' },
+  { key: 'showCompanyWallet', label: 'Show Company Wallet' },
+  { key: 'showComplienceTracker', label: 'Show Compliance Tracker' },
+  { key: 'showConsumptionOrder', label: 'Show Consumption Order' },
+  { key: 'isEmployeeEmailLogin', label: 'Is Employee Email Login' },
+  { key: 'showSiteExecutive' , label:'Show Site Executive'},
+  { key: 'showchecklist' , label:'Show Checklist'},
+];
+
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
@@ -48,23 +65,24 @@ export class AddOrganizationComponent implements OnInit {
     private modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private toaster: ToasterService,
   ) {
     this.form = this.fb.group({
-      organization_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)],],
+      organization_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)],],
       location: ['', Validators.required],
       domain: [''],
       city: ['', Validators.required],
-      gstin: ['', [Validators.required, Validators.pattern('^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$'),],],
+      gstin: ['', [Validators.required, Validators.pattern(REGEX.GSTIN),],],
       poc_details: this.fb.array([], this.minArrayLength(1)),
       org_address: this.fb.group({
-        addressLine1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120),],],
-        addressLine2: ['', [Validators.maxLength(120)]],
-        addressLine3: ['', [Validators.maxLength(80)]],  // Landmark field
+        addressLine1: ['', [Validators.required, Validators.minLength(5),],],
+        addressLine2: ['', []],
+        addressLine3: ['', []],  // Landmark field
       }),
       cafeteriaList: this.fb.array([], this.minArrayLength(1)),
-      subsidy: [0, [Validators.min(0), Validators.max(100), Validators.pattern('^\\d+(\\.\\d{1,2})?$')],],
-      isEmpIdRequired: [, Validators.required],
+      subsidy: [0, [Validators.min(0), Validators.pattern(REGEX.SUBSIDY)],],
+      isEmpIdRequired: [true, Validators.required],
     });
   }
 
@@ -77,10 +95,8 @@ export class AddOrganizationComponent implements OnInit {
     };
   }
 
-
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-
     const cacheOrg = this.runtimeStorageService.getCacheData('VIEW_ORG');
     if (cacheOrg && cacheOrg._id) {
       this.viewOrg = cacheOrg;
@@ -103,9 +119,9 @@ export class AddOrganizationComponent implements OnInit {
 
   new_admin_details(): FormGroup {
     return this.fb.group({
-      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-      admin_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
-      admin_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
+      admin_name: ['', [Validators.required, Validators.minLength(3), Validators.pattern(REGEX.NAME)]],
+      admin_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
+      admin_email: ['', [Validators.required, Validators.email,]],
       admin_location: ['', Validators.required],
     });
   }
@@ -113,7 +129,7 @@ export class AddOrganizationComponent implements OnInit {
   new_cafeteria(): FormGroup {
     let id = Math.floor(Math.random() * 1000000000);
     return this.fb.group({
-      accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(/^[0-9]+$/)]],
+      accessCode: ['', [Validators.minLength(1), Validators.maxLength(4), Validators.pattern(REGEX.ACCESS_CODE)]],
       showAdminDaily: [false],
       showEmpPolls: [false],
       showVirtualCafe: [false],
@@ -125,49 +141,51 @@ export class AddOrganizationComponent implements OnInit {
       isEmployeeEmailLogin: [false],
       showComplienceTracker: [false],
       showConsumptionOrder: [false],
-      cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
+      cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
       cafeteria_id: [id, Validators.required],
       cafeteria_city: ['', Validators.required],
-      cafeteria_gstin: ['', Validators.pattern(/^([0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1})$/)],
+      cafeteria_gstin: ['', Validators.pattern(REGEX.GSTIN)],
       cafeteria_location: this.fb.group({ lat: ['', Validators.required], lng: ['', Validators.required], }),
       clusterId: [''],
       clusterName: [''],
-      address1: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(120)]],
-      address2: ['', [Validators.maxLength(120)]],
-      landmark: ['', [Validators.maxLength(80)]],
+      address1: ['', [Validators.required, Validators.minLength(5)]],
+      address2: ['', [Validators.required, Validators.minLength(5)]],
+      landmark: ['', [Validators.required, Validators.maxLength(80)]],
       location: ['', Validators.required],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       poc_details: this.fb.group({
-        poc_id: ['', Validators.required], poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80)]],
-        poc_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
-        poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
-        poc_location: ['', Validators.required],
-        poc_role: ['', Validators.required],
+        poc_id: [{ value: '', disabled: true }, Validators.required],
+        poc_name: [{ value: '', disabled: true }, [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+        poc_phoneNo: [{ value: '', disabled: true }, [Validators.required, Validators.pattern(REGEX.PHONE)]],
+        poc_email: [{ value: '', disabled: true }, [Validators.required, Validators.email,]],
+        poc_location: [{ value: '', disabled: true }, Validators.required],
+        poc_role: [{ value: '', disabled: true }, Validators.required],
         approverPriceLimit: [''],
         approverCountLimit: [''],
         approverDetails: this.fb.group({
           approver_id: [''],
-          approver_name: ['', [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-          approver_phoneNo: ['', Validators.pattern(/^[6-9][0-9]{9}$/)],
+          approver_name: ['', [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+          approver_phoneNo: ['', Validators.pattern(REGEX.PHONE)],
           approver_email: ['', Validators.email],
           approver_location: [''],
           approver_role: [''],
         }),
       }),
+
     });
   }
 
   new_poc_details(): FormGroup {
     return this.fb.group({
       poc_id: ['', Validators.required],
-      poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-      poc_phoneNo: ['', [Validators.required, Validators.pattern(/^[6-9][0-9]{9}$/)]],
+      poc_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(80), Validators.pattern(REGEX.NAME)]],
+      poc_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
       poc_email: ['', [Validators.required, Validators.email, Validators.maxLength(80)]],
       poc_location: ['', Validators.required],
       poc_role: ['', Validators.required],
       approverDetails: this.fb.group({
-        approver_id: [{ value: '', disabled: true }], approver_name: [{ value: '', disabled: true }, [Validators.minLength(3), Validators.maxLength(80), Validators.pattern(/^[A-Za-z ]+$/)]],
-        approver_phoneNo: [{ value: '', disabled: true }, Validators.pattern(/^[6-9][0-9]{9}$/)],
+        approver_id: [{ value: '', disabled: true }], approver_name: [{ value: '', disabled: true }, [Validators.minLength(3), Validators.maxLength(80)]],
+        approver_phoneNo: [{ value: '', disabled: true }, Validators.pattern(REGEX.PHONE)],
         approver_email: [{ value: '', disabled: true }, Validators.email],
         approver_location: [{ value: '', disabled: true }],
         approver_role: [{ value: '', disabled: true }],
@@ -200,39 +218,39 @@ export class AddOrganizationComponent implements OnInit {
   removeAdmin(index: any) {
     this.form.controls['admin_details'].removeAt(index);
   }
-removePOC(index: number) {
+  removePOC(index: number) {
 
-  const pocArray = this.form.get('poc_details') as FormArray;
-  const selectedPocId = pocArray.at(index).get('poc_id')?.value;
+    const pocArray = this.form.get('poc_details') as FormArray;
+    const selectedPocId = pocArray.at(index).get('poc_id')?.value;
 
-  const isUsedInCafe = this.orgInfo?.cafeteriaList?.some(
-    (cafe: any) => cafe.poc_details?.poc_id === selectedPocId
-  );
+    const isUsedInCafe = this.orgInfo?.cafeteriaList?.some(
+      (cafe: any) => cafe.poc_details?.poc_id === selectedPocId
+    );
 
-  // Rule 1: At least one POC must exist
-  if (pocArray.length === 1) {
-    this.openPocModal();
-    return;
+    // Rule 1: At least one POC must exist
+    if (pocArray.length === 1) {
+      this.openPocModal();
+      return;
+    }
+
+    // Rule 2: Cannot delete if this POC is assigned in cafeteria
+    if (isUsedInCafe) {
+      this.openPocModal();
+      return;
+    }
+
+    // Otherwise delete normally
+    pocArray.removeAt(index);
   }
 
-  // Rule 2: Cannot delete if this POC is assigned in cafeteria
-  if (isUsedInCafe) {
-    this.openPocModal();
-    return;
+  openPocModal() {
+    this.modalService.open(this.pocContent, {
+      ariaLabelledBy: 'modal-basic-title',
+      size: 'md',
+      windowClass: 'menuModel',
+      centered: true
+    });
   }
-
-  // Otherwise delete normally
-  pocArray.removeAt(index);
-}
-
-openPocModal() {
-  this.modalService.open(this.pocContent, {
-    ariaLabelledBy: 'modal-basic-title',
-    size: 'md',
-    windowClass: 'menuModel',
-    centered: true
-  });
-}
 
   // removePOC(index: any) {
 
@@ -271,24 +289,20 @@ openPocModal() {
   getOrgGstin(event: any, i: any) {
     const cafeteriaArray = this.form.get('cafeteriaList') as FormArray;
     const cafeteriaGroup = cafeteriaArray.at(i) as FormGroup;
-
-    const gstinValue = event.target.checked
-      ? this.form.get('gstin')?.value
-      : '';
-
-    cafeteriaGroup.patchValue({ cafeteria_gstin: gstinValue });
-    console.log(cafeteriaGroup);
-
+    const control = cafeteriaGroup.get('cafeteria_gstin');
+    const gstinValue = event.checked ? this.form.get('gstin')?.value : '';
+    control?.patchValue(gstinValue);
+    control?.markAsDirty();
+    control?.markAsTouched();
+    control?.updateValueAndValidity();
   }
 
+
   patchFormValue(org: any) {
-    console.log("org", org);
     this.orgInfo = org;
     let clusterdetails: any = {};
     this.orgSubsidy = org.subsidy;
     this.imageUrl = environment.imageUrl + org.organizationLogoUrl;
-
-    // this.customerLocation = org.customerLocation;
     this.form.patchValue({
       organization_name: org.organization_name,
       location: org.location,
@@ -300,6 +314,8 @@ openPocModal() {
     });
     org.cafeteriaList.forEach(async (cafe: any, i: any) => {
       if (cafe.clusterId) {
+        console.log(cafe, "cafe");
+
         clusterdetails = {
           clusterId: cafe.clusterId,
           clusterName: cafe.clusterName,
@@ -397,6 +413,7 @@ openPocModal() {
   }
 
   addApprover(index: any) {
+    this.adminSelected = this.form.controls['poc_details'].at(index).value;
     this.modalService
       .open(this.content, {
         ariaLabelledBy: 'modal-basic-title',
@@ -405,6 +422,8 @@ openPocModal() {
       })
       .result.then(
         (result) => {
+          console.log(index, "idndd");
+
           if (result === 'add') {
             this.patchSelectedAdmins(index);
           } else if (result === 'addCafe') {
@@ -412,6 +431,7 @@ openPocModal() {
           }
         },
         (reason) => {
+          console.log(index, "idndd");
           console.log(`Model Dismissed`);
         }
       );
@@ -450,7 +470,7 @@ openPocModal() {
             modalRef.componentInstance.uploadedImageUrl = imageUrl;
             modalRef.componentInstance.imageWidth = 150;
             modalRef.componentInstance.imageHeight = 150;
-            modalRef.componentInstance.aspectRatio = 1;
+            modalRef.componentInstance.aspectRatio = 1 / 2;
           } catch (e) {
             console.log('error while changes kitchen opened status ', e);
           }
@@ -550,15 +570,20 @@ openPocModal() {
         approver_role: this.adminSelected.approverDetails.approver_role,
       });
   }
-
-  pushAdmin(admin: any) {
-    this.adminSelected = admin;
+  selectedOption: any = null;
+  selectedApprover: any;
+  pushAdmin(admin: MatRadioChange) {
+    this.adminSelected = admin.value;
   }
 
   async addOrg() {
-    console.log(this.form.value);
-
     try {
+      this.markAllFieldsAsTouched(this.form);
+      if (this.form.invalid) {
+        this.scrollToFirstInvalidField();
+        return;
+      }
+
       if (!this.form.valid) {
         this.showError = true;
         return;
@@ -602,11 +627,16 @@ openPocModal() {
 
   async updateOrg() {
     try {
+      this.markAllFieldsAsTouched(this.form);
+      if (this.form.invalid) {
+        this.scrollToFirstInvalidField();
+        return;
+      }
+
       if (!this.form.valid) {
         this.showError = true;
         return;
       }
-
       const raw = this.form.getRawValue();
       const formData = new FormData();
 
@@ -682,6 +712,59 @@ openPocModal() {
   hasError(form: FormGroup | AbstractControl, controlPath: string, error: string) {
     const control = form.get(controlPath);
     return control && control.hasError(error)
+  }
+
+  get filledPocCount(): number {
+    const pocDetails = this.form.controls['poc_details']?.value;
+    if (!pocDetails || !Array.isArray(pocDetails)) return 0;
+    return pocDetails.filter(p =>
+      String(p.poc_id || '').trim() &&
+      String(p.poc_name || '').trim() &&
+      String(p.poc_phoneNo || '').trim() &&
+      String(p.poc_email || '').trim() &&
+      String(p.poc_location || '').trim() &&
+      String(p.poc_role || '').trim()
+    ).length;
+  }
+
+  markAllFieldsAsTouched(control: AbstractControl | null): void {
+    if (!control) return;
+
+    if (control instanceof FormGroup) {
+      Object.keys(control.controls).forEach(key => {
+        const child = control.get(key);
+        this.markAllFieldsAsTouched(child);
+      });
+    }
+
+    else if (control instanceof FormArray) {
+      control.controls.forEach(child => this.markAllFieldsAsTouched(child));
+    }
+
+    else if (control instanceof FormControl) {
+      control.markAsTouched({ onlySelf: true });
+      control.markAsDirty({ onlySelf: true });
+      control.updateValueAndValidity({ onlySelf: true });
+    }
+  }
+
+
+  scrollToFirstInvalidField(): void {
+    setTimeout(() => {
+      const firstInvalid = document.querySelector('.ng-invalid') as HTMLElement | null;
+      if (!firstInvalid) return;
+      firstInvalid.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+      this.toaster.error('Please correct the errors in the form before submitting.');
+      firstInvalid.focus();
+    });
+  }
+
+  selectApprovers(i: number) {
+    this.addApprover(i)
+    this.poc_selected(i)
   }
 
 }

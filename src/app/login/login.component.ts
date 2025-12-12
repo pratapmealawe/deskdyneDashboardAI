@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -6,22 +6,34 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   showOTP = false;
-  adminId: any;
-  password: any;
-  otp = ['', '', '', '', '', ''];
+  adminId: string = '';
+  password: string = '';
+  otp: string[] = ['', '', '', '', '', ''];
   otpBoxes = Array(6).fill(0);
-  timer = 30;
+  timer = 0;
   intervalId: any;
 
-  constructor(private localStorageService: LocalStorageService, private router: Router, private apiMainService: ApiMainService) { }
+  isLoggingIn = false;
+  isVerifying = false;
+
+  constructor(
+    private localStorageService: LocalStorageService,
+    private router: Router,
+    private apiMainService: ApiMainService
+  ) {}
 
   ngOnInit(): void {
     this.checkIfTokenPresent();
-    this.startTimer();
+  }
+
+  ngOnDestroy(): void {
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
   }
 
   checkIfTokenPresent() {
@@ -31,66 +43,91 @@ export class LoginComponent implements OnInit {
       this.router.navigate(['/home']);
     }
   }
+
   async login() {
+    if (!this.adminId || this.isLoggingIn) return;
+
     try {
-      if (this.adminId) {
-        this.adminId = this.adminId.toUpperCase();
-        await this.apiMainService.loginAdmin({ adminId: this.adminId });
-        this.showOTP = true;
-      }
+      this.isLoggingIn = true;
+      const id = this.adminId.toUpperCase();
+      this.adminId = id;
+
+      await this.apiMainService.loginAdmin({ adminId: id });
+
+      this.showOTP = true;
+      this.resetOtp();
+      this.startTimer();
     } catch (error) {
       console.log('error while login ', error);
+      // You can show snackbar/toast here
+    } finally {
+      this.isLoggingIn = false;
     }
   }
 
   async verifyOTP() {
+    if (!this.isOTPComplete() || this.isVerifying) return;
+
     try {
-      const loginObj = await this.apiMainService.verifyOTP({ adminId: this.adminId, password: this.password });
+      this.isVerifying = true;
+      const loginObj = await this.apiMainService.verifyOTP({
+        adminId: this.adminId,
+        password: this.password,
+      });
+
       this.localStorageService.setCacheData('ADMIN_ID', this.adminId);
       this.localStorageService.setCacheData('ADMIN_TOKEN', loginObj.token);
       this.router.navigate(['/home']);
     } catch (error) {
       console.log('error while verifying otp ', error);
+      // You can show snackbar/toast here and maybe reset OTP
+    } finally {
+      this.isVerifying = false;
     }
   }
 
   backToLogin() {
-    this.showOTP = !this.showOTP
+    this.showOTP = false;
+    this.resetOtp();
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+    }
+    this.timer = 0;
   }
 
   onInput(event: any, index: number) {
-    let value = event.target.value;
-
-    value = value.replace(/[^0-9]/g, "");
+    let value = event.target.value as string;
+    value = value.replace(/[^0-9]/g, '');
     event.target.value = value;
     this.otp[index] = value;
     this.updatePassword();
+
     if (value.length > 1) {
       this.handlePasteValue(value);
       return;
     }
 
     if (value && index < 5) {
-      event.target.nextElementSibling.focus();
+      const next = event.target.nextElementSibling as HTMLInputElement;
+      next?.focus();
     }
   }
 
   onKeyDown(event: KeyboardEvent, index: number) {
     const input = event.target as HTMLInputElement;
 
-    if (event.key === "Backspace") {
-
-      if (input.value === "") {
+    if (event.key === 'Backspace') {
+      if (input.value === '') {
         if (index > 0) {
           const prev = input.previousElementSibling as HTMLInputElement;
-          prev.value = "";
-          this.otp[index - 1] = "";
+          prev.value = '';
+          this.otp[index - 1] = '';
           this.updatePassword();
           prev.focus();
         }
       } else {
-        input.value = "";
-        this.otp[index] = "";
+        input.value = '';
+        this.otp[index] = '';
         this.updatePassword();
         event.preventDefault();
       }
@@ -98,8 +135,8 @@ export class LoginComponent implements OnInit {
   }
 
   onPaste(event: ClipboardEvent) {
-    const pastedData = event.clipboardData?.getData('text') || "";
-    const numbersOnly = pastedData.replace(/[^0-9]/g, "");
+    const pastedData = event.clipboardData?.getData('text') || '';
+    const numbersOnly = pastedData.replace(/[^0-9]/g, '');
 
     if (numbersOnly.length === 0) return;
 
@@ -108,22 +145,24 @@ export class LoginComponent implements OnInit {
   }
 
   handlePasteValue(value: string) {
-    const digits = value.split("").slice(0, 6);
+    const digits = value.split('').slice(0, 6);
 
-    digits.forEach((d, i) => this.otp[i] = d);
+    digits.forEach((d, i) => (this.otp[i] = d));
 
     setTimeout(() => {
-      const boxes: any = document.querySelectorAll('.otp-box');
-      boxes.forEach((box: any, i: number) => box.value = this.otp[i] || "");
+      const boxes = document.querySelectorAll(
+        '.otp-box'
+      ) as NodeListOf<HTMLInputElement>;
+      boxes.forEach((box, i) => (box.value = this.otp[i] || ''));
 
       const nextIndex = digits.length < 6 ? digits.length : 5;
-      boxes[nextIndex].focus();
+      boxes[nextIndex]?.focus();
       this.updatePassword();
     });
   }
 
   isOTPComplete() {
-    return this.otp.every(d => d !== "" && d !== null && d !== undefined);
+    return this.otp.every((d) => d !== '' && d != null);
   }
 
   updatePassword() {
@@ -132,7 +171,6 @@ export class LoginComponent implements OnInit {
 
   startTimer() {
     this.timer = 30;
-
     if (this.intervalId) clearInterval(this.intervalId);
 
     this.intervalId = setInterval(() => {
@@ -145,7 +183,13 @@ export class LoginComponent implements OnInit {
   }
 
   resendOTP() {
+    if (this.timer !== 0) return;
+    // call API to resend OTP here
     this.startTimer();
-    //resend otp logic here
+  }
+
+  private resetOtp() {
+    this.otp = ['', '', '', '', '', ''];
+    this.updatePassword();
   }
 }

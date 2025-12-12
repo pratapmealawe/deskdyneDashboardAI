@@ -518,6 +518,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getReportHistoryByfilter, data);
   }
 
+  getChecklistReportByOutletId(outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getChecklistReportByOutletId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method });
+  }
+
   getfeedbacklistByfilter(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getfeedbacklistByfilter, data);
   }
@@ -1301,6 +1306,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
+  getImageGroupConfigByName(name: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getImageGroupConfigByName;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${name}`, method: urlObj.method });
+  }
+
   getMealAweOutletByCafeteria(id: string) {
     const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletByCafeteria;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
@@ -1391,5 +1401,25 @@ export class ApiMainService {
   changePaidType(id: any, body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.changePaidType
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+  getByOrgIdAndCafeteriaIdAndDate(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getByOrgIdAndCafeteriaIdAndDate
+    return this.apiHttpService.REQUEST(urlObj, payload);
+  }
+
+  createAuditReport(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.createAuditReport
+    return this.apiHttpService.REQUEST(urlObj, body);
+  }
+
+  updateAuditReport(id: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateAuditReport
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+  deleteAuditReport(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteAuditReport
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 }

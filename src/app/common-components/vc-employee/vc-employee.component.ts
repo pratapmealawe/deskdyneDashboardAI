@@ -221,10 +221,23 @@ export class VcEmployeeComponent implements OnInit {
           }
         })
       }
+      this.showMultipleEmployeeForm = true;
       this.showRemoveForm = true;
       this.showAddMoreForm = false;
     } catch (error) {
       console.log(error)
     }
   }
+
+      cancelMultipleEmployee() {
+        this.showMultipleEmployeeForm = false;
+        this.showAddMoreForm = true;
+        this.showRemoveForm = false;
+        this.fileName = null
+        // if (this.fileInputRef) {
+        //     this.fileInputRef.nativeElement.value = '';
+        // }
+        // this.employeeForm?.reset();
+        // this.uploadedEmployeeList = [];
+    }
 }

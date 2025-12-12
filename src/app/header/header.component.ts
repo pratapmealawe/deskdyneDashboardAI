@@ -168,19 +168,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Incident Reporting',
       showParent: true,
-      showBadge: true,
-      count: this.inReviewIncidentsCount$,
+      // showBadge: true,
+      // count: this.inReviewIncidentsCount$,
       route: 'orgIncidentManagement',
       image: 'Incident reporting_white',
       imageblue: 'Incident reporting_blue',
     },
     {
-      name: 'Submit CheckList',
-      route: 'submitChecklist',
+      name: 'Audit Report',
       showParent: true,
-      image: 'Checklist_white',
-      imageblue: 'Checklist_blue',
+      route: 'auditReport',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
     },
+
     {
       name: 'CheckList',
       showParent: true,
@@ -190,6 +191,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         {
           name: 'View Checklist',
           route: 'viewChecklistQuestion',
+          showChild: true,
+        },
+        {
+          name: 'Submit CheckList',
+          route: 'submitChecklist',
           showChild: true,
         },
         {
@@ -356,6 +362,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       imageblue: 'Food items_blue',
     },
     {
+      name: 'Audit Report',
+      showParent: true,
+      route: 'auditReport',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
+    },
+    {
       name: 'Incident Management',
       showParent: true,
       route: 'orgIncidentManagement',
@@ -410,6 +423,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectedIndexpar: number = 0;
   selectedIndexchild: number = 0;
   pollingSub!: Subscription;
+  orgLogo!: any
 
   constructor(
     private router: Router,
@@ -446,7 +460,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.getAdminProfile();
     this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
     this.suggestionsFeedbackService.fetchAllEnquiries();
-    this.getInReviewIncidents();
+    // this.getInReviewIncidents();
     this.setActiveStateFromRoute(this.router.url);
     // this.pollingSub = interval(30_000).subscribe(() => {
     //   this.getInReviewIncidents();
@@ -549,9 +563,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         this.adminProfile = adminProfile;
         if (this.adminProfile.role == 'ORGADMIN' || this.adminProfile.role == 'HYPERPURE_ADMIN' || this.adminProfile.role == 'HYPERPURE_POC') {
           this.isOrgAdmin = true;
+          // this.orgLogo = this.adminProfile.orgDetails.organizationLogoUrl;
           this.orgDetails = JSON.parse(
             JSON.stringify(this.adminProfile.orgDetails)
           );
+
           this.finalNavOption = this.orgOptions;
           // this.router.navigate(['/org-dashboard']);
         } else {

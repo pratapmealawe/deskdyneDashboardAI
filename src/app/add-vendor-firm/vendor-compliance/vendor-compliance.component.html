@@ -1,7 +1,7 @@
 <div class="bgpadding1">
   <div class="right" *ngIf="!orgVendorInfo">
-    <button *ngIf="!editMode && access" type="button" class="btn btn-primary btn-sm"
-      (click)="editMode = true">Edit</button>
+    <button *ngIf="!editMode && access" type="button" mat-raised-button
+      (click)="editMode = true" color="primary"><mat-icon>edit</mat-icon>Edit</button>
   </div>
 
   <ng-container *ngIf="!editMode">

@@ -1,9 +1,9 @@
 <div class="container-fluid pe-4 ps-4">
-  <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between">
+  <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-4 ">
     <div class="g-0">
       <h4 class="m-0 fw-semibold">Vendor</h4>
     </div>
-    <div class="col d-flex justify-content-end align-items-center gap-3">
+    <div class="d-flex justify-content-end align-items-center gap-3">
       <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
         <mat-form-field appearance="outline" class="search-input">
           <input matInput type="text" placeholder="Search Vendor..." [formControl]="searchControl" />
@@ -11,16 +11,13 @@
             <mat-icon>search</mat-icon> </button>
         </mat-form-field>
       </div>
-      <button mat-raised-button color="primary" class="text-nowrap d-none d-md-inline-flex" (click)="addVendor()">
+      <button mat-raised-button color="primary" class="text-nowrap" (click)="addVendor()">
+        <mat-icon>add_business</mat-icon>
         Add Vendor
       </button>
-      <button mat-icon-button color="primary" class="d-inline-flex d-md-none" (click)="addVendor()"
-        matTooltip="Add Vendor" aria-label="Add Vendor">
-        <mat-icon>add_circle</mat-icon>
-      </button>
     </div>
-    <div class="col d-inline-flex d-md-none">
-      <mat-form-field appearance="outline" class="search-input">
+    <div class="d-inline-flex d-md-none w-100" >
+      <mat-form-field appearance="outline" class="search-input w-100">
         <input matInput type="text" placeholder="Search Vendor..." [formControl]="searchControl" />
         <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
           <mat-icon>search</mat-icon> </button>
