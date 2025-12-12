@@ -44,6 +44,19 @@ export class AddOrganizationComponent implements OnInit {
   selectApprover: any
 
   panelOpenState = false;
+  checkboxOptions = [
+  { key: 'showAdminDaily', label: 'Show Admin Daily Card' },
+  { key: 'showEmpPolls', label: 'Show Emp Poll Card' },
+  { key: 'showVirtualCafe', label: 'Show Virtual Cafeteria' },
+  { key: 'showSaas', label: 'Show Outlet' },
+  { key: 'showCompanyWallet', label: 'Show Company Wallet' },
+  { key: 'showComplienceTracker', label: 'Show Compliance Tracker' },
+  { key: 'showConsumptionOrder', label: 'Show Consumption Order' },
+  { key: 'isEmployeeEmailLogin', label: 'Is Employee Email Login' },
+  { key: 'showSiteExecutive' , label:'Show Site Executive'},
+  { key: 'showchecklist' , label:'Show Checklist'},
+];
+
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,

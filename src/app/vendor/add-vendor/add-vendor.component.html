@@ -9,7 +9,7 @@
         <div class="form-group">
           <label class="field-label">Vendor Firm <span class="required-input"> * </span></label>
           <mat-form-field appearance="outline" class="w-100">
-            <mat-select placeholder="Select Vendor Firm" formControlName="vendorId"
+            <mat-select placeholder="Select Vendor Firm" formControlName="vendorId" 
               (selectionChange)="changeVendorFirm($event)">
               <mat-option value="" disabled>Select Vendor Firm</mat-option>
               <mat-option *ngFor="let firm of vendorList" [value]="firm._id">
@@ -189,9 +189,9 @@
   </div>
 
   <button mat-raised-button (click)="submit('update')" [disabled]="!isAddVendorValid()" color="primary"
-    matTooltip="Update is enabled only when the form is fully filled"
+   [matTooltip]="!isAddVendorValid() ? 'Submit is enabled only when the form is fully filled':''"
     *ngIf="showUpdate && true || btnPolicy?.editVendor">Update</button>
-  <span matTooltip="Submit is enabled only when the form is fully filled">
+  <span [matTooltip]="!isAddVendorValid() ? 'Submit is enabled only when the form is fully filled':''">
     <button mat-raised-button (click)="submit()" [disabled]="!isAddVendorValid()" color="primary"
       *ngIf="!showUpdate && true || btnPolicy?.addVendor">Submit</button>
   </span>
