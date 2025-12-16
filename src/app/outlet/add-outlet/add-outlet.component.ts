@@ -49,6 +49,7 @@ export class AddOutletComponent implements OnInit {
 
   // For meal type dropdown
   mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'EveningSnacks', 'Dinner'];
+  billingTypeOptions: string[] = ['ecommerce', 'revenueSharing'];
 
   // Error text for meal timings
   mealTimingError: string | null = null;
@@ -88,7 +89,7 @@ export class AddOutletComponent implements OnInit {
       outletName: ['', Validators.required],
       outletDescription: ['', Validators.required],
 
-      outletOpened: [false],
+      outletOpened: [true],
       isPreOrder: [false],
       preOrderMealType: ['lunch'],
       isSatAvailable: [false],
@@ -104,6 +105,7 @@ export class AddOutletComponent implements OnInit {
       ],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       precedence: [0, [Validators.min(0)]],
+      billingType: ['revenueSharing', Validators.required],
 
       mealTimings: this.fb.array([]),
     });
@@ -193,6 +195,7 @@ export class AddOutletComponent implements OnInit {
         MRPCommissionPercentage: outlet.MRPCommissionPercentage ?? 0,
         subsidy: outlet.subsidy ?? 0,
         precedence: outlet.precedence ?? 0,
+        billingType: outlet.billingType ?? 'revenueSharing',
       });
 
       this.validateMealTimings();

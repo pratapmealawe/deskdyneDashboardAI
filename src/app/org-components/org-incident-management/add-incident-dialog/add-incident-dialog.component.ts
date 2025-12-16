@@ -33,21 +33,32 @@ export class AddIncidentDialogComponent implements OnInit {
     ) {
         this.mode = data.mode || 'create';
         this.isEdit = this.mode === 'edit';
-        this.orgList = data.orgList || [];
-        this.cafeList = data.cafeList || [];
+        // this.orgList = data.orgList || []; // Now fetched internally
+        // this.cafeList = data.cafeList || []; // derived from orgList
     }
 
     ngOnInit(): void {
         this.initForm();
-        if (this.isEdit && this.data.incident) {
-            this.patchForm(this.data.incident);
-        } else if (this.data.filterObj) {
-            // Pre-fill from filter
-            this.form.patchValue({
-                orgDetails: { orgId: this.data.filterObj.orgId },
-                cafeteriaDetails: { cafeteria_id: this.data.filterObj.cafeteria_id }
-            });
-            if (this.data.filterObj.orgId) this.onOrgChange(this.data.filterObj.orgId);
+        this.loadOrgs().then(() => {
+            if (this.isEdit && this.data.incident) {
+                this.patchForm(this.data.incident);
+            } else if (this.data.filterObj) {
+                // Pre-fill from filter
+                this.form.patchValue({
+                    orgDetails: { orgId: this.data.filterObj.orgId },
+                    cafeteriaDetails: { cafeteria_id: this.data.filterObj.cafeteria_id }
+                });
+                if (this.data.filterObj.orgId) this.onOrgChange(this.data.filterObj.orgId);
+            }
+        });
+    }
+
+    async loadOrgs() {
+        try {
+            const orgData = await this.api.B2B_fetchFilteredAllOrgs({ countOnly: false }, 1);
+            this.orgList = orgData || [];
+        } catch (e) {
+            console.error('Failed to load orgs', e);
         }
     }
 

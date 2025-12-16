@@ -67,8 +67,8 @@
   padding: 12px 14px;
   border-radius: 12px;
   background: #ffffff;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
-  border: 1px solid rgba(148, 163, 184, 0.35);
+  // box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  // border: 1px solid rgba(148, 163, 184, 0.35);
   align-items: stretch;
 }
 
@@ -391,4 +391,38 @@
     width: 56px;
     height: 56px;
   }
+}
+
+/* NEW STYLES */
+.small-icon-btn {
+  width: 24px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+
+  // mat-icon {
+  //   font-size: 18px;
+  //   width: 18px;
+  //   height: 18px;
+  //   line-height: 18px;
+  // }
+}
+
+.scale-08 {
+  transform: scale(0.8);
+  transform-origin: left center;
+}
+
+.meal-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: $primary-color1;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.small-fab {
+  transform: scale(0.8);
 }

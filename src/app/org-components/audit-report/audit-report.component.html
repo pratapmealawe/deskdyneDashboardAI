@@ -87,7 +87,8 @@
                         <mat-icon>visibility</mat-icon>
                     </button>
                     <!-- Edit option removed as per request -->
-                    <button mat-icon-button color="warn" (click)="deleteReport(element)" matTooltip="Delete">
+                    <button mat-icon-button color="warn" (click)="deleteReport(element)" matTooltip="Delete"
+                        *ngIf="orgAdmin?.role !== 'ORGADMIN'">
                         <mat-icon>delete</mat-icon>
                     </button>
                 </td>

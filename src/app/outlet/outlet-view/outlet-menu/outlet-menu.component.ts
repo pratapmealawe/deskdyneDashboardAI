@@ -13,6 +13,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -161,7 +163,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     if (this.searchTermMenu) {
       const term = this.searchTermMenu.toLowerCase();
       temp = temp.filter((item: any) =>
-        (item.itemName || '').toLowerCase().includes(term)
+        (item.itemName || '').toLowerCase().includes(term) ||
+        (item.description || '').toLowerCase().includes(term) ||
+        (item.outletName || '').toLowerCase().includes(term)
       );
     }
 
@@ -234,7 +238,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       price: [null, [Validators.required, Validators.min(1)]],
       subsidy: [0, [Validators.min(0)]],
       category: ['', Validators.required],
-      mealTimingInfo: [[], Validators.required], 
+      mealTimingInfo: [[], Validators.required],
       itemType: ['Veg', Validators.required],
       precedence: [0, [Validators.min(0)]],
       isActive: [false],
@@ -739,5 +743,49 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       this.transformedMenuItems = [];
       this.selectedMenuItems = [];
     });
+  }
+
+  async excelExport() {
+    if (!this.filteredMenuList || this.filteredMenuList.length === 0) {
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Outlet Menu');
+
+    worksheet.columns = [
+      { header: 'Item Name', key: 'itemName', width: 25 },
+      { header: 'Description', key: 'description', width: 30 },
+      { header: 'Category', key: 'category', width: 15 },
+      { header: 'Type', key: 'itemType', width: 10 },
+      { header: 'Price (₹)', key: 'price', width: 15 },
+      { header: 'Subsidy (₹)', key: 'subsidy', width: 15 }
+    ];
+
+    // Header style
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+    this.filteredMenuList.forEach((item) => {
+      worksheet.addRow({
+        itemName: item.itemName,
+        description: item.description || '',
+        category: item.category,
+        itemType: item.itemType,
+        price: item.price || 0,
+        subsidy: item.subsidy || 0
+      });
+    });
+
+    const fileName =
+      `outlet_menu_${this.outletObj?.outletName || 'outlet'}` +
+      `_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, fileName);
   }
 }

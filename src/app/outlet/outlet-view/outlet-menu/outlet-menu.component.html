@@ -1,7 +1,7 @@
-<div class="pt-3 pb-3 outlet-menu">
+<div class="pt-3 pb-3 outlet-menu container-fluid">
 
   <!-- TOP ACTIONS -->
-  <div class="d-flex justify-content-between align-items-center mb-2">
+  <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
     <button mat-raised-button color="primary" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
       Add Menu
     </button>
@@ -14,6 +14,10 @@
       <button mat-stroked-button color="primary" (click)="openOutlet()">
         Copy Menu
       </button>
+
+      <button mat-stroked-button color="primary" (click)="excelExport()">
+        Export Excel
+      </button>
     </div>
   </div>
 
@@ -22,7 +26,8 @@
     <div class="col-12 col-md-6">
       <mat-form-field appearance="outline" class="w-100">
         <mat-label>Search item</mat-label>
-        <input matInput placeholder="Search by name..." [(ngModel)]="searchTermMenu" (input)="applyMenuFilters()" />
+        <input matInput placeholder="Search by name, outlet name..." [(ngModel)]="searchTermMenu"
+          (input)="applyMenuFilters()" />
         <button *ngIf="searchTermMenu" matSuffix mat-icon-button aria-label="Clear"
           (click)="searchTermMenu=''; applyMenuFilters()">
           <mat-icon>close</mat-icon>
@@ -59,92 +64,90 @@
         </span>
       </div>
 
-      <!-- Items -->
-      <mat-card class="menu-item-card" *ngFor="let item of group.items; let i = index">
-        <div class="menu-item-card-inner">
-          <!-- LEFT: image + veg/nonveg -->
-          <div class="menu-thumb">
-            <img [src]="displayImgUrl + item.imageUrl" class="menu-thumb-img" />
-            <span *ngIf="item.itemType === 'Veg'" class="typeIcon veg-indicator vegIcon"></span>
-            <span *ngIf="item.itemType === 'NonVeg'" class="typeIcon nonveg-indicator nonvegIcon"></span>
-          </div>
-
-          <!-- MIDDLE: content -->
-          <div class="menu-content">
-            <!-- Name + active -->
-            <div class="menu-header-row">
-              <div class="menu-title-block">
-                <div class="menu-name">
-                  {{ item.itemName || 'Unnamed item' }}
-                </div>
-                <!-- Description -->
-                <div class="menu-desc" *ngIf="item.description" [matTooltip]="item.description">
-                  {{ item.description }}
-                </div>
+      <!-- Items Grid -->
+      <div class="row g-3">
+        <div class="col-12 col-md-6 col-xl-4" *ngFor="let item of group.items; let i = index">
+          <mat-card class="menu-item-card h-100">
+            <div class="menu-item-card-inner h-100">
+              <!-- LEFT: image + veg/nonveg -->
+              <div class="menu-thumb">
+                <img [src]="displayImgUrl + item.imageUrl" class="menu-thumb-img" />
+                <span *ngIf="item.itemType === 'Veg'" class="typeIcon veg-indicator vegIcon"></span>
+                <span *ngIf="item.itemType === 'NonVeg'" class="typeIcon nonveg-indicator nonvegIcon"></span>
               </div>
 
-              <div class="menu-active-chip d-none d-md-block">
-                <mat-checkbox color="primary" [checked]="item.isActive"
-                  (change)="showPopupForItemActivation(item, $event)">
-                  Active
-                </mat-checkbox>
+              <!-- MIDDLE: content -->
+              <div class="menu-content justify-content-between">
+                <div>
+                  <!-- Name + active -->
+                  <div class="menu-header-row">
+                    <div class="menu-title-block">
+                      <div class="menu-name" [matTooltip]="item.itemName">
+                        {{ item.itemName || 'Unnamed item' }}
+                      </div>
+                      <!-- Description -->
+                      <div class="menu-desc" *ngIf="item.description" [matTooltip]="item.description">
+                        {{ item.description }}
+                      </div>
+                    </div>
+
+                    <!-- Desktop Actions (moved to top right) -->
+                    <div class="d-none d-md-flex gap-1">
+                      <mat-icon *ngIf="true || btnPolicy?.editMenu" color="primary" class="small-icon-btn"
+                        (click)="edit(item, i)" matTooltip="Edit item">edit</mat-icon>
+                      <mat-icon *ngIf="true || btnPolicy?.deleteMenu" color="warn" class="small-icon-btn"
+                        (click)="showPopup(item, i)" matTooltip="Delete item">delete</mat-icon>
+                    </div>
+                  </div>
+
+                  <!-- Meta row: price / subsidy / precedence -->
+                  <div class="menu-meta-row mt-3">
+                    <div class="meta-block">
+                      <div class="meta-label">Price</div>
+                      <div class="meta-value">₹{{ item.price }}</div>
+                    </div>
+                    <div class="meta-block">
+                      <div class="meta-label">Subsidy</div>
+                      <div class="meta-value">
+                        ₹{{ item.subsidy || 0 }}
+                      </div>
+                    </div>
+                    <!-- Active Toggle -->
+                    <div class="meta-block">
+                      <div class="meta-label">Active</div>
+                      <mat-slide-toggle color="primary" [checked]="item.isActive" class="scale-08"
+                        (change)="showPopupForItemActivation(item, $event)">
+                      </mat-slide-toggle>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Meal time chips -->
+                <div class="menu-mealchips mt-2" *ngIf="item.mealTimingInfo?.length">
+                  <div class="menu-mealchips-list">
+                    <span *ngFor="let meal of item.mealTimingInfo" class="meal-badge">
+                      {{ meal.mealType }}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Mobile Actions -->
+                <div class="d-flex d-md-none justify-content-end mt-2 gap-2">
+                  <button mat-mini-fab color="primary" class="small-fab" *ngIf="true || btnPolicy?.editMenu"
+                    (click)="edit(item, i)">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-mini-fab color="warn" class="small-fab" *ngIf="true || btnPolicy?.deleteMenu"
+                    (click)="showPopup(item, i)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+
               </div>
             </div>
-
-            <!-- Meta row: price / subsidy / precedence -->
-            <div class="menu-meta-row">
-              <div class="meta-block">
-                <div class="meta-label">Price</div>
-                <div class="meta-value">₹{{ item.price }}</div>
-              </div>
-              <div class="meta-block">
-                <div class="meta-label">Subsidy</div>
-                <div class="meta-value">
-                  ₹{{ item.subsidy || 0 }}
-                </div>
-              </div>
-              <div class="meta-block">
-                <div class="meta-label">Precedence</div>
-                <div class="meta-value">
-                  {{ item.precedence || 0 }}
-                </div>
-              </div>
-            </div>
-
-            <!-- Meal time chips -->
-            <div class="menu-mealchips" *ngIf="item.mealTimingInfo?.length">
-              <div class="meta-label mb-1">Meal Time</div>
-              <div class="menu-mealchips-list">
-                <mat-chip *ngFor="let meal of item.mealTimingInfo" class="menu-meal-chip">
-                  {{ meal.mealType }} •
-                  {{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}
-                </mat-chip>
-              </div>
-            </div>
-
-            <!-- Active checkbox on mobile -->
-            <div class="menu-active-chip d-md-none mt-2">
-              <mat-checkbox color="primary" [checked]="item.isActive"
-                (change)="showPopupForItemActivation(item, $event)">
-                Active
-              </mat-checkbox>
-            </div>
-          </div>
-
-          <!-- RIGHT: actions -->
-          <div class="menu-actions">
-            <button mat-icon-button color="primary" class="me-1" *ngIf="true || btnPolicy?.editMenu"
-              (click)="edit(item, i)" matTooltip="Edit item">
-              <mat-icon>edit</mat-icon>
-            </button>
-
-            <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu" (click)="showPopup(item, i)"
-              matTooltip="Delete item">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
+          </mat-card>
         </div>
-      </mat-card>
+      </div>
     </div>
 
     <!-- PAGINATOR -->
