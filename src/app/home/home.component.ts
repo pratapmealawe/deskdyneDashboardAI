@@ -1,15 +1,11 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import * as Highcharts from 'highcharts';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { UtilityService } from 'src/service/utility.service';
-import { register } from 'swiper/element/bundle';
-
-register();
 
 @Component({
   selector: 'app-home',
