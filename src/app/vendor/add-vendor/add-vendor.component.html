@@ -78,6 +78,7 @@
           <mat-radio-group formControlName="accessType" class="d-flex gap-3">
             <mat-radio-button value="outlet" color="primary">Outlet Access</mat-radio-button>
             <mat-radio-button value="daily_bulk" color="primary">Daily And Bulk Access</mat-radio-button>
+            <mat-radio-button value="popup" color="primary">Popup Access</mat-radio-button>
           </mat-radio-group>
         </div>
       </div>
@@ -188,6 +189,59 @@
     </div>
   </div>
 
+  <div class="cardDesign m-1 mb-3">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+      <h5>Add Popup</h5>
+      <button mat-raised-button (click)="addPopup()" [disabled]="!this.form.get('vendorId').value" color="primary">
+        <mat-icon>countertops</mat-icon> Add Popup </button>
+    </div>
+    <div class="no-address" *ngIf="selectedPopupsList.length == 0">
+      <p>No Popup added yet.</p>
+      <small>Click on <strong>"Add Popup"</strong> to add a Popup details.</small>
+    </div>
+    <div class="outlet-list" *ngIf="selectedPopupsList.length > 0" class="mt-2 p-3">
+      <div class="mt-1" *ngFor="let popup of selectedPopupsList; index as i">
+        <div class="row card-wrapper d-flex justify-content-between p-2">
+          <div class="col-lg-10">
+            <div class="row gap-2">
+              <div class="col-12 col-md-4 col-lg-12">
+                <div class="row">
+                  <div class="col-lg-3">
+                    <div class="labelText">Outlet Name</div>
+                    <div class="labelData">{{ popup.outletName }}</div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="labelText">Outlet Type</div>
+                    <div class="labelData">{{ popup.outletType }}</div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="labelText">Description</div>
+                    <div class="labelData">{{ popup.outletDescription }}</div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="labelText">Organization</div>
+                    <div class="labelData">
+                      {{ popup.organizationDetails.organization_name }}
+                    </div>
+                  </div>
+                  <div class="col-lg-3">
+                    <div class="labelText">Cafeteria Name</div>
+                    <div class="labelData">
+                      {{ popup.cafeteriaDetails.cafeteria_name }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-1 d-flex align-items-center justify-content-end">
+            <mat-icon color="warn" (click)="deletePopup(i)">delete</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <button mat-raised-button (click)="submit('update')" [disabled]="!isAddVendorValid()" color="primary"
    [matTooltip]="!isAddVendorValid() ? 'Submit is enabled only when the form is fully filled':''"
     *ngIf="showUpdate && true || btnPolicy?.editVendor">Update</button>
@@ -289,6 +343,42 @@
           Add
         </button>
       </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template #popupModal let-dialogRef="dialogRef">
+  <div class="dialog-header p-3">
+    <div class="d-flex justify-content-between align-items-center">
+      <h4 class="dialog-title">Popup</h4>
+      <button mat-icon-button mat-dialog-close class="dialog-close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+  <div class="dialog-content p-3">
+    <div *ngFor="let popup of outletByCafeteriaList" class="cardDesign">
+      <div class="row card-wrapper" (click)="toggleCheckboxforPopup(popup)">
+        <div class="col-12 col-md-4 col-lg-12">
+          <div class="row align-items-center">
+            <div class="col-6 col-md-5 col-lg-2" (click)="$event.stopPropagation()">
+              <mat-checkbox [(ngModel)]="popup.isChecked" color="primary">
+              </mat-checkbox>
+            </div>
+            <div class="col-6 col-md-5 col-lg-3">
+              <div class="labelText">Outlet Name</div>
+              <div class="labelData">{{ popup.outletName }}</div>
+            </div>
+            <div class="col-6 col-md-7 col-lg-3">
+              <div class="labelText">Outlet Type</div>
+              <div class="labelData">{{ popup.outletType }}</div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end">
+      <button mat-raised-button (click)="getSelectedPopups()" color="primary">Add</button>
     </div>
   </div>
 </ng-template>

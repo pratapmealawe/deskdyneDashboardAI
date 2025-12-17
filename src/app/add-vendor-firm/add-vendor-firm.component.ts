@@ -25,7 +25,9 @@ export class AddVendorFirmComponent {
   cafeteriaNameNCity: any;
   outletByCafeteriaList: any;
   showModalOutletList = false;
+  showModalOutletListforPopup = false;
   selectedOutletsList: any = [];
+  selectedPopupsList: any = [];
   defaultRole: any = 'Cashier';
   isVendorEdit: any;
   showAddbutton: any = false;
@@ -39,6 +41,7 @@ export class AddVendorFirmComponent {
   @ViewChild('geolocation') geolocation: any;
   @ViewChild('addAddress') address: any;
   @ViewChild('pocDetailsTemp') pocdetails: any;
+  @ViewChild('popupModal') popupModal: any;
   addressList: any = [];
   pocDetails: any = []
 
@@ -247,6 +250,7 @@ export class AddVendorFirmComponent {
       const finalObj = {
         ...this.form.value,
         outletList: this.selectedOutletsList,
+        popup_details: this.selectedPopupsList
       };
       const formData = this.objectToFormData(finalObj);
 
@@ -270,24 +274,38 @@ export class AddVendorFirmComponent {
     }
   }
 
+  getOrgNameForPopup(org: MatSelectChange) {
+    this.showCafeteria = true;
+    if (org && org) {
+      this.orgName = org.value;
+      const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
+      this.cafeterialist = cafes?.cafeteriaList ?? []
+    }
+  }
+
 selectCafeteria(event: MatSelectChange) {
   const value = event.value;
-  console.log(event.value , "value ");
   const cafeteriaName = value.cafeteria_name;
   const cafeteriaCity = value.cafeteria_city;
   const cafeteriaId = event.value.cafeteria_id;
   const organizationName = this.orgList.find((org: any) =>
     org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
   )?.organization_name;
-  console.log("Organization Name:", organizationName);
-
-  // const { cafeteriaName, cafeteriaCity, organization } = value;
-  console.log(cafeteriaName, cafeteriaCity, organizationName ,"cafeteriaName, cafeteriaCity, organization");
-  
   this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
   this.showModalOutletList = true;
 }
 
+  selectCafeteriaForPopup(event: MatSelectChange) {
+    const value = event.value;
+    const cafeteriaName = value.cafeteria_name;
+    const cafeteriaCity = value.cafeteria_city;
+    const cafeteriaId = event.value.cafeteria_id;
+    const organizationName = this.orgList.find((org: any) =>
+      org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
+    )?.organization_name;
+    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
+    this.showModalOutletListforPopup = true;
+  }
 
   async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {
     try {
@@ -303,9 +321,6 @@ selectCafeteria(event: MatSelectChange) {
     }
   }
 
-  // addOutlet() {
-  //   this.modalService.open(this.outlet, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
-  // }
   addressTemplate() {
     this.modalService.open(this.address, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
@@ -332,7 +347,8 @@ selectCafeteria(event: MatSelectChange) {
         }
       }
     });
-    this.modalService.dismissAll();
+    const dialogRef = this.dialog.getDialogById('OUTLET_DIALOG');
+    dialogRef?.close();
   }
 
   deleteOutlet(index: number) {
@@ -424,9 +440,45 @@ addOutlet() {
   }
   this.dialog.open(this.outletDialog, {
     width: '1000px',
-    disableClose: false
+    disableClose: false,
+    id: 'OUTLET_DIALOG'
   });
 }
 
+  addPopup() {
+    if (!this.popupModal) {
+      console.error('TemplateRef popup is not available');
+      return;
+    }
+    this.dialog.open(this.popupModal, {
+      width: '1000px',
+      disableClose: false
+    });
+    this.dialog.afterAllClosed.subscribe(() => {
+    this.showModalOutletListforPopup = false;
+    })
+  }
 
+  getSelectedPopups() {
+    this.outletByCafeteriaList.forEach((elm: any) => {
+      if (elm.isChecked) {
+        const exists = this.selectedPopupsList.some((outlet: any) => outlet.outletId === elm._id);
+        if (!exists) {
+          this.selectedPopupsList.push({
+            popupId: elm._id,
+            popupName: elm.outletName,
+            popupType: elm.outletType,
+            cafeteriaDetails: elm.cafeteriaDetails,
+            organizationDetails: elm.organizationDetails,
+          });
+        }
+      }
+    });
+    this.showModalOutletListforPopup = false;
+    this.dialog.closeAll();
+  }
+
+  deletePopup(index: number) {
+    this.selectedPopupsList.splice(index, 1);
+  }
 }

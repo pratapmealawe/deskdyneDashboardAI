@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import {
@@ -25,6 +26,7 @@ export class AddVendorCommponent {
   outletByCafeteriaList: any;
   showModalOutletList = false;
   selectedOutletsList: any = [];
+  selectedPopupsList: any = [];
   defaultRole: any = 'Cashier';
 
   showAddbutton: any = false;
@@ -39,6 +41,7 @@ export class AddVendorCommponent {
 
   @ViewChild('outletModal') outlet: any;
   @ViewChild('addressModal') address: any;
+  @ViewChild('popupModal') popupModal: any;
   selectedAddressList: any = [];
   selectedAddress: any = null;  // holds the selected address object
 
@@ -53,7 +56,8 @@ export class AddVendorCommponent {
     public modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private dialog: MatDialog,
   ) {
   }
 
@@ -171,9 +175,11 @@ export class AddVendorCommponent {
         ...this.form.value,
         isOutletAccess: this.form.value.accessType === 'outlet' ? true : false,
         isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk' ? true : false,
+        isPopupAccess: this.form.value.accessType === 'popup' ? true : false,
         outletList: this.selectedOutletsList,
         vendorFirmDetails: vendorFirmDetails,
-        addressList: this.selectedAddressList
+        addressList: this.selectedAddressList,
+        popup_Details: this.selectedPopupsList
       };
 
       const formData = this.objectToFormData(finalObj);
@@ -322,5 +328,47 @@ isAddVendorValid(): boolean {
 toggleCheckbox(outlet: any) {
   outlet.isChecked = !outlet.isChecked;
 }
+
+toggleCheckboxforPopup(popup: any) {
+  popup.isChecked = !popup.isChecked;
+}
+  addPopup() {
+    if (!this.popupModal) {
+      console.error('TemplateRef popup is not available');
+      return;
+    }
+    this.dialog.open(this.popupModal, {
+      width: '1000px',
+      disableClose: false
+    });
+  }
+
+  getSelectedPopups(){
+    this.selectedPopupsList = []
+    this.outletByCafeteriaList.forEach((elm: any) => {
+      if (elm.isChecked) {
+        let outletPresent = false;
+        this.selectedPopupsList.forEach((savedOutlet: any) => {
+          if (savedOutlet.outletId === elm.outletId) {
+            outletPresent = true;
+          }
+        });
+        if (!outletPresent) {
+          this.selectedPopupsList.push({
+            popupId: elm.outletId,
+            popupName: elm.outletName,
+            popupType: elm.outletType,
+            cafeteriaDetails: elm.cafeteriaDetails,
+            organizationDetails: elm.organizationDetails,
+          });
+        }
+      }
+    });
+    this.dialog.closeAll();
+  }
+
+  deletePopup(index: number) {
+    this.selectedPopupsList.splice(index, 1);
+  }
 
 }
