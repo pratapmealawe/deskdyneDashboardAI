@@ -8,7 +8,8 @@ export interface WalletTxnDialogData {
   kind: 'Credit' | 'Debit' | 'Transfer';
   subsidyBalance?: number; // only for subsidy transfer
   dailyBalance?: number;   // only for daily transfer
-  transferSource?: 'subsidy' | 'daily'; // NEW
+  walletBalance?: number;   // only for daily transfer
+  transferSource?: 'wallet' | 'subsidy' | 'daily'; // NEW
 }
 
 export interface WalletTxnDialogResult {
@@ -39,7 +40,7 @@ export class WalletTxnDialogComponent {
 
     if (this.data.kind === 'Transfer') {
       const max =
-        this.data.transferSource === 'daily'
+        this.data.transferSource === 'wallet' ? (this.data.walletBalance ?? 0) : this.data.transferSource === 'daily'
           ? (this.data.dailyBalance ?? 0)
           : (this.data.subsidyBalance ?? 0);
 
@@ -68,9 +69,16 @@ export class WalletTxnDialogComponent {
             amount: +amt.toFixed(2),
             remark
           });
-        } else {
+        } else if (this.data.transferSource === 'subsidy') {
           // Subsidy → wallet (existing)
           await this.api.moveSubsidyToWallet({
+            vendorFirmId: this.data.vendorFirmId,
+            amount: +amt.toFixed(2),
+            remark
+          });
+        } else if (this.data.transferSource === 'wallet') {
+          // Wallet → BANK API
+          await this.api.transferWalletListToBankManual({
             vendorFirmId: this.data.vendorFirmId,
             amount: +amt.toFixed(2),
             remark
