@@ -1,195 +1,208 @@
-<div class="bgpadding1">
-    <div class="row mt-2">  
-        <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedStatus === 'AuditLogs'}"
-        (click)="getAuditLogs()" >
-            <div class="tileLabel header4 countTile">Audit Logs</div>
-        </div>    
-        <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedStatus === 'DBLogs'}"
-        (click)="getMLDBLogs()" >
-            <div class="tileLabel header4 countTile">DB Logs</div>
+<div class="server-logs-container">
+    <!-- Header Section -->
+    <div class="page-header">
+        <div class="title-section">
+            <h1>Server Logs</h1>
         </div>
-        <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedStatus === 'logs'}"
-        (click)="getServerLogs('logs','app.out.log')" >
-            <div class="tileLabel header4 countTile">Logs</div>
+        <div class="log-type-tabs">
+            <button class="tab-btn" [class.active]="selectedStatus === 'AuditLogs'" (click)="getAuditLogs()">
+                Audit Logs
+            </button>
+            <button class="tab-btn" [class.active]="selectedStatus === 'DBLogs'" (click)="getMLDBLogs()"
+                *ngIf="access?.serverLogs">
+                DB Logs
+            </button>
         </div>
-        <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedStatus === 'errorlogs'}"
-        (click)="getServerLogs('errorlogs','app.err.log')" >
-            <div class="tileLabel header4 countTile">Error Logs</div>
-          </div>
-    </div>
-    <div>
-        <p class="labelText" *ngFor="let log of serverLogsList">{{log}}</p>
     </div>
 
-    <div class="bgpadding1" *ngIf="selectedStatus === 'DBLogs'">
-        <div class="row mt-2">
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '100'}"
-                (click)="getLineBasedLogs('100')" >
-                <div class="tileLabel header4 countTile">100 Lines</div>
+    <!-- Filters Toolbar -->
+    <div class="filters-toolbar">
+        <div class="filter-row">
+            <!-- Line Count Filter -->
+            <div class="filter-group">
+                <label>Lines</label>
+                <div class="btn-group">
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '100'"
+                        (click)="selectedStatus === 'AuditLogs' ? getLineBasedAuditLogs('100') : getLineBasedLogs('100')">
+                        100
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '500'"
+                        (click)="selectedStatus === 'AuditLogs' ? getLineBasedAuditLogs('500') : getLineBasedLogs('500')">
+                        500
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '1000'"
+                        (click)="selectedStatus === 'AuditLogs' ? getLineBasedAuditLogs('1000') : getLineBasedLogs('1000')">
+                        1000
+                    </button>
+                </div>
             </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '500'}"
-                (click)="getLineBasedLogs('500')" >
-                <div class="tileLabel header4 countTile">500 Lines</div>
+
+            <!-- Time Filter -->
+            <div class="filter-group">
+                <label>Time Range</label>
+                <div class="btn-group">
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '1hr'"
+                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('1hr') : getTimeBasedLogs('1hr')">
+                        1 Hr
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '2hr'"
+                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('2hr') : getTimeBasedLogs('2hr')">
+                        2 Hr
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '5hr'"
+                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('5hr') : getTimeBasedLogs('5hr')">
+                        5 Hr
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '1Day'"
+                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('1Day') : getTimeBasedLogs('1Day')">
+                        24 Hr
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedDBStatus === '2Day'"
+                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('2Day') : getTimeBasedLogs('2Day')">
+                        48 Hr
+                    </button>
+                </div>
             </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '1000'}"
-                (click)="getLineBasedLogs('1000')" >
-                <div class="tileLabel header4 countTile">1000 Lines</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '1hr'}"
-                (click)="getTimeBasedLogs('1hr')" >
-                <div class="tileLabel header4 countTile">1 hr.</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '2hr'}"
-                (click)="getTimeBasedLogs('2hr')" >
-                <div class="tileLabel header4 countTile">2 hr.</div>
+
+            <!-- Date Range Filter -->
+            <div class="filter-group">
+                <label>Date Range</label>
+                <div class="date-inputs">
+                    <input type="date" [(ngModel)]="startDate" [max]="maxDate" placeholder="Start Date">
+                    <span class="text-muted">-</span>
+                    <input type="date" [(ngModel)]="endDate" [min]="startDate" [max]="maxDate" placeholder="End Date">
+                    <button class="btn-fetch"
+                        (click)="selectedStatus === 'AuditLogs' ? getDayRangeBasedAuditLogs(startDate,endDate) : getDayRangeBasedLogs(startDate,endDate)">
+                        Fetch
+                    </button>
+                </div>
             </div>
         </div>
-            <div class="row mt-2">
-                <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '5hr'}"
-                    (click)="getTimeBasedLogs('5hr')" >
-                    <div class="tileLabel header4 countTile">5 hr.</div>
+
+        <!-- Search Bar -->
+        <div class="filter-row" style="width: 100%;">
+            <div class="search-group">
+                <div class="search-input-wrapper">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search logs by message, type, IP, or user..."
+                        [(ngModel)]="searchText" (blur)="onSearchChange()">
+                    <button *ngIf="searchText" class="clear-btn" (click)="clearSearch()">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
                 </div>
-                <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '1Day'}"
-                    (click)="getTimeBasedLogs('1Day')" >
-                    <div class="tileLabel header4 countTile">1 Day</div>
-                </div>
-                <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '2Day'}"
-                    (click)="getTimeBasedLogs('2Day')" >
-                    <div class="tileLabel header4 countTile">2 Days</div>
-                </div>
-            </div>
-        <div class="mt-2">Range</div>
-        <div class="row mt-2">
-            <div class="col-6 col-md-6 col-lg-3 date-input-container">
-                <label for="startDate" class="form-label">Start Date</label>
-                <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate">
-            </div>
-            <div class="col-6 col-md-6 col-lg-3 date-input-container">
-                <label for="endDate" class="form-label">End Date</label>
-                <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate">
-            </div>
-            <div class="col-6 col-md-6 col-lg-3">
-                <button class="btn btn-primary btn-sm submit-btn" (click)="getDayRangeBasedLogs(startDate,endDate)">fetch</button>
             </div>
         </div>
-        <ng-container *ngIf="logsList.length>0 ">  
-            <ng-container *ngFor="let log of logsList">
-                <div class="logContainer">
-                 <div class="row">  
-                    <div class="col-12 col-md-6 col-lg-9"> 
-                        <span class="labelText"> Message :</span>
-                        <span class="valueText">{{log.logMsg}}</span>
-                    </div>                  
-                    <div class="col-6 col-md-1 col-lg-1">
-                        <span  class="labelText">Type :</span>
-                        <span class="valueText">{{log.type}}</span>
-                    </div>
-                    <div class="col-6 col-md-3 col-lg-2">
-                        <span  class="labelText">Date and Time :</span>
-                        <span class="valueText">{{log.timestamp |  date:'dd-MMM-yyyy HH:mm a'}}</span>
-                    </div>     
-                    <div class="col-12" *ngIf="log.logObj">
-                        <span  class="labelText">LogObj :</span>
-                        <span class="valueText">{{log.logObj}}</span>
-                    </div>                
-                </div> 
-                </div>
-            </ng-container >      
-        </ng-container>
     </div>
 
-    <div class="bgpadding1" *ngIf="selectedStatus === 'AuditLogs'">
-        <div>Audit Logs</div>
-        <div class="row mt-2">
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '100'}"
-                (click)="getLineBasedAuditLogs('100')" >
-                <div class="tileLabel header4 countTile">100 Lines</div>
+    <!-- Logs List Display -->
+    <div class="logs-list" #listing>
+        <!-- Loading State -->
+        <div class="loading-container" *ngIf="isLoading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
             </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '500'}"
-                (click)="getLineBasedAuditLogs('500')" >
-                <div class="tileLabel header4 countTile">500 Lines</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '1000'}"
-                (click)="getLineBasedAuditLogs('1000')" >
-                <div class="tileLabel header4 countTile">1000 Lines</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '1hr'}"
-                (click)="getTimeBasedAuditLogs('1hr')" >
-                <div class="tileLabel header4 countTile">1 hr.</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '2hr'}"
-                (click)="getTimeBasedAuditLogs('2hr')" >
-                <div class="tileLabel header4 countTile">2 hr.</div>
-            </div>
+            <p>Fetching logs...</p>
         </div>
-            <div class="row mt-2">
-                <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '5hr'}"
-                    (click)="getTimeBasedAuditLogs('5hr')" >
-                    <div class="tileLabel header4 countTile">5 hr.</div>
-                </div>
-                <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '1Day'}"
-                    (click)="getTimeBasedAuditLogs('1Day')" >
-                    <div class="tileLabel header4 countTile">1 Day</div>
-                </div>
-                <div class="col-6 col-md-6 col-lg-2" [ngClass]="{tileSelected: selectedDBStatus === '2Day'}"
-                    (click)="getTimeBasedAuditLogs('2Day')" >
-                    <div class="tileLabel header4 countTile">2 Days</div>
-                </div>
-            </div>
-        <div class="mt-2">Range</div>
-        <div class="row mt-2">
-            <div class="col-6 col-md-6 col-lg-3 date-input-container">
-                <label for="startDate" class="form-label">Start Date</label>
-                <input type="date" class="form-control" id="startDate" [(ngModel)]="startDate">
-            </div>
-            <div class="col-6 col-md-6 col-lg-3 date-input-container">
-                <label for="endDate" class="form-label">End Date</label>
-                <input type="date" class="form-control" id="endDate" [(ngModel)]="endDate">
-            </div>
-            <div class="col-6 col-md-6 col-lg-3">
-                <button class="btn btn-primary btn-sm submit-btn" (click)="getDayRangeBasedAuditLogs(startDate,endDate)">fetch</button>
-            </div>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!isLoading && (filteredLogsList.length === 0 && logsList.length > 0)">
+            <i class="bi bi-search"></i>
+            <h3>No matching logs found</h3>
+            <p>Try adjusting your search terms or filters</p>
         </div>
-        <ng-container *ngIf="logsList.length>0 ">  
-            <ng-container *ngFor="let log of logsList">
-                <div class="logContainer">
-                 <div class="row">  
-                    <div class="col-12 col-md-6 col-lg-5"> 
-                        <span class="labelText"> urlInfo :</span>
-                        <span class="valueText">{{log.urlInfo}}</span>
-                    </div>   
-                    <div class="col-6 col-md-1 col-lg-1">
-                        <span  class="labelText">Method :</span>
-                        <span class="valueText">{{log.urlMethod}}</span>
+
+        <div class="empty-state" *ngIf="!isLoading && logsList.length === 0">
+            <i class="bi bi-journal-x"></i>
+            <h3>No logs available</h3>
+            <p>There are no logs to display for the selected period</p>
+        </div>
+
+        <!-- Log Items -->
+        <ng-container *ngIf="!isLoading && filteredLogsList.length > 0">
+            <div class="log-card" *ngFor="let log of filteredLogsList"
+                [ngClass]="{'type-error': log.type === 'ERROR' || log.urlMethod === 'DELETE', 'type-info': log.type === 'INFO' || log.urlMethod === 'GET', 'type-success': log.urlMethod === 'POST' || log.urlMethod === 'PUT'}">
+
+                <!-- Audit Log Layout -->
+                <ng-container *ngIf="selectedStatus === 'AuditLogs'">
+                    <div class="log-header">
+                        <div class="meta-info">
+                            <span class="method-badge">{{log.urlMethod}}</span>
+                            <span class="timestamp">
+                                <i class="bi bi-clock"></i>
+                                {{log.timestamp | date:'dd MMM yyyy, HH:mm:ss'}}
+                            </span>
+                        </div>
+                        <div class="actions">
+                            <button class="btn-view-payload" *ngIf="log.payload" (click)="payloadView(log.payload)">
+                                View Payload
+                            </button>
+                        </div>
                     </div>
-                    <div class="col-12 col-md-4 col-lg-1"> 
-                        <span class="labelText"> IP :</span>
-                        <span class="valueText">{{log.ipInfo}}</span>
-                    </div>                
-                    <div class="col-6 col-md-1 col-lg-2">
-                        <span  class="labelText">UserInfo :</span>
-                        <span class="valueText" *ngIf="log.userInfo">{{log.userInfo.type}},{{log.userInfo.loginId}}</span>
+                    <div class="log-body">
+                        <div class="log-message">{{log.urlInfo}}</div>
+                        <div class="log-details">
+                            <div class="detail-item">
+                                <span class="label">IP Address</span>
+                                <span class="value">{{log.ipInfo}}</span>
+                            </div>
+                            <div class="detail-item" *ngIf="log.userInfo">
+                                <span class="label">User Type</span>
+                                <span class="value">{{log.userInfo.type}}</span>
+                            </div>
+                            <div class="detail-item" *ngIf="log.userInfo">
+                                <span class="label">Login ID</span>
+                                <span class="value">{{log.userInfo.loginId}}</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-6 col-md-3 col-lg-3">
-                        <span  class="labelText">Date and Time :</span>
-                        <span class="valueText">{{log.timestamp |  date:'dd-MMM-yyyy HH:mm a'}}</span>
-                        <span class="viewPayload" *ngIf="log.payload" (click)="payloadView(log.payload)">View Payload</span>
-                    </div>                     
-                </div> 
-                </div>
-            </ng-container >      
+                </ng-container>
+
+                <!-- DB Log Layout -->
+                <ng-container *ngIf="selectedStatus === 'DBLogs'">
+                    <div class="log-header">
+                        <div class="meta-info">
+                            <span class="method-badge">{{log.type}}</span>
+                            <span class="timestamp">
+                                <i class="bi bi-clock"></i>
+                                {{log.timestamp | date:'dd MMM yyyy, HH:mm:ss'}}
+                            </span>
+                            <span class="detail-item" *ngIf="log.ipInfo">
+                                <span class="label">IP Address</span>
+                                <span class="value">{{log.ipInfo}}</span>
+                            </span>
+                            <span class="detail-item" *ngIf="log.userInfo">
+                                <span class="label">User Type</span>
+                                <span class="value">{{log.userInfo.type}}</span>
+                            </span>
+                            <span class="detail-item" *ngIf="log.userInfo">
+                                <span class="label">Login ID</span>
+                                <span class="value">{{log.userInfo.loginId}}</span>
+                            </span>
+                        </div>
+                        <div class="actions">
+                            <button class="btn-view-payload" *ngIf="log.logObj" (click)="payloadView(log.logObj)">
+                                View Payload
+                            </button>
+                        </div>
+                    </div>
+                    <div class="log-body">
+                        <div class="log-message">{{log.logMsg}}</div>
+                    </div>
+                </ng-container>
+            </div>
         </ng-container>
     </div>
-    
 </div>
 
+<!-- Payload Modal -->
 <ng-template #contentPayload let-modal>
     <div class="modal-header">
+        <h5 class="modal-title">Payload Details</h5>
         <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
             <span aria-hidden="true">&times;</span>
         </button>
     </div>
     <div class="modal-body">
-        {{logPayload}}
+        <pre>{{logPayload}}</pre>
     </div>
 </ng-template>

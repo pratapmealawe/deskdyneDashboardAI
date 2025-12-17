@@ -64,30 +64,30 @@ export class MealaweOutletComponent implements AfterViewInit {
   async getMealAweOutletByCafeteria(): Promise<void> {
     try {
       this.mealOutlet = await this.apiMainService.getMealAweOutletByCafeteria(this.cafeteriaId);
-      this.config = this.config.map(item => {
-        const found = this.mealOutlet.config.find((value: any) => value.name === item.name);
-        return {
-          ...item,
-          value: found ? found.value : item.value
-        };
-      });
-      console.log(this.mealOutlet);
-      this.categories = (this.mealOutlet?.categoryConfig || []).map((c: any) => ({
-        ...c,
-        editing: false,
-        _previewImage: c.categoryImg ? this.serverDDUrl + c.categoryImg : null,
-        _previewBanners: (c.categoryBanners || []).map((b: string) => this.serverDDUrl + b),
-        _deleteBanners: [],
-        _newImageFile: null,
-        _newBannerFiles: []
-      }));
-      this.packages = (this.mealOutlet?.itemList || []).map((p: any) => ({
-        ...p,
-        editing: false
-      }));
+      if (this.mealOutlet) {
+        this.config = this.config.map(item => {
+          const found = this.mealOutlet?.config?.find((value: any) => value.name === item.name);
+          return {
+            ...item,
+            value: found ? found.value : item.value
+          };
+        });
+        this.categories = (this.mealOutlet?.categoryConfig || []).map((c: any) => ({
+          ...c,
+          editing: false,
+          _previewImage: c.categoryImg ? this.serverDDUrl + c.categoryImg : null,
+          _previewBanners: (c.categoryBanners || []).map((b: string) => this.serverDDUrl + b),
+          _deleteBanners: [],
+          _newImageFile: null,
+          _newBannerFiles: []
+        }));
+        this.packages = (this.mealOutlet?.itemList || []).map((p: any) => ({
+          ...p,
+          editing: false
+        }));
+      }
     } catch (error) {
       console.error("❌ Loading failed", error);
-      this.toaster.error("Unable to load cafeteria details");
     }
   }
 
@@ -108,7 +108,7 @@ export class MealaweOutletComponent implements AfterViewInit {
       this.getMealAweOutletByCafeteria();
     } catch (error) {
       console.error("❌ Update failed", error);
-      this.toaster.error("Update failed");
+      this.toaster.error("Update failed. No changes applied.  ");
     }
   }
 
@@ -177,9 +177,12 @@ export class MealaweOutletComponent implements AfterViewInit {
       if (cat._newImageFile) {
         fd.append("categoryImg", cat._newImageFile);
       }
-      if (cat._newBannerFiles?.length > 0) {
-        cat._newBannerFiles.forEach((file: any) => fd.append("categoryBanners", file));
+      if (cat._newBannerFiles && cat._newBannerFiles.length > 0) {
+        cat._newBannerFiles.forEach((file: File) => {
+          fd.append("categoryBanners", file);
+        });
       }
+
       const payload = {
         ...cat,
         _deleteBanners: cat._deleteBanners || []
@@ -205,7 +208,7 @@ export class MealaweOutletComponent implements AfterViewInit {
         this.getMealAweOutletByCafeteria();
       } catch (err) {
         console.error(`❌ Delete error:`, err);
-        this.toaster.error(`Unable to delete ${type}`);
+        this.toaster.error(`Delete failed. No changes applied.`);
       }
     }, this);
   }
@@ -266,6 +269,13 @@ export class MealaweOutletComponent implements AfterViewInit {
   dropBanner(category: any, event: CdkDragDrop<string[]>) {
     if (!category._previewBanners) return;
     moveItemInArray(category._previewBanners, event.previousIndex, event.currentIndex);
+
+    // Sync categoryBanners with _previewBanners
+    if (this.serverDDUrl) {
+      category.categoryBanners = category._previewBanners
+        .filter((banner: string) => typeof banner === 'string' && banner.includes(this.serverDDUrl))
+        .map((banner: string) => banner.replace(this.serverDDUrl, ''));
+    }
   }
 
   openCategoryDialog(category: any) {
@@ -331,7 +341,7 @@ export class MealaweOutletComponent implements AfterViewInit {
       this.getMealAweOutletByCafeteria();
     } catch (error) {
       console.error("❌ Update failed", error);
-      this.toaster.error("Update failed");
+      this.toaster.error("Create default categories failed");
     }
   }
 

@@ -305,16 +305,8 @@ export class ApiConfigService {
       updateAuditReport: p('/api/updateAuditReport', 'PUT'),
       deleteAuditReport: p('/api/deleteAuditReport', 'DELETE'),
       getImageGroupConfigByName: p('/api/getImageGroupConfigByName', 'GET'),
+      getServerLogs: p('/public/getServerLogs', 'POST'),
+      getAuditLogs: p('/utility/getAuditLogs', 'POST'),
     }
   }
-  // private generateOneLineApi(): string[] {
-  //   const result: string[] = [];
-  //   Object.entries(this.apiEndPointObj).forEach(([key, value]) => {
-  //     const endpoint = value as { url: string; method: string };
-  //     const path = endpoint.url.replace(this.baseUrl, '');
-  //     result.push(`${key}: p('${path}', '${endpoint.method}')`);
-  //   });
-  //   return result;
-  // }
 }
-

@@ -360,11 +360,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.lastsevendaysorderdaywisecount, searchObj);
   }
 
-  getServerLogs(fileName: string) {
-    const urlObj = this.apiConfigService.apiEndPointObj.serverlogs;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${fileName}`, method: urlObj.method }, null, { Accept: 'text/html' }, true);
-  }
-
   getDayRangeBasedLogs(startDate: any, endDate: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getDayRangeBasedLogs;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${startDate}` + `/${endDate}`, method: urlObj.method });
@@ -1366,5 +1361,15 @@ export class ApiMainService {
   deleteAuditReport(id: string) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteAuditReport
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getServerLogs(params: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getServerLogs;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, params);
+  }
+
+  getAuditLogs(params: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAuditLogs;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, params);
   }
 }
