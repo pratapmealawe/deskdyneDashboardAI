@@ -1,81 +1,83 @@
-<div class="bgpadding1">
-  <div class="labelText">Search Admin</div>
-  <div class="right addBtn" (click)="addAdmin()" *ngIf="true || btnPolicy?.addAdmin">
-    +
+<div class="admin-header">
+  <div>
+    <h4 class="m-0 fw-semibold">Admin</h4>
   </div>
-  <div class="row mt-2">
-    <div class="col-12 col-md-4 col-lg-3 mt-1">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Admin Name"
-        [(ngModel)]="searchObj.adminName"
-      />
+  <div class="header-actions">
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <mat-select [formControl]="roleControl">
+          <mat-option value="">All Roles</mat-option>
+          <mat-option *ngFor="let role of roleList" [value]="role">{{ role }}</mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
-    <div class="col-12 col-md-4 col-lg-3 mt-1">
-      <input
-        type="text"
-        class="form-control"
-        placeholder="Admin Id"
-        [(ngModel)]="searchObj.adminId"
-      />
+
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <input matInput type="text" placeholder="Search admin..." [formControl]="searchControl" />
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
     </div>
-    <div class="col-12 col-md-4 col-lg-3 mt-1">
-      <input
-        type="number"
-        class="form-control"
-        placeholder="phoneNo"
-        [(ngModel)]="searchObj.phoneNo"
-      />
-    </div>
-    <div class="col-12 col-md-4 col-lg-3 mt-1">
-      <input
-        type="email"
-        class="form-control"
-        placeholder="email"
-        [(ngModel)]="searchObj.email"
-      />
-    </div>
-    <div class="col-12 col-md-4 col-lg-3 mt-2">
-      <button
-        type="button"
-        class="btn btn-success btn-sm"
-        (click)="searchAdmin()"
-      >
-        Search
-      </button>
-    </div>
+
+    <button mat-raised-button color="primary" (click)="addAdmin()">
+      <mat-icon>add_circle</mat-icon> Add Admin
+    </button>
   </div>
-  <div class="mt-2" *ngIf="adminList.length > 0">
-    <div *ngFor="let admin of adminList" class="cardDesign">
-      <div class="row">
-        <div class="col-2 col-md-2 col-lg-1">
-          <img
-            class="adminImage"
-            [src]="
-              admin.imageUrl
-                ? imageUrl + admin.imageUrl
-                : 'assets/images/dummyUpload.png'
-            "
-          />
-        </div>
-        <div class="col-4 col-md-1 col-lg-1 labelData">{{ admin.loginId }}</div>
-        <div class="col-4 col-md-1 col-lg-1 labelData">{{ admin.role }}</div>
-        <div class="col-4 col-md-2 col-lg-2 labelData">{{ admin.name }}</div>
-        <div class="col-4 col-md-1 col-lg-2 labelData">{{ admin.policy_name }}</div>
-        <div class="col-4 col-md-2 col-lg-2 labelData">{{ admin.phoneNo }}</div>
-        <div class="col-9 col-md-3 col-lg-3 labelData">{{ admin.email }}</div>
-        <div class="col-3 col-md-2 col-lg-1">
-          <div
-            class="inline right edit"
-            *ngIf="true || btnPolicy?.editAdmin"
-            (click)="editAdmin(admin)"
-          >
-            <i class="bi bi-pencil-square"></i>
+</div>
+
+<div class="container-fluid">
+  <div *ngIf="adminList && adminList.length == 0" class="center mt-5">
+    No Admin Found
+  </div>
+
+  <div *ngIf="adminList && adminList.length > 0">
+    <div *ngFor="let admin of pagedAdminList" class="cardDesign">
+      <div class="container-fluid">
+        <div class="row align-items-center">
+          <div class="col-md-11">
+            <div class="row align-items-center">
+              <div class="col-md-1">
+                <img class="adminImage" [src]="
+                        admin.imageUrl
+                          ? imageUrl + admin.imageUrl
+                          : 'assets/images/dummyUpload.png'
+                      " />
+              </div>
+              <div class="col-md-2">
+                <div class="labelText">Login ID</div>
+                <div class="labelData">{{ admin.loginId }}</div>
+              </div>
+              <div class="col-md-2">
+                <div class="labelText">Role</div>
+                <div class="labelData">{{ admin.role }}</div>
+              </div>
+              <div class="col-md-2">
+                <div class="labelText">Name</div>
+                <div class="labelData">{{ admin.name }}</div>
+              </div>
+              <div class="col-md-2">
+                <div class="labelText">Policy</div>
+                <div class="labelData">{{ admin.policy_name }}</div>
+              </div>
+              <div class="col-md-2">
+                <div class="labelText">Phone</div>
+                <div class="labelData">{{ admin.phoneNo }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-1 d-flex align-items-center gap-3 justify-content-end">
+            <mat-icon *ngIf="true || btnPolicy?.editAdmin" (click)="editAdmin(admin)" color="primary" class="edit"
+              [matTooltip]="'Edit'"> edit
+            </mat-icon>
           </div>
         </div>
       </div>
     </div>
+    <div class="paginator">
+      <mat-paginator [length]="filteredAdminList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPageChange($event)" aria-label="Select page"></mat-paginator>
+    </div>
   </div>
-  <div class="center" *ngIf="adminList.length === 0">No Records Found</div>
 </div>

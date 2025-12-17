@@ -1,118 +1,152 @@
 <div class="container-fluid px-4">
   <div class="row">
-    <div class="col-lg-8">
-      <h3>Vendor Info</h3>
-    </div>
+    <div class="d-flex justify-content-between align-items-center w-100">
 
-    <div class="col-lg-4">
-      <div class="searchDiv">
-        <i class="bi bi-search"></i>
-        <input type="text" (input)="searchFilter($event)" class="form-control" placeholder="Search"
-          aria-label="Search Filter" aria-describedby="basic-addon2" />
+      <h3 class="mb-0">Vendor</h3>
+
+      <div class="search-wrapper text-nowrap d-none d-md-inline-flex">
+        <mat-form-field appearance="outline" class="search-input">
+          <input class="py-0" matInput type="text" placeholder="Search Vendor..." (keyup)="onKeyEvent($event)"
+            (input)="searchFilter($event)" />
+          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+            <mat-icon>search</mat-icon>
+          </button>
+        </mat-form-field>
       </div>
     </div>
   </div>
-  <div class="mt-2" *ngIf="filteredVendorList.length > 0">
-    <div class="row customCard list-group mb-2" *ngFor="let vendor of filteredVendorList; let i = index">
-      <div class="list-group-item">
-        <div class="row">
-          <div style="cursor: pointer" class="bgTopDownpadding1 d-flex align-items-center justify-content-between p-2"
-            (click)="toggleVendor(i)">
-            <div class="d-flex align-items-center gap-4 flex-wrap">
-              <div class="d-flex align-items-center">
-                <div class="labelText">Vendor Firm Name :</div>
-                <div class="labelData">{{ vendor?.vendorFirmDetails?.vendorFirmName }}</div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="labelText">Vendor Name :</div>
-                <div class="labelData">{{ vendor?.vendorName }}</div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="labelText">Vendor Phone No :</div>
-                <div class="labelData">{{ vendor?.vendorPhoneNo }}</div>
-              </div>
-              <div class="d-flex align-items-center">
-                <div class="labelText">Vendor Email :</div>
-                <div class="labelData">{{ vendor?.vendorEmail }}</div>
-              </div>
 
-              <div class="d-flex align-items-center">
-                <div *ngIf="vendor.vendorFirmDetails.vendorFirmId.compliance" class="btn btn-success btn-sm ml-2"
-                  (click)="addComplience($event,vendor.vendorFirmDetails.vendorFirmId)">
-                  compliance
-                </div>
-              </div>
+  <div class="py-3" *ngIf="paginatedVendorList.length > 0">
+    <div class="row customCard list-group mb-2" *ngFor="let vendor of paginatedVendorList; let i = index">
+      <div class="list-group-item p-1">
+
+        <div class="d-none d-md-flex align-items-center justify-content-between p-2 bgTopDownpadding1">
+
+          <!-- LEFT SIDE DETAILS -->
+          <div class="d-flex align-items-center gap-4 flex-wrap">
+            <div class="d-flex align-items-center">
+              <div class="labelText"> <b> Vendor Firm Name: </b> </div>
+              <div class="labelData">{{ vendor?.vendorFirmDetails?.vendorFirmName }}</div>
             </div>
-            <span class="right">
-              <i class="bi bi-chevron-down" *ngIf="!expandedItems[i]"></i>
-              <i class="bi bi-chevron-up" *ngIf="expandedItems[i]"></i>
-            </span>
+
+            <div class="d-flex align-items-center">
+              <div class="labelText"> <b> Vendor Name: </b></div>
+              <div class="labelData">{{ vendor?.vendorName }}</div>
+            </div>
+
+            <div class="d-flex align-items-center">
+              <div class="labelText"> <b> Vendor Phone: </b></div>
+              <div class="labelData">{{ vendor?.vendorPhoneNo }}</div>
+            </div>
+
+            <div class="d-flex align-items-center">
+              <div class="labelText"> <b> Vendor Email: </b></div>
+              <div class="labelData">{{ vendor?.vendorEmail }}</div>
+            </div>
           </div>
-          <ng-container *ngIf="expandedItems[i]">
-            <ng-container *ngFor="let item of vendor.outletList; index as k">
-              <div class="cardDesignfeddback">
-                <div class="container-fluid">
-                  <div class="d-flex w-100 align-items-center">
-                    <hr class="flex-grow-1" />
-                    <span class="mx-2"> Outlet Details</span>
-                    <hr class="flex-grow-1" />
-                  </div>
 
-                  <div class="row">
-                    <div class="col-lg-4">
-                      <div class="labelText">Outlet Name</div>
-                      <div class="labelData">{{ item?.outletName }}</div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="labelText">Outlet Type</div>
-                      <div class="labelData">{{ item?.outletType }}</div>
-                    </div>
-                    <div class="col-lg-4">
-                      <div class="labelText">Outlet Name</div>
-                      <div class="labelData">{{ item?.outletName }}</div>
-                    </div>
-                  </div>
-                  <div class="d-flex w-100 align-items-center">
-                    <hr class="flex-grow-1" />
-                    <span class="mx-2">Cafeterion Details</span>
-                    <hr class="flex-grow-1" />
-                  </div>
+          <div>
+            <button mat-raised-button class="mat-small-btn" color="primary"
+              *ngIf="vendor?.vendorFirmDetails?.vendorFirmId?.compliance"
+              (click)="addComplience($event, vendor?.vendorFirmDetails?.vendorFirmId)">
+              Compliance
+            </button>
+          </div>
+        </div>
 
-                  <div class="row">
-                    <div class="col-lg-4">
-                      <div class="labelText">Cafeterion Name</div>
-                      <div class="labelData">
-                        {{ item?.cafeteriaDetails?.cafeteria_name }}
-                      </div>
-                    </div>
-                    <div class="col-lg-8">
-                      <div class="labelText">Cafeterion Location</div>
-                      <div class="labelData">
-                        {{ item?.cafeteriaDetails?.location }} -
-                        {{ item?.cafeteriaDetails?.cafeteria_city }}
-                      </div>
-                    </div>
-                  </div>
+        <!-- MOBILE LAYOUT-->
+        <div class="d-flex d-md-none flex-column p-2 bgTopDownpadding1">
+
+          <div class="d-flex flex-column gap-2">
+            <div><b>Vendor Firm:</b> {{ vendor?.vendorFirmDetails?.vendorFirmName }}</div>
+            <div><b>Name:</b> {{ vendor?.vendorName }}</div>
+            <div><b>Phone:</b> {{ vendor?.vendorPhoneNo }}</div>
+            <div><b>Email:</b> {{ vendor?.vendorEmail }}</div>
+          </div>
+
+          <div class="mt-2">
+            <button mat-raised-button class="w-100" color="primary"
+              *ngIf="vendor?.vendorFirmDetails?.vendorFirmId?.compliance"
+              (click)="addComplience($event, vendor?.vendorFirmDetails?.vendorFirmId)">
+              Compliance
+            </button>
+          </div>
+        </div>
+
+        <!-- OUTLET & CAFETERIA DETAILS -->
+        <div *ngFor="let outlet of vendor?.outletList">
+          <div class="container-fluid">
+
+            <!-- Single outlet row -->
+            <div class="row mb-3">
+              <div class="col-lg-4">
+                <div class="labelText"> <b>Outlet Name </b></div>
+                <div class="labelData"><i class="bi bi-dot me-1"></i>{{ outlet?.outletName }}</div>
+              </div>
+
+              <div class="col-lg-4">
+                <div class="labelText"> <b>Cafeteria Name </b></div>
+                <div class="labelData"><i class="bi bi-dot me-1"></i>{{ outlet?.cafeteriaDetails?.cafeteria_name }}
                 </div>
               </div>
-            </ng-container>
-          </ng-container>
-          <ng-template #complianceModal let-modal>
-            <div class="modal-header">
-              <h4 class="modal-title" id="modal-basic-title">compliance</h4>
-              <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-                <span aria-hidden="true">&times;</span>
-              </button>
+
+              <div class="col-lg-4">
+                <div class="labelText"> <b>Cafeteria Location </b></div>
+                <div class="labelData"><i class="bi bi-dot me-1"></i>
+                  {{ outlet?.cafeteriaDetails?.location }} -
+                  {{ outlet?.cafeteriaDetails?.cafeteria_city }}
+                </div>
+              </div>
             </div>
-            <div class="modal-body">
-              <app-vendor-compliance [venderDetails]="selectedVendor"></app-vendor-compliance>
+
+            <!-- MULTIPLE cafetera list -->
+            <div *ngIf="outlet?.cafeteriaList?.length > 1">
+              <div class="row mb-2" *ngFor="let cf of outlet.cafeteriaList">
+
+                <div class="col-lg-4">
+                  <div class="labelText"> <b>Outlet Name </b></div>
+                  <div class="labelData"><i class="bi bi-dot me-1"></i>{{ outlet?.outletName }}</div>
+                </div>
+
+                <div class="col-lg-4">
+                  <div class="labelText"> <b>Cafeteria Name </b></div>
+                  <div class="labelData"><i class="bi bi-dot me-1"></i>{{ cf?.cafeteria_name }}</div>
+                </div>
+
+                <div class="col-lg-4">
+                  <div class="labelText"> <b>Cafeteria Location </b></div>
+                  <div class="labelData"><i class="bi bi-dot me-1"></i>
+                    {{ cf?.location }} - {{ cf?.cafeteria_city }}
+                  </div>
+                </div>
+
+              </div>
             </div>
-          </ng-template>
+
+          </div>
         </div>
+
+
+        <ng-template #complianceModal let-dialogRef="dialogRef">
+          <div class="dialog-header">
+            <h4 class="dialog-title">Compliance</h4>
+            <button mat-icon-button mat-dialog-close class="dialog-close-btn">
+              <mat-icon>close</mat-icon>
+            </button>
+          </div>
+          <div class="dialog-content">
+            <app-vendor-compliance [venderDetails]="selectedVendor"></app-vendor-compliance>
+          </div>
+        </ng-template>
+
       </div>
     </div>
+    <!-- pagination -->
+    <mat-paginator [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 20, 25]"
+      [length]="vendorList.length" (page)="onPageChange($event)">
+    </mat-paginator>
   </div>
-  <div class="center labelText mt-2" *ngIf="filteredVendorList.length == 0">
-    No Vendor Info found
-  </div>
+  <mat-card class="center labelText py-2 rounded-4 mt-4" *ngIf="vendorList.length == 0">
+    No Menu Items Found
+  </mat-card>
 </div>

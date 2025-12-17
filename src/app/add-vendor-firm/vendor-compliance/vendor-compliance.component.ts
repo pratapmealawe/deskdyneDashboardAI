@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ElementRef, Inject, Optional } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -6,6 +6,9 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { PdfPreviewDialogComponent } from 'src/app/org-components/audit-report/pdf-preview-dialog/pdf-preview-dialog.component';
+
 @Component({
   selector: 'app-vendor-compliance',
   templateUrl: './vendor-compliance.component.html',
@@ -13,6 +16,8 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 })
 export class VendorComplianceComponent implements OnInit {
   @Input() venderDetails: any;
+  orgDetails: any;
+  isAdmin: boolean = false;
   profileApproval: any;
   compliance: any = {};
   imageUrl = environment.imageUrl;
@@ -50,6 +55,7 @@ export class VendorComplianceComponent implements OnInit {
   panFileStatus = false;
   selectedMerchantFile: any;
   orgVendorInfo: any;
+
   @ViewChild('fssaiNoRef') fssaiNoField!: ElementRef;
   @ViewChild('aadharNo') aadharNoField!: ElementRef;
   @ViewChild('panNoRef') panNoField!: ElementRef;
@@ -59,13 +65,22 @@ export class VendorComplianceComponent implements OnInit {
   @ViewChild('adhaarFileRef') adhaarFileRef!: ElementRef;
   @ViewChild('panFileRef') panFileRef!: ElementRef;
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private modalService: NgbModal, private policyService: PolicyService, private localStorageService: LocalStorageService) {
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer,
+    private modalService: NgbModal, private policyService: PolicyService,
+    private localStorageService: LocalStorageService, private matDialog: MatDialog,
+    @Optional() public dialogRef: MatDialogRef<VendorComplianceComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
     this.access = this.policyService.getCurrentButtonPolicy();
+    this.venderDetails = data || this.venderDetails || {};
   }
 
 
   ngOnInit() {
     // this.profileApproval = this.venderDetails.profileApproval;
+    this.orgDetails = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    if (this.orgDetails) {
+      this.isAdmin = this.orgDetails.role === 'ADMIN';
+    }
     this.orgVendorInfo = this.localStorageService.getCacheData('ORG_VENDOR_INFO');
     if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
@@ -546,6 +561,7 @@ export class VendorComplianceComponent implements OnInit {
       console.error('Invalid file URL provided for download:', fileUrl);
     }
   }
+
   DeleteFile(file: any) {
     if (file == 'fssailic') {
       this.compliance.fssaiFileUrl = null;
@@ -594,4 +610,36 @@ export class VendorComplianceComponent implements OnInit {
       this.compliance.selfDeclarationFileUrl = null;
     }
   }
+
+  viewFile(fileUrl: any, title: string) {
+    let url: string = '';
+
+    // Handle SafeResourceUrl or string
+    if (fileUrl && typeof fileUrl === 'object' && (fileUrl as any).changingThisBreaksApplicationSecurity) {
+      url = (fileUrl as any).changingThisBreaksApplicationSecurity;
+    } else if (typeof fileUrl === 'string') {
+      url = fileUrl;
+    }
+
+    if (url) {
+      // Ensure the component is working with the dialog
+      this.matDialog.open(PdfPreviewDialogComponent, {
+        width: '800px',
+        maxWidth: '95vw',
+        height: '90vh',
+        data: {
+          title: title,
+          fileName: title,
+          url: url
+        },
+        panelClass: 'custom-dialog-container',
+        autoFocus: false
+      });
+    } else {
+      console.warn('ViewFile: No valid URL found', fileUrl);
+      // Optional: Show a user friendly message
+      // this.apiMainService.showSnackBar('No valid file URL to view.');
+    }
+  }
+
 }

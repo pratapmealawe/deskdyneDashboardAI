@@ -1,10 +1,17 @@
-import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormArray, Validators, FormGroup } from '@angular/forms';
+import { Component, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
+import { FormBuilder, FormArray, Validators, FormGroup, AbstractControl, FormControl } from '@angular/forms';
+import { MatCheckbox } from '@angular/material/checkbox';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { log } from 'console';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { REGEX } from 'src/shared/constants/regex';
+import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
+
 
 @Component({
   selector: 'app-add-vendor-firm',
@@ -13,6 +20,8 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 })
 export class AddVendorFirmComponent {
   form: any;
+  addressForm: any;
+  pocForm: any;
   showError = false;
   showUpdate = false;
   orgList: any;
@@ -28,15 +37,23 @@ export class AddVendorFirmComponent {
   showSelectCafeteriaOption = true;
   selectedVendorFirm: any;
   vendorLocation: any
-
+  dialogRef!: MatDialogRef<any>;
   @ViewChild('outletModal') outlet: any;
-  @ViewChild('complianceModal') compliance: any;
+  // @ViewChild('complianceModal') compliance: any; // Removed as we use MatDialog type
   @ViewChild('geolocation') geolocation: any;
+  @ViewChild('addAddress') address: any;
+  @ViewChild('pocDetailsTemp') pocdetails: any;
+  addressList: any = [];
+  pocDetails: any = []
 
   btnPolicy: any;
+  pocBtn: string = 'Submit';
+  cafeterialist: any;
+
 
   constructor(
     private fb: FormBuilder,
+    private dialog: MatDialog,
     private apiMainService: ApiMainService,
     public modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
@@ -51,13 +68,13 @@ export class AddVendorFirmComponent {
     this.createForm();
     this.updateVendorFirm();
     this.isVendorEdit = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
-
-
   }
 
   async getOrgList() {
     try {
       this.orgList = await this.apiMainService.getOrgList();
+      console.log(this.orgList, "roglist");
+
     } catch (error) {
       console.log('getOrgList', error);
     }
@@ -65,86 +82,45 @@ export class AddVendorFirmComponent {
 
   createForm() {
     this.form = this.fb.group({
-      vendorFirmName: ['', Validators.required],
-      vendorFirmEmail: [''],
-      vendorFirmPhoneNo: [''],
+      vendorFirmName: ['', [Validators.required]],
+      vendorFirmEmail: ['', [Validators.required, Validators.pattern(REGEX.EMAIL)]],
+      vendorFirmPhoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
+      retailShareTDSPct: [2, [Validators.required, Validators.min(0), Validators.max(10)]],
       bank_details: this.fb.group({
-        accountNo: [''],
-        ifsc: [''],
+        accountNo: ['', [Validators.required, Validators.pattern(REGEX.ACCOUNTNO)]],
+        ifsc: ['', [Validators.required, Validators.pattern(REGEX.IFSC)]],
         upi: [''],
-        accountName: [''],
-        bank_name: ['']
+        accountName: ['', [Validators.required]],
+        bank_name: ['', [Validators.required]]
       }),
-      poc_details: this.fb.array([
-        this.fb.group({
-          poc_id: [''],
-          poc_name: [''],
-          poc_phoneNo: [''],
-          poc_email: [''],
-          poc_location: [''],
-        })
-      ]),
-      address: this.fb.array([
-        this.fb.group({
-          address1: [''],
-          address2: [''],
-          landmark: [''],
-          location: [''],
-          geolocation: this.fb.group({
-            lat: [''],
-            lng: [''],
-          })
-        })
-      ]),
       accountEnrollment: ['']
     });
-  }
-
-  get pocDetails(): FormArray {
-    return this.form.get('poc_details') as FormArray;
-  }
-
-  get addressList(): FormArray {
-    return this.form.get('address') as FormArray;
-  }
-
-  addPocDetail() {
-    this.pocDetails.push(this.fb.group({
-      poc_id: ['', Validators.required],
+    this.pocForm = this.fb.group({
+      poc_id: [''],
       poc_name: [''],
       poc_phoneNo: [''],
       poc_email: [''],
-      poc_location: [''],
-    }));
+      poc_location: ['']
+    });
+    this.addressForm = this.fb.group({
+      address1: ['', [Validators.required]],
+      address2: ['', [Validators.required]],
+      landmark: ['', [Validators.required]],
+      location: ['', [Validators.required]],
+      geolocation: this.fb.group({
+        lat: ['', [Validators.required]],
+        lng: ['', [Validators.required]],
+      })
+    });
   }
 
   onFileSelected(event: any) {
-
     const file = event.target.files[0];
     if (file) {
       this.form.get('accountEnrollment')?.setValue(file.name);
     }
-
   }
-
-  removePocDetail(index: number) {
-    this.pocDetails.removeAt(index);
-  }
-
-  addAddress() {
-    this.addressList.push(this.fb.group({
-      address1: [''],
-      address2: [''],
-      landmark: [''],
-      location: [''],
-      geolocation: this.fb.group({
-        lat: [''],
-        lng: [''],
-      })
-    }));
-  }
-
-  toggleMap(index: any) {
+  toggleMap(index?: any) {
     this.modalService
       .open(this.geolocation, {
         ariaLabelledBy: 'modal-basic-title',
@@ -153,9 +129,11 @@ export class AddVendorFirmComponent {
       })
       .result.then(
         (result) => {
-          if (result === 'add') {
-            this.patchVendorLocation(index);
-          }
+          const geoGroup = this.addressForm.get('geolocation') as FormGroup;
+          geoGroup.patchValue({
+            lat: this.vendorLocation.latlng.lat,
+            lng: this.vendorLocation.latlng.lng,
+          });
         },
         (reason) => {
           console.log(`Model Dismissed`);
@@ -166,22 +144,20 @@ export class AddVendorFirmComponent {
   updateLocation(event: any) {
     this.vendorLocation = event;
   }
-
-  async patchVendorLocation(index: any) {
-    const addressArray = this.form.get('address') as FormArray;
-    const addressGroup = addressArray.at(index) as FormGroup;
-
-    const geoControl = addressGroup.get('geolocation');
-    if (geoControl && this.vendorLocation?.latlng) {
-      geoControl.patchValue({
-        lat: this.vendorLocation.latlng.lat,
-        lng: this.vendorLocation.latlng.lng,
-      });
-    }
+  async patchVendorLocation() {
+    const geoGroup = this.addressForm.get('geolocation') as FormGroup;
+    geoGroup.patchValue({
+      lat: this.vendorLocation.latlng.lat,
+      lng: this.vendorLocation.latlng.lng,
+    });
   }
 
   removeAddress(index: number) {
-    this.addressList.removeAt(index);
+    this.addressList.splice(index, 1);
+  }
+
+  removePocDetail(index: number) {
+    this.pocDetails.splice(index, 1);
   }
 
   objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
@@ -211,70 +187,82 @@ export class AddVendorFirmComponent {
   }
 
   addComplience() {
-    this.modalService.open(this.compliance, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
+    console.log('Opening Compliance Dialog');
+
+    // Merge form values with selectedVendorFirm to ensure _id is present if editing
+    const dialogData = {
+      ...this.selectedVendorFirm, // Contains _id if it exists
+      ...this.form.value,         // Contains latest form edits
+      compliance: this.selectedVendorFirm?.compliance || this.form.value.compliance // prioritize existing compliance data properly
+    };
+
+    const dialogRef = this.dialog.open(VendorComplianceComponent, {
+      width: '90vw',
+      maxWidth: '1000px',
+      height: '90vh',
+      disableClose: true,
+      data: dialogData,
+      autoFocus: false,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      // The VendorComplianceComponent saves data directly via API in saveImages().
+      // However, we might want to refresh the local data or form if needed.
+      if (this.selectedVendorFirm && this.selectedVendorFirm._id) {
+        // Optionally refresh vendor data or patch form
+        // For now, we assume the component handled the save.
+      }
     });
   }
 
   updateVendorFirm() {
     const firm = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
-
     if (firm && firm._id) {
       this.selectedVendorFirm = firm;
       this.showUpdate = true;
       this.selectedOutletsList = firm.outletList;
-      this.form.patchValue({
-        vendorFirmName: firm.vendorFirmName,
-        vendorFirmEmail: firm.vendorFirmEmail,
-        vendorFirmPhoneNo: firm.vendorFirmPhoneNo,
-      });
-
+      this.patchVendorFirmAndBank(firm);
       if (firm.poc_details?.length) {
-        this.pocDetails.clear();
         firm.poc_details.forEach((poc: any, index: number) => {
           if (index !== 0 || this.pocDetails.length === 0) {
-            this.pocDetails.push(this.fb.group(poc));
+            this.pocDetails.push(poc);
           }
         });
       }
 
       if (firm.address?.length) {
- this.addressList.clear();
-  firm.address.forEach((addr: any, index: number) => {
-    const addressGroup = this.fb.group({
-      address1: [addr.address1 || ''],
-      address2: [addr.address2 || ''],
-      landmark: [addr.landmark || ''],
-      location: [addr.location || ''],
-      geolocation: this.fb.group({
-        lat: [addr.geolocation?.lat || ''],
-        lng: [addr.geolocation?.lng || '']
-      })
-    });
+        firm.address.forEach((addr: any, index: number) => {
+          const addressGroup = this.fb.group({
+            address1: [addr.address1 || ''],
+            address2: [addr.address2 || ''],
+            landmark: [addr.landmark || ''],
+            location: [addr.location || ''],
+            geolocation: this.fb.group({
+              lat: [addr.geolocation?.lat || ''],
+              lng: [addr.geolocation?.lng || '']
+            })
+          });
 
-    if (index !== 0 || this.addressList.length === 0) {
-      this.addressList.push(addressGroup);
-    }
-  });
-
-
-
-        // this.addressList.clear();
-        // firm.address.forEach((addr: any, index: number) => {
-        //   if (index !== 0 || this.addressList.length === 0) {
-        //     this.addressList.push(this.fb.group(addr));
-        //   }
-        // });
+          if (index !== 0 || this.addressList.length === 0) {
+            this.addressList.push(addressGroup.value);
+          }
+        });
       }
       if (firm.accountEnrollment) {
         this.form.get('accountEnrollment').setValue(firm.accountEnrollment);
       }
-
-      if (firm.bank_details) {
-        this.form.get('bank_details').setValue(firm.bank_details);
-      }
     }
+  }
+
+  patchVendorFirmAndBank(data: any) {
+    this.form.patchValue({
+      vendorFirmName: data.vendorFirmName,
+      vendorFirmEmail: data.vendorFirmEmail,
+      vendorFirmPhoneNo: data.vendorFirmPhoneNo,
+      bank_details: data.bank_details
+    });
   }
 
   closeAccountEnroll() {
@@ -282,14 +270,11 @@ export class AddVendorFirmComponent {
   }
 
   async submit(type?: any) {
-
     try {
       const finalObj = {
         ...this.form.value,
         outletList: this.selectedOutletsList,
       };
-      console.log(finalObj);
-
       const formData = this.objectToFormData(finalObj);
 
       if (type == 'update') {
@@ -303,38 +288,59 @@ export class AddVendorFirmComponent {
     }
   }
 
-  getOrgName(org: any) {
+  getOrgName(org: MatSelectChange) {
     this.showCafeteria = true;
-    if (org && org.target) {
-      this.orgName = org.target.value;
+    if (org && org) {
+      this.orgName = org.value;
+      const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
+      this.cafeterialist = cafes?.cafeteriaList ?? []
     }
   }
 
-  selectCafeteria(event: any) {
-    let [cafeteriaName, cafeteriaCity, organization] = event.target.value.split(',');
-    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organization);
+  selectCafeteria(event: MatSelectChange) {
+    const value = event.value;
+    console.log(event.value, "value ");
+    const cafeteriaName = value.cafeteria_name;
+    const cafeteriaCity = value.cafeteria_city;
+    const cafeteriaId = event.value.cafeteria_id;
+    const organizationName = this.orgList.find((org: any) =>
+      org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
+    )?.organization_name;
+    console.log("Organization Name:", organizationName);
+
+    // const { cafeteriaName, cafeteriaCity, organization } = value;
+    console.log(cafeteriaName, cafeteriaCity, organizationName, "cafeteriaName, cafeteriaCity, organization");
+
+    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
     this.showModalOutletList = true;
   }
 
+
   async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {
     try {
+      console.log('getOutletByCafeteriaList', { cafeteriaName, cafeteriaCity, organization });
       this.outletByCafeteriaList = await this.apiMainService.getOutletByCafeteria(
         cafeteriaName,
         cafeteriaCity,
         organization
       );
+      console.log(this.outletByCafeteriaList);
     } catch (error) {
       console.log('getOutletByCafeteriaList', error);
     }
   }
 
-  addOutlet() {
-    this.modalService.open(this.outlet, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  // addOutlet() {
+  //   this.modalService.open(this.outlet, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  // }
+  addressTemplate() {
+    this.modalService.open(this.address, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+  addPoc() {
+    this.modalService.open(this.pocdetails, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
-  addCompliance() {
-    this.modalService.open(this.compliance, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
-  }
+
 
   getSelectedOutlets() {
     this.outletByCafeteriaList.forEach((elm: any) => {
@@ -361,4 +367,98 @@ export class AddVendorFirmComponent {
   goBack() {
     this.router.navigate(['/searchVendorFirm']);
   }
+
+  hasError(form: FormGroup, controlName: string, error: string) {
+    const c = form.get(controlName);
+    return c?.hasError(error) && (c.touched || c.dirty);
+  }
+
+  hasSubError(path: string[], error: string) {
+    let c: AbstractControl | null = null;
+    if (path[0] === 'address') {
+      c = this.addressForm.get(path[1]);
+    } else if (path[0] === 'poc_details') {
+      c = this.pocForm.get(path[1]);
+    } else {
+      c = this.form.get(path);
+    }
+    return c?.hasError(error) && (c.touched || c.dirty);
+  }
+
+  isEditPoc: number | null = null;
+  submitPocDetails() {
+    const pocDetails = this.pocForm.value;
+    if (this.isEditPoc !== null) {
+      this.pocDetails[this.isEditPoc] = { ...pocDetails };
+    } else {
+      this.pocDetails.push({ ...pocDetails })
+    }
+    this.isEditPoc = null;
+    this.modalService.dismissAll();
+  }
+  openPocTemplate() {
+    this.isEditPoc = null
+    this.pocForm.reset();
+    this.addPoc();
+  }
+  editPoc(index: number) {
+    this.isEditPoc = index;
+    const value = this.pocDetails[index]
+    this.pocForm.patchValue(value);
+    this.addPoc();
+  }
+
+  isEditIndex: number | null = null
+  isEditIndexPoc: number | null = null;
+  submitAddress() {
+    const addressData = this.addressForm.value;
+    if (this.isEditIndex !== null) {
+      this.addressList[this.isEditIndex] = { ...addressData };
+    } else {
+      this.addressList.push({ ...addressData });
+    }
+    this.isEditIndex = null;
+    this.modalService.dismissAll();
+  }
+  openAddressTemplate() {
+    this.isEditIndex = null;
+    this.addressForm.reset()
+    this.addressTemplate()
+  }
+  openPOCTemplate() {
+    this.isEditIndexPoc = null;
+    this.pocForm.reset()
+    this.addPoc()
+  }
+  editPOC(i: number) {
+    this.isEditIndexPoc = i;
+    this.pocBtn = 'Update';
+    const value = this.pocDetails[i];
+    this.pocForm.patchValue(value);
+    this.addPoc();
+  }
+  editAddress(i: number) {
+    this.isEditIndex = i;
+    const value = this.addressList[i]
+    this.addressForm.patchValue(value);
+    this.addressTemplate();
+  }
+  closeDialog() {
+    this.dialogRef.close();
+  }
+
+  @ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
+
+  addOutlet() {
+    if (!this.outletDialog) {
+      console.error('TemplateRef outletDialog is not available');
+      return;
+    }
+    this.dialog.open(this.outletDialog, {
+      width: '1000px',
+      disableClose: false
+    });
+  }
+
+
 }

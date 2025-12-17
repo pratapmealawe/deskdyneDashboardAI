@@ -24,7 +24,6 @@ export class OrgDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    console.log(this.orgObj);
     this.getOutlets()
   }
 
@@ -34,7 +33,6 @@ export class OrgDetailsComponent implements OnInit {
     }
     try {
       const res = await this.apiMainService.searchOutletByOrgId(searchObj)
-      // console.log(res);
       this.outltList = res
       this.getVendors()
 
@@ -56,27 +54,22 @@ export class OrgDetailsComponent implements OnInit {
     }
   }
 
- async getMatchedOutlets() {
-  const merged = this.orgObj?.cafeteriaList.map((cafe: any) => ({
-    ...cafe,
-    outlets: this.outltList.filter(o => o.cafeteriaDetails.cafeteria_name === cafe.cafeteria_name)
-  }));
-
-  merged.forEach((cafeteria: any) => {
-    cafeteria.outlets.forEach((outlet: any) => {
-      outlet.vendors = this.getVendorsForOutlet(outlet._id);
+  async getMatchedOutlets() {
+    const merged = this.orgObj?.cafeteriaList?.map((cafe: any) => ({
+      ...cafe,
+      outlets: this.outltList.filter(o => o.cafeteriaDetails.cafeteria_name === cafe.cafeteria_name)
+    }));
+    merged?.forEach((cafeteria: any) => {
+      cafeteria.outlets.forEach((outlet: any) => {
+        outlet.vendors = this.getVendorsForOutlet(outlet._id);
+      });
     });
-  });
+    this.filteredOutletList = merged;
+  }
 
-  this.filteredOutletList = merged;
-  console.log(merged);
-}
-
-getVendorsForOutlet(outletId: string) {
-  return this.vendorList.filter((vendor: any) =>
-    vendor.outletList.some((outlet: any) => outlet.outletId === outletId)
-  ) || [];
-}
+  getVendorsForOutlet(outletId: string) {
+    return this.vendorList.filter((vendor: any) => vendor.outletList.some((outlet: any) => outlet.outletId === outletId)) || [];
+  }
 
   editOrg() {
     this.runtimeStorageService.setCacheData('VIEW_ORG', this.orgObj);

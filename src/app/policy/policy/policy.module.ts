@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 
 import { PolicyRoutingModule } from './policy-routing.module';
 import { PolicyComponent } from './policy.component';
+import { MaterialModule } from 'src/app/material.module';
 
 
 @NgModule({
@@ -11,6 +12,7 @@ import { PolicyComponent } from './policy.component';
   ],
   imports: [
     CommonModule,
+    MaterialModule,
     PolicyRoutingModule
   ]
 })

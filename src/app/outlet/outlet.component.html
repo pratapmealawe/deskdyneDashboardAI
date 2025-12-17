@@ -1,54 +1,29 @@
-<div class="bgsidepadding1" *ngIf="showSearchSection">
-  <div class="right addBtn addOutlet" *ngIf="true || btnPolicy?.addOutlet" (click)="addOutlet()">
-    +
+<div class="outlet-header" *ngIf="showSearchSection">
+  <div>
+    <h4 class="m-0 fw-semibold">Outlet</h4>
   </div>
-  <div class="row">
-    <div class="col-12 col-md-4 col-lg-6">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Outlet Name</div>
-          <input type="text" class="form-control" placeholder="Org Name" [(ngModel)]="searchObj.outletName" />
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-4">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Ph No</div>
-          <input type="text" class="form-control" placeholder="POC Phone No" [(ngModel)]="searchObj.phoneNo" />
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-4">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12 bgpadding1">
-          <div class="bold">Email</div>
-          <input type="text" class="form-control" placeholder="POC Email" [(ngModel)]="searchObj.emailID" />
-        </div>
-      </div>
-    </div>
-
-    <div class="row mt-2">
-      <div class="col-sm-12 col-md-4 col-lg-12">
-        <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchOutlet()">
-          Search
+  <div class="header-actions">
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <input matInput type="text" placeholder="Search outlet..." [formControl]="searchControl" />
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+          <mat-icon>search</mat-icon>
         </button>
-        <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">
-          Reset
-        </button>
-      </div>
+      </mat-form-field>
     </div>
 
-    <div class="mt-3" *ngIf="outletList && outletList.length > 0 && showSearchSection">
-      <div *ngFor="let outlet of filteredOutletList" class="cardDesign mt-3">
-        <app-outlet-card [outlet]="outlet" (view)="viewOutlet($event)"></app-outlet-card>
-      </div>
-    </div>
+    <button mat-raised-button color="primary" (click)="addOutlet()">
+      <mat-icon>add_circle</mat-icon> Add Outlet
+    </button>
   </div>
 </div>
+<div *ngIf="outletList && outletList.length === 0" class="text-center text-muted my-5">
+  No Outlet Found
+</div>
+<div *ngIf="outletList && outletList.length > 0 && showSearchSection" class="container-fluid pb-4">
+  <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
+</div>
 <div class="center mt-5" *ngIf="outletList.length === 0">No Records Found</div>
-<div class="bgsidepadding2" *ngIf="!showSearchSection && outletList.length > 0">
+<div class="container-fluid pb-4" *ngIf="!showSearchSection && outletList.length > 0">
   <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
 </div>

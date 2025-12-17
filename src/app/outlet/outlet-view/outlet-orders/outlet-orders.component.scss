@@ -1,8 +1,242 @@
-.iconBtn {
-    background: #8a8a8a;
-    color: white;
-    border-radius: 12px;
-    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-    width: fit-content;
-    float: right;
+// .outlet-orders-wrapper {
+//   padding: 0.5rem 0;
+// }
+
+.filter-card {
+  padding: 1rem 1.5rem;
+}
+
+.summary-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6c757d;
+}
+
+.summary-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.toggle-btn {
+  border-radius: 12px;
+  box-shadow: rgba(99, 99, 99, 0.2) 0 2px 8px 0;
+}
+
+.order-card {
+  display: block;
+  padding: 0;
+  border-radius: 12px;
+}
+
+.order-card-inner {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 12px 16px;
+}
+
+.order-left,
+.order-right {
+  flex: 1;
+  min-width: 0;
+}
+
+.order-left {
+  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  padding-right: 12px;
+}
+
+.order-right {
+  padding-left: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.order-avatar {
+  background-color: #4f46e5;
+  color: #fff;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-header-text {
+  flex: 1;
+}
+
+mat-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.status-chip {
+  margin-left: auto;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+.filter-card {
+  border-radius: 12px;
+}
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+  margin-left: 2px;
+}
+
+/* Base for filter chips */
+.status-chip-filter {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+/* All */
+.status-chip-filter.all {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Match status colors */
+.status-chip-filter.paymentInprogress {
+  background: #fff7e6;
+  color: #d48806;
+}
+
+.status-chip-filter.paymentFailed {
+  background: #fff1f0;
+  color: #cf1322;
+}
+
+.status-chip-filter.placed {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-chip-filter.completed {
+  background: #ecfdf3;
+  color: #166534;
+}
+
+.status-chip-filter.cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.status-chip-filter.readyOrder {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.status-chip-filter.autoComplete {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+/* Status-specific colors */
+.status-chip.paymentInprogress {
+  background: #fff7e6;
+  color: #d48806;
+}
+
+.status-chip.paymentFailed {
+  background: #fff1f0;
+  color: #cf1322;
+}
+
+.status-chip.placed {
+  background: #e0e7ff;
+  color: #3730a3;
+}
+
+.status-chip.completed {
+  background: #ecfdf3;
+  color: #166534;
+}
+
+.status-chip.cancelled {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.status-chip.readyOrder {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.status-chip.autoComplete {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+.item-list {
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.item-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 2px 0;
+}
+
+.item-name {
+  flex: 1;
+  margin-right: 8px;
+}
+
+.item-price {
+  white-space: nowrap;
+}
+
+.amounts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 16px;
+  font-size: 12px;
+}
+
+.amounts-grid .label {
+  color: #6b7280;
+}
+
+.amounts-grid .value {
+  font-weight: 600;
+}
+
+.amounts-grid .value.total {
+  color: #111827;
+}
+
+@media (max-width: 767.98px) {
+  .summary-value {
+    font-size: 1rem;
+  }
+
+  .order-card-inner {
+    flex-direction: column;
+  }
+
+  .order-left {
+    border-right: none;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    padding-right: 0;
+    padding-bottom: 8px;
+  }
+
+  .order-right {
+    padding-left: 0;
+    padding-top: 8px;
+  }
 }

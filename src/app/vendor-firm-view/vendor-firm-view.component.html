@@ -1,29 +1,32 @@
-<div class="left_arrow" (click)="goBack()" style="cursor: pointer">
-  <i class="bi bi-arrow-left"></i> Back
-</div>
-
-<div class="row bg-light rounded py-4 my-3">
-  <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of vendorViewList"
-    [ngClass]="{ tileSelected: selectedTab === view.path }" (click)="gotToTab(view.path)">
-    <div class="tileLabel header4 countTile">{{ view.name }}</div>
-  </div>
-</div>
-<div class="row" *ngIf="getSubTab().length">
-  <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let sub of getSubTab()"
-    [ngClass]="{ tileSelected: selectedSubTab === sub.path || selectedSubTab === sub.name }"
-    (click)="goToSubTab(sub.path || sub.name)">
-    <div class="tileLabel header4 countTile">{{ sub.name }}</div>
-  </div>
-</div>
-
-
+<button mat-flat-button (click)="goBack()">
+  <mat-icon>arrow_back</mat-icon>
+  Back
+</button>
+<mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)" class="custom-tabs py-3">
+  <mat-tab *ngFor="let view of vendorViewList" class="custom-tabs">
+    <ng-template mat-tab-label class="custom-tabs">
+      {{ view.name }}
+    </ng-template>
+    <ng-container *ngIf="selectedTab === view.path">
+      <mat-tab-group *ngIf="view.subTabs?.length" [(selectedIndex)]="selectedSubTabIndex"
+        (selectedTabChange)="onTabSubChange($event)" class="mt-3"
+        [ngClass]="{ 'wallet-border': selectedTab === 'wallet' }">
+        <mat-tab *ngFor="let sub of getSubTab() ; let i = index" class="second-tab">
+          <ng-template mat-tab-label>
+            {{ sub.name }}
+          </ng-template>
+        </mat-tab>
+      </mat-tab-group>
+    </ng-container>
+  </mat-tab>
+</mat-tab-group>
 <ng-container [ngSwitch]="selectedTab">
   <app-vendor-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-details>
 </ng-container>
-
 <ng-container [ngSwitch]="selectedSubTab">
   <app-wallet-details *ngSwitchCase="'walletDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-wallet-details>
   <app-ledger-details *ngSwitchCase="'ledgerDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-ledger-details>
   <app-vendor-report *ngSwitchCase="'vendorFirmReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-report>
-  <app-vendor-daily-report *ngSwitchCase="'vendorFirmDailyReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-daily-report>
+  <app-vendor-daily-report *ngSwitchCase="'vendorFirmDailyReport'"
+    [vendorFirmInfo]="vendorFirmInfo"></app-vendor-daily-report>
 </ng-container>

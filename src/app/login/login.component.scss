@@ -1,33 +1,197 @@
-.auth-page {
-    height: 100vh;
-    background-color: #f9fafb;
+.login-wrapper {
+  background: #f5f7fb;
 }
 
-.card-wrapper {
-    margin: auto;
+/* LEFT PANEL */
+.login-img {
+  width: 100%;
+  height: 100%;
+  background-color: #f8fafb;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .login-hero-img {
+    width: 90%;
+    height: 65%;
+    object-fit: contain;
+    display: block;
+  }
 }
 
-.auth-side-wrapper {
-    background: url('~src/assets/images/deskdyneLogoblue.png');
-    background-size: 75%;
-    background-repeat: no-repeat;
-    height: 150px;
+.logo-desktop {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+
+  img {
+    width: 140px;
+    height: auto;
+  }
+}
+
+/* RIGHT PANEL */
+.forms {
+  background: #ffffff !important;
+  padding: 24px;
+}
+
+.form-container {
+  width: 100%;
+  max-width: 380px;
+}
+
+.logo-mobile img {
+  width: 120px;
+  height: auto;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  .login-title {
+    font-size: 26px;
+    margin-top: 10px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .login-btn {
+    background: #0e49b5;
+    color: #ffffff;
     width: 100%;
-    background-position: center;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+  }
+
+  .login-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
 }
 
-.btn-primary {
-    background-color: #6571ff;
+/* OTP SECTION */
+.otp-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 }
 
-.backBtn {
-    color: #4150f7;
+.otp-container {
+  width: 100%;
+  text-align: left;
+}
+
+.back-btn {
+  padding-inline: 10px;
+}
+
+.otp-title {
+  color: #192754;
+  margin-top: 10px;
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+.otp-subtitle {
+  font-size: 14px;
+}
+
+.otp-inputs {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.otp-box {
+  width: 45px;
+  height: 45px;
+  border: 2px solid #d9d9d9;
+  border-radius: 5px;
+  font-size: 22px;
+  text-align: center;
+  outline: none;
+  transition: 0.2s;
+}
+
+.otp-box:focus {
+  border-color: #0e49b5;
+  box-shadow: 0 0 0 3px rgba(14, 73, 181, 0.2);
+}
+
+.verify-btn {
+  background: #0e49b5;
+  color: #ffffff;
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 8px;
+  border: none;
+}
+
+.verify-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.resend-text {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #999;
+  text-align: center;
+  pointer-events: none;
+  transition: 0.2s;
+
+  &.active {
+    color: #192754;
+    cursor: pointer;
+    pointer-events: auto;
+    font-weight: 500;
+  }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .forms {
+    min-height: 100vh;
     display: flex;
     align-items: center;
-    gap: 8px;
-    cursor: pointer;
+    justify-content: center;
+    padding: 24px;
+  }
 
-    p {
-        margin: 0;
-    }
+  .form-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .otp-box {
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+  }
+
+  .otp-inputs {
+    gap: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .otp-box {
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+
+  .otp-inputs {
+    gap: 8px;
+  }
 }

@@ -1,16 +1,27 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder } from '@angular/forms';
+import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import {
+  FormArray,
+  FormBuilder,
+  FormGroup,
+  Validators,
+  AbstractControl,
+} from '@angular/forms';
 import { Router } from '@angular/router';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { DataFormatService } from 'src/service/data-format.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+
+interface MealTiming {
+  mealType: string;
+  acceptOrderFrom: string;
+  acceptOrderTill: string;
+}
 
 @Component({
   selector: 'app-add-outlet',
@@ -18,325 +29,420 @@ import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmatio
   styleUrls: ['./add-outlet.component.scss'],
 })
 export class AddOutletComponent implements OnInit {
-  @ViewChild('menuItem') menuItem: any;
-  @ViewChild('contentOrg') contentOrg: any;
-  orgList: any;
-  form: any;
+  @ViewChild('contentOrg') contentOrg!: TemplateRef<any>;
+
+  form!: FormGroup;
   showError = false;
-  uploadedOutletImages: any = {};
-  outletImages: any = {};
-  selectedOrg: any = {};
-  selectedCafe: any = {};
-  imageUrl: any;
-  uploadedImageFile: any;
-  showUpdate: any = false;
-  selectedOutlet: any;
-  formattedOrgList: any;
-  selectedOrgCafeteria: any;
+
+  imageUrl: string | null = null;
+  uploadedImageFile: File | null = null;
+
   btnPolicy: any;
+  showUpdate = false;
+  selectedOutlet: any;
+
+  formattedOrgList: any[] = [];
+  selectedOrgCafeteria: string | undefined;
   seletedCafetria: any;
-  BREAKFAST_END_TIME: any;
-  LUNCH_END_TIME: any;
-  EVENINGSNACKS_END_TIME: any;
-  DINNER_END_TIME: any;
-  FULLDAY_END_TIME: any;
-  mealTiming: any = [
-    { mealType: 'Fullday', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
-    {
-      mealType: 'Breakfast',
-      acceptOrderFrom: '00:00',
-      acceptOrderTill: '00:00',
-    },
-    { mealType: 'Lunch', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
-    {
-      mealType: 'EveningSnacks',
-      acceptOrderFrom: '00:00',
-      acceptOrderTill: '00:00',
-    },
-    { mealType: 'Dinner', acceptOrderFrom: '00:00', acceptOrderTill: '00:00' },
-  ];
-  outletSubsidy: number = 0;
+
+  outletSubsidy = 0;
+
+  // For meal type dropdown
+  mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'EveningSnacks', 'Dinner'];
+  billingTypeOptions: string[] = ['ecommerce', 'revenueSharing'];
+
+  // Error text for meal timings
+  mealTimingError: string | null = null;
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
     private runtimeStorageService: RuntimeStorageService,
-    private modalService: NgbModal,
     private fb: FormBuilder,
+    private dialog: MatDialog,
     private confirmationModal: ConfirmationModalService,
     private dataFormatService: DataFormatService,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.createForm();
-    this.updateOutlet();
+    this.populateForEditIfNeeded();
+
+    // validate overlaps whenever meal timings change
+    this.mealTimings.valueChanges.subscribe(() => this.validateMealTimings());
   }
 
-  updateOutlet() {
-    const outlet = this.runtimeStorageService.getCacheData('OUTLET_EDIT');
-    console.log(outlet);
-    if (outlet && outlet._id) {
-      this.showUpdate = true;
-      this.imageUrl = environment.imageUrl + outlet.imageUrl;
-      this.selectedOutlet = outlet;
-      this.selectedOrg = outlet.companyDetails;
-      this.selectedCafe = outlet.cafeteriaDetails;
-      this.seletedCafetria = {
-        organizationDetails: outlet.organizationDetails,
-        cafeteriaDetails: outlet.cafeteriaDetails,
-      };
-      this.mealTiming = this.mealTiming.map((meal: any) => {
-        const matchingMeal = outlet.mealTiming.find(
-          (outletMeal: any) => outletMeal.mealType === meal.mealType
-        );
-
-        return matchingMeal
-          ? {
-            ...meal,
-            acceptOrderFrom: matchingMeal.acceptOrderFrom,
-            acceptOrderTill: matchingMeal.acceptOrderTill,
-          }
-          : meal;
-      });
-
-      this.selectedOrg = outlet.companyDetails;
-      this.selectedCafe = outlet.cafeteriaDetails;
-      this.form.patchValue({
-        outletName: outlet.outletName,
-        outletDescription: outlet.outletDescription,
-        outletType: outlet.outletType,
-        outletOpened: outlet.outletOpened,
-        isPreOrder: outlet.isPreOrder ?? false,
-        preOrderMealType: outlet.preOrderMealType,
-        isSatAvailable: outlet.isSatAvailable,
-        isSunAvailable: outlet.isSunAvailable,
-        vendorCommissionPercentage: outlet.vendorCommissionPercentage,
-        MRPCommissionPercentage: outlet.MRPCommissionPercentage,
-        subsidy: outlet.subsidy,
-        precedence: outlet.precedence
-      });
-    }
+  // convenience getter for template
+  get f() {
+    return this.form.controls;
   }
 
-  createForm() {
+  get mealTimings(): FormArray {
+    return this.form.get('mealTimings') as FormArray;
+  }
+
+  private createForm(): void {
     this.form = this.fb.group({
-      outletName: [''],
-      outletDescription: [''],
-      outletType: [''],
-      outletOpened: [false],
+      outletName: ['', Validators.required],
+      outletDescription: ['', Validators.required],
+
+      outletOpened: [true],
       isPreOrder: [false],
       preOrderMealType: ['lunch'],
       isSatAvailable: [false],
       isSunAvailable: [false],
-      vendorCommissionPercentage: [0],
-      MRPCommissionPercentage: [0],
-      subsidy: [0],
-      precedence: [0]
+
+      vendorCommissionPercentage: [
+        0,
+        [Validators.required, Validators.min(0), Validators.max(100)],
+      ],
+      MRPCommissionPercentage: [
+        0,
+        [Validators.required, Validators.min(0), Validators.max(100)],
+      ],
+      subsidy: [0, [Validators.min(0), Validators.max(100)]],
+      precedence: [0, [Validators.min(0)]],
+      billingType: ['revenueSharing', Validators.required],
+
+      mealTimings: this.fb.array([]),
+    });
+
+    // default one timing per standard meal type
+    this.addDefaultMealTimings();
+
+    // When isPreOrder is false, clear related fields
+    this.form.get('isPreOrder')?.valueChanges.subscribe((isPreOrder: boolean) => {
+      if (!isPreOrder) {
+        this.form.patchValue(
+          {
+            preOrderMealType: 'lunch',
+            isSatAvailable: false,
+            isSunAvailable: false,
+          },
+          { emitEvent: false }
+        );
+      }
     });
   }
 
-  removeItem(index: any) {
-    this.form.controls['menuList'].removeAt(index);
+  private createMealTimingGroup(
+    mealType: string = '',
+    from: string = '00:00',
+    till: string = '00:00'
+  ): FormGroup {
+    return this.fb.group({
+      mealType: [mealType, Validators.required],
+      acceptOrderFrom: [from, Validators.required],
+      acceptOrderTill: [till, Validators.required],
+    });
   }
 
-  async getOrgList() {
+  private addDefaultMealTimings(): void {
+    this.mealTypes.forEach((type) => {
+      this.mealTimings.push(this.createMealTimingGroup(type));
+    });
+  }
+
+  addMealTiming(): void {
+    this.mealTimings.push(this.createMealTimingGroup());
+    this.mealTimings.markAsDirty();
+  }
+
+  removeMealTiming(index: number): void {
+    this.mealTimings.removeAt(index);
+    this.mealTimings.markAsDirty();
+    this.validateMealTimings();
+  }
+
+  private populateForEditIfNeeded(): void {
+    const outlet = this.runtimeStorageService.getCacheData('OUTLET_EDIT');
+
+    if (outlet && outlet._id) {
+      this.showUpdate = true;
+      this.selectedOutlet = outlet;
+      this.imageUrl = outlet.imageUrl ? environment.imageUrl + outlet.imageUrl : null;
+
+      this.seletedCafetria = {
+        organizationDetails: outlet.organizationDetails,
+        cafeteriaDetails: outlet.cafeteriaDetails,
+      };
+
+      this.mealTimings.clear();
+      if (outlet.mealTiming && Array.isArray(outlet.mealTiming)) {
+        outlet.mealTiming.forEach((mt: MealTiming) => {
+          this.mealTimings.push(
+            this.createMealTimingGroup(mt.mealType, mt.acceptOrderFrom, mt.acceptOrderTill)
+          );
+        });
+      } else {
+        this.addDefaultMealTimings();
+      }
+
+      this.form.patchValue({
+        outletName: outlet.outletName ?? '',
+        outletDescription: outlet.outletDescription ?? '',
+        // outletType REMOVED
+
+        outletOpened: outlet.outletOpened ?? false,
+        isPreOrder: outlet.isPreOrder ?? false,
+        preOrderMealType: outlet.preOrderMealType ?? 'lunch',
+        isSatAvailable: outlet.isSatAvailable ?? false,
+        isSunAvailable: outlet.isSunAvailable ?? false,
+        vendorCommissionPercentage: outlet.vendorCommissionPercentage ?? 0,
+        MRPCommissionPercentage: outlet.MRPCommissionPercentage ?? 0,
+        subsidy: outlet.subsidy ?? 0,
+        precedence: outlet.precedence ?? 0,
+        billingType: outlet.billingType ?? 'revenueSharing',
+      });
+
+      this.validateMealTimings();
+    }
+  }
+  async getOrgList(): Promise<void> {
     try {
       const orgList = await this.apiMainService.getOrgList();
       if (orgList && orgList.length > 0) {
-        const formattedOrgList = this.dataFormatService.getformattedOrgList(orgList);
-        this.formattedOrgList = formattedOrgList;
+        this.formattedOrgList = this.dataFormatService.getformattedOrgList(orgList);
       }
     } catch (error) {
       console.log(error);
     }
   }
 
-  openOrgList() {
+  async openOrgList(): Promise<void> {
     this.selectedOrgCafeteria = undefined;
-    this.getOrgList();
-    const modalRef = this.modalService.open(this.contentOrg, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
-    });
-    modalRef.result.then(
-      (result) => {
-        if (result === 'add') {
-          this.confirmationModal.modal("Are you sure you want to change Organization and Cafeteria?", () => {
-            this.formattedOrgList.forEach((org: any) => {
-              if (org.key === this.selectedOrgCafeteria) {
-                this.seletedCafetria = { ...org };
-                console.log(this.seletedCafetria);
-              }
-            });
-          }, this)
+    await this.getOrgList();
 
-        }
-      },
-      (reason) => {
-        console.log(`Model Dismissed`);
+    const dialogRef = this.dialog.open(this.contentOrg, {
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'add') {
+        this.confirmationModal.modal(
+          'Are you sure you want to change Organization and Cafeteria?',
+          () => {
+            const selected = this.formattedOrgList.find(
+              (org: any) => org.key === this.selectedOrgCafeteria
+            );
+            if (selected) {
+              this.seletedCafetria = { ...selected };
+            }
+          },
+          this
+        );
       }
-    );
+    });
   }
 
-  handleFileInput($event: any) {
-    if ($event && $event.target && $event.target.files) {
+  handleFileInput($event: any): void {
+    if ($event?.target?.files?.length) {
       const file: File = $event.target.files[0];
-      if (file) {
-        const fileName = file.name;
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async (_event) => {
-          const imageUrl = reader.result;
-          try {
-            const modalRef: NgbModalRef = this.modalService.open(
-              ImageCropperComponent,
-              {
-                ariaLabelledBy: 'modal-basic-title',
-                size: 'xl',
-                backdrop: 'static',
-                centered: true,
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const imageUrl = reader.result as string;
+
+        try {
+          const modalRef: NgbModalRef = this.modalService.open(ImageCropperComponent, {
+            ariaLabelledBy: 'modal-basic-title',
+            size: 'xl',
+            backdrop: 'static',
+            centered: true,
+          });
+
+          modalRef.componentInstance.uploadedImageUrl = imageUrl;
+          modalRef.componentInstance.imageWidth = 150;
+          modalRef.componentInstance.imageHeight = 150;
+          modalRef.componentInstance.aspectRatio = 1;
+
+          modalRef.result.then(
+            (result: any) => {
+              if (result?.croppedImages) {
+                this.uploadedImageFile = result.croppedImages.file;
+                this.imageUrl = result.croppedImages.resizeDataUrl;
               }
-            );
-            modalRef.result.then(
-              (result: any) => {
-                if (result && result.croppedImages) {
-                  this.uploadedImageFile = result.croppedImages.file;
-                  this.imageUrl = result.croppedImages.resizeDataUrl;
-                }
-              },
-              (reason: any) => {
-                console.log(`Model Dismissed`);
-              }
-            );
-            modalRef.componentInstance.uploadedImageUrl = imageUrl;
-            modalRef.componentInstance.imageWidth = 150;
-            modalRef.componentInstance.imageHeight = 150;
-            modalRef.componentInstance.aspectRatio = 1;
-          } catch (e) {
-            console.log('error while changes kitchen opened status ', e);
-          }
-        };
-      }
+            },
+            () => {
+              console.log('Image crop modal dismissed');
+            }
+          );
+        } catch (e) {
+          console.log('error while changing outlet image ', e);
+        }
+      };
     }
   }
 
-  async updateOutletLevelSubsidy() {
+
+  async updateOutletLevelSubsidy(): Promise<void> {
+    if (!this.selectedOutlet?._id) {
+      return;
+    }
+
     try {
-      this.outletSubsidy = this.form.getRawValue().subsidy;
-      const res = await this.apiMainService.updateOutletLevelSubsidy(
+      this.outletSubsidy = Number(this.form.getRawValue().subsidy) || 0;
+      await this.apiMainService.updateOutletLevelSubsidy(
         this.selectedOutlet._id,
         this.outletSubsidy
-      )
+      );
     } catch (err) {
       console.log(err);
     }
   }
 
-  async submit(type?: any) {
+  // For (ngSubmit) without explicit type
+  onSubmit(type?: 'update'): void {
+    this.submit(type);
+  }
+
+  async submit(type?: 'update'): Promise<void> {
+    this.showError = true;
+    this.validateMealTimings();
+
+    if (this.form.invalid || !this.seletedCafetria || this.mealTimingError) {
+      this.form.markAllAsTouched();
+      return;
+    }
 
     try {
-      const finalObj = {
+      const formValue = this.form.getRawValue();
+
+      const finalObj: any = {
         cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
         organizationDetails: this.seletedCafetria.organizationDetails,
-        mealTiming: this.mealTiming,
-        ...this.form.value,
+        mealTiming: this.mealTimings.value, // send array
+        ...formValue,
       };
-      console.log(finalObj);
-      const formData = this.objectToFormData(finalObj);
+
+      let formData = this.objectToFormData(finalObj);
+
       if (this.uploadedImageFile) {
         formData.append('image', this.uploadedImageFile);
       }
 
-      const res =
-        type === 'update'
-          ? await this.apiMainService.updateOutlet(
-            this.selectedOutlet._id,
-            formData,
-            0
-          )
-          : await this.apiMainService.saveOutlet(formData);
+      if (type === 'update' && this.selectedOutlet?._id) {
+        await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
+      } else {
+        await this.apiMainService.saveOutlet(formData);
+      }
+
       this.router.navigate(['/outlet']);
     } catch (error) {
       console.log(error);
     }
   }
 
-  objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
+  objectToFormData(obj: any, formData = new FormData(), parentKey = ''): FormData {
     for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        let keyName = parentKey ? `${parentKey}[${key}]` : key;
-        if (
-          typeof obj[key] === 'object' &&
-          obj[key] !== null &&
-          !Array.isArray(obj[key])
-        ) {
-          this.objectToFormData(obj[key], formData, keyName);
-        } else if (Array.isArray(obj[key])) {
-          obj[key].forEach((item: any, index: any) => {
-            if (typeof item === 'object' && item !== null) {
-              this.objectToFormData(item, formData, `${keyName}[${index}]`);
-            } else {
-              formData.append(`${keyName}[${index}]`, item);
-            }
-          });
-        } else {
-          formData.append(keyName, obj[key]);
-        }
+      if (!obj.hasOwnProperty(key)) continue;
+
+      const keyName = parentKey ? `${parentKey}[${key}]` : key;
+      const value = obj[key];
+
+      if (value === undefined || value === null) continue;
+
+      if (Array.isArray(value)) {
+        value.forEach((item: any, index: number) => {
+          if (item && typeof item === 'object') {
+            this.objectToFormData(item, formData, `${keyName}[${index}]`);
+          } else {
+            formData.append(`${keyName}[${index}]`, item);
+          }
+        });
+      } else if (typeof value === 'object') {
+        this.objectToFormData(value, formData, keyName);
+      } else {
+        formData.append(keyName, value);
       }
     }
     return formData;
   }
 
-  selectOrg(org: any, cafe: any) {
-    this.selectedOrg = {
-      organization_name: org.organization_name,
-      city: org.city,
-      location: org.location,
-    };
-    this.selectedCafe = {
-      cafeteria_name: cafe.cafeteria_name,
-      cafeteria_city: cafe.cafeteria_city,
-      cafeteria_location: cafe.cafeteria_location,
-      address1: cafe.address1,
-      address2: cafe.address2,
-      landmark: cafe.landmark,
-      location: cafe.location,
-      cafeteria_id: cafe.cafeteria_id
-    };
-  }
-
-  back() {
+  back(): void {
     this.router.navigate(['/outlet']);
   }
-  setStandardEndTime() {
-    this.mealTiming = [
-      {
-        mealType: 'Fullday',
-        acceptOrderFrom: '06:00',
-        acceptOrderTill: '23:00',
-      },
-      {
-        mealType: 'Breakfast',
-        acceptOrderFrom: '06:00',
-        acceptOrderTill: '10:00',
-      },
-      {
-        mealType: 'Lunch',
-        acceptOrderFrom: '11:00',
-        acceptOrderTill: '14:00',
-      },
-      {
-        mealType: 'EveningSnacks',
-        acceptOrderFrom: '16:00',
-        acceptOrderTill: '18:00',
-      },
-      {
-        mealType: 'Dinner',
-        acceptOrderFrom: '19:00',
-        acceptOrderTill: '22:00',
-      },
-    ];
+
+  setStandardEndTime(): void {
+    // Set standard times based on mealType
+    const map: Record<string, { from: string; till: string }> = {
+      Fullday: { from: '06:00', till: '23:00' },
+      Breakfast: { from: '06:00', till: '10:00' },
+      Lunch: { from: '11:00', till: '14:00' },
+      EveningSnacks: { from: '16:00', till: '18:00' },
+      Dinner: { from: '19:00', till: '22:00' },
+    };
+
+    this.mealTimings.controls.forEach((ctrl: AbstractControl) => {
+      const mt = ctrl.get('mealType')?.value;
+      if (mt && map[mt]) {
+        ctrl.patchValue(
+          {
+            acceptOrderFrom: map[mt].from,
+            acceptOrderTill: map[mt].till,
+          },
+          { emitEvent: false }
+        );
+      }
+    });
+
+    this.validateMealTimings();
+  }
+
+  private validateMealTimings(): void {
+    this.mealTimingError = null;
+
+    const timings = this.mealTimings.value as MealTiming[];
+    if (!timings || timings.length === 0) {
+      this.mealTimingError = 'Please add at least one meal timing.';
+      return;
+    }
+
+    // Helper to convert HH:mm -> minutes
+    const toMinutes = (time: string): number => {
+      const [h, m] = (time || '00:00').split(':').map((x) => parseInt(x, 10) || 0);
+      return h * 60 + m;
+    };
+
+    // 1. from < to
+    for (const t of timings) {
+      const start = toMinutes(t.acceptOrderFrom);
+      const end = toMinutes(t.acceptOrderTill);
+      if (start >= end) {
+        this.mealTimingError = 'Start time must be before end time for all slots.';
+        return;
+      }
+    }
+
+    // 2. no overlap within same mealType
+    const byType: Record<string, { start: number; end: number }[]> = {};
+    timings.forEach((t) => {
+      const key = t.mealType || 'DEFAULT';
+      if (!byType[key]) byType[key] = [];
+      byType[key].push({
+        start: toMinutes(t.acceptOrderFrom),
+        end: toMinutes(t.acceptOrderTill),
+      });
+    });
+
+    for (const type of Object.keys(byType)) {
+      const slots = byType[type];
+      for (let i = 0; i < slots.length; i++) {
+        for (let j = i + 1; j < slots.length; j++) {
+          const a = slots[i];
+          const b = slots[j];
+          const overlap = a.start < b.end && b.start < a.end;
+          if (overlap) {
+            this.mealTimingError = `Time ranges for meal type "${type}" are overlapping.`;
+            return;
+          }
+        }
+      }
+    }
   }
 }

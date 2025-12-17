@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
@@ -10,15 +11,13 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 export class OutletViewComponent implements OnInit {
   @Input() outlet: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
-
+  selectedtab:number = 0 ; 
   outletViewList = [
     { name: 'Basic Details', path: 'outlet-details' },
-    // { name: 'Categories', path: 'outlet-categories' },
     { name: 'Menu', path: 'outlet-menu' },
-    { name: 'Past Orders', path: 'outlet-orders' },
+    { name: 'QR Menu', path: 'qr-menu' },
+    { name: 'Outlet Orders', path: 'outlet-orders' },
     { name: 'Reviews', path: 'outlet-feedback' },
-    { name: 'Vendor', path: 'outlet-vendor' },
-    // { name: 'Complience', path: 'outlet-compliance' },
   ];
   selectedTab = 'outlet-details';
   updateval: any = false;
@@ -42,5 +41,10 @@ export class OutletViewComponent implements OnInit {
 
   receiveData(event: any) {
     this.outlet = event;
+  }
+
+  onTabChange(event:MatTabChangeEvent){
+     const selectedIndex = this.outletViewList[event.index];
+     this.gotToTab(selectedIndex.path);
   }
 }

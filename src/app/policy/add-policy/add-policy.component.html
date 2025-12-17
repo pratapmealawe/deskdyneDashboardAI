@@ -1,108 +1,107 @@
-<div class="container-fluid mt-2 policy-wrapper">
-  <div class="labelText">Policy Add</div>
-  <div class="row mt-2">
-    <div class="col-sm-12 col-md-4 col-lg-3">
-      <label for="name" class="labelData">Policy Name</label>
-      <input
-        type="text"
-        class="form-control shadow-none"
-        name="name"
-        placeholder="Policy Name"
-        [(ngModel)]="policyObj.policy_name"
-      />
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="policyArr?.length > 0">
-      <label for="reference" class="labelData">Reference Policy</label>
-      <select
-        class="pointer"
-        name="reference"
-        (change)="showReferencePolicy($event)"
-      >
-        <option disabled selected value>-- select an option --</option>
-        <option [value]="item._id" *ngFor="let item of policyArr">
-          {{ item.policy_name }}
-        </option>
-      </select>
-    </div>
-    <div class="col-sm-6 col-md-6 col-lg-6">
-      <label for="description" class="labelData">Policy Description</label>
-      <input
-        type="text"
-        class="form-control shadow-none"
-        name="description"
-        placeholder="Policy Description"
-        [(ngModel)]="policyObj.policy_description"
-      />
-    </div>
-  </div>
-  <div class="row inline button-wrapper">
-    <label class="labelText"
-      >Route Access<span
-        class="tileLabel selectAll header4"
-        (click)="selectAllRoutes()"
-        >Select All</span
-      ></label
-    >
-    <div class="col-12 inline">
-      <span
-        class="me-2 inline"
-        *ngFor="let item of routeKeys"
-        [ngClass]="{ tileSelected: policyObj.route_policies[item] }"
-      >
-        <span
-          class="tileLabel header4 countTile"
-          (click)="
-            policyObj.route_policies[item] = !policyObj.route_policies[item]
-          "
-          >{{ item }}</span
-        >
-      </span>
-    </div>
-  </div>
-  <div class="row inline button-wrapper">
-    <label class="labelText"
-      >Button Access<span
-        class="tileLabel selectAll header4"
-        (click)="selectAllPolicy()"
-        >Select All</span
-      ></label
-    >
-    <div class="col-12 inline">
-      <span
-        class="me-2 inline"
-        *ngFor="let item of buttonKeys"
-        [ngClass]="{ tileSelected: policyObj.button_policies[item] }"
-      >
-        <span
-          class="tileLabel header4 countTile"
-          (click)="
-            policyObj.button_policies[item] = !policyObj.button_policies[item]
-          "
-          >{{ item }}</span
-        >
-      </span>
-    </div>
-  </div>
+<div class="admin-header">
   <div>
-    <button
-      class="btn btn-primary btn-sm me-1"
-      (click)="addPolicy()"
-      *ngIf="!editMode && true || btnPolicy?.addPolicy"
-    >
+    <h4 class="m-0 fw-semibold">
+      {{ editMode ? "Update Policy" : "Add Policy" }}
+    </h4>
+  </div>
+</div>
+
+<div class="container-fluid policy-container">
+
+  <!-- POLICY DETAILS -->
+  <mat-card class="mb-3">
+    <div class="row g-3">
+      <div class="col-md-4 col-sm-12">
+        <div class="field-label">Policy Name <span class="text-danger">*</span></div>
+        <mat-form-field appearance="outline" class="w-100 input">
+          <input matInput [(ngModel)]="policyObj.policy_name" required placeholder="Policy Name" />
+          <mat-error *ngIf="showErrorMsg && !policyObj.policy_name">
+            Policy name is required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="col-md-4 col-sm-12" *ngIf="policyArr.length > 0">
+        <div class="field-label">Reference Policy</div>
+        <mat-form-field appearance="outline" class="w-100 input">
+          <mat-select (selectionChange)="showReferencePolicy($event)">
+            <mat-option disabled selected value="">
+              -- Select Policy --
+            </mat-option>
+            <mat-option *ngFor="let item of policyArr" [value]="item._id">
+              {{ item.policy_name }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="col-md-4 col-sm-12">
+        <div class="field-label">Policy Description <span class="text-danger">*</span></div>
+        <mat-form-field appearance="outline" class="w-100 input">
+          <input matInput [(ngModel)]="policyObj.policy_description" required placeholder="Policy Description" />
+          <mat-error *ngIf="showErrorMsg && !policyObj.policy_description">
+            Description is required.
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- ROUTE ACCESS -->
+  <mat-card class="mb-3">
+    <div class="section-header">
+      <h5 class="section-title">Route Access</h5>
+
+      <button mat-button color="primary" class="select-btn" (click)="selectAllRoutes()">
+        Select All
+      </button>
+    </div>
+
+    <mat-chip-listbox class="chip-list" multiple>
+      <mat-chip-option *ngFor="let item of routeKeys" [selected]="policyObj.route_policies[item]"
+        (click)="policyObj.route_policies[item] = !policyObj.route_policies[item]">
+        {{ item }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </mat-card>
+
+  <!-- BUTTON ACCESS -->
+  <mat-card class="mb-3">
+    <div class="section-header">
+      <h5 class="section-title">Button Access</h5>
+
+      <button mat-button color="primary" class="select-btn" (click)="selectAllButtons()">
+        Select All
+      </button>
+    </div>
+
+    <mat-chip-listbox class="chip-list" multiple>
+      <mat-chip-option *ngFor="let item of buttonKeys" [selected]="policyObj.button_policies[item]"
+        (click)="policyObj.button_policies[item] = !policyObj.button_policies[item]">
+        {{ item }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </mat-card>
+
+  <!-- ACTION BUTTONS -->
+  <div class="action-buttons">
+    <button mat-raised-button color="primary" *ngIf="!editMode" (click)="addPolicy()">
+      <mat-icon>add</mat-icon>
       Save
     </button>
-    <button
-      class="btn btn-success btn-sm me-1"
-      (click)="updatePolicy()"
-      *ngIf="editMode && true || btnPolicy?.editPolicy"
-    >
+
+    <button mat-raised-button color="primary" *ngIf="editMode" (click)="updatePolicy()">
+      <mat-icon>system_update_alt</mat-icon>
       Update
     </button>
-    <button class="btn btn-danger btn-sm me-1" (click)="cancelPolicy()">
+
+    <button mat-stroked-button color="primary" (click)="cancelPolicy()">
+      <mat-icon>cancel</mat-icon>
       Cancel
     </button>
-    <div style="color: red" *ngIf="showErrorMsg">
-      Please Enter Policy Name and Description
-    </div>
+  </div>
+
+  <div class="error-msg" *ngIf="showErrorMsg">
+    Please enter Policy Name and Description.
   </div>
 </div>

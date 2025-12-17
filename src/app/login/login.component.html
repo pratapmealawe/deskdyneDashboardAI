@@ -1,41 +1,125 @@
-<div class="row w-100 mx-0 auth-page">
-    <div class="col-md-8 col-xl-6 card-wrapper">
-        <div class="card">
-            <div class="row">
-                <div class="col-md-4 pe-md-0 d-flex align-items-center justify-content-center">
-                    <div class="auth-side-wrapper"></div>
-                </div>
-                <div class="col-md-8 ps-md-0">
-                    <div class="auth-form-wrapper px-4 py-5" *ngIf="!showOTP">Login
-                        <h5 class="text-muted mb-3">Welcome back! Log in to your
-                            account.</h5>
-                        <form class="forms-sample">
-                            <div class="mb-2"><label for="adminID" class="form-label">ID</label>
-                                <input type="text" name="adminID" [(ngModel)]="adminId" placeholder="ID"
-                                    class="form-control shadow-none">
-                            </div>
-                            <button type="submit" class="btn btn-primary" (click)="login()">Login</button>
-                        </form>
-                    </div>
-                    <div class="auth-form-wrapper px-4 py-5" *ngIf="showOTP">
-                        <div class="mb-3" style="display: flex; align-items: center ; gap: 16px  ;">
-                            <div class="backBtn" (click)="backToLogin()">
-                                <i class="bi bi-chevron-left"></i>
-                                <p>Back</p>
-                            </div>
-                            <h5 class="text-muted mb-0">Enter OTP</h5>
-                        </div>
-                        <form class="forms-sample">
-                            <div class="mb-3"><label for="otp" class="form-label">Please enter verification code sent to
-                                    the registered Mobile No.</label>
-                                <input type="password" name="otp" [(ngModel)]="password" placeholder="OTP"
-                                    class="form-control">
-                            </div>
-                            <button type="submit" class="btn btn-primary" (click)="verifyOTP()">Submit</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+<div class="login-wrapper">
+  <div class="row g-0 min-vh-100">
+
+    <!-- LEFT IMAGE PANEL (HIDDEN ON SMALL SCREENS) -->
+    <div class="col-12 col-md-8 px-0 d-none d-md-flex ">
+      <div class="login-img h-100 position-relative">
+        <div class="logo-desktop">
+          <img
+            src="assets/images/logos/DeskDyne-Logo-01.png"
+            alt="DeskDyne Logo"
+          />
         </div>
+
+        <img
+          src="assets/login/LoginImage.png"
+          alt="DeskDyne login banner"
+          class="login-hero-img"
+        />
+      </div>
     </div>
+
+    <!-- RIGHT FORM PANEL -->
+    <div class="col-12 col-md-4 forms d-flex align-items-center justify-content-center">
+      <div class="form-container">
+
+        <!-- MOBILE LOGO -->
+        <div class="logo-mobile d-md-none text-center mb-3">
+          <img
+            src="assets/images/logos/DeskDyne-Logo-01.png"
+            alt="DeskDyne Logo"
+          />
+        </div>
+
+        <!-- LOGIN FORM -->
+        <div class="login-form" *ngIf="!showOTP">
+          <div class="login-title">
+            Welcome to <span class="fw-bold">DESKDYNE!</span>
+          </div>
+          <p class="text-muted mb-3">Please login to your account.</p>
+
+          <form (ngSubmit)="login()" novalidate>
+            <div class="row gx-0">
+              <div class="col-12 mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Admin/User ID</mat-label>
+                  <input
+                    matInput
+                    type="text"
+                    name="adminID"
+                    [(ngModel)]="adminId"
+                    placeholder="Enter your ID here"
+                    autocomplete="off"
+                  />
+                </mat-form-field>
+              </div>
+
+              <div class="col-12">
+                <button
+                  type="submit"
+                  class="btn login-btn"
+                  [disabled]="!adminId || isLoggingIn"
+                >
+                  <span *ngIf="!isLoggingIn">Login</span>
+                  <span *ngIf="isLoggingIn">Logging in...</span>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- OTP FORM -->
+        <div class="otp-form" *ngIf="showOTP">
+          <div class="otp-container">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary back-btn mb-2"
+              (click)="backToLogin()"
+            >
+              ← Back to Login
+            </button>
+
+            <h4 class="otp-title mb-2">Enter OTP</h4>
+
+            <p class="otp-subtitle text-muted mb-3">
+              Check your registered mobile for a 6-digit code.
+            </p>
+
+            <div class="otp-inputs mb-3">
+              <input
+                type="text"
+                maxlength="1"
+                class="otp-box"
+                *ngFor="let box of otpBoxes; let i = index"
+                [(ngModel)]="otp[i]"
+                (input)="onInput($event, i)"
+                (keydown)="onKeyDown($event, i)"
+                (paste)="onPaste($event)"
+                autocomplete="one-time-code"
+              />
+            </div>
+
+            <button
+              class="btn verify-btn mb-2"
+              [disabled]="!isOTPComplete() || isVerifying"
+              (click)="verifyOTP()"
+            >
+              <span *ngIf="!isVerifying">Verify</span>
+              <span *ngIf="isVerifying">Verifying...</span>
+            </button>
+
+            <div
+              class="resend-text"
+              [class.active]="timer === 0"
+              (click)="timer === 0 && resendOTP()"
+            >
+              {{ timer === 0 ? 'Resend OTP' : ('Resend in ' + timer + 's') }}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
 </div>

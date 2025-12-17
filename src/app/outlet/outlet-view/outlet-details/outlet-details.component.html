@@ -1,103 +1,150 @@
-<span
-  class="right btn-danger btn-sm pointer right"
-  *ngIf="true || btnPolicy?.editOutlet"
-  (click)="editOrg()"
-  >EDIT</span
->
-<div class="row">
-  <div class="col-12 col-md-4 col-lg-12">
-    <div class="row">
-      <div class="col-6 col-md-7 col-lg-4">
-        <img
-          [src]="
-            outletObj?.imageUrl
-              ? imageUrl + outletObj.imageUrl
-              : 'assets/images/dummyUpload.png'
-          "
-          class="uploadedImage"
-        />
-      </div>
-      <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Outlet Name</div>
-        <div class="labelData">{{ outletObj.outletName }}</div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Outlet Type</div>
-        <div class="labelData">{{ outletObj.outletType }}</div>
-      </div>
+<div class="pb-4 container-fluid">
+  <!-- Header / Actions -->
+  <div class="d-flex justify-content-between align-items-center mb-2 pt-3">
+    <div class="d-flex align-items-center gap-2">
+      <!-- <div class="heading">Outlet Details</div> -->
     </div>
-  </div>
-  <div class="col-12 col-md-4 col-lg-12 mt-2">
-    <div class="row">
-      <div class="col-6 col-md-5 col-lg-12">
-        <div class="labelText">Outlet Description</div>
-        <div class="labelData">{{ outletObj.outletDescription }}</div>
-      </div>
-    </div>
-  </div>
-  <div class="col-12 col-md-4 col-lg-12">
-    <div class="row">
-      <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Organization Name</div>
-        <div class="labelData">
-          {{ outletObj.organizationDetails.organization_name }}
-        </div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">City</div>
-        <div class="labelData">{{ outletObj.organizationDetails.city }}</div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Location</div>
-        <div class="labelData">
-          {{ outletObj.organizationDetails.location }}
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-12 col-md-4 col-lg-12">
-    <div class="row">
-      <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Cafeteria Name</div>
-        <div class="labelData">
-          {{ outletObj.cafeteriaDetails.cafeteria_name }}
-        </div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Cafeteria City</div>
-        <div class="labelData">
-          {{ outletObj.cafeteriaDetails.cafeteria_city }}
-        </div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Landmark</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.landmark }}</div>
-      </div>
-      <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Cafeteria Name</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.location }}</div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Cafeteria City</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.address1 }}</div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Location</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.address2 }}</div>
-      </div>
-    </div>
+    <button mat-raised-button color="primary" (click)="editOrg()">
+      <mat-icon>edit</mat-icon> Edit Outlet
+    </button>
   </div>
 
-  <div class="col-lg-12 pt-4">
-    <div class="row">
-      <div *ngFor="let meal of outletObj?.mealTiming" class="col-lg-3 mb-2">
-        <div class="bg-light rounded p-2">
-          <span class="labelText"> {{ meal.mealType }}</span>
-          <div class="labelData">
-            {{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}
+  <div class="row g-4">
+    <!-- Card 1: Outlet Overview -->
+    <div class="col-12 col-md-6">
+      <div class="card p-4 h-100">
+        <h5 class="mb-3 fw-bold border-bottom pb-2">Overview</h5>
+        <div class="d-flex gap-4">
+          <!-- Image -->
+          <div class="flex-shrink-0">
+            <img [src]="outletObj?.imageUrl ? imageUrl + outletObj.imageUrl : 'assets/images/dummyUpload.png'"
+              class="uploadedImage rounded" alt="Outlet Image">
+          </div>
+          <!-- Basic Info -->
+          <div class="flex-grow-1">
+            <div class="mb-3">
+              <div class="labelText">Outlet Name</div>
+              <div class="labelData fs-6 fw-semibold">{{ outletObj.outletName }}</div>
+            </div>
+            <div class="mb-3">
+              <div class="labelText mb-1">Status</div>
+              <div class="d-flex gap-2 flex-wrap">
+                <!-- Opened Status Badge -->
+                <div class="status-badge" [ngClass]="outletObj.outletOpened ? 'success' : 'danger'">
+                  <mat-icon class="icon-sm">{{ outletObj.outletOpened ? 'check_circle' : 'cancel' }}</mat-icon>
+                  <span>{{ outletObj.outletOpened ? 'Opened' : 'Closed' }}</span>
+                </div>
+                <!-- Preorder Badge -->
+                <div class="status-badge" [ngClass]="outletObj.isPreOrder ? 'info' : 'neutral'">
+                  <mat-icon class="icon-sm">schedule</mat-icon>
+                  <span>Preorder: {{ outletObj.isPreOrder ? 'Yes' : 'No' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="mb-0">
+              <div class="labelText">Description</div>
+              <div class="labelData text-break">{{ outletObj.outletDescription || '-' }}</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Card 2: Commercials & Operations -->
+    <div class="col-12 col-md-6">
+      <div class="card p-4 h-100">
+        <h5 class="mb-3 fw-bold border-bottom pb-2">Commercials & Operations</h5>
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="labelText">Billing Type</div>
+            <div class="labelData">{{ outletObj.billingType || '-' }}</div>
+          </div>
+          <div class="col-6">
+            <div class="labelText">Subsidy</div>
+            <div class="labelData">{{ outletObj.subsidy || 0 }} %</div>
+          </div>
+          <div class="col-6">
+            <div class="labelText">Vendor Commission</div>
+            <div class="labelData">{{ outletObj.vendorCommissionPercentage }} %</div>
+          </div>
+          <div class="col-6">
+            <div class="labelText">MRP Commission</div>
+            <div class="labelData">{{ outletObj.MRPCommissionPercentage }} %</div>
+          </div>
+          <!-- Placeholder for potentially empty fields or spacing -->
+          <div class="col-12"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 3: Location & Organization -->
+    <div class="col-12">
+      <div class="card p-4">
+        <h5 class="mb-3 fw-bold border-bottom pb-2">Organization & Location</h5>
+        <div class="row g-4">
+          <!-- Organization Column -->
+          <div class="col-md-6 border-end-md">
+            <h6 class="text-secondary mb-3">Organization Details</h6>
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="labelText">Name</div>
+                <div class="labelData">{{ outletObj.organizationDetails.organization_name }}</div>
+              </div>
+              <div class="col-6">
+                <div class="labelText">City</div>
+                <div class="labelData">{{ outletObj.organizationDetails.city }}</div>
+              </div>
+              <div class="col-12">
+                <div class="labelText">Location</div>
+                <div class="labelData">{{ outletObj.organizationDetails.location }}</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cafeteria Column -->
+          <div class="col-md-6 ps-md-4">
+            <h6 class="text-secondary mb-3">Cafeteria Details</h6>
+            <div class="row g-3">
+              <div class="col-6">
+                <div class="labelText">Name</div>
+                <div class="labelData">{{ outletObj.cafeteriaDetails.cafeteria_name }}</div>
+              </div>
+              <div class="col-6">
+                <div class="labelText">City</div>
+                <div class="labelData">{{ outletObj.cafeteriaDetails.cafeteria_city }}</div>
+              </div>
+              <div class="col-12">
+                <div class="labelText">Landmark & Address</div>
+                <div class="labelData">
+                  {{ outletObj.cafeteriaDetails.landmark }}, {{ outletObj.cafeteriaDetails.location }}
+                  <br>
+                  <small class="text-muted">{{ outletObj.cafeteriaDetails.address1 }} {{
+                    outletObj.cafeteriaDetails.address2 }}</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 4: Meal Timings -->
+    <div class="col-12">
+      <div class="card p-4">
+        <h5 class="mb-3 fw-bold border-bottom pb-2">Meal Timings</h5>
+        <div class="row g-3">
+          <div *ngFor="let meal of outletObj?.mealTiming" class="col-12 col-sm-6 col-md-4 col-lg-2">
+            <div class="timing-card p-3 rounded border bg-light text-center h-100">
+              <div class="labelText mb-1 text-primary fw-bold">{{ meal.mealType }}</div>
+              <div class="labelData">{{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}</div>
+            </div>
+          </div>
+          <div *ngIf="!outletObj?.mealTiming?.length" class="col-12 text-muted fst-italic">
+            No meal timings configured.
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </div>

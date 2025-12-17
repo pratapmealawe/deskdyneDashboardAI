@@ -12,9 +12,7 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
-import { UtilityService } from 'src/service/utility.service';
 
 @Component({
   selector: 'app-header',
@@ -68,7 +66,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       image: 'Outlet_white',
       imageblue: 'Outlet_blue',
       children: [
-        { name: 'Outlet Overview', route: 'outlet', showChild: true },
+        { name: 'Search Outlet', route: 'outlet', showChild: true },
         { name: 'Outlet Add', route: 'addOutlet', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] },
         {
           name: 'Outlet Master Menu',
@@ -78,7 +76,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       ],
     },
     {
-      name: 'vendor Firm',
+      name: 'Vendor Firm',
       showParent: true,
       image: 'Vendor firm_white',
       imageblue: 'Vendor firm_blue',
@@ -134,7 +132,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Search Order', route: 'searchOrder', showChild: true },
       ],
     },
-   
+
     {
       name: 'Users',
       showParent: true,
@@ -160,19 +158,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Incident Reporting',
       showParent: true,
-      showBadge: true,
-      count: this.inReviewIncidentsCount$,
+      // showBadge: true,
+      // count: this.inReviewIncidentsCount$,
       route: 'orgIncidentManagement',
       image: 'Incident reporting_white',
       imageblue: 'Incident reporting_blue',
     },
     {
-      name: 'Submit CheckList',
-      route: 'submitChecklist',
+      name: 'Audit Report',
       showParent: true,
-      image: 'Checklist_white',
-      imageblue: 'Checklist_blue',
+      route: 'auditReport',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
     },
+
     {
       name: 'CheckList',
       showParent: true,
@@ -182,6 +181,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
         {
           name: 'View Checklist',
           route: 'viewChecklistQuestion',
+          showChild: true,
+        },
+        {
+          name: 'Submit CheckList',
+          route: 'submitChecklist',
           showChild: true,
         },
         {
@@ -270,7 +274,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       image: 'Dashbaord_white',
       imageblue: 'Dashbaord_blue',
     },
-     {
+    {
       name: 'Consumption Orders',
       showParent: true,
       route: 'consumptionOrders',
@@ -319,6 +323,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       image: 'Reviews_white',
       imageblue: 'Reviews_blue',
     },
+    {
+      name: 'Users',
+      showParent: true,
+      route: 'customer',
+      image: 'Users_white',
+      imageblue: 'Users_blue',
+    },
     // {
     //   name: 'Reports',
     //   showParent: true,
@@ -339,6 +350,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: 'orgMenuCounters',
       image: 'Food items_white',
       imageblue: 'Food items_blue',
+    },
+    {
+      name: 'Audit Report',
+      showParent: true,
+      route: 'auditReport',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
     },
     {
       name: 'Incident Management',
@@ -395,13 +413,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
   selectedIndexpar: number = 0;
   selectedIndexchild: number = 0;
   pollingSub!: Subscription;
+  orgLogo!: any
 
   constructor(
     private router: Router,
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private runtimeStorageService: RuntimeStorageService,
-    private utilityService: UtilityService,
     private offcanvasService: NgbOffcanvas,
     private suggestionsFeedbackService: SuggestionsFeedbackService
   ) {
@@ -411,12 +429,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
 
       if (event instanceof NavigationEnd) {
-        console.log(event.url);
-
         this.currentRoute = event.url;
         this.breadCrumbText = event.url;
         const url = event.url.replace('/', '');
         this.setBreadcrumb(url);
+        this.setActiveStateFromRoute(event.url);
         // alert(event.url);
       }
 
@@ -433,8 +450,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.getAdminProfile();
     this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
     this.suggestionsFeedbackService.fetchAllEnquiries();
-    this.getInReviewIncidents();
-
+    // this.getInReviewIncidents();
+    this.setActiveStateFromRoute(this.router.url);
     // this.pollingSub = interval(30_000).subscribe(() => {
     //   this.getInReviewIncidents();
     // });
@@ -450,6 +467,33 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.error('Error fetching incidents:', error);
+    }
+  }
+
+  setActiveStateFromRoute(url: string): void {
+    this.selectedIndex = -1;
+    this.openChildSectionIndex = -1;
+    this.childSelectedIndex = -1;
+
+    const currentPath = url.split('?')[0];
+
+    for (let i = 0; i < this.finalNavOption.length; i++) {
+      const nav = this.finalNavOption[i];
+
+      if (nav.children && nav.children.length > 0) {
+        for (let j = 0; j < nav.children.length; j++) {
+          const child = nav.children[j];
+          if (child.route && currentPath.includes(child.route)) {
+            this.openChildSectionIndex = i;
+            this.childSelectedIndex = j;
+            return;
+          }
+        }
+      }
+      else if (nav.route && currentPath.includes(nav.route)) {
+        this.selectedIndex = i;
+        return;
+      }
     }
   }
 
@@ -505,16 +549,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
     const adminId = this.localStorageService.getCacheData('ADMIN_ID');
     try {
       const adminProfile = await this.apiMainService.getadminprofile(adminId);
-
-      console.log(adminProfile);
-
       if (adminProfile && adminProfile._id) {
         this.adminProfile = adminProfile;
         if (this.adminProfile.role == 'ORGADMIN' || this.adminProfile.role == 'HYPERPURE_ADMIN' || this.adminProfile.role == 'HYPERPURE_POC') {
           this.isOrgAdmin = true;
+          // this.orgLogo = this.adminProfile.orgDetails.organizationLogoUrl;
           this.orgDetails = JSON.parse(
             JSON.stringify(this.adminProfile.orgDetails)
           );
+
           this.finalNavOption = this.orgOptions;
           // this.router.navigate(['/org-dashboard']);
         } else {
@@ -582,6 +625,30 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  getInitials(name: string): string {
+    if (!name) return '';
+
+    let parts = name.trim().split(' ');
+    if (parts.length === 1) {
+      return parts[0].charAt(0).toUpperCase();
+    }
+
+    return (
+      parts[0].charAt(0).toUpperCase() +
+      parts[1].charAt(0).toUpperCase()
+    );
+  }
+
+  getAvatarColor(name: string): string {
+    if (name) {
+      const colors = ['#192754', '#FF6B6B', '#17C964', '#FFB020', '#9333EA'];
+      let index = name.length % colors.length;
+      return colors[index];
+    } else {
+      return '#192754'
     }
   }
 

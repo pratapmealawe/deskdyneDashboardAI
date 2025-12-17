@@ -1,17 +1,72 @@
-.addMultipleConsumption {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    color: white;
-    text-align: center;
-    font-size: 19px;
-    margin: 2px;
-    background: #15a292;
-    margin-top: 24px;
-    cursor: pointer;
+/* minimal, responsive */
+.dialog-wrapper {
+  width: 100%;
+  max-width: 640px; /* reasonable dialog width */
+  box-sizing: border-box;
 }
 
-.bi-pencil-square {
-    margin-right: 20px !important;
+/* header: title left, close icon right */
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 4px; /* space for icon */
+}
+
+/* move the close icon a bit */
+.close-button {
+  line-height: 1;
+  margin-left: 8px;
+}
+.page-container {
+  padding: 24px;
+  background: #f0f2f5;
+}
+
+mat-card {
+  margin-bottom: 24px;
+}
+/* layout for fields */
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* small grid row to put two fields side-by-side on md+ screens */
+.row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* column helpers (simple bootstrap-like) */
+.col-12 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+.col-md-6 {
+  flex: 0 0 100%;
+  max-width: 100%;
+}
+
+/* chip list spacing */
+.chip-list {
+  display: block;
+  margin-top: 8px;
+}
+
+/* actions spacing */
+.actions {
+  padding-top: 8px;
+  gap: 8px;
+}
+
+/* medium+ screens: two columns */
+@media (min-width: 768px) {
+  .col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
 }

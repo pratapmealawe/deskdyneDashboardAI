@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import {
   NgbModal,
@@ -33,7 +34,8 @@ export class AddVendorCommponent {
   selectedVendor: any;
   addressList: any = [];
   showEditModalOutletList = false;
-  vendorId: string = ''
+  vendorId: number = 0
+  title:string = ' Add Vendor '
 
   @ViewChild('outletModal') outlet: any;
   @ViewChild('addressModal') address: any;
@@ -64,12 +66,12 @@ export class AddVendorCommponent {
 
   createForm() {
     this.form = this.fb.group({
-      vendorName: [''],
-      vendorPhoneNo: [''],
-      vendorEmail: [''],
-      vendorRole: [''],
-      vendorId: [''],
-      accessType: [''],
+      vendorName: ['',[Validators.required]],
+      vendorPhoneNo: ['',[Validators.required]],
+      vendorEmail: ['',[Validators.required]],
+      vendorRole: ['',[Validators.required]],
+      vendorId: ['',[Validators.required]],
+      accessType: ['',[Validators.required]],
       // address: this.fb.group({
       //   address1: [''],
       //   address2: [''],
@@ -87,9 +89,8 @@ export class AddVendorCommponent {
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
-      this.vendorId && this.changeVendorFirm(this.vendorId ? this.vendorId : "")
+      this.vendorId && this.changeVendorFirm(this.vendorId)
     } catch (error) {
-      console.log('getAllVendor', error);
     }
   }
 
@@ -119,11 +120,13 @@ export class AddVendorCommponent {
     return formData;
   }
 
-  async changeVendorFirm(e: any) {
-    this.getVendorFirmById(e.target.value);
-    if (e) {
-      const id = typeof e === "string" ? e : e.target.value
-      const vendorFirm = this.vendorList.find((item: any) => item?._id === id)
+    async changeVendorFirm(e: any) {
+    this.getVendorFirmById(e.value);
+    console.log(e.value , "ghjgdug" , e);
+    this.vendorId = e.value
+    if (e.value) {
+      // const id = typeof e === "string" ? e : e.value
+      const vendorFirm = this.vendorList.find((item: any) => item?._id === e.value)
       if (vendorFirm?.outletList.length > 0) {
         this.outletByCafeteriaList = vendorFirm?.outletList
       }
@@ -133,16 +136,11 @@ export class AddVendorCommponent {
   async getVendorFirmById(event: any) {
     const vendorFirmId = event;
     const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
-    console.log(res);
     this.addressList = res.address;
-    // this.selectedAddressList = [];
-
   }
 
   updateVendor() {
     const vendor = this.runtimeStorageService.getCacheData('VENDOR_EDIT');
-    console.log(vendor);
-
     if (vendor && vendor._id) {
       this.selectedVendor = vendor;
       this.showUpdate = true;
@@ -190,7 +188,6 @@ export class AddVendorCommponent {
       }
       this.router.navigate(['/searchVendor']);
     } catch (error) {
-      console.log('saveVendor submit error', error);
     }
   }
 
@@ -210,8 +207,6 @@ export class AddVendorCommponent {
 
   getSelectedOutlets() {
     this.selectedOutletsList = []
-    console.log(this.outletByCafeteriaList);
-
     this.outletByCafeteriaList.forEach((elm: any) => {
       if (elm.isChecked) {
         let outletPresent = false;
@@ -233,34 +228,25 @@ export class AddVendorCommponent {
       }
     });
     this.modalService.dismissAll();
-    // console.log('selected outlet list',this.selectedOutletsList);
   }
 
-  selectAddress(address: any, event: any) {
-    const isChecked = event.target.checked;
+  selectAddress(address: any) {
+    this.selectedAddress = address;
 
-    if (isChecked) {
-      // user checked → select this address
-      this.selectedAddress = address;
+    this.selectedAddressList = [{
+      address1: address.address1,
+      address2: address.address2,
+      landmark: address.landmark,
+      location: address.location,
+      geolocation: address.geolocation
+    }];
 
-      this.selectedAddressList = [{
-        address1: address.address1,
-        address2: address.address2,
-        landmark: address.landmark,
-        location: address.location,
-        geolocation: address.geolocation
-      }];
-
-    } else {
-      // user unchecked → clear selection
-      this.selectedAddress = null;
-      this.selectedAddressList = [];
-    }
-
-    console.log('Selected address list:', this.selectedAddressList);
+    // } else {
+    //   // user unchecked → clear selection
+    //   this.selectedAddress = null;
+    //   this.selectedAddressList = [];
+    // }
   }
-
-  // console.log('selected outlet list',this.selectedOutletsList)
 
   addSelectedAddress() {
     this.modalService.dismissAll();
@@ -271,7 +257,7 @@ export class AddVendorCommponent {
     try {
       this.selectedOutletsList.splice(index, 1);
     } catch (error) {
-      console.log('deleteOutlet', error);
+
     }
   }
 
@@ -279,7 +265,6 @@ export class AddVendorCommponent {
     try {
       this.selectedAddressList.splice(index, 1);
     } catch (error) {
-      console.log('deleteAddress', error);
     }
   }
 
@@ -297,7 +282,6 @@ export class AddVendorCommponent {
           }
         },
         (reason) => {
-          console.log(`Model Dismissed`);
         }
       );
   }
@@ -320,4 +304,23 @@ export class AddVendorCommponent {
     this.form.reset();
     this.router.navigate(['/searchVendor']);
   }
+
+  hasError(form: FormGroup, control: string, error: string) {
+    return form.get(control)?.hasError(error);
+  }
+
+onRadioClick(address: any) {
+  this.selectedAddress = address;
+}
+isAddVendorValid(): boolean {
+  return (
+    this.form.valid &&
+    this.selectedOutletsList.length > 0 &&
+    this.selectedAddressList.length > 0
+  );
+}
+toggleCheckbox(outlet: any) {
+  outlet.isChecked = !outlet.isChecked;
+}
+
 }

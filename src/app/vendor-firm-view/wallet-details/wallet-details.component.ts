@@ -53,7 +53,7 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
     this.loadPage(true);
   }
 
-  openTxnDialog(kind: 'Credit' | 'Debit' | 'Transfer', transferSource?: 'subsidy' | 'daily') {
+  openTxnDialog(kind: 'Credit' | 'Debit' | 'Transfer', transferSource?: 'wallet' | 'subsidy' | 'daily') {
     const ref = this.dialog.open(WalletTxnDialogComponent, {
       width: '420px',
       disableClose: true,
@@ -62,7 +62,8 @@ export class WalletDetailsComponent implements OnChanges, OnInit {
         kind,
         transferSource, // NEW
         subsidyBalance: transferSource === 'subsidy' ? this.subsidyBalance : undefined,
-        dailyBalance: transferSource === 'daily' ? this.dailyBalance : undefined
+        dailyBalance: transferSource === 'daily' ? this.dailyBalance : undefined,
+        walletBalance: transferSource === 'wallet' ? this.walletBalance : undefined,
       }
     });
 

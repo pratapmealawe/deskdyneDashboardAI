@@ -1,101 +1,72 @@
-<div class="container">
-  <h3 class="mb-4">Submit Checklist</h3>
-  <div class="container">
-    <div class="row mb-4 mt-3 p-3 bg-light rounded">
-      <div class="col-12 col-md-3">
-        <label for="organization" class="labelText d-block">Organization</label>
-        <select
-          [disabled]="editMode"
-          class="form-select"
-          [(ngModel)]="filterObj.orgId"
-          (change)="setOrgDetails()"
-        >
-          <option selected disabled value="">Select Organization</option>
-          <option *ngFor="let option of orglist" [value]="option._id">
-            {{ option.organization_name }}
-          </option>
-        </select>
-      </div>
+<div class="admin-header">
+  <div>
+    <h4 class="m-0 fw-semibold">
+      {{ editMode ? "Update Checklist" : "Submit Checklist" }}
+    </h4>
+  </div>
+</div>
 
-      <div class="col-12 col-md-3">
-        <label for="cafeteria" class="labelText d-block">Cafeteria</label>
-        <select
-          [disabled]="cafeList.length <= 0 || editMode"
-          class="form-select"
-          [(ngModel)]="filterObj.cafeteria_id"
-          (change)="changeCafe()"
-        >
-          <option selected disabled value="">Select Cafeteria</option>
-          <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
-            {{ option.cafeteria_name }}
-          </option>
-        </select>
-      </div>
+<div class="container-fluid submit-checklist-wrapper">
 
-      <div class="col-12 col-md-3">
-        <label for="exampleFormControlInput2" class="labelText d-block"
-          >Search</label
-        >
+  <!-- ORG / CAFETERIA SELECTOR -->
+  <mat-card class="mb-3">
+    <app-common-outlet-cafe-select [config]="headerConfig" (submitted)="filterSubmitted($event)">
+    </app-common-outlet-cafe-select>
+  </mat-card>
 
-      <div class="searchDiv">
-        <i class="bi bi-search"></i>
-        <input
-          type="text"
-          (input)="searchFilter($event)"
-          class="form-control"
-          placeholder="Search"
-          aria-label="Search Filter"
-          aria-describedby="basic-addon2"
-        />
+  <!-- SEARCH + LIST -->
+  <mat-card class="mb-3" *ngIf="allChecklistQuestions.length > 0">
+    <div class="section-header mb-2">
+      <h5 class="section-title">Checklist Questions</h5>
+
+      <mat-form-field appearance="outline" class="search-field input">
+        <input matInput type="text" (input)="searchFilter($event)" placeholder="Search by question..." />
+        <button mat-icon-button matSuffix aria-label="search">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <div class="questions-list">
+      <div *ngFor="let q of filteredChecklistQuestions; trackBy: trackByQuestionId" class="question-row">
+
+        <div class="question-main">
+          <mat-checkbox [(ngModel)]="q.selected" class="question-checkbox">
+          </mat-checkbox>
+
+          <div class="question-text">
+            <div class="labelText">Question</div>
+            <div class="labelData">
+              {{ q.checklistQuestion }}
+            </div>
+          </div>
+
+          <!-- <div class="question-text">
+            <div class="labelText">Type</div>
+            <div class="labelData">
+              {{ q.checklistQuestionType }}
+            </div>
+          </div> -->
+        </div>
+
+        <div class="question-comment">
+          <div class="field-label">Comment (optional)</div>
+          <mat-form-field appearance="outline" class="w-100 input">
+            <input matInput [(ngModel)]="q.comment" placeholder="Add comment" />
+          </mat-form-field>
         </div>
       </div>
     </div>
-    <div
-      class="row cardDesign mb-3"
-      *ngFor="let question of filteredChecklistQuestions"
-    >
-      <div class="col-lg-1">
-        <input
-          type="checkbox"
-          class="form-check-input checkbox"
-          [(ngModel)]="question.selected"
-        />
-      </div>
-      <div class="col-lg-8">
-        {{ question.checklistQuestion }}
-      </div>
 
-      <div class="col-lg-3">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="Enter Comment"
-          [(ngModel)]="question.comment"
-        />
-      </div>
-    </div>
-  </div>
-  <div class="row mt-4">
-    <div class="col-lg-12">
-      <button
-        [disabled]="!filterObj.orgId && !filterObj.cafeteria_id"
-        class="btn btn-primary me-2"
-        (click)="submitChecklist()"
-        *ngIf="!editMode && true || btnPolicy?.addChecklist"
-      >
+    <div class="header-actions mt-3">
+      <button mat-raised-button color="primary" class="me-2" [disabled]="!canSubmit()" (click)="submitChecklist()"
+        *ngIf="!editMode && (true || btnPolicy?.addChecklist)">
         Save
       </button>
-      <button
-        [disabled]="!filterObj.orgId && !filterObj.cafeteria_id"
-        class="btn btn-success me-2"
-        (click)="updateChecklist()"
-        *ngIf="editMode && true || btnPolicy?.editChecklist"
-      >
-        Update
-      </button>
-      <button class="btn btn-danger me-1" (click)="cancelChecklistSubmit()">
-        Cancel
-      </button>
     </div>
+  </mat-card>
+
+  <div class="center mt-4" *ngIf="allChecklistQuestions && allChecklistQuestions.length === 0">
+    No checklist questions found. Please configure questions first.
   </div>
 </div>

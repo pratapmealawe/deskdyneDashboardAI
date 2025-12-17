@@ -8,7 +8,8 @@ import { LocalStorageService } from 'src/service/local-storage.service';
   styleUrls: ['./org-dashboard.component.scss'],
 })
 export class OrgDashboardComponent implements OnInit, OnChanges {
-  @Input() adminOrg: any
+  @Input() adminOrg: any;
+  @Input() isOrgSelected: boolean = false;
   orgAdmin: any;
 
   constructor(

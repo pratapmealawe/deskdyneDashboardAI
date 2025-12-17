@@ -1,15 +1,48 @@
-.selectStyle{
-    border: 1px solid #dee2e6;
-    border-radius: 6px;
-    width:100%;
-    height: 37.5px;
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.cardDesign {
+  @include mixin.card-design(color.$primary-offset-color1);
 }
-.selectParent{
-    display:flex;
-    flex-direction: row;
-    width:100%;
-    .selectStyle{
-        padding:5px;
-        width:50%;
-    }
+
+.input-group {
+  width: 17%;
+}
+
+.search-icon {
+  margin-top: -5px;
+}
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
+}
+
+.selectStyle {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  width: 100%;
+  height: 37.5px;
+}
+
+.selectParent {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+
+  .selectStyle {
+    padding: 5px;
+    width: 50%;
+  }
+}
+
+.cardDesign {
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 10px;
+  transition: border-color 0.3s, background-color 0.3s;
+}
+
+.cardDesign.selected-card {
+  border-color: #007bff;
+  background-color: #e7f1ff;
 }

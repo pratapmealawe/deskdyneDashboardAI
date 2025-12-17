@@ -18,6 +18,8 @@ import { OrgEmployeeListModule } from 'src/app/org-components/org-employee-list/
 import { OrgBulkOrderHistoryModule } from 'src/app/org-components/org-bulk-order-history/org-bulk-order-history.module';
 import { OrgBillingModule } from 'src/app/org-components/org-billing/org-billing.module';
 import { BillingModule } from 'src/app/billing/billing.module';
+import { CustomerModule } from 'src/app/common-components/customer/customer.module';
+import { AuditReportModule } from 'src/app/org-components/audit-report/audit-report.module';
 
 
 @NgModule({
@@ -40,7 +42,9 @@ import { BillingModule } from 'src/app/billing/billing.module';
     OrgMenuCountersModule,
     OrgEmployeeListModule,
     OrgBulkOrderHistoryModule,
-    BillingModule
+    BillingModule,
+    AuditReportModule,
+    CustomerModule
   ]
 })
 export class DashboardModule { }

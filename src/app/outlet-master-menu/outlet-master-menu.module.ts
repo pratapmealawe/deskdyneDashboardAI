@@ -6,6 +6,7 @@ import { OutletMasterMenuComponent } from './outlet-master-menu.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OutletViewModule } from '../outlet/outlet-view/outlet-view.module';
+import { MaterialModule } from '../material.module';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { OutletViewModule } from '../outlet/outlet-view/outlet-view.module';
     MatChipsModule,
     FormsModule,
     ReactiveFormsModule,
-    OutletViewModule
+    OutletViewModule,
+    MaterialModule
   ]
 })
 export class OutletMasterMenuModule { }

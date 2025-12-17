@@ -6,7 +6,6 @@ import { Injectable } from '@angular/core';
 })
 export class ApiConfigService {
   private baseUrl: string = environment.serverUrl;
-
   apiEndPointObj: any;
   constructor() {
     this.init();
@@ -16,6 +15,8 @@ export class ApiConfigService {
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
+      addQrOutletMenu: p('/api/addQrOutletMenu', 'POST'),
+      createQrMenu: p('/api/createQrMenu', 'POST'),
       addOutletMasterMenu: p('/api/addOutletMasterMenu', 'POST'),
       verifyOTP: p('/authadmin/verifyOTP', 'POST'),
       logout: p('/authadmin/logout', 'GET'),
@@ -68,6 +69,7 @@ export class ApiConfigService {
       getCurrentOutletOrdersList: p('/api/getCurrentOutletOrdersList', 'GET'),
       gettfeedbacklist: p('/api/getFeedbackListOutletById', 'GET'),
       deleteOutletMenu: p('/api/deleteOutletMenu', 'DELETE'),
+      deleteQrMenuItem: p('/api/deleteQrMenuItem', 'DELETE'),
       deleteOutletMasterMenu: p('/api/deleteOutletMasterMenu', 'DELETE'),
       updateComplianceByAdmin: p('/api/updateComplianceByAdmin', 'POST'),
       updateProfileApproval: p('/api/updateProfileApproval', 'POST'),
@@ -107,6 +109,7 @@ export class ApiConfigService {
       updateChecklistReports: p('/api/updateChecklistReports', 'PUT'),
       deletechecklistReport: p('/api/deleteOutletMenu', 'DELETE'),
       getReportHistoryByfilter: p('/api/getReportHistoryByfilter', 'POST'),
+      getChecklistReportByOutletId: p('/api/getChecklistReportByOutletId', 'GET'),
       createIncident: p('/api/createIncident', 'POST'),
       getAllIncidents: p('/api/getAllIncidents', 'GET'),
       getIncidentsByDateAndFilters: p('/api/getIncidentsByDateAndFilters', 'POST'),
@@ -115,8 +118,10 @@ export class ApiConfigService {
       deleteIncident: p('/api/deleteIncident', 'DELETE'),
       getfeedbacklistByfilter: p('/api/getfeedbacklistByfilter', 'POST'),
       updateOutletMenu: p('/api/updateOutletMenu', 'POST'),
+      updateQrMenu: p('/api/updateQrMenu', 'POST'),
       updateOutletMasterMenu: p('/api/updateOutletMasterMenu', 'PUT'),
       changeMenuActivation: p('/api/changeMenuActivation', 'PUT'),
+      changeQrMenuActivation: p('/api/changeQrMenuActivation', 'POST'),
       changeMasterMenuActivation: p('/api/changeMasterMenuActivation', 'PUT'),
       getGuestEmployeelistByOrgId: p('/api/getGuestEmployeelist', 'GET'),
       deleteGuestEmployee: p('/api/deleteGuestEmployee', 'DELETE'),
@@ -139,6 +144,8 @@ export class ApiConfigService {
       updateEmployee: p('/api/updateEmployee', 'POST'),
       getMealAweOutletById: p('/api/getMealAweOutletById', 'GET'),
       updateMealAweOutlet: p('/api/updateMealAweOutlet', 'POST'),
+      getMealAweOutletByCafeteria: p('/api/getMealAweOutletByCafeteria', 'GET'),
+      deleteMealItem: p('/api/deleteMealItem', 'POST'),
       setOutletOpenedStatus: p('/api/outletOpenedStatus', 'PUT'),
       generateInvoice: p('/api/generateInvoice', 'GET'),
       changePackageStatus: p('/api/changePackageStatus', 'POST'),
@@ -178,6 +185,14 @@ export class ApiConfigService {
       updateOutletEmployee: p('/api/updateOutletEmployee', 'POST'),
       getOutletEmployeeByPhoneNo: p('/api/getOutletEmployeeByPhoneNo', 'GET'),
       verifyOutletEmployeeByPhoneNo: p('/api/verifyOutletEmployeeByPhoneNo', 'GET'),
+      qrEmployeeAdd: p('/api/qrEmployeeAdd', 'POST'),
+      qrEmployeeByCafeId: p('/api/qrEmployeeByCafeId', 'GET'),
+      addQrEmployeeList: p('/api/addQrEmployeeList', 'POST'),
+      updateEmployeeQrCode: p('/api/updateEmployeeQrCode', 'POST'),
+      deleteQrEmployee: p('/api/deleteQrEmployee', 'DELETE'),
+      updateQrEmployee: p('/api/updateQrEmployee', 'POST'),
+      getQrEmployeeByPhoneNo: p('/api/getQrEmployeeByPhoneNo', 'GET'),
+      verifyQrEmployeeByPhoneNo: p('/api/verifyQrEmployeeByPhoneNo', 'GET'),
       vcEmployeeAdd: p('/api/vcEmployeeAdd', 'POST'),
       vcEmployeeByOrgId: p('/api/vcEmployeeByOrgId', 'GET'),
       employeeWalletByOrgId: p('/api/employeeWalletByOrgId', 'GET'),
@@ -269,20 +284,29 @@ export class ApiConfigService {
       getTotalVendorLedgerBalanceByFirm: p('/api/getTotalVendorLedgerBalanceByFirm', 'GET'),
       getVendorTransactionByFirmAndTypeAndDate: p('/api/getVendorTransactionByFirmAndTypeAndDate', 'POST'),
       creditOrDebitVendorWallet: p('/api/creditOrDebitVendorWallet', 'POST'),
+      transferWalletListToBankManual: p('/api/transferWalletListToBankManual', 'POST'),
       moveSubsidyToWallet: p('/api/moveSubsidyToWallet', 'POST'),
-      moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
       deleteOutlet: p('/api/deleteOutlet', 'DELETE'),
-      getConsumptionOrderByDateForDashboard: p('/api/getConsumptionOrderByDateForDashboard', 'POST')
-    };
+      getConsumptionOrderByDateForDashboard: p('/api/getConsumptionOrderByDateForDashboard', 'POST'),
+      updateMealItemList: p('/api/updateMealItemList', 'POST'),
+      saveMealAweOutletCategoryConfig: p('/api/saveMealAweOutletCategoryConfig', 'POST'),
+      deleteCategoryConfig: p('/api/deleteCategoryConfig', 'POST'),
+      addCategoryConfig: p('/api/addCategoryConfig', 'POST'),
+      changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'),
+      updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'),
+      createDefaultCategories: p('/api/createDefaultCategories', 'POST'),
+      moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
+      getQrMenuList: p('/api/getQrMenuList', 'POST'),
+      changeQrMealTypeActivation: p('/api/changeQrMealTypeActivation', 'POST'),
+      changeCategoryMenuType: p('/api/changeCategoryMenuType', 'POST'),
+      changePaidType: p('/api/changePaidType', 'POST'),
+      getByOrgIdAndCafeteriaIdAndDate: p('/api/getByOrgIdAndCafeteriaIdAndDate', 'POST'),
+      createAuditReport: p('/api/createAuditReport', 'POST'),
+      updateAuditReport: p('/api/updateAuditReport', 'PUT'),
+      deleteAuditReport: p('/api/deleteAuditReport', 'DELETE'),
+      getImageGroupConfigByName: p('/api/getImageGroupConfigByName', 'GET'),
+      getServerLogs: p('/public/getServerLogs', 'POST'),
+      getAuditLogs: p('/utility/getAuditLogs', 'POST'),
+    }
   }
-  // private generateOneLineApi(): string[] {
-  //   const result: string[] = [];
-  //   Object.entries(this.apiEndPointObj).forEach(([key, value]) => {
-  //     const endpoint = value as { url: string; method: string };
-  //     const path = endpoint.url.replace(this.baseUrl, '');
-  //     result.push(`${key}: p('${path}', '${endpoint.method}')`);
-  //   });
-  //   return result;
-  // }
 }
-

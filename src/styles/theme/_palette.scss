@@ -1,0 +1,40 @@
+@use '@angular/material' as mat;
+
+/* ---------------------------------------------
+   Custom Material Palettes based on your colors
+----------------------------------------------*/
+
+/* Primary (Royal Blue #0E49B5) */
+$primary-colors: (
+  50: #e3ecf8,
+  100: #b9d0f0,
+  200: #8eb4e7,
+  300: #6398de,
+  400: #3f82d7,
+  500: #0E49B5,
+  600: #0c429f,
+  700: #0a3b89,
+  800: #073473,
+  900: #052d5e,
+  contrast: (
+    50: #000,
+    100: #000,
+    200: #000,
+    300: #fff,
+    400: #fff,
+    500: #fff,
+    600: #fff,
+    700: #fff,
+    800: #fff,
+    900: #fff
+  ),
+);
+
+/* Accent (Bright Red #FF3333) */
+$accent-colors: mat.define-palette(mat.$red-palette, 500);
+
+/* Warn (same red) */
+$warn-colors: mat.define-palette(mat.$red-palette, 600);
+
+/* Export palettes */
+$primary-palette: mat.define-palette($primary-colors);

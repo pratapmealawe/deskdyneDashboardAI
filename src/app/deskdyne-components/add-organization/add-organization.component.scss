@@ -1,41 +1,332 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+@import 'src/styles.scss';
+
 .addBtn {
-    font-size: 12px;
+  font-size: 12px;
+}
+
+.uploadedImage {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+
+.uploadInput {
+  display: none;
+}
+
+.uploadIcon {
+  width: 84px;
+  // background: $secondary-color3;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  position: relative;
+  top: -15px;
+  left: 8px;
+  font-size: 13px;
+  padding: 4px 0px;
+  cursor: pointer;
 }
 
 .addressMap {
-    width: 100%;
-    height: 500px;
+  width: 100%;
+  height: 500px;
 }
 
-.padding-bottom{
-    padding-bottom:100px;
+.padding-bottom {
+  padding-bottom: 100px;
 }
 
-.radio{
-    height: 10px;
-    width: 10px;
-    border: 1px solid;
-    border-radius: 50%;
-    &.red{
-        background-color:#e62841;
-    }
+.radio {
+  height: 10px;
+  width: 10px;
+  border: 1px solid;
+  border-radius: 50%;
+
+  &.red {
+    background-color: #e62841;
+  }
 }
 
-.radioCol{
-    display:flex;
-    align-items:center;
+.radioCol {
+  display: flex;
+  align-items: center;
 }
+
 .cardDesign {
-    margin: 2px 0px;
-    padding: 10px;
-    border-radius: 11px;
+  margin: 2px 0px;
+  padding: 10px;
+  border-radius: 11px;
 
-    // box-shadow: 1px 2px 3px;
-    &:nth-child(odd) {
-        background: #a4a4a4;
-    }
+  // box-shadow: 1px 2px 3px;
+  &:nth-child(odd) {
+    background: #a4a4a4;
+  }
 
-    &:nth-child(even) {
-        background: #e0dddd;
-    }
+  &:nth-child(even) {
+    background: #e0dddd;
+  }
+}
+
+.cardDesign,
+.list-group {
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
+
+
+.addOutlet {
+  position: absolute;
+  right: 5px;
+  top: 100px;
+}
+
+.labelText {
+  font-size: 13px;
+}
+
+.uploadedImage {
+  width: 100px;
+  height: 100px;
+  cursor: pointer;
+}
+
+.uploadInput {
+  display: none;
+}
+
+.uploadIcon {
+  width: 84px;
+  background: $secondary-color3;
+  border-radius: 5px;
+  text-align: center;
+  color: white;
+  position: relative;
+  top: -15px;
+  left: 8px;
+  font-size: 13px;
+  padding: 4px 0px;
+  cursor: pointer;
+}
+
+.mainCheckDiv {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 16px 20px;
+  height: fit-content;
+  width: fit-content;
+
+  label {
+    margin: 0;
+  }
+}
+
+
+.heading {
+  font-size: clamp(20px, 2vw, 1rem) !important;
+  display: flex;
+  align-items: center;
+}
+
+.list-grou-item {
+  border: none !important;
+}
+
+mat-icon {
+  cursor: pointer !important;
+}
+
+.main {
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
+.fill-available-width {
+  width: -webkit-fill-available;
+  width: fill-available;
+  /* for compatibility */
+  width: stretch;
+  /* fallback for some browsers */
+}
+
+.cafeteria-container {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.cafeteria-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cafeteria-card {
+  display: flex;
+  gap: 5rem;
+  align-items: center;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.sub-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.full {
+  width: 100%;
+}
+
+.cafeteria-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.full {
+  width: 100%;
+}
+
+.subsidy-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.update-btn {
+  height: 56px;
+  /* matches mat-input height */
+}
+
+/* Mobile: stack input + button */
+@media (max-width: 480px) {
+  .subsidy-row {
+    grid-template-columns: 1fr;
+  }
+
+  .update-btn {
+    width: 100%;
+  }
+}
+
+::ng-deep .mat-mdc-checkbox .mdc-label {
+  margin: 0 !important;
+}
+.modal-container {
+  width: 100%; 
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.modal-header,
+.modal-footer {
+  display: flex;
+  align-items: center;
+}
+
+.modal-body {
+  width: 100%;
+}
+
+.approver-item {
+  width: 100%;
+
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+  width: 100%;
+}
+.approver{
+  text-decoration: underline;
+  color:blue;
+  cursor:pointer;
+}
+.approver-warn{
+  text-decoration: underline;
+  color:red;
+  margin-left:8px;
+    cursor:pointer;
+}
+/* Responsive: stack columns on small screens */
+@media(max-width: 600px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 360px) {
+  .grid-4 {
+  grid-template-columns: repeat(auto-fill, minmax(103px, 1fr));
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cursor-pointer:hover mat-icon {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+.admin-row {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 16px;
+}
+
+.admin-info {
+  display: grid;
+  grid-template-columns: 100px 150px 250px 100px 150px;
+  width: 100%;
+}
+.add-cafe{
+   font-size: clamp(9px, 2vw, 1rem) !important;
+}
+.admin-row .ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%; /* ensures ellipsis works in Bootstrap grid */
+}
+
+.radioCol {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.highlight-panel {
+  background-color: #fff3cd !important;  /* light yellow */
+  transition: background-color 0.4s ease-in-out;
+  border-radius: 6px;
 }

@@ -7,9 +7,15 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  TemplateRef,
 } from '@angular/core';
-import { FormArray, FormBuilder } from '@angular/forms';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { categoryList } from 'src/config/food-category.config';
@@ -26,129 +32,249 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 export class OutletMenuComponent implements OnInit, OnChanges {
   @Input() outletObj: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild('content') content: any;
-  @ViewChild('comboContent') comboContent: any;
-  @ViewChild('masterMenu') masterMenu: any;
-  @ViewChild('selectOutletModal') selectOutletModal: any;
   @Output() dataToParent = new EventEmitter<string>();
+
+  @ViewChild('content') content!: TemplateRef<any>;
+  @ViewChild('masterMenu') masterMenu!: TemplateRef<any>;
+  @ViewChild('selectOutletModal') selectOutletModal!: TemplateRef<any>;
+
+  @ViewChild(MatPaginator) menuPaginator!: MatPaginator;
+
   categoryList = categoryList;
-  modalRef!: NgbModalRef;
-  categorySelected: boolean = false;
-  form: any;
+
+  form!: FormGroup;
+
   selectedCategory: any;
   uploadedImageFile: any;
   imageUrl: any;
   displayImgUrl = environment.imageUrl;
-  showCard: any = false;
-  menuList: any = [];
-  // menuIndex: any = 0;
+  showCard: boolean = false;
+
+  // main outlet menu lists
+  menuList: any[] = [];
+  filteredMenuList: any[] = [];
+  groupedMenuList: any[] = [];
+
+  // outlet copy
   selectedOutlet: any = null;
+  outletMenuList: any[] = [];
+
+  // master menu
+  filteredMasterMenuList: any[] = [];
+  tempList: any[] = [];
+
+  // selections for master/copy
+  selectedMasterItem: any = null;
+  selectedItems: any[] = [];
   selectedMenuItems: any[] = [];
-  outletMenuList: any = []
   transformedMenuItems: any[] = [];
 
   menuId: any = 0;
-  showUpdateBtn: any = false;
-  imageReplaced: any = false;
-  uploadStatus: any = false;
+  showUpdateBtn: boolean = false;
+  imageReplaced: boolean = false;
+  uploadStatus: boolean = false;
   noImages: boolean = false;
   foodItem: any;
   btnPolicy: any;
-  filteredMenuList: any[] = []
-  filteredMasterMenuList: any[] = []
-  outletList: any = [];
-  tempList: any;
-  selectedMasterItem: any = null;
-  selectedItems: any[] = [];
+  outletList: any[] = [];
   menuInfo: any;
   eventInfo: any;
-  tempMenuList: any;
-  searchTerm: string = '';
-  groupedMenuList: any;
+
+  // filters
+  searchTerm: string = '';        // for master menu
+  searchTermMenu: string = '';    // for outlet menu
+  selectedCategoryFilter: string = '';
+
+  // pagination
+  menuPageSize = 10;
+  menuPageIndex = 0;
+
   constructor(
     private fb: FormBuilder,
-    private modalService: NgbModal,
+    private modalService: NgbModal, // used only for ImageCropper
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
-    private sendDataToComponent: SendDataToComponent
+    private sendDataToComponent: SendDataToComponent,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.fetchOutletMasterMenus();
     this.fetchAllOutlets();
-    this.init();
     this.createForm();
+    this.init();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.outletObj = changes['outletObj'].currentValue;
-    this.init();
+    if (changes['outletObj']) {
+      this.outletObj = changes['outletObj'].currentValue;
+      this.init();
+    }
   }
 
+  // INIT OUTLET MENU
   init() {
-    if (this.outletObj.menuList && this.outletObj.menuList.length > 0) {
-      this.filteredMenuList = this.outletObj.menuList.sort((a: any, b: any) => a.precedence - b.precedence)
+    if (this.outletObj?.menuList && this.outletObj.menuList.length > 0) {
+      this.filteredMenuList = this.outletObj.menuList
+        .slice()
+        .sort((a: any, b: any) => a.precedence - b.precedence);
       this.showCard = true;
     } else {
-      this.filteredMenuList = []
+      this.filteredMenuList = [];
+      this.showCard = false;
     }
 
-    this.groupItemsByCategory();
-
+    this.menuPageIndex = 0;
+    this.applyMenuFilters();
   }
 
+  // FETCH ALL OUTLETS
   async fetchAllOutlets() {
-
-    const res = await this.apiMainService.fetchAllOutlets();
-    console.log(res);
-    this.outletList = res;
-
+    try {
+      const res = await this.apiMainService.fetchAllOutlets();
+      this.outletList = res || [];
+    } catch (e) {
+      console.log('error while fetching outlets', e);
+      this.outletList = [];
+    }
   }
 
-  groupItemsByCategory() {
-    const grouped = this.filteredMenuList.reduce((acc, item) => {
+  // OUTLET MENU FILTERS + PAGINATION
+  applyMenuFilters() {
+    if (!this.outletObj?.menuList) {
+      this.filteredMenuList = [];
+      this.groupedMenuList = [];
+      this.showCard = false;
+      return;
+    }
+
+    let temp = this.outletObj.menuList
+      .slice()
+      .sort((a: any, b: any) => a.precedence - b.precedence);
+
+    if (this.selectedCategoryFilter) {
+      temp = temp.filter(
+        (item: any) => item.category === this.selectedCategoryFilter
+      );
+    }
+
+    if (this.searchTermMenu) {
+      const term = this.searchTermMenu.toLowerCase();
+      temp = temp.filter((item: any) =>
+        (item.itemName || '').toLowerCase().includes(term) ||
+        (item.description || '').toLowerCase().includes(term) ||
+        (item.outletName || '').toLowerCase().includes(term)
+      );
+    }
+
+    this.filteredMenuList = temp;
+    this.showCard = this.filteredMenuList.length > 0;
+
+    this.menuPageIndex = 0;
+    this.updateMenuPagination();
+  }
+
+  private buildGroupedMenu(list: any[]) {
+    const grouped = list.reduce((acc: any, item: any) => {
       const category = item.category || 'Uncategorized';
       if (!acc[category]) {
         acc[category] = [];
       }
       acc[category].push(item);
       return acc;
-    }, {} as Record<string, any[]>);
+    }, {});
 
-    this.groupedMenuList = Object.keys(grouped).map(category => ({
+    return Object.keys(grouped).map((category) => ({
       category,
-      items: grouped[category]
+      items: grouped[category],
     }));
+  }
 
-    console.log(this.groupedMenuList);
+  updateMenuPagination() {
+    const start = this.menuPageIndex * this.menuPageSize;
+    const end = start + this.menuPageSize;
+    const slice = this.filteredMenuList.slice(start, end);
+    this.groupedMenuList = this.buildGroupedMenu(slice);
+  }
 
+  onMenuPageChange(event: PageEvent) {
+    this.menuPageIndex = event.pageIndex;
+    this.menuPageSize = event.pageSize;
+    this.updateMenuPagination();
   }
 
   onOutletChange() {
-    console.log('Selected Outlet Object:', this.selectedOutlet.menuList);
-    this.outletMenuList = this.selectedOutlet.menuList;
-
+    if (this.selectedOutlet) {
+      this.outletMenuList = this.selectedOutlet.menuList || [];
+    } else {
+      this.outletMenuList = [];
+    }
   }
 
-
+  // NUMBER VALIDATIONS
   preventInvalidNumber(e: KeyboardEvent) {
     const invalidKeys = ['-', '+', 'e', 'E'];
     if (invalidKeys.includes(e.key)) e.preventDefault();
   }
 
-  preventInvalidPaste(e: ClipboardEvent, type: "integer" | "decimal" = "integer") {
+  preventInvalidPaste(
+    e: ClipboardEvent,
+    type: 'integer' | 'decimal' = 'integer'
+  ) {
     const text = e.clipboardData?.getData('text') ?? '';
-    if (type === "integer") {
+    if (type === 'integer') {
       if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
     } else {
       if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
     }
   }
 
+  // FORM
+  createForm() {
+    this.form = this.fb.group({
+      itemName: ['', [Validators.required, Validators.maxLength(80)]],
+      price: [null, [Validators.required, Validators.min(1)]],
+      subsidy: [0, [Validators.min(0)]],
+      category: ['', Validators.required],
+      mealTimingInfo: [[], Validators.required],
+      itemType: ['Veg', Validators.required],
+      precedence: [0, [Validators.min(0)]],
+      isActive: [false],
+      description: ['', [Validators.maxLength(200)]],
+      doNotChangeInFuture: [false],
+      energyValue: [10],
+      nutritionList: this.fb.array([
+        this.fb.group({
+          nutritionName: [''],
+          nutritionValue: [''],
+          nutritionUnit: [''],
+        }),
+      ]),
+    });
+  }
+
+
+  get nutrition_Lists(): FormArray {
+    return this.form.get('nutritionList') as FormArray;
+  }
+
+  addNutritionLists() {
+    this.nutrition_Lists.push(
+      this.fb.group({
+        nutritionName: [''],
+        nutritionValue: [''],
+        nutritionUnit: [''],
+      })
+    );
+  }
+
+  removenNutritionLists(index: number) {
+    this.nutrition_Lists.removeAt(index);
+  }
+
   patchFormValue(item: any) {
-    console.log(item, "item");
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
@@ -162,138 +288,81 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       isActive: item.isActive,
       doNotChangeInFuture: item.doNotChangeInFuture,
       description: item.description,
-      itemContains: item.itemContains,
       energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
-      nutritionList: item.nutritionInfo ? [...item.nutritionInfo.nutritionList] : []
+      nutritionList: item.nutritionInfo
+        ? [...item.nutritionInfo.nutritionList]
+        : [],
     });
+
     if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
       this.nutrition_Lists.clear();
-      item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
+      item.nutritionInfo.nutritionList.forEach((nutrition: any) => {
         this.nutrition_Lists.push(this.fb.group(nutrition));
       });
     }
   }
 
-  createForm() {
-    this.form = this.fb.group({
-      itemName: [''],
-      price: [''],
-      subsidy: [0],
-      category: [''],
-      subCategory: [''],
-      mealTimingInfo: [[]],
-      itemType: ['Veg'],
-      precedence: [0],
-      isActive: [false],
-      description: [''],
-      doNotChangeInFuture: [false],
-      itemContains: [[]],
-      energyValue: [10],
-      nutritionList: this.fb.array([
-        this.fb.group({
-          nutritionName: [''],
-          nutritionValue: [''],
-          nutritionUnit: ['']
-        })
-      ])
-
-    });
-  }
-
-
-  get nutrition_Lists(): FormArray {
-    return this.form.get('nutritionList') as FormArray;
-  }
-
-  addNutritionLists() {
-    this.nutrition_Lists.push(this.fb.group({
-      nutritionName: [''],
-      nutritionValue: [''],
-      nutritionUnit: ['']
-    }));
-  }
-
-  removenNutritionLists(index: number) {
-    this.nutrition_Lists.removeAt(index);
-  }
-
-  setCategory(event: any) {
-    this.selectedCategory = event.target.value;
-    this.categorySelected = true;
-  }
-
-  onItemSelected(item: any) {
-    this.selectedMasterItem = item;
-    console.log('Selected Master Menu Item:', item);
-  }
-
-  applyFilter() {
-    let tempList = [...this.tempList];
+  // MASTER MENU FILTER
+  applyMasterFilter() {
+    let tempList = [...(this.tempList || [])];
 
     if (this.selectedCategory) {
       tempList = tempList.filter(
-        (data) => data.category === this.selectedCategory
+        (data: any) => data.category === this.selectedCategory
       );
     }
 
     if (this.searchTerm) {
-      tempList = tempList.filter(
-        (data) =>
-          (data.itemName?.toLowerCase() || '').includes(this.searchTerm.toLowerCase())
+      const term = this.searchTerm.toLowerCase();
+      tempList = tempList.filter((data: any) =>
+        (data.itemName?.toLowerCase() || '').includes(term)
       );
     }
 
     this.filteredMasterMenuList = tempList;
   }
 
-
   async fetchOutletMasterMenus() {
     try {
       const res = await this.apiMainService.getAllOutletMasterMenus();
-      console.log(res);
       if (res) {
         this.filteredMasterMenuList = res;
         this.tempList = this.filteredMasterMenuList;
-        console.log(this.filteredMasterMenuList);
-
       }
-    }
-    catch (e) {
-      console.log('error while fetching outlet master menus')
+    } catch (e) {
+      console.log('error while fetching outlet master menus', e);
+      this.filteredMasterMenuList = [];
+      this.tempList = [];
     }
   }
 
+  // IMAGE HANDLING (ImageCropper via NgbModal)
   handleFileInput($event: any) {
     if ($event && $event.target && $event.target.files) {
       const file: File = $event.target.files[0];
       if (file) {
-        const fileName = file.name;
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef: NgbModalRef = this.modalService.open(
-              ImageCropperComponent,
-              {
-                ariaLabelledBy: 'modal-basic-title',
-                size: 'xl',
-                backdrop: 'static',
-                centered: true,
-              }
-            );
+            const modalRef = this.modalService.open(ImageCropperComponent, {
+              ariaLabelledBy: 'modal-basic-title',
+              size: 'xl',
+              backdrop: 'static',
+              centered: true,
+            });
             modalRef.result.then(
               (result: any) => {
                 if (result && result.croppedImages) {
                   this.uploadedImageFile = result.croppedImages.file;
                   this.imageUrl = result.croppedImages.resizeDataUrl;
-                  // console.log(imageUrl);
                   this.uploadStatus = true;
                   this.imageReplaced = true;
                 }
               },
-              (reason: any) => {
-                console.log(`Model Dismissed`);
+              () => {
+                console.log('Image cropper dismissed');
               }
             );
             modalRef.componentInstance.uploadedImageUrl = imageUrl;
@@ -301,17 +370,17 @@ export class OutletMenuComponent implements OnInit, OnChanges {
             modalRef.componentInstance.imageHeight = 150;
             modalRef.componentInstance.aspectRatio = 1;
           } catch (e) {
-            console.log('error while changes kitchen opened status ', e);
+            console.log('error while opening image cropper', e);
           }
         };
       }
     }
   }
 
+  // EDIT / ADD
   async edit(item: any, index: any) {
     this.imageUrl = item.imageUrl;
     this.showUpdateBtn = true;
-    // this.menuIndex = index;
     this.menuId = item._id;
 
     this.patchFormValue(item);
@@ -319,56 +388,61 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   async addMasterMenu() {
-
-    if (this.modalRef) {
-      this.modalRef.close();
-    }
-
     this.imageReplaced = true;
     this.uploadStatus = false;
     this.imageUrl = this.selectedMasterItem?.imageUrl;
+
     try {
-      const res = await this.apiMainService.addOutletList(this.outletObj._id, { outletList: this.selectedItems })
+      const res = await this.apiMainService.addOutletList(
+        this.outletObj._id,
+        { outletList: this.selectedItems }
+      );
       this.selectedItems = [];
       this.dataToParent.emit(res);
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
-
     }
-    this.form.patchValue(this.selectedMasterItem);
+
+    if (this.selectedMasterItem) {
+      this.form.patchValue(this.selectedMasterItem);
+    }
   }
 
   async addMenuItem() {
-
-    if (this.modalRef) {
-      this.modalRef.close();
-    }
-
     this.imageReplaced = true;
     this.uploadStatus = false;
     this.imageUrl = this.selectedMasterItem?.imageUrl;
+
     try {
-      const res = await this.apiMainService.addOutletList(this.outletObj._id, { outletList: this.transformedMenuItems })
+      const res = await this.apiMainService.addOutletList(
+        this.outletObj._id,
+        { outletList: this.transformedMenuItems }
+      );
       this.transformedMenuItems = [];
       this.selectedMenuItems = [];
       this.dataToParent.emit(res);
-    }
-    catch (err) {
+    } catch (err) {
       console.log(err);
     }
-    this.form.patchValue(this.selectedMasterItem);
+
+    if (this.selectedMasterItem) {
+      this.form.patchValue(this.selectedMasterItem);
+    }
   }
 
   async updateMenu(index: any) {
-    if ((typeof this.form.value.subsidy === "undefined") ||
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
+    if (
+      typeof this.form.value.subsidy === 'undefined' ||
       this.form.value.subsidy === null ||
       this.form.value.subsidy === ''
     ) {
       this.form.patchValue({ subsidy: 0 });
     }
     try {
-      // const menuId = this.outletObj.menuList[index]._id;
       const outletId = this.outletObj._id;
       const formData = new FormData();
       if (this.imageUrl) {
@@ -379,29 +453,36 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       formData.append('isActive', this.form.value.isActive);
       formData.append('itemName', this.form.value.itemName);
       formData.append('price', this.form.value.price);
-      formData.append('quantityAvailable', this.form.value.quantityAvailable);
-      formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
+      formData.append(
+        'quantityAvailable',
+        this.form.value.quantityAvailable
+      );
+      formData.append(
+        'setDailyQuantity',
+        this.form.value.setDailyQuantity
+      );
       formData.append('subsidy', this.form.value.subsidy);
-      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture);
-      formData.append('itemContains', JSON.stringify(this.form.value.itemContains));
+      formData.append(
+        'doNotChangeInFuture',
+        this.form.value.doNotChangeInFuture
+      );
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
       formData.append('itemType', this.form.value.itemType);
       formData.append('precedence', this.form.value.precedence);
 
-      let mealTypes = this.form.value.mealTimingInfo;
-
+      const mealTypes = this.form.value.mealTimingInfo;
       const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
         mealTypes.includes(meal.mealType)
       );
-
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+
       const nutritionInfo = {
         energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList
+        nutritionList: this.form.value.nutritionList,
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
-      console.log(this.form.value, "formData");
+
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
         this.menuId,
@@ -410,7 +491,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
       if (res && res._id) {
         this.outletObj = res;
-        this.init()
+        this.init();
       }
 
       this.resetValues();
@@ -421,9 +502,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   resetValues() {
     this.form.reset();
-    // this.menuIndex = 0;
     this.menuId = '';
-
     this.imageUrl = '';
     this.uploadedImageFile = '';
     this.showUpdateBtn = false;
@@ -434,8 +513,10 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   async submit() {
-    console.log(this.form.value);
-
+    if (this.form.invalid) {
+      this.form.markAllAsTouched();
+      return;
+    }
     try {
       const formData: any = new FormData();
       if (this.imageUrl) {
@@ -443,29 +524,51 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       }
       formData.append('imageUrl', this.imageUrl);
       formData.append('description', this.form.value.description);
-      formData.append('isActive', this.form.value.isActive ? this.form.value.isActive : false);
+      formData.append(
+        'isActive',
+        this.form.value.isActive ? this.form.value.isActive : false
+      );
       formData.append('itemName', this.form.value.itemName);
       formData.append('price', this.form.value.price);
-      formData.append('quantityAvailable', this.form.value.quantityAvailable ? this.form.value.quantityAvailable : 0);
-      formData.append('setDailyQuantity', this.form.value.setDailyQuantity ? this.form.value.setDailyQuantity : 0);
-      formData.append('subsidy', this.form.value.subsidy ? this.form.value.subsidy : 0);
-      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture ? this.form.value.doNotChangeInFuture : false);
-      formData.append('itemContains', JSON.stringify(this.form.value.itemContains));
+      formData.append(
+        'quantityAvailable',
+        this.form.value.quantityAvailable
+          ? this.form.value.quantityAvailable
+          : 0
+      );
+      formData.append(
+        'setDailyQuantity',
+        this.form.value.setDailyQuantity
+          ? this.form.value.setDailyQuantity
+          : 0
+      );
+      formData.append(
+        'subsidy',
+        this.form.value.subsidy ? this.form.value.subsidy : 0
+      );
+      formData.append(
+        'doNotChangeInFuture',
+        this.form.value.doNotChangeInFuture
+          ? this.form.value.doNotChangeInFuture
+          : false
+      );
       formData.append('category', this.form.value.category);
       formData.append('subCategory', this.form.value.subCategory);
       formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence ? this.form.value.precedence : 0);
+      formData.append(
+        'precedence',
+        this.form.value.precedence ? this.form.value.precedence : 0
+      );
 
-      let mealTypes = this.form.value.mealTimingInfo;
-
+      const mealTypes = this.form.value.mealTimingInfo;
       const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
         mealTypes?.includes(meal.mealType)
       );
-
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+
       const nutritionInfo = {
         energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList
+        nutritionList: this.form.value.nutritionList,
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
@@ -477,7 +580,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       if (res && res._id) {
         this.outletObj = res;
         this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-        this.init()
+        this.init();
       }
       this.resetValues();
     } catch (error) {
@@ -485,107 +588,28 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     }
   }
 
-  objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        let keyName = parentKey ? `${parentKey}[${key}]` : key;
-        if (
-          typeof obj[key] === 'object' &&
-          obj[key] !== null &&
-          !Array.isArray(obj[key])
-        ) {
-          this.objectToFormData(obj[key], formData, keyName);
-        } else if (Array.isArray(obj[key])) {
-          obj[key].forEach((item: any, index: any) => {
-            if (typeof item === 'object' && item !== null) {
-              this.objectToFormData(item, formData, `${keyName}[${index}]`);
-            } else {
-              formData.append(`${keyName}[${index}]`, item);
-            }
-          });
-        } else {
-          formData.append(keyName, obj[key]);
-        }
-      }
-    }
-    return formData;
+  get f() {
+    return this.form.controls;
   }
 
-  open() {
-    this.selectedMasterItem = null;
-    this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
-      .result.then(
-        (result) => {
-          if (result === 'add') {
-            this.submit();
-          } else if (result === 'update') {
-            this.updateMenu(this.menuId);
-          }
-        },
-        (reason) => {
-          console.log(`Model Dismissed`);
-        }
-      );
+  // SELECTION HELPERS
+  onItemSelected(item: any) {
+    this.selectedMasterItem = item;
+    console.log('Selected Master Menu Item:', item);
   }
 
-  openMenu() {
-    this.modalRef = this.modalService.open(this.masterMenu, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl'
-    });
-
-    this.modalRef.result.then(
-      (result) => {
-      },
-      (reason) => {
-        this.selectedItems = [];
-        this.selectedMenuItems = [];
-        console.log('Modal dismissed with reason:', reason);
-      }
-    );
-  }
-
-  openOutlet() {
-
-    this.modalRef = this.modalService.open(this.selectOutletModal, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl'
-    });
-
-    this.modalRef.result.then(
-      (result) => {
-        this.transformedMenuItems = []
-      },
-      (reason) => {
-        this.transformedMenuItems = [];
-        this.selectedMenuItems = [];
-        console.log('Modal dismissed with reason:', reason);
-      }
-    );
-  }
-
-  showPopup(item: any, i: any) {
-    this.foodItem = item;
-    // this.menuIndex = i;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${item.itemName}`,
-      this.deleteFoodItem,
-      this
-    );
-  }
-
-
-  onItemToggle(item: any, event: Event) {
+  onItemToggle(item: any, event: any) {
     const checkbox = event.target as HTMLInputElement;
     if (checkbox.checked) {
       this.selectedItems.push(item);
     } else {
-      this.selectedItems = this.selectedItems.filter(i => i._id !== item._id);
+      this.selectedItems = this.selectedItems.filter(
+        (i) => i._id !== item._id
+      );
     }
-    console.log(this.selectedItems);
   }
 
-  onMenuItemToggle(item: any, event: Event) {
+  onMenuItemToggle(item: any, event: any) {
     const checkbox = event.target as HTMLInputElement;
 
     if (checkbox.checked) {
@@ -596,32 +620,36 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       );
     }
 
-    this.transformedMenuItems = this.selectedMenuItems.map(item => {
+    this.transformedMenuItems = this.selectedMenuItems.map((each: any) => {
       return {
-        ...item,
-        mealTimingInfo: item.mealTimingInfo.map((info: any) => info.mealType)
+        ...each,
+        mealTimingInfo: each.mealTimingInfo.map(
+          (info: any) => info.mealType
+        ),
       };
     });
   }
 
   isSelected(item: any): boolean {
-    return this.selectedItems.find(i => i._id === item._id) !== undefined;
+    return this.selectedItems.find((i) => i._id === item._id) !== undefined;
   }
 
   isMenuSelected(item: any): boolean {
-    return this.transformedMenuItems.find(i => i._id === item._id) !== undefined;
+    return (
+      this.transformedMenuItems.find((i) => i._id === item._id) !==
+      undefined
+    );
   }
 
+  // DELETE / ACTIVATE / DEACTIVATE
   async deleteFoodItem() {
     const res: any = await this.apiMainService.deleteOutletMenu(
       this.outletObj._id,
       this.foodItem._id
     );
     if (res && res._id) {
-      console.log(res);
       this.outletObj = res;
       this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-
       this.showCard = true;
       this.init();
     }
@@ -630,18 +658,28 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   async changeMenuActivation() {
-    let menu = this.menuInfo;
-    let event = this.eventInfo;
+    const menu = this.menuInfo;
+    const event = this.eventInfo;
+
     menu.isActive = event.target.checked;
 
     const menuObj = {
       isActive: event.target.checked,
     };
 
-    let outletmenu = await this.apiMainService.changeMenuActivation(
+    await this.apiMainService.changeMenuActivation(
       this.outletObj._id,
       menu._id,
       menuObj
+    );
+  }
+
+  showPopup(item: any, i: any) {
+    this.foodItem = item;
+    this.confirmationModalService.modal(
+      `Are you sure, you want to delete ${item.itemName}`,
+      this.deleteFoodItem,
+      this
     );
   }
 
@@ -649,96 +687,105 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.menuInfo = menu;
     this.eventInfo = event;
     this.confirmationModalService.modal(
-      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
+      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'
+      } ${menu.itemName} Item`,
       this.changeMenuActivation,
       this
     );
   }
 
-  defineDescription() {
-    this.modalService
-      .open(this.comboContent, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'xl',
-      })
-      .result.then((result) => { });
+  // MAT DIALOG OPENERS
+  open() {
+    this.selectedMasterItem = null;
+
+    const dialogRef = this.dialog.open(this.content, {
+      width: '950px',
+      maxWidth: '95vw',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'add') {
+        this.submit();
+      } else if (result === 'update') {
+        this.updateMenu(this.menuId);
+      }
+    });
   }
 
-  comboout(event: any) {
-    if (event) {
-      this.createComboDescription(event);
-    }
+  openMenu() {
+    const dialogRef = this.dialog.open(this.masterMenu, {
+      width: '900px',
+      maxWidth: '95vw',
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'addMasterMenu') {
+        this.addMasterMenu();
+      }
+      this.selectedItems = [];
+      this.selectedMenuItems = [];
+    });
   }
 
-  createComboDescription(comboItem: any) {
-    let description = '';
-    let comboType = '';
-    let descriptionArr = [];
-    let itemContains = [];
-    if (comboItem.vegCurry.selected) {
-      comboItem.vegCurry.curryList.forEach((curry: any) => {
-        descriptionArr.push(`${curry.size} ${curry.curryName}`);
-        itemContains.push({
-          name: curry.curryName,
-          quantity: curry.size,
-          contentType: 'VegCurry',
-        });
-      });
+  openOutlet() {
+    const dialogRef = this.dialog.open(this.selectOutletModal, {
+      width: '900px',
+      maxWidth: '95vw',
+      disableClose: false,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === 'addMenuItem') {
+        this.addMenuItem();
+      }
+      this.transformedMenuItems = [];
+      this.selectedMenuItems = [];
+    });
+  }
+
+  async excelExport() {
+    if (!this.filteredMenuList || this.filteredMenuList.length === 0) {
+      return;
     }
-    if (comboItem.nonVegCurry.selected) {
-      comboItem.nonVegCurry.curryList.forEach((curry: any) => {
-        descriptionArr.push(`${curry.size} ${curry.curryName}`);
-        itemContains.push({
-          name: curry.curryName,
-          quantity: curry.size,
-          contentType: 'NonVegCurry',
-        });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Outlet Menu');
+
+    worksheet.columns = [
+      { header: 'Item Name', key: 'itemName', width: 25 },
+      { header: 'Description', key: 'description', width: 30 },
+      { header: 'Category', key: 'category', width: 15 },
+      { header: 'Type', key: 'itemType', width: 10 },
+      { header: 'Price (₹)', key: 'price', width: 15 },
+      { header: 'Subsidy (₹)', key: 'subsidy', width: 15 }
+    ];
+
+    // Header style
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+    this.filteredMenuList.forEach((item) => {
+      worksheet.addRow({
+        itemName: item.itemName,
+        description: item.description || '',
+        category: item.category,
+        itemType: item.itemType,
+        price: item.price || 0,
+        subsidy: item.subsidy || 0
       });
-    }
-    if (comboItem.rice.selected) {
-      descriptionArr.push(comboItem.rice.size + ' Rice');
-      itemContains.push({
-        name: 'Rice',
-        quantity: comboItem.rice.size,
-        contentType: 'Rice',
-      });
-    }
-    if (comboItem.chapati.selected) {
-      descriptionArr.push(
-        comboItem.chapati.count + ` ${comboItem.chapati.chapatiName}`
-      );
-      itemContains.push({
-        name: comboItem.chapati.chapatiName,
-        quantity: comboItem.chapati.count,
-        contentType: 'Chapati',
-      });
-    }
-    if (comboItem.dal.selected) {
-      descriptionArr.push(comboItem.dal.size + ' Dal');
-      itemContains.push({
-        name: 'Dal',
-        quantity: comboItem.dal.size,
-        contentType: 'Dal',
-      });
-    }
-    if (comboItem.sweet.selected) {
-      descriptionArr.push('Sweet');
-      itemContains.push({
-        name: 'Sweet',
-        quantity: undefined,
-        contentType: 'Sweet',
-      });
-    }
-    if (comboItem.salad.selected) {
-      descriptionArr.push('Salad');
-      itemContains.push({
-        name: 'Salad',
-        quantity: undefined,
-        contentType: 'Salad',
-      });
-    }
-    const finalDescription = descriptionArr.join(', ');
-    this.form.patchValue({ description: finalDescription });
-    this.form.patchValue({ itemContains: itemContains });
+    });
+
+    const fileName =
+      `outlet_menu_${this.outletObj?.outletName || 'outlet'}` +
+      `_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, fileName);
   }
 }

@@ -1,171 +1,152 @@
-import { Component, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, ElementRef, HostListener, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-server-logs',
   templateUrl: './server-logs.component.html',
   styleUrls: ['./server-logs.component.scss']
 })
-export class ServerLogsComponent {
-  @ViewChild("contentPayload") contentPayload: any;
-  selectedStatus:string = '';
-  selectedDBStatus:string = '';
-  serverLogsList = [];
-  access:any;
-  startDate: any;
-  endDate: any;
-  hours: any;
-  logsList:any=[];
-  logPayload:any = '';
+export class ServerLogsComponent implements OnInit {
+  @ViewChild('listing', { static: false }) listing!: ElementRef<HTMLDivElement>;
+  @ViewChild('contentPayload') contentPayload!: TemplateRef<any>;
+  selectedStatus = 'AuditLogs';
+  selectedDBStatus = '100';
+  logsList: any[] = [];
+  logPayload: any;
+  startDate = '';
+  endDate = '';
+  access = { serverLogs: true, serverErrorLogs: true };
+  isLoading = false;
+  hasMoreData = true;
+  searchText = '';
+  filteredLogsList: any[] = [];
+  maxDate: string = new Date().toISOString().split('T')[0];
 
-  constructor(private apiMainService: ApiMainService,public router: Router, private policyService:PolicyService,
+  constructor(
+    private apiMainService: ApiMainService,
     private modalService: NgbModal
-  ) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+  ) { }
+
+  ngOnInit() {
+    this.loadLogs('AuditLogs', '100');
   }
-  async getServerLogs(selectedStatus:string,fileName:string){
-      try{
-        this.serverLogsList=[];
-        this.logsList = [];
-        this.selectedStatus = selectedStatus;
-        this.selectedDBStatus = '';
-        const serverLogs = await this.apiMainService.getServerLogs(fileName);
-        if(serverLogs){
-          this.serverLogsList = serverLogs.split('\n').reverse();
-        }
-      }catch(error){
-          console.log('getServerLogs error ',error)
+
+  onSearchChange() {
+    this.logsList = []; // Clear list for new search
+    // Trigger reload with current status
+    if (this.startDate && this.endDate) {
+      this.loadLogs(this.selectedStatus as any, '', { start: this.startDate, end: this.endDate });
+    } else {
+      this.loadLogs(this.selectedStatus as any, this.selectedDBStatus);
+    }
+  }
+
+  clearSearch() {
+    this.searchText = '';
+    this.onSearchChange();
+  }
+
+  // Restoring filterLogs for compatibility, but it just syncs lists now since filtering is server-side
+  filterLogs() {
+    this.filteredLogsList = [...this.logsList];
+  }
+
+  loadLogs(type: 'AuditLogs' | 'DBLogs', limitOrHour: string, range?: { start: string, end: string }) {
+    this.selectedStatus = type;
+    this.selectedDBStatus = limitOrHour;
+    this.isLoading = true;
+    let params: any = {};
+    let apiCall: Promise<any>;
+
+    if (range) {
+      // if (!range.start || !range.end) return alert('Please select both start and end dates');
+      params = { from: new Date(range.start).getTime(), to: new Date(range.end).getTime() };
+    } else if (limitOrHour.includes('hr') || limitOrHour.includes('Day')) {
+      const hourMap: any = { '1hr': 1, '2hr': 2, '5hr': 5, '1Day': 24, '2Day': 48 };
+      params = { hour: hourMap[limitOrHour] };
+    } else {
+      params = { limit: parseInt(limitOrHour) };
+    }
+
+    // Always append search text if present
+    if (this.searchText.trim()) {
+      params.searchObj = this.searchText.trim();
+    }
+
+    apiCall = type === 'AuditLogs' ? this.apiMainService.getAuditLogs(params) : this.apiMainService.getServerLogs(params);
+    apiCall.then((response: any) => {
+      // If response is array, user previously appended. 
+      // Ideally we should reset if it's a fresh load, but loadMore relies on append?
+      // For now, adhering to user's "append" logic but we cleared logsList in onSearchChange for search events.
+      if (response && Array.isArray(response)) {
+        this.logsList = [...this.logsList, ...response];
       }
-  }
-  getMLDBLogs(){
-    this.serverLogsList=[];
-    this.logsList = [];
-    this.selectedDBStatus = '';
-    this.selectedStatus = 'DBLogs'
-  }
-
-  
-  getAuditLogs(){
-    this.serverLogsList=[];
-    this.logsList = [];
-    this.selectedDBStatus = '';
-    this.selectedStatus = 'AuditLogs'
-  }
-
-  async getLineBasedLogs(selectedLines: any) {
-    this.selectedDBStatus = selectedLines;
-    this.logsList.length=0;
-    try {
-        const selectedLine = parseInt(selectedLines);
-        this.logsList= await this.apiMainService.getLineBasedLogs(selectedLine);
-       
-       this.logsList.forEach((element:any) => {
-        element.timestamp = new Date(element.timestamp);
-        element.logObj = JSON.stringify(element.logObj);
-       });
-        console.log('loglist object',this.logsList);
-    } catch (error) {
-        console.log(error)
-    }
-}
-async getTimeBasedLogs(selectedTime:string){
-  try{
-   this.logsList.length=0;
-    this.selectedDBStatus = selectedTime;
-    if(selectedTime=='1Day'){
-      this.hours=24;
-    }else if(selectedTime=='2Day'){
-        this.hours=48;
-    }else{
-        this.hours = parseInt(selectedTime.split('')[0]);
-    }
-
-    this.logsList = await this.apiMainService.getTimeBasedLogs(this.hours); 
-    this.logsList.forEach((element:any) => {
-      element.timestamp = new Date(element.timestamp);
+      this.filterLogs();
+      this.isLoading = false;
+    }).catch((error: any) => {
+      console.error(`Error fetching ${type === 'AuditLogs' ? 'audit' : 'server'} logs:`, error);
+      this.isLoading = false;
     });
-    console.log('loglist object',this.logsList);
-  }catch(error){
-      console.log('getServerLogs error ',error)
   }
-}
-async getDayRangeBasedLogs(startDate: any, endDate: any) {
-    let sDate = new Date(startDate);
-    let eDate = new Date(endDate)
-    try {
-        this.logsList.length = 0 ;
-        this.logsList = await this.apiMainService.getDayRangeBasedLogs(startDate, endDate);
-        this.logsList.forEach((element:any) => {
-          element.timestamp = new Date(element.timestamp);
-        });
-        console.log('loglist object',this.logsList);
-    } catch (error) {
-        console.log(error)
+
+  getAuditLogs() {
+    this.searchText = '';
+    this.loadLogs('AuditLogs', '100');
+  }
+
+  getMLDBLogs() {
+    this.searchText = '';
+    this.loadLogs('DBLogs', '100');
+  }
+
+  getLineBasedAuditLogs(limit: string) {
+    this.loadLogs('AuditLogs', limit);
+  }
+
+  getTimeBasedAuditLogs(hour: string) {
+    this.loadLogs('AuditLogs', hour);
+  }
+
+  getDayRangeBasedAuditLogs(start: string, end: string) {
+    this.loadLogs('AuditLogs', '', { start, end });
+  }
+
+  getLineBasedLogs(limit: string) {
+    this.loadLogs('DBLogs', limit);
+  }
+
+  getTimeBasedLogs(hour: string) {
+    this.loadLogs('DBLogs', hour);
+  }
+
+  getDayRangeBasedLogs(start: string, end: string) {
+    this.loadLogs('DBLogs', '', { start, end });
+  }
+
+  payloadView(payload: any) {
+    this.logPayload = typeof payload === 'string' ? payload : JSON.stringify(payload, null, 2);
+    this.modalService.open(this.contentPayload, { size: 'lg', scrollable: true });
+  }
+
+  @HostListener('window:scroll')
+  onWindowScroll() {
+    if (!this.listing) return;
+    const element = this.listing.nativeElement;
+    const rect = element.getBoundingClientRect();
+    const scrollable = element.scrollHeight > window.innerHeight;
+    if (scrollable && rect.bottom <= window.innerHeight + 50 && !this.isLoading && this.hasMoreData) {
+      this.loadMore();
     }
-}
-
-async getLineBasedAuditLogs(selectedLines: any) {
-  this.selectedDBStatus = selectedLines;
-  this.logsList.length=0;
-  try {
-      const selectedLine = parseInt(selectedLines);
-      this.logsList= await this.apiMainService.getLineBasedAuditLogs(selectedLine);       
-     this.logsList.forEach((element:any) => {
-      element.timestamp = new Date(element.timestamp);
-     });
-      console.log('loglist object',this.logsList);
-  } catch (error) {
-      console.log(error)
-  }
-}
-async getTimeBasedAuditLogs(selectedTime:string){
-try{
- this.logsList.length=0;
-  this.selectedDBStatus = selectedTime;
-  if(selectedTime=='1Day'){
-    this.hours=24;
-  }else if(selectedTime=='2Day'){
-      this.hours=48;
-  }else{
-      this.hours = parseInt(selectedTime.split('')[0]);
   }
 
-  this.logsList = await this.apiMainService.getTimeBasedAuditLogs(this.hours); 
-  this.logsList.forEach((element:any) => {
-    element.timestamp = new Date(element.timestamp);
-  });
-  console.log('loglist object',this.logsList);
-}catch(error){
-    console.log('getServerLogs error ',error)
-}
-}
-
-async getDayRangeBasedAuditLogs(startDate: any, endDate: any) {
-  let sDate = new Date(startDate);
-  let eDate = new Date(endDate)
-  try {
-      this.logsList.length = 0 ;
-      this.logsList = await this.apiMainService.getDayRangeBasedAuditLogs(startDate, endDate);   
-      this.logsList.forEach((element:any) => {
-        element.timestamp = new Date(element.timestamp);
-      });
-      console.log('loglist object',this.logsList);
-  } catch (error) {
-      console.log(error)
+  loadMore() {
+    if (this.selectedDBStatus && !this.selectedDBStatus.includes('hr') && !this.selectedDBStatus.includes('Day')) {
+      const currentLimit = parseInt(this.selectedDBStatus);
+      if (!isNaN(currentLimit)) {
+        const newLimit = currentLimit + 50;
+        this.loadLogs(this.selectedStatus as any, newLimit.toString());
+      }
+    }
   }
-}
-
-payloadView(paylaod:any){
-  this.logPayload = JSON.stringify(paylaod);
-  const modalRef = this.modalService.open(this.contentPayload, { ariaLabelledBy: 'modal-basic-title', size: 'xl', windowClass: 'menuModel' });
-    modalRef.result.then(() => {  }, () => {});
-}
-
-  goBack(){
-    this.router.navigate(['/home/miscellaneous']);
-  }
-
 }

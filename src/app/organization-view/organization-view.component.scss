@@ -1,0 +1,8 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.custom-tabs {
+  ::ng-deep .mat-mdc-tab.mdc-tab--active {
+    @include mixin.active-mat-tab(#fff, 6px);
+  }
+}

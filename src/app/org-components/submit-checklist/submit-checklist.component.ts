@@ -1,15 +1,21 @@
-import { LocationStrategy } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import {
+  CommonSelectConfig,
+  SubmitPayload
+} from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
-interface filter {
-  orgId: string;
-  cafeteria_id: string;
-  fromDate: Date;
+interface ChecklistQuestion {
+  _id: string;
+  checklistQuestion: string;
+  checklistQuestionType: string;
+  selected: boolean;
+  comment: string;
+  // keep room for backend extras
+  [key: string]: any;
 }
 
 @Component({
@@ -18,224 +24,204 @@ interface filter {
   styleUrls: ['./submit-checklist.component.scss'],
 })
 export class SubmitChecklistComponent implements OnInit {
-  editMode: boolean = false;
-  allChecklistQuestions: any[] = [];
-  filteredChecklistQuestions: any[] = [];
+  editMode = false; // kept for future use / header text toggle
+
+  allChecklistQuestions: ChecklistQuestion[] = [];
+  filteredChecklistQuestions: ChecklistQuestion[] = [];
   reportHistory: any[] = [];
   reportObj: any = {};
+
   adminProfile: any = {};
   btnPolicy: any;
-  orglist: any[] = [];
-  filterObj: filter = {
-    orgId: '',
-    cafeteria_id: '',
-    fromDate: new Date(),
+
+  headerConfig: CommonSelectConfig = {
+    mode: 'outlet',
+    showDateRange: false,
+    disableOrg: true,
+    requireAll: true,
+    defaultOrgId: '',
   };
-  cafeList: any[] = [];
-  stateData: any;
+
+  filterData?: SubmitPayload;
 
   constructor(
     public apiMainService: ApiMainService,
     public localStorageService: LocalStorageService,
     private policyService: PolicyService,
-    private searchService: SearchFilterService,
-    private router: Router,
-    private location: LocationStrategy
-  ) {}
+    private searchService: SearchFilterService
+  ) { }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.clear();
+
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.adminProfile = this.localStorageService.getCacheData('ADMIN_PROFILE');
 
-    this.stateData = this.location.getState();
-
-    this.stateData?._id ? (this.editMode = true) : (this.editMode = false);
-
-    this.getOrgList();
+    // default org from profile
+    this.headerConfig.defaultOrgId = this.adminProfile?.orgDetails?._id || '';
   }
 
-  async getOrgList() {
-    try {
-      let page = 1;
-      let searchObj = { countOnly: false };
-      let data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        searchObj,
-        page
-      );
+  // called from app-common-outlet-cafe-select
+  filterSubmitted(e: SubmitPayload): void {
+    this.filterData = e;
 
-      this.orglist = data.filter((item: any) =>
-        this.adminProfile?.siteExecutiveDetails?.orgDetails.some(
-          (a: any) => a._id === item._id
-        )
-      );
-      // this.filterObj.orgId = this.orglist[0]?._id;
-
-      if (this.editMode) {
-        this.filterObj.orgId = this.stateData.orgDetails._id;
-        this.filterObj.cafeteria_id = this.stateData.cafeDetails.cafeteria_id;
-        this.setOrgDetails();
-      }
+    if (this.filterData?.outlet_id) {
       this.getReportHistoryByfilter();
-    } catch (error) {
-      console.log(error);
+    } else {
+      this.allChecklistQuestions = [];
+      this.filteredChecklistQuestions = [];
+      this.reportHistory = [];
     }
   }
 
-  changeCafe() {
-    this.getReportHistoryByfilter();
+  trackByQuestionId(index: number, item: ChecklistQuestion): string {
+    return item._id;
   }
 
-  setOrgDetails() {
-    this.cafeList = [];
-    let orgDetails = this.orglist.find((org: any) => {
-      return org._id == this.filterObj?.orgId;
-    });
+  // Enforce outlet + at least one selected/commented
+  canSubmit(): boolean {
+    if (!this.filterData || !this.filterData.outlet_id) {
+      return false;
+    }
 
-    this.cafeList = orgDetails?.cafeteriaList.filter((item: any) =>
-      this.adminProfile?.siteExecutiveDetails?.cafeDetails.some(
-        (a: any) => a.cafeteria_id === item.cafeteria_id
-      )
+    if (!this.allChecklistQuestions || this.allChecklistQuestions.length === 0) {
+      return false;
+    }
+
+    const hasAnySelection = this.allChecklistQuestions.some(
+      q => q.selected || (q.comment && q.comment.trim())
     );
-
-    this.filterObj.cafeteria_id = '';
+    return hasAnySelection;
   }
 
-  async getAllChecklistQuestions() {
+  private async getAllChecklistQuestions(): Promise<void> {
     this.allChecklistQuestions = [];
     this.filteredChecklistQuestions = [];
+
     try {
-      const checklistQuestions: any[] =
-        await this.apiMainService.getAllChecklistQuestions();
+      const checklistQuestions: any[] = await this.apiMainService.getAllChecklistQuestions();
+
       if (checklistQuestions && checklistQuestions.length > 0) {
-        this.allChecklistQuestions = checklistQuestions.map((q: any) => {
-          return {
-            ...q,
-            selected: false,
-            comment: '',
-          };
-        });
-        if (this.reportHistory.length > 0) {
-          this.allChecklistQuestions = this.mergeChecklistData(
+        let base: ChecklistQuestion[] = checklistQuestions.map((q: any) => ({
+          ...q,
+          selected: false,
+          comment: '',
+        }));
+
+        // If there is history, merge the last submitted state
+        if (
+          this.reportHistory.length > 0 &&
+          this.reportHistory[0].checklist_questions
+        ) {
+          base = this.mergeChecklistData(
             this.reportHistory[0].checklist_questions,
-            this.allChecklistQuestions
+            base
           );
         }
-        this.filteredChecklistQuestions = this.allChecklistQuestions;
-      } else {
-        this.allChecklistQuestions = [];
+
+        console.log("base", base);
+
+        this.allChecklistQuestions = base;
+        this.filteredChecklistQuestions = [...base];
       }
     } catch (e) {
-      console.log('Error while fetching reports ', e);
+      console.log('Error while fetching checklist questions ', e);
     }
   }
 
-  mergeChecklistData(arr1: any[], arr2: any[]) {
-    // Convert first array to a map for quick lookup
-    const map = new Map(arr1.map((item) => [item._id, item]));
-
-    // Update the second array with values from the first array
-    return arr2.map((item) => {
+  private mergeChecklistData(
+    previous: any[],
+    current: ChecklistQuestion[]
+  ): ChecklistQuestion[] {
+    const map = new Map(previous.map(item => [item._id, item]));
+    return current.map(item => {
       if (map.has(item._id)) {
+        const m: any = map.get(item._id);
         return {
           ...item,
-          selected: map.get(item._id).selected,
-          comment: map.get(item._id).comment,
+          selected: !!m.selected,
+          comment: m.comment || '',
         };
       }
       return item;
     });
   }
 
-  async getReportHistoryByfilter() {
-    console.log(this.filterObj);
+  async getReportHistoryByfilter(): Promise<void> {
+    if (!this.filterData || !this.filterData.outlet_id) {
+      // nothing to fetch yet
+      this.reportHistory = [];
+      this.allChecklistQuestions = [];
+      this.filteredChecklistQuestions = [];
+      return;
+    }
 
     try {
-      const data = await this.apiMainService.getReportHistoryByfilter(
-        this.filterObj
+      const data = await this.apiMainService.getChecklistReportByOutletId(
+        this.filterData.outlet_id
       );
+      console.log("data", data);
 
-      console.log(data);
-
-      this.reportHistory = data;
-
-      this.getAllChecklistQuestions();
+      this.reportHistory = data || [];
+      await this.getAllChecklistQuestions();
     } catch (e) {
-      console.log('Error while fetching data', e);
+      console.log('Error while fetching report history', e);
+      this.reportHistory = [];
+      await this.getAllChecklistQuestions();
     }
   }
 
-  async submitChecklist() {
-    this.reportObj.checklist_questions = this.allChecklistQuestions;
-    this.reportObj.orgDetails =
-      this.adminProfile.siteExecutiveDetails.orgDetails.find(
-        (item: any) => item._id === this.filterObj.orgId
-      );
-    this.reportObj.cafeDetails =
-      this.adminProfile.siteExecutiveDetails.cafeDetails.find(
-        (item: any) => item.cafeteria_id === this.filterObj.cafeteria_id
-      );
-    this.reportObj.SubmitedBy = this.adminProfile.name;
-    this.reportObj.submitedUserId = this.adminProfile._id;
-    try {
-      const allReports = await this.apiMainService.saveChecklistReport(
-        this.reportObj
-      );
-      this.cancelChecklistSubmit();
-    } catch (e) {
-      console.log('Error while fetching reports ', e);
-    }
-  }
+  async submitChecklist(): Promise<void> {
+    if (!this.canSubmit() || !this.filterData) return;
 
-  async updateChecklist() {
-    this.reportObj.checklist_questions = this.allChecklistQuestions;
-    this.reportObj.orgDetails =
-      this.adminProfile.siteExecutiveDetails.orgDetails.find(
-        (item: any) => item._id === this.filterObj.orgId
-      );
-    this.reportObj.cafeDetails =
-      this.adminProfile.siteExecutiveDetails.cafeDetails.find(
-        (item: any) => item.cafeteria_id === this.filterObj.cafeteria_id
-      );
-    this.reportObj.SubmitedBy = this.stateData?.SubmitedBy;
-    this.reportObj.submitedUserId = this.stateData?.submitedUserId;
-    this.reportObj._id = this.stateData?._id;
-    try {
-      await this.apiMainService.updateChecklistReports(this.reportObj);
-      this.cancelChecklistSubmit();
-    } catch (e) {
-      console.log('Error while fetching reports ', e);
-    }
-  }
-
-  clear() {
-    this.reportObj = {};
-    this.filterObj = {
-      cafeteria_id: '',
-      orgId: '',
-      fromDate: new Date(),
+    // build report object for new submission
+    const payload: any = {
+      ...this.reportObj,
+      checklist_questions: this.allChecklistQuestions,
+      orgDetails: {
+        organization_name: this.filterData.org_name,
+        _id: this.filterData.org_id,
+      },
+      cafeDetails: {
+        cafeteria_name: this.filterData.cafeteria_name,
+        cafeteria_id: this.filterData.cafeteria_id,
+      },
+      outletDetails: {
+        outletName: this.filterData.outlet_name,
+        outletId: this.filterData.outlet_id,
+      },
+      SubmitedBy: this.adminProfile?.name,
+      submitedUserId: this.adminProfile?._id,
     };
+
+    try {
+      await this.apiMainService.saveChecklistReport(payload);
+      this.editMode = false; // in case you add edit in future
+      await this.getReportHistoryByfilter();
+    } catch (e) {
+      console.log('Error while saving checklist report ', e);
+    }
+  }
+
+  clear(): void {
+    this.reportObj = {};
     this.filteredChecklistQuestions = [];
     this.allChecklistQuestions = [];
+    this.reportHistory = [];
+    // keep filterData as-is; it will be set when outlet is selected
   }
 
-  cancelChecklistSubmit() {
-    this.clear();
-    this.router.navigate(['/checklistHistory']);
-  }
+  searchFilter(e: Event): void {
+    const target = e.target as HTMLInputElement;
+    const searchText = (target.value || '').trim();
 
-  async deleteFAQ(id: string) {
-    try {
-      await this.apiMainService.deleteFAQ(id);
-      this.cancelChecklistSubmit();
-    } catch (e) {
-      console.log('Error while fetching reports ', e);
+    if (!searchText) {
+      this.filteredChecklistQuestions = [...this.allChecklistQuestions];
+      return;
     }
-  }
 
-  searchFilter(e: any) {
-    const searchText = e.target.value;
     const config = { keys: ['checklistQuestion'] };
+
     this.filteredChecklistQuestions = this.searchService.searchData(
       this.allChecklistQuestions,
       config,
