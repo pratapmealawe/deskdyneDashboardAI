@@ -88,7 +88,7 @@
       <div class="d-flex align-items-center justify-content-between mb-4">
         <h5>Add Address</h5>
         <button mat-raised-button color="primary" (click)="addAddress()" [disabled]="!this.form.get('vendorId').value">
-          Add Address </button>
+         <mat-icon>location_on</mat-icon> Add Address </button>
       </div>
       <div class="no-address" *ngIf="selectedAddressList.length == 0 ">
         <p>No Address added yet.</p>
@@ -140,7 +140,7 @@
     <div class="d-flex align-items-center justify-content-between mb-4">
       <h5>Add Outlet</h5>
       <button mat-raised-button (click)="addOutlet()" [disabled]="!this.form.get('vendorId').value" color="primary">
-        Add Outlet </button>
+       <mat-icon>countertops</mat-icon> Add Outlet </button>
     </div>
     <div class="no-address" *ngIf="selectedOutletsList.length == 0">
       <p>No Outlet added yet.</p>
