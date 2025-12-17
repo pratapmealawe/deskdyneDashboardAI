@@ -9,6 +9,7 @@ $success-color: green;
 $primary-color1: #e62841;
 $primary-color2: #b9041c;
 $primary-color3: #fe8e9c;
+$border-color: #e5e7eb;
 $primary-offset-color1: #ffffff;
 $primary-offset-color2: #a4a4a4;
 $primary-offset-color3: #f3f3f3;
@@ -22,6 +23,7 @@ $secondary-offset-color2: #ffc947;
 $secondary-offset-color3: #ffb300;
 $card-odd: #dee2e6;
 $background-color: #f3f3f3;
+
 
 html {
   font-family: "Poppins-regular," "Lato" !important;
@@ -655,12 +657,15 @@ button.accordion-button:focus {
   font-size: 15px;
   color: #212529;
 }
+
 .no-address {
   @include no-address-style();
 }
+
 .mdc-label {
   margin-bottom: 0px;
 }
+
 .responsive-btn {
   font-size: clamp(0.75rem, 2vw, 1rem) !important;
 
@@ -670,9 +675,19 @@ button.accordion-button:focus {
   }
 }
 
-mat-error{
+mat-error {
   font-size: clamp(0.75rem, 2vw, 0rem) !important;
 }
- mat-icon {
-    cursor: pointer;
+
+mat-icon {
+  cursor: pointer;
+}
+
+mat-tab-header {
+  border-bottom: 1px solid #d0d0d0;
+}
+
+// Fix for dialog appearing behind header
+.cdk-overlay-container {
+  z-index: 9999 !important;
 }

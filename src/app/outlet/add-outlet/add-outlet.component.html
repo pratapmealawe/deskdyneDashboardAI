@@ -1,261 +1,280 @@
 <form class="container-fluid" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <!-- BACK -->
-  <div class="d-flex align-items-center mb-3 gap-3">
-    <button mat-flat-button (click)="back()">
-      <mat-icon>arrow_back</mat-icon>Back
-    </button>
+  <!-- HEADER -->
+  <div class="form-header">
+    <div class="d-flex align-items-center gap-3">
+      <button mat-flat-button (click)="back()"><mat-icon>arrow_back</mat-icon>Back</button>
 
-    <div class="heading mb-0">
-      {{ showUpdate ? 'Edit Outlet' : 'Add Outlet' }}
+      <div class="heading">
+        {{ showUpdate ? 'Edit Outlet' : 'Add Outlet' }}
+      </div>
+
+      <!-- Validity Badge -->
+      <div class="status-badge" [ngClass]="form.valid && seletedCafetria && !mealTimingError ? 'valid' : 'invalid'">
+        <mat-icon>{{ form.valid && seletedCafetria && !mealTimingError ? 'check_circle' : 'error' }}</mat-icon>
+        <span>{{ form.valid && seletedCafetria && !mealTimingError ? 'Valid' : 'Invalid' }}</span>
+      </div>
+    </div>
+
+    <!-- Buttons removed from here, moved to sticky bottom bar -->
+    <div class="d-flex gap-2"></div>
+  </div>
+
+  <div class="row g-4">
+    <!-- LEFT COLUMN: Image & Settings -->
+    <div class="col-12 col-lg-4">
+      <!-- IMAGE & UPLOAD -->
+      <div class="modern-card mb-4">
+        <div class="card-header">
+          <h3><mat-icon>image</mat-icon> Outlet Image</h3>
+        </div>
+        <div class="card-body">
+          <div class="upload-wrapper">
+            <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
+              (change)="handleFileInput($event)" style="display: none;" />
+
+            <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
+              <img *ngIf="imageUrl" [src]="imageUrl" class="preview-image" />
+              <div *ngIf="!imageUrl" class="placeholder-content">
+                <mat-icon>cloud_upload</mat-icon>
+                <span>Upload Image</span>
+              </div>
+              <div class="upload-overlay">
+                <span>Change Image</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="modern-card mb-4">
+        <div class="card-header">
+          <h3><mat-icon>settings</mat-icon> Configuration</h3>
+        </div>
+        <div class="card-body">
+          <div class="switch-group">
+            <mat-slide-toggle formControlName="outletOpened" color="primary">
+              Outlet Opened
+            </mat-slide-toggle>
+
+            <mat-slide-toggle formControlName="isPreOrder" color="primary">
+              Pre-Order Enabled
+            </mat-slide-toggle>
+          </div>
+
+          <div class="mt-4" *ngIf="form.get('isPreOrder')?.value">
+            <h4 class="text-secondary mb-2" style="font-size: 0.9rem;">Pre-Order Settings</h4>
+            <div class="d-flex flex-column gap-2 p-3 bg-light rounded">
+              <mat-radio-group formControlName="preOrderMealType" class="d-flex gap-3 mb-2">
+                <mat-radio-button value="lunch">Lunch</mat-radio-button>
+                <mat-radio-button value="dinner">Dinner</mat-radio-button>
+              </mat-radio-group>
+
+              <mat-checkbox formControlName="isSatAvailable">Saturday Available</mat-checkbox>
+              <mat-checkbox formControlName="isSunAvailable">Sunday Available</mat-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BILLING TYPE (NEW) -->
+      <div class="modern-card mb-4">
+        <div class="card-header">
+          <h3><mat-icon>receipt_long</mat-icon> Billing Type</h3>
+        </div>
+        <div class="card-body">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Billing Type</mat-label>
+            <mat-select formControlName="billingType">
+              <mat-option *ngFor="let type of billingTypeOptions" [value]="type">
+                {{ type | titlecase }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="f['billingType'].invalid">
+              *Billing Type is required
+            </mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Details -->
+    <div class="col-12 col-lg-8">
+      <!-- BASIC INFO -->
+      <div class="modern-card mb-4">
+        <div class="card-header">
+          <h3><mat-icon>storefront</mat-icon> Basic Details</h3>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-12 col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Outlet Name</mat-label>
+                <input matInput placeholder="e.g. Starbucks" formControlName="outletName" />
+                <mat-error *ngIf="f['outletName'].invalid && (f['outletName'].touched || showError)">
+                  *Outlet name is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Precedence</mat-label>
+                <input matInput type="number" formControlName="precedence" />
+              </mat-form-field>
+            </div>
+            <div class="col-12 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Description</mat-label>
+                <textarea matInput rows="3" placeholder="Brief description of the outlet..."
+                  formControlName="outletDescription"></textarea>
+                <mat-error *ngIf="f['outletDescription'].invalid && (f['outletDescription'].touched || showError)">
+                  *Description is required
+                </mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-12 col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Vendor Commission (%)</mat-label>
+                <input matInput type="number" formControlName="vendorCommissionPercentage" />
+                <mat-error *ngIf="f['vendorCommissionPercentage'].invalid">Required (0-100)</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-4 mb-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>MRP Commission (%)</mat-label>
+                <input matInput type="number" formControlName="MRPCommissionPercentage" />
+                <mat-error *ngIf="f['MRPCommissionPercentage'].invalid">Required (0-100)</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-4 mb-3">
+              <div class="d-flex align-items-center gap-2">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Subsidy (%)</mat-label>
+                  <input matInput type="number" formControlName="subsidy" />
+                </mat-form-field>
+                <button *ngIf="showUpdate" mat-icon-button color="primary" matTooltip="Update Subsidy"
+                  (click)="updateOutletLevelSubsidy()" [disabled]="!selectedOutlet">
+                  <mat-icon>save</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOCATION -->
+      <div class="modern-card mb-4">
+        <div class="card-header">
+          <h3><mat-icon>location_on</mat-icon> Organization & Cafeteria</h3>
+        </div>
+        <div class="card-body">
+          <button mat-stroked-button color="primary" type="button" (click)="openOrgList()" class="w-100 py-2">
+            {{ showUpdate ? 'Change Organization & Cafeteria' : 'Select Organization & Cafeteria' }}
+          </button>
+
+          <div class="selected-cafe-info" *ngIf="seletedCafetria">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="label">Organization</span>
+                <span class="value">{{ seletedCafetria.organizationDetails.organization_name }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">City</span>
+                <span class="value">{{ seletedCafetria.organizationDetails.city }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Cafeteria</span>
+                <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_name }}</span>
+              </div>
+              <div class="info-item">
+                <span class="label">Location</span>
+                <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_city }}</span>
+              </div>
+            </div>
+          </div>
+          <mat-error *ngIf="!seletedCafetria && showError" class="mt-2 d-block text-center">
+            *Please select an organization and cafeteria
+          </mat-error>
+        </div>
+      </div>
+
     </div>
   </div>
 
-  <mat-card class="mb-3">
-    <mat-card-content class="pt-3">
-      <!-- TOP SECTION -->
-      <div class="row">
-        <!-- IMAGE -->
-        <div class="col-12 col-md-3 image-div">
-          <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
-            (change)="handleFileInput($event)" />
-
-          <mat-card class="image-card" (click)="fileInput.click()">
-            <img [src]="imageUrl || 'assets/images/dummyUpload.png'" class="uploadedImage" />
-            <div class="uploadIcon">
-              <mat-icon>upload</mat-icon>
-              <span>Upload</span>
-            </div>
-          </mat-card>
-        </div>
-
-        <!-- CHECKBOXES / PRE-ORDER -->
-        <div class="col-12 col-md-9">
-          <div class="mainCheckDiv mb-2">
-            <mat-checkbox formControlName="outletOpened">
-              Outlet Opened
-            </mat-checkbox>
-
-            <mat-divider vertical></mat-divider>
-
-            <mat-checkbox formControlName="isPreOrder">
-              Is Pre Order
-            </mat-checkbox>
-          </div>
-
-          <div class="mainCheckDiv mb-2" *ngIf="form.get('isPreOrder')?.value">
-            <mat-radio-group formControlName="preOrderMealType" class="preorder-radio-group">
-              <mat-radio-button value="lunch">Lunch</mat-radio-button>
-              <mat-radio-button value="dinner">Dinner</mat-radio-button>
-            </mat-radio-group>
-          </div>
-
-          <div class="mainCheckDiv" *ngIf="form.get('isPreOrder')?.value">
-            <mat-checkbox formControlName="isSatAvailable">
-              Saturday Available
-            </mat-checkbox>
-
-            <mat-divider vertical></mat-divider>
-
-            <mat-checkbox formControlName="isSunAvailable">
-              Sunday Available
-            </mat-checkbox>
+  <!-- MEAL TIMINGS (FULL WIDTH) -->
+  <div class="row g-4 mt-1">
+    <div class="col-12">
+      <div class="modern-card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <h3><mat-icon>schedule</mat-icon> Meal Timings</h3>
+          <div class="d-flex gap-2">
+            <button mat-stroked-button color="primary" type="button" (click)="setStandardEndTime()">
+              Set Standards
+            </button>
+            <button mat-flat-button color="primary" type="button" (click)="addMealTiming()">
+              <mat-icon>add</mat-icon> Add
+            </button>
           </div>
         </div>
-      </div>
-
-      <!-- BASIC DETAILS -->
-      <div class="row mt-3">
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Outlet Name</mat-label>
-            <input matInput placeholder="Outlet Name" formControlName="outletName" />
-            <mat-error *ngIf="f['outletName'].invalid && (f['outletName'].touched || showError)">
-              *Outlet name is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <!-- OUTLET TYPE REMOVED HERE -->
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Outlet Description</mat-label>
-            <input matInput placeholder="Outlet Description" formControlName="outletDescription" />
-            <mat-error *ngIf="f['outletDescription'].invalid && (f['outletDescription'].touched || showError)">
-              *Outlet description is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Commission Percentage (%)</mat-label>
-            <input matInput type="number" formControlName="vendorCommissionPercentage"
-              placeholder="Enter Commission %" />
-            <mat-error *ngIf="
-                f['vendorCommissionPercentage'].invalid &&
-                (f['vendorCommissionPercentage'].touched || showError)
-              ">
-              *Vendor Commission is required (0-100)
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>MRP Commission Percentage (%)</mat-label>
-            <input matInput type="number" formControlName="MRPCommissionPercentage"
-              placeholder="Enter MRP Commission %" />
-            <mat-error *ngIf="
-                f['MRPCommissionPercentage'].invalid &&
-                (f['MRPCommissionPercentage'].touched || showError)
-              ">
-              *MRP Commission is required (0-100)
-            </mat-error>
-          </mat-form-field>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4 d-flex align-items-end gap-2 mb-3">
-          <mat-form-field appearance="outline" class="w-75">
-            <mat-label>Subsidy Amount (in %)</mat-label>
-            <input matInput type="number" formControlName="subsidy" placeholder="Subsidy Amount" />
-          </mat-form-field>
-
-          <button mat-stroked-button color="primary" type="button" (click)="updateOutletLevelSubsidy()"
-            [disabled]="!showUpdate || !selectedOutlet">
-            Update
-          </button>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4 mb-3">
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Precedence</mat-label>
-            <input matInput type="number" formControlName="precedence" />
-          </mat-form-field>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- ORG + CAFETERIA CARD -->
-  <mat-card class="mb-3">
-    <mat-card-content>
-      <div class="row">
-        <div class="col-12 col-md-4 mb-2">
-          <button mat-raised-button color="primary" type="button" (click)="openOrgList()">
-            {{
-            showUpdate
-            ? 'Change Organization & Cafeteria'
-            : 'Select Organization & Cafeteria'
-            }}
-          </button>
-        </div>
-      </div>
-
-      <mat-card class="cardDesign mt-2" *ngIf="seletedCafetria">
-        <div class="row card-wrapper">
-          <div class="col-12">
-            <div class="row">
-              <div class="col-6 col-md-3">
-                <div class="labelText">Organization Name</div>
-                <div class="labelData">
-                  {{ seletedCafetria.organizationDetails.organization_name }}
-                </div>
-              </div>
-              <div class="col-6 col-md-3">
-                <div class="labelText">Organization City</div>
-                <div class="labelData">
-                  {{ seletedCafetria.organizationDetails.city }}
-                </div>
-              </div>
-              <div class="col-6 col-md-3">
-                <div class="labelText">Cafeteria Name</div>
-                <div class="labelData">
-                  {{ seletedCafetria.cafeteriaDetails.cafeteria_name }}
-                </div>
-              </div>
-              <div class="col-6 col-md-3">
-                <div class="labelText">Cafeteria City</div>
-                <div class="labelData">
-                  {{ seletedCafetria.cafeteriaDetails.cafeteria_city }} - {{ seletedCafetria?.cafeteriaDetails?.location }}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </mat-card>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- MEAL TIMING CARD -->
-  <mat-card>
-    <mat-card-content>
-      <div class="row">
-        <div class="col-12 d-flex align-items-center gap-2 mb-2">
-          <span class="labelText">
-            Meal Timing<span class="mandatory">*</span>
-          </span>
-          <button mat-stroked-button color="primary" type="button" (click)="setStandardEndTime()">
-            Set Standard End Time
-          </button>
-          <button mat-stroked-button color="accent" type="button" (click)="addMealTiming()">
-            Add Timing
-          </button>
-        </div>
-
-        <div class="col-12">
-          <div formArrayName="mealTimings" class="row">
-            <div class="col-12 col-md-6 col-lg-4 bgpadding1" *ngFor="let group of mealTimings.controls; let i = index"
-              [formGroupName]="i">
-              <mat-card class="py-2 px-2">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                  <span class="labelText">Meal {{ i + 1 }}</span>
-                  <button mat-icon-button type="button" (click)="removeMealTiming(i)" *ngIf="mealTimings.length > 1">
-                    <mat-icon>delete</mat-icon>
-                  </button>
-                </div>
-
-                <mat-form-field appearance="outline" class="w-100 mb-2">
-                  <mat-label>Meal Type</mat-label>
-                  <input matInput formControlName="mealType" placeholder="e.g. Breakfast, Evening Snacks, Night Meal" />
-                </mat-form-field>
-
-                <div class="row">
-                  <div class="col-6">
-                    <div class="labelData">From</div>
-                    <div class="time-input-wrapper">
-                      <input class="time-input" type="time" formControlName="acceptOrderFrom" />
+        <div class="card-body">
+          <div formArrayName="mealTimings">
+            <div class="container-fluid p-0">
+              <div class="row g-3">
+                <div class="col-12 col-xl-6" *ngFor="let group of mealTimings.controls; let i = index"
+                  [formGroupName]="i">
+                  <div class="meal-timing-card h-100 mb-0">
+                    <div class="timing-header">
+                      <h4>Meal {{ i + 1 }}</h4>
+                      <button mat-icon-button color="warn" (click)="removeMealTiming(i)" *ngIf="mealTimings.length > 1">
+                        <mat-icon>close</mat-icon>
+                      </button>
                     </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="labelData">To</div>
-                    <div class="time-input-wrapper">
-                      <input class="time-input" type="time" formControlName="acceptOrderTill" />
+
+                    <div class="row align-items-center">
+                      <div class="col-12 col-md-4 mb-2 mb-md-0">
+                        <mat-form-field appearance="outline" class="w-100 dense-field">
+                          <mat-label>Meal Type</mat-label>
+                          <input matInput formControlName="mealType" placeholder="Breakfast" />
+                        </mat-form-field>
+                      </div>
+                      <div class="col-6 col-md-4">
+                        <div class="time-input-styled">
+                          <label class="small text-secondary mb-1 d-block">From</label>
+                          <input type="time" formControlName="acceptOrderFrom" />
+                        </div>
+                      </div>
+                      <div class="col-6 col-md-4">
+                        <div class="time-input-styled">
+                          <label class="small text-secondary mb-1 d-block">To</label>
+                          <input type="time" formControlName="acceptOrderTill" />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
-
-              </mat-card>
+              </div>
             </div>
-          </div>
 
+          </div>
           <mat-error *ngIf="mealTimingError" class="mt-2 d-block">
             {{ mealTimingError }}
           </mat-error>
         </div>
       </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- ACTION BUTTONS -->
-  <div class="mt-3 d-flex gap-2">
+    </div>
+  </div>
+  <div class="action-bar">
     <button *ngIf="showUpdate && (btnPolicy?.editOutlet ?? true)" mat-raised-button color="primary" type="button"
-      (click)="onSubmit('update')" [disabled]="form.invalid || !seletedCafetria || !!mealTimingError">
-      Update
+      (click)="onSubmit('update')" [disabled]="form.invalid || !seletedCafetria || !!mealTimingError" class="px-5">
+      Update Outlet
     </button>
 
     <button *ngIf="!showUpdate && (btnPolicy?.addOutlet ?? true)" mat-raised-button color="primary" type="submit"
-      [disabled]="form.invalid || !seletedCafetria || !!mealTimingError">
-      Submit
+      [disabled]="form.invalid || !seletedCafetria || !!mealTimingError" class="px-5">
+      Create Outlet
     </button>
   </div>
 </form>

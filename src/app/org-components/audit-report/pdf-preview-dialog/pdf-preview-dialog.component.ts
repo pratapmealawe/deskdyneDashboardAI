@@ -17,9 +17,11 @@ export class PdfPreviewDialogComponent implements OnInit {
         @Inject(MAT_DIALOG_DATA) public data: any,
         private sanitizer: DomSanitizer
     ) {
+        console.log(data);
         if (data.url) {
             this.rawUrl = data.url;
             this.fileName = data.fileName || 'document.pdf';
+
             this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.url);
         }
     }

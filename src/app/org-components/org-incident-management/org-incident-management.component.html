@@ -22,7 +22,7 @@
     </mat-card>
 
     <!-- INCIDENT LIST -->
-    <div *ngIf="pagedIncidentList.length > 0; else noRecords" class="incident-page">
+    <div class="incident-page">
       <div class="d-flex gap-2 mt-3 justify-content-end">
         <button mat-raised-button color="primary" *ngIf="
             orgAdmin?.role === 'ORGADMIN' &&
@@ -33,7 +33,7 @@
           Add Incident
         </button>
       </div>
-      <div class="incident-list mt-3 ">
+      <div class="incident-list mt-3 " *ngIf="pagedIncidentList.length > 0; else noRecords">
         <mat-card class="incident-card mb-2" *ngFor="let incident of pagedIncidentList">
           <mat-card-content>
             <div class="row g-2 align-items-center">

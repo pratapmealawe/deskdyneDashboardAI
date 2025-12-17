@@ -1,89 +1,87 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles.scss' as color;
 
-.vendor-wrapper {
-  padding: 15px 30px;
-  // display: flex;
-  flex-direction: column;
-  gap: 20px;
+.vendor-header {
+  @include mixin.responsive-header;
+  background-color: transparent;
 }
 
-.vendor-card {
-  @include mixin.vertical-line();
-  @include mixin.card-design(color.$primary-offset-color1);
-}
+.header-actions {
+  @include mixin.responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
 
-.vendor-grid {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 20px;
-  align-items: flex-start;
-}
+  .input-wrapper {
+    min-width: 200px;
 
-.vendor-info {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 16px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
+    @media(max-width: 768px) {
+      width: 100%;
+      display: block !important;
+    }
+  }
 }
 
 .search-input {
   @include mixin.mat-form-field-responsive();
 }
 
+.cardDesign {
+  @include mixin.vertical-line();
+  @include mixin.card-design(color.$primary-offset-color1);
+}
+
 .labelText {
-  font-size: 13px;
-  font-weight: 600;
-  opacity: 0.8;
+  @include mixin.labelText;
 }
 
 .labelData {
-  font-size: 15px;
+  @include mixin.labelData;
+}
+
+.edit {
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.verified-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
   font-weight: 500;
+
+  &.verified {
+    background-color: #e6f4ea;
+    color: #1e8e3e;
+  }
+
+  &.unverified {
+    background-color: #fce8e6;
+    color: #d93025;
+  }
+
+  mat-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+  }
 }
 
-
-.outlet-section {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
+/* Custom styles for chips if not covered by global styles */
 .outlet-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-}
+  gap: 4px;
 
-.vendor-actions {
-  display: flex;
-  flex-direction: row;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-  height: -webkit-fill-available;
-}
-
-.paginator {
-  margin-top: 20px;
-}
-
-@media (max-width: 768px) {
-  .vendor-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .vendor-actions {
-    justify-content: flex-start;
+  mat-chip {
+    font-size: 12px;
+    min-height: 24px;
   }
 }

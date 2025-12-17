@@ -17,6 +17,11 @@
                     </div>
 
                     <div class="btnDiv pt-3 d-flex gap-2 justify-content-center flex-wrap">
+                        <button mat-flat-button color="primary" (click)="openTxnDialog('Transfer', 'wallet')"
+                            aria-label="Transfer Wallet Balance">
+                            Transfer Wallet Balance
+                        </button>
+
                         <button mat-flat-button color="primary" (click)="openTxnDialog('Credit')"
                             aria-label="Credit Wallet">
                             Credit Wallet Balance
@@ -54,8 +59,8 @@
 
                     <div class="pt-3 d-flex justify-content-start">
                         <button mat-flat-button color="primary" *ngIf="subsidyBalance > 0"
-                            [disabled]="!subsidyBalance || subsidyBalance <= 0" (click)="openTxnDialog('Transfer', 'subsidy')"
-                            aria-label="Transfer subsidy to wallet">
+                            [disabled]="!subsidyBalance || subsidyBalance <= 0"
+                            (click)="openTxnDialog('Transfer', 'subsidy')" aria-label="Transfer subsidy to wallet">
                             Transfer Subsidy To Wallet Balance
                         </button>
                     </div>

@@ -93,3 +93,7 @@ mat-card {
     padding: 15px;
     border-radius: 12px;
 }
+
+.input {
+    @include mixin.mat-form-field-responsive();
+}
