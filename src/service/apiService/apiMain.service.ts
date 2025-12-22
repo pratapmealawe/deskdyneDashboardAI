@@ -1243,6 +1243,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.creditOrDebitVendorWallet, body);
   }
 
+  transferWalletListToBankManual(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.transferWalletListToBankManual, body);
+  }
+
   moveSubsidyToWallet(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.moveSubsidyToWallet, body);
   }

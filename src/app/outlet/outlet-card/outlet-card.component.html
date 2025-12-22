@@ -1,46 +1,73 @@
-<div class="container-fuild pe-3 ps-3">
-  <div class="outlet-card" *ngFor="let outlet of outletUpdated">
-    <div>
-      <div class="labelText">Organization Name</div>
-      <div class="labelData">{{ outlet?.organizationName }}</div>
-    </div>
-    <div class="rows" *ngFor="let outlet of outlet.outletList">
-      <div class="d-flex flex-wrap p-3">
-        <div class="col-6 col-md-5 col-lg-2">
-          <div class="labelText">Outlet Name</div>
-          <div class="labelData">{{ outlet.outletName }}</div>
-        </div>
-        <div class="col-6 col-md-2 col-lg-1">
-          <div class="labelText">Opened</div>
-          <div class="labelData"> <mat-chip [ngClass]="outlet.outletOpened ? 'green' : 'red'"> {{ (outlet.outletOpened ?
-              'true' : 'false') | titlecase }}</mat-chip></div>
-        </div>
-        <div class="col-6 col-md-2 col-lg-1">
-          <div class="labelText">Subsidy</div>
-          <div class="labelData">&#8377; {{ outlet?.subsidy }}</div>
-        </div>
-        <div class="col-6 col-md-2 col-lg-1">
-          <div class="labelText">Precedence</div>
-          <div class="labelData">{{ outlet?.precedence }}</div>
-        </div>
-        <div class="col-6 col-md-6 col-lg-5">
-          <div class="labelText ">Outlet Description</div>
-          <div class="labelData desc" [matTooltip]="outlet.outletDescription" [matTooltipPosition]="'below'">{{
-            outlet.outletDescription }}</div>
-        </div>
-        <div class="col-6 col-md-6 col-lg-1">
-          <div class="d-flex align-items-center gap-2">
-            <mat-icon *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(outlet)" color="primary"> visibility
-            </mat-icon>
-            <mat-icon (click)="showPopup(outlet)" color="warn"> delete </mat-icon>
-          </div>
-        </div>
+<div class="cardDesign mb-4" *ngFor="let outletGroup of outletUpdated">
+  <!-- Organization Header -->
+  <div class="container-fluid py-2 border-bottom">
+    <div class="row align-items-center">
+      <div class="col-md-12">
+        <div class="labelText">Organization Name</div>
+        <div class="labelData fw-bold">{{ outletGroup?.organizationName || 'No Organization' }}</div>
       </div>
     </div>
   </div>
-  <div class="empty-outlet d-flex justify-content-center mb-2 align-items-center" *ngIf="outlet.length == 0">
-    <h6>No data found</h6>
+
+  <!-- Outlets List -->
+  <div *ngFor="let outlet of outletGroup.outletList; let last = last">
+    <div class="container-fluid py-3">
+      <div class="row align-items-center">
+
+        <!-- Outlet Name -->
+        <div class="col-md-3 mb-2 mb-md-0">
+          <div class="labelText">Outlet Name</div>
+          <div class="labelData text-truncate">{{ outlet.outletName }}</div>
+        </div>
+
+        <!-- Opened Status -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">Status</div>
+          <div class="verified-badge" [ngClass]="outlet.outletOpened ? 'verified' : 'unverified'">
+            <mat-icon>{{ outlet.outletOpened ? 'check_circle' : 'cancel' }}</mat-icon>
+            <span>{{ outlet.outletOpened ? 'Opened' : 'Closed' }}</span>
+          </div>
+        </div>
+
+        <!-- Subsidy -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">Subsidy</div>
+          <div class="labelData">&#8377; {{ outlet?.subsidy }}</div>
+        </div>
+
+        <!-- Precedence -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">Precedence</div>
+          <div class="labelData">{{ outlet?.precedence }}</div>
+        </div>
+
+        <!-- Description -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">Description</div>
+          <div class="labelData text-truncate" [matTooltip]="outlet.outletDescription">
+            {{ outlet.outletDescription || '-' }}
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="col-md-1 d-flex align-items-center justify-content-end gap-3 p-0">
+          <mat-icon (click)="vieworg(outlet)" color="primary" class="action-icon" matTooltip="View Outlet">
+            visibility
+          </mat-icon>
+          <mat-icon (click)="showPopup(outlet)" color="warn" class="action-icon" matTooltip="Delete Outlet">
+            delete
+          </mat-icon>
+        </div>
+
+      </div>
+    </div>
+    <!-- Separator Line (except for last item) -->
+    <hr *ngIf="!last" class="m-0 text-muted">
   </div>
-  <mat-paginator [length]="outlet.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
-    [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)"></mat-paginator>
 </div>
+
+<div class="empty-outlet d-flex justify-content-center mb-2 align-items-center" *ngIf="outletUpdated.length == 0">
+  <h6 class="m-0 text-muted">No data found</h6>
+</div>
+<mat-paginator [length]="outletUpdated.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+  [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)"></mat-paginator>

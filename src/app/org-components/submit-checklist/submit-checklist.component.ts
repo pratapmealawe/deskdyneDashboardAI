@@ -11,6 +11,7 @@ import { SearchFilterService } from 'src/service/search-filter.service';
 interface ChecklistQuestion {
   _id: string;
   checklistQuestion: string;
+  checklistQuestionType: string;
   selected: boolean;
   comment: string;
   // keep room for backend extras

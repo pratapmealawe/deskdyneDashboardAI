@@ -278,6 +278,7 @@ export class ApiConfigService {
       getTotalVendorLedgerBalanceByFirm: p('/api/getTotalVendorLedgerBalanceByFirm', 'GET'),
       getVendorTransactionByFirmAndTypeAndDate: p('/api/getVendorTransactionByFirmAndTypeAndDate', 'POST'),
       creditOrDebitVendorWallet: p('/api/creditOrDebitVendorWallet', 'POST'),
+      transferWalletListToBankManual: p('/api/transferWalletListToBankManual', 'POST'),
       moveSubsidyToWallet: p('/api/moveSubsidyToWallet', 'POST'),
       deleteOutlet: p('/api/deleteOutlet', 'DELETE'),
       getConsumptionOrderByDateForDashboard: p('/api/getConsumptionOrderByDateForDashboard', 'POST'),

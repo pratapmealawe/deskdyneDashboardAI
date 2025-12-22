@@ -29,6 +29,13 @@ export class VendorReportComponent {
 
   filteredData: any
 
+  get isEcommerce(): boolean {
+    const outletId = this.selected.outletId;
+    if (!outletId) return true; // default safe
+    const out = this.outletList.find(o => o.outletId === outletId);
+    return out?.billingType === 'ecommerce';
+  }
+
   // ---- Totals (extended) ----
   vendorTotals = {
     totalVendorAmt: 0,
@@ -41,6 +48,8 @@ export class VendorReportComponent {
     vendorLedgerAmtBeforeTdsTcs: 0,
     tcsAmount: 0,
     tdsAmount: 0,
+    // New fields for non-ecommerce
+    revenueSharingTdsAmount: 0,
     count: 0,
   };
 
@@ -57,6 +66,7 @@ export class VendorReportComponent {
       tcsAmount: number;
       tdsAmount: number;
       totalGstAmt: number; // <- sum of gstamt
+      revenueSharingTdsAmount: number;
 
       // declared percentage fields (uniform per date or "mixed")
       itemGstRatePct: number | null | undefined;
@@ -64,6 +74,7 @@ export class VendorReportComponent {
       tdsRatePct: number | null | undefined;
       vendorCommissionPercentage: number | null | undefined;
       vendorCommissionGstPercentage: number | null | undefined;
+      revenueSharingTdsRatePct: number | null | undefined;
 
       count: number;
       orders: any[];
@@ -86,6 +97,7 @@ export class VendorReportComponent {
     vendorLedgerAmtBeforeTdsTcs: number;
     tcsAmount: number;
     tdsAmount: number;
+    revenueSharingTdsAmount: number;
     vendorLedgerAmt: number;
 
     // rate fields (kept per-order only; not summed)
@@ -93,6 +105,7 @@ export class VendorReportComponent {
     tdsRatePct?: number;
     vendorCommissionPercentage?: number;
     vendorCommissionGstPercentage?: number;
+    revenueSharingTdsRatePct?: number;
   }> = [];
 
   trackByOrder = (_: number, r: any) => r.orderNo ?? r._id ?? _;
@@ -293,6 +306,8 @@ export class VendorReportComponent {
 
   // ---- Call this right after you set this.orders = res ----
   private buildSummaries(): void {
+    const isEcom = this.isEcommerce;
+
     // reset
     this.vendorTotals = {
       totalVendorAmt: 0,
@@ -305,6 +320,7 @@ export class VendorReportComponent {
       vendorLedgerAmtBeforeTdsTcs: 0,
       tcsAmount: 0,
       tdsAmount: 0,
+      revenueSharingTdsAmount: 0,
       count: 0,
     };
     this.byDate = {};
@@ -321,7 +337,13 @@ export class VendorReportComponent {
     for (const o of this.orders || []) {
       if (o.orderstatus !== "completed") continue;
 
-      const vAmt = this.n(o.vendorLedgerAmt);
+      let vAmt = 0;
+      if (isEcom) {
+        vAmt = this.n(o.vendorLedgerAmt);
+      } else {
+        vAmt = this.n(o.vendorRevenueSharingLedgerAmt);
+      }
+
       const itemAmt = this.n(o.itemAmount);
       const subsidy = this.n(o.subsidyAmount);
       const baseAmt = this.n(o.totalItemAmountAfterGst);
@@ -332,6 +354,7 @@ export class VendorReportComponent {
       const tcsAmt = this.n(o.tcsAmount);
       const tdsAmt = this.n(o.tdsAmount);
       const gstAmt = this.n(o.gstamt);
+      const revSharingTdsAmt = this.n(o.revenueSharingTdsAmount);
 
       // overall
       this.vendorTotals.totalVendorAmt += vAmt;
@@ -344,6 +367,7 @@ export class VendorReportComponent {
       this.vendorTotals.vendorLedgerAmtBeforeTdsTcs += beforeTdsTcs;
       this.vendorTotals.tcsAmount += tcsAmt;
       this.vendorTotals.tdsAmount += tdsAmt;
+      this.vendorTotals.revenueSharingTdsAmount += revSharingTdsAmt;
       this.vendorTotals.count += 1;
 
       // date-wise (IST)
@@ -361,12 +385,14 @@ export class VendorReportComponent {
           tcsAmount: 0,
           tdsAmount: 0,
           totalGstAmt: 0,
+          revenueSharingTdsAmount: 0,
 
           itemGstRatePct: undefined,
           tcsRatePct: undefined,
           tdsRatePct: undefined,
           vendorCommissionPercentage: undefined,
           vendorCommissionGstPercentage: undefined,
+          revenueSharingTdsRatePct: undefined,
 
           count: 0,
           orders: [],
@@ -385,6 +411,7 @@ export class VendorReportComponent {
       b.tcsAmount += tcsAmt;
       b.tdsAmount += tdsAmt;
       b.totalGstAmt += gstAmt;
+      b.revenueSharingTdsAmount += revSharingTdsAmt;
 
       // keep rates uniform, else mark Mixed (null)
       b.itemGstRatePct = keepUniform(b.itemGstRatePct, o.itemGstRatePct);
@@ -392,6 +419,7 @@ export class VendorReportComponent {
       b.tdsRatePct = keepUniform(b.tdsRatePct, o.tdsRatePct);
       b.vendorCommissionPercentage = keepUniform(b.vendorCommissionPercentage, o.vendorCommissionPercentage);
       b.vendorCommissionGstPercentage = keepUniform(b.vendorCommissionGstPercentage, o.vendorCommissionGstPercentage);
+      b.revenueSharingTdsRatePct = keepUniform(b.revenueSharingTdsRatePct, o.revenueSharingTdsRatePct);
 
       b.count += 1;
       b.orders.push(o);
@@ -411,11 +439,13 @@ export class VendorReportComponent {
         vendorLedgerAmtBeforeTdsTcs: beforeTdsTcs,
         tcsAmount: tcsAmt,
         tdsAmount: tdsAmt,
+        revenueSharingTdsAmount: revSharingTdsAmt,
         vendorLedgerAmt: vAmt,
         tcsRatePct: this.n(o.tcsRatePct),
         tdsRatePct: this.n(o.tdsRatePct),
         vendorCommissionPercentage: this.n(o.vendorCommissionPercentage),
         vendorCommissionGstPercentage: this.n(o.vendorCommissionGstPercentage),
+        revenueSharingTdsRatePct: this.n(o.revenueSharingTdsRatePct),
       });
     }
 
@@ -468,6 +498,7 @@ export class VendorReportComponent {
   async exportDatewiseSummaryExcel() {
     if (!this.byDate || !Object.keys(this.byDate).length) return;
 
+    const isEcom = this.isEcommerce;
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet('Datewise Summary');
 
@@ -483,31 +514,56 @@ export class VendorReportComponent {
       this.dateForm.get('dateTo')?.value
     );
 
-    // Title (exactly 15 columns -> A..O)
-    ws.mergeCells('A1:O1');
+    // Dynamic Headers based on type
+    let headers: string[] = [];
+    if (isEcom) {
+      // Original Ecommerce Headers (15 cols)
+      headers = [
+        'Date',                               // A
+        'Orders',                             // B
+        'Value (Gross)',                      // C
+        'GST(5%) Value',                      // D
+        'Value (GROSS - GST)',                // E
+        'Commission',                         // F
+        'Commission GST (18%)',               // G
+        'Net Commission',                     // H
+        'Net Value (value - Net Commission)', // I
+        'TCS (5%)',                           // J
+        'TDS (1%)',                           // K
+        'Vendor Amount (Net Value - TCS -TDS )', // L
+        'Subsidy Balance',                    // M
+        'Final Vendor Payout',                // N
+        'Wallet Status',                      // O
+      ];
+    } else {
+      // Non-Ecommerce (Revenue Sharing) Headers
+      // Removing: Commission, Comm GST, Net Comm, Net Value, TCS, standard TDS
+      // Adding: Rev Sharing TDS, updated Vendor Amount logic
+      headers = [
+        'Date',                               // A
+        'Orders',                             // B
+        'Value (Gross)',                      // C
+        'GST(5%) Value',                      // D
+        'Value (GROSS - GST)',                // E
+        'Commission',                         // F
+        'TDS',                                // G (Revenue Sharing TDS)
+        'Vendor Amount',                      // H (using vendorRevenueSharingLedgerAmt)
+        'Subsidy Balance',                    // I
+        'Final Vendor Payout',                // J
+        'Wallet Status',                      // K
+      ];
+    }
+
+    const totalCols = headers.length;
+    // Update title merge range depending on cols
+    const endColChar = String.fromCharCode(65 + totalCols - 1); // e.g. 'O' or 'K'
+    ws.mergeCells(`A1:${endColChar}1`);
+
     const titleCell = ws.getCell('A1');
     titleCell.value = `Outlet Billing — ${outlet.outletName}`;
     titleCell.font = { bold: true, size: 13 };
     titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-    // Header — 15 columns (A..O)
-    const headers = [
-      'Date',                               // A
-      'Orders',                             // B
-      'Value (Gross)',                      // C  sum totalItemAmount
-      'GST(5%) Value',                      // D  sum totalGstAmt
-      'Value (GROSS - GST)',                // E  sum totalItemAmountAfterGst
-      'Commission',                         // F  sum vendorCommissionAmount
-      'Commission GST (18%)',               // G  sum vendorCommissionGstAmount
-      'Net Commission',                     // H  sum (commission + commission GST)
-      'Net Value (value - Net Commission)', // I  sum vendorLedgerAmtBeforeTdsTcs
-      'TCS (5%)',                           // J  sum tcsAmount
-      'TDS (1%)',                           // K  sum tdsAmount
-      'Vendor Amount (Net Value - TCS -TDS )', // L  sum totalVendorAmt
-      'Subsidy Balance',                    // M  sum totalSubsidy
-      'Final Vendor Payout',                // N  sum (totalVendorAmt - totalSubsidy)
-      'Wallet Status',                      // O  (blank/NA per date)
-    ];
     const headerRow = ws.addRow(headers);
     headerRow.eachCell((c: any) => {
       c.font = { bold: true };
@@ -517,9 +573,11 @@ export class VendorReportComponent {
     });
     ws.getRow(2).height = 22;
 
-    // Column widths — 15 entries (A..O)
-    const widths = [14, 10, 18, 18, 20, 16, 22, 18, 32, 16, 16, 34, 18, 20, 16];
-    widths.forEach((w, i) => ws.getColumn(i + 1).width = w);
+    // Set widths approximate
+    ws.columns = headers.map(() => ({ width: 16 }));
+    // Fine tune first few if needed
+    ws.getColumn(1).width = 14;
+    ws.getColumn(3).width = 18;
 
     const dateKeys = this.availableDateKeys;
 
@@ -531,13 +589,14 @@ export class VendorReportComponent {
       base: 0,
       comm: 0,
       commGst: 0,
-      netComm: 0,          // comm + commGst
-      netValue: 0,         // before TDS/TCS
+      netComm: 0,
+      netValue: 0,
       tcs: 0,
       tds: 0,
+      revSharingTds: 0,
       vendor: 0,
       subsidy: 0,
-      finalPayout: 0,      // vendor - subsidy
+      finalPayout: 0,
     };
 
     // Data rows start at row 3
@@ -548,104 +607,161 @@ export class VendorReportComponent {
       const gross = this.n(g.totalItemAmount);
       const gst = this.n(g.totalGstAmt);
       const base = this.n(g.totalItemAmountAfterGst);
-      const commission = this.n(g.vendorCommissionAmount);
-      const commissionGst = g.vendorCommissionGstAmount;
-      const netCommission = commission + commissionGst;
-      const netValue = this.n(g.vendorLedgerAmtBeforeTdsTcs);
-      const tcs = this.n(g.tcsAmount);
-      const tds = this.n(g.tdsAmount);
-      const vendorAmt = this.n(g.totalVendorAmt);
       const subsidy = this.n(g.totalSubsidy);
+      const vendorAmt = this.n(g.totalVendorAmt);
       const finalPayout = vendorAmt - subsidy;
-      const walletStatus: string = ''; // no per-date status in data; leave blank or set as needed
+      const walletStatus: string = '';
 
-      // Date key "yyyy-mm-dd" -> real Date for Excel
       const excelDate = this.excelDateFromISTKey(key);
 
-      const row = ws.addRow([
-        excelDate,        // A Date
-        g.count,          // B Orders
-        gross,            // C Value (Gross)
-        gst,              // D GST(5%) Value
-        base,             // E Value (GROSS - GST)
-        commission,       // F Commission
-        commissionGst,    // G Commission GST (18%)
-        netCommission,    // H Net Commission
-        netValue,         // I Net Value
-        tcs,              // J TCS
-        tds,              // K TDS
-        vendorAmt,        // L Vendor Amount
-        subsidy,          // M Subsidy Balance
-        finalPayout,      // N Final Vendor Payout
-        walletStatus,     // O Wallet Status
-      ]);
+      let rowValues: any[] = [];
 
-      // Formats & alignment
+      if (isEcom) {
+        const commission = this.n(g.vendorCommissionAmount);
+        const commissionGst = g.vendorCommissionGstAmount;
+        const netCommission = commission + commissionGst;
+        const netValue = this.n(g.vendorLedgerAmtBeforeTdsTcs);
+        const tcs = this.n(g.tcsAmount);
+        const tds = this.n(g.tdsAmount);
+
+        rowValues = [
+          excelDate,
+          g.count,
+          gross,
+          gst,
+          base,
+          commission,
+          commissionGst,
+          netCommission,
+          netValue,
+          tcs,
+          tds,
+          vendorAmt,
+          subsidy,
+          finalPayout,
+          walletStatus
+        ];
+
+        totals.comm += commission;
+        totals.commGst += commissionGst;
+        totals.netComm += netCommission;
+        totals.netValue += netValue;
+        totals.tcs += tcs;
+        totals.tds += tds;
+
+      } else {
+        // Non-Ecom
+        const revTds = this.n(g.revenueSharingTdsAmount);
+        const commission = this.n(g.vendorCommissionAmount);
+
+        rowValues = [
+          excelDate,
+          g.count,
+          gross,
+          gst,
+          base,
+          commission,
+          revTds,
+          vendorAmt, // is vendorRevenueSharingLedgerAmt
+          subsidy,
+          finalPayout,
+          walletStatus
+        ];
+
+        totals.revSharingTds += revTds;
+        totals.comm += commission;
+      }
+
+      const row = ws.addRow(rowValues);
+
+      // Formatting
       row.getCell(1).numFmt = dateFmt;
       row.getCell(1).alignment = { horizontal: 'center' };
       row.getCell(2).alignment = { horizontal: 'center' };
 
-      // Money columns: C..N (3..14)
-      for (let ci = 3; ci <= 14; ci++) {
-        const c = row.getCell(ci);
-        c.numFmt = currencyFmt;
-        c.alignment = { horizontal: 'right' };
+      // Apply currency format to money columns
+      if (isEcom) {
+        // Cols 3..14
+        for (let ci = 3; ci <= 14; ci++) { row.getCell(ci).numFmt = currencyFmt; row.getCell(ci).alignment = { horizontal: 'right' }; }
+        row.getCell(15).alignment = { horizontal: 'center' };
+      } else {
+        // Cols 3..10 are money
+        // Col 11 is Status
+        for (let ci = 3; ci <= 10; ci++) { row.getCell(ci).numFmt = currencyFmt; row.getCell(ci).alignment = { horizontal: 'right' }; }
+        row.getCell(11).alignment = { horizontal: 'center' };
       }
-      // Wallet Status align center
-      row.getCell(15).alignment = { horizontal: 'center' };
+
 
       row.eachCell((c: any) => {
         c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
       });
 
-      // Totals
+      // Accumulate common totals
       totals.count += g.count;
       totals.gross += gross;
       totals.gst += gst;
       totals.base += base;
-      totals.comm += commission;
-      totals.commGst += commissionGst;
-      totals.netComm += netCommission;
-      totals.netValue += netValue;
-      totals.tcs += tcs;
-      totals.tds += tds;
       totals.vendor += vendorAmt;
       totals.subsidy += subsidy;
       totals.finalPayout += finalPayout;
     }
 
-    // Spacer + GRAND TOTAL (align to headers)
+    // Spacer
     ws.addRow([]);
-    const gtRow = ws.addRow([
-      'GRAND TOTAL',         // A
-      totals.count,          // B Orders
-      totals.gross,          // C Value (Gross)
-      totals.gst,            // D GST(5%) Value
-      totals.base,           // E Value (GROSS - GST)
-      totals.comm,           // F Commission
-      totals.commGst,        // G Commission GST
-      totals.netComm,        // H Net Commission
-      totals.netValue,       // I Net Value
-      totals.tcs,            // J TCS
-      totals.tds,            // K TDS
-      totals.vendor,         // L Vendor Amount
-      totals.subsidy,        // M Subsidy Balance
-      totals.finalPayout,    // N Final Vendor Payout
-      '',                    // O Wallet Status (blank)
-    ]);
 
+    // Grand Total Row logic
+    let gtValues: any[] = [];
+    if (isEcom) {
+      gtValues = [
+        'GRAND TOTAL',
+        totals.count,
+        totals.gross,
+        totals.gst,
+        totals.base,
+        totals.comm,
+        totals.commGst,
+        totals.netComm,
+        totals.netValue,
+        totals.tcs,
+        totals.tds,
+        totals.vendor,
+        totals.subsidy,
+        totals.finalPayout,
+        ''
+      ];
+    } else {
+      gtValues = [
+        'GRAND TOTAL',
+        totals.count,
+        totals.gross,
+        totals.gst,
+        totals.base,
+        totals.comm,
+        totals.revSharingTds,
+        totals.vendor,
+        totals.subsidy,
+        totals.finalPayout,
+        ''
+      ];
+    }
+
+    const gtRow = ws.addRow(gtValues);
     gtRow.font = { bold: true };
     gtRow.getCell(1).alignment = { horizontal: 'center' };
     gtRow.getCell(2).alignment = { horizontal: 'center' };
-    for (let ci = 3; ci <= 14; ci++) gtRow.getCell(ci).numFmt = currencyFmt;
-    gtRow.getCell(15).alignment = { horizontal: 'center' };
+
+    if (isEcom) {
+      for (let ci = 3; ci <= 14; ci++) gtRow.getCell(ci).numFmt = currencyFmt;
+    } else {
+      // Cols 3..10
+      for (let ci = 3; ci <= 10; ci++) gtRow.getCell(ci).numFmt = currencyFmt;
+    }
+
     gtRow.eachCell((c) => {
       c.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
     });
 
-    // DO NOT freeze header (per your instruction)
-
-    // Save (sanitize filename)
+    // Save
     const buf = await wb.xlsx.writeBuffer();
     const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     const safeRange = rangeLabel.replace(/[\\/:*?"<>|]/g, '–');

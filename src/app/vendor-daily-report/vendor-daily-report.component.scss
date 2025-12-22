@@ -43,20 +43,6 @@
     justify-content: end;
 }
 
-::ng-deep .billingContainer .mat-mdc-form-field-subscript-wrapper {
-    display: none;
-}
-
-::ng-deep .billingContainer .mdc-notched-outline__leading {
-    border-top-left-radius: 12px !important;
-    border-bottom-left-radius: 12px !important;
-}
-
-::ng-deep .billingContainer .mdc-notched-outline__trailing {
-    border-top-right-radius: 12px !important;
-    border-bottom-right-radius: 12px !important;
-}
-
 
 /* compact, readable stat grid */
 .stat-grid {

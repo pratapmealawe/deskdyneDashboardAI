@@ -1,28 +1,56 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles.scss' as color;
 
-.cardDesign{
-    // @include mixin.vertical-line();
-    @include mixin.card-design(color.$primary-offset-color1);
+.card {
+  @include mixin.card-design(white);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: none;
+  height: 100%;
 }
 
-.vendor-details {
-  .labelText {
-    @include mixin.labelText();
+.labelText {
+  @include mixin.labelText;
+  color: #6c757d;
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.labelData {
+  @include mixin.labelData;
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+
+  .icon-sm {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
   }
 
-  .labelData {
-    @include mixin.labelData();
+  &.verified {
+    background-color: #e6f4ea;
+    color: #1e8e3e;
   }
 
-  h5 {
-    font-weight: 600;
-    margin-bottom: 1rem;
+  &.unverified {
+    background-color: #fce8e6;
+    color: #d93025;
   }
+}
 
-  .card {
-    border-radius: 10px;
-    box-shadow: 0 0 7px rgba(0, 0, 0, 0.06);
-    border: none;
+.border-end-md {
+  @media (min-width: 768px) {
+    border-right: 1px solid #dee2e6;
   }
 }
