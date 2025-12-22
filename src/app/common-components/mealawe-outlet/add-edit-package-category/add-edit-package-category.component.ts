@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { MaterialModule } from 'src/app/material.module';
 import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-drop';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-add-edit-package-category',
@@ -14,14 +15,7 @@ import { CdkDragDrop, moveItemInArray, DragDropModule } from '@angular/cdk/drag-
   styleUrls: ['./add-edit-package-category.component.scss']
 })
 export class AddEditPackageCategoryComponent {
-  packageCategoryList = [
-    'Trial', 'Breakfast', 'Flexi Plans', 'Standard', 'Deluxe', 'Healthy',
-    'Special', 'Jain', 'KotaBowl', 'KotaThalis', 'KotaSuperCombo',
-    'BngVeg', 'BngNonVeg', 'BngCombos', 'lowcalariesmeal', 'proteinmeal',
-    'Salads', 'HostelThali', 'IITThali', 'PocketThali', 'RiceCombo',
-    'Classic', 'Comfort'
-  ];
-
+  packageCategoryList = ['Breakfast', 'Standard', 'Deluxe', 'Healthy', 'Special', 'Jain', 'lowcalariesmeal', 'proteinmeal', 'Salads'];
   categoryForm: FormGroup = new FormGroup({
     categoryName: new FormControl('', Validators.required),
     categoryDisplayName: new FormControl('', Validators.required),
@@ -31,7 +25,8 @@ export class AddEditPackageCategoryComponent {
     isActive: new FormControl(true)
   });
   categoryImgFile!: File;
-  bannerFiles: File[] = [];
+  banners: { preview: string, file?: File, isExisting: boolean, path?: string }[] = [];
+  deletedBannerPaths: string[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -42,19 +37,24 @@ export class AddEditPackageCategoryComponent {
   ngOnInit() {
     const category = this.data?.category;
     if (category) {
+      if (category.categoryBanners && Array.isArray(category.categoryBanners)) {
+        this.banners = category.categoryBanners.map((bannerPath: string) => ({
+          preview: environment.imageUrl + bannerPath,
+          isExisting: true,
+          path: bannerPath
+        }));
+      }
+
       this.categoryForm.patchValue({
         categoryName: category.categoryName,
         categoryDisplayName: category.categoryDisplayName,
-        categoryImg: category.categoryImg,
-        categoryBanners: category.categoryBanners || [],
+        categoryImg: category.categoryImg ? environment.imageUrl + category.categoryImg : '',
+        categoryBanners: [], 
         imageConfigNameMealawe: category.imageConfigNameMealawe,
         isActive: category.isActive ?? true
       });
     }
-    if (!this.data.addNew) {
-      let alreadyCategory = this.data.alreadyCategory;
-      this.packageCategoryList = this.packageCategoryList.filter((pkg) => !alreadyCategory.includes(pkg));
-    }
+
     this.categoryForm.get('categoryName')?.valueChanges.subscribe(val => {
       this.categoryForm.patchValue({ categoryDisplayName: val });
     });
@@ -64,7 +64,6 @@ export class AddEditPackageCategoryComponent {
     const file = event.target.files[0];
     if (!file) return;
     this.categoryImgFile = file;
-
     const reader = new FileReader();
     reader.onload = () => {
       this.categoryForm.patchValue({ categoryImg: reader.result });
@@ -74,15 +73,13 @@ export class AddEditPackageCategoryComponent {
 
   onBannerSelect(event: any) {
     const files = Array.from(event.target.files) as File[];
-    this.bannerFiles.push(...files);
-    const existingBanners = this.categoryForm.value.categoryBanners || [];
-    const newBanners: any[] = [];
     files.forEach(file => {
       const reader = new FileReader();
       reader.onload = () => {
-        newBanners.push(reader.result);
-        this.categoryForm.patchValue({
-          categoryBanners: [...existingBanners, ...newBanners]
+        this.banners.push({
+          preview: reader.result as string,
+          file: file,
+          isExisting: false
         });
       };
       reader.readAsDataURL(file);
@@ -90,16 +87,15 @@ export class AddEditPackageCategoryComponent {
   }
 
   dropBanner(event: CdkDragDrop<string[]>) {
-    const banners = [...this.categoryForm.value.categoryBanners];
-    moveItemInArray(banners, event.previousIndex, event.currentIndex);
-    this.categoryForm.patchValue({ categoryBanners: banners });
+    moveItemInArray(this.banners, event.previousIndex, event.currentIndex);
   }
 
   removeBanner(index: number) {
-    const banners = [...this.categoryForm.value.categoryBanners];
-    banners.splice(index, 1);
-    this.categoryForm.patchValue({ categoryBanners: banners });
-    this.bannerFiles.splice(index, 1);
+    const removedBanner = this.banners[index];
+    if (removedBanner.isExisting && removedBanner.path) {
+      this.deletedBannerPaths.push(removedBanner.path);
+    }
+    this.banners.splice(index, 1);
   }
 
   closeDialog() {
@@ -114,54 +110,69 @@ export class AddEditPackageCategoryComponent {
   async sendCategoryToServer() {
     if (this.categoryForm.invalid) return;
     const formValue = this.categoryForm.getRawValue();
-    const orgObj = this.data.orgObj;
     const selectedCafeteria = this.data.selectedCafeteria;
     const { _id: cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = selectedCafeteria;
-    const categoryObj = {
+    const isEdit = !!this.data.category;
+    const categoryId = isEdit ? this.data.category._id : undefined;
+    const bannerPayloadIndices: string[] = [];
+    const newBannerFiles: File[] = [];
+    this.banners.forEach((banner) => {
+      if (banner.isExisting && banner.path) {
+        bannerPayloadIndices.push(banner.path);
+      } else if (!banner.isExisting && banner.file) {
+        bannerPayloadIndices.push(newBannerFiles.length.toString());
+        newBannerFiles.push(banner.file);
+      }
+    });
+
+    const categoryObj: any = {
       categoryName: formValue.categoryName,
       categoryDisplayName: formValue.categoryDisplayName,
       imageConfigNameMealawe: formValue.imageConfigNameMealawe || '',
-      isActive: formValue.isActive
+      isActive: formValue.isActive,
+      categoryBanners: bannerPayloadIndices,
+      deleteBannerPaths: this.deletedBannerPaths
     };
+
+    if (isEdit) {
+      categoryObj['_id'] = categoryId;
+    }
+
+    const orgObj = this.data.orgObj;
+
     const fd = new FormData();
-    fd.append('categoryImg', this.categoryImgFile || new Blob());
-    this.bannerFiles.forEach(file => fd.append('categoryBanners', file));
-    if (this.data.addNew) {
-      const payload: any = {
-        org_id: orgObj._id,
-        org_name: orgObj.organization_name,
-        cafeteriaDetails: {
-          cafeteria_name,
-          address1,
-          address2,
-          cafeteria_city,
-          cafeteria_location,
-          cafeteria_id
-        },
-        itemList: [],
-        categoryConfig: [categoryObj]
-      };
-      fd.append('payload', JSON.stringify(payload));
+    if (this.categoryImgFile) {
+      fd.append('categoryImg', this.categoryImgFile);
+    } else if (!isEdit) {
+      fd.append('categoryImg', new Blob());
+    }
+    newBannerFiles.forEach(file => fd.append('categoryBanners', file));
 
-      try {
-        const response = await this.apiMainService.saveMealAweOutletCategoryConfig(fd);
-        this.dialogRef.close(response);
-      } catch (err) {
-        console.error('❌ Failed to save new category', err);
-      }
+    const payload: any = {
+      org_id: orgObj._id,
+      org_name: orgObj.organization_name,
+      cafeteriaDetails: {
+        cafeteria_name,
+        address1,
+        address2,
+        cafeteria_city,
+        cafeteria_location,
+        cafeteria_id
+      },
+      categoryObj: categoryObj
+    };
+    fd.append('payload', JSON.stringify(payload));
 
-    } else {
-      const payload: any = {
-        cafeteriaId: cafeteria_id,
-        categoryConfig: categoryObj
-      };
-      fd.append('payload', JSON.stringify(payload));
-      try {
-        const response = await this.apiMainService.addCategoryConfig(fd);
-        this.dialogRef.close(response);
-      } catch (err) {
-        console.error('❌ Failed to update category', err);
+    try {
+      let response;
+      if (isEdit && categoryId) {
+        response = await this.apiMainService.updateCategoryMealAweOutlet(cafeteria_id, fd);
+      } else {
+        response = await this.apiMainService.addCategoryMealAweOutlet(fd);
       }
+      this.dialogRef.close(response);
+    } catch (err) {
+      console.error('❌ Failed to save/update category', err);
     }
   }
 }

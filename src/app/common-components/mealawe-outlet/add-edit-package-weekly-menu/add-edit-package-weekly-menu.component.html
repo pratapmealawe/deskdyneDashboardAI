@@ -74,6 +74,9 @@
                         Set as Active Week
                     </mat-checkbox>
                     <span class="badge bg-success" *ngIf="week.isSelected">Active Week</span>
+                    <button mat-icon-button color="warn" (click)="deleteWeek(i)" matTooltip="Delete Week">
+                        <mat-icon>delete</mat-icon>
+                    </button>
                     <mat-error *ngIf="showRequiredError && !week.isSelected">
                         Please select an active week
                     </mat-error>
@@ -93,8 +96,8 @@
                                     <div class="col-12 col-md-9">
                                         <mat-form-field appearance="outline" class="w-100">
                                             <mat-label>Description</mat-label>
-                                            <input matInput [(ngModel)]="item.description" #desc="ngModel" required
-                                                placeholder="Enter menu description" />
+                                            <input matInput [(ngModel)]="item[categoryKey || 'breakfast'].description"
+                                                #desc="ngModel" required placeholder="Enter menu description" />
                                             <mat-error *ngIf="desc.invalid && (desc.touched || desc.dirty)">
                                                 Description is required
                                             </mat-error>

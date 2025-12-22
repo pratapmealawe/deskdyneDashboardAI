@@ -32,8 +32,8 @@
             <input type="file" multiple (change)="onBannerSelect($event)" accept="image/*">
 
             <div cdkDropList (cdkDropListDropped)="dropBanner($event)" class="banner-preview mt-2">
-                <div *ngFor="let b of categoryForm.value.categoryBanners; let i = index" cdkDrag class="banner-item">
-                    <img [src]="b" width="120" />
+                <div *ngFor="let b of banners; let i = index" cdkDrag class="banner-item">
+                    <img [src]="b.preview" width="120" />
                     <button mat-icon-button color="warn" class="remove-btn" (click)="removeBanner(i)">
                         <mat-icon>close</mat-icon>
                     </button>
