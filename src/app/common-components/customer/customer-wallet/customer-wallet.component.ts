@@ -1,6 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
+import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { WalletTransactionDialogComponent } from './wallet-transaction-dialog/wallet-transaction-dialog.component';
 
 @Component({
   selector: 'app-customer-wallet',
@@ -8,88 +12,165 @@ import { PolicyService } from 'src/service/policy.service';
   styleUrls: ['./customer-wallet.component.scss']
 })
 export class CustomerWalletComponent implements OnInit {
-@Input() userObj: any;
-  walletDetails:any;
-  editMode:any = false;
-  amt:any
-  actionType:any;
-  walletObj = {
-    customerId:"",
-    customerName:"",
-    rewardsPoints:0,
-    remark:""
-  }
-  page = 1;
-  walletList: any = [];
+  @Input() userObj: any;
+  walletDetails: any;
 
-  constructor(private apiMainService: ApiMainService, private policyService: PolicyService) {
-  }
+  // Pagination
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  pageIndex = 0;
+  pageSize = 10;
+  estimatedTotal = 0;
+  walletList: any = [];
+  allTransactions: any[] = [];
+  filteredTransactions: any[] = [];
+
+  // Filter
+  selectedWalletType: string = 'all';
+  walletTypeFilterList = [
+    { value: 'all', viewValue: 'All' },
+    { value: 'billing', viewValue: 'Billing' },
+    { value: 'complimentary', viewValue: 'Complimentary' },
+    { value: 'others', viewValue: 'Others' }
+  ];
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private policyService: PolicyService,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
+
   ngOnInit() {
-    console.log(this.userObj,"this.userObj");
-    this.walletObj.customerId = this.userObj._id
-    this.walletObj.customerName = this.userObj.userName
-    this.checkWallets();
     this.getWalletBalance();
     this.getWalletList();
   }
 
-  async getWalletBalance(){
-      const res = await this.apiMainService.getWalletBalance(this.userObj._id);
-      this.walletDetails = res;
-  }
-
-  changeBalance(type:any){
-    this.walletObj.rewardsPoints = 0
-    this.walletObj.remark = ""
-    this.actionType = type;
-    this.editMode = true;
-  }
-
-  async updateWallet(type:any){
+  async getWalletBalance() {
     try {
-        const res = type === 'add' ? await this.apiMainService.depositeInWallet(this.userObj._id,this.walletObj) : await this.apiMainService.withdrawFromWallet(this.userObj._id,this.walletObj);
-        this.editMode = false;
-        this.getWalletBalance();
-        this.getWalletList();
-    } catch (error) {
-      console.log(error)
+      this.walletDetails = await this.apiMainService.getWalletBalance(this.userObj._id);
+    } catch (e) {
+      console.error(e);
     }
+  }
+
+  openTransactionDialog(actionType: 'add' | 'deduct') {
+    const dialogRef = this.dialog.open(WalletTransactionDialogComponent, {
+      width: '450px',
+      disableClose: true,
+      data: {
+        actionType,
+        customerName: this.userObj.userName
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result && result.success) {
+        await this.processTransaction(actionType, result);
+      }
+    });
+  }
+
+  async processTransaction(type: 'add' | 'deduct', data: any) {
+    const walletObj = {
+      customerId: this.userObj._id,
+      customerName: this.userObj.userName,
+      walletType: data.walletType,
+      rewardsPoints: data.amount,
+      remark: data.remark
+    };
+
+    try {
+      if (type === 'add') {
+        await this.apiMainService.depositeInWallet(this.userObj._id, walletObj);
+      } else {
+        await this.apiMainService.withdrawFromWallet(this.userObj._id, walletObj);
+      }
+      this.snackBar.open(`Money ${type === 'add' ? 'Added' : 'Deducted'} Successfully`, 'OK', { duration: 3000 });
+      this.getWalletBalance();
+      // Reset pagination to first page on new transaction
+      this.getWalletList(); // Reload all data
+    } catch (error) {
+      console.error(error);
+      this.snackBar.open('Transaction Failed', 'OK', { duration: 3000 });
+    }
+  }
+
+  onPageChange(event: PageEvent) {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updateView();
+  }
+
+  onFilterChange() {
+    this.pageIndex = 0;
+    if (this.paginator) this.paginator.firstPage();
+    this.updateView();
   }
 
   async getWalletList() {
     try {
-      let walletList:any=[];
-        walletList = await this.apiMainService.userRewardsPointsHistory(this.userObj._id, this.page, 10);
-      if (walletList && walletList.length > 0) {
-        this.walletList = [...walletList];
-        console.log('wallet list ', this.walletList)
-        // this.nextOn = true;
-      } else {
-        // this.nextOn = false;
+      // Fetch all transactions (client-side pagination)
+      const res: any = await this.apiMainService.userRewardsPointsHistory(this.userObj._id, 1, 1000); // Fetching large chunk
+
+      if (res) {
+        this.allTransactions = Array.isArray(res) ? res : (res.data || []);
+        this.updateView();
       }
     } catch (error) {
-      console.log('error while searching wallet ', error);
+      console.error('Error loading wallet list', error);
     }
   }
 
-  getMore() {
-    this.page++;
-    this.getWalletList();
+  updateView() {
+    // 1. Filter
+    let temp = this.allTransactions;
+    if (this.selectedWalletType !== 'all') {
+      temp = temp.filter(tx => tx.walletType?.toLowerCase() === this.selectedWalletType.toLowerCase());
+    }
+    this.filteredTransactions = temp;
+    this.estimatedTotal = this.filteredTransactions.length;
+
+    // 2. Paginate
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.walletList = this.filteredTransactions.slice(start, end);
   }
 
-  async checkWallets() {
-    try {
-      if (this.userObj && this.userObj._id && this.userObj.phoneNo && this.userObj.email) {
-        const walletObj = {
-          customerId: this.userObj._id,
-          customerPhoneNo: this.userObj.phoneNo,
-          customerEmail: this.userObj.email
-        };
-          let wallet = await this.apiMainService.checkUserWallet(walletObj);
-      }
-    } catch (error) {
-      console.log('error while reload ', error)
+  // Helper for status styling (same as wallet-details)
+  getTxnTypeColorClass(type: string): string {
+    if (!type) return '';
+    if (type === 'credit' || type.toLowerCase().includes('credit') || type.includes('added')) return 'green';
+    if (type === 'debit' || type.toLowerCase().includes('debit') || type.includes('deducted')) return 'red';
+    return 'primary2';
+  }
+
+  getStatusColorClass(status: string | undefined): string {
+    if (!status) return 'text-muted';
+    switch (status.toLowerCase()) {
+      case 'success': return 'green';
+      case 'pending': return 'orange';
+      case 'failed': return 'red';
+      default: return 'text-muted';
     }
   }
 
+  getWalletTypeColorClass(type: string): string {
+    if (!type) return 'gray';
+    switch (type.toLowerCase()) {
+      case 'billing': return 'blue';
+      case 'complimentary': return 'purple';
+      case 'others': return 'gray';
+      default: return 'gray';
+    }
+  }
+
+  getTxnTypeChipColor(type: string | undefined): string {
+    if (!type) return 'gray';
+    const t = type.toLowerCase();
+    if (t.includes('credit') || t.includes('deposite') || t.includes('add')) return 'green';
+    if (t.includes('debit') || t.includes('withdraw') || t.includes('deduct')) return 'red';
+    if (t.includes('refund')) return 'purple';
+    if (t.includes('order')) return 'blue';
+    return 'gray';
+  }
 }

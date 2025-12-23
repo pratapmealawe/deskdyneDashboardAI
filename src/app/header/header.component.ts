@@ -132,7 +132,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Search Order', route: 'searchOrder', showChild: true },
       ],
     },
-
+    {
+      name: 'Vendor Wallet Dashboard',
+      showParent: true,
+      route: 'vendorWalletDashboard',
+      image: 'Users_white',
+      imageblue: 'Users_blue',
+    },
+    {
+      name: 'Vendor Payout',
+      showParent: true,
+      route: 'vendorPayout',
+      image: 'Users_white',
+      imageblue: 'Users_blue',
+    },
     {
       name: 'Users',
       showParent: true,

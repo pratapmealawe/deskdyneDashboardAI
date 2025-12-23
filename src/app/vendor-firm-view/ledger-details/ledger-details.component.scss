@@ -3,9 +3,95 @@
   min-width: 220px;
 }
 
+/* --- Card Design --- */
+.transaction-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+    border-color: #d0d0d0;
+  }
+
+  /* detail labels */
+  .detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .detail-value {
+    font-size: 0.95rem;
+    color: #212529;
+    font-weight: 500;
+  }
+}
+
+/* --- Status & Type Chips --- */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  /* Specific styling overrides if needed, distinct from bootstrap util classes */
+  &.bg-primary {
+    background-color: #e3f2fd !important;
+    color: #1976d2 !important;
+  }
+
+  &.bg-success {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+  }
+
+  &.bg-warning {
+    background-color: #fff8e1 !important;
+    color: #f57f17 !important;
+  }
+
+  &.bg-info {
+    background-color: #e0f7fa !important;
+    color: #0097a7 !important;
+  }
+
+  &.bg-secondary {
+    background-color: #f5f5f5 !important;
+    color: #616161 !important;
+  }
+}
+
+/* --- Typography & Spacing --- */
+h5.card-title {
+  font-weight: 700;
+  color: #343a40;
+}
+
 /* Optional: tighter card spacing on small screens */
 @media (max-width: 576px) {
   .status-filter {
     width: 100%;
+  }
+
+  .transaction-card {
+    margin-bottom: 1rem;
   }
 }

@@ -938,6 +938,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchOutletOrdersbysearchObj, body);
   }
 
+  fetchAllOutletOrdersbysearchObj(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchAllOutletOrdersbysearchObj, body);
+  }
+
   fetchConsumptionOrdersbysearchObj(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchConsumptionOrdersbysearchObj, body);
   }
@@ -983,6 +987,10 @@ export class ApiMainService {
 
   getCustomerListByOrgId(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCustomerListByOrgId, body);
+  }
+
+  getCustomerWalletListByOrgId(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCustomerWalletListByOrgId, body);
   }
 
   updateOrderStatus(body: any) {
@@ -1371,5 +1379,19 @@ export class ApiMainService {
   getAuditLogs(params: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getAuditLogs;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, params);
+  }
+
+  checkJusPayPayoutStatus(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.checkJusPayPayoutStatus;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getAllVendorWallet() {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllVendorWallet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
+  }
+
+  addBulkWalletBalance(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkWalletBalance, data);
   }
 }

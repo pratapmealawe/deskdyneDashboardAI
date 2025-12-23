@@ -26,6 +26,8 @@ export class VendorDetailsComponent implements OnInit {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.bankDetails = this.vendorObj.bank_details;
     this.filteredOutletList = this.filterOutletListByCafeteria(this.vendorObj.outletList);
+    console.log(this.filteredOutletList);
+
   }
 
   filterOutletListByCafeteria(outletList: any[]) {
@@ -46,10 +48,7 @@ export class VendorDetailsComponent implements OnInit {
         };
       }
 
-      cafeteriaMap[key].outlets.push({
-        outletName: outlet.outletName,
-        outletType: outlet.outletType
-      });
+      cafeteriaMap[key].outlets.push(outlet);
     });
 
     return Object.values(cafeteriaMap);

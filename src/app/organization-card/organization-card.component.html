@@ -1,39 +1,64 @@
-<div class="container-fuild">
-  <div class="cardDesign d-flex  flex-column flex-sm-row  w-100" *ngFor="let org of pagedOrganized">
-     <div class="content">
-      <div class="org-image-div">
-        <img [src]="org.organizationLogoUrl ? imageUrl + org.organizationLogoUrl : 'assets/images/dummyUpload.png'" class="org-image" />
+<div class="mb-2">
+  <div class="cardDesign mb-2" *ngFor="let org of pagedOrganized">
+    <div class="container-fluid py-2">
+      <div class="row align-items-center">
+
+        <!-- Logo -->
+        <div class="col-md-1 mb-2 mb-md-0">
+          <div class="org-image-div">
+            <img [src]="org.organizationLogoUrl ? imageUrl + org.organizationLogoUrl : 'assets/images/dummyUpload.png'"
+              class="org-image" />
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">Organization Name</div>
+          <div class="labelData fw-bold">{{ org?.organization_name }}</div>
+        </div>
+
+        <!-- City -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">City</div>
+          <div class="labelData">{{ org?.city }}</div>
+        </div>
+
+        <!-- Location -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">Location</div>
+          <div class="labelData">{{ org?.location }}</div>
+        </div>
+
+        <!-- Cafeteria -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">Cafeteria</div>
+          <mat-chip class="small-chip" style="cursor: pointer !important;" selected color="primary"
+            (click)="dataView(org?.cafeteriaList , 'cafeteria')">
+            Cafeterias | {{org?.cafeteriaList?.length || 0}}
+          </mat-chip>
+        </div>
+
+        <!-- POC -->
+        <div class="col-md-2 mb-2 mb-md-0">
+          <div class="labelText">POC Details</div>
+          <mat-chip class="small-chip" style="cursor: pointer !important;" selected color="accent"
+            (click)="dataView(org.poc_details,'poc')">
+            POCs | {{org.poc_details?.length || 0}}
+          </mat-chip>
+        </div>
+
+        <!-- Actions -->
+        <div class="col-md-1 d-flex align-items-center justify-content-end p-0">
+          <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View Details">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </div>
+
       </div>
-    </div>
-    <div class="content">
-      <div class="labelText">Organization Name</div>
-      <div class="labelData">{{org?.organization_name}}</div>
-    </div>
-    <div class="content">
-      <div class="labelText">City</div>
-      <div class="labelData">{{org?.city}}</div>
-    </div>
-    <div class="content">
-      <div class="labelText">location</div>
-      <div class="labelData">{{org?.location}}</div>
-    </div>
-    <div class="content">
-      <div class="labelText"> Cafeteria</div>
-      <div class="labelData"><mat-chip style="cursor: pointer;"
-          (click)="dataView(org?.cafeteriaList , 'cafeteria')">cafeteria | {{org?.cafeteriaList?.length || 0}}</mat-chip></div>
-    </div>
-    <div class="content">
-      <div class="labelText">Poc Details</div>
-      <div class="labelData"><mat-chip style="cursor: pointer;" (click)="dataView(org.poc_details,'poc')">poc details |
-          {{org.poc_details?.length}}</mat-chip></div>
-    </div>
-    <div class="content action-btn">
-      <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View">
-        <mat-icon>visibility</mat-icon>
-      </button>
     </div>
   </div>
 </div>
+
 <mat-paginator [length]="organization.length|| 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
   [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" aria-label="Select page">
 </mat-paginator>

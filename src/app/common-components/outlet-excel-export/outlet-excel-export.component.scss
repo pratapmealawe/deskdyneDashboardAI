@@ -1,3 +1,11 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.vendor-header {
+    @include mixin.responsive-header;
+    background-color: transparent;
+}
+
 .iconBtn {
     background: #8a8a8a;
     color: white;

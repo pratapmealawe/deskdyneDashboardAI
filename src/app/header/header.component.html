@@ -44,7 +44,7 @@
   </div>
   <div class="offcanvas-body">
     <ng-container>
-      <div *ngFor="let link of finalNavOption; let i = index">
+      <div *ngFor="let link of finalNavOption; let i = index" style="padding: 2px 0px;">
         <div *ngIf="link.showParent">
           <div class="orgbutton d-flex align-items-center justify-content-between"
             [ngClass]="{ 'active-link': selectedIndex === i }" (click)="selectLink(link, i)">
@@ -63,7 +63,7 @@
             </div>
           </div>
           <div *ngIf="link.children && openChildSectionIndex === i">
-            <div *ngFor="let childLink of link.children; let j = index">
+            <div *ngFor="let childLink of link.children; let j = index" style="padding: 2px 0px;">
               <div *ngIf="childLink.showChild" class="childMenuStyle" type="button"
                 (click)="selectChildLink(childLink.route, i, j)" [ngClass]="{
         'active-link': openChildSectionIndex === i && childSelectedIndex === j

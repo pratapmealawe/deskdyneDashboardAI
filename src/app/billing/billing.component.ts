@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-billing',
@@ -6,28 +7,30 @@ import { Component, Input, OnInit } from '@angular/core';
   styleUrls: ['./billing.component.scss']
 })
 export class BillingComponent implements OnInit {
-  @Input() adminOrg: any
+  @Input() adminOrg: any;
   billingTypes: any = [
     { name: "Outlet", type: "outletBilling" },
+    { name: "Wallet", type: "walletBilling" },
     { name: "Virtual Cafeteria", type: "vcBilling" },
     { name: "Daily Order", type: "dailyOrderBilling" },
     { name: "Bulk", type: "bulkOrderBilling" },
-  ]
+  ];
 
-  selectedTab: any
+  selectedTab: string = '';
+  selectedTabIndex: number = 0;
 
   constructor() { }
 
   ngOnInit(): void {
     console.log(this.adminOrg);
-
-    
-    this.selectedTab = this.billingTypes[0]?.type
+    if (this.billingTypes.length) {
+      this.selectedTab = this.billingTypes[0].type;
+      this.selectedTabIndex = 0;
+    }
   }
 
-  gotToTab(type: any) {
-    console.log(type);
-    this.selectedTab = type
+  onTabChange(event: MatTabChangeEvent) {
+    this.selectedTabIndex = event.index;
+    this.selectedTab = this.billingTypes[event.index].type;
   }
-
 }
