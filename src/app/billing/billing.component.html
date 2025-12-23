@@ -1,15 +1,23 @@
-<div class="container-fluid">
-    <h2>Billing</h2>
-
-    <div class="row bg-light rounded py-3 my-3">
-        <div class="col-4 col-md-3 col-lg-2 bgpadding1" *ngFor="let view of billingTypes"
-            [ngClass]="{ tileSelected: selectedTab === view.type }" (click)="gotToTab(view.type)">
-            <div class="tileLabel header4 countTile">{{ view.name }}</div>
-        </div>
+<div class="vendor-header">
+    <div>
+        <h4 class="m-0 fw-semibold">Billing</h4>
     </div>
+</div>
+
+
+<div class="container-fluid">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)"
+        class="custom-tabs pb-3">
+        <mat-tab *ngFor="let view of billingTypes">
+            <ng-template mat-tab-label>
+                {{ view.name }}
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
 
     <ng-container [ngSwitch]="selectedTab">
         <app-outlet-billing [selectedOrg]="adminOrg" *ngSwitchCase="'outletBilling'"></app-outlet-billing>
+        <app-wallet-billing [selectedOrg]="adminOrg" *ngSwitchCase="'walletBilling'"></app-wallet-billing>
         <app-vc-billing [selectedOrg]="adminOrg" *ngSwitchCase="'vcBilling'"></app-vc-billing>
         <app-daily-billing *ngSwitchCase="'dailyOrderBilling'"></app-daily-billing>
         <app-bulk-billing *ngSwitchCase="'bulkOrderBilling'"></app-bulk-billing>

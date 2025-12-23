@@ -1,6 +1,16 @@
-.left_arrow {
-  background: #eeeeee;
-  border-radius: 8px;
-  padding: 4px 10px;
-  width: fit-content;
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.custom-tabs {
+  ::ng-deep .mat-mdc-tab.mdc-tab--active {
+    @include mixin.active-mat-tab(#fff, 6px);
+  }
+
+  ::ng-deep .mat-mdc-tab-labels {
+    width: fit-content;
+  }
+
+  ::ng-deep .mat-mdc-tab-label-container {
+    border-bottom-style: 1rem solid !important;
+  }
 }

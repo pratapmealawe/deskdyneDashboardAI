@@ -1,24 +1,30 @@
-@import "/src/styles.scss";
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
 
+.card {
+    @include mixin.card-design(white);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: none;
+    height: 100%;
+}
+
+.labelText {
+    @include mixin.labelText;
+    color: #6c757d;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.labelData {
+    @include mixin.labelData;
+    color: #333;
+    font-size: 14px;
+    font-weight: 500;
+}
 
 .userImage {
-    width: 150px;
-    height: 150px;
-}
-
-@media only screen and (min-width:600px) and (max-width:1180px) {
-    .userImage {
-        width: 100px;
-        height: 100px;
-    }
-}
-
-.deleteBtn {
-    float: right;
-}
-
-.orgDetial {
-    display: flex;
-    align-items: center;
-    // justify-content: center;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
 }

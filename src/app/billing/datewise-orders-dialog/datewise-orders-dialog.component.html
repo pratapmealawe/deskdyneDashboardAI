@@ -7,14 +7,8 @@
       <!-- Single date (IST) -->
       <mat-form-field appearance="outline">
         <mat-label>Select date (IST)</mat-label>
-        <input
-          matInput
-          [matDatepicker]="picker1"
-          [(ngModel)]="selectedDate"
-          [min]="data.minDate"
-          [max]="data.maxDate"
-          (dateChange)="onDateChange($event.value)"
-        />
+        <input matInput [matDatepicker]="picker1" [(ngModel)]="selectedDate" [min]="data.minDate" [max]="data.maxDate"
+          (dateChange)="onDateChange($event.value)" />
         <mat-datepicker #picker1></mat-datepicker>
         <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
       </mat-form-field>
@@ -32,12 +26,23 @@
           <div><small>Item:</small> ₹{{ snapshot?.totalItemAmount || 0 | number:'1.2-2' }}</div>
           <div><small>Subsidy:</small> ₹{{ snapshot?.totalSubsidy || 0 | number:'1.2-2' }}</div>
           <div><small>After GST:</small> ₹{{ snapshot?.totalItemAmountAfterGst || 0 | number:'1.2-2' }}</div>
-          <div><small>Comm:</small> ₹{{ snapshot?.vendorCommissionAmount || 0 | number:'1.2-2' }}</div>
-          <div><small>Comm GST:</small> ₹{{ snapshot?.vendorCommissionGstAmount || 0 | number:'1.2-2' }}</div>
-          <div><small>Before Comm GST:</small> ₹{{ snapshot?.vendorLedgerAmtBeforeCommissionGst || 0 | number:'1.2-2' }}</div>
-          <div><small>Before TDS/TCS:</small> ₹{{ snapshot?.vendorLedgerAmtBeforeTdsTcs || 0 | number:'1.2-2' }}</div>
-          <div><small>TCS:</small> ₹{{ snapshot?.tcsAmount || 0 | number:'1.2-2' }}</div>
-          <div><small>TDS:</small> ₹{{ snapshot?.tdsAmount || 0 | number:'1.2-2' }}</div>
+          <ng-container *ngIf="data.isEcommerce">
+            <div><small>Comm:</small> ₹{{ snapshot?.vendorCommissionAmount || 0 | number:'1.2-2' }}</div>
+            <div><small>Comm GST:</small> ₹{{ snapshot?.vendorCommissionGstAmount || 0 | number:'1.2-2' }}</div>
+            <div><small>Before Comm GST:</small> ₹{{ snapshot?.vendorLedgerAmtBeforeCommissionGst || 0 |
+              number:'1.2-2' }}</div>
+            <div><small>Before TDS/TCS:</small> ₹{{ snapshot?.vendorLedgerAmtBeforeTdsTcs || 0 | number:'1.2-2'
+              }}</div>
+            <div><small>TCS:</small> ₹{{ snapshot?.tcsAmount || 0 | number:'1.2-2' }}</div>
+            <div><small>TDS:</small> ₹{{ snapshot?.tdsAmount || 0 | number:'1.2-2' }}</div>
+          </ng-container>
+
+          <ng-container *ngIf="!data.isEcommerce">
+            <div><small>Comm:</small> ₹{{ snapshot?.vendorCommissionAmount || 0 | number:'1.2-2' }}</div>
+            <div><small>TDS (Rev Share):</small> ₹{{ snapshot?.revenueSharingTdsAmount || 0 | number:'1.2-2' }}
+            </div>
+            <!-- Note: Vendor Payout for non-ecom is typically (Vendor Amt - Subsidy), same formula but different base ledger -->
+          </ng-container>
           <div class="ms-auto"><small>Vendor:</small> ₹{{ snapshot?.totalVendorAmt || 0 | number:'1.2-2' }}</div>
         </div>
       </div>
@@ -53,12 +58,19 @@
               <th class="text-end">Item</th>
               <th class="text-end">Subsidy</th>
               <th class="text-end">After GST</th>
-              <th class="text-end">Comm</th>
-              <th class="text-end">Comm GST</th>
-              <th class="text-end">Before Comm GST</th>
-              <th class="text-end">Before TDS/TCS</th>
-              <th class="text-end">TCS</th>
-              <th class="text-end">TDS</th>
+              <ng-container *ngIf="data.isEcommerce">
+                <th class="text-end">Comm</th>
+                <th class="text-end">Comm GST</th>
+                <th class="text-end">Before Comm GST</th>
+                <th class="text-end">Before TDS/TCS</th>
+                <th class="text-end">TCS</th>
+                <th class="text-end">TDS</th>
+              </ng-container>
+
+              <ng-container *ngIf="!data.isEcommerce">
+                <th class="text-end">Comm</th>
+                <th class="text-end">TDS</th>
+              </ng-container>
               <th class="text-end">Vendor Amt</th>
             </tr>
           </thead>
@@ -70,28 +82,30 @@
               <td class="text-end">₹{{ o.itemAmount | number:'1.2-2' }}</td>
               <td class="text-end">₹{{ o.subsidyAmount | number:'1.2-2' }}</td>
               <td class="text-end">₹{{ o.totalItemAmountAfterGst | number:'1.2-2' }}</td>
-              <td class="text-end">₹{{ o.vendorCommissionAmount | number:'1.2-2' }}</td>
-              <td class="text-end">₹{{ o.vendorCommissionGstAmount | number:'1.2-2' }}</td>
-              <td class="text-end">₹{{ o.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</td>
-              <td class="text-end">₹{{ o.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</td>
-              <td class="text-end">₹{{ o.tcsAmount | number:'1.2-2' }}</td>
-              <td class="text-end">₹{{ o.tdsAmount | number:'1.2-2' }}</td>
-              <td class="text-end">₹{{ o.vendorLedgerAmt | number:'1.2-2' }}</td>
+              <ng-container *ngIf="data.isEcommerce">
+                <td class="text-end">₹{{ o.vendorCommissionAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ o.vendorCommissionGstAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ o.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ o.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ o.tcsAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ o.tdsAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ o.vendorLedgerAmt | number:'1.2-2' }}</td>
+              </ng-container>
+
+              <ng-container *ngIf="!data.isEcommerce">
+                <td class="text-end">₹{{ o.vendorCommissionAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ o.revenueSharingTdsAmount | number:'1.2-2' }}</td>
+                <!-- For non-ecom, the main ledger amount is typically stored in vendorRevenueSharingLedgerAmt -->
+                <td class="text-end">₹{{ o.vendorRevenueSharingLedgerAmt | number:'1.2-2' }}</td>
+              </ng-container>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Paginator -->
-      <mat-paginator
-        *ngIf="records?.length"
-        [length]="records.length"
-        [pageIndex]="pageIndex"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="pageSizeOptions"
-        (page)="onPage($event)"
-        showFirstLastButtons
-      ></mat-paginator>
+      <mat-paginator *ngIf="records?.length" [length]="records.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions" (page)="onPage($event)" showFirstLastButtons></mat-paginator>
 
       <ng-template #noData>
         <div class="mt-3 text-muted" style="font-size: 0.9rem;">

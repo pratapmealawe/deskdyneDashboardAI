@@ -34,24 +34,26 @@ export class LedgerDetailsComponent implements OnInit {
   /** Status filter (Material Select + Bootstrap layout) */
   selectedStatuses: Array<'New' | 'InProgress' | 'Closed'> = ['New'];
 
-  constructor(private apiMainService: ApiMainService) {}
+  searchOrderNo = '';
+
+  constructor(private apiMainService: ApiMainService) { }
 
   ngOnInit(): void {
     const todayISO = new Date().toISOString();
     this.fromDate = todayISO;
     this.toDate = todayISO;
     this.fetchPage(1);
-    this.getVendorLedgerBalance()
+    this.getVendorLedgerBalance();
   }
 
   async getVendorLedgerBalance() {
     // this.vendorFirmInfo._id
     try {
-      const res = await this.apiMainService.getTotalVendorLedgerBalanceByFirm(this.vendorFirmInfo._id)
+      const res = await this.apiMainService.getTotalVendorLedgerBalanceByFirm(this.vendorFirmInfo._id);
       console.log(res);
-      
-      this.totalVendorLegersBalance = res.totalBalance
-    } catch(err:any) {
+
+      this.totalVendorLegersBalance = res.totalBalance;
+    } catch (err: any) {
       console.log(err);
     }
   }
@@ -70,9 +72,15 @@ export class LedgerDetailsComponent implements OnInit {
   /** Apply status filter on current page and recompute page-scope balance */
   private applyFilters() {
     const allowed = new Set(this.selectedStatuses);
-    const filtered = this.pageItems.filter(it => allowed.has(this.normalizeStatus(it.status)));
-    this.displayedLedgers = filtered;
+    const searchStr = (this.searchOrderNo || '').trim().toLowerCase();
 
+    const filtered = this.pageItems.filter(it => {
+      const matchStatus = allowed.has(this.normalizeStatus(it.status));
+      const matchSearch = !searchStr || String(it.orderNo || '').toLowerCase().includes(searchStr);
+      return matchStatus && matchSearch;
+    });
+
+    this.displayedLedgers = filtered;
   }
 
   /** Fetch a page (supports common API shapes) */
@@ -152,9 +160,11 @@ export class LedgerDetailsComponent implements OnInit {
 
     // Client-side re-filter current page:
     this.applyFilters();
+  }
 
-    // Or switch to server-side filtering:
-    // this.fetchPage(1);
+  /** Search trigger */
+  onSearch() {
+    this.applyFilters();
   }
 
   /** Backward compatibility if called elsewhere */
@@ -167,5 +177,53 @@ export class LedgerDetailsComponent implements OnInit {
     if (this.totalCount !== null) return this.totalCount;
     // Approximate length so paginator enables "Next" when applicable
     return (this.page - 1) * this.limit + this.displayedLedgers.length + (this.hasNextPage ? 1 : 0);
+  }
+
+  // --- UI Helpers ---
+
+  getBillingTypeColorClass(type: string | undefined): string {
+    if (!type) return 'bg-secondary text-white';
+    switch (type.toLowerCase()) {
+      case 'ecommerce': return 'bg-info text-dark';
+      case 'subscription': return 'bg-primary text-white';
+      default: return 'bg-secondary text-white';
+    }
+  }
+
+  getOrderTypeColorClass(type: string | undefined): string {
+    if (!type) return 'bg-light text-dark border';
+    switch (type.toLowerCase()) {
+      case 'preorder': return 'bg-warning text-dark';
+      case 'ondemand': return 'bg-success text-white';
+      default: return 'bg-light text-dark border';
+    }
+  }
+
+  getStatusColorClass(status: string | undefined): string {
+    const s = this.normalizeStatus(status);
+    switch (s) {
+      case 'New': return 'bg-primary text-white';
+      case 'InProgress': return 'bg-warning text-dark';
+      case 'Closed': return 'bg-success text-white';
+      default: return 'bg-secondary text-white';
+    }
+  }
+
+  getStatusIcon(status: string | undefined): string {
+    const s = this.normalizeStatus(status);
+    switch (s) {
+      case 'New': return 'bi-hourglass-split';
+      case 'InProgress': return 'bi-arrow-repeat';
+      case 'Closed': return 'bi-check-circle-fill';
+      default: return 'bi-question-circle';
+    }
+  }
+
+  getLedgerDisplayAmount(ledger: any): number {
+    if (ledger.billingType === 'ecommerce') {
+      return ledger.vendorLedgerAmt || 0;
+    } else {
+      return (ledger.vendorRevenueSharingLedgerAmt || 0) - (ledger.subsidyAmount || 0);
+    }
   }
 }

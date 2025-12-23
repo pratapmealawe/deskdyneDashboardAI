@@ -3,6 +3,8 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
+import { BulkWalletUploadDialogComponent } from './bulk-wallet-upload-dialog/bulk-wallet-upload-dialog.component';
 
 // Excel & PDF
 import * as ExcelJS from 'exceljs';
@@ -49,6 +51,7 @@ export class CustomerComponent implements OnInit, OnChanges {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService,
+    private dialog: MatDialog
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -98,7 +101,7 @@ export class CustomerComponent implements OnInit, OnChanges {
     console.log(this.filterObj?.orgId, "this.filterObj?.orgId");
   }
 
-   onKeyEvent(event: any) {
+  onKeyEvent(event: any) {
     if (event.key === "Escape") {
       (event.target as HTMLInputElement).value = '';
       this.filteredCustomerList = [...this.customerList];
@@ -309,5 +312,16 @@ export class CustomerComponent implements OnInit, OnChanges {
     (pdfMake as any)
       .createPdf(docDefinition)
       .download(`Users_${orgName}_${dateStr}.pdf`);
+  }
+
+  openBulkWalletDialog() {
+    this.dialog.open(BulkWalletUploadDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        orgId: this.filterObj.orgId,
+        customerList: this.customerList
+      }
+    });
   }
 }

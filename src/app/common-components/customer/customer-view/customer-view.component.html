@@ -1,35 +1,29 @@
-<div class="container-fluid">
-  <div class="left_arrow" (click)="backBtn()" style="cursor: pointer">
-    <i class="bi bi-arrow-left"></i>
+<div class="container-fluid pb-4">
+  <button mat-flat-button (click)="backBtn()">
+    <mat-icon>arrow_back</mat-icon>
     Back
-  </div>
+  </button>
 
-  <div class="row my-3">
-    <div *ngFor="let view of userViewList" class="col-4 col-md-3 col-lg-2 bgpadding1"
-      [ngClass]="{ 'tileSelected': selectedTab === view.path }" (click)="gotToTab(view.path)">
-      <div class="tileLabel header4 countTile">
+  <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)"
+    class="custom-tabs py-3">
+    <mat-tab *ngFor="let view of userViewList">
+      <ng-template mat-tab-label>
         {{ view.name }}
-      </div>
-    </div>
-  </div>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+
   <div class="tab-content mt-3">
     <ng-container [ngSwitch]="selectedTab">
       <div *ngSwitchCase="'userDetails'" class="tab-pane fade show active">
-        <app-customer-details [userDetails]="userDetails" ></app-customer-details>
-      </div>
-      <div *ngSwitchCase="'pastorders'" class="tab-pane fade show active">
-        <app-customer-past-orders [userObj]="userDetails"></app-customer-past-orders>
-      </div>
-      <div *ngSwitchCase="'pastmealorders'" class="tab-pane fade show active">
-        <!-- <app-user-past-meal-order [userObj]="user" [server]="server"></app-user-past-meal-order> -->
+        <app-customer-details [userDetails]="userDetails"></app-customer-details>
       </div>
       <div *ngSwitchCase="'wallet'" class="tab-pane fade show active">
-        <app-customer-wallet [userObj]="userDetails" ></app-customer-wallet>
+        <app-customer-wallet [userObj]="userDetails"></app-customer-wallet>
       </div>
       <div *ngSwitchCase="'outletOrders'" class="tab-pane fade show active">
         <app-customer-outlet-orders [userDetails]="userDetails"></app-customer-outlet-orders>
       </div>
     </ng-container>
   </div>
-
 </div>
