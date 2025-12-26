@@ -37,17 +37,20 @@ export class ImportDailyOrderMenuComponent {
     const workbook = new ExcelJS.Workbook();
     const ws = workbook.addWorksheet('Menu Template');
 
-    // Parent Header Row (Nested Labels)
+    // Parent Header Row
     const parentHeader = [
       'Delivery Settings', '', '', '', '', '', '',
       'Meal Configuration', '', '',
-      'Weekly Menu', '', '', '', '', '', ''
+      'Monday', '', '', 'Tuesday', '', '', 'Wednesday', '', '', 'Thursday', '', '', 'Friday', '', '', 'Saturday', '', '', 'Sunday', '', ''
     ];
     const parentRow = ws.addRow(parentHeader);
 
-    ws.mergeCells('A1:G1'); // Delivery Settings
-    ws.mergeCells('H1:J1'); // Meal Config
-    ws.mergeCells('K1:Q1'); // Weekly Menu
+    ws.mergeCells('A1:G1');
+    ws.mergeCells('H1:J1');
+    for (let i = 0; i < 7; i++) {
+      const startCol = 11 + (i * 3);
+      ws.mergeCells(1, startCol, 1, startCol + 2);
+    }
 
     // Style parent header
     parentRow.eachCell((cell, colNumber) => {
@@ -63,10 +66,14 @@ export class ImportDailyOrderMenuComponent {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const subHeaders = [
       'Meal Type', 'MOQ', 'Price', 'From', 'To', 'Cutoff', 'Same Day',
-      'Item Name', 'Item Price', 'Kitchen Pay', ...days
+      'Item Name', 'Item Price', 'Kitchen Pay'
     ];
+    days.forEach(() => {
+      subHeaders.push('Item Name', 'Description', 'Status');
+    });
+
     const headerRow = ws.addRow(subHeaders);
-    headerRow.eachCell((cell) => {
+    headerRow.eachCell((cell: any) => {
       cell.font = { bold: true };
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8F9FA' } };
       cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
@@ -74,24 +81,57 @@ export class ImportDailyOrderMenuComponent {
     });
 
     // Column Widths
-    const widths = [15, 8, 10, 10, 10, 10, 12, 25, 12, 12, 20, 20, 20, 20, 20, 20, 20];
+    const widths = [15, 8, 10, 10, 10, 10, 12, 25, 12, 12];
+    for (let i = 0; i < 7; i++) widths.push(25, 30, 15);
     widths.forEach((w, i) => ws.getColumn(i + 1).width = w);
 
     // Add a sample row
     const sampleRow = [
-      'Lunch', 5, 50, '12:00', '14:00', '10:00', 'Yes',
-      'Veg Thali', 120, 80,
-      'Palak Paneer', 'Aloo Gobhi', 'Mixed Veg', 'Paneer Butter Masala', 'Baingan Bharta', 'N/A', 'N/A'
+      'Lunch', 5, 0, '12:30', '14:00', '11:00', 'No',
+      'Executive Veg Thali', 250, 210,
+      'Paneer Butter Masala', 'Served with Roti & Rice', 'Applicable',
+      'Aloo Gobhi', 'Standard side', 'Applicable',
+      'Dal Fry', 'Lentil soup', 'Applicable',
+      'Vegetable Pulao', 'Fragrant rice', 'Applicable',
+      'Gulab Jamun', 'Dessert', 'Applicable',
+      '', 'No service', 'Not Applicable',
+      '', 'No service', 'Not Applicable'
     ];
     const row = ws.addRow(sampleRow);
-    row.eachCell((cell) => {
+    row.eachCell((cell: any) => {
       cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, 'Daily_Order_Menu_Template.xlsx');
-    this.toaster.success('Template downloaded successfully');
+    saveAs(blob, `Menu_Template_${this.data?.cafeteriaName || 'Cafeteria'}.xlsx`);
+    this.toaster.success('Detailed template downloaded');
+  }
+
+  private formatTime(val: any): string {
+    if (val instanceof Date) {
+      // Excel stores time as Date. If year is 1899/1900, it's just a time cell.
+      const hours = val.getHours().toString().padStart(2, '0');
+      const minutes = val.getMinutes().toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+    if (typeof val === 'number') {
+      // Excel stores time as fraction of day (0.5 = 12:00)
+      const totalMinutes = Math.round(val * 24 * 60);
+      const hours = Math.floor(totalMinutes / 60).toString().padStart(2, '0');
+      const minutes = (totalMinutes % 60).toString().padStart(2, '0');
+      return `${hours}:${minutes}`;
+    }
+    return val ? val.toString().trim() : '';
+  }
+
+  private getCellValue(cell: any): any {
+    if (!cell) return null;
+    const val = cell.value;
+    if (val && typeof val === 'object' && 'result' in val) {
+      return val.result;
+    }
+    return val;
   }
 
   async onFileChange(event: any) {
@@ -110,56 +150,73 @@ export class ImportDailyOrderMenuComponent {
 
       const jsonData: any[] = [];
       const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-      // Row 1 & 2 are headers, start from Row 3 (sample was Row 3, so data is Row 3+)
-      // Actually my template has:
-      // Row 1: Parent Headers
-      // Row 2: Sub Headers
-      // Row 3: Sample/Data
+      let lastDeliverySettings: any = null;
 
       worksheet?.eachRow((row, rowNumber) => {
         if (rowNumber <= 2) return; // Skip headers
 
+        const mealTypeVal = this.getCellValue(row.getCell(1));
+        const itemNameVal = this.getCellValue(row.getCell(8));
+
+        const mealType = mealTypeVal?.toString()?.trim();
+        const itemName = itemNameVal?.toString()?.trim();
+
+        // Skip header repeated or empty rows
+        if (mealType === 'Meal Type' && itemName === 'Item Name') return;
+        if (!mealType && !itemName) return;
+
+        // If mealType exists, update the current "active" delivery settings (for merged rows)
+        if (mealType) {
+          lastDeliverySettings = {
+            mealType: mealType,
+            moq: Number(this.getCellValue(row.getCell(2))) || 0,
+            deliveryCharge: Number(this.getCellValue(row.getCell(3))) || 0,
+            from: this.formatTime(this.getCellValue(row.getCell(4))),
+            to: this.formatTime(this.getCellValue(row.getCell(5))),
+            cutoff: this.formatTime(this.getCellValue(row.getCell(6))),
+            isSameDay: ['yes', 'true', 'y'].includes(this.getCellValue(row.getCell(7))?.toString()?.trim().toLowerCase())
+          };
+        }
+
+        // Must have an item name and delivery settings to create a menu entry
+        if (!itemName || !lastDeliverySettings) return;
+
         const rowData: any = {
-          mealType: row.getCell(1).value,
-          moq: row.getCell(2).value,
-          deliveryCharge: row.getCell(3).value,
-          from: row.getCell(4).value,
-          to: row.getCell(5).value,
-          cutoff: row.getCell(6).value,
-          isSameDay: row.getCell(7).value === 'Yes',
-          itemName: row.getCell(8).value,
-          mealPrice: row.getCell(9).value,
-          kitchenPay: row.getCell(10).value,
+          ...lastDeliverySettings,
+          itemName: itemName,
+          mealPrice: Number(this.getCellValue(row.getCell(9))) || 0,
+          kitchenPay: Number(this.getCellValue(row.getCell(10))) || 0,
           weeklyMenu: []
         };
 
-        if (rowData.mealType && rowData.itemName) {
-          days.forEach((day, index) => {
-            const dayItemName = row.getCell(11 + index).value;
-            rowData.weeklyMenu.push({
-              itemDay: day,
-              itemName: dayItemName === 'N/A' ? '' : dayItemName,
-              itemDescription: '',
-              notApplicable: dayItemName === 'N/A'
-            });
-          });
+        days.forEach((day, index) => {
+          const colIndex = 11 + (index * 3);
+          const dName = this.getCellValue(row.getCell(colIndex))?.toString()?.trim() || '';
+          const dDesc = this.getCellValue(row.getCell(colIndex + 1))?.toString()?.trim() || '';
+          const dStatus = this.getCellValue(row.getCell(colIndex + 2))?.toString()?.trim().toLowerCase() || '';
 
-          jsonData.push(rowData);
-          this.importPreviewData.push({
-            mealType: rowData.mealType,
-            itemName: rowData.itemName,
-            price: rowData.mealPrice,
-            isValid: true
+          rowData.weeklyMenu.push({
+            itemDay: day,
+            itemName: dName,
+            itemDescription: dDesc,
+            notApplicable: dStatus.includes('not') || dStatus.includes('n/a') || dStatus === 'no'
           });
-        }
+        });
+
+        jsonData.push(rowData);
+        this.importPreviewData.push({
+          mealType: rowData.mealType,
+          itemName: rowData.itemName,
+          price: rowData.mealPrice,
+          isValid: true
+        });
       });
 
       this.parsedData = jsonData;
-      this.toaster.success('File parsed successfully. Review data and confirm.');
+      this.toaster.success(`Parsed ${jsonData.length} items successfully.`);
     } catch (error) {
       console.error('Error parsing file:', error);
-      this.toaster.error('Error parsing Excel file. Please check the format.');
+      this.toaster.error('Error parsing file. Please use the provided template.');
     } finally {
       this.isImporting = false;
     }
@@ -170,16 +227,55 @@ export class ImportDailyOrderMenuComponent {
 
     this.isImporting = true;
     try {
-      // In a real scenario, you'd transform this back into the structure the API expects
-      // and call the copy/add API. 
-      // For now, we'll simulate the import.
-      console.log('Final Data to Import:', this.parsedData);
+      const mealTypeGroups = new Map<string, any>();
 
-      // Emit success and close
-      this.dialogRef.close(this.parsedData);
-      this.toaster.success('Menu imported successfully');
+      // Group by delivery setting combination
+      this.parsedData.forEach((row: any) => {
+        const key = `${row.mealType}_${row.moq}_${row.deliveryCharge}_${row.from}_${row.to}_${row.cutoff}_${row.isSameDay}`;
+
+        if (!mealTypeGroups.has(key)) {
+          mealTypeGroups.set(key, {
+            selectedMealType: row.mealType,
+            deliveryMOQ: row.moq,
+            deliveryCharge: row.deliveryCharge,
+            isSameDay: row.isSameDay,
+            cutOffTime: row.cutoff,
+            deliveryTimeFrom: row.from,
+            deliveryTimeTo: row.to,
+            mealConfig: []
+          });
+        }
+
+        const group = mealTypeGroups.get(key);
+        group.mealConfig.push({
+          itemName: row.itemName,
+          mealPrice: row.mealPrice,
+          payAmtToKitchen: row.kitchenPay,
+          isActive: true,
+          weeklyMenu: row.weeklyMenu
+        });
+      });
+
+      const payload = {
+        organization_name: this.data.organization_name,
+        organizationId: this.data.organizationId,
+        cafeteriaId: this.data.cafeteriaId,
+        cafeteriaName: this.data.cafeteriaName,
+        mealTypeList: Array.from(mealTypeGroups.values())
+      };
+
+      console.log('Bulk Import Payload:', JSON.stringify(payload, null, 2));
+
+      this.apiMainService.addBulkDailyOrderMenu(payload).then((res: any) => {
+        this.dialogRef.close(true);
+        this.toaster.success('Menu items imported successfully');
+      }).catch((error: any) => {
+        console.error('API Error:', error);
+        this.toaster.error('Server failed to import menu items');
+      });
     } catch (error) {
-      this.toaster.error('Failed to import menu');
+      console.error('Process Import Error:', error);
+      this.toaster.error('An error occurred during import processing');
     } finally {
       this.isImporting = false;
     }

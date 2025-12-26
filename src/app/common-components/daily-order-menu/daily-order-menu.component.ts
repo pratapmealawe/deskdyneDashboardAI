@@ -246,25 +246,26 @@ export class DailyOrderMenuComponent implements OnInit {
     const parentHeader = [
       'Delivery Settings', '', '', '', '', '', '',
       'Meal Configuration', '', '',
-      'Weekly Menu', '', '', '', '', '', ''
+      'Monday', '', '', 'Tuesday', '', '', 'Wednesday', '', '', 'Thursday', '', '', 'Friday', '', '', 'Saturday', '', '', 'Sunday', '', ''
     ];
     const parentRow = ws.addRow(parentHeader);
 
     // Merge parent header cells
     ws.mergeCells('A2:G2'); // Delivery Settings
     ws.mergeCells('H2:J2'); // Meal Config
-    ws.mergeCells('K2:Q2'); // Weekly Menu
+    // Merge Days (each gets 3 columns: Name, Desc, Status)
+    let charCode = 75; // Starting from 'K'
+    for (let i = 0; i < 7; i++) {
+      const startCol = 11 + (i * 3);
+      const endCol = startCol + 2;
+      ws.mergeCells(2, startCol, 2, endCol);
+    }
 
     // Style parent header
     parentRow.eachCell((cell, colNumber) => {
       cell.font = { bold: true, size: 12 };
       cell.alignment = { vertical: 'middle', horizontal: 'center' };
-      cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' }
-      };
+      cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
       if (colNumber <= 7) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFCFE2FF' } }; // Blue
       else if (colNumber <= 10) cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF3CD' } }; // Yellow
       else cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1E7DD' } }; // Green
@@ -274,26 +275,28 @@ export class DailyOrderMenuComponent implements OnInit {
     const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
     const subHeaders = [
       'Meal Type', 'MOQ', 'Price', 'From', 'To', 'Cutoff', 'Same Day',
-      'Item Name', 'Item Price', 'Kitchen Pay', ...days
+      'Item Name', 'Item Price', 'Kitchen Pay'
     ];
+    days.forEach(() => {
+      subHeaders.push('Item Name', 'Description', 'Status');
+    });
+
     const headerRow = ws.addRow(subHeaders);
     headerRow.eachCell((cell: any) => {
       cell.font = { bold: true };
       cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF8F9FA' } };
-      cell.border = {
-        top: { style: 'thin' },
-        left: { style: 'thin' },
-        bottom: { style: 'thin' },
-        right: { style: 'thin' }
-      };
+      cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
       cell.alignment = { horizontal: 'center' };
     });
 
     // Column Widths
-    const widths = [15, 8, 10, 10, 10, 10, 12, 25, 12, 12, 20, 20, 20, 20, 20, 20, 20];
+    const widths = [15, 8, 10, 10, 10, 10, 12, 25, 12, 12];
+    for (let i = 0; i < 7; i++) {
+      widths.push(25, 30, 15); // Name, Desc, Status for each day
+    }
     widths.forEach((w, i) => ws.getColumn(i + 1).width = w);
 
-    let currentRow = 4; // Starting data row (Row 4 since Rows 1-3 are headers)
+    let currentRow = 4;
 
     this.deliverySettings.forEach((setting: any) => {
       const startCell = currentRow;
@@ -314,25 +317,25 @@ export class DailyOrderMenuComponent implements OnInit {
             config.payAmtToKitchen
           ];
 
-          // Fill weekly menu horizontally
+          // Fill weekly menu horizontally with 3 cols per day
           days.forEach(dayName => {
             const dayData = config.weeklyMenu?.find((d: any) => d.itemDay === dayName);
-            rowValues.push(dayData ? (dayData.itemName || (dayData.notApplicable ? 'N/A' : '')) : '');
+            if (dayData) {
+              rowValues.push(dayData.itemName || '');
+              rowValues.push(dayData.itemDescription || '');
+              rowValues.push(dayData.notApplicable ? 'Not Applicable' : 'Applicable');
+            } else {
+              rowValues.push('', '', '');
+            }
           });
 
           const row = ws.addRow(rowValues);
           row.eachCell((cell: any) => {
-            cell.border = {
-              top: { style: 'thin' },
-              left: { style: 'thin' },
-              bottom: { style: 'thin' },
-              right: { style: 'thin' }
-            };
+            cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
           });
           currentRow++;
         });
       } else {
-        // Handle case with no meal configurations
         const rowValues = [
           setting.selectedMealType,
           setting.deliveryMOQ,
@@ -341,25 +344,17 @@ export class DailyOrderMenuComponent implements OnInit {
           setting.deliveryTimeTo,
           setting.cutOffTime,
           setting.isSameDay ? 'Yes' : 'No',
-          '', '', '' // Empty Item Name, Price, Kitchen Pay
+          '', '', ''
         ];
-        // Empty Weekly Menu columns
-        days.forEach(() => rowValues.push(''));
-
+        for (let i = 0; i < 21; i++) rowValues.push('');
         const row = ws.addRow(rowValues);
         row.eachCell((cell: any) => {
-          cell.border = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' }
-          };
+          cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
         });
         currentRow++;
       }
 
       const endCell = currentRow - 1;
-      // Merge setting cells if there are multiple configs
       if (startCell < endCell) {
         for (let col = 1; col <= 7; col++) {
           ws.mergeCells(startCell, col, endCell, col);
@@ -369,18 +364,12 @@ export class DailyOrderMenuComponent implements OnInit {
       }
     });
 
-    // Styling the Day Headers specifically
-    for (let i = 11; i <= 17; i++) {
-      const cell = headerRow.getCell(i);
-      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD1E7DD' } }; // Light success color
-    }
-
     // Write to Buffer and Save
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const fileName = `Menu_${this.orgObj.organization_name}_${this.selectedCafeteriaName}_Nested.xlsx`;
+    const fileName = `Detailed_Menu_${this.orgObj.organization_name}_${this.selectedCafeteriaName}.xlsx`;
     saveAs(blob, fileName);
-    this.toaster.success('Menu exported successfully');
+    this.toaster.success('Detailed menu exported successfully');
   }
 
   importMenu() {
