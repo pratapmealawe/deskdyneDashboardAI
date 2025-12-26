@@ -1,12 +1,3 @@
-.page-container {
-    padding: 24px;
-    background: #f0f2f5;
-
-    @media (max-width: 768px) {
-        padding: 12px;
-    }
-}
-
 ::ng-deep {
     .mat-expansion-panel-header {
         height: auto !important;
@@ -103,34 +94,5 @@
                 height: 18px;
             }
         }
-    }
-}
-
-.empty-state {
-    padding: 3rem 1rem;
-    text-align: center;
-    background: #fff;
-    border-radius: 12px;
-    border: 2px dashed #e9ecef;
-    margin: 1.5rem;
-
-    .empty-icon {
-        font-size: 4rem;
-        width: 4rem;
-        height: 4rem;
-        color: #dee2e6;
-        margin-bottom: 1.5rem;
-    }
-
-    h5 {
-        font-weight: 700;
-        color: #495057;
-        margin-bottom: 0.5rem;
-    }
-
-    p {
-        color: #6c757d;
-        max-width: 300px;
-        margin: 0 auto;
     }
 }

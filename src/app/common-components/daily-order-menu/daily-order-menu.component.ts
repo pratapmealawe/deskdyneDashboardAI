@@ -6,6 +6,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { AddDailyOrderMenuComponent } from './add-daily-order-menu/add-daily-order-menu.component';
 import { AddSubTypeDailyOrderMenuComponent } from './add-sub-type-daily-order-menu/add-sub-type-daily-order-menu.component';
 import { AddVendorDailyOrderMenuComponent } from './add-vendor-daily-order-menu/add-vendor-daily-order-menu.component';
+import { CopyDailyOrderMenuComponent } from './copy-daily-order-menu/copy-daily-order-menu.component';
 
 @Component({
   selector: 'app-daily-order-menu',
@@ -41,15 +42,24 @@ export class DailyOrderMenuComponent implements OnInit {
 
   getDailyOrderMenuByCafeteriaId() {
     this.apiMainService.getDailyOrderMenuByCafeteriaId(this.selectedCafeteriaId).then((res: any) => {
-      this.vendorDetails = res.vendorDetails;
-      this.deliverySettings = res.mealTypeList;
+      if (res) {
+        this.vendorDetails = res.vendorDetails;
+        if (res.mealTypeList && res.mealTypeList.length > 0) {
+          this.deliverySettings = res.mealTypeList;
+        } else {
+          this.deliverySettings = [];
+        }
+      } else {
+        this.vendorDetails = undefined;
+        this.deliverySettings = [];
+      }
     }).catch((err: any) => {
       console.log(err);
-      this.toaster.error('Failed to fetch daily order menu');
     })
   }
 
   onCafeteriaChange(event: any) {
+    this.selectedCafeteria = event.value;
     this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
     this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     this.getDailyOrderMenuByCafeteriaId();
@@ -192,5 +202,23 @@ export class DailyOrderMenuComponent implements OnInit {
       vendorDetails: this.vendorDetails,
     }
     this.openModal(AddVendorDailyOrderMenuComponent, payload);
+  }
+
+  copyMenu() {
+    const payload = {
+      organization_name: this.orgObj.organization_name,
+      organizationId: this.orgObj._id,
+      cafeteriaId: this.selectedCafeteriaId,
+      cafeteriaName: this.selectedCafeteriaName,
+    }
+    const dialogRef = this.modalService.open(CopyDailyOrderMenuComponent, {
+      width: '1000px',
+      data: payload,
+      autoFocus: true,
+      disableClose: false
+    });
+    dialogRef.afterClosed().subscribe(() => {
+      this.getDailyOrderMenuByCafeteriaId();
+    });
   }
 }

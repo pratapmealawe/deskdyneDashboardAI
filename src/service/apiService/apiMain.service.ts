@@ -1443,4 +1443,8 @@ export class ApiMainService {
   addBulkWalletBalance(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkWalletBalance, data);
   }
+
+  copyDailyOrderMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyDailyOrderMenu, data);
+  }
 }
