@@ -52,19 +52,7 @@ export class OtherOrdersComponent implements OnInit {
   orderTypeList = [
     {
       name: 'Admin Orders',
-      path: 'adminOrders',
-      subTabs: [
-        { name: 'Placed', path: 'placed' },
-        { name: 'Accepted', path: 'accepted' },
-        { name: 'Preparing', path: 'preparing' },
-        { name: 'Cancelled', path: 'cancelled' },
-        { name: 'Ready For Delivery', path: 'readyForDelivery' },
-        { name: 'Delivery Boy Assigned', path: 'deliveryBoyAssigned' },
-        { name: 'Handed To Delivery Boy', path: 'handedOverToDeliveryBoy' },
-        { name: 'On The Way', path: 'onTheWay' },
-        { name: 'Delivered', path: 'delivered' },
-        { name: 'Completed', path: 'completed' },
-      ],
+      path: 'adminOrders', // This matches the data logic
     },
     {
       name: 'Bulk Orders',
@@ -74,9 +62,17 @@ export class OtherOrdersComponent implements OnInit {
       name: 'Employee Poll',
       path: 'employeePoll',
     },
-  ]
-  selectedTab: string = 'adminOrders';
-  selectedSubTab: string = '';
+  ];
+
+  selectedTabIndex = 0;
+  selectedTab = 'adminOrders';
+
+  // Maps selected group to the current status key for chips
+  // Default selections
+  selectedAdminGroup = 'dailyBulk';
+  selectedBulkGroup = 'b2b';
+  selectedPollGroup = 'empPolls';
+
 
   constructor(private apiMainService: ApiMainService, private sendDataToComponent: SendDataToComponent, private utilityService: UtilityService) { }
 
@@ -85,18 +81,15 @@ export class OtherOrdersComponent implements OnInit {
     this.subscribeEvents();
   }
 
-  gotToTab(tab: string): void {
-    this.selectedTab = tab;
+  // Handle Tab Change
+  onTabChange(event: any): void {
+    this.selectedTabIndex = event.index;
+    this.selectedTab = this.orderTypeList[event.index].path;
+    // Reset filters on tab change if needed, or keep state
+    this.filteredList = [];
+    this.page = 1;
   }
 
-  goToSubTab(subPath: string): void {
-    this.selectedSubTab = subPath;
-  }
-
-  getSubTab(): any[] {
-    const main = this.orderTypeList.find(item => item.path === this.selectedTab);
-    return main?.subTabs || [];
-  }
 
 
   subscribeEvents() {
@@ -156,6 +149,7 @@ export class OtherOrdersComponent implements OnInit {
       else if (showDailyBulk) {
         orderList = await this.apiMainService.getb2bBulkDailyOrderList(status, this.page, this.pageLimit)
       }
+      console.log(orderList, "orderList");
       if (orderList && orderList.length > 0) {
         this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
         this.pageLastEntry = this.pageFirstEntry + orderList.length - 1;
@@ -238,6 +232,36 @@ export class OtherOrdersComponent implements OnInit {
 
   setBtnGroup(group: any) {
     this.selectedGroup = group;
+  }
+
+  getPollingOrdersCount(): number {
+    const data = this.orderStatusCountObj?.dailyBulk;
+    if (!data) return 0;
+    return (data.placed || 0) + (data.accepted || 0) + (data.preparing || 0) + (data.cancelled || 0) + (data.completed || 0);
+  }
+
+  getPollingDeliveryCount(): number {
+    const data = this.orderStatusCountObj?.dailyBulk;
+    if (!data) return 0;
+    return (data.readyForDelivery || 0) + (data.deliveryBoyAssigned || 0) + (data.handedOverToDeliveryBoy || 0) + (data.onTheWay || 0) + (data.delivered || 0);
+  }
+
+  getB2BOrdersCount(): number {
+    const data = this.orderStatusCountObj?.b2bBulk;
+    if (!data) return 0;
+    return (data.waitingForApproval || 0) + (data.placed || 0) + (data.accepted || 0) + (data.preparing || 0) + (data.declined || 0) + (data.cancelled || 0) + (data.completed || 0);
+  }
+
+  getB2BDeliveryCount(): number {
+    const data = this.orderStatusCountObj?.b2bBulk;
+    if (!data) return 0;
+    return (data.readyForDelivery || 0) + (data.deliveryBoyAssigned || 0) + (data.handedOverToDeliveryBoy || 0) + (data.onTheWay || 0) + (data.delivered || 0);
+  }
+
+  getEmployeePollCount(): number {
+    const data = this.orderStatusCountObj?.empVote;
+    if (!data) return 0;
+    return (data.today || 0) + (data.tomorrow || 0) + (data.dayAfterTomorrow || 0);
   }
 
 }

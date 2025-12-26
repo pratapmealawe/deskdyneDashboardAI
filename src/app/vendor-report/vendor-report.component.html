@@ -158,16 +158,19 @@
                                 <th class="text-end">Before TDS/TCS</th>
                                 <th class="text-end">TCS</th>
                                 <th class="text-end">TDS</th>
+                                <th class="text-end">Vendor Amt</th>
+                                <th class="text-end">Vendor Payout</th>
                             </ng-container>
 
                             <!-- Non-Ecommerce Cols -->
                             <ng-container *ngIf="!isEcommerce">
-                                <th class="text-end">Comm</th>
-                                <th class="text-end">TDS</th>
+                                <th class="text-end">Rev. Share</th>
+                                <th class="text-end">Rev. Share TDS</th>
                                 <th class="text-center">TDS Rate</th>
+                                <th class="text-end">Vendor Amt</th>
+                                <th class="text-end">Vendor Payout</th>
                             </ng-container>
 
-                            <th class="text-end">Vendor Amt</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -188,6 +191,9 @@
                                 <td class="text-end">₹{{ r.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</td>
                                 <td class="text-end">₹{{ r.tcsAmount | number:'1.2-2' }}</td>
                                 <td class="text-end">₹{{ r.tdsAmount | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ r.vendorLedgerAmt | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ (r.vendorLedgerAmt > 0 ? r.vendorLedgerAmt - r.subsidyAmount :
+                                    r.vendorLedgerAmt) | number:'1.2-2' }}</td>
                             </ng-container>
 
                             <!-- Non-Ecommerce Cols -->
@@ -195,10 +201,15 @@
                                 <td class="text-end">₹{{ r.vendorCommissionAmount | number:'1.2-2' }}</td>
                                 <td class="text-end">₹{{ r.revenueSharingTdsAmount | number:'1.2-2' }}</td>
                                 <td class="text-center">{{ r.revenueSharingTdsRatePct }}%</td>
+                                <td class="text-end">₹{{ r.vendorRevenueSharingLedgerAmt | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ (r.vendorRevenueSharingLedgerAmt > 0 ?
+                                    r.vendorRevenueSharingLedgerAmt - r.subsidyAmount : r.vendorRevenueSharingLedgerAmt)
+                                    |
+                                    number:'1.2-2' }}</td>
+
                             </ng-container>
 
                             <!-- Vendor Amt (already conditionally populated in .ts) -->
-                            <td class="text-end">₹{{ r.vendorLedgerAmt | number:'1.2-2' }}</td>
                         </tr>
                     </tbody>
                 </table>

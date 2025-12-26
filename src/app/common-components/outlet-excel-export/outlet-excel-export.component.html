@@ -1,5 +1,11 @@
-<div class="container-fluid">
-    <h3 class="mb-0 pb-3">Outlet Orders</h3>
+<div class="vendor-header">
+    <div>
+        <h4 class="m-0 fw-semibold">Outlet Orders</h4>
+    </div>
+</div>
+
+<div class="container-fluid mt-3 pb-4">
+
     <div *ngIf="!isAdmin">
         <app-common-outlet-cafe-select [config]="headerConfig"
             (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>

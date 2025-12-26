@@ -1,30 +1,25 @@
-<div class="container-fluid">
-  <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-4"
-    *ngIf="showSearchSection">
-    <div class="g-0">
-      <h4 class="m-0 fw-semibold">Organization</h4>
-    </div>
-    <div class="d-flex justify-content-end align-items-center gap-3">
-      <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
-        <mat-form-field appearance="outline" class="search-input">
-          <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
-          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-            <mat-icon appAutoTooltip>search</mat-icon> </button>
-        </mat-form-field>
-      </div>
-      <button mat-raised-button color="primary" class="text-nowrap" (click)="addOrg()">
-        <mat-icon appAutoTooltip>add</mat-icon>
-        Add Organization
-      </button>
-    </div>
-    <div class="d-inline-flex d-md-none w-100">
-      <mat-form-field appearance="outline" class="search-input w-100">
+<div class="vendor-header" *ngIf="showSearchSection">
+  <div>
+    <h4 class="m-0 fw-semibold">Organization</h4>
+  </div>
+  <div class="header-actions">
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
         <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
         <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-          <mat-icon>search</mat-icon> </button>
+          <mat-icon>search</mat-icon>
+        </button>
       </mat-form-field>
     </div>
+
+    <button mat-raised-button color="primary" (click)="addOrg()">
+      <mat-icon>add_business</mat-icon> Add Organization
+    </button>
   </div>
+</div>
+
+
+<div class="container-fluid pb-4">
   <ng-container *ngIf="showSearchSection; else viewSection">
     <div *ngIf="orgList?.length > 0; else noRecords">
       <div>

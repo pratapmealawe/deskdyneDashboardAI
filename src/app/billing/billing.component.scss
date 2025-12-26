@@ -1,0 +1,37 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.vendor-header {
+    @include mixin.responsive-header;
+    background-color: transparent;
+}
+
+.header-actions {
+    @include mixin.responsive-flex-wrapper(1rem);
+    flex-grow: 1;
+    justify-content: flex-end;
+
+    .input-wrapper {
+        min-width: 200px;
+
+        @media(max-width: 768px) {
+            width: 100%;
+            display: block !important;
+        }
+    }
+}
+
+
+.custom-tabs {
+    ::ng-deep .mat-mdc-tab.mdc-tab--active {
+        @include mixin.active-mat-tab(#fff, 6px);
+    }
+
+    ::ng-deep .mat-mdc-tab-labels {
+        width: fit-content;
+    }
+
+    ::ng-deep .mat-mdc-tab-label-container {
+        border-bottom-style: 1rem solid !important;
+    }
+}

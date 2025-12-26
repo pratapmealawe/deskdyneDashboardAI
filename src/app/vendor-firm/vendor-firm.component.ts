@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -38,7 +38,8 @@ export class VendorFirmComponent {
     private policyService: PolicyService,
     private localStorageService: LocalStorageService,
     private confirmationModalService: ConfirmationModalService,
-    private searchService: SearchFilterService
+    private searchService: SearchFilterService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {

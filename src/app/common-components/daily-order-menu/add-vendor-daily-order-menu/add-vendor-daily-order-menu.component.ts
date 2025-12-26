@@ -24,10 +24,13 @@ export class AddVendorDailyOrderMenuComponent implements OnInit {
     vendorPhone: new FormControl(null, [Validators.required]),
     vendorAddress: new FormGroup({
       address1: new FormControl(null, [Validators.required]),
-      address2: new FormControl(null, [Validators.required]),
-      landmark: new FormControl(null),
-      location: new FormControl(null),
-      geolocation: new FormControl(null)
+      address2: new FormControl(null),
+      landmark: new FormControl(null, [Validators.required]),
+      location: new FormControl(null, [Validators.required]),
+      geolocation: new FormGroup({
+        lat: new FormControl(null, [Validators.required]),
+        lng: new FormControl(null, [Validators.required])
+      })
     })
   });
   vendorFirmList: any[] = [];
@@ -42,15 +45,14 @@ export class AddVendorDailyOrderMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.getVendors();
-
   }
 
   getVendors() {
     this.apiMainService.searchVendor(undefined).then((res) => {
       if (res && res.length > 0) {
-        const dailyAccessVendors = res.filter((vendor: any) => vendor.isDailyAndBulkAccess === false);
+        console.log(res);
+        const dailyAccessVendors = res.filter((vendor: any) => vendor.isDailyAndBulkAccess === true && vendor?.vendorFirmDetails?.vendorFirmName);
         const firmMap = new Map();
-
         dailyAccessVendors.forEach((vendor: any) => {
           const firmId = vendor?.vendorFirmDetails?.vendorFirmId;
           if (!firmMap.has(firmId)) {
@@ -61,9 +63,11 @@ export class AddVendorDailyOrderMenuComponent implements OnInit {
           }
           firmMap.get(firmId).vendorList.push(vendor);
         });
-
         this.vendorFirmList = [...firmMap.values()];
-        console.log(this.vendorFirmList);
+        if (this.data?.vendorDetails) {
+          this.vendorForm.patchValue(this.data.vendorDetails);
+          this.vendorList = this.vendorFirmList.find((firm: any) => firm.vendorFirmDetails.vendorFirmId === this.data.vendorDetails.vendorFirmId)?.vendorList;
+        }
       }
     })
   }
@@ -80,7 +84,7 @@ export class AddVendorDailyOrderMenuComponent implements OnInit {
       cafeteriaName: this.data.cafeteriaName,
       vendorDetails: this.vendorForm.getRawValue(),
     }
-    this.apiMainService.saveVendor(payload).then((res) => {
+    this.apiMainService.addVendorDetails(payload).then((res) => {
       this.toaster.success('Vendor saved successfully');
       this.dialogRef.close();
     }).catch((err) => {
@@ -88,18 +92,30 @@ export class AddVendorDailyOrderMenuComponent implements OnInit {
     })
   }
 
-onVendorFirmChange(event: any) {
-  // set vendorFirmId, vendorFirmName, vendorFirmEmail in vendorForm
-  this.vendorForm.get('vendorFirmId')?.setValue(event.value);
-  this.vendorForm.get('vendorFirmName')?.setValue(event.value);
-  this.vendorForm.get('vendorFirmEmail')?.setValue(event.value);
+  onVendorFirmChange(event: any) {
+    this.apiMainService.getVendorFirmById(event.value).then((res) => {
+      if (res) {
+        this.vendorForm.get('vendorFirmId')?.setValue(res._id);
+        this.vendorForm.get('vendorFirmName')?.setValue(res.vendorFirmName);
+        this.vendorForm.get('vendorFirmEmail')?.setValue(res.vendorFirmEmail);
+        this.vendorList = this.vendorFirmList.find((firm: any) => firm.vendorFirmDetails.vendorFirmId === event.value)?.vendorList;
+      }
+    })
+  }
 
-  this.vendorList = this.vendorFirmList.find((firm: any) => firm.vendorFirmId === event.value)?.vendorList;
-}
-
-onVendorChange(event: any) {
-  this.vendorForm.get('vendorId')?.setValue(event.value);
-}
+  onVendorChange(event: any) {
+    const vendor = this.vendorList.find((vendor: any) => vendor._id === event.value);
+    this.vendorForm.get('vendorId')?.setValue(vendor._id);
+    this.vendorForm.get('vendorName')?.setValue(vendor.vendorName);
+    this.vendorForm.get('vendorEmail')?.setValue(vendor.vendorEmail);
+    this.vendorForm.get('vendorPhone')?.setValue(vendor.vendorPhoneNo);
+    this.vendorForm.get('vendorAddress.address1')?.setValue(vendor.address.address1);
+    this.vendorForm.get('vendorAddress.address2')?.setValue(vendor.address.address2);
+    this.vendorForm.get('vendorAddress.landmark')?.setValue(vendor.address.landmark);
+    this.vendorForm.get('vendorAddress.location')?.setValue(vendor.address.location);
+    this.vendorForm.get('vendorAddress.geolocation.lat')?.setValue(vendor.geolocation.lat);
+    this.vendorForm.get('vendorAddress.geolocation.lng')?.setValue(vendor.geolocation.lng);
+  }
 
   closeModal() {
     this.dialogRef.close();

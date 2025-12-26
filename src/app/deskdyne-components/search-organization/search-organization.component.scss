@@ -1,4 +1,26 @@
 @use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.vendor-header {
+  @include mixin.responsive-header;
+  background-color: transparent;
+}
+
+.header-actions {
+  @include mixin.responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
+
+  .input-wrapper {
+    min-width: 200px;
+
+    @media(max-width: 768px) {
+      width: 100%;
+      display: block !important;
+    }
+  }
+}
+
 
 .cardDesign-2 {
   margin: 2px 0;
@@ -15,5 +37,5 @@
 }
 
 .search-input {
-  @include mixin.mat-form-field-responsive(); 
+  @include mixin.mat-form-field-responsive();
 }

@@ -1,7 +1,7 @@
 <div mat-dialog-title>
     <div class="d-flex justify-content-between">
         <span class="mb-0 fw-bold text-dark">
-            {{data.mealType ? 'Edit' : 'Add'}} Delivery Settings
+            {{data.vendorDetails ? 'Edit' : 'Add'}} Vendor
         </span>
         <button mat-icon-button (click)="closeModal()">
             <mat-icon>close</mat-icon>
@@ -14,7 +14,7 @@
             <div class="col-md-6">
                 <mat-form-field appearance="outline">
                     <mat-label>Vendor Firm Name</mat-label>
-                    <mat-select (selectionChange)="onVendorFirmChange($event)">
+                    <mat-select (selectionChange)="onVendorFirmChange($event)" formControlName="vendorFirmId">
                         <mat-option *ngFor="let vendorFirm of vendorFirmList" [value]="vendorFirm.vendorFirmDetails.vendorFirmId">
                             {{vendorFirm.vendorFirmDetails?.vendorFirmName}}
                         </mat-option>
@@ -24,8 +24,8 @@
             <div class="col-md-6">
                 <mat-form-field appearance="outline">
                     <mat-label>Vendor Name</mat-label>
-                    <mat-select (selectionChange)="onVendorChange($event)">
-                        <mat-option *ngFor="let vendor of vendorList" [value]="vendor.vendorId">
+                    <mat-select (selectionChange)="onVendorChange($event)" formControlName="vendorId">
+                        <mat-option *ngFor="let vendor of vendorList" [value]="vendor._id">
                             {{vendor.vendorName}}
                         </mat-option>
                     </mat-select>

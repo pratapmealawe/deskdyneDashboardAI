@@ -60,7 +60,7 @@ export class OutletExcelExportComponent implements OnInit {
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
     this.headerConfig.defaultOrgId = this.orgAdmin?.orgDetails?._id;
-    if(this.orgAdmin){
+    if (this.orgAdmin) {
       this.isAdmin = this.orgAdmin.role === 'ADMIN';
     }
   }
@@ -71,7 +71,7 @@ export class OutletExcelExportComponent implements OnInit {
     this.totalWalletUsed = 0;
     this.totalAmount = 0;
     try {
-      const res = await this.apiMainService.fetchOutletOrdersbysearchObj(body);
+      const res = await this.apiMainService.fetchAllOutletOrdersbysearchObj(body);
       // const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
       this.filteredOrderList = res;
       this.totalAmount = this.filteredOrderList.reduce((sum, order) => {
@@ -477,13 +477,7 @@ export class OutletExcelExportComponent implements OnInit {
   filterSubmitted(event: any) {
     if (event) {
       const body = {
-        cafeteriaName: event.cafeteria_name,
-        organizationName: event.org_name,
-        fromDate: event.date_from,
-        toDate: event.date_to,
-      }
-      const body1 = {
-        outletId: event.org_id,
+        outletId: event.outlet_id,
         fromDate: event.date_from,
         toDate: event.date_to,
       }

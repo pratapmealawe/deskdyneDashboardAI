@@ -201,6 +201,7 @@ export class ApiConfigService {
       getVcEmployeeByPhoneNo: p('/api/getVcEmployeeByPhoneNo', 'GET'),
       verifyVcEmployeeByPhoneNo: p('/api/verifyVcEmployeeByPhoneNo', 'GET'),
       fetchOutletOrdersbysearchObj: p('/api/fetchOutletOrdersbysearchObj', 'POST'),
+      fetchAllOutletOrdersbysearchObj: p('/api/fetchAllOutletOrdersbysearchObj', 'POST'),
       fetchConsumptionOrdersbysearchObj: p('/api/fetchConsumptionOrdersbysearchObj', 'POST'),
       fetchFoodOrderPackagebysearchObj: p('/api/fetchFoodOrderPackagebysearchObj', 'POST'),
       getStaticTotalCounts: p('/api/getStaticTotalCounts', 'GET'),
@@ -321,6 +322,10 @@ export class ApiConfigService {
       deleteMealConfig:p('/api/deleteMealConfig', 'POST'),
       isActiveAndDeActiveMealConfig:p('/api/isActiveAndDeActiveMealConfig', 'POST'),
       addVendorDetails:p('/api/addVendorDetails', 'POST'),
+      checkJusPayPayoutStatus: p('/utility/checkJusPayPayoutStatus', 'GET'),
+      getAllVendorWallet: p('/api/getAllVendorWallet', 'GET'),
+      addBulkWalletBalance: p('/api/addBulkWalletBalance', 'POST'),
+      getCustomerWalletListByOrgId: p('/api/getCustomerWalletListByOrgId', 'POST'),
     }
   }
 }

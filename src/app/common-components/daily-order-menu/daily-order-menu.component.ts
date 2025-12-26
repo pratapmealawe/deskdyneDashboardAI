@@ -43,7 +43,6 @@ export class DailyOrderMenuComponent implements OnInit {
     this.apiMainService.getDailyOrderMenuByCafeteriaId(this.selectedCafeteriaId).then((res: any) => {
       this.vendorDetails = res.vendorDetails;
       this.deliverySettings = res.mealTypeList;
-      console.log(this.deliverySettings);
     }).catch((err: any) => {
       console.log(err);
       this.toaster.error('Failed to fetch daily order menu');

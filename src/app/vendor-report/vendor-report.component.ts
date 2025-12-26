@@ -67,6 +67,7 @@ export class VendorReportComponent {
       tdsAmount: number;
       totalGstAmt: number; // <- sum of gstamt
       revenueSharingTdsAmount: number;
+      vendorRevenueSharingLedgerAmt: number;
 
       // declared percentage fields (uniform per date or "mixed")
       itemGstRatePct: number | null | undefined;
@@ -99,6 +100,7 @@ export class VendorReportComponent {
     tdsAmount: number;
     revenueSharingTdsAmount: number;
     vendorLedgerAmt: number;
+    vendorRevenueSharingLedgerAmt: number;
 
     // rate fields (kept per-order only; not summed)
     tcsRatePct?: number;
@@ -335,8 +337,6 @@ export class VendorReportComponent {
     };
 
     for (const o of this.orders || []) {
-      if (o.orderstatus !== "completed") continue;
-
       let vAmt = 0;
       if (isEcom) {
         vAmt = this.n(o.vendorLedgerAmt);
@@ -386,6 +386,7 @@ export class VendorReportComponent {
           tdsAmount: 0,
           totalGstAmt: 0,
           revenueSharingTdsAmount: 0,
+          vendorRevenueSharingLedgerAmt: 0,
 
           itemGstRatePct: undefined,
           tcsRatePct: undefined,
@@ -412,6 +413,7 @@ export class VendorReportComponent {
       b.tdsAmount += tdsAmt;
       b.totalGstAmt += gstAmt;
       b.revenueSharingTdsAmount += revSharingTdsAmt;
+      b.vendorRevenueSharingLedgerAmt += this.n(o.vendorRevenueSharingLedgerAmt);
 
       // keep rates uniform, else mark Mixed (null)
       b.itemGstRatePct = keepUniform(b.itemGstRatePct, o.itemGstRatePct);
@@ -446,6 +448,7 @@ export class VendorReportComponent {
         vendorCommissionPercentage: this.n(o.vendorCommissionPercentage),
         vendorCommissionGstPercentage: this.n(o.vendorCommissionGstPercentage),
         revenueSharingTdsRatePct: this.n(o.revenueSharingTdsRatePct),
+        vendorRevenueSharingLedgerAmt: this.n(o.vendorRevenueSharingLedgerAmt),
       });
     }
 
@@ -480,7 +483,8 @@ export class VendorReportComponent {
           minDate,
           maxDate,
           // optional: preselect the most recent date that has data
-          initialKey: this.availableDateKeys[0] || undefined
+          initialKey: this.availableDateKeys[0] || undefined,
+          isEcommerce: this.isEcommerce
         }
       }
     );
@@ -653,6 +657,7 @@ export class VendorReportComponent {
         // Non-Ecom
         const revTds = this.n(g.revenueSharingTdsAmount);
         const commission = this.n(g.vendorCommissionAmount);
+        const vendorAmt = this.n(g.vendorRevenueSharingLedgerAmt);
 
         rowValues = [
           excelDate,
