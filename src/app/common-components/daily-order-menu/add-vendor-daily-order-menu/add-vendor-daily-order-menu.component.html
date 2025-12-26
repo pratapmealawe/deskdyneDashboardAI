@@ -1,0 +1,40 @@
+<div mat-dialog-title>
+    <div class="d-flex justify-content-between">
+        <span class="mb-0 fw-bold text-dark">
+            {{data.mealType ? 'Edit' : 'Add'}} Delivery Settings
+        </span>
+        <button mat-icon-button (click)="closeModal()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+</div>
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="vendorForm">
+        <div class="row">
+            <div class="col-md-6">
+                <mat-form-field appearance="outline">
+                    <mat-label>Vendor Firm Name</mat-label>
+                    <mat-select (selectionChange)="onVendorFirmChange($event)">
+                        <mat-option *ngFor="let vendorFirm of vendorFirmList" [value]="vendorFirm.vendorFirmDetails.vendorFirmId">
+                            {{vendorFirm.vendorFirmDetails?.vendorFirmName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field appearance="outline">
+                    <mat-label>Vendor Name</mat-label>
+                    <mat-select (selectionChange)="onVendorChange($event)">
+                        <mat-option *ngFor="let vendor of vendorList" [value]="vendor.vendorId">
+                            {{vendor.vendorName}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end" class="border-top pt-3 mt-0 pe-4 pb-3">
+    <button mat-stroked-button color="primary" (click)="closeModal()" class="me-2">Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+</mat-dialog-actions>

@@ -1,54 +1,176 @@
-.dialog-wrapper{
+// Theme Colors
+$primary-color: #e62841;
+$secondary-color: #15a292;
+$warning-color: #ffb300;
+$white: #ffffff;
+$text-dark: #1a1a1a;
+$backdrop-color: rgba(0, 0, 0, 0.4);
+
+.dialog-wrapper {
     position: fixed;
     width: 100%;
     height: 100%;
-    top:0;
-    left:0;
-    background: rgba(0, 0, 0, 0.7);
+    top: 0;
+    left: 0;
+    background: $backdrop-color;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     z-index: 10000;
-}
-.dialog-content{
-    text-align: center;
-    background: white;
-    width: 350px;
-    margin: 10% auto;
-    border-radius: 12px;
-}
-.dialogHeader{
-    -webkit-box-align: start;
-    -ms-flex-align: start;
-    align-items: flex-start;
-    -webkit-box-pack: justify;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
-    padding: 1rem;
-    border-bottom: 1px solid #e9ecef;
-    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out forwards;
 }
 
-.dialogbody{
+.dialog-content {
     position: relative;
-    -webkit-box-flex: 1;
-    -ms-flex: 1 1 auto;
-    flex: 1 1 auto;
-    padding: 1rem;
+    width: 90%;
+    max-width: 380px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow:
+        0 25px 50px -12px rgba(0, 0, 0, 0.25),
+        inset 0 1px 1px rgba(255, 255, 255, 0.9);
+    overflow: hidden;
+    transform: scale(0.9);
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    display: flex;
+    flex-direction: column;
 }
-p {
-    margin-top: 0;
-    margin-bottom: 1rem;
+
+.dialogHeader {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        color: $text-dark;
+
+        .warning-icon {
+            color: $warning-color;
+            font-size: 18px;
+        }
+    }
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #999;
+    transition: all 0.2s;
+    padding: 4px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+        color: $primary-color;
+        background-color: rgba($primary-color, 0.1);
+    }
+}
+
+.dialogbody {
+    padding: 10px 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: $text-dark;
+
+    p {
+        font-size: 16px;
+        line-height: 1.5;
+        margin: 0;
+        font-weight: 500;
+        text-align: center;
+    }
 }
 
 .dialogfooter {
-    -webkit-box-align: center;
-    -ms-flex-align: center;
-    align-items: center;
-    -webkit-box-pack: end;
-    -ms-flex-pack: end;
-    justify-content: flex-end;
-    padding: 1rem;
-    border-top: 1px solid #e9ecef;
-    .btn{
-        margin: 0px 8%;
-        width: 90px;
+    padding: 0 24px 24px;
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+
+    button {
+        flex: 1;
+        padding: 12px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border: none;
+        letter-spacing: 0.3px;
+        max-width: 140px;
+
+        &.btn-cancel {
+            background-color: #f3f4f6;
+            color: #4b5563;
+            box-shadow: 0 4px 6px rgba(#f3f4f6, 0.25);
+
+            &:hover {
+                background-color: #e5e7eb;
+                color: #1f2937;
+            }
+        }
+
+        &.btn-confirm {
+            background-color: #0e49b5;
+            color: #ffffff;
+            box-shadow: 0 4px 6px rgba(#0e49b5, 0.25);
+
+            &:hover {
+                background-color: darken(#0e49b5, 5%);
+                transform: translateY(-2px);
+                box-shadow: 0 8px 12px rgba(#0e49b5, 0.3);
+            }
+
+            &:active {
+                transform: translateY(0);
+            }
+        }
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    to {
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
     }
 }

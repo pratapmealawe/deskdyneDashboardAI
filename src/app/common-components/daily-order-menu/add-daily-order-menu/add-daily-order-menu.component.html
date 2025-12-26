@@ -1,0 +1,67 @@
+<div mat-dialog-title>
+    <div class="d-flex justify-content-between">
+        <span class="mb-0 fw-bold text-dark">
+            {{data.mealType ? 'Edit' : 'Add'}} Delivery Settings
+        </span>
+        <button mat-icon-button (click)="closeModal()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+</div>
+
+<mat-dialog-content class="mat-typography">
+    <form [formGroup]="deliveryForm">
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Meal Type</mat-label>
+                    <mat-select formControlName="selectedMealType">
+                        <mat-option value="Breakfast">Breakfast</mat-option>
+                        <mat-option value="Lunch">Lunch</mat-option>
+                        <mat-option value="HighTea">High Tea</mat-option>
+                        <mat-option value="Dinner">Dinner</mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Min. Order Quantity (MOQ)</mat-label>
+                    <input matInput type="text" formControlName="deliveryMOQ" placeholder="e.g. 10">
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Delivery Charge</mat-label>
+                    <input matInput type="text" formControlName="deliveryCharge" placeholder="0.00">
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Delivery Time From</mat-label>
+                    <input matInput type="time" formControlName="deliveryTimeFrom">
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Delivery Time To</mat-label>
+                    <input matInput type="time" formControlName="deliveryTimeTo">
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Order Cut Off Time</mat-label>
+                    <input matInput type="time" formControlName="cutOffTime">
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <mat-checkbox color="primary" formControlName="isSameDay">Enable Same Day Delivery</mat-checkbox>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="border-top pt-3 mt-0 pe-4 pb-3">
+    <button mat-stroked-button color="primary" (click)="closeModal()" class="me-2">Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveChanges()">Save Changes</button>
+</mat-dialog-actions>

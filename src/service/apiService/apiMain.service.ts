@@ -1384,4 +1384,41 @@ export class ApiMainService {
   createDefaultCategories(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDefaultCategories, data);
   }
+
+  dailyOrderMenuAdd(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.dailyOrderMenuAdd, data);
+  }
+
+  getDailyOrderMenuByCafeteriaId(cafeeteriaId: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getDailyOrderMenuByCafeteriaId
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method });
+  }
+
+  updateMealType(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateMealType, data);
+  }
+
+  deleteMealType(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMealType, data);
+  }
+
+  addMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addMealConfig, data);
+  }
+
+  updateMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateMealConfig, data);
+  }
+
+  deleteMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMealConfig, data);
+  }
+
+  isActiveAndDeActiveMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.isActiveAndDeActiveMealConfig, data);
+  }
+
+  addVendorDetails(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addVendorDetails, data);
+  }
 }

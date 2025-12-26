@@ -48,6 +48,7 @@ export class OrganizationViewComponent implements OnInit {
     },
     { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
     { name: 'B2B Weekly Menu', path: 'b2bWeeklyMenu' },
+    { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
     { name: 'Consumption Menu', path: 'consumptionOrder' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Outlet Employee', path: 'outletEmployee' },

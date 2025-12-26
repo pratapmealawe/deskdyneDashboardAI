@@ -300,7 +300,6 @@ export class ApiConfigService {
       updateCategoryMealAweOutlet: p('/api/updateCategoryMealAweOutlet', 'POST'),
       getDefaultCategories: p('/api/getDefaultCategories', 'GET'),
       updateWeeklyMenuCategory: p('/api/updateWeeklyMenuCategory', 'POST'),
-
       saveMealAweOutlet: p('/api/saveMealAweOutlet', 'POST'),
       updateMealAweOutlet: p('/api/updateMealAweOutlet', 'POST'),
       getMealAweOutletByCafeteria: p('/api/getMealAweOutletByCafeteria', 'GET'),
@@ -313,6 +312,15 @@ export class ApiConfigService {
       deleteCategoryConfig: p('/api/deleteCategoryConfig', 'POST'),
       changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'),
       createDefaultCategories: p('/api/createDefaultCategories', 'POST'),
+      dailyOrderMenuAdd: p('/api/dailyOrderMenuAdd', 'POST'),
+      getDailyOrderMenuByCafeteriaId: p('/api/getDailyOrderMenuByCafeteriaId', 'GET'),
+      updateMealType: p('/api/updateMealType', 'POST'),
+      deleteMealType: p('/api/deleteMealType', 'POST'),
+      addMealConfig :p('/api/addMealConfig', 'POST'),
+      updateMealConfig:p('/api/updateMealConfig', 'POST'),
+      deleteMealConfig:p('/api/deleteMealConfig', 'POST'),
+      isActiveAndDeActiveMealConfig:p('/api/isActiveAndDeActiveMealConfig', 'POST'),
+      addVendorDetails:p('/api/addVendorDetails', 'POST'),
     }
   }
 }

@@ -29,6 +29,8 @@ import { QrEmployeeComponent } from '../common-components/qr-employee/qr-employe
 import { QRCodeModule } from 'angularx-qrcode';
 import { OrgOutletOrdersComponent } from '../common-components/org-outlet-orders/org-outlet-orders.component';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { DailyOrderMenuComponent } from '../common-components/daily-order-menu/daily-order-menu.component';
+
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -42,6 +44,7 @@ import { DirectivesModule } from 'src/shared/directives/common-directives.direct
     OrgCustomizedSnackboxMenuComponent,
     OrgOutletOrdersComponent,
     EmployeeListComponent,
+    DailyOrderMenuComponent,
     B2bWeeklyMenuComponent,
     OrgComplianceComponent,
     OutletEmployeeComponent,
