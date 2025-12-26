@@ -327,6 +327,7 @@ export class ApiConfigService {
       addBulkWalletBalance: p('/api/addBulkWalletBalance', 'POST'),
       getCustomerWalletListByOrgId: p('/api/getCustomerWalletListByOrgId', 'POST'),
       copyDailyOrderMenu:p('/api/copyDailyOrderMenu', 'POST'),
+      addBulkDailyOrderMenu:p('/api/addBulkDailyOrderMenu', 'POST'),
     }
   }
 }

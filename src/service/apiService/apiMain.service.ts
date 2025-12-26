@@ -1447,4 +1447,8 @@ export class ApiMainService {
   copyDailyOrderMenu(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyDailyOrderMenu, data);
   }
+
+  addBulkDailyOrderMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkDailyOrderMenu, data);
+  }
 }
