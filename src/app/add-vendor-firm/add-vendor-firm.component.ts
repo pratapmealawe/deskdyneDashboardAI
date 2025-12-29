@@ -10,6 +10,8 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
+import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
+
 
 @Component({
   selector: 'app-add-vendor-firm',
@@ -18,6 +20,8 @@ import { REGEX } from 'src/shared/constants/regex';
 })
 export class AddVendorFirmComponent {
   form: any;
+  addressForm: any;
+  pocForm: any;
   showError = false;
   showUpdate = false;
   orgList: any;
@@ -37,7 +41,7 @@ export class AddVendorFirmComponent {
   vendorLocation: any
   dialogRef!: MatDialogRef<any>;
   @ViewChild('outletModal') outlet: any;
-  @ViewChild('complianceModal') compliance: any;
+  // @ViewChild('complianceModal') compliance: any; // Removed as we use MatDialog type
   @ViewChild('geolocation') geolocation: any;
   @ViewChild('addAddress') address: any;
   @ViewChild('pocDetailsTemp') pocdetails: any;
@@ -46,8 +50,8 @@ export class AddVendorFirmComponent {
   pocDetails: any = []
 
   btnPolicy: any;
-  pocBtn:string = 'Submit';
-  cafeterialist:any;
+  pocBtn: string = 'Submit';
+  cafeterialist: any;
 
 
   constructor(
@@ -72,8 +76,8 @@ export class AddVendorFirmComponent {
   async getOrgList() {
     try {
       this.orgList = await this.apiMainService.getOrgList();
-      console.log(this.orgList,"roglist");
-      
+      console.log(this.orgList, "roglist");
+
     } catch (error) {
       console.log('getOrgList', error);
     }
@@ -84,33 +88,32 @@ export class AddVendorFirmComponent {
       vendorFirmName: ['', [Validators.required]],
       vendorFirmEmail: ['', [Validators.required, Validators.pattern(REGEX.EMAIL)]],
       vendorFirmPhoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
+      retailShareTDSPct: [2, [Validators.required, Validators.min(0), Validators.max(10)]],
       bank_details: this.fb.group({
         accountNo: ['', [Validators.required, Validators.pattern(REGEX.ACCOUNTNO)]],
         ifsc: ['', [Validators.required, Validators.pattern(REGEX.IFSC)]],
-        upi: ['', [Validators.pattern(REGEX.UPI)]],
+        upi: [''],
         accountName: ['', [Validators.required]],
         bank_name: ['', [Validators.required]]
       }),
-      poc_details:
-        this.fb.group({
-          poc_id: ['', [Validators.required, Validators.pattern(REGEX.ID)]],
-          poc_name: ['', [Validators.required]],
-          poc_phoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
-          poc_email: ['', [Validators.required, Validators.pattern(REGEX.EMAIL)]],
-          poc_location: ['', [Validators.required, Validators.pattern(REGEX.LOCATION)]]
-        }),
-      address:
-        this.fb.group({
-          address1: ['', [Validators.required]],
-          address2: ['', [Validators.required]],
-          landmark: ['', [Validators.required]],
-          location: ['', [Validators.required]],
-          geolocation: this.fb.group({
-            lat: ['', [Validators.required]],
-            lng: ['', [Validators.required]],
-          })
-        }),
       accountEnrollment: ['']
+    });
+    this.pocForm = this.fb.group({
+      poc_id: [''],
+      poc_name: [''],
+      poc_phoneNo: [''],
+      poc_email: [''],
+      poc_location: ['']
+    });
+    this.addressForm = this.fb.group({
+      address1: ['', [Validators.required]],
+      address2: ['', [Validators.required]],
+      landmark: ['', [Validators.required]],
+      location: ['', [Validators.required]],
+      geolocation: this.fb.group({
+        lat: ['', [Validators.required]],
+        lng: ['', [Validators.required]],
+      })
     });
   }
 
@@ -129,7 +132,7 @@ export class AddVendorFirmComponent {
       })
       .result.then(
         (result) => {
-          const geoGroup = this.form.get('address.geolocation') as FormGroup;
+          const geoGroup = this.addressForm.get('geolocation') as FormGroup;
           geoGroup.patchValue({
             lat: this.vendorLocation.latlng.lat,
             lng: this.vendorLocation.latlng.lng,
@@ -145,7 +148,7 @@ export class AddVendorFirmComponent {
     this.vendorLocation = event;
   }
   async patchVendorLocation() {
-    const geoGroup = this.form.get('address.geolocation') as FormGroup;
+    const geoGroup = this.addressForm.get('geolocation') as FormGroup;
     geoGroup.patchValue({
       lat: this.vendorLocation.latlng.lat,
       lng: this.vendorLocation.latlng.lng,
@@ -187,9 +190,33 @@ export class AddVendorFirmComponent {
   }
 
   addComplience() {
-    this.modalService.open(this.compliance, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
+    console.log('Opening Compliance Dialog');
+
+    // Merge form values with selectedVendorFirm to ensure _id is present if editing
+    const dialogData = {
+      ...this.selectedVendorFirm, // Contains _id if it exists
+      ...this.form.value,         // Contains latest form edits
+      compliance: this.selectedVendorFirm?.compliance || this.form.value.compliance // prioritize existing compliance data properly
+    };
+
+    const dialogRef = this.dialog.open(VendorComplianceComponent, {
+      width: '90vw',
+      maxWidth: '1000px',
+      height: '90vh',
+      disableClose: true,
+      data: dialogData,
+      autoFocus: false,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed', result);
+      // The VendorComplianceComponent saves data directly via API in saveImages().
+      // However, we might want to refresh the local data or form if needed.
+      if (this.selectedVendorFirm && this.selectedVendorFirm._id) {
+        // Optionally refresh vendor data or patch form
+        // For now, we assume the component handled the save.
+      }
     });
   }
 
@@ -203,7 +230,7 @@ export class AddVendorFirmComponent {
       if (firm.poc_details?.length) {
         firm.poc_details.forEach((poc: any, index: number) => {
           if (index !== 0 || this.pocDetails.length === 0) {
-            this.pocDetails.push(this.fb.group(poc));
+            this.pocDetails.push(poc);
           }
         });
       }
@@ -309,7 +336,7 @@ selectCafeteria(event: MatSelectChange) {
 
   async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {
     try {
-      console.log( 'getOutletByCafeteriaList', { cafeteriaName, cafeteriaCity, organization } );
+      console.log('getOutletByCafeteriaList', { cafeteriaName, cafeteriaCity, organization });
       this.outletByCafeteriaList = await this.apiMainService.getOutletByCafeteria(
         cafeteriaName,
         cafeteriaCity,
@@ -328,9 +355,7 @@ selectCafeteria(event: MatSelectChange) {
     this.modalService.open(this.pocdetails, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
   }
 
-  addCompliance() {
-    this.modalService.open(this.compliance, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
-  }
+
 
   getSelectedOutlets() {
     this.outletByCafeteriaList.forEach((elm: any) => {
@@ -359,79 +384,86 @@ selectCafeteria(event: MatSelectChange) {
     this.router.navigate(['/searchVendorFirm']);
   }
 
-hasError(form: FormGroup, controlName: string, error: string) {
-  const c = form.get(controlName);
-  return c?.hasError(error) && (c.touched || c.dirty);
-}
+  hasError(form: FormGroup, controlName: string, error: string) {
+    const c = form.get(controlName);
+    return c?.hasError(error) && (c.touched || c.dirty);
+  }
 
-hasSubError(path: string[], error: string) {
-  const c = this.form.get(path);
-  return c?.hasError(error) && (c.touched || c.dirty);
-}
+  hasSubError(path: string[], error: string) {
+    let c: AbstractControl | null = null;
+    if (path[0] === 'address') {
+      c = this.addressForm.get(path[1]);
+    } else if (path[0] === 'poc_details') {
+      c = this.pocForm.get(path[1]);
+    } else {
+      c = this.form.get(path);
+    }
+    return c?.hasError(error) && (c.touched || c.dirty);
+  }
 
-  isEditPoc :number | null = null;
+  isEditPoc: number | null = null;
   submitPocDetails() {
-    const pocDetails = this.form.get('poc_details')?.value;
-    if(this.isEditPoc !== null){
-      this.pocDetails[this.isEditPoc] = {...pocDetails};
-    }else{
-      this.pocDetails.push({...pocDetails})
+    const pocDetails = this.pocForm.value;
+    if (this.isEditPoc !== null) {
+      this.pocDetails[this.isEditPoc] = { ...pocDetails };
+    } else {
+      this.pocDetails.push({ ...pocDetails })
     }
     this.isEditPoc = null;
     this.modalService.dismissAll();
   }
-  openPocTemplate(){
+  openPocTemplate() {
     this.isEditPoc = null
-    this.form.get("poc_details").reset();
+    this.pocForm.reset();
     this.addPoc();
   }
   editPoc(index: number) {
     this.isEditPoc = index;
     const value = this.pocDetails[index]
-    this.form.get('poc_details').patchValue(value);
+    this.pocForm.patchValue(value);
     this.addPoc();
   }
 
   isEditIndex: number | null = null
-  isEditIndexPoc:number | null = null;
+  isEditIndexPoc: number | null = null;
   submitAddress() {
-    const addressData = this.form.get('address')?.value;
+    const addressData = this.addressForm.value;
     if (this.isEditIndex !== null) {
       this.addressList[this.isEditIndex] = { ...addressData };
     } else {
       this.addressList.push({ ...addressData });
     }
-    this.isEditIndex = null; 
+    this.isEditIndex = null;
     this.modalService.dismissAll();
   }
   openAddressTemplate() {
     this.isEditIndex = null;
-    this.form.get('address').reset()
+    this.addressForm.reset()
     this.addressTemplate()
   }
-  openPOCTemplate(){
+  openPOCTemplate() {
     this.isEditIndexPoc = null;
-    this.form.get('poc_details').reset()
+    this.pocForm.reset()
     this.addPoc()
   }
-  editPOC(i:number){
-    this.isEditIndexPoc = i ;
+  editPOC(i: number) {
+    this.isEditIndexPoc = i;
     this.pocBtn = 'Update';
     const value = this.pocDetails[i];
-    this.form.get('poc_details').patchValue(value);
+    this.pocForm.patchValue(value);
     this.addPoc();
   }
   editAddress(i: number) {
     this.isEditIndex = i;
     const value = this.addressList[i]
-    this.form.get('address').patchValue(value);
+    this.addressForm.patchValue(value);
     this.addressTemplate();
   }
   closeDialog() {
     this.dialogRef.close();
   }
 
-@ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
+  @ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
 
 addOutlet() {
   if (!this.outletDialog) {

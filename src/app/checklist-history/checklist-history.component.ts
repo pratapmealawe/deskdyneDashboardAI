@@ -27,7 +27,7 @@ export class ChecklistHistoryComponent implements OnInit {
   // Filter object used for API calls
   filterObj: any = {
     outlet_id: '',
-    fromDate: new Date().toISOString().split('T')[0],
+    fromDate: '',
     toDate: '',
     page: 1,
   };
@@ -60,10 +60,10 @@ export class ChecklistHistoryComponent implements OnInit {
     this.filterObj.outlet_id = data.outlet_id;
 
     if (data.date_from) {
-      this.filterObj.fromDate = data.date_from.split('T')[0];
+      this.filterObj.fromDate = data.date_from;
     }
     if (data.date_to) {
-      this.filterObj.toDate = data.date_to.split('T')[0];
+      this.filterObj.toDate = data.date_to;
     }
 
     // Reset to first page on new filter

@@ -21,7 +21,7 @@
                         Add Category
                     </button>
                     <button mat-raised-button color="accent" [disabled]="!selectedCafeteria?.showVirtualCafe"
-                        *ngIf="categories.length == 0" (click)="createDefaultCategories()">
+                        *ngIf="categories.length == 0 && defaultCategories" (click)="createDefaultCategories()">
                         <mat-icon>auto_fix_high</mat-icon>
                         Add Default Categories
                     </button>
@@ -53,15 +53,11 @@
                                         </mat-icon>
                                     </div>
                                     <div class="mt-3 d-flex gap-2">
-                                        <button mat-icon-button color="accent" (click)="openCategoryDialog(category)"
-                                            matTooltip="View">
-                                            <mat-icon>visibility</mat-icon>
-                                        </button>
                                         <button mat-icon-button color="primary"
                                             (click)="openEditCategoryDialog(category)" matTooltip="Edit">
                                             <mat-icon>edit</mat-icon>
                                         </button>
-                                        <button mat-icon-button color="warn" (click)="deleteItem('category', category)"
+                                        <button mat-icon-button color="warn" (click)="deleteCategoryMealAweOutlet(category.categoryName)"
                                             matTooltip="Delete">
                                             <mat-icon>delete</mat-icon>
                                         </button>
@@ -260,8 +256,6 @@
                 </mat-card>
             </div>
         </mat-tab>
-        <mat-tab label="Banners" *ngIf="packages.length > 0 || categories.length > 0">
-        </mat-tab>
     </mat-tab-group>
 </div>
 <ng-template #categoryDialog let-data>
@@ -287,79 +281,4 @@
             </mat-tab>
         </mat-tab-group>
     </mat-dialog-content>
-</ng-template>
-
-<ng-template #editCategoryDialog let-data>
-    <h2 mat-dialog-title>Edit Category</h2>
-    <mat-dialog-content *ngIf="data?.category">
-        <div class="p-3">
-            <div class="row g-3">
-                <div class="col-md-4">
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-label>Display Name</mat-label>
-                        <input matInput [(ngModel)]="data.category.categoryDisplayName" required />
-                        <mat-error *ngIf="!data.category.categoryDisplayName">Display Name is required</mat-error>
-                    </mat-form-field>
-                </div>
-                <div class="col-md-4">
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-label>Image Config Name (Mealawe)</mat-label>
-                        <input matInput [(ngModel)]="data.category.imageConfigNameMealawe" />
-                    </mat-form-field>
-                </div>
-            </div>
-
-            <!-- Category Image -->
-            <div class="mt-4">
-                <h6>Category Image</h6>
-                <img [src]="data.category._previewImage || (data.serverDDUrl + data.category.categoryImg)" width="150"
-                    height="120" class="rounded shadow-sm mb-2" />
-                <br />
-                <button mat-raised-button color="primary" (click)="pickCategoryImage(data.category)">
-                    <mat-icon>upload</mat-icon> Change Image
-                </button>
-                <mat-error *ngIf="!data.category.categoryImg && !data.category._previewImage" class="d-block">
-                    Category image is required
-                </mat-error>
-            </div>
-
-            <!-- Banners -->
-            <div class="mt-4">
-                <h6>Banners</h6>
-                <button mat-raised-button color="primary" (click)="pickBannerFiles(data.category)">
-                    <mat-icon>upload</mat-icon> Upload Banner
-                </button>
-
-                <div cdkDropList [cdkDropListData]="data.category._previewBanners"
-                    (cdkDropListDropped)="dropBanner(data.category, $event)" class="d-flex flex-wrap gap-3 mt-3">
-                    <div *ngFor="let bn of data.category._previewBanners; let b = index" cdkDrag
-                        class="position-relative">
-                        <img [src]="bn" width="120" height="90" class="rounded shadow-sm" />
-                        <button mat-mini-fab color="warn" class="position-absolute top-0 end-0"
-                            (click)="removePreviewBanner(data.category, b)">
-                            <mat-icon>close</mat-icon>
-                        </button>
-                    </div>
-
-                    <div *ngIf="!data.category.categoryBanners?.length && !data.category._previewBanners?.length"
-                        class="text-muted">
-                        No banners added
-                    </div>
-                    <mat-error *ngIf="!data.category.categoryBanners?.length && !data.category._previewBanners?.length"
-                        class="d-block">
-                        At least one banner is required
-                    </mat-error>
-                </div>
-            </div>
-        </div>
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-        <button mat-raised-button color="primary" [disabled]="!data.category.categoryDisplayName || 
-                             (!data.category.categoryImg && !data.category._previewImage) || 
-                             (!data.category.categoryBanners?.length && !data.category._previewBanners?.length)"
-            (click)="updateCategory(data.category)">
-            Save
-        </button>
-        <button mat-stroked-button color="warn" (click)="closeDialog()">Cancel</button>
-    </mat-dialog-actions>
 </ng-template>

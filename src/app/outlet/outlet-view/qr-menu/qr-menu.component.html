@@ -68,6 +68,7 @@
             <div class="control-label">Paid By</div>
             <mat-radio-group class="pill-radio-group" [value]="group.paidType" (change)="TogglePaidType(group, $event)">
               <mat-radio-button value="company">Company</mat-radio-button>
+              <mat-radio-button value="partial">Partial</mat-radio-button>
               <mat-radio-button value="user">User</mat-radio-button>
             </mat-radio-group>
           </div>
@@ -91,19 +92,16 @@
       <!-- Items under this mealType -->
       <mat-card class="menu-item-card" *ngFor="let item of group.items; let i = index">
         <div class="menu-item-card-inner">
-          <!-- LEFT: image + veg/nonveg -->
-          <div class="menu-thumb">
-            <img [src]="displayImgUrl + item.imageUrl" class="menu-thumb-img" />
-            <span *ngIf="item.itemType === 'Veg'" class="typeIcon veg-indicator vegIcon"></span>
-            <span *ngIf="item.itemType === 'NonVeg'" class="typeIcon nonveg-indicator nonvegIcon"></span>
-          </div>
-
           <!-- MIDDLE: content -->
           <div class="menu-content">
             <!-- Name + active -->
             <div class="menu-header-row">
               <div class="menu-title-block">
                 <div class="menu-name">
+                  <img src="assets/icon/veg.png" *ngIf="item.itemType === 'Veg'" class="me-2" width="18" height="18"
+                    alt="Veg">
+                  <img src="assets/icon/nonveg.png" *ngIf="item.itemType === 'NonVeg'" class="me-2" width="18"
+                    height="18" alt="Non-Veg">
                   {{ item.itemName || 'Unnamed item' }}
                 </div>
                 <!-- Description -->
@@ -199,30 +197,8 @@
 
     <mat-dialog-content class="modal-body">
       <div [formGroup]="form">
-        <div class="row">
+        <div class="row pt-4 pb-2">
           <!-- IMAGE -->
-          <div class="col-12 col-md-6 col-lg-12">
-            <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
-              (change)="handleFileInput($event)" />
-            <img class="uploadedImage" [src]="
-                showUpdateBtn
-                  ? displayImgUrl + imageUrl
-                  : imageUrl
-                  ? imageUrl
-                  : 'assets/images/dummyUpload.png'
-              " *ngIf="!imageReplaced" />
-            <img class="uploadedImage" [src]="
-                imageUrl
-                  ? uploadStatus
-                    ? imageUrl
-                    : displayImgUrl + imageUrl
-                  : 'assets/images/dummyUpload.png'
-              " *ngIf="imageReplaced" />
-            <div class="uploadIcon" (click)="fileInput.click()">
-              Upload <i class="bi bi-upload"></i>
-            </div>
-          </div>
-
           <!-- BASIC FIELDS -->
           <div class="col-12 col-md-6 col-lg-4">
             <mat-form-field appearance="outline" class="w-100">
@@ -284,7 +260,7 @@
 
           <!-- ACTIVE / DO NOT CHANGE -->
           <div *ngIf="showUpdateBtn" class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-center mt-3">
-            <mat-checkbox formControlName="isActive" >
+            <mat-checkbox formControlName="isActive">
               Active
             </mat-checkbox>
           </div>

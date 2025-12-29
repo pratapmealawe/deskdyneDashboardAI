@@ -1,74 +1,122 @@
-@import "src/styles.scss";
+@use '/src/styles.scss' as color;
 
-.uploadedImage {
-    width: 150px;
-    height: 150px;
-    cursor: pointer;
+/* Dialog Container Layout */
+.dialog-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    background: #fff;
+    max-height: 90vh;
+
+    /* Ensure it respects dialog height */
 }
 
-.uploadInput {
-    display: none;
-}
-
-.uploadIcon {
-    width: 84px;
-    background: $secondary-color3;
-    border-radius: 5px;
-    text-align: center;
-    color: white;
-    position: relative;
-    top: -15px;
-    left: 30px;
-    font-size: 13px;
-    padding: 4px 0px;
-    cursor: pointer;
-}
-
-.bankDetails {
-    input {
-        display: block;
-        width: 100%;
-    }
-}
-
-.editBtn {
-    cursor: pointer;
-    background: $primary-color2;
-    color: white;
-    font-weight: bold;
-    padding: 5px 5px;
-    text-align: center;
-}
-
-.fssaiImg {
-    width: 450px;
-    height: 500px;
-}
-
-.adhaarImg {
-    width: 400px;
-    height: 300px;
-    padding: 5px;
-}
-
-.dialog-header {
+/* Header */
+.form-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 10px;
-    border-bottom: 1px solid #e0e0e0;
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 10;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid color.$border-color;
+    background: #fff;
+    flex-shrink: 0;
+
+    .heading {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #111827;
+    }
 }
 
-.dialog-content {
+/* Scrollable Content */
+.content-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.5rem;
+    margin: 0; // Reset default margin
+}
+
+/* Sticky Action Bar */
+.action-bar {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid color.$border-color;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    background: #fff;
+    flex-shrink: 0;
+    position: sticky;
+    bottom: 0;
+}
+
+/* Card Styling for Grid Items */
+.compliance-item-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    height: 100%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+    &:hover {
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    &.edit-mode {
+        border-color: color.$secondary-color3;
+        box-shadow: 0 0 0 1px color.$secondary-color3;
+        background: #fafbff;
+    }
+}
+
+/* Typography & Labels */
+.labelText {
+    font-size: 0.875rem;
+    color: color.$primary-offset-color2;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.labelData {
+    font-size: 1rem;
+    color: color.$primary-color1;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+/* Utilities */
+.error-text {
+    color: color.$error-color;
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.pdf-preview {
+    margin-top: 0.5rem;
+    border: 1px solid color.$border-color;
+    border-radius: 4px;
+    padding: 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    iframe {
+        width: 100%;
+        height: 200px;
+        border: none;
+    }
+}
+
+.required-star {
+    color: color.$error-color;
+}
+
+/* Button & Icon alignment */
+.btn-icon {
+    display: flex;
     align-items: center;
-    max-height: 60vh;
-    overflow-y: auto;
-    padding: 8px 10px;
+    gap: 0.5rem;
 }

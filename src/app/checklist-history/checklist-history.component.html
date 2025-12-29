@@ -18,7 +18,7 @@
 
       <!-- Search if needed can go here, reused existing searchFilter method -->
       <div class="d-flex justify-content-end mb-2">
-        <mat-form-field appearance="outline" class="dense-input" style="width: 250px;">
+        <mat-form-field appearance="outline" class="dense-input input" style="width: 250px;">
           <mat-icon matPrefix>search</mat-icon>
           <input matInput (keyup)="searchFilter($event)" placeholder="Search User">
         </mat-form-field>
@@ -41,10 +41,10 @@
               </div>
 
               <div class="actions d-flex align-items-center gap-3">
-                <button mat-icon-button *ngIf="isToday(report.SubmitedDate)"
+                <!-- <button mat-icon-button *ngIf="isToday(report.SubmitedDate)"
                   (click)="$event.stopPropagation(); editChecklist(report)" matTooltip="Edit Checklist">
                   <mat-icon color="primary">edit</mat-icon>
-                </button>
+                </button> -->
                 <!-- Custom toggle icon to mimic design if needed, or default -->
                 <mat-icon>expand_more</mat-icon>
               </div>

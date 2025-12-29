@@ -15,12 +15,11 @@ import { AddEditPackageWeeklyMenuComponent } from './add-edit-package-weekly-men
   styleUrls: ['./mealawe-outlet.component.scss']
 })
 export class MealaweOutletComponent implements AfterViewInit {
-  @ViewChild('categoryDialog') categoryDialogTemplate!: TemplateRef<any>;
-  @ViewChild('editCategoryDialog') editCategoryDialogTemplate!: TemplateRef<any>;
   @Input() orgObj: any;
   serverUrl = environment.mlImageUrl;
   serverDDUrl = environment.imageUrl;
   cafeteriaList: any[] = [];
+  defaultCategories: boolean = false;
   selectedCafeteria: any = {};
   mealOutlet: any = {};
   categories: any[] = [];
@@ -46,6 +45,7 @@ export class MealaweOutletComponent implements AfterViewInit {
   ) { }
 
   ngAfterViewInit(): void {
+    this.getDefaultCategories();
     this.cafeteriaList = [...(this.orgObj?.cafeteriaList || [])];
     if (this.cafeteriaList.length > 0) {
       this.selectedCafeteria = this.cafeteriaList[0];
@@ -61,37 +61,72 @@ export class MealaweOutletComponent implements AfterViewInit {
     return this.selectedCafeteria?._id;
   }
 
+  async getDefaultCategories(): Promise<void> {
+    try {
+      const defaultCategories = await this.apiMainService.getDefaultCategories();
+      if (typeof defaultCategories === 'boolean') {
+        this.defaultCategories = defaultCategories;
+      } else {
+        this.defaultCategories = false;
+      }
+    } catch (error) {
+      console.error("❌ Loading failed", error);
+    }
+  }
+
   async getMealAweOutletByCafeteria(): Promise<void> {
     try {
       this.mealOutlet = await this.apiMainService.getMealAweOutletByCafeteria(this.cafeteriaId);
-      this.config = this.config.map(item => {
-        const found = this.mealOutlet.config.find((value: any) => value.name === item.name);
-        return {
-          ...item,
-          value: found ? found.value : item.value
-        };
-      });
-      console.log(this.mealOutlet);
-      this.categories = (this.mealOutlet?.categoryConfig || []).map((c: any) => ({
-        ...c,
-        editing: false,
-        _previewImage: c.categoryImg ? this.serverDDUrl + c.categoryImg : null,
-        _previewBanners: (c.categoryBanners || []).map((b: string) => this.serverDDUrl + b),
-        _deleteBanners: [],
-        _newImageFile: null,
-        _newBannerFiles: []
-      }));
-      this.packages = (this.mealOutlet?.itemList || []).map((p: any) => ({
-        ...p,
-        editing: false
-      }));
+      if (this.mealOutlet) {
+        this.config = this.config.map(item => {
+          const found = this.mealOutlet?.config?.find((value: any) => value.name === item.name);
+          return {
+            ...item,
+            value: found ? found.value : item.value
+          };
+        });
+        this.categories = this.mealOutlet?.categoryConfig || [];
+        this.packages = (this.mealOutlet?.itemList || []).map((p: any) => ({
+          ...p,
+          editing: false
+        }));
+      }
     } catch (error) {
       console.error("❌ Loading failed", error);
-      this.toaster.error("Unable to load cafeteria details");
     }
   }
 
   async updateMealAweOutlet() {
+    // 1. Check for negative values
+    const invalidConfig = this.config.find(item => item.value < 0);
+    if (invalidConfig) {
+      this.toaster.error(`${invalidConfig.label} cannot be negative`);
+      return;
+    }
+
+    // 2. Check for discounts without charges
+    const getValue = (name: string) => this.config.find(c => c.name === name)?.value || 0;
+
+    const validateDiscount = (chargeKey: string, discountKey: string, label: string) => {
+      const charge = getValue(chargeKey);
+      const discount = getValue(discountKey);
+      if (discount > 0 && charge <= 0) {
+        return `${label} Discount cannot be applied without ${label} Charges`;
+      }
+      return null;
+    };
+
+    const errors = [
+      validateDiscount('SUBSCRIPTION_PLATFORM_CHARGES', 'SUBSCRIPTION_PLATFORM_CHARGES_DISCOUNT', 'Platform'),
+      validateDiscount('SUBSCRIPTION_DELIVERY_CHARGES', 'SUBSCRIPTION_DELIVERY_CHARGES_DISCOUNT', 'Delivery'),
+      validateDiscount('SUBSCRIPTION_ECO_FRIENDLY_PACKAGING_CHARGES', 'SUBSCRIPTION_ECO_FRIENDLY_PACKAGING_CHARGES_DISCOUNT', 'Eco-Friendly Packaging')
+    ].filter(e => e !== null);
+
+    if (errors.length > 0) {
+      this.toaster.error(errors[0]!);
+      return;
+    }
+
     try {
       const simplifiedConfig = this.config.map(item => ({
         name: item.name,
@@ -108,7 +143,7 @@ export class MealaweOutletComponent implements AfterViewInit {
       this.getMealAweOutletByCafeteria();
     } catch (error) {
       console.error("❌ Update failed", error);
-      this.toaster.error("Update failed");
+      this.toaster.error("Update failed. No changes applied.  ");
     }
   }
 
@@ -132,12 +167,11 @@ export class MealaweOutletComponent implements AfterViewInit {
   }
 
   createCategory() {
-    this.openModal(AddEditPackageCategoryComponent, {
+    const data = {
       orgObj: this.orgObj,
-      addNew: this.addNew,
       selectedCafeteria: this.selectedCafeteria,
-      alreadyCategory: this.categories.map((e: any) => e.categoryName)
-    });
+    }
+    this.openModal(AddEditPackageCategoryComponent, data);
   }
 
   async changePackageStatus(status: boolean, masterMenuId: string) {
@@ -168,32 +202,19 @@ export class MealaweOutletComponent implements AfterViewInit {
     this.updateMealAweOutlet();
   }
 
-  async updateCategory(cat: any) {
-    if (!cat?._id) return this.toaster.error("Invalid category");
-    try {
-      const fd = new FormData();
-      fd.append("cafeteriaId", this.cafeteriaId);
-      fd.append("categoryId", cat._id);
-      if (cat._newImageFile) {
-        fd.append("categoryImg", cat._newImageFile);
+  deleteCategoryMealAweOutlet(categoryName: string) {
+    this.confirmationModalService.modal(`Are you sure you want to delete ${categoryName}?`, async () => {
+      try {
+        await this.apiMainService.deleteCategoryMealAweOutlet(this.cafeteriaId, { categoryName });
+        this.toaster.success(`${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} deleted`);
+        this.getMealAweOutletByCafeteria();
+      } catch (err) {
+        console.error(`❌ Delete error:`, err);
+        this.toaster.error(`Delete failed. No changes applied.`);
       }
-      if (cat._newBannerFiles?.length > 0) {
-        cat._newBannerFiles.forEach((file: any) => fd.append("categoryBanners", file));
-      }
-      const payload = {
-        ...cat,
-        _deleteBanners: cat._deleteBanners || []
-      };
-      fd.append("payload", JSON.stringify(payload));
-      await this.apiMainService.updateMealAweOutletCategory(fd);
-      this.toaster.success("Category updated successfully");
-      this.closeDialog();
-      await this.getMealAweOutletByCafeteria();
-    } catch (error) {
-      console.error("❌ Category update failed", error);
-      this.toaster.error("Category update failed. No changes applied.");
-    }
+    }, this);
   }
+
 
   deleteItem(type: 'package' | 'category', item: any) {
     const name = type === 'package' ? item.packageName : item.categoryName;
@@ -205,85 +226,18 @@ export class MealaweOutletComponent implements AfterViewInit {
         this.getMealAweOutletByCafeteria();
       } catch (err) {
         console.error(`❌ Delete error:`, err);
-        this.toaster.error(`Unable to delete ${type}`);
+        this.toaster.error(`Delete failed. No changes applied.`);
       }
     }, this);
   }
 
-  pickCategoryImage(cat: any) {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.onchange = () => {
-      const file = (input.files as FileList)[0];
-      if (!file) return;
-      cat._newImageFile = file;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        cat._previewImage = e.target?.result || null;
-      };
-      reader.readAsDataURL(file);
-    };
-
-    input.click();
-  }
-
-  pickBannerFiles(cat: any) {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.multiple = true;
-    input.onchange = () => {
-      const files = Array.from(input.files as FileList);
-      if (!files.length) return;
-      cat._newBannerFiles = cat._newBannerFiles || [];
-      cat._previewBanners = cat._previewBanners || [];
-      files.forEach((file) => {
-        cat._newBannerFiles.push(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const result = e.target?.result;
-          if (result) cat._previewBanners.push(result);
-        };
-        reader.readAsDataURL(file);
-      });
-    };
-    input.click();
-  }
-
-  removePreviewBanner(cat: any, index: number) {
-    if (!cat._previewBanners || index < 0 || index >= cat._previewBanners.length) return;
-    const existingBanner = cat.categoryBanners?.[index];
-    if (existingBanner) {
-      cat._deleteBanners = cat._deleteBanners || [];
-      cat._deleteBanners.push(existingBanner);
-    } else if (cat._newBannerFiles?.[index]) {
-      cat._newBannerFiles.splice(index, 1);
-    }
-    cat._previewBanners.splice(index, 1);
-  }
-
-  dropBanner(category: any, event: CdkDragDrop<string[]>) {
-    if (!category._previewBanners) return;
-    moveItemInArray(category._previewBanners, event.previousIndex, event.currentIndex);
-  }
-
-  openCategoryDialog(category: any) {
-    this.modalService.open(this.categoryDialogTemplate, {
-      width: '800px',
-      data: { category, serverDDUrl: this.serverDDUrl },
-      autoFocus: true,
-      disableClose: false
-    });
-  }
-
   openEditCategoryDialog(category: any) {
-    this.modalService.open(this.editCategoryDialogTemplate, {
-      width: '800px',
-      data: { category, serverDDUrl: this.serverDDUrl },
-      autoFocus: true,
-      disableClose: false
-    });
+    const data = {
+      orgObj: this.orgObj,
+      selectedCafeteria: this.selectedCafeteria,
+      category
+    }
+    this.openModal(AddEditPackageCategoryComponent, data);
   }
 
   openWeeklyMenu(category: any) {
@@ -298,17 +252,7 @@ export class MealaweOutletComponent implements AfterViewInit {
       autoFocus: true,
       disableClose: false
     });
-
-    dialogRef.afterClosed().subscribe((result: any) => {
-      if (result && result.action === 'save') {
-        // category.customWeeklyMenu = result.customWeeklyMenu;
-        // category.selectedClusterId = result.selectedClusterId;
-        // category.selectedCafeId = result.selectedCafeId;
-        // category.selectedOrgId = result.selectedOrgId;
-        category.weeklyMenu = result.data;
-        this.updateCategory(category);
-      }
-    });
+    dialogRef.afterClosed().subscribe(() => this.getMealAweOutletByCafeteria());
   }
 
   async createDefaultCategories() {
@@ -331,7 +275,7 @@ export class MealaweOutletComponent implements AfterViewInit {
       this.getMealAweOutletByCafeteria();
     } catch (error) {
       console.error("❌ Update failed", error);
-      this.toaster.error("Update failed");
+      this.toaster.error("Create default categories failed");
     }
   }
 

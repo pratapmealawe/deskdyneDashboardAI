@@ -154,13 +154,8 @@ export class ApiConfigService {
       addEmployeeList: p('/api/addEmployeeList', 'POST'),
       deleteEmployee: p('/api/deleteEmployee', 'DELETE'),
       updateEmployee: p('/api/updateEmployee', 'POST'),
-      getMealAweOutletById: p('/api/getMealAweOutletById', 'GET'),
-      updateMealAweOutlet: p('/api/updateMealAweOutlet', 'POST'),
-      getMealAweOutletByCafeteria: p('/api/getMealAweOutletByCafeteria', 'GET'),
-      deleteMealItem: p('/api/deleteMealItem', 'POST'),
       setOutletOpenedStatus: p('/api/outletOpenedStatus', 'PUT'),
       generateInvoice: p('/api/generateInvoice', 'GET'),
-      changePackageStatus: p('/api/changePackageStatus', 'POST'),
       getMealPackageList: p('/api/getMealPackageList', 'GET'),
       saveMealPackage: p('/api/saveMealPackage', 'POST'),
       B2BFetchWeeklyMenu: p('/api/B2BFetchWeeklyMenu', 'GET'),
@@ -255,7 +250,6 @@ export class ApiConfigService {
       getAllVendorFirms: p('/api/getAllVendorFirms', 'GET'),
       deleteUserFromAllList: p('/api/deleteUserFromAllList', 'DELETE'),
       fetchtOrgInfo: p('/api/b2b_org_info', 'POST'),
-      saveMealAweOutlet: p('/api/saveMealAweOutlet', 'POST'),
       b2b_fetchBulkCakeMenu: p('/api/b2b_fetchBulkCakeMenu', 'GET'),
       b2b_fetchBulkLuxMenu: p('/api/b2b_fetchBulkLuxMenu', 'GET'),
       b2b_fetchBulkSweetMenu: p('/api/b2b_fetchBulkSweetMenu', 'GET'),
@@ -296,16 +290,10 @@ export class ApiConfigService {
       getTotalVendorLedgerBalanceByFirm: p('/api/getTotalVendorLedgerBalanceByFirm', 'GET'),
       getVendorTransactionByFirmAndTypeAndDate: p('/api/getVendorTransactionByFirmAndTypeAndDate', 'POST'),
       creditOrDebitVendorWallet: p('/api/creditOrDebitVendorWallet', 'POST'),
+      transferWalletListToBankManual: p('/api/transferWalletListToBankManual', 'POST'),
       moveSubsidyToWallet: p('/api/moveSubsidyToWallet', 'POST'),
       deleteOutlet: p('/api/deleteOutlet', 'DELETE'),
       getConsumptionOrderByDateForDashboard: p('/api/getConsumptionOrderByDateForDashboard', 'POST'),
-      updateMealItemList: p('/api/updateMealItemList', 'POST'),
-      saveMealAweOutletCategoryConfig: p('/api/saveMealAweOutletCategoryConfig', 'POST'),
-      deleteCategoryConfig: p('/api/deleteCategoryConfig', 'POST'),
-      addCategoryConfig: p('/api/addCategoryConfig', 'POST'),
-      changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'),
-      updateMealAweOutletCategory: p('/api/updateMealAweOutletCategory', 'POST'),
-      createDefaultCategories: p('/api/createDefaultCategories', 'POST'),
       moveDailyToWallet: p('/api/moveDailyToWallet', 'POST'),
       getQrMenuList: p('/api/getQrMenuList', 'POST'),
       changeQrMealTypeActivation: p('/api/changeQrMealTypeActivation', 'POST'),
@@ -316,16 +304,27 @@ export class ApiConfigService {
       updateAuditReport: p('/api/updateAuditReport', 'PUT'),
       deleteAuditReport: p('/api/deleteAuditReport', 'DELETE'),
       getImageGroupConfigByName: p('/api/getImageGroupConfigByName', 'GET'),
+      getServerLogs: p('/public/getServerLogs', 'POST'),
+      getAuditLogs: p('/utility/getAuditLogs', 'POST'),
+
+      addCategoryMealAweOutlet: p('/api/addCategoryMealAweOutlet', 'POST'),
+      deleteCategoryMealAweOutlet: p('/api/deleteCategoryMealAweOutlet', 'POST'),
+      updateCategoryMealAweOutlet: p('/api/updateCategoryMealAweOutlet', 'POST'),
+      getDefaultCategories: p('/api/getDefaultCategories', 'GET'),
+      updateWeeklyMenuCategory: p('/api/updateWeeklyMenuCategory', 'POST'),
+
+      saveMealAweOutlet: p('/api/saveMealAweOutlet', 'POST'),
+      updateMealAweOutlet: p('/api/updateMealAweOutlet', 'POST'),
+      getMealAweOutletByCafeteria: p('/api/getMealAweOutletByCafeteria', 'GET'),
+      getMealAweOutletById: p('/api/getMealAweOutletById', 'GET'),
+      changePackageStatus: p('/api/changePackageStatus', 'POST'),
+      updateMealItemList: p('/api/updateMealItemList', 'POST'),
+      deleteMealItem: p('/api/deleteMealItem', 'POST'),
+      saveMealAweOutletCategoryConfig: p('/api/saveMealAweOutletCategoryConfig', 'POST'),
+      addCategoryConfig: p('/api/addCategoryConfig', 'POST'),
+      deleteCategoryConfig: p('/api/deleteCategoryConfig', 'POST'),
+      changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'),
+      createDefaultCategories: p('/api/createDefaultCategories', 'POST'),
     }
   }
-  // private generateOneLineApi(): string[] {
-  //   const result: string[] = [];
-  //   Object.entries(this.apiEndPointObj).forEach(([key, value]) => {
-  //     const endpoint = value as { url: string; method: string };
-  //     const path = endpoint.url.replace(this.baseUrl, '');
-  //     result.push(`${key}: p('${path}', '${endpoint.method}')`);
-  //   });
-  //   return result;
-  // }
 }
-

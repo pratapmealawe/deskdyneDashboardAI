@@ -1,7 +1,5 @@
 <div class="container-fluid pb-4 billingContainer">
     <div class="row pt-3 pb-2">
-        <!-- <app-common-outlet-cafe-select [config]="headerConfig"
-            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select> -->
         <div class="col-12 col-md-3">
             <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Outlet</mat-label>
@@ -44,6 +42,7 @@
 
             <!-- Stat grid -->
             <div class="stat-grid flex-grow-1">
+                <!-- Shared Stats -->
                 <div class="stat">
                     <span class="label">Total Orders</span>
                     <span class="value">{{ vendorTotals.count }}</span>
@@ -60,36 +59,51 @@
                     <span class="label">After GST (Items)</span>
                     <span class="value">₹{{ vendorTotals.totalItemAmountAfterGst | number:'1.2-2' }}</span>
                 </div>
+
+                <!-- Shared Commission (as requested) -->
                 <div class="stat">
                     <span class="label">Comm</span>
                     <span class="value">₹{{ vendorTotals.vendorCommissionAmount | number:'1.2-2' }}</span>
                 </div>
-                <div class="stat">
-                    <span class="label">Comm GST</span>
-                    <span class="value">₹{{ vendorTotals.vendorCommissionGstAmount | number:'1.2-2' }}</span>
-                </div>
-                <div class="stat">
-                    <span class="label">Before Comm GST</span>
-                    <span class="value">₹{{ vendorTotals.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</span>
-                </div>
-                <div class="stat">
-                    <span class="label">Before TDS/TCS</span>
-                    <span class="value">₹{{ vendorTotals.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</span>
-                </div>
-                <div class="stat">
-                    <span class="label">TCS</span>
-                    <span class="value">₹{{ vendorTotals.tcsAmount | number:'1.2-2' }}</span>
-                </div>
-                <div class="stat">
-                    <span class="label">TDS</span>
-                    <span class="value">₹{{ vendorTotals.tdsAmount | number:'1.2-2' }}</span>
-                </div>
+
+                <!-- Ecommerce Only Stats -->
+                <ng-container *ngIf="isEcommerce">
+                    <div class="stat">
+                        <span class="label">Comm GST</span>
+                        <span class="value">₹{{ vendorTotals.vendorCommissionGstAmount | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Before Comm GST</span>
+                        <span class="value">₹{{ vendorTotals.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2'
+                            }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">Before TDS/TCS</span>
+                        <span class="value">₹{{ vendorTotals.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">TCS</span>
+                        <span class="value">₹{{ vendorTotals.tcsAmount | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="label">TDS</span>
+                        <span class="value">₹{{ vendorTotals.tdsAmount | number:'1.2-2' }}</span>
+                    </div>
+                </ng-container>
+
+                <!-- Non-Ecommerce (Revenue Sharing) Specific Stats -->
+                <ng-container *ngIf="!isEcommerce">
+                    <div class="stat">
+                        <span class="label">TDS (Rev Share)</span>
+                        <span class="value">₹{{ vendorTotals.revenueSharingTdsAmount | number:'1.2-2' }}</span>
+                    </div>
+                </ng-container>
+
                 <div class="stat highlight">
                     <span class="label">Vendor Total</span>
                     <span class="value">₹{{ vendorTotals.totalVendorAmt | number:'1.2-2' }}</span>
                 </div>
             </div>
-
             <!-- Buttons -->
             <div class="d-flex flex-column gap-2 ms-auto">
                 <button mat-raised-button color="primary" (click)="exportDatewiseSummaryExcel()">
@@ -105,8 +119,15 @@
         </div>
     </div>
 
+    <!-- Empty State: Please Select Outlet -->
+    <div *ngIf="!selected.outletId" class="card shadow-sm mt-3">
+        <div class="card-body text-center text-muted py-5">
+            Please select an outlet to view the report.
+        </div>
+    </div>
+
     <!-- Flat order-wise table (all dates) -->
-    <div *ngIf="hasData; else noDataTpl" class="card shadow-sm">
+    <div *ngIf="hasData && selected.outletId" class="card shadow-sm mt-3">
         <div class="card-body">
             <div class="d-flex align-items-center justify-content-between mb-2">
                 <h6 class="mb-0">Order-wise Breakdown</h6>
@@ -118,7 +139,7 @@
             </div>
 
             <div class="table-responsive table-wrap">
-                <table class="table table-striped  table-sm align-middle">
+                <table class="table table-striped table-sm align-middle">
                     <thead class="bg-body">
                         <tr>
                             <th>Date</th>
@@ -128,12 +149,24 @@
                             <th class="text-end">Item</th>
                             <th class="text-end">Subsidy</th>
                             <th class="text-end">After GST</th>
-                            <th class="text-end">Comm</th>
-                            <th class="text-end">Comm GST</th>
-                            <th class="text-end">Before Comm GST</th>
-                            <th class="text-end">Before TDS/TCS</th>
-                            <th class="text-end">TCS</th>
-                            <th class="text-end">TDS</th>
+
+                            <!-- Ecommerce Cols -->
+                            <ng-container *ngIf="isEcommerce">
+                                <th class="text-end">Comm</th>
+                                <th class="text-end">Comm GST</th>
+                                <th class="text-end">Before Comm GST</th>
+                                <th class="text-end">Before TDS/TCS</th>
+                                <th class="text-end">TCS</th>
+                                <th class="text-end">TDS</th>
+                            </ng-container>
+
+                            <!-- Non-Ecommerce Cols -->
+                            <ng-container *ngIf="!isEcommerce">
+                                <th class="text-end">Comm</th>
+                                <th class="text-end">TDS</th>
+                                <th class="text-center">TDS Rate</th>
+                            </ng-container>
+
                             <th class="text-end">Vendor Amt</th>
                         </tr>
                     </thead>
@@ -146,12 +179,25 @@
                             <td class="text-end">₹{{ r.itemAmount | number:'1.2-2' }}</td>
                             <td class="text-end">₹{{ r.subsidyAmount | number:'1.2-2' }}</td>
                             <td class="text-end">₹{{ r.totalItemAmountAfterGst | number:'1.2-2' }}</td>
-                            <td class="text-end">₹{{ r.vendorCommissionAmount | number:'1.2-2' }}</td>
-                            <td class="text-end">₹{{ r.vendorCommissionGstAmount | number:'1.2-2' }}</td>
-                            <td class="text-end">₹{{ r.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</td>
-                            <td class="text-end">₹{{ r.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</td>
-                            <td class="text-end">₹{{ r.tcsAmount | number:'1.2-2' }}</td>
-                            <td class="text-end">₹{{ r.tdsAmount | number:'1.2-2' }}</td>
+
+                            <!-- Ecommerce Cols -->
+                            <ng-container *ngIf="isEcommerce">
+                                <td class="text-end">₹{{ r.vendorCommissionAmount | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ r.vendorCommissionGstAmount | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ r.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ r.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ r.tcsAmount | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ r.tdsAmount | number:'1.2-2' }}</td>
+                            </ng-container>
+
+                            <!-- Non-Ecommerce Cols -->
+                            <ng-container *ngIf="!isEcommerce">
+                                <td class="text-end">₹{{ r.vendorCommissionAmount | number:'1.2-2' }}</td>
+                                <td class="text-end">₹{{ r.revenueSharingTdsAmount | number:'1.2-2' }}</td>
+                                <td class="text-center">{{ r.revenueSharingTdsRatePct }}%</td>
+                            </ng-container>
+
+                            <!-- Vendor Amt (already conditionally populated in .ts) -->
                             <td class="text-end">₹{{ r.vendorLedgerAmt | number:'1.2-2' }}</td>
                         </tr>
                     </tbody>
@@ -165,9 +211,9 @@
         </div>
     </div>
 
-    <!-- No data message (covers both totals + table areas) -->
+    <!-- No data message -->
     <ng-template #noDataTpl>
-        <div class="card shadow-sm">
+        <div class="card shadow-sm" *ngIf="selected.outletId">
             <div class="card-body text-center text-muted py-5">
                 No data found for the selected filters.
             </div>

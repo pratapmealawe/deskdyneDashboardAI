@@ -419,11 +419,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.lastsevendaysorderdaywisecount, searchObj);
   }
 
-  getServerLogs(fileName: string) {
-    const urlObj = this.apiConfigService.apiEndPointObj.serverlogs;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${fileName}`, method: urlObj.method }, null, { Accept: 'text/html' }, true);
-  }
-
   getDayRangeBasedLogs(startDate: any, endDate: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getDayRangeBasedLogs;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${startDate}` + `/${endDate}`, method: urlObj.method });
@@ -687,7 +682,6 @@ export class ApiMainService {
   }
 
   addEmployeeList(employeeList: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.addEmployeeList;
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addEmployeeList, employeeList);
   }
 
@@ -715,15 +709,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  changePackageStatus(payload: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.changePackageStatus, payload);
-  }
-
-  getMealAweOutletById(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletById;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
   setOutletOpenedStatus(id: any, status: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.setOutletOpenedStatus;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}` + `/${status}`, method: urlObj.method });
@@ -740,15 +725,6 @@ export class ApiMainService {
 
   saveMealPackage(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealPackage, data);
-  }
-
-  saveMealAweOutlet(outlet: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealAweOutlet, outlet);
-  }
-
-  updateMealAweOutlet(id: any, outlet: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateMealAweOutlet;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, outlet);
   }
 
   B2BFetchWeeklyMenu(orgId: any) {
@@ -797,7 +773,6 @@ export class ApiMainService {
   }
 
   getOrgEmployeePollingList(payload: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getOrgEmployeePollingList;
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getOrgEmployeePollingList, payload);
   }
 
@@ -910,7 +885,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
 
-
   qrEmployeeAdd(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.qrEmployeeAdd, body);
   }
@@ -943,8 +917,6 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.updateQrEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
-
-
 
   vcEmployeeAdd(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.vcEmployeeAdd, body);
@@ -1096,14 +1068,15 @@ export class ApiMainService {
   fetchCompletedOutletOrdersbysearchObj(payload: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchCompletedOutletOrdersbysearchObj, payload);
   }
+
   fetchDailyBulkOrdersbysearchObj(payload: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbysearchObj;
-    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbysearchObj, payload);
   }
+
   fetchDailyBulkOrdersbyOrgId(payload: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbyOrgId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbyOrgId, payload);
   }
+
   getOrg(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getOrg;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
@@ -1311,11 +1284,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${name}`, method: urlObj.method });
   }
 
-  getMealAweOutletByCafeteria(id: string) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletByCafeteria;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
   getAllImageGroupConfigs(page: number, pageSize: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getAllImageGroupConfigs;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${pageSize}`, method: urlObj.method });
@@ -1334,13 +1302,16 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.creditOrDebitVendorWallet, body);
   }
 
+  transferWalletListToBankManual(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.transferWalletListToBankManual, body);
+  }
+
   moveSubsidyToWallet(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.moveSubsidyToWallet, body);
   }
 
   moveDailyToWallet(body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.moveDailyToWallet;
-    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.moveDailyToWallet, body);
   }
 
   deleteOutlet(id: any) {
@@ -1358,30 +1329,6 @@ export class ApiMainService {
 
   deleteMealItem(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMealItem, data);
-  }
-
-  saveMealAweOutletCategoryConfig(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealAweOutletCategoryConfig, data);
-  }
-
-  addCategoryConfig(data: FormData) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addCategoryConfig, data);
-  }
-
-  deleteCategoryConfig(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteCategoryConfig, data);
-  }
-
-  changeCategoryStatus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.changeCategoryStatus, data);
-  }
-
-  updateMealAweOutletCategory(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateMealAweOutletCategory, data);
-  }
-
-  createDefaultCategories(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDefaultCategories, data);
   }
 
   getQrMenuList(filter: any) {
@@ -1404,13 +1351,11 @@ export class ApiMainService {
   }
 
   getByOrgIdAndCafeteriaIdAndDate(payload: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getByOrgIdAndCafeteriaIdAndDate
-    return this.apiHttpService.REQUEST(urlObj, payload);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getByOrgIdAndCafeteriaIdAndDate, payload);
   }
 
   createAuditReport(body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.createAuditReport
-    return this.apiHttpService.REQUEST(urlObj, body);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createAuditReport, body);
   }
 
   updateAuditReport(id: string, body: any) {
@@ -1421,5 +1366,81 @@ export class ApiMainService {
   deleteAuditReport(id: string) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteAuditReport
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getServerLogs(params: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getServerLogs, params);
+  }
+
+  getAuditLogs(params: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAuditLogs, params);
+  }
+
+
+  addCategoryMealAweOutlet(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.addCategoryMealAweOutlet
+    return this.apiHttpService.REQUEST(urlObj, body);
+  }
+
+  deleteCategoryMealAweOutlet(cafeeteriaId: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteCategoryMealAweOutlet
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method }, body);
+  }
+
+  updateCategoryMealAweOutlet(cafeeteriaId: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateCategoryMealAweOutlet
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method }, body);
+  }
+
+  getDefaultCategories() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getDefaultCategories);
+  }
+
+  updateWeeklyMenuCategory(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateWeeklyMenuCategory, body);
+  }
+
+  saveMealAweOutlet(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealAweOutlet, body);
+  }
+
+  updateMealAweOutlet(cafeeteriaId: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateMealAweOutlet
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method }, body);
+  }
+
+  getMealAweOutletByCafeteria(cafeeteriaId: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletByCafeteria
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method });
+  }
+
+  getMealAweOutletById(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletById
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  changePackageStatus(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changePackageStatus
+    return this.apiHttpService.REQUEST(urlObj, body);
+  }
+
+  saveMealAweOutletCategoryConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealAweOutletCategoryConfig, data);
+  }
+
+  addCategoryConfig(data: FormData) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addCategoryConfig, data);
+  }
+
+  deleteCategoryConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteCategoryConfig, data);
+  }
+
+  changeCategoryStatus(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.changeCategoryStatus, data);
+  }
+
+  createDefaultCategories(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDefaultCategories, data);
   }
 }

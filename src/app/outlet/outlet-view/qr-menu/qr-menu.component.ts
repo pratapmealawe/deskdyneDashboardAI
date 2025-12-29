@@ -16,7 +16,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { categoryList } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -40,9 +39,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
   form!: FormGroup;
 
-  uploadedImageFile: any;
-  imageUrl: any;
-  displayImgUrl = environment.imageUrl;
   showCard: boolean = false;
 
   // Raw docs from API (one per mealType)
@@ -56,9 +52,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
   menuId: any = 0;
   showUpdateBtn: boolean = false;
-  imageReplaced: boolean = false;
-  uploadStatus: boolean = false;
-  noImages: boolean = false;
   foodItem: any;
   groupItem: any;
   editGroupItem: any;
@@ -363,50 +356,10 @@ export class QrMenuComponent implements OnInit, OnChanges {
     });
   }
 
-  // IMAGE HANDLING (ImageCropper via NgbModal)
-  handleFileInput($event: any) {
-    if ($event && $event.target && $event.target.files) {
-      const file: File = $event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async (_event) => {
-          const imageUrl = reader.result;
-          try {
-            const modalRef = this.modalService.open(ImageCropperComponent, {
-              ariaLabelledBy: 'modal-basic-title',
-              size: 'xl',
-              backdrop: 'static',
-              centered: true,
-            });
-            modalRef.result.then(
-              (result: any) => {
-                if (result && result.croppedImages) {
-                  this.uploadedImageFile = result.croppedImages.file;
-                  this.imageUrl = result.croppedImages.resizeDataUrl;
-                  this.uploadStatus = true;
-                  this.imageReplaced = true;
-                }
-              },
-              () => {
-                console.log('Image cropper dismissed');
-              }
-            );
-            (modalRef.componentInstance as any).uploadedImageUrl = imageUrl;
-            (modalRef.componentInstance as any).imageWidth = 150;
-            (modalRef.componentInstance as any).imageHeight = 150;
-            (modalRef.componentInstance as any).aspectRatio = 1;
-          } catch (e) {
-            console.log('error while opening image cropper', e);
-          }
-        };
-      }
-    }
-  }
+
 
   // EDIT / ADD
   async edit(group: any, item: any, index: any) {
-    this.imageUrl = item.imageUrl;
     this.showUpdateBtn = true;
     this.menuId = item._id;
     this.editGroupItem = group
@@ -419,7 +372,7 @@ export class QrMenuComponent implements OnInit, OnChanges {
       this.form.markAllAsTouched();
       return;
     }
-        if (
+    if (
       typeof this.form.value.subsidy === 'undefined' ||
       this.form.value.subsidy === null ||
       this.form.value.subsidy === ''
@@ -429,33 +382,26 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
 
     try {
-      const formData = new FormData();
-
-      console.log(this.form.value);
-      
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-
-      formData.append('imageUrl', this.form.value.imageUrl || '');
-      formData.append('description', this.form.value.description || '');
-      formData.append('isActive', this.form.value.isActive);
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append('subsidy', this.form.value.subsidy ?? 0);
-      formData.append('maxQuantity', this.form.value.maxQuantity ?? 1);
-      formData.append('category', this.form.value.category);
-      formData.append('mealType', this.form.value.mealType || '');
-      formData.append('acceptOrderFrom', this.form.value.acceptOrderFrom || '');
-      formData.append('acceptOrderTill', this.form.value.acceptOrderTill || '');
-      formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence ?? 0);
-      formData.append('outletId', this.outletObj._id);
-      formData.append('outletName', this.outletObj.outletName);
-      formData.append('menuId', this.menuId);
+      const data = {
+        description: this.form.value.description || '',
+        isActive: this.form.value.isActive,
+        itemName: this.form.value.itemName,
+        price: this.form.value.price,
+        subsidy: this.form.value.subsidy ?? 0,
+        maxQuantity: this.form.value.maxQuantity ?? 1,
+        category: this.form.value.category,
+        mealType: this.form.value.mealType || '',
+        acceptOrderFrom: this.form.value.acceptOrderFrom || '',
+        acceptOrderTill: this.form.value.acceptOrderTill || '',
+        itemType: this.form.value.itemType,
+        precedence: this.form.value.precedence ?? 0,
+        outletId: this.outletObj._id,
+        outletName: this.outletObj.outletName,
+        menuId: this.menuId
+      };
 
       const res = await this.apiMainService.createQrMenu(
-        formData,
+        data,
         this.outletObj._id
       );
 
@@ -472,11 +418,7 @@ export class QrMenuComponent implements OnInit, OnChanges {
   resetValues() {
     this.form.reset();
     this.menuId = '';
-    this.imageUrl = '';
-    this.uploadedImageFile = '';
     this.showUpdateBtn = false;
-    this.imageReplaced = false;
-    this.noImages = false;
 
     // restore some sensible defaults
     this.form.patchValue({
@@ -495,36 +437,25 @@ export class QrMenuComponent implements OnInit, OnChanges {
     }
 
     try {
-      const formData: any = new FormData();
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-      formData.append('imageUrl', this.form.value.imageUrl || '');
-      formData.append('description', this.form.value.description || '');
-      formData.append(
-        'isActive',
-        this.form.value.isActive ? this.form.value.isActive : false
-      );
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append('subsidy', this.form.value.subsidy ? this.form.value.subsidy : 0);
-      formData.append('maxQuantity', this.form.value.maxQuantity ? this.form.value.maxQuantity : 0);
-      formData.append('category', this.form.value.category);
-      formData.append('mealType', this.form.value.mealType || '');
-      formData.append('acceptOrderFrom', this.form.value.acceptOrderFrom || '');
-      formData.append('acceptOrderTill', this.form.value.acceptOrderTill || '');
-      formData.append('itemType', this.form.value.itemType);
-      formData.append(
-        'precedence',
-        this.form.value.precedence ? this.form.value.precedence : 0
-      );
-
-      // Outlet
-      formData.append('outletId', this.outletObj._id);
-      formData.append('outletName', this.outletObj.outletName);
+      const data = {
+        description: this.form.value.description || '',
+        isActive: this.form.value.isActive ? this.form.value.isActive : false,
+        itemName: this.form.value.itemName,
+        price: this.form.value.price,
+        subsidy: this.form.value.subsidy ? this.form.value.subsidy : 0,
+        maxQuantity: this.form.value.maxQuantity ? this.form.value.maxQuantity : 0,
+        category: this.form.value.category,
+        mealType: this.form.value.mealType || '',
+        acceptOrderFrom: this.form.value.acceptOrderFrom || '',
+        acceptOrderTill: this.form.value.acceptOrderTill || '',
+        itemType: this.form.value.itemType,
+        precedence: this.form.value.precedence ? this.form.value.precedence : 0,
+        outletId: this.outletObj._id,
+        outletName: this.outletObj.outletName,
+      };
 
       const res = await this.apiMainService.createQrMenu(
-        formData,
+        data,
         this.outletObj._id
       );
 
@@ -544,28 +475,26 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
     try {
       const outletId = this.outletObj._id;
-      const formData = new FormData();
 
-      // reuse existing image via URL
-      formData.append('imageUrl', item.imageUrl || '');
-      formData.append('description', item.description || '');
-      formData.append('isActive', item.isActive ?? false);
-      formData.append('itemName', item.itemName || '');
-      formData.append('price', item.price);
-      formData.append('subsidy', item.subsidy ?? 0);
-      formData.append('maxQuantity', item.maxQuantity ?? 1);
-      formData.append('category', item.category || '');
-      formData.append('mealType', group.mealType || '');
-      formData.append('acceptOrderFrom', group.acceptOrderFrom || '');
-      formData.append('acceptOrderTill', group.acceptOrderTill || '');
-      formData.append('itemType', item.itemType || 'Veg');
-      formData.append('precedence', item.precedence ?? 0);
-
-      formData.append('outletId', group.outletId);
-      formData.append('outletName', group.outletName);
+      const data = {
+        description: item.description || '',
+        isActive: item.isActive ?? false,
+        itemName: item.itemName || '',
+        price: item.price,
+        subsidy: item.subsidy ?? 0,
+        maxQuantity: item.maxQuantity ?? 1,
+        category: item.category || '',
+        mealType: group.mealType || '',
+        acceptOrderFrom: group.acceptOrderFrom || '',
+        acceptOrderTill: group.acceptOrderTill || '',
+        itemType: item.itemType || 'Veg',
+        precedence: item.precedence ?? 0,
+        outletId: group.outletId,
+        outletName: group.outletName
+      };
 
       // Using same create API for copy
-      const res = await this.apiMainService.createQrMenu(formData, outletId);
+      const res = await this.apiMainService.createQrMenu(data, outletId);
 
       if (res && res._id) {
         this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
@@ -596,38 +525,38 @@ export class QrMenuComponent implements OnInit, OnChanges {
   }
 
   async changeMenuActivation(menu: any, checked: boolean, showToast: boolean = true) {
-  const prev = menu.isActive;
-  menu.isActive = checked;
+    const prev = menu.isActive;
+    menu.isActive = checked;
 
-  const menuObj = { isActive: checked };
+    const menuObj = { isActive: checked };
 
-  try {
-    await this.apiMainService.changeQrMenuActivation(
-      this.outletObj._id,
-      menu._id,
-      menuObj
-    );
-
-    if (showToast) {
-      this.snackBar.open(
-        `Item "${menu.itemName}" ${checked ? 'activated' : 'deactivated'} successfully.`,
-        'Close',
-        { duration: 2500 }
+    try {
+      await this.apiMainService.changeQrMenuActivation(
+        this.outletObj._id,
+        menu._id,
+        menuObj
       );
-    }
-  } catch (err) {
-    console.log('Error updating item activation', err);
-    menu.isActive = prev;
 
-    if (showToast) {
-      this.snackBar.open('Failed to update item status. Please try again.', 'Close', {
-        duration: 2500,
-      });
-    }
+      if (showToast) {
+        this.snackBar.open(
+          `Item "${menu.itemName}" ${checked ? 'activated' : 'deactivated'} successfully.`,
+          'Close',
+          { duration: 2500 }
+        );
+      }
+    } catch (err) {
+      console.log('Error updating item activation', err);
+      menu.isActive = prev;
 
-    throw err;
+      if (showToast) {
+        this.snackBar.open('Failed to update item status. Please try again.', 'Close', {
+          duration: 2500,
+        });
+      }
+
+      throw err;
+    }
   }
-}
 
 
   async onItemActiveToggle(group: any, menu: any, event: any) {
