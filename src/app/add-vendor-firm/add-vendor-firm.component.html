@@ -239,29 +239,6 @@
                     </div>
                 </div>
 
-                <!-- Compliance / Enrollment Actions -->
-                <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
-                    <div *ngIf="form.controls['accountEnrollment'].value" class="uploaded-file-tag">
-                        <mat-icon class="fs-6" style="width: auto; height: auto;">description</mat-icon>
-                        {{ form.controls['accountEnrollment'].value }}
-                        <i class="bi bi-x-lg" (click)="closeAccountEnroll()"></i>
-                    </div>
-
-                    <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
-                        style="display: none;" />
-
-                    <button mat-stroked-button color="primary" type="button" *ngIf="isVendorEdit"
-                        (click)="fileInput.click()">
-                        <mat-icon>upload_file</mat-icon> Account Enrollment
-                    </button>
-                    <button mat-stroked-button color="primary" type="button" *ngIf="isVendorEdit"
-                        (click)="addComplience()">
-                        <mat-icon>verified_user</mat-icon> Compliance
-                    </button>
-                </div>
-            </div>
-
-            <div class="col-12">
                 <div class="modern-card mb-3">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h3><mat-icon>store</mat-icon>Event Popup</h3>
@@ -305,6 +282,27 @@
                             </div>
                         </div>
                     </div>
+                </div>
+
+                <!-- Compliance / Enrollment Actions -->
+                <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
+                    <div *ngIf="form.controls['accountEnrollment'].value" class="uploaded-file-tag">
+                        <mat-icon class="fs-6" style="width: auto; height: auto;">description</mat-icon>
+                        {{ form.controls['accountEnrollment'].value }}
+                        <i class="bi bi-x-lg" (click)="closeAccountEnroll()"></i>
+                    </div>
+
+                    <input type="file" #fileInput accept=".pdf,.jpg,.jpeg,.png" (change)="onFileSelected($event)"
+                        style="display: none;" />
+
+                    <button mat-stroked-button color="primary" type="button" *ngIf="isVendorEdit"
+                        (click)="fileInput.click()">
+                        <mat-icon>upload_file</mat-icon> Account Enrollment
+                    </button>
+                    <button mat-stroked-button color="primary" type="button" *ngIf="isVendorEdit"
+                        (click)="addComplience()">
+                        <mat-icon>verified_user</mat-icon> Compliance
+                    </button>
                 </div>
             </div>
         </div>
