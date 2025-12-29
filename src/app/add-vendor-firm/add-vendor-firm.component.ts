@@ -301,26 +301,23 @@ export class AddVendorFirmComponent {
     }
   }
 
-  getOrgNameForPopup(org: MatSelectChange) {
-    this.showCafeteria = true;
-    if (org && org) {
-      this.orgName = org.value;
-      const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
-      this.cafeterialist = cafes?.cafeteriaList ?? []
-    }
-  }
+  selectCafeteria(event: MatSelectChange) {
+    const value = event.value;
+    console.log(event.value, "value ");
+    const cafeteriaName = value.cafeteria_name;
+    const cafeteriaCity = value.cafeteria_city;
+    const cafeteriaId = event.value.cafeteria_id;
+    const organizationName = this.orgList.find((org: any) =>
+      org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
+    )?.organization_name;
+    console.log("Organization Name:", organizationName);
 
-selectCafeteria(event: MatSelectChange) {
-  const value = event.value;
-  const cafeteriaName = value.cafeteria_name;
-  const cafeteriaCity = value.cafeteria_city;
-  const cafeteriaId = event.value.cafeteria_id;
-  const organizationName = this.orgList.find((org: any) =>
-    org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
-  )?.organization_name;
-  this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
-  this.showModalOutletList = true;
-}
+    // const { cafeteriaName, cafeteriaCity, organization } = value;
+    console.log(cafeteriaName, cafeteriaCity, organizationName, "cafeteriaName, cafeteriaCity, organization");
+
+    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
+    this.showModalOutletList = true;
+  }
 
   selectCafeteriaForPopup(event: MatSelectChange) {
     const value = event.value;
@@ -465,52 +462,15 @@ selectCafeteria(event: MatSelectChange) {
 
   @ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
 
-addOutlet() {
-  if (!this.outletDialog) {
-    console.error('TemplateRef outletDialog is not available');
-    return;
-  }
-  this.dialog.open(this.outletDialog, {
-    width: '1000px',
-    disableClose: false,
-    id: 'OUTLET_DIALOG'
-  });
-}
-
-  addPopup() {
-    if (!this.popupModal) {
-      console.error('TemplateRef popup is not available');
+  addOutlet() {
+    if (!this.outletDialog) {
+      console.error('TemplateRef outletDialog is not available');
       return;
     }
-    this.dialog.open(this.popupModal, {
+    this.dialog.open(this.outletDialog, {
       width: '1000px',
       disableClose: false
     });
-    this.dialog.afterAllClosed.subscribe(() => {
-    this.showModalOutletListforPopup = false;
-    })
   }
 
-  getSelectedPopups() {
-    this.outletByCafeteriaList.forEach((elm: any) => {
-      if (elm.isChecked) {
-        const exists = this.selectedPopupsList.some((outlet: any) => outlet.outletId === elm._id);
-        if (!exists) {
-          this.selectedPopupsList.push({
-            popupId: elm._id,
-            popupName: elm.outletName,
-            popupType: elm.outletType,
-            cafeteriaDetails: elm.cafeteriaDetails,
-            organizationDetails: elm.organizationDetails,
-          });
-        }
-      }
-    });
-    this.showModalOutletListforPopup = false;
-    this.dialog.closeAll();
-  }
-
-  deletePopup(index: number) {
-    this.selectedPopupsList.splice(index, 1);
-  }
 }
