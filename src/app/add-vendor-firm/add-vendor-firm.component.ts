@@ -473,4 +473,43 @@ export class AddVendorFirmComponent {
     });
   }
 
+  addPopup() {
+    if (!this.popupModal) {
+      console.error('TemplateRef popup is not available');
+      return;
+    }
+    this.modalService.open(this.popupModal, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  }
+
+  deletePopup(index: number) {
+    this.selectedPopupsList.splice(index, 1);
+  }
+
+  getOrgNameForPopup(event: any) {
+    if (event) {
+      this.orgName = event.value;
+      const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
+      this.cafeterialist = cafes?.cafeteriaList ?? []
+    }
+  }
+
+  getSelectedPopups() {
+    this.outletByCafeteriaList.forEach((elm: any) => {
+      if (elm.isChecked) {
+        const exists = this.selectedPopupsList.some((outlet: any) => outlet.outletId === elm._id);
+        if (!exists) {
+          this.selectedPopupsList.push({
+            popupId: elm._id,
+            popupName: elm.outletName,
+            popupType: elm.outletType,
+            cafeteriaDetails: elm.cafeteriaDetails,
+            organizationDetails: elm.organizationDetails,
+          });
+        }
+      }
+    });
+    this.showModalOutletListforPopup = false;
+    this.modalService.dismissAll();
+  }
+
 }
