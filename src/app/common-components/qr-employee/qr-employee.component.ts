@@ -322,7 +322,7 @@ export class QrEmployeeComponent implements OnInit {
         employeeId: emp.employeeId,
         employeePhoneNo: emp.employeePhoneNo,
         employeeEmail: emp.employeeEmail,
-        qrCode: ""  
+        qrCode: ""
       });
     }
 
@@ -635,4 +635,172 @@ export class QrEmployeeComponent implements OnInit {
     const fileName = `Card_${employee.employeeName}.pdf`;
     pdfMake.createPdf(docDefinition).download(fileName);
   }
+
+  downloadAllEmployeesPdf(): void {
+    if (!this.filteredEmployees || this.filteredEmployees.length === 0) {
+      this.snackBar.open('No employees to download', 'Close', { duration: 2500 });
+      return;
+    }
+
+    const dLogo = this.deskdyneLogoDataUrl;
+    const oLogo = this.orgLogoDataUrl;
+    const pageWidth = 270;
+    const pageHeight = 170;
+    const cardBackground = '#192754';
+    const textColor = '#FFFFFF';
+    const dividerColor = '#FFFFFF';
+    const qrSize = 80;
+
+    // --- 1. Prepare "Common Page" (Back Side) Content ---
+    const slide2Columns: any[] = [];
+    slide2Columns.push({ width: '*', text: '' });
+    slide2Columns.push({
+      width: 'auto',
+      stack: [
+        dLogo ? {
+          image: dLogo,
+          width: 75,
+          alignment: 'center',
+          margin: [0, 0, 0, 0]
+        } : {
+          text: 'DeskDyne',
+          color: textColor,
+          bold: true,
+          fontSize: 16,
+          margin: [0, 25, 0, 0]
+        }
+      ]
+    });
+
+    if (this.isShowCollab) {
+      slide2Columns.push({
+        width: 30,
+        text: 'X',
+        fontSize: 16,
+        bold: true,
+        color: '#888888',
+        alignment: 'center',
+        margin: [0, 29, 0, 0]
+      });
+      slide2Columns.push({
+        width: 'auto',
+        stack: [
+          oLogo ? {
+            image: oLogo,
+            width: 70,
+            alignment: 'center',
+            margin: [0, 0, 0, 0]
+          } : {
+            text: (this.orgObj?.organization_name || 'Partner').toUpperCase(),
+            color: textColor,
+            fontSize: 12,
+            bold: true,
+            alignment: 'center',
+            margin: [0, 30, 0, 0]
+          }
+        ]
+      });
+    }
+    slide2Columns.push({ width: '*', text: '' });
+
+    // The common page definition
+    const commonBackPage = {
+      margin: [0, 48, 0, 0],
+      columns: slide2Columns,
+      // Force page break after this common page so employees start on next page
+      pageBreak: 'after'
+    };
+
+    // --- 2. Build Content Array ---
+    // Start with the common page
+    const contentArr: any[] = [commonBackPage];
+
+    // Loop employees
+    this.filteredEmployees.forEach((employee, index) => {
+      // If no QR, maybe skip or show placeholder. 
+      // User requirement implies downloading all, so we include them even if QR missing (maybe just blank or text).
+      // But typically we need QR. Let's assume valid employees or just handle gracefully.
+      const qrImage = employee.qrCode ? {
+        image: employee.qrCode,
+        width: qrSize,
+        height: qrSize,
+        alignment: 'right',
+        margin: [0, 0, 5, 0]
+      } : {
+        text: 'No QR',
+        width: qrSize,
+        height: qrSize,
+        alignment: 'right',
+        color: '#ff0000',
+        margin: [0, 30, 5, 0]
+      };
+
+      const employeePage = {
+        margin: [0, 45, 0, 0],
+        table: {
+          widths: ['48%', '4%', '48%'],
+          body: [
+            [
+              // QR
+              qrImage,
+              // Line
+              {
+                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 0, y2: 85, lineWidth: 1, lineColor: dividerColor }],
+                alignment: 'center',
+              },
+              // Details
+              {
+                margin: [10, 18, 0, 0],
+                stack: [
+                  {
+                    text: employee.employeeName || 'No Name',
+                    fontSize: 12,
+                    bold: true,
+                    color: textColor,
+                    font: 'Roboto',
+                    margin: [0, 0, 0, 8]
+                  },
+                  {
+                    table: {
+                      widths: [10, '*'],
+                      body: [
+                        [
+                          { text: '📞', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                          { text: employee.employeePhoneNo || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 4] }
+                        ],
+                        [
+                          { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                          { text: employee.employeeEmail || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 0] }
+                        ]
+                      ]
+                    },
+                    layout: 'noBorders'
+                  }
+                ]
+              }
+            ]
+          ]
+        },
+        layout: 'noBorders',
+        // Add pageBreak 'after' for all except the last one
+        pageBreak: (index === this.filteredEmployees.length - 1) ? undefined : 'after'
+      };
+
+      contentArr.push(employeePage);
+    });
+
+    const docDefinition: any = {
+      pageSize: { width: pageWidth, height: pageHeight },
+      pageMargins: [0, 0, 0, 0],
+      background: function () {
+        return { canvas: [{ type: 'rect', x: 0, y: 0, w: pageWidth, h: pageHeight, color: cardBackground }] };
+      },
+      content: contentArr
+    };
+
+    const fileName = `All_Employees_${this.selectedCafeteriaName || 'Cafeteria'}.pdf`;
+    pdfMake.createPdf(docDefinition).download(fileName);
+
+  }
 }
+

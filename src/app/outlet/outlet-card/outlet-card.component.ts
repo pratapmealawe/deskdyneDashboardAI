@@ -12,27 +12,28 @@ import { PolicyService } from 'src/service/policy.service';
   styleUrls: ['./outlet-card.component.scss'],
 })
 export class OutletCardComponent implements OnInit {
-private _outlet: any[] = [];
-searchText:string =''
+  private _outlet: any[] = [];
+  searchText: string = ''
 
-@Input()
-get outlet(): any[] {
-  return this._outlet;
-}
+  @Input()
+  get outlet(): any[] {
+    return this._outlet;
+  }
 
-set outlet(value: any[]) {
-  this._outlet = value ?? [];
-  this.outletUpdated = this._outlet;
-}
+  set outlet(value: any[]) {
+    this._outlet = value ?? [];
+    this.pageIndex = 0;
+    this.updatePage();
+  }
 
   @Output() view: EventEmitter<any> = new EventEmitter<any>();
   imageUrl: any = environment.imageUrl;
   btnPolicy: any;
   filteredMenuList: any;
-  outletInfo:any
-  pageSize :number = 10
-  pageIndex:number = 0
-  outletUpdated:any[]=[]
+  outletInfo: any
+  pageSize: number = 10
+  pageIndex: number = 0
+  outletUpdated: any[] = []
 
   constructor(private policyService: PolicyService, private apiMainService: ApiMainService, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService) { }
   ngOnInit(): void {
@@ -49,12 +50,12 @@ set outlet(value: any[]) {
     );
   }
 
- async deleteOutletFunc() {
+  async deleteOutletFunc() {
     try {
       const res = await this.apiMainService.deleteOutlet(this.outletInfo?._id)
       console.log(res);
       this.toaster.success("Successfully Deleted Outlet....!")
-    } catch(err: any) {
+    } catch (err: any) {
       console.log(err);
     }
   }
@@ -63,13 +64,13 @@ set outlet(value: any[]) {
     this.view.emit(org);
   }
 
-  onPageChange(event:PageEvent){
+  onPageChange(event: PageEvent) {
     this.pageSize = event.pageSize
     this.pageIndex = event.pageIndex
     this.updatePage();
   }
 
-  updatePage(){
+  updatePage() {
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
     this.outletUpdated = this.outlet.slice(start, end)

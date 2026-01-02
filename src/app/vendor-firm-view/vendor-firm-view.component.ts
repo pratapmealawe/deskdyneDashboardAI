@@ -13,8 +13,8 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   selectedSubTab: string = '';
   selectedChildTab: string = '';
   btnPolicy: any;
-  selectedTabIndex:number =0
-  selectedSubTabIndex:number = 0 ;
+  selectedTabIndex: number = 0
+  selectedSubTabIndex: number = 0;
 
   vendorViewList = [
     { name: 'VendorFirm Details', path: 'vendorFirmDetails' },
@@ -32,7 +32,8 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
         }
       ],
     },
-    { name: 'Order Report', 
+    {
+      name: 'Order Report',
       path: 'orderReport',
       subTabs: [
         {
@@ -44,7 +45,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
           path: 'vendorFirmDailyReport'
         }
       ],
-     },
+    },
   ];
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -52,6 +53,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   }
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     this.initSubTabFor(this.selectedTab)
   }
 
@@ -100,11 +102,11 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
     }
   }
   //  tab implementation 
-  onTabChange(event:any){
+  onTabChange(event: any) {
     const selectTab = this.vendorViewList[event.index]
     this.gotToTab(selectTab.path)
   }
-  onTabSubChange(event:any){
+  onTabSubChange(event: any) {
     const selectedSubTab = this.getSubTab()
     const findIndex = selectedSubTab[event.index]
     this.goToSubTab(findIndex.path)

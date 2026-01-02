@@ -66,11 +66,12 @@ export class WalletDetailsComponent implements OnChanges, OnInit, OnDestroy {
     try {
       const wallet: any = await this.apiMainService.getVendorWallet(this.vendorFirmInfo._id);
       const bal = Number(wallet?.wallet_balance ?? 0);
-      this.walletBalance = Number.isFinite(bal) ? +bal.toFixed(2) : 0;
+      this.walletBalance = Number.isFinite(bal) ? +bal : 0;
+      console.log(this.walletBalance);
       const subBal = Number(wallet?.subsidy_balance ?? 0);
-      this.subsidyBalance = Number.isFinite(subBal) ? +subBal.toFixed(2) : 0;
+      this.subsidyBalance = Number.isFinite(subBal) ? +subBal : 0;
       const dailyBal = Number(wallet?.daily_balance ?? 0);
-      this.dailyBalance = Number.isFinite(dailyBal) ? +dailyBal.toFixed(2) : 0;
+      this.dailyBalance = Number.isFinite(dailyBal) ? +dailyBal : 0;
     } catch (error) {
       console.log('error while fetching wallet');
     }
