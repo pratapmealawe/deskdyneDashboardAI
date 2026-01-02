@@ -24,7 +24,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private localStorageService: LocalStorageService,
     private router: Router,
     private apiMainService: ApiMainService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.checkIfTokenPresent();
@@ -182,9 +182,11 @@ export class LoginComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  resendOTP() {
+  async resendOTP() {
     if (this.timer !== 0) return;
-    // call API to resend OTP here
+
+    await this.apiMainService.loginAdmin({ adminId: this.adminId });
+
     this.startTimer();
   }
 
