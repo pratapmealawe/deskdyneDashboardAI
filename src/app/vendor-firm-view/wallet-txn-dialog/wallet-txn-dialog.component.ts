@@ -73,6 +73,7 @@ export class WalletTxnDialogComponent {
           });
         } else if (this.data.transferSource === 'subsidy') {
           // Subsidy → wallet (existing)
+          console.log('Subsidy → wallet (existing)');
           await this.api.moveSubsidyToWallet({
             vendorFirmId: this.data.vendorFirmId,
             amount: +amt.toFixed(2),

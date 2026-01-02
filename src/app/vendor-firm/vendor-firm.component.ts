@@ -27,9 +27,10 @@ export class VendorFirmComponent {
   showSearchSection = true;
   vendorInfo: any;
   searchControl = new FormControl('');
-  pageSize: number = 5;
+  pageSize: number = 10;
   pageIndex: number = 0;
   pagedVendorFirm: any[] = [];
+  filteredList: any[] = [];
 
 
   constructor(
@@ -56,9 +57,12 @@ export class VendorFirmComponent {
           config,
           value ?? ''
         )
-        this.pagedVendorFirm = [...result]
+        this.filteredList = [...result]
+        this.pageIndex = 0;
+        this.updateCard();
       } else {
-        this.pagedVendorFirm = [...this.vendorList]
+        this.filteredList = [...this.vendorList]
+        this.pageIndex = 0;
         this.updateCard()
       }
     })
@@ -67,7 +71,8 @@ export class VendorFirmComponent {
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
-      this.pagedVendorFirm = await this.apiMainService.getAllVendorFirms();
+      this.filteredList = [...this.vendorList];
+      this.updateCard();
       console.log(this.pagedVendorFirm, "pagee vendir ");
     } catch (error) {
       console.log('getAllVendor', error);
@@ -120,10 +125,10 @@ export class VendorFirmComponent {
     this.updateCard();
   }
   updateCard() {
-    if (!this.vendorList) return;
+    if (!this.filteredList) return;
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
-    this.pagedVendorFirm = this.vendorList.slice(start, end);
+    this.pagedVendorFirm = this.filteredList.slice(start, end);
 
   }
 }
