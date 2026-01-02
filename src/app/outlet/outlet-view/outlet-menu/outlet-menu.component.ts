@@ -393,6 +393,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.imageUrl = this.selectedMasterItem?.imageUrl;
 
     try {
+      console.log("selectedItems", this.selectedItems);
+
       const res = await this.apiMainService.addOutletList(
         this.outletObj._id,
         { outletList: this.selectedItems }
@@ -599,7 +601,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   onItemToggle(item: any, event: any) {
-    const checkbox = event.target as HTMLInputElement;
+    const checkbox = event;
+
     if (checkbox.checked) {
       this.selectedItems.push(item);
     } else {
@@ -610,7 +613,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   onMenuItemToggle(item: any, event: any) {
-    const checkbox = event.target as HTMLInputElement;
+    const checkbox = event;
 
     if (checkbox.checked) {
       this.selectedMenuItems.push(item);

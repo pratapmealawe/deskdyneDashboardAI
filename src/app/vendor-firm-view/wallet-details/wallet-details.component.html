@@ -9,7 +9,7 @@
                     <div>
                         <h5 class="card-title mb-1">Wallet Balance</h5>
                         <h2 class="fw-bold text-success" *ngIf="walletBalance > 0; else zeroWallet">
-                            {{ walletBalance | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                            {{ walletBalance | currency:'INR':'symbol':'1.2-4':'en-IN' }}
                         </h2>
                         <ng-template #zeroWallet>
                             <h2 class="fw-bold text-muted">₹0.00</h2>
@@ -17,8 +17,8 @@
                     </div>
 
                     <div class="btnDiv pt-3 d-flex gap-2 justify-content-center flex-wrap">
-                        <button mat-flat-button color="primary" (click)="openTxnDialog('Transfer', 'wallet')"
-                            aria-label="Transfer Wallet Balance">
+                        <button mat-flat-button color="primary" *ngIf="vendorFirmInfo?.bank_details?.bankVerified"
+                            (click)="openTxnDialog('Transfer', 'wallet')" aria-label="Transfer Wallet Balance">
                             Transfer Wallet Balance
                         </button>
 
