@@ -668,23 +668,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealPackage, data);
   }
 
-  B2BFetchWeeklyMenu(orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2BFetchWeeklyMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
-  }
-
-  updateWeeklyMenuItem(menuObj: any, orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateWeeklyMenuItem;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method }, menuObj);
-  }
 
   updateBulkB2BDailyFoodOrder(order: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkB2BDailyFoodOrder, order);
   }
 
-  B2BweeklyMenuAdd(menuObj: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2BweeklyMenuAdd, menuObj);
-  }
 
   getGeneralAppFeeback(page?: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getGeneralAppFeeback;

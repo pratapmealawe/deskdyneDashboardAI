@@ -5,11 +5,12 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { ToasterService } from 'src/app/toaster/toaster.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 
 @Component({
   selector: 'app-add-daily-order-menu',
   standalone: true,
-  imports: [CommonModule, MaterialModule, ReactiveFormsModule],
+  imports: [CommonModule, MaterialModule, ReactiveFormsModule,DirectivesModule],
   templateUrl: './add-daily-order-menu.component.html',
   styleUrls: ['./add-daily-order-menu.component.scss']
 })
@@ -40,7 +41,7 @@ export class AddDailyOrderMenuComponent implements OnInit {
   saveChanges() {
     if (this.deliveryForm.valid) {
       const payload = {
-        organization_name: this.data.organization_name,
+        organization_nacomme: this.data.organization_name,
         organizationId: this.data.organizationId,
         cafeteriaId: this.data.cafeteriaId,
         cafeteriaName: this.data.cafeteriaName,
