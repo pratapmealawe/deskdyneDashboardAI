@@ -102,7 +102,12 @@
         </div>
 
         <div *ngIf="displayedLedgers.length === 0" class="text-muted text-center mt-3">
-          No ledger history found.
+          <ng-container *ngIf="pageItems.length > 0; else noData">
+            No transactions match your filters on this page.
+          </ng-container>
+          <ng-template #noData>
+            No ledger history found.
+          </ng-template>
         </div>
       </ng-container>
 

@@ -10,6 +10,7 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { categoryList } from 'src/config/food-category.config';
 import { Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-outlet-master-menu',
@@ -79,7 +80,8 @@ export class OutletMasterMenuComponent implements OnInit {
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
     private sendDataToComponent: SendDataToComponent,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -186,9 +188,9 @@ export class OutletMasterMenuComponent implements OnInit {
       itemType: ['', Validators.required],
       subsidy: ['', [Validators.pattern(/^\d+(\.\d{1,2})?$/)]],
       precedence: ['', [Validators.pattern(/^[0-9]+$/)]],
-      description: ['', [Validators.required,Validators.maxLength(250)]],
+      description: ['', [Validators.required, Validators.maxLength(250)]],
       itemContains: [[]],
-      mealTimingInfo: ['',[Validators.required]],
+      mealTimingInfo: ['', [Validators.required]],
       category: ['', Validators.required],
       energyValue: [''],
       nutritionList: this.fb.array([
@@ -286,31 +288,25 @@ export class OutletMasterMenuComponent implements OnInit {
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef: NgbModalRef = this.modalService.open(
-              ImageCropperComponent,
-              {
-                ariaLabelledBy: 'modal-basic-title',
-                size: 'xl',
-                backdrop: 'static',
-                centered: true,
+            const dialogRef = this.dialog.open(ImageCropperComponent, {
+              width: '50%',
+              panelClass: 'image-cropper-dialog',
+              disableClose: true,
+              data: {
+                imageUrl: imageUrl,
+                imageWidth: 150,
+                imageHeight: 150,
+                aspectRatio: 1
               }
-            );
-            modalRef.result.then(
-              (result: any) => {
-                if (result && result.croppedImages) {
-                  this.uploadedImageFile = result.croppedImages.file;
-                  this.imageUrl = result.croppedImages.resizeDataUrl;
-                  this.imageReplaced = true;
-                }
-              },
-              (reason: any) => {
-                console.log(`Model Dismissed`);
+            });
+
+            dialogRef.afterClosed().subscribe((result: any) => {
+              if (result && result.croppedImages) {
+                this.uploadedImageFile = result.croppedImages.file;
+                this.imageUrl = result.croppedImages.resizeDataUrl;
+                this.imageReplaced = true;
               }
-            );
-            modalRef.componentInstance.uploadedImageUrl = imageUrl;
-            modalRef.componentInstance.imageWidth = 150;
-            modalRef.componentInstance.imageHeight = 150;
-            modalRef.componentInstance.aspectRatio = 1;
+            });
           } catch (e) {
             console.log('error while changes kitchen opened status ', e);
           }
@@ -653,8 +649,8 @@ export class OutletMasterMenuComponent implements OnInit {
 
   }
   // 
-  goBack(){
-    
+  goBack() {
+
   }
   // paginator logic 
   onPageChanges(event: PageEvent) {
