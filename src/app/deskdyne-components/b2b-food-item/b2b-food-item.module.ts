@@ -7,12 +7,7 @@ import { B2bFoodItemCardModule } from '../b2b-food-item-card/b2b-food-item-card.
 import { B2bFoodItemFormModule } from '../b2b-food-item-form/b2b-food-item-form.module';
 import { FormsModule } from '@angular/forms';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
-import { MatCardModule } from '@angular/material/card';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MaterialModule } from 'src/app/material.module';
 
 
 @NgModule({
@@ -26,14 +21,9 @@ import { MatIconModule } from '@angular/material/icon';
     B2bFoodItemFormModule,
     FormsModule,
     CustomPipeModule,
-    MatCardModule,
-    MatPaginatorModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-    MatIconModule
+    MaterialModule
   ],
-  exports:[
+  exports: [
     B2bFoodItemComponent
   ]
 })

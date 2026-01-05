@@ -10,7 +10,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
@@ -91,7 +91,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   constructor(
     private fb: FormBuilder,
-    private modalService: NgbModal, // used only for ImageCropper
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
@@ -346,29 +345,27 @@ export class OutletMenuComponent implements OnInit, OnChanges {
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef = this.modalService.open(ImageCropperComponent, {
-              ariaLabelledBy: 'modal-basic-title',
-              size: 'xl',
-              backdrop: 'static',
-              centered: true,
-            });
-            modalRef.result.then(
-              (result: any) => {
-                if (result && result.croppedImages) {
-                  this.uploadedImageFile = result.croppedImages.file;
-                  this.imageUrl = result.croppedImages.resizeDataUrl;
-                  this.uploadStatus = true;
-                  this.imageReplaced = true;
-                }
-              },
-              () => {
-                console.log('Image cropper dismissed');
+            const dialogRef = this.dialog.open(ImageCropperComponent, {
+              width: '50%',
+              panelClass: 'image-cropper-dialog',
+              disableClose: true,
+              data: {
+                imageUrl: imageUrl,
+                imageWidth: 150,
+                imageHeight: 150,
+                aspectRatio: 1
               }
-            );
-            modalRef.componentInstance.uploadedImageUrl = imageUrl;
-            modalRef.componentInstance.imageWidth = 150;
-            modalRef.componentInstance.imageHeight = 150;
-            modalRef.componentInstance.aspectRatio = 1;
+            });
+
+            dialogRef.afterClosed().subscribe((result: any) => {
+              if (result && result.croppedImages) {
+                this.uploadedImageFile = result.croppedImages.file;
+                this.imageUrl = result.croppedImages.resizeDataUrl;
+                this.uploadStatus = true;
+                this.imageReplaced = true;
+              }
+            });
+
           } catch (e) {
             console.log('error while opening image cropper', e);
           }
