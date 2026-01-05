@@ -484,13 +484,10 @@ export class EventMenuComponent implements OnInit {
     this.back.emit(true);
   }
 
-  async changeMenuActivation() {
-    const menu = this.menuInfo;
-    const event = this.eventInfo;
-
-    menu.isActive = event.target.checked;
-    await this.apiMainService.toggleMenuItemStatus(this.eventObj._id, menu._id);
-  }
+async changeMenuActivation(isActive: boolean, menu: any) {
+  menu.isActive = isActive;
+  await this.apiMainService.toggleMenuItemStatus(this.eventObj._id,menu._id);
+}
 
   showPopup(item: any, i: any) {
     this.foodItem = item;
@@ -517,8 +514,7 @@ export class EventMenuComponent implements OnInit {
 
   handleConfirm(newState: boolean, menu: any) {
     menu.isActive = newState;
-    this.changeMenuActivation
-    this;
+    this.changeMenuActivation(newState, menu);
   }
 
   handleCancel(event: MatCheckboxChange, oldState: boolean) {
@@ -529,19 +525,25 @@ export class EventMenuComponent implements OnInit {
   open() {
     this.selectedMasterItem = null;
 
-    const dialogRef = this.dialog.open(this.content, {
-      width: '950px',
-      maxWidth: '95vw',
-      disableClose: true,
+    const modalRef = this.modalService.open(this.content, {
+      size: 'xl',
+      backdrop: 'static',
+      centered: true,
+      keyboard: false
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'add') {
-        this.submit();
-      } else if (result === 'update') {
-        this.updateMenu(this.menuId);
+    modalRef.result.then(
+      (result) => {
+        if (result === 'add') {
+          this.submit();
+        } else if (result === 'update') {
+          this.updateMenu(this.menuId);
+        }
+      },
+      () => {
+        // dismissed
       }
-    });
+    );
   }
 
   openOutlet() {
