@@ -7,19 +7,20 @@ import { OrgReviewsComponent } from './org-reviews.component';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
 import { MaterialModule } from "src/app/material.module";
-import { OrgOrderComponent } from './org-order/org-order.component';
+import { OrgOrderModule } from './org-order/org-order.module';
 
 
 @NgModule({
-  declarations: [OrgReviewsComponent, OrgOrderComponent],
+  declarations: [OrgReviewsComponent],
   imports: [
     CommonModule,
     OrgReviewsRoutingModule,
     FormsModule,
     HighchartsChartModule,
     CommonOutletCafeSelectModule,
-    MaterialModule
-],
+    MaterialModule,
+    OrgOrderModule
+  ],
   exports: [OrgReviewsComponent]
 })
 export class OrgReviewsModule { }

@@ -97,11 +97,12 @@ export class VendorFirmComponent {
 
   showPopup(vendorFirm: any) {
     this.vendorFirmInfo = vendorFirm;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${vendorFirm.vendorFirmName} vendor firm`,
-      this.deleteVendorFirm,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this firm?',
+      callback: this.deleteVendorFirm,
+      context: this,
+      data: vendorFirm._id
+    });
   }
 
 

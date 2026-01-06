@@ -1,80 +1,248 @@
-<div class="bgpadding2">
-    
-
-    <div class="row mb-4 mt-2 p-3 bg-light rounded filterDiv">
-        <div class="mb-2">
-        <i class="bi bi-bootstrap-reboot pointer right" (click)="reloadPage()"></i>
+<div class="vendor-header">
+    <div>
+        <h4 class="m-0 fw-semibold">Outlet Orders</h4>
     </div>
-        <div class="col-md-3">
-            <label class="labelText">Organization</label>
-            <select class="form-select" [(ngModel)]="filterObj.orgId" (change)="setOrgDetails()">
-                <option selected disabled value="">Select Organization</option>
-                <option *ngFor="let option of orglist" [value]="option._id">
-                    {{ option.organization_name }}
-                </option>
-            </select>
+    <div class="header-actions">
+        <div class="input-wrapper">
+            <mat-form-field appearance="outline" class="w-100 search-input">
+                <input matInput type="text" placeholder="Order #, Name, Mobile, Email"
+                    (keyup)="onSearch($any($event.target).value)" />
+                <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+                    <mat-icon>search</mat-icon>
+                </button>
+            </mat-form-field>
         </div>
 
-        <div class="col-md-3">
-            <label class="labelText">Cafeteria</label>
-            <select class="form-select" [(ngModel)]="filterObj.cafeId">
-                <option selected disabled value="">Select Cafeteria</option>
-                <option *ngFor="let option of cafeList" [value]="option.cafeteria_id">
-                    {{ option.cafeteria_name }}
-                </option>
-            </select>
-        </div>
-
-        <div class="col-md-3 btnDiv">
-            <button class="btn btn-primary" [disabled]="!filterObj.orgId || !filterObj.cafeId"
-                (click)="reloadPage()">Submit</button>
-        </div>
+        <button mat-raised-button color="primary" (click)="reloadPage()" [disabled]="isLoading">
+            <mat-icon [class.spin]="isLoading">refresh</mat-icon>
+            <span class="d-none d-md-inline ms-2">Refresh</span>
+        </button>
     </div>
+</div>
 
-    <div class="main-div" >
-        <div class="cl6" [ngClass]="{tileSelected: selectedStatus === 'paymentInprogress'}"
-            (click)="getLatestOrderStatusList('paymentInprogress')">
-            <span class="tileLabel header4 countTile">Payment In progress<span
-                    class="tileBadge">{{orderStatusCountObj.paymentInprogress}}</span></span>
-        </div>
-        <div class="cl6" [ngClass]="{tileSelected: selectedStatus === 'paymentFailed'}"
-            (click)="getLatestOrderStatusList('paymentFailed')">
-            <span class="tileLabel header4 countTile">Payment Failed<span
-                    class="tileBadge">{{orderStatusCountObj.paymentFailed}}</span></span>
-        </div>
-        <div class="cl6" [ngClass]="{tileSelected: selectedStatus === 'placed'}"
-            (click)="getLatestOrderStatusList('placed')">
-            <span class="tileLabel header4 countTile">Placed<span
-                    class="tileBadge">{{orderStatusCountObj.placed}}</span></span>
-        </div>
 
-        <div class="cl6" [ngClass]="{tileSelected: selectedStatus === 'completed'}"
-            (click)="getLatestOrderStatusList('completed')">
-            <span class="tileLabel header4 countTile">Completed<span
-                    class="tileBadge">{{orderStatusCountObj.completed}}</span></span>
-        </div>
-        <div class="bgpadding2">
-            <div *ngIf="filteredList.length > 0">
-                <div class="navigationBtns">
-                    <button class="btn btn-dark btn-sm me-4" (click)="previous(page)"
-                        [disabled]="page === 1">Previous</button>
-                    <span class="labelText">Showing {{pageFirstEntry}} to {{pageLastEntry}}</span>
-                    <button class="btn btn-dark btn-sm ms-4" (click)="next(page)"
-                        [disabled]="paginationOver && page === lastPage">Next</button>
+<div class="orders-container container-fluid mt-3 pb-4">
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <mat-card class="filter-card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="row g-3 align-items-center">
+                        <div class="col-12">
+                            <app-common-outlet-cafe-select [config]="headerConfigAdmin"
+                                (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+                        </div>
+                    </div>
                 </div>
-                <div *ngIf="filteredList.length > 0" class="mt-3">
-                    <ul *ngFor="let order of filteredList" class="list-group">
-                        <li class="list-group-item">
-                            <app-order-card [order]="order"></app-order-card>
-                        </li>
-                    </ul>
+            </mat-card>
+        </div>
+    </div>
+
+    <!-- Error Message -->
+    <div class="alert alert-danger d-flex align-items-center mb-4" *ngIf="errorMessage">
+        <mat-icon class="me-2">error_outline</mat-icon>
+        <div>{{ errorMessage }}</div>
+    </div>
+
+    <!-- Status Tiles / Stats -->
+    <div class="stats-grid mb-4">
+        <div class="stat-card" [class.active]="selectedStatus === 'paymentInprogress'"
+            (click)="getLatestOrderStatusList('paymentInprogress')">
+            <div class="stat-icon warning-bg">
+                <mat-icon>hourglass_empty</mat-icon>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{orderStatusCountObj.paymentInprogress}}</div>
+                <div class="stat-label">Payment Processing</div>
+            </div>
+        </div>
+
+        <div class="stat-card" [class.active]="selectedStatus === 'paymentFailed'"
+            (click)="getLatestOrderStatusList('paymentFailed')">
+            <div class="stat-icon error-bg">
+                <mat-icon>error</mat-icon>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{orderStatusCountObj.paymentFailed}}</div>
+                <div class="stat-label">Payment Failed</div>
+            </div>
+        </div>
+
+        <div class="stat-card" [class.active]="selectedStatus === 'placed'"
+            (click)="getLatestOrderStatusList('placed')">
+            <div class="stat-icon primary-bg">
+                <mat-icon>restaurant</mat-icon>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{orderStatusCountObj.placed}}</div>
+                <div class="stat-label">New Orders</div>
+            </div>
+        </div>
+
+        <div class="stat-card" [class.active]="selectedStatus === 'completed'"
+            (click)="getLatestOrderStatusList('completed')">
+            <div class="stat-icon success-bg">
+                <mat-icon>check_circle</mat-icon>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{orderStatusCountObj.completed}}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Totals Section (Only show if data exists) -->
+    <div class="d-flex flex-wrap gap-3 mb-4" *ngIf="!isLoading && filteredList.length > 0">
+        <div class="total-badge">
+            <span class="label">Total Orders</span>
+            <span class="value">{{ filteredList.length }}</span>
+        </div>
+        <div class="total-badge">
+            <span class="label">Wallet Used</span>
+            <span class="value">₹{{ totalWalletUsed | number : '1.2-2' }}</span>
+        </div>
+        <div class="total-badge">
+            <span class="label">Amount Paid</span>
+            <span class="value">₹{{ totalAmountPaid | number : '1.2-2' }}</span>
+        </div>
+        <div class="total-badge primary">
+            <span class="label">Total Revenue</span>
+            <span class="value">₹{{ totalAmount | number : '1.2-2' }}</span>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div class="d-flex justify-content-center my-5" *ngIf="isLoading">
+        <mat-spinner diameter="50"></mat-spinner>
+    </div>
+
+    <!-- Orders List (Cards) -->
+    <div class="orders-list" *ngIf="!isLoading">
+        <ng-container *ngIf="filteredList.length > 0; else noRecords">
+            <div class="row g-3">
+                <div class="col-12" *ngFor="let row of filteredList">
+                    <mat-card class="order-card h-100 shadow-sm border-0">
+                        <div class="order-card-inner h-100">
+                            <!-- LEFT SIDE: header / meta -->
+                            <div class="order-left">
+                                <mat-card-header class="p-0 mb-3">
+                                    <div mat-card-avatar class="order-avatar">
+                                        {{ row.customerName?.[0] || 'C' }}
+                                    </div>
+                                    <div class="order-header-text overflow-hidden">
+                                        <mat-card-title class="text-truncate fs-6 mb-1">
+                                            #{{ row.orderNo }}
+                                        </mat-card-title>
+                                        <mat-card-subtitle class="small">
+                                            Token: <strong>{{ row.tokenNo || '-' }}</strong>
+                                            <div class="text-muted" style="font-size: 0.75rem;"> {{ row.SubmitedDate ||
+                                                row.orderDate | date: 'MMM d, h:mm a' }}</div>
+                                        </mat-card-subtitle>
+                                    </div>
+                                </mat-card-header>
+
+                                <div class="mb-3">
+                                    <span class="status-chip" [ngClass]="row.orderstatus">
+                                        {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
+                                    </span>
+                                </div>
+
+                                <!-- Customer & order details -->
+                                <div class="order-meta small text-muted">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Customer:</span>
+                                        <span class="fw-medium text-dark text-end">{{ row.customerName }}</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span>Mobile:</span>
+                                        <span class="fw-medium text-dark text-end">{{ row.customerPhoneNo }}</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mb-1"
+                                        *ngIf="row.organizationDetails?.organization_name">
+                                        <span>Org:</span>
+                                        <span class="fw-medium text-dark text-end text-truncate w-50">{{
+                                            row.organizationDetails?.organization_name }}</span>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between mb-1"
+                                        *ngIf="row.cafeteriaDetails?.cafeteria_name">
+                                        <span>Cafe:</span>
+                                        <span class="fw-medium text-dark text-end text-truncate w-50">{{
+                                            row.cafeteriaDetails?.cafeteria_name }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RIGHT SIDE: items + amounts -->
+                            <div class="order-right">
+                                <!-- Items -->
+                                <div class="flex-grow-1">
+                                    <strong class="d-block mb-2 small text-uppercase text-muted">Items</strong>
+                                    <div class="item-list custom-scrollbar">
+                                        <div class="item-row" *ngFor="let i of (row.itemList || row.itemlist)">
+                                            <div class="item-name text-truncate">
+                                                <span class="fw-medium">{{ i.itemName }}</span>
+                                                <span class="badge bg-light text-dark ms-1" *ngIf="i.count > 1">x{{
+                                                    i.count }}</span>
+                                            </div>
+                                            <div class="item-price fw-semibold">
+                                                ₹{{ i.price | number : '1.2-2' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <hr class="my-2 opacity-50">
+
+                                <!-- Amounts -->
+                                <div class="amounts-summary small">
+                                    <div class="d-flex justify-content-between mb-1">
+                                        <span class="text-muted">Item Total</span>
+                                        <span>₹{{ row.itemAmount | number : '1.2-2' }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-1 text-success"
+                                        *ngIf="row.moneyWalletPointsUsed">
+                                        <span>Wallet</span>
+                                        <span>- ₹{{ row.moneyWalletPointsUsed | number : '1.2-2' }}</span>
+                                    </div>
+                                    <div class="d-flex justify-content-between mt-2 pt-2 border-top">
+                                        <span class="fw-bold">Total Paid</span>
+                                        <span class="fw-bold fs-6">₹{{ (row.amount || 0) + (row.moneyWalletPointsUsed ||
+                                            0) | number : '1.2-2' }}</span>
+                                    </div>
+                                </div>
+
+                                <!-- Actions -->
+                                <div class="mt-3" *ngIf="row.orderstatus === 'placed'">
+                                    <button mat-stroked-button color="warn" class="w-100 rounded-pill"
+                                        (click)="cancelOrder(row)">
+                                        Cancel Order
+                                    </button>
+                                </div>
+                                <div class="mt-3"
+                                    *ngIf="row.orderstatus === 'paymentInprogress' && isPaymentValidationVisible(row)">
+                                    <button mat-stroked-button color="warn" class="w-100 rounded-pill"
+                                        (click)="validateJusPayPaymentTransaction(row._id)">
+                                        Validate Payment
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-card>
                 </div>
             </div>
+        </ng-container>
 
-        </div>
-    </div>
-
-    <div class="center" *ngIf="filteredList.length === 0">
-        No Records Found
+        <ng-template #noRecords>
+            <div class="text-center py-5">
+                <div class="mb-3 opacity-50">
+                    <mat-icon style="font-size: 48px; width: 48px; height: 48px;">receipt_long</mat-icon>
+                </div>
+                <h5 class="text-muted fw-normal">No orders found</h5>
+                <p class="text-muted small">Try changing the status filter or check back later.</p>
+            </div>
+        </ng-template>
     </div>
 </div>

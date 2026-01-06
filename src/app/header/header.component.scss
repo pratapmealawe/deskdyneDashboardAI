@@ -176,14 +176,17 @@
   background: #2A3357;
   color: #F6C66A;
   font-weight: 600;
-  font-size: 12px;
-  padding: 2px 8px;
-  border-radius: 25px;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 12px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 20px;
+  min-width: 20px;
+  height: auto;
+  line-height: 1;
+  margin-left: auto;
+  /* Push badge to the right */
 }
 
 .centered-logo {

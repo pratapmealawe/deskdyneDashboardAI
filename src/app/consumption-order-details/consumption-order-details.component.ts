@@ -139,7 +139,12 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
       adminMobile: this.adminMobile
     };
     const statusText = `Are you sure you want to approve all menu items?`;
-    this.confirmationModalService.modal(statusText, this.updateConsumptionOrderStatus, this);
+    this.confirmationModalService.modal({
+      msg: statusText,
+      callback: this.updateConsumptionOrderStatus,
+      context: this,
+      data: status
+    });
   }
 
   // Approve Single
@@ -158,7 +163,12 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
       adminMobile: this.adminMobile
     };
     const statusText = `Are you sure you want to approve ${meal.itemName} item?`;
-    this.confirmationModalService.modal(statusText, this.updateConsumptionSingleMealStatus, this);
+    this.confirmationModalService.modal({
+      msg: statusText,
+      callback: this.updateConsumptionSingleMealStatus,
+      context: this,
+      data: status
+    });
   }
 
   // === CANCEL: All items in an order ===

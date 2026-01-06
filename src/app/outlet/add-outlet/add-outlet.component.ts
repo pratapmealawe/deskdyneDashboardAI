@@ -220,9 +220,9 @@ export class AddOutletComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'add') {
-        this.confirmationModal.modal(
-          'Are you sure you want to change Organization and Cafeteria?',
-          () => {
+        this.confirmationModal.modal({
+          msg: 'Are you sure you want to change Organization and Cafeteria?',
+          callback: () => {
             const selected = this.formattedOrgList.find(
               (org: any) => org.key === this.selectedOrgCafeteria
             );
@@ -230,8 +230,8 @@ export class AddOutletComponent implements OnInit {
               this.seletedCafetria = { ...selected };
             }
           },
-          this
-        );
+          context: this
+        });
       }
     });
   }
