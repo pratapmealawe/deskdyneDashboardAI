@@ -19,6 +19,7 @@ import { OutletOrdersModule } from './outlet-orders/outlet-orders.module';
 import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
 import { MaterialModule } from 'src/app/material.module';
 import { QrMenuComponent } from './qr-menu/qr-menu.component';
+import { OrgOrderModule } from 'src/app/org-components/org-reviews/org-order/org-order.module';
 
 @NgModule({
   declarations: [
@@ -37,8 +38,9 @@ import { QrMenuComponent } from './qr-menu/qr-menu.component';
     FormsModule,
     ReactiveFormsModule,
     CustomPipeModule,
-     MaterialModule,
-    OutletOrdersModule
+    MaterialModule,
+    OutletOrdersModule,
+    OrgOrderModule
   ],
   exports: [OutletViewComponent, ComboPopupComponent],
 })

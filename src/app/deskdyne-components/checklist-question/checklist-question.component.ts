@@ -171,10 +171,10 @@ export class ChecklistQuestionComponent implements OnInit {
   }
 
   showPopup(question: ChecklistQuestion): void {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete "${question.checklistQuestion}"?`,
-      () => this.deletechecklistQuestion(question._id as string),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${question.checklistQuestion}?`,
+      callback: () => this.deletechecklistQuestion(question._id as string),
+      context: this
+    });
   }
 }

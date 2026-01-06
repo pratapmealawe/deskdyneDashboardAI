@@ -676,22 +676,22 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   showPopup(item: any, i: any) {
     this.foodItem = item;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${item.itemName}`,
-      this.deleteFoodItem,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${item.itemName}`,
+      callback: this.deleteFoodItem,
+      context: this
+    });
   }
 
   showPopupForItemActivation(menu: any, event: any) {
     this.menuInfo = menu;
     this.eventInfo = event;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'
-      } ${menu.itemName} Item`,
-      this.changeMenuActivation,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'
+        } ${menu.itemName} Item`,
+      callback: this.changeMenuActivation,
+      context: this
+    });
   }
 
   // MAT DIALOG OPENERS

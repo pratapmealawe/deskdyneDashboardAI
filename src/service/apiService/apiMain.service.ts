@@ -1394,4 +1394,19 @@ export class ApiMainService {
   addBulkWalletBalance(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkWalletBalance, data);
   }
+
+  getAllCurrentOrders(outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllCurrentOrders;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, null, null, true);
+  }
+
+  updatescanOrder(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updatescanOrder;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+  }
+
+  validateJusPayPaymentTransaction(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.validateJusPayPaymentTransaction;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+  }
 }

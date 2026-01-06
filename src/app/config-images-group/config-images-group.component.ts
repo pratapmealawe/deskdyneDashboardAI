@@ -11,7 +11,7 @@ import { ToasterService } from '../toaster/toaster.service';
   styleUrls: ['./config-images-group.component.scss']
 })
 export class ConfigImagesGroupComponent {
- imageGroupConfigs: any[] = [];
+  imageGroupConfigs: any[] = [];
   currentPage: number = 1;
   pageSize: number = 10;
   totalPages: number = 0;
@@ -86,14 +86,14 @@ export class ConfigImagesGroupComponent {
   }
 
   confirmDelete(config: any): void {
-    console.log(config,"config");
+    console.log(config, "config");
     if (!config) return;
 
-    this.confirmationModalService.modal(
-      `Are you sure you want to delete "${config.groupName}"?`,
-      () => this.deleteConfig(config._id),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete "${config.groupName}"?`,
+      callback: () => this.deleteConfig(config._id),
+      context: this
+    });
   }
 
   async deleteConfig(configId: string): Promise<void> {

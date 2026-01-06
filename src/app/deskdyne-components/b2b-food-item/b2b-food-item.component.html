@@ -1,28 +1,26 @@
-<div class="container-fluid b2b-food-item">
-
-  <!-- HEADER + SEARCH (LIST MODE) -->
-  <div class="mb-3" *ngIf="!editMode">
-    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-      <h2 class="mb-0">Food Items</h2>
-
-      <button mat-flat-button color="primary" (click)="addFooditem()" *ngIf="btnPolicy?.addFoodItem !== false">
-        <mat-icon class="me-1">add</mat-icon>
-        Add Food Item
-      </button>
-    </div>
-
-    <div class="row mt-3">
-      <div class="col-12 col-md-4 col-lg-3">
-        <mat-form-field appearance="outline" class="w-100">
-          <mat-label>Search</mat-label>
-          <input matInput placeholder="Search by item name" [(ngModel)]="searchText"
-            (ngModelChange)="onSearchChange($event)" />
-          <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-      </div>
-    </div>
+<div class="vendor-header">
+  <div>
+    <h4 class="m-0 fw-semibold">Food Items</h4>
   </div>
+  <div class="header-actions" *ngIf="!editMode">
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <input matInput type="text" placeholder="Search by item name" [(ngModel)]="searchText"
+          (ngModelChange)="onSearchChange($event)" />
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
 
+    <button mat-raised-button color="primary" (click)="addFooditem()">
+      <mat-icon>add</mat-icon>
+      <span class="d-none d-md-inline ms-2">Add Food Item</span>
+    </button>
+  </div>
+</div>
+
+<div class="container-fluid b2b-food-item">
   <!-- LIST MODE -->
   <div *ngIf="!editMode">
     <div class="row">
@@ -56,7 +54,7 @@
           {{ editType === 'edit' ? 'Edit Food Item' : 'Add Food Item' }}
         </h2>
       </div>
-      <app-b2b-food-item-form  [editType]="editType" [editfoodItemObj]="editfoodItemObj"
+      <app-b2b-food-item-form [editType]="editType" [editfoodItemObj]="editfoodItemObj"
         (gotoPreviousState)="gotoPreviousState($event)"></app-b2b-food-item-form>
     </mat-card>
   </div>

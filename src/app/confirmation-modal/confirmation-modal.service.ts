@@ -7,10 +7,12 @@ import { BehaviorSubject } from 'rxjs';
 export class ConfirmationModalService {
   confimationModalSubject = new BehaviorSubject({});
 
-  constructor() {}
+  constructor() { }
 
-  modal(msg: string, callback: Function, context: object) {
-    const modalObj = { msg, callback, context };
+  data: any;
+
+  modal(modalObj: { msg: string; callback: Function; context: object; data?: any }) {
+    this.data = modalObj.data;
     this.confimationModalSubject.next(modalObj);
   }
 }

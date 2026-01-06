@@ -613,11 +613,11 @@ export class QrMenuComponent implements OnInit, OnChanges {
   showPopup(group: any, item: any, i: any) {
     this.groupItem = group
     this.foodItem = item;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${item.itemName}`,
-      this.deleteFoodItem,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${item.itemName} ?`,
+      callback: this.deleteFoodItem,
+      context: this
+    });
   }
 
 
