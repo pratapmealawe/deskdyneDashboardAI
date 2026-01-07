@@ -30,12 +30,23 @@
               <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)"  color="warn">delete</mat-icon>
             </div>
           </div>
-          <div  class="cafeteriaCard">
-            <div class="row">
-                 <div class="labelText">Outlet Name</div>
-              <div class="col-md-3 d-flex gap-4 w-100 flex-wrap">
-                <div class="labelData" *ngFor="let cafeteria of vendor.outletList">
-                  <mat-chip > {{cafeteria.outletName}}</mat-chip>
+          <div class="cafeteriaCard">
+            <div class="row gy-3">
+              <div class="col-12 col-md-6">
+                <div class="labelText mb-2">Outlet Name</div>
+                <div class="d-flex gap-2 flex-wrap">
+                  <mat-chip *ngFor="let cafeteria of vendor.outletList">
+                    {{ cafeteria.outletName }}
+                  </mat-chip>
+                </div>
+              </div>
+          
+              <div class="col-12 col-md-6" *ngIf="vendor.popup_Details?.length">
+                <div class="labelText mb-2">Event Popups Name</div>
+                <div class="d-flex gap-2 flex-wrap">
+                  <mat-chip *ngFor="let popup of vendor.popup_Details">
+                    {{ popup.popupName }}
+                  </mat-chip>
                 </div>
               </div>
             </div>
