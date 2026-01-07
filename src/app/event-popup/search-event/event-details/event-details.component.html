@@ -1,7 +1,7 @@
 <div class="rows pt-3 pb-3">
 
     <div class="card-header d-flex justify-content-between">
-        <div class="heading">{{ eventObj.outletName }}</div>
+        <div class="heading">{{ eventObj.eventPopupName }}</div>
         <button mat-raised-button color="primary" (click)="editOrg()"><mat-icon>edit</mat-icon>Edit</button>
     </div>
 
@@ -15,8 +15,8 @@
           " class="uploadedImage" />
             </div>
             <div class="col-10">
-                <div class="labelText">Outlet Description</div>
-                <div class="labelData">{{ eventObj.outletDescription }}</div>
+                <div class="labelText">Event Popup Description</div>
+                <div class="labelData">{{ eventObj.eventPopupDescription }}</div>
             </div>
         </div>
     </div>
@@ -79,10 +79,10 @@
         <div class="row py-3 px-2">
             <div class="col-lg-2 mb-2">
                 <div class="bg-light rounded px-2">
-                    <div class="labelText">Outlet Dates</div>
+                    <div class="labelText">Event Popup Dates</div>
                     <div class="labelData">
-                        {{ eventObj.outletStartDate | date: "dd-MM-yyyy" }} -
-                        {{ eventObj.outletEndDate | date: "dd-MM-yyyy" }}
+                        {{ eventObj.eventPopupStartDate | date: "dd-MM-yyyy" }} -
+                        {{ eventObj.eventPopupEndDate | date: "dd-MM-yyyy" }}
                     </div>
                 </div>
             </div>

@@ -1069,6 +1069,24 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchCompletedOutletOrdersbysearchObj, payload);
   }
 
+  fetchCompletedEventOrdersbysearchObj(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchCompletedEventOrdersbysearchObj, payload);
+  }
+
+  fetchPastEventOrdersbyOutletId(id: any, page: any, orderType?: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchPastEventOrdersbyOutletId;
+    let url = urlObj.url + `/${id}/${page}`;
+    return this.apiHttpService.REQUEST(
+      { url, method: urlObj.method },
+      orderType ? { orderType } : {}
+    );
+  }
+
+  getPopupOutletsByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getPopupOutletsByOrgId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
   fetchDailyBulkOrdersbysearchObj(payload: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbysearchObj, payload);
   }

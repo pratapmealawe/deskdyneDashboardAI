@@ -43,9 +43,9 @@ export class EventMenuComponent implements OnInit {
   filteredMenuList: any[] = [];
   groupedMenuList: any[] = [];
 
-  // outlet copy
-  selectedOutlet: any = null;
-  outletMenuList: any[] = [];
+  // event copy
+  selectedEvent: any = null;
+  eventMenuList: any[] = [];
 
   // selections for master/copy
   selectedMasterItem: any = null;
@@ -59,7 +59,7 @@ export class EventMenuComponent implements OnInit {
   noImages: boolean = false;
   foodItem: any;
   btnPolicy: any;
-  outletList: any[] = [];
+  eventPopupList: any[] = [];
   menuInfo: any;
   eventInfo: any;
 
@@ -116,10 +116,10 @@ export class EventMenuComponent implements OnInit {
   async fetchAllOutlets() {
     try {
       const res = await this.apiMainService.getPopupOutlets();
-      this.outletList = res || [];
+      this.eventPopupList = res || [];
     } catch (e) {
       console.log('error while fetching outlets', e);
-      this.outletList = [];
+      this.eventPopupList = [];
     }
   }
 
@@ -186,10 +186,10 @@ export class EventMenuComponent implements OnInit {
   }
 
   onOutletChange() {
-    if (this.selectedOutlet) {
-      this.outletMenuList = this.selectedOutlet.menuList || [];
+    if (this.selectedEvent) {
+      this.eventMenuList = this.selectedEvent.menuList || [];
     } else {
-      this.outletMenuList = [];
+      this.eventMenuList = [];
     }
   }
 
@@ -302,7 +302,7 @@ export class EventMenuComponent implements OnInit {
     try {
       const res = await this.apiMainService.addOutletList(
         this.eventObj._id,
-        { outletList: this.transformedMenuItems }
+        { eventPopupList: this.transformedMenuItems }
       );
       this.transformedMenuItems = [];
       this.selectedMenuItems = [];

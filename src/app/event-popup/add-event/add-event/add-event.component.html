@@ -5,7 +5,7 @@
         </button>
 
         <div class="heading mb-0">
-            {{ showUpdate ? 'Edit Event' : 'Add Event' }}
+            {{ showUpdate ? 'Edit Event Popup' : 'Add Event Popup' }}
         </div>
     </div>
     <form [formGroup]="eventform" (ngSubmit)="onSubmit()">
@@ -22,14 +22,14 @@
                             <img [src]="imageUrl || 'assets/images/dummyUpload.png'" class="uploadedImage" />
                             <div class="uploadIcon">
                                 <mat-icon>upload</mat-icon>
-                                <span>Upload Outlet Image</span>
+                                <span>Upload Event Popup Image</span>
                             </div>
                         </mat-card>
                     </div>
                     <div class="col-12 col-md-9">
                         <div class="mainCheckDiv mb-2">
-                            <mat-checkbox formControlName="outletOpened">
-                                Outlet Opened
+                            <mat-checkbox formControlName="eventPopupOpened">
+                                Event Popup Opened
                             </mat-checkbox>
                         </div>
                     </div>
@@ -38,10 +38,10 @@
                 <div class="row mt-3">
                     <div class="col-12 col-md-6 col-lg-4 mb-3">
                         <mat-form-field appearance="outline" class="w-100">
-                            <mat-label>Outlet Name</mat-label>
-                            <input matInput placeholder="Outlet Name" formControlName="outletName" />
-                            <mat-error *ngIf="f['outletName'].invalid && (f['outletName'].touched || showError)">
-                                *Outlet name is required
+                            <mat-label>Event Popup Name</mat-label>
+                            <input matInput placeholder="Event Popup Name" formControlName="eventPopupName" />
+                            <mat-error *ngIf="f['eventPopupName'].invalid && (f['eventPopupName'].touched || showError)">
+                                *Event popup name is required
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -49,11 +49,11 @@
                     <!-- OUTLET TYPE REMOVED HERE -->
                     <div class="col-12 col-md-6 col-lg-4">
                         <mat-form-field appearance="outline" class="w-100">
-                            <mat-label>Outlet Description</mat-label>
-                            <input matInput placeholder="Outlet Description" formControlName="outletDescription" />
+                            <mat-label>Event Popup Description</mat-label>
+                            <input matInput placeholder="Event Popup Description" formControlName="eventPopupDescription" />
                             <mat-error
-                                *ngIf="f['outletDescription'].invalid && (f['outletDescription'].touched || showError)">
-                                *Outlet description is required
+                                *ngIf="f['eventPopupDescription'].invalid && (f['eventPopupDescription'].touched || showError)">
+                                *Event popup description is required
                             </mat-error>
                         </mat-form-field>
                     </div>
@@ -106,8 +106,8 @@
                         <mat-form-field appearance="outline" class="w-100">
                             <mat-label>Event Date range</mat-label>
                             <mat-date-range-input [rangePicker]="picker" [min]="minDate" [max]="maxDate">
-                                <input matStartDate placeholder="From" formControlName="outletStartDate" />
-                                <input matEndDate placeholder="To" formControlName="outletEndDate" />
+                                <input matStartDate placeholder="Event Start Date" formControlName="eventPopupStartDate" />
+                                <input matEndDate placeholder="Event To Date" formControlName="eventPopupEndDate" />
                             </mat-date-range-input>
                             <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
                             <mat-date-range-picker #picker></mat-date-range-picker>

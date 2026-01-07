@@ -7,13 +7,13 @@
         <mat-tab *ngFor="let view of eventViewList" [label]="view.name" class="custom-tabs">
             <ng-container [ngSwitch]="view.path">
 
-                <app-event-details *ngSwitchCase="'outlet-details'" [eventObj]="event"></app-event-details>
+                <app-event-details *ngSwitchCase="'event-details'" [eventObj]="event"></app-event-details>
 
-                <app-event-menu *ngSwitchCase="'outlet-menu'" [eventObj]="event"></app-event-menu>
+                <app-event-menu *ngSwitchCase="'event-menu'" [eventObj]="event"></app-event-menu>
 
-                <app-event-orders *ngSwitchCase="'outlet-orders'" [eventObj]="event"></app-event-orders>
+                <app-event-orders *ngSwitchCase="'event-orders'" [eventObj]="event"></app-event-orders>
 
-                <app-event-reviews *ngSwitchCase="'outlet-feedback'" [eventObj]="event"></app-event-reviews>
+                <app-event-reviews *ngSwitchCase="'event-feedback'" [eventObj]="event"></app-event-reviews>
 
                 <div *ngSwitchDefault>No Component Found</div>
 

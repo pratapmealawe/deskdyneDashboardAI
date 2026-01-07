@@ -7,12 +7,12 @@
     <div class="rows" *ngFor="let event of event.outletList">
       <div class="d-flex flex-wrap p-3">
         <div class="col-6 col-md-5 col-lg-2">
-          <div class="labelText">Outlet Name</div>
-          <div class="labelData">{{ event.outletName }}</div>
+          <div class="labelText">Event Popup Name</div>
+          <div class="labelData">{{ event.eventPopupName }}</div>
         </div>
         <div class="col-6 col-md-2 col-lg-1">
           <div class="labelText">Opened</div>
-          <div class="labelData"> <mat-chip [ngClass]="event.outletOpened ? 'green' : 'red'"> {{ (event.outletOpened ?
+          <div class="labelData"> <mat-chip [ngClass]="event.eventPopupOpened ? 'green' : 'red'"> {{ (event.eventPopupOpened ?
               'true' : 'false') | titlecase }}</mat-chip></div>
         </div>
         <div class="col-6 col-md-2 col-lg-1">
@@ -24,9 +24,9 @@
           <div class="labelData">{{ event?.precedence }}</div>
         </div>
         <div class="col-6 col-md-6 col-lg-5">
-          <div class="labelText ">Outlet Description</div>
-          <div class="labelData desc" [matTooltip]="event.outletDescription" [matTooltipPosition]="'below'">{{
-            event.outletDescription }}</div>
+          <div class="labelText ">Event Popup Description</div>
+          <div class="labelData desc" [matTooltip]="event.eventPopupDescription" [matTooltipPosition]="'below'">{{
+            event.eventPopupDescription }}</div>
         </div>
         <div class="col-6 col-md-6 col-lg-1">
           <div class="d-flex align-items-center gap-2">

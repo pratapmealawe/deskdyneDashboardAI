@@ -24,6 +24,7 @@ export class AddVendorCommponent {
   showError = false;
   showUpdate = false;
   outletByCafeteriaList: any;
+  popupsByVendorFirm: any = [];
   showModalOutletList = false;
   selectedOutletsList: any = [];
   selectedPopupsList: any = [];
@@ -93,8 +94,11 @@ export class AddVendorCommponent {
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
-      this.vendorId && this.changeVendorFirm(this.vendorId)
+      if (this.vendorId) {
+        this.changeVendorFirm({ value: this.vendorId });
+      }
     } catch (error) {
+      console.error(error);
     }
   }
 
@@ -126,10 +130,8 @@ export class AddVendorCommponent {
 
     async changeVendorFirm(e: any) {
     this.getVendorFirmById(e.value);
-    console.log(e.value , "ghjgdug" , e);
     this.vendorId = e.value
     if (e.value) {
-      // const id = typeof e === "string" ? e : e.value
       const vendorFirm = this.vendorList.find((item: any) => item?._id === e.value)
       if (vendorFirm?.outletList.length > 0) {
         this.outletByCafeteriaList = vendorFirm?.outletList
@@ -137,20 +139,29 @@ export class AddVendorCommponent {
     }
   }
 
-  async getVendorFirmById(event: any) {
-    const vendorFirmId = event;
+  async getVendorFirmById(vendorFirmId: any) {
     const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
     this.addressList = res.address;
+    this.popupsByVendorFirm = res.popup_details || [];
   }
 
   updateVendor() {
     const vendor = this.runtimeStorageService.getCacheData('VENDOR_EDIT');
+    let accessType = '';
+    if (vendor?.isOutletAccess) {
+      accessType = 'outlet';
+    } else if (vendor?.isDailyAndBulkAccess) {
+      accessType = 'daily_bulk';
+    } else if (vendor?.isPopupAccess) {
+      accessType = 'popup';
+    }
     if (vendor && vendor._id) {
       this.selectedVendor = vendor;
       this.showUpdate = true;
       this.defaultRole = vendor.vendorRole;
       this.selectedOutletsList = vendor.outletList;
       this.selectedAddressList = vendor.addressList;
+      this.selectedPopupsList = vendor.popup_Details || [];
       this.form.patchValue({
         vendorName: vendor.vendorName,
         vendorPhoneNo: vendor.vendorPhoneNo,
@@ -158,11 +169,16 @@ export class AddVendorCommponent {
         vendorRole: vendor.vendorRole,
         address: vendor.address,
         geolocation: vendor.geolocation,
-        accessType: vendor.isOutletAccess ? 'outlet' : 'daily_bulk',
+        accessType: accessType,
         vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
       });
-      this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : ""
+      this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "";
+      this.getAllVendors(); // to bind values of outletByCafeteriaList and popupsByVendorFirm after edit
     }
+  }
+
+  isAnyPopupSelected(): boolean {
+    return this.popupsByVendorFirm?.some((p: any) => p.isChecked);
   }
 
   async submit(type?: any) {
@@ -344,20 +360,20 @@ toggleCheckboxforPopup(popup: any) {
   }
 
   getSelectedPopups(){
-    this.selectedPopupsList = []
-    this.outletByCafeteriaList.forEach((elm: any) => {
+    this.selectedPopupsList = [];
+    this.popupsByVendorFirm.forEach((elm: any) => {
       if (elm.isChecked) {
         let outletPresent = false;
         this.selectedPopupsList.forEach((savedOutlet: any) => {
-          if (savedOutlet.outletId === elm.outletId) {
+          if (savedOutlet.popupId === elm.popupId) {
             outletPresent = true;
           }
         });
         if (!outletPresent) {
           this.selectedPopupsList.push({
-            popupId: elm.outletId,
-            popupName: elm.outletName,
-            popupType: elm.outletType,
+            popupId: elm.popupId,
+            popupName: elm.popupName,
+            popupType: elm.popupType,
             cafeteriaDetails: elm.cafeteriaDetails,
             organizationDetails: elm.organizationDetails,
           });

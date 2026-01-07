@@ -81,8 +81,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
       image: 'Outlet_white',
       imageblue: 'Outlet_blue',
       children: [
-        { name: 'Search Event', route: 'eventPopup', showChild: true },
-        { name: 'Add Event', route: 'addEventPopup', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] },
+        { name: 'Search Event Popup', route: 'eventPopup', showChild: true },
+        { name: 'Add Event Popup', route: 'addEventPopup', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] },
       ],
     },
     {

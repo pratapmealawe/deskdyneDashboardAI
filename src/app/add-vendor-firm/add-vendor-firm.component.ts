@@ -4,7 +4,7 @@ import { MatCheckbox } from '@angular/material/checkbox';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { log } from 'console';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -22,12 +22,16 @@ export class AddVendorFirmComponent {
   form: any;
   addressForm: any;
   pocForm: any;
+  popupForm: any;
   showError = false;
   showUpdate = false;
   orgList: any;
   orgName = 'select organization';
   cafeteriaNameNCity: any;
-  outletByCafeteriaList: any;
+  outletByCafeteriaList: any[] = [];
+  eventsByOrganization: any[] = [];
+  selectedOrg: any;
+  selectedCafeteriaId: any;
   showModalOutletList = false;
   showModalOutletListforPopup = false;
   selectedOutletsList: any = [];
@@ -113,6 +117,31 @@ export class AddVendorFirmComponent {
       geolocation: this.fb.group({
         lat: ['', [Validators.required]],
         lng: ['', [Validators.required]],
+      })
+    });
+    this.popupForm = this.fb.group({
+      popupId: [''],
+      popupName: [''],
+      popupType: [''],
+
+      cafeteriaDetails: this.fb.group({
+        cafeteria_name: [''],
+        cafeteria_city: [''],
+        cafeteria_location: this.fb.group({
+          lat: [''],
+          lng: ['']
+        }),
+        address1: [''],
+        address2: [''],
+        landmark: [''],
+        location: ['']
+      }),
+
+      organizationDetails: this.fb.group({
+        organization_name: [''],
+        organizationId: [''],
+        city: [''],
+        location: ['']
       })
     });
   }
@@ -227,6 +256,8 @@ export class AddVendorFirmComponent {
       this.showUpdate = true;
       this.selectedOutletsList = firm.outletList;
       this.patchVendorFirmAndBank(firm);
+      this.selectedPopupsList = firm.popup_details;
+      this.patchPopupForm(firm);
       if (firm.poc_details?.length) {
         firm.poc_details.forEach((poc: any, index: number) => {
           if (index !== 0 || this.pocDetails.length === 0) {
@@ -268,6 +299,18 @@ export class AddVendorFirmComponent {
     });
   }
 
+  patchPopupForm(data: any) {
+    if (!data?.popup_details) return;
+
+    this.popupForm.patchValue({
+      popupId: data.popup_details.popupId,
+      popupName: data.popup_details.popupName,
+      popupType: data.popup_details.popupType,
+      cafeteriaDetails: data.popup_details.cafeteriaDetails,
+      organizationDetails: data.popup_details.organizationDetails,
+    });
+  }
+
   closeAccountEnroll() {
     this.form.get('accountEnrollment').setValue('');
   }
@@ -296,6 +339,7 @@ export class AddVendorFirmComponent {
     this.showCafeteria = true;
     if (org && org) {
       this.orgName = org.value;
+      this.selectedOrg = this.orgList.filter((org: any) => org.organization_name === this.orgName);
       const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
       this.cafeterialist = cafes?.cafeteriaList ?? []
     }
@@ -319,30 +363,42 @@ export class AddVendorFirmComponent {
     this.showModalOutletList = true;
   }
 
-  selectCafeteriaForPopup(event: MatSelectChange) {
-    const value = event.value;
-    const cafeteriaName = value.cafeteria_name;
-    const cafeteriaCity = value.cafeteria_city;
-    const cafeteriaId = event.value.cafeteria_id;
-    const organizationName = this.orgList.find((org: any) =>
-      org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
-    )?.organization_name;
-    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
-    this.showModalOutletListforPopup = true;
-  }
-
   async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {
     try {
-      console.log('getOutletByCafeteriaList', { cafeteriaName, cafeteriaCity, organization });
       this.outletByCafeteriaList = await this.apiMainService.getOutletByCafeteria(
         cafeteriaName,
         cafeteriaCity,
         organization
       );
-      console.log(this.outletByCafeteriaList);
     } catch (error) {
       console.log('getOutletByCafeteriaList', error);
     }
+  }
+
+  selectCafeteriaForPopup(event: MatSelectChange) {
+    const cafeteria = event.value;
+    this.selectedCafeteriaId = cafeteria.cafeteria_id;
+    this.showModalOutletListforPopup = true;
+    this.getEventPopupsByCafe();
+  }
+
+  async getEventPopupsByCafe() {
+    try {
+      if (!this.selectedOrg?.length || !this.selectedCafeteriaId) {
+        return;
+      }
+      const events = await this.apiMainService
+        .getPopupOutletsByOrgId(this.selectedOrg[0]._id);
+      this.eventsByOrganization = events.filter((event: any) =>
+        event?.cafeteriaDetails?.cafeteria_id === this.selectedCafeteriaId
+      );
+    } catch (error) {
+      console.log('eventsByOrganization', error);
+    }
+  }
+
+  get isAnyPopupSelected(): boolean {
+    return this.eventsByOrganization?.some((event: any) => event.isChecked);
   }
 
   addressTemplate() {
@@ -478,7 +534,17 @@ export class AddVendorFirmComponent {
       console.error('TemplateRef popup is not available');
       return;
     }
-    this.modalService.open(this.popupModal, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+    const modalRef: NgbModalRef = this.modalService.open(this.popupModal, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+    modalRef.result
+      .then((result) => {
+        // Modal closed (modalRef.close())
+        this.showModalOutletListforPopup = false;
+        this.getSelectedPopups();
+      })
+      .catch((reason) => {
+        // Modal dismissed (ESC, backdrop, modalRef.dismiss())
+        this.getSelectedPopups();
+      });
   }
 
   deletePopup(index: number) {
@@ -494,14 +560,14 @@ export class AddVendorFirmComponent {
   }
 
   getSelectedPopups() {
-    this.outletByCafeteriaList.forEach((elm: any) => {
+    this.eventsByOrganization.forEach((elm: any) => {
       if (elm.isChecked) {
-        const exists = this.selectedPopupsList.some((outlet: any) => outlet.outletId === elm._id);
+        const exists = this.selectedPopupsList.some((popup: any) => popup.popupId === elm._id);
         if (!exists) {
           this.selectedPopupsList.push({
             popupId: elm._id,
-            popupName: elm.outletName,
-            popupType: elm.outletType,
+            popupName: elm.eventPopupName,
+            popupType: elm.eventPopupOpened,
             cafeteriaDetails: elm.cafeteriaDetails,
             organizationDetails: elm.organizationDetails,
           });

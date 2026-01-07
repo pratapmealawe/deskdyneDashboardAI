@@ -309,11 +309,11 @@
       <div class="row mb-3">
         <div class="col-12 col-md-6">
           <mat-form-field appearance="outline" class="w-100">
-            <mat-label>Outlet Name</mat-label>
-            <mat-select [(ngModel)]="selectedOutlet" (selectionChange)="onOutletChange()">
-              <mat-option [value]="null">Select Outlet</mat-option>
-              <mat-option *ngFor="let outlet of outletList" [value]="outlet">
-                {{ outlet.outletName }}
+            <mat-label>Event Popup Name</mat-label>
+            <mat-select [(ngModel)]="selectedEvent" (selectionChange)="onOutletChange()">
+              <mat-option [value]="null">Select Event Popup</mat-option>
+              <mat-option *ngFor="let event of eventPopupList" [value]="event">
+                {{ event.eventPopupName }}
               </mat-option>
             </mat-select>
           </mat-form-field>
@@ -322,7 +322,7 @@
 
       <div class="mt-2">
         <!-- Improved selection cards -->
-        <div class="menu-select-row mb-2" *ngFor="let item of outletMenuList"
+        <div class="menu-select-row mb-2" *ngFor="let item of eventMenuList"
           [ngClass]="{ 'selected': isMenuSelected(item) }">
           <div class="row g-2 align-items-center">
             <!-- Checkbox -->
@@ -371,7 +371,7 @@
           </div>
         </div>
 
-        <div class="center labelText mt-2" *ngIf="outletMenuList.length === 0">
+        <div class="center labelText mt-2" *ngIf="eventMenuList.length === 0">
           No items found
         </div>
       </div>

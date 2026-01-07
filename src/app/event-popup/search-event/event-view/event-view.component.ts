@@ -11,12 +11,12 @@ export class EventViewComponent implements OnInit {
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
   selectedtab: number = 0;
   eventViewList = [
-    { name: 'Basic Details', path: 'outlet-details' },
-    { name: 'Menu', path: 'outlet-menu' },
-    { name: 'Event Orders', path: 'outlet-orders' },
-    { name: 'Reviews', path: 'outlet-feedback' },
+    { name: 'Basic Details', path: 'event-details' },
+    { name: 'Menu', path: 'event-menu' },
+    { name: 'Event Orders', path: 'event-orders' },
+    { name: 'Reviews', path: 'event-feedback' },
   ];
-  selectedTab = 'outlet-details';
+  selectedTab = 'event-details';
   updateval: any = false;
 
   constructor() { }

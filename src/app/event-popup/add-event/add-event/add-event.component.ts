@@ -161,11 +161,11 @@ export class AddEventComponent implements OnInit {
         cafeteriaDetails: event.cafeteriaDetails,
       };
       this.eventform.patchValue({
-        outletName: event.outletName ?? '',
-        outletDescription: event.outletDescription ?? '',
-        outletStartDate: event.outletStartDate ? new Date(event.outletStartDate) : null,
-        outletEndDate: event.outletEndDate ? new Date(event.outletEndDate) : null,
-        outletOpened: event.outletOpened ?? false,
+        eventPopupName: event.eventPopupName ?? '',
+        eventPopupDescription: event.eventPopupDescription ?? '',
+        eventPopupStartDate: event.eventPopupStartDate ? new Date(event.eventPopupStartDate) : null,
+        eventPopupEndDate: event.eventPopupEndDate ? new Date(event.eventPopupEndDate) : null,
+        eventPopupOpened: event.eventPopupOpened ?? false,
         vendorCommissionPercentage: event.vendorCommissionPercentage ?? 0,
         MRPCommissionPercentage: event.MRPCommissionPercentage ?? 0,
         subsidy: event.subsidy ?? 0,
@@ -189,11 +189,11 @@ export class AddEventComponent implements OnInit {
     try {
       const formValue = this.eventform.getRawValue();
 
-      if (formValue.outletStartDate instanceof Date) {
-        formValue.outletStartDate = formValue.outletStartDate.toISOString();
+      if (formValue.eventPopupStartDate instanceof Date) {
+        formValue.eventPopupStartDate = formValue.eventPopupStartDate.toISOString();
       }
-      if (formValue.outletEndDate instanceof Date) {
-        formValue.outletEndDate = formValue.outletEndDate.toISOString();
+      if (formValue.eventPopupEndDate instanceof Date) {
+        formValue.eventPopupEndDate = formValue.eventPopupEndDate.toISOString();
       }
 
       const finalObj: any = {
@@ -319,11 +319,11 @@ export class AddEventComponent implements OnInit {
 
   private createForm(): void {
     this.eventform = this.fb.group({
-      outletName: ['', Validators.required],
-      outletDescription: ['', Validators.required],
-      outletOpened: [false],
-      outletStartDate: [null, Validators.required],
-      outletEndDate: [null, Validators.required],
+      eventPopupName: ['', Validators.required],
+      eventPopupDescription: ['', Validators.required],
+      eventPopupOpened: [false],
+      eventPopupStartDate: [null, Validators.required],
+      eventPopupEndDate: [null, Validators.required],
       bannerImages: [null],
       vendorCommissionPercentage: [
         0,

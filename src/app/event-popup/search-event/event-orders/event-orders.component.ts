@@ -15,10 +15,8 @@ import { saveAs } from 'file-saver';
 export class EventOrdersComponent implements OnInit {
 
   @Input() eventObj: any;
-
   Highcharts: typeof Highcharts = Highcharts;
   orderStatusMapper: any = orderStatusMapper;
-
   orders: any[] = [];          // raw list from API
   filteredOrders: any[] = [];  // after status filter
   pagedOrders: any[] = [];     // current page to display
@@ -30,6 +28,7 @@ export class EventOrdersComponent implements OnInit {
   loading = false;
 
   // paginator
+  page = 1;
   pageSize = 10;
   pageIndex = 0;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -102,7 +101,7 @@ export class EventOrdersComponent implements OnInit {
   async fetchOutletOrders(body: any) {
     try {
       this.loading = true;
-      const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
+      const res = await this.apiMainService.fetchCompletedEventOrdersbysearchObj(body);
       this.orders = res || [];
       this.buildStatusOptions();
       this.applyFilters(); // also rebuild chart if needed
@@ -309,7 +308,7 @@ export class EventOrdersComponent implements OnInit {
     totalsRow.font = { bold: true };
 
     const fileName =
-      `outlet_orders_${this.eventObj?.outletName || 'outlet'}` +
+      `outlet_orders_${this.eventObj?.eventPopupName || 'eventPopup'}` +
       `_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
     const buffer = await workbook.xlsx.writeBuffer();
