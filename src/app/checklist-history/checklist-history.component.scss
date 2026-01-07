@@ -1,15 +1,14 @@
-@use "/src/styles/theme/mixins" as mixin;
-@use "/src/styles.scss" as color;
+@import '/src/styles.scss';
 
 .admin-header {
-    @include mixin.responsive-header;
+    @include responsive-header;
     background-color: transparent;
     margin-bottom: 1rem;
 }
 
 .report-panel {
     border-radius: 8px !important; // Override material default
-    border: 1px solid #e0e0e0;
+    border: 1px solid $border-color;
     box-shadow: none !important;
 
     &.mat-expanded {
@@ -23,7 +22,7 @@
 
     .label {
         font-size: 0.75rem;
-        color: #757575;
+        color: $primary-offset-color2;
         font-weight: 500;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -32,7 +31,7 @@
     .value {
         font-size: 1rem;
         font-weight: 600;
-        color: #333;
+        color: $textPrimary;
     }
 }
 
@@ -43,10 +42,10 @@
 }
 
 .question-card {
-    background: #f9f9f9;
+    background: $card-bg;
     border-radius: 8px;
     padding: 12px;
-    border: 1px solid #eee;
+    border: 1px solid $border-color;
 
     .q-row {
         display: flex;
@@ -60,14 +59,14 @@
         .q-label {
             font-weight: 600;
             font-size: 0.85rem;
-            color: #555;
+            color: $primary-offset-color2;
             min-width: 80px;
             margin-right: 8px;
         }
 
         .q-text {
             font-size: 0.9rem;
-            color: #222;
+            color: $textPrimary;
         }
     }
 }
@@ -95,5 +94,5 @@ mat-card {
 }
 
 .input {
-    @include mixin.mat-form-field-responsive();
+    @include mat-form-field-responsive();
 }

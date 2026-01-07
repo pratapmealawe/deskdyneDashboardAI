@@ -86,7 +86,7 @@
     </div>
 
     <div class="paginator">
-      <mat-paginator [length]="filteredList?.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+      <mat-paginator [length]="filteredList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
         [pageSizeOptions]="[10, 20, 50]" (page)="onPageChange($event)">
       </mat-paginator>
     </div>

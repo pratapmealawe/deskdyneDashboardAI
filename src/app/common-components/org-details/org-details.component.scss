@@ -1,11 +1,13 @@
+@import '/src/styles.scss';
+
 .labelText {
   font-size: 13px;
-  color: #6c757d;
+  color: $primary-offset-color2;
 }
 
 .labelData {
   font-size: 15px;
-  color: #212529;
+  color: $textPrimary;
 }
 
 .card {
@@ -13,5 +15,5 @@
 }
 
 .card-header {
-  border-bottom: 1px solid #f1f1f1;
+  border-bottom: 1px solid $border-color;
 }

@@ -1,67 +1,14 @@
-@use './styles/theme/index' as *;
+// Force Rebuild
+@import './styles/theme/variable';
+@import './styles/theme/mixins';
+@import './styles/theme/utilities';
+@import './styles/components/chips';
 @import "bootstrap-icons/font/bootstrap-icons.css";
 
-$white :#ffffff;
-$black :#000;
-$textPrimary: #1a1a1a;
-$error-color: red;
-$success-color: green;
-$primary-color1: #e62841;
-$primary-color2: #b9041c;
-$primary-color3: #fe8e9c;
-$border-color: #e5e7eb;
-$primary-offset-color1: #ffffff;
-$primary-offset-color2: #a4a4a4;
-$primary-offset-color3: #f3f3f3;
-$primary-offset-color4: #efefef;
-$primary-offset-color5: white;
-$secondary-color1: #88e5db;
-$secondary-color2: #60c8bc;
-$secondary-color3: #15a292;
-$secondary-offset-color1: #ffd674;
-$secondary-offset-color2: #ffc947;
-$secondary-offset-color3: #ffb300;
-$card-odd: #dee2e6;
-$background-color: #f3f3f3;
 
 
-html {
-  font-family: "Poppins-regular," "Lato" !important;
-  // --ion-font-family: 'Lato' !important;
-  background: var(--color-backgroundGrey);
-}
 
-@font-face {
-  font-family: "Poppins-regular";
-  src: url("assets/fonts/Poppins-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Poppins-bold";
-  src: url("assets/fonts/Poppins-Bold.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Poppins-semiBold";
-  src: url("assets/fonts/Poppins-SemiBold.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "PoetsenOne-Regular";
-  src: url("assets/fonts/PoetsenOne-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+@import './styles/base/base';
 
 .paddingAll-5 {
   padding: 5px;
@@ -336,14 +283,6 @@ html {
   }
 }
 
-html,
-body {
-  font-family: "Poppins-regular";
-  height: 100%;
-  margin: 0;
-  background-color: #f3f3f3 !important;
-  color: var(--color-text);
-}
 
 .customInput {
   border: 1px solid #dee2e6;

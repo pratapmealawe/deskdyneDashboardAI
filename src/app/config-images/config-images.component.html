@@ -19,9 +19,15 @@
         <div class="row g-4">
             <!-- Image Name Configuration -->
             <div class="col-md-6">
-                <label class="labelText mb-2" for="imageName">Image Name</label>
-                <input type="text" class="form-control" id="imageName" [(ngModel)]="imageObj.imageName"
-                    placeholder="Enter image name" />
+                <p class="labelText mb-2">Image Name</p>
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Image Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="imageObj.imageName" placeholder="Enter image name">
+                    <button *ngIf="imageObj.imageName" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="imageObj.imageName=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
             </div>
 
             <!-- Image Upload Section -->

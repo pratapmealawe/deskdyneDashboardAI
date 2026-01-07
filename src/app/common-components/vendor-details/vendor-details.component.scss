@@ -1,24 +1,23 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
 .card {
-  @include mixin.card-design(white);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  @include card-design($white);
+  box-shadow: $box-shadow-md;
   border: none;
   height: 100%;
 }
 
 .labelText {
-  @include mixin.labelText;
-  color: #6c757d;
+  @include labelText;
+  color: $primary-offset-color2;
   font-size: 13px;
   font-weight: 500;
   margin-bottom: 4px;
 }
 
 .labelData {
-  @include mixin.labelData;
-  color: #333;
+  @include labelData;
+  color: $textPrimary;
   font-size: 14px;
   font-weight: 500;
 }
@@ -28,7 +27,7 @@
   align-items: center;
   gap: 4px;
   padding: 4px 10px;
-  border-radius: 20px;
+  border-radius: $border-radius-xl;
   font-size: 12px;
   font-weight: 500;
 
@@ -39,18 +38,18 @@
   }
 
   &.verified {
-    background-color: #e6f4ea;
-    color: #1e8e3e;
+    background-color: $color-success-bg;
+    color: $color-success;
   }
 
   &.unverified {
-    background-color: #fce8e6;
-    color: #d93025;
+    background-color: $color-error-bg;
+    color: $color-error;
   }
 }
 
 .border-end-md {
   @media (min-width: 768px) {
-    border-right: 1px solid #dee2e6;
+    border-right: 1px solid $border-color;
   }
 }

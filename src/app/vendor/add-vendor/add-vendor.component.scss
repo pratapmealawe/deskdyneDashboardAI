@@ -1,11 +1,10 @@
-@use 'src/styles.scss' as color;
+@import '/src/styles.scss';
 
 // Variables
-$primary-color: color.$secondary-color3;
-$bg-color: color.$background-color;
-$card-bg: color.$white;
-$text-secondary: color.$primary-offset-color2;
-$border-color: #e5e7eb;
+$primary-color: $secondary-color3;
+$bg-color: $background-color;
+$card-bg: $white;
+$text-secondary: $primary-offset-color2;
 
 .form-header {
   display: flex;
@@ -17,7 +16,7 @@ $border-color: #e5e7eb;
   .heading {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #111827;
+    color: $textPrimary;
   }
 }
 
@@ -42,21 +41,21 @@ $border-color: #e5e7eb;
   align-items: center;
   gap: 0.25rem;
   padding: 0.25rem 0.5rem;
-  border-radius: 9999px;
+  border-radius: $border-radius-pill;
   font-size: 0.75rem;
   font-weight: 500;
   transition: all 0.3s ease;
 
   &.valid {
-    background-color: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
+    background-color: $color-success-bg;
+    color: $color-success;
+    border: 1px solid $color-success-border;
   }
 
   &.invalid {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background-color: $color-error-bg;
+    color: $color-error;
+    border: 1px solid $color-error-border;
   }
 
   mat-icon {
@@ -68,8 +67,8 @@ $border-color: #e5e7eb;
 
 .modern-card {
   background: $card-bg;
-  border-radius: 12px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-md;
   border: 1px solid $border-color;
   overflow: hidden;
   height: fit-content;
@@ -77,7 +76,7 @@ $border-color: #e5e7eb;
   margin-bottom: 1.5rem;
 
   .card-header {
-    background: #f9fafb;
+    background: $background-color;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid $border-color;
     display: flex;
@@ -87,7 +86,7 @@ $border-color: #e5e7eb;
     h3 {
       font-size: 1.1rem;
       font-weight: 600;
-      color: #374151;
+      color: $textPrimary;
       margin: 0;
       display: flex;
       align-items: center;
@@ -109,9 +108,9 @@ $border-color: #e5e7eb;
 
 // Inner Lists (Address/Outlet)
 .list-item-card {
-  background: #f8fafc;
+  background: $primary-offset-color4;
   border: 1px solid $border-color;
-  border-radius: 8px;
+  border-radius: $border-radius-md;
   padding: 1rem;
   margin-bottom: 0.75rem;
   position: relative;
@@ -119,7 +118,7 @@ $border-color: #e5e7eb;
 
   &:hover {
     border-color: $primary-color;
-    background: #f0f9ff;
+    background: $color-info-bg;
   }
 
   .row {
@@ -137,7 +136,7 @@ $border-color: #e5e7eb;
   .labelData {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #1f2937;
+    color: $textPrimary;
     word-break: break-word;
   }
 }
@@ -146,8 +145,8 @@ $border-color: #e5e7eb;
   text-align: center;
   padding: 2rem;
   color: $text-secondary;
-  background: #f9fafb;
-  border-radius: 8px;
+  background: $background-color;
+  border-radius: $border-radius-md;
   border: 1px dashed $border-color;
 
   p {
@@ -159,18 +158,18 @@ $border-color: #e5e7eb;
 // Modal specific styles
 .cardDesign {
   cursor: pointer;
-  border-radius: 8px;
+  border-radius: $border-radius-md;
   border: 1px solid $border-color;
   padding: 1rem;
   margin-bottom: 0.5rem;
   transition: all 0.2s;
 
   &:hover {
-    background-color: #f3f4f6;
+    background-color: $background-color;
   }
 
   &.selected-card {
     border-color: $primary-color;
-    background-color: #eff6ff;
+    background-color: $color-info-bg;
   }
 }

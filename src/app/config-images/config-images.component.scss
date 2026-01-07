@@ -1,35 +1,34 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
 .vendor-header {
-    @include mixin.responsive-header;
+    @include responsive-header;
     background-color: transparent;
 }
 
 .header-actions {
-    @include mixin.responsive-flex-wrapper(1rem);
+    @include responsive-flex-wrapper(1rem);
     flex-grow: 1;
     justify-content: flex-end;
 }
 
 .cardDesign {
-    @include mixin.vertical-line();
-    @include mixin.card-design(color.$primary-offset-color1);
+    @include vertical-line();
+    @include card-design($primary-offset-color1);
     margin-bottom: 1rem;
 }
 
 .labelText {
-    @include mixin.labelText;
+    @include labelText;
 }
 
 .labelData {
-    @include mixin.labelData;
+    @include labelData;
 }
 
 .center {
     text-align: center;
     margin-top: 2rem;
-    color: #666;
+    color: $primary-offset-color2;
     font-weight: 500;
 }
 
@@ -37,7 +36,7 @@
     background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: $box-shadow-sm;
 }
 
 // Upload Styles
@@ -46,7 +45,7 @@
     height: 150px;
     object-fit: cover;
     border-radius: 8px;
-    border: 1px solid #ddd;
+    border: 1px solid $border-color;
     cursor: pointer;
     transition: opacity 0.2s;
 
@@ -62,7 +61,7 @@
 .uploadIcon {
     margin-top: 0.5rem;
     cursor: pointer;
-    color: color.$primary-color1;
+    color: $primary-color1;
     font-weight: 500;
 
     &:hover {
@@ -76,7 +75,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f9f9f9;
+    background: $primary-offset-color3;
     border-radius: 4px;
 
     img {

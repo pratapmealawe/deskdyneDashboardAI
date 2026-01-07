@@ -12,12 +12,12 @@
 <div class="container-fluid pb-4">
 
     <!-- No Data State -->
-    <div *ngIf="!imageGroupConfigs?.length" class="center">
+    <div *ngIf="!imageGroupConfigs.length" class="center">
         No image group configs found.
     </div>
 
     <!-- Card List -->
-    <div *ngIf="imageGroupConfigs?.length">
+    <div *ngIf="imageGroupConfigs.length">
         <div *ngFor="let config of imageGroupConfigs; let i = index" class="cardDesign">
             <div class="container-fluid">
                 <div class="row align-items-center">

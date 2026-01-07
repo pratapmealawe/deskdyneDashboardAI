@@ -1,3 +1,5 @@
+@import '/src/styles.scss';
+
 .order-card {
   display: block;
   padding: 0;
@@ -18,7 +20,7 @@
 }
 
 .order-left {
-  border-right: 1px solid rgba(0, 0, 0, 0.06);
+  border-right: 1px solid $border-color;
   padding-right: 12px;
 }
 
@@ -30,8 +32,8 @@
 }
 
 .order-avatar {
-  background-color: #4f46e5;
-  color: #fff;
+  background-color: $primary-color1;
+  color: $white;
   font-weight: 600;
   display: flex;
   align-items: center;
@@ -51,7 +53,7 @@ mat-card-header {
 .status-chip {
   margin-left: auto;
   padding: 4px 10px;
-  border-radius: 999px;
+  border-radius: $border-radius-pill;
   font-size: 11px;
   font-weight: 600;
   text-transform: capitalize;
@@ -60,74 +62,74 @@ mat-card-header {
 
 /* Match status colors */
 .status-chip-filter.paymentInprogress {
-  background: #fff7e6;
-  color: #d48806;
+  background: $color-warning-bg;
+  color: $color-warning;
 }
 
 .status-chip-filter.paymentFailed {
-  background: #fff1f0;
-  color: #cf1322;
+  background: $color-error-bg;
+  color: $color-error;
 }
 
 .status-chip-filter.placed {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: $color-info-bg;
+  color: $color-info;
 }
 
 .status-chip-filter.completed {
-  background: #ecfdf3;
-  color: #166534;
+  background: $color-success-bg;
+  color: $color-success;
 }
 
 .status-chip-filter.cancelled {
-  background: #fef2f2;
-  color: #b91c1c;
+  background: $color-error-bg;
+  color: $color-error;
 }
 
 .status-chip-filter.readyOrder {
-  background: #e0f2fe;
-  color: #075985;
+  background: $color-info-bg;
+  color: $color-info;
 }
 
 .status-chip-filter.autoComplete {
-  background: #f5f3ff;
-  color: #6d28d9;
+  background: $color-info-bg;
+  color: $color-info;
 }
 
 /* Status-specific colors */
 .status-chip.paymentInprogress {
-  background: #fff7e6;
-  color: #d48806;
+  background: $color-warning-bg;
+  color: $color-warning;
 }
 
 .status-chip.paymentFailed {
-  background: #fff1f0;
-  color: #cf1322;
+  background: $color-error-bg;
+  color: $color-error;
 }
 
 .status-chip.placed {
-  background: #e0e7ff;
-  color: #3730a3;
+  background: $color-info-bg;
+  color: $color-info;
 }
 
 .status-chip.completed {
-  background: #ecfdf3;
-  color: #166534;
+  background: $color-success-bg;
+  color: $color-success;
 }
 
 .status-chip.cancelled {
-  background: #fef2f2;
-  color: #b91c1c;
+  background: $color-error-bg;
+  color: $color-error;
 }
 
 .status-chip.readyOrder {
-  background: #e0f2fe;
-  color: #075985;
+  background: $color-info-bg;
+  color: $color-info;
 }
 
 .status-chip.autoComplete {
-  background: #f5f3ff;
-  color: #6d28d9;
+  background: $color-info-bg;
+  color: $color-info;
 }
 
 .item-list {
@@ -159,7 +161,7 @@ mat-card-header {
 }
 
 .amounts-grid .label {
-  color: #6b7280;
+  color: $primary-offset-color2;
 }
 
 .amounts-grid .value {
@@ -167,7 +169,7 @@ mat-card-header {
 }
 
 .amounts-grid .value.total {
-  color: #111827;
+  color: $textPrimary;
 }
 
 @media (max-width: 767px) {
@@ -177,7 +179,7 @@ mat-card-header {
 
   .order-left {
     border-right: none;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    border-bottom: 1px solid $border-color;
     padding-right: 0;
     padding-bottom: 8px;
   }
