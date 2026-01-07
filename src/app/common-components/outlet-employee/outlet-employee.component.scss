@@ -1,6 +1,8 @@
+@import '/src/styles.scss';
+
 .page-container {
   padding: 24px;
-  background: #f0f2f5;
+  background: $background-color;
 }
 
 mat-card {
@@ -9,13 +11,13 @@ mat-card {
 
 .upload-box {
   height: 200px;
-  border: 2px dashed #bdbdbd;
+  border: 2px dashed $border-color;
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background: #fafafa;
+  background: $primary-offset-color3;
   text-align: center;
 }
 
@@ -26,14 +28,14 @@ mat-card {
 .hint {
   margin-top: 12px;
   font-size: 12px;
-  color: #757575;
+  color: $primary-offset-color2;
 }
 
 /* Manual Entry Grid */
 .entry-grid {
   display: grid;
-    grid-template-columns: repeat(4, 1fr) 100px;
-    gap: 11px;
+  grid-template-columns: repeat(4, 1fr) 100px;
+  gap: 11px;
   margin-top: 16px;
 }
 
@@ -47,7 +49,7 @@ mat-card {
 .add-label {
   font-size: 11px;
   margin-top: 4px;
-  color: #666;
+  color: $primary-offset-color2;
 }
 
 /* Responsive: stack grid on mobile */
@@ -56,32 +58,33 @@ mat-card {
     grid-template-columns: 1fr;
   }
 }
+
 .hidden-file-input {
   display: none;
 }
 
 .upload-box {
-  border: 2px dashed #90a4ae;
+  border: 2px dashed $border-color;
   padding: 25px;
   border-radius: 10px;
-  background: #f7f9fc;
+  background: $primary-offset-color3;
 }
 
 .or-text {
   margin: 10px 0;
   font-weight: 500;
-  color: #666;
+  color: $primary-offset-color2;
 }
 
 .hint {
   font-size: 13px;
-  color: #666 !important;
+  color: $primary-offset-color2 !important;
 }
 
 .file-name {
   margin-top: 12px;
   font-size: 14px;
-  color: #333;
+  color: $textPrimary;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,7 +93,7 @@ mat-card {
 .file-icon {
   font-size: 20px;
   margin-right: 6px;
-  color: #1976d2;
+  color: $primary-color1;
 }
 
 
@@ -98,14 +101,16 @@ mat-card {
   display: flex;
   flex-direction: column;
   padding: 8px 12px;
-  min-width: 180px;   /* optional: prevents extremely tiny boxes */
+  min-width: 180px;
+  /* optional: prevents extremely tiny boxes */
   max-width: fit-content;
-  white-space: nowrap; /* keeps label/value in one line */
+  white-space: nowrap;
+  /* keeps label/value in one line */
 }
 
 .label {
   font-size: 12px;
-  color: #555;
+  color: $primary-offset-color2;
 }
 
 .value {
@@ -120,7 +125,7 @@ mat-card {
 .label {
   font-size: 12px;
   font-weight: 600;
-  color: #666;
+  color: $primary-offset-color2;
 }
 
 .value {
@@ -144,16 +149,16 @@ mat-card {
   font-size: 12px;
   text-transform: uppercase;
   font-weight: 600;
-  color: #666;
+  color: $primary-offset-color2;
   margin-bottom: 4px;
 }
 
 .item .value {
   font-size: 16px;
   font-weight: 500;
-  color: #222;
+  color: $textPrimary;
 }
 
 .actions button {
-  margin-left: 12px;
+  margin-left: $border-radius-lg;
 }

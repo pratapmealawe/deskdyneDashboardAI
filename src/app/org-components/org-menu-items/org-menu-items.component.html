@@ -3,9 +3,9 @@
   <app-common-outlet-cafe-select [config]="headerConfig"
     (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
   <div class="d-flex justify-content-end align-items-center w-100 mt-2">
-    <button type="button" *ngIf="outletOrderData.length > 0" mat-stroked-button color="primary"
+    <button class="btn-view" type="button" *ngIf="outletOrderData.length > 0" mat-stroked-button color="primary"
       (click)="openItemBreakdownModal()">
-      Details breakdown
+      <mat-icon>list_alt</mat-icon> Details breakdown
     </button>
   </div>
   <div class="card-hover mt-2">

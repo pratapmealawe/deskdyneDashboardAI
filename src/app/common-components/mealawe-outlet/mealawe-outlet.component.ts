@@ -203,32 +203,40 @@ export class MealaweOutletComponent implements AfterViewInit {
   }
 
   deleteCategoryMealAweOutlet(categoryName: string) {
-    this.confirmationModalService.modal(`Are you sure you want to delete ${categoryName}?`, async () => {
-      try {
-        await this.apiMainService.deleteCategoryMealAweOutlet(this.cafeteriaId, { categoryName });
-        this.toaster.success(`${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} deleted`);
-        this.getMealAweOutletByCafeteria();
-      } catch (err) {
-        console.error(`❌ Delete error:`, err);
-        this.toaster.error(`Delete failed. No changes applied.`);
-      }
-    }, this);
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete ${categoryName}?`,
+      callback: async () => {
+        try {
+          await this.apiMainService.deleteCategoryMealAweOutlet(this.cafeteriaId, { categoryName });
+          this.toaster.success(`${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} deleted`);
+          this.getMealAweOutletByCafeteria();
+        } catch (err) {
+          console.error(`❌ Delete error:`, err);
+          this.toaster.error(`Delete failed. No changes applied.`);
+        }
+      },
+      context: this
+    });
   }
 
 
   deleteItem(type: 'package' | 'category', item: any) {
     const name = type === 'package' ? item.packageName : item.categoryName;
     const apiCall = type === 'package' ? () => this.apiMainService.deleteMealItem({ cafeteriaId: this.cafeteriaId, masterMenuId: item.masterMenuId }) : () => this.apiMainService.deleteCategoryConfig({ cafeteriaId: this.cafeteriaId, categoryName: item.categoryName });
-    this.confirmationModalService.modal(`Are you sure you want to delete ${type === 'package' ? name : 'category' + name}?`, async () => {
-      try {
-        await apiCall();
-        this.toaster.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted`);
-        this.getMealAweOutletByCafeteria();
-      } catch (err) {
-        console.error(`❌ Delete error:`, err);
-        this.toaster.error(`Delete failed. No changes applied.`);
-      }
-    }, this);
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete ${type === 'package' ? name : 'category' + name}?`,
+      callback: async () => {
+        try {
+          await apiCall();
+          this.toaster.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted`);
+          this.getMealAweOutletByCafeteria();
+        } catch (err) {
+          console.error(`❌ Delete error:`, err);
+          this.toaster.error(`Delete failed. No changes applied.`);
+        }
+      },
+      context: this
+    });
   }
 
   openEditCategoryDialog(category: any) {

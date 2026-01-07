@@ -13,20 +13,20 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
   styleUrls: ['vendor-card.component.scss'],
 })
 export class VendorCardComponent implements OnInit {
-  private _vendorFirm :any[]=[];
-  @Input() 
-  get vendorFirm(): any[]{
+  private _vendorFirm: any[] = [];
+  @Input()
+  get vendorFirm(): any[] {
     return this._vendorFirm;
   }
-  set vendorFirm(value:any[]){
-    this._vendorFirm= value || [];
+  set vendorFirm(value: any[]) {
+    this._vendorFirm = value || [];
     this.refreshData()
   }
   @Output() deleted = new EventEmitter();
   btnPolicy: any;
   vendorInfo: any;
   pageIndex: number = 0;
-  pageSize: number = 5;
+  pageSize: number = 10;
 
   pagedVendorFirm: any[] = [];
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -38,15 +38,15 @@ export class VendorCardComponent implements OnInit {
     private policyService: PolicyService,
     private confirmationModalService: ConfirmationModalService
   ) { }
-  refreshData(){
+  refreshData() {
     this.ngOnInit()
 
   }
   ngOnInit(): void {
-    console.log(this.vendorFirm,"vendorFirm");
-    
+    console.log(this.vendorFirm, "vendorFirm");
+
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-     this.updatePage(); 
+    this.updatePage();
   }
 
   editVendor(vendor: any) {
@@ -66,23 +66,23 @@ export class VendorCardComponent implements OnInit {
 
   showPopup(vendor: any) {
     this.vendorInfo = vendor;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${this.vendorInfo.vendorName} vendor`,
-      this.deleteVendor,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this Vendor?',
+      callback: this.deleteVendor,
+      context: this
+    });
   }
 
   onPageChange(event: any) {
-  this.pageIndex = event.pageIndex;
-  this.pageSize = event.pageSize;
-  this.updatePage();
-}
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.updatePage();
+  }
 
-updatePage() {
-  if (!this.vendorFirm) return;
-  const start = this.pageIndex * this.pageSize;
-  const end = start + this.pageSize;
-  this.pagedVendorFirm = this.vendorFirm.slice(start, end);
-}
+  updatePage() {
+    if (!this.vendorFirm) return;
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    this.pagedVendorFirm = this.vendorFirm.slice(start, end);
+  }
 }

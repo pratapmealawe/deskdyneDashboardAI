@@ -12,8 +12,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   showOTP = false;
   adminId: string = '';
   password: string = '';
-  otp: string[] = ['', '', '', '', '', ''];
-  otpBoxes = Array(6).fill(0);
+  otp: string = '';
   timer = 0;
   intervalId: any;
 
@@ -24,7 +23,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private localStorageService: LocalStorageService,
     private router: Router,
     private apiMainService: ApiMainService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.checkIfTokenPresent();
@@ -95,78 +94,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.timer = 0;
   }
 
-  onInput(event: any, index: number) {
-    let value = event.target.value as string;
-    value = value.replace(/[^0-9]/g, '');
-    event.target.value = value;
-    this.otp[index] = value;
-    this.updatePassword();
-
-    if (value.length > 1) {
-      this.handlePasteValue(value);
-      return;
-    }
-
-    if (value && index < 5) {
-      const next = event.target.nextElementSibling as HTMLInputElement;
-      next?.focus();
-    }
-  }
-
-  onKeyDown(event: KeyboardEvent, index: number) {
-    const input = event.target as HTMLInputElement;
-
-    if (event.key === 'Backspace') {
-      if (input.value === '') {
-        if (index > 0) {
-          const prev = input.previousElementSibling as HTMLInputElement;
-          prev.value = '';
-          this.otp[index - 1] = '';
-          this.updatePassword();
-          prev.focus();
-        }
-      } else {
-        input.value = '';
-        this.otp[index] = '';
-        this.updatePassword();
-        event.preventDefault();
-      }
-    }
-  }
-
-  onPaste(event: ClipboardEvent) {
-    const pastedData = event.clipboardData?.getData('text') || '';
-    const numbersOnly = pastedData.replace(/[^0-9]/g, '');
-
-    if (numbersOnly.length === 0) return;
-
-    this.handlePasteValue(numbersOnly);
-    event.preventDefault();
-  }
-
-  handlePasteValue(value: string) {
-    const digits = value.split('').slice(0, 6);
-
-    digits.forEach((d, i) => (this.otp[i] = d));
-
-    setTimeout(() => {
-      const boxes = document.querySelectorAll(
-        '.otp-box'
-      ) as NodeListOf<HTMLInputElement>;
-      boxes.forEach((box, i) => (box.value = this.otp[i] || ''));
-
-      const nextIndex = digits.length < 6 ? digits.length : 5;
-      boxes[nextIndex]?.focus();
-      this.updatePassword();
-    });
+  onOtpChange(otp: string) {
+    this.otp = otp;
+    this.password = otp;
   }
 
   isOTPComplete() {
-    return this.otp.every((d) => d !== '' && d != null);
-  }
-
-  updatePassword() {
-    this.password = this.otp.join('');
+    return this.otp && this.otp.length === 6;
   }
 
   startTimer() {
@@ -182,14 +116,16 @@ export class LoginComponent implements OnInit, OnDestroy {
     }, 1000);
   }
 
-  resendOTP() {
+  async resendOTP() {
     if (this.timer !== 0) return;
-    // call API to resend OTP here
+
+    await this.apiMainService.loginAdmin({ adminId: this.adminId });
+
     this.startTimer();
   }
 
   private resetOtp() {
-    this.otp = ['', '', '', '', '', ''];
-    this.updatePassword();
+    this.otp = '';
+    this.password = '';
   }
 }

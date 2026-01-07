@@ -1,15 +1,21 @@
-<div class="container-fluid mainUserDiv pb-4" *ngIf="!isViewCustomer">
-    <div class="headerDiv mb-3">
-        <h2 class="page-title ">Users</h2>
-        <div class="input-group text-nowrap d-none d-md-inline-flex">
-            <mat-form-field appearance="outline" class="search-input">
-                <input matInput (input)="searchFilter($event)" (input)="searchFilter($event)" [value]="searchText"
-                    placeholder="Search by name, phone, or email" />
-                <mat-icon matSuffix>search</mat-icon>
+<div class="vendor-header" *ngIf="!isViewCustomer">
+    <div>
+        <h4 class="m-0 fw-semibold">Users</h4>
+    </div>
+    <div class="header-actions">
+        <div class="input-wrapper">
+            <mat-form-field appearance="outline" class="w-100 search-input">
+                <input matInput type="text" matInput (input)="searchFilter($event)" (input)="searchFilter($event)"
+                    [value]="searchText" placeholder="Search by name, phone, or email" />
+                <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+                    <mat-icon>search</mat-icon>
+                </button>
             </mat-form-field>
         </div>
     </div>
+</div>
 
+<div class="container-fluid pb-4" *ngIf="!isViewCustomer">
     <div class="row g-3 align-items-end mb-3">
         <!-- Organization Selection -->
         <div class="col-12 col-md-6">
@@ -28,15 +34,19 @@
         <!-- Search -->
         <div class="col-12 col-md-6 text-md-end">
             <!-- Export buttons -->
-            <div class="d-flex justify-content-end mb-2" *ngIf="filteredCustomerList?.length">
-                <button mat-stroked-button class="me-2" (click)="exportToExcel()">
-                    <mat-icon class="me-1">grid_on</mat-icon>
-                    Export Excel
+            <div class="d-flex justify-content-end mb-2 gap-2">
+                <button class="btn-import" mat-stroked-button *ngIf=" filteredCustomerList?.length && !isOrgAdmin"
+                    (click)="openBulkWalletDialog()">
+                    <mat-icon>upload_file</mat-icon> Bulk Wallet Add
+                </button>
+                <button class="btn-export-excel" mat-stroked-button *ngIf="filteredCustomerList?.length"
+                    (click)="exportToExcel()">
+                    <mat-icon>file_download</mat-icon> Export Excel
                 </button>
 
-                <button mat-stroked-button color="warn" (click)="exportToPdf()">
-                    <mat-icon class="me-1">picture_as_pdf</mat-icon>
-                    Export PDF
+                <button class="btn-export-pdf" mat-stroked-button *ngIf="filteredCustomerList?.length"
+                    (click)="exportToPdf()">
+                    <mat-icon>picture_as_pdf</mat-icon> Export PDF
                 </button>
             </div>
         </div>
@@ -78,10 +88,8 @@
                         </div>
 
                         <div *ngIf="!isOrgAdmin" class="col-12 col-md-1 text-md-end mt-2 mt-md-0">
-                            <button mat-icon-button color="primary" (click)="viewCustomer(user)"
-                                matTooltip="View details">
-                                <mat-icon>visibility</mat-icon>
-                            </button>
+                            <mat-icon color="primary" (click)="viewCustomer(user)" class="action-icon view"
+                                matTooltip="View details">visibility</mat-icon>
                         </div>
                     </div>
                 </mat-card>

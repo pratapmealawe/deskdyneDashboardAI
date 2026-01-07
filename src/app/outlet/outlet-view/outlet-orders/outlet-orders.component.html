@@ -33,8 +33,9 @@
 
             <!-- Submit button -->
             <div class="col-12 col-md-3 d-flex justify-content-md-end">
-                <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="!dateForm.valid || !outletObj">
-                    Apply
+                <button class="btn-add" mat-flat-button color="primary" (click)="onSubmit()"
+                    [disabled]="!dateForm.valid || !outletObj">
+                    <mat-icon>filter_list</mat-icon> Apply
                 </button>
             </div>
 
@@ -74,7 +75,7 @@
                 </div>
 
                 <div class="col-6 col-md-3 text-md-end">
-                    <button mat-stroked-button color="primary" (click)="excelExport()"
+                    <button class="btn-export-excel" mat-stroked-button (click)="excelExport()"
                         [disabled]="filteredOrders.length === 0">
                         <mat-icon class="me-1">file_download</mat-icon>
                         Excel Export

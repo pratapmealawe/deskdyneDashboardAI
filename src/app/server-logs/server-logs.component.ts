@@ -12,6 +12,7 @@ export class ServerLogsComponent implements OnInit {
   @ViewChild('contentPayload') contentPayload!: TemplateRef<any>;
   selectedStatus = 'AuditLogs';
   selectedDBStatus = '100';
+  selectedLevel = 'All';
   logsList: any[] = [];
   logPayload: any;
   startDate = '';
@@ -44,6 +45,12 @@ export class ServerLogsComponent implements OnInit {
 
   clearSearch() {
     this.searchText = '';
+    this.selectedLevel = 'All';
+    this.onSearchChange();
+  }
+
+  filterByLevel(level: string) {
+    this.selectedLevel = level;
     this.onSearchChange();
   }
 
@@ -58,6 +65,9 @@ export class ServerLogsComponent implements OnInit {
     this.isLoading = true;
     let params: any = {};
     let apiCall: Promise<any>;
+    if (this.selectedLevel && this.selectedLevel !== 'All') {
+      params.level = this.selectedLevel;
+    }
 
     if (range) {
       // if (!range.start || !range.end) return alert('Please select both start and end dates');
@@ -92,11 +102,13 @@ export class ServerLogsComponent implements OnInit {
 
   getAuditLogs() {
     this.searchText = '';
+    this.selectedLevel = 'All';
     this.loadLogs('AuditLogs', '100');
   }
 
   getMLDBLogs() {
     this.searchText = '';
+    this.selectedLevel = 'All';
     this.loadLogs('DBLogs', '100');
   }
 

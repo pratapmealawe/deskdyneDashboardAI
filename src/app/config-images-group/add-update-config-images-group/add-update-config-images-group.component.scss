@@ -1,22 +1,42 @@
+@import '/src/styles.scss';
+
 .image-option {
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 6px;
     cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 5px;
+    transition: all 0.2s;
     text-align: center;
-    width: 90px;
-    transition: all 0.2s ease;
+    width: 100px;
+    background-color: $primary-offset-color3;
 
     img {
-        width: 100%;
-        height: 60px;
+        width: 80px;
+        height: 80px;
         object-fit: cover;
-        border-radius: 6px;
-        margin-bottom: 4px;
+        border-radius: 4px;
+        margin-bottom: 5px;
+    }
+
+    small {
+        display: block;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &:hover {
+        background-color: $card-odd;
     }
 
     &.selected {
-        border-color: var(--bs-primary);
-        background: rgba(13, 110, 253, 0.1);
+        border-color: $primary-color1;
+        background-color: rgba($primary-color1, 0.1);
+
+        small {
+            color: $primary-color1;
+            font-weight: 600;
+        }
     }
 }

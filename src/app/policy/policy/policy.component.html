@@ -7,30 +7,15 @@
     <!-- SEARCH FIELD -->
     <div class="input-wrapper">
       <mat-form-field appearance="outline" class="w-100 search-input">
-        <input
-          matInput
-          type="text"
-          placeholder="Search policy..."
-          [formControl]="searchControl"
-        />
-        <button
-          mat-icon-button
-          matSuffix
-          aria-label="Search"
-          class="search-icon"
-        >
+        <input matInput type="text" placeholder="Search policy..." [formControl]="searchControl" />
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
     </div>
 
     <!-- ADD BUTTON -->
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="addPolicy()"
-      *ngIf="true || btnPolicy?.addPolicy"
-    >
+    <button class="btn-add" mat-raised-button (click)="addPolicy()" *ngIf="true || btnPolicy?.addPolicy">
       <mat-icon>add_circle</mat-icon>
       Add Policy
     </button>
@@ -66,26 +51,14 @@
               </div>
             </div>
 
-            <div
-              class="col-md-2 col-3 d-flex align-items-center gap-3 justify-content-end"
-            >
-              <mat-icon
-                *ngIf="true || btnPolicy?.editPolicy"
-                (click)="editPolicy(policy._id)"
-                color="primary"
-                class="edit"
-                matTooltip="Edit"
-              >
+            <div class="col-md-2 col-3 d-flex align-items-center gap-3 justify-content-end">
+              <mat-icon *ngIf="true || btnPolicy?.editPolicy" (click)="editPolicy(policy._id)" class="action-icon edit"
+                matTooltip="Edit">
                 edit
               </mat-icon>
 
-              <mat-icon
-                *ngIf="true || btnPolicy?.deletePolicy"
-                (click)="confirmDelete(policy._id)"
-                color="warn"
-                class="edit"
-                matTooltip="Delete"
-              >
+              <mat-icon *ngIf="true || btnPolicy?.deletePolicy" (click)="confirmDelete(policy._id)"
+                class="action-icon delete" matTooltip="Delete">
                 delete
               </mat-icon>
             </div>

@@ -62,9 +62,6 @@ export class OutletOrdersComponent implements OnInit {
       dateTo: today,
     });
 
-    console.log(this.outletObj);
-
-
     if (this.outletObj) {
       this.onSubmit(); // load initial data for today
     }

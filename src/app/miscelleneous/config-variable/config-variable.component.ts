@@ -89,10 +89,10 @@ export class ConfigVariableComponent implements OnInit {
   }
 
   showPopup(variableObj: any) {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${variableObj.configName}`,
-      () => this.deleteVariable(variableObj._id),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${variableObj.configName} variable?`,
+      callback: () => this.deleteVariable(variableObj._id),
+      context: this
+    });
   }
 }

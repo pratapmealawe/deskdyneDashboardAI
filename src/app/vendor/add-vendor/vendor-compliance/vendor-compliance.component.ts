@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 @Component({
@@ -12,71 +12,71 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 })
 export class VendorComplianceComponent implements OnInit {
   @Input() venderDetails: any;
-  profileApproval:any;
-  compliance:any = {};
+  profileApproval: any;
+  compliance: any = {};
   imageUrl = environment.imageUrl;
   fileUrl = environment.fileUrl;
-  comment='';
+  comment = '';
   editMode = false;
-  uploadedCompliance:any = {};
-  originalCompliance:any = {};
-  access:any;
-  fssailic='fssaiFile';
-  TradeLic='TradeLic';
-  aadhar='aadharFile';
-  pfFile='pfFile';
-  ESIFile='ESIFile';
-  GSTFile='GSTFile';
-  PanCardFile='PanCardFile';
-  pestconFile='pestconFile';
-  aadharpdfobj={
-    name:'aadharFile',
-    url:'',
-    file:undefined
+  uploadedCompliance: any = {};
+  originalCompliance: any = {};
+  access: any;
+  fssailic = 'fssaiFile';
+  TradeLic = 'TradeLic';
+  aadhar = 'aadharFile';
+  pfFile = 'pfFile';
+  ESIFile = 'ESIFile';
+  GSTFile = 'GSTFile';
+  PanCardFile = 'PanCardFile';
+  pestconFile = 'pestconFile';
+  aadharpdfobj = {
+    name: 'aadharFile',
+    url: '',
+    file: undefined
   }
-  fssaipdfobj={
-    name:'fssaiFile',
-    url:'',
-    file:undefined
+  fssaipdfobj = {
+    name: 'fssaiFile',
+    url: '',
+    file: undefined
   }
 
-  constructor( private apiMainService: ApiMainService,private sanitizer: DomSanitizer,private modalService: NgbModal,private policyService:PolicyService) { 
-    this.access = this.policyService.getCurrentButtonPolicy(); 
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private policyService: PolicyService) {
+    this.access = this.policyService.getCurrentButtonPolicy();
     console.log(this.access);
   }
 
 
-  ngOnInit(){
-    this.profileApproval = this.venderDetails.profileApproval;  
-    if(this.venderDetails.compliance){
+  ngOnInit() {
+    this.profileApproval = this.venderDetails.profileApproval;
+    if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
-      this.originalCompliance = {...this.venderDetails.compliance};
+      this.originalCompliance = { ...this.venderDetails.compliance };
       this.prepareForEdit();
-    }    
+    }
   }
 
-  prepareForEdit(){
-    if(this.compliance.fssaiImageUrl){
+  prepareForEdit() {
+    if (this.compliance.fssaiImageUrl) {
       this.originalCompliance.fssaiImageUrlOld = this.compliance.fssaiImageUrl;
       this.compliance.fssaiImageUrl = this.imageUrl + this.compliance.fssaiImageUrl;
       this.originalCompliance.fssaiImageUrl = this.compliance.fssaiImageUrl;
     }
-    
-    if(this.compliance.adhaarFrontImageUrl){
+
+    if (this.compliance.adhaarFrontImageUrl) {
       this.originalCompliance.adhaarFrontImageUrlOld = this.compliance.adhaarFrontImageUrl;
       this.compliance.adhaarFrontImageUrl = this.imageUrl + this.compliance.adhaarFrontImageUrl;
       this.originalCompliance.adhaarFrontImageUrl = this.compliance.adhaarFrontImageUrl;
     }
-    if(this.compliance.adhaarBackImageUrl){
+    if (this.compliance.adhaarBackImageUrl) {
       this.originalCompliance.adhaarBackImageUrlOld = this.compliance.adhaarBackImageUrl;
       this.compliance.adhaarBackImageUrl = this.imageUrl + this.compliance.adhaarBackImageUrl;
       this.originalCompliance.adhaarBackImageUrl = this.compliance.adhaarBackImageUrl;
     }
-    if(this.compliance.fssaiExpiryDate){
+    if (this.compliance.fssaiExpiryDate) {
       this.originalCompliance.fssaiExpiryDate = this.compliance.fssaiExpiryDate;
       this.compliance.fssaiExpiryDate = this.compliance.fssaiExpiryDate.split('T')[0];
     }
-    if(this.compliance.adhaarFileUrl){
+    if (this.compliance.adhaarFileUrl) {
       this.originalCompliance.adhaarFileUrlold = this.compliance.adhaarFileUrl;
       this.compliance.adhaarFileUrl = this.fileUrl + this.compliance.adhaarFileUrl;
       this.originalCompliance.adhaarFileUrl = this.compliance.adhaarFileUrl;
@@ -117,205 +117,207 @@ export class VendorComplianceComponent implements OnInit {
       this.originalCompliance.pestconFile = this.compliance.pestconFile;
       this.compliance.pestconFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + this.compliance.pestconFile);
     }
-  
+
   }
 
-  async updateProfileApproval(status:string){
-    try{
-      await this.apiMainService.updateProfileApproval(this.venderDetails._id,status,{comment:this.comment});
+  async updateProfileApproval(status: string) {
+    try {
+      await this.apiMainService.updateProfileApproval(this.venderDetails._id, status, { comment: this.comment });
       this.profileApproval = status;
-    }catch(error){
+    } catch (error) {
       console.log('error while updating kitchen wallet', error);
     }
   }
 
-  handleFileInput($event: any,filename:string,height:number) {
+  handleFileInput($event: any, filename: string, height: number) {
     // const fileToUpload = files.item(0);
-    if($event && $event.target && $event.target.files){
-      const file:File = $event.target.files[0];
+    if ($event && $event.target && $event.target.files) {
+      const file: File = $event.target.files[0];
       if (file) {
         // this.uploadedCompliance = file;
         const fileName = file.name;
         console.log(fileName);
         const reader = new FileReader();
-        reader.readAsDataURL(file); 
-        reader.onload =async (_event) => { 
-          const imageUrl = reader.result; 
-          try{  
-            const modalRef: NgbModalRef  = this.modalService.open(ImageCropperComponent, 
-              {ariaLabelledBy: 'modal-basic-title', size: 'xl', backdrop: 'static',
-              centered: true});
-            modalRef.result.then((result:any) => {
-              console.log('Closed with:',result);
-                  if (result && result.croppedImages){
-                    console.log('croppedImages ', result.croppedImages);
-                    this.uploadedCompliance[filename] = result.croppedImages.file;
-                    // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];  
-                    this.compliance[filename] = result.croppedImages.resizeDataUrl;
-                }
-            }, (reason:any) => {
-              console.log( `Model Dismissed`);
-            });  
-            modalRef.componentInstance.uploadedImageUrl = imageUrl; 
-            modalRef.componentInstance.imageWidth = 600;
-            modalRef.componentInstance.imageHeight = height*2; 
-            // modalRef.componentInstance.aspectRatio = 1; 
-          }catch(error){
-            console.log('error while changes kitchen opened status ',error);
-          } 
-        }       
+        reader.readAsDataURL(file);
+        reader.onload = async (_event) => {
+          const imageUrl = reader.result;
+          try {
+            const dialogRef = this.dialog.open(ImageCropperComponent, {
+              width: '50%',
+              panelClass: 'image-cropper-dialog',
+              disableClose: true,
+              data: {
+                imageUrl: imageUrl,
+                imageWidth: 600,
+                imageHeight: height * 2
+              }
+            });
+
+            dialogRef.afterClosed().subscribe((result: any) => {
+              console.log('Closed with:', result);
+              if (result && result.croppedImages) {
+                console.log('croppedImages ', result.croppedImages);
+                this.uploadedCompliance[filename] = result.croppedImages.file;
+                // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];
+                this.compliance[filename] = result.croppedImages.resizeDataUrl;
+              }
+            });
+          } catch (error) {
+            console.log('error while changes kitchen opened status ', error);
+          }
+        }
       }
-    }    
+    }
   }
 
-  async saveImages(){
-    try{
+  async saveImages() {
+    try {
       const formData = new FormData();
       let uploadImageCount = 0
-      if(this.uploadedCompliance.fssaiImageUrl){  
-        formData.append('image', this.uploadedCompliance.fssaiImageUrl);        
+      if (this.uploadedCompliance.fssaiImageUrl) {
+        formData.append('image', this.uploadedCompliance.fssaiImageUrl);
         formData.append('fssaiImageUrlNo', `${uploadImageCount}`);
-        if(this.originalCompliance.fssaiImageUrlOld){
+        if (this.originalCompliance.fssaiImageUrlOld) {
           formData.append('fssaiImageUrlOld', this.originalCompliance.fssaiImageUrlOld);
         }
         uploadImageCount++;
-      }else if(this.originalCompliance.fssaiImageUrlOld){
+      } else if (this.originalCompliance.fssaiImageUrlOld) {
         formData.append('fssaiImageUrl', this.originalCompliance.fssaiImageUrlOld);
-      } 
+      }
 
-      if(this.uploadedCompliance.adhaarFrontImageUrl){  
+      if (this.uploadedCompliance.adhaarFrontImageUrl) {
         formData.append('image', this.uploadedCompliance.adhaarFrontImageUrl);
         formData.append('adhaarFrontImageUrlNo', `${uploadImageCount}`);
-        if(this.originalCompliance.adhaarFrontImageUrlOld){
+        if (this.originalCompliance.adhaarFrontImageUrlOld) {
           formData.append('adhaarFrontImageUrlOld', this.originalCompliance.adhaarFrontImageUrlOld);
         }
         uploadImageCount++;
-      }else if(this.originalCompliance.adhaarFrontImageUrlOld){
+      } else if (this.originalCompliance.adhaarFrontImageUrlOld) {
         formData.append('adhaarFrontImageUrl', this.originalCompliance.adhaarFrontImageUrlOld);
-      }  
+      }
 
-      if(this.uploadedCompliance.adhaarBackImageUrl){  
-        formData.append('image', this.uploadedCompliance.adhaarBackImageUrl);        
+      if (this.uploadedCompliance.adhaarBackImageUrl) {
+        formData.append('image', this.uploadedCompliance.adhaarBackImageUrl);
         formData.append('adhaarBackImageUrlNo', `${uploadImageCount}`);
-        if(this.originalCompliance.adhaarBackImageUrlOld){
+        if (this.originalCompliance.adhaarBackImageUrlOld) {
           formData.append('adhaarBackImageUrlOld', this.originalCompliance.adhaarBackImageUrlOld);
         }
-      } else if(this.originalCompliance.adhaarBackImageUrlOld){
+      } else if (this.originalCompliance.adhaarBackImageUrlOld) {
         formData.append('adhaarBackImageUrl', this.originalCompliance.adhaarBackImageUrlOld);
-      }      
-     
-      if(this.compliance.fssaiExpiryDate){
+      }
+
+      if (this.compliance.fssaiExpiryDate) {
         formData.append('fssaiExpiryDate', this.compliance.fssaiExpiryDate.split('T')[0]);
-      } 
-      if(this.compliance.fssai){
+      }
+      if (this.compliance.fssai) {
         formData.append('fssai', this.compliance.fssai);
       }
-      if(this.compliance.adhaar){
+      if (this.compliance.adhaar) {
         formData.append('adhaar', this.compliance.adhaar);
-      }   
-      if(this.compliance.tradeLicNumber){
-        formData.append('tradeLicNumber',this.compliance.tradeLicNumber);
       }
-      if(this.compliance.gstNumber){
-        formData.append('gstNumber',this.compliance.gstNumber);
+      if (this.compliance.tradeLicNumber) {
+        formData.append('tradeLicNumber', this.compliance.tradeLicNumber);
       }
-      if(this.compliance.pestconNumber){
+      if (this.compliance.gstNumber) {
+        formData.append('gstNumber', this.compliance.gstNumber);
+      }
+      if (this.compliance.pestconNumber) {
         formData.append('pestconNumber', this.compliance.pestconNumber);
-      }   
-      if(this.compliance.panNumber){
-        formData.append('panNumber',this.compliance.panNumber);
       }
-      if(this.compliance.ESIFileno){
-        formData.append('ESIFileno',this.compliance.ESIFileno);
+      if (this.compliance.panNumber) {
+        formData.append('panNumber', this.compliance.panNumber);
       }
-      if(this.originalCompliance.adhaarFileUrlold){
-        formData.append('aadharFile',this.originalCompliance.adhaarFileUrlold);
+      if (this.compliance.ESIFileno) {
+        formData.append('ESIFileno', this.compliance.ESIFileno);
       }
-      if(this.originalCompliance.fssaiFileUrlOld){
-        formData.append('fssaiFile',this.originalCompliance.fssaiFileUrlOld);
+      if (this.originalCompliance.adhaarFileUrlold) {
+        formData.append('aadharFile', this.originalCompliance.adhaarFileUrlold);
       }
-      if(this.originalCompliance.TradeLicFileUrlOld){
-        formData.append('TradeLic',this.originalCompliance.TradeLicFileUrlOld);
+      if (this.originalCompliance.fssaiFileUrlOld) {
+        formData.append('fssaiFile', this.originalCompliance.fssaiFileUrlOld);
       }
-      if(this.originalCompliance.pfFileUrlOld){
-        formData.append('pfFile',this.originalCompliance.pfFileUrlOld);
+      if (this.originalCompliance.TradeLicFileUrlOld) {
+        formData.append('TradeLic', this.originalCompliance.TradeLicFileUrlOld);
       }
-      if(this.originalCompliance.ESIFileUrlOld){
-        formData.append('ESIFile',this.originalCompliance.ESIFileUrlOld);
+      if (this.originalCompliance.pfFileUrlOld) {
+        formData.append('pfFile', this.originalCompliance.pfFileUrlOld);
       }
-      if(this.originalCompliance.GSTFileUrlOld){
-        formData.append('GSTFile',this.originalCompliance.GSTFileUrlOld);
+      if (this.originalCompliance.ESIFileUrlOld) {
+        formData.append('ESIFile', this.originalCompliance.ESIFileUrlOld);
       }
-      if(this.originalCompliance.PanCardFileUrlOld){
-        formData.append('PanCardFile',this.originalCompliance.PanCardFileUrlOld);
+      if (this.originalCompliance.GSTFileUrlOld) {
+        formData.append('GSTFile', this.originalCompliance.GSTFileUrlOld);
       }
-      if(this.originalCompliance.pestconFileUrlOld){
-        formData.append('pestconFile',this.originalCompliance.pestconFileUrlOld);
+      if (this.originalCompliance.PanCardFileUrlOld) {
+        formData.append('PanCardFile', this.originalCompliance.PanCardFileUrlOld);
       }
-      console.log('formData',formData);
-      const kitchen = await this.apiMainService.updateVenderComplianceByAdmin(this.venderDetails._id,formData);
+      if (this.originalCompliance.pestconFileUrlOld) {
+        formData.append('pestconFile', this.originalCompliance.pestconFileUrlOld);
+      }
+      console.log('formData', formData);
+      const kitchen = await this.apiMainService.updateVenderComplianceByAdmin(this.venderDetails._id, formData);
       this.venderDetails.compliance = kitchen.compliance;
       this.compliance = this.venderDetails.compliance;
-      this.originalCompliance = {...this.venderDetails.compliance};
+      this.originalCompliance = { ...this.venderDetails.compliance };
       this.editMode = false;
       this.uploadedCompliance = {};
       this.prepareForEdit();
-    }catch(error){
-      console.log('error while save compliance Images ',error);
+    } catch (error) {
+      console.log('error while save compliance Images ', error);
     }
   }
 
-  cancelEdit(){
-    this.compliance = {...this.originalCompliance};
+  cancelEdit() {
+    this.compliance = { ...this.originalCompliance };
     this.editMode = false;
   }
-  uploadDoc(event:any){
-    if(event.documentname=="aadharFile"){
-      this.originalCompliance.adhaarFileUrlold=event.url;
+  uploadDoc(event: any) {
+    if (event.documentname == "aadharFile") {
+      this.originalCompliance.adhaarFileUrlold = event.url;
       // this.compliance.adhaarFileUrl=this.fileUrl + event.url;
-      this.compliance.adhaarFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+      this.compliance.adhaarFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
       console.log(this.compliance.adhaarFileUrl);
-      console.log("eventaadharFile",event);
-    }else if(event.documentname=="fssaiFile"){
-      this.originalCompliance.fssaiFileUrlOld=event.url;
+      console.log("eventaadharFile", event);
+    } else if (event.documentname == "fssaiFile") {
+      this.originalCompliance.fssaiFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       console.log(this.compliance.fssaiFileUrl)
-      this.compliance.fssaiFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log("eventfssaiFile",event);
+      this.compliance.fssaiFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+      console.log("eventfssaiFile", event);
     }
-    else if(event.documentname=="TradeLic"){
-      this.originalCompliance.TradeLicFileUrlOld=event.url;
+    else if (event.documentname == "TradeLic") {
+      this.originalCompliance.TradeLicFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      this.compliance.TradeLicFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-    }
-
-    else if(event.documentname=="pfFile"){
-      this.originalCompliance.pfFileUrlOld=event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      this.compliance.pfFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+      this.compliance.TradeLicFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
 
-    else if(event.documentname=="ESIFile"){
-      this.originalCompliance.ESIFileUrlOld=event.url;
+    else if (event.documentname == "pfFile") {
+      this.originalCompliance.pfFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      this.compliance.ESIFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+      this.compliance.pfFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
 
-    else if(event.documentname=="GSTFile"){
-      this.originalCompliance.GSTFileUrlOld=event.url;
+    else if (event.documentname == "ESIFile") {
+      this.originalCompliance.ESIFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      this.compliance.GSTFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-    }
-    else if(event.documentname=="PanCardFile"){
-      this.originalCompliance.PanCardFileOld=event.url;
-      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      this.compliance.PanCardFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+      this.compliance.ESIFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
 
-    else if(event.documentname=="pestconFile"){
-      this.originalCompliance.pestconFileUrlOld=event.url;
+    else if (event.documentname == "GSTFile") {
+      this.originalCompliance.GSTFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      this.compliance.pestconFileUrl=this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+      this.compliance.GSTFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+    }
+    else if (event.documentname == "PanCardFile") {
+      this.originalCompliance.PanCardFileOld = event.url;
+      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
+      this.compliance.PanCardFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
+    }
+
+    else if (event.documentname == "pestconFile") {
+      this.originalCompliance.pestconFileUrlOld = event.url;
+      // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
+      this.compliance.pestconFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
   }
   DeleteFile(file: any) {
@@ -323,17 +325,17 @@ export class VendorComplianceComponent implements OnInit {
       this.compliance.fssaiFileUrl = null;
     } else if (file == 'aadhar') {
       this.compliance.adhaarFileUrl = null;
-    }else if (file == 'TradeLic') {
+    } else if (file == 'TradeLic') {
       this.compliance.TradeLicFileUrl = null;
-    }else if (file == 'pfFile') {
+    } else if (file == 'pfFile') {
       this.compliance.pfFileUrl = null;
-    }else if (file == 'ESIFile') {
+    } else if (file == 'ESIFile') {
       this.compliance.ESIFileUrl = null;
-    }else if (file == 'GSTFile') {
+    } else if (file == 'GSTFile') {
       this.compliance.GSTFileUrl = null;
-    }else if (file == 'PanCardFile') {
+    } else if (file == 'PanCardFile') {
       this.compliance.PanCardFile = null;
-    }else if (file == 'pestconFile') {
+    } else if (file == 'pestconFile') {
       this.compliance.pestconFileUrl = null;
     }
   }

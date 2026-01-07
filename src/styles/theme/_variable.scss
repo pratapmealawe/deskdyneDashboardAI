@@ -1,19 +1,74 @@
 /* ---------------------------------------------
-   Global CSS Variables - Your Brand Colors
+   Global SCSS Variables - Brand Colors
 ----------------------------------------------*/
 
-:root {
-  --soft-cream:   #F4ECC5;
-  --bright-red:   #FF3333;
-  --royal-blue:   #0E49B5;
-  --navy-blue:    #192754;
-  --dashboad-bg : #f3f3f3;
+$white: #ffffff;
+$black: #000000;
+$textPrimary: #1a1a1a;
 
-  /* Semantic tokens */
-  --color-primary:      var(--royal-blue);
-  --color-secondary:    var(--navy-blue);
-  --color-accent:       var(--bright-red);
-  --color-background:   var(--soft-cream);
-  --color-backgroundGrey: var(--dashboard-bg);
-  --color-text:         #192754;
+// Brand Colors (Royal Blue & Navy)
+$primary-color1: #0E49B5; // Royal Blue (Main Primary)
+$primary-color: $primary-color1; // Alias for consistency
+$primary-color2: #192754; // Navy Blue (Secondary / Dark Primary)
+$primary-color3: #4b82e2; // Lighter Blue derivative
+
+// Brand Colors (Cream & Red)
+$secondary-color1: #F4ECC5; // Soft Cream
+$secondary-color2: #ffe0b2; // Derivative
+$secondary-color3: #FF3333; // Bright Red (Accent)
+
+// Design Tokens - Border Radius
+$border-radius-sm: 4px;
+$border-radius-md: 8px;
+$border-radius-lg: 12px;
+$border-radius-xl: 20px;
+$border-radius-pill: 9999px;
+$border-radius-circle: 50%;
+
+// Design Tokens - Box Shadow
+$box-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$box-shadow-card: 0 2px 12px rgba(0, 0, 0, 0.04);
+$box-shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+// Accent Colors
+$secondary-offset-color1: #ffd674;
+$secondary-offset-color2: #ffc947;
+$secondary-offset-color3: #ffb300;
+
+
+// Grays & Backgrounds
+$primary-offset-color1: #ffffff;
+$primary-offset-color2: #a4a4a4; // Gray text
+$primary-offset-color3: #f3f3f3; // Light background
+$primary-offset-color4: #efefef; // Card background
+$primary-offset-color5: white;
+$border-color: #e5e7eb;
+$card-odd: #dee2e6;
+$background-color: #f3f3f3;
+
+// Semantic Colors (Standardized)
+$color-success: #52c41a;
+$color-success-bg: #f6ffed;
+$color-success-border: #b7eb8f;
+
+$color-warning: #faad14;
+$color-warning-bg: #fff7e6;
+$color-warning-border: #ffe58f;
+
+$color-error: #ff4d4f;
+$color-error-bg: #fff1f0;
+$color-error-border: #ffccc7;
+
+$color-info: #1890ff;
+$color-info-bg: #e6f7ff;
+$color-info-border: #91d5ff;
+
+// CSS Variables for Runtime Theming
+:root {
+  --color-primary: #{$primary-color1};
+  --color-secondary: #{$secondary-color3};
+  --color-backgroundGrey: #{$background-color};
+  --color-text: #{$textPrimary};
 }

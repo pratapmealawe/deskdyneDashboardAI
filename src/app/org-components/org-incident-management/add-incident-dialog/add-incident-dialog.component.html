@@ -37,13 +37,13 @@
                 </mat-select>
             </mat-form-field>
         </div>
-        
+
         <!-- Photo Upload -->
         <div class="col-12">
             <div class="d-flex flex-column gap-2">
                 <label class="fw-bold">Photo</label>
                 <div class="d-flex align-items-center gap-3">
-                    <button type="button" mat-stroked-button (click)="fileInput.click()">
+                    <button class="btn-import" type="button" mat-stroked-button (click)="fileInput.click()">
                         <mat-icon>add_a_photo</mat-icon> Upload Photo
                     </button>
                     <input #fileInput type="file" (change)="onFileSelected($event)" accept="image/*" hidden>
@@ -60,7 +60,9 @@
 
 <mat-dialog-actions align="end" class="pb-3 pe-3">
     <button mat-button (click)="close()">Cancel</button>
-    <button mat-raised-button color="primary" (click)="submit()" [disabled]="form.invalid || isUploading">
-        {{ isUploading ? 'Uploading...' : (isEdit ? 'Update' : 'Save') }}
+    <button class="btn-add" mat-raised-button color="primary" (click)="submit()"
+        [disabled]="form.invalid || isUploading">
+        <mat-icon>{{ isEdit ? 'update' : 'save' }}</mat-icon> {{ isUploading ? 'Uploading...' : (isEdit ? 'Update' :
+        'Save') }}
     </button>
 </mat-dialog-actions>

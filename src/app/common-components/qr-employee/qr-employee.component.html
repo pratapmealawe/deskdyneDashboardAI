@@ -20,6 +20,7 @@
                     <span class="ms-1">Add Employee</span>
                 </button>
 
+
                 <button mat-stroked-button color="primary" (click)="showBulkForm()" *ngIf="!showMultipleEmployeeForm">
                     <mat-icon>group_add</mat-icon>
                     <span class="ms-1">Add Multiple Employees</span>
@@ -29,6 +30,14 @@
                     <mat-icon>close</mat-icon>
                     <span class="ms-1">Cancel Multiple</span>
                 </button>
+
+                <button mat-stroked-button color="primary" (click)="downloadAllEmployeesPdf()"
+                    *ngIf="filteredEmployees.length > 0">
+                    <mat-icon>file_download</mat-icon>
+                    <span class="ms-1">Download All QR</span>
+                </button>
+
+
             </div>
         </mat-card-content>
     </mat-card>

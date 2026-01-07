@@ -12,7 +12,7 @@
       </mat-form-field>
     </div>
 
-    <button mat-raised-button color="primary" (click)="addVendor()">
+    <button class="btn-add" mat-flat-button (click)="addVendor()">
       <mat-icon>add_business</mat-icon> Add Vendor Firm
     </button>
   </div>
@@ -75,9 +75,9 @@
 
           <!-- Actions -->
           <div class="col-md-1 d-flex align-items-center gap-3 justify-content-end p-0">
-            <mat-icon *ngIf="true || btnPolicy?.editVendor" (click)="editVendor(vendor)" color="primary" class="edit"
+            <mat-icon *ngIf="true || btnPolicy?.editVendor" (click)="editVendor(vendor)" class="action-icon edit"
               matTooltip="View">visibility</mat-icon>
-            <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)" color="warn" class="edit"
+            <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)" class="action-icon delete"
               matTooltip="Delete">delete</mat-icon>
           </div>
 
@@ -86,8 +86,8 @@
     </div>
 
     <div class="paginator">
-      <mat-paginator [length]="vendorList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
-        [pageSizeOptions]="[5, 10, 20]" (page)="onPageChange($event)">
+      <mat-paginator [length]="filteredList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 20, 50]" (page)="onPageChange($event)">
       </mat-paginator>
     </div>
   </div>

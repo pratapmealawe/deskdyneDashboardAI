@@ -2,21 +2,21 @@
 
   <!-- TOP ACTIONS -->
   <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-    <button mat-raised-button color="primary" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
-      Add Menu
+    <button class="btn-add" mat-flat-button *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
+      <mat-icon>add</mat-icon> Add Menu
     </button>
 
     <div class="d-flex align-items-center gap-2 flex-wrap">
-      <button mat-stroked-button color="primary" (click)="openMenu()">
-        Add Master Menu
+      <button class="btn-add" mat-stroked-button (click)="openMenu()">
+        <mat-icon>playlist_add</mat-icon> Add Master Menu
       </button>
 
-      <button mat-stroked-button color="primary" (click)="openOutlet()">
-        Copy Menu
+      <button class="btn-import" mat-stroked-button (click)="openOutlet()">
+        <mat-icon>content_copy</mat-icon> Copy Menu
       </button>
 
-      <button mat-stroked-button color="primary" (click)="excelExport()">
-        Export Excel
+      <button class="btn-export-excel" mat-stroked-button (click)="excelExport()">
+        <mat-icon>file_download</mat-icon> Export Excel
       </button>
     </div>
   </div>
@@ -93,9 +93,9 @@
 
                     <!-- Desktop Actions (moved to top right) -->
                     <div class="d-none d-md-flex gap-1">
-                      <mat-icon *ngIf="true || btnPolicy?.editMenu" color="primary" class="small-icon-btn"
-                        (click)="edit(item, i)" matTooltip="Edit item">edit</mat-icon>
-                      <mat-icon *ngIf="true || btnPolicy?.deleteMenu" color="warn" class="small-icon-btn"
+                      <mat-icon *ngIf="true || btnPolicy?.editMenu" class="action-icon edit" (click)="edit(item, i)"
+                        matTooltip="Edit item">edit</mat-icon>
+                      <mat-icon *ngIf="true || btnPolicy?.deleteMenu" class="action-icon delete"
                         (click)="showPopup(item, i)" matTooltip="Delete item">delete</mat-icon>
                     </div>
                   </div>
@@ -150,12 +150,7 @@
       </div>
     </div>
 
-    <!-- PAGINATOR -->
-    <div class="mt-3">
-      <mat-paginator [length]="filteredMenuList.length" [pageSize]="menuPageSize" [pageIndex]="menuPageIndex"
-        [pageSizeOptions]="[5, 10, 20, 50]" (page)="onMenuPageChange($event)">
-      </mat-paginator>
-    </div>
+
   </div>
 
   <div class="center labelText mt-2" *ngIf="!showCard">
@@ -485,6 +480,7 @@
       </button>
     </mat-dialog-actions>
   </ng-template>
+
   <!-- SELECT OUTLET DIALOG TEMPLATE -->
   <ng-template #selectOutletModal>
     <h2 mat-dialog-title>Select Outlet</h2>
@@ -502,11 +498,23 @@
             </mat-select>
           </mat-form-field>
         </div>
+
+        <div class="col-12 col-md-6">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Search Item</mat-label>
+            <input matInput placeholder="Search item..." [(ngModel)]="searchTermCopyMenu"
+              (input)="applyCopyMenuFilter()" />
+            <button *ngIf="searchTermCopyMenu" matSuffix mat-icon-button aria-label="Clear"
+              (click)="searchTermCopyMenu=''; applyCopyMenuFilter()">
+              <mat-icon>close</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
       </div>
 
       <div class="mt-2">
         <!-- Improved selection cards -->
-        <div class="menu-select-row mb-2" *ngFor="let item of outletMenuList"
+        <div class="menu-select-row mb-2" *ngFor="let item of filteredOutletMenuList"
           [ngClass]="{ 'selected': isMenuSelected(item) }">
           <div class="row g-2 align-items-center">
             <!-- Checkbox -->
@@ -565,7 +573,7 @@
       <button mat-button mat-dialog-close>
         Cancel
       </button>
-      <button mat-raised-button color="primary" [mat-dialog-close]="'addMenuItem'" (click)="addMenuItem()">
+      <button mat-raised-button color="primary" [mat-dialog-close]="'addMenuItem'">
         Add
       </button>
     </mat-dialog-actions>

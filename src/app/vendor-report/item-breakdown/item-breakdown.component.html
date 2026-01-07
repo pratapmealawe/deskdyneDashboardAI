@@ -8,9 +8,13 @@
     <mat-tab-group>
       <!-- By Item -->
       <mat-tab label="By Item">
-        <div class="tab-head">
-          <button mat-stroked-button (click)="export('item')">Export Excel</button>
-          <button class="ms-2" mat-stroked-button color="primary" (click)="exportPdf('item')">Export PDF</button>
+        <div class="tab-head d-flex gap-2">
+          <button class="btn-export-excel" mat-stroked-button (click)="export('item')">
+            <mat-icon>file_download</mat-icon> Export Excel
+          </button>
+          <button class="btn-export-pdf" mat-stroked-button (click)="exportPdf('item')">
+            <mat-icon>picture_as_pdf</mat-icon> Export PDF
+          </button>
         </div>
         <div class="table-wrap">
           <table class="table table-sm">
@@ -38,9 +42,13 @@
 
       <!-- By Item Type -->
       <mat-tab label="By Item Type">
-        <div class="tab-head">
-          <button mat-stroked-button (click)="export('type')">Export Excel</button>
-          <button class="ms-2" mat-stroked-button color="primary" (click)="exportPdf('type')">Export PDF</button>
+        <div class="tab-head d-flex gap-2">
+          <button class="btn-export-excel" mat-stroked-button (click)="export('type')">
+            <mat-icon>file_download</mat-icon> Export Excel
+          </button>
+          <button class="btn-export-pdf" mat-stroked-button (click)="exportPdf('type')">
+            <mat-icon>picture_as_pdf</mat-icon> Export PDF
+          </button>
         </div>
         <div class="table-wrap">
           <table class="table table-sm">
@@ -68,9 +76,13 @@
 
       <!-- By Category -->
       <mat-tab label="By Category">
-        <div class="tab-head">
-          <button mat-stroked-button (click)="export('category')">Export Excel</button>
-          <button class="ms-2" mat-stroked-button color="primary" (click)="exportPdf('category')">Export PDF</button>
+        <div class="tab-head d-flex gap-2">
+          <button class="btn-export-excel" mat-stroked-button (click)="export('category')">
+            <mat-icon>file_download</mat-icon> Export Excel
+          </button>
+          <button class="btn-export-pdf" mat-stroked-button (click)="exportPdf('category')">
+            <mat-icon>picture_as_pdf</mat-icon> Export PDF
+          </button>
         </div>
         <div class="table-wrap">
           <table class="table table-sm">
@@ -97,35 +109,37 @@
       </mat-tab>
 
       <!-- MRP vs Non-MRP -->
-<mat-tab label="MRP vs Non-MRP">
-  <div class="tab-head">
-    <button mat-stroked-button (click)="export('mrpSplit')">Export Excel</button>
-    <button class="ms-2" mat-stroked-button color="primary" (click)="exportPdf('mrpSplit')">
-      Export PDF
-    </button>
-  </div>
+      <mat-tab label="MRP vs Non-MRP">
+        <div class="tab-head d-flex gap-2">
+          <button class="btn-export-excel" mat-stroked-button (click)="export('mrpSplit')">
+            <mat-icon>file_download</mat-icon> Export Excel
+          </button>
+          <button class="btn-export-pdf" mat-stroked-button (click)="exportPdf('mrpSplit')">
+            <mat-icon>picture_as_pdf</mat-icon> Export PDF
+          </button>
+        </div>
 
-  <div class="table-wrap">
-    <table class="table table-sm">
-      <thead>
-        <tr>
-          <th>Type</th>
-          <th class="text-end">Gross Amount</th>
-          <th class="text-end">Base Amount</th>
-          <th class="text-end">Commission Amount</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let r of mrpSplit()">
-          <td>{{ r.label }}</td>
-          <td class="text-end">₹{{ r.gross | number:'1.2-2' }}</td>
-          <td class="text-end">₹{{ r.base | number:'1.2-2' }}</td>
-          <td class="text-end">₹{{ r.commissionAmt | number:'1.2-2' }}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-</mat-tab>
+        <div class="table-wrap">
+          <table class="table table-sm">
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th class="text-end">Gross Amount</th>
+                <th class="text-end">Base Amount</th>
+                <th class="text-end">Commission Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of mrpSplit()">
+                <td>{{ r.label }}</td>
+                <td class="text-end">₹{{ r.gross | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.base | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.commissionAmt | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </mat-tab>
 
     </mat-tab-group>
   </div>

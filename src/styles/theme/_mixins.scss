@@ -1,8 +1,6 @@
 // _card-design.scss
-
 @mixin card-design($odd-bg) {
   margin: 10px 0px;
-  // padding: 10px;
   padding: 18px 24px;
   border-radius: 12px;
   background: $odd-bg !important;
@@ -26,7 +24,6 @@
     display: $display !important;
   }
 
-  // Mobile responsive fixes
   @media (max-width: 992px) {
     .mat-mdc-form-field {
       flex-direction: column-reverse !important;
@@ -38,7 +35,6 @@
     .mat-mdc-form-field {
       flex-direction: column-reverse !important;
       width: 100% !important;
-      // max-height: unset !important;
     }
   }
 
@@ -49,7 +45,6 @@
     }
   }
 
-  // Infix (input area)
   ::ng-deep .mat-mdc-text-field-wrapper.mdc-text-field--outlined .mat-mdc-form-field-infix {
     display: flex;
     margin-top: $margin-top-infix;
@@ -61,12 +56,10 @@
     height: 37px;
   }
 
-  // Suffix icon fix
   ::ng-deep .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
     padding-right: 0 !important;
   }
 
-  // Filled background override
   ::ng-deep .mdc-text-field--filled:not(.mdc-text-field--disabled) {
     background-color: white !important;
   }
@@ -135,40 +128,34 @@
   }
 }
 
-// --- New Responsive Mixins ---
-
 @mixin responsive-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  flex-wrap: wrap; // Allow wrapping on small screens
+  flex-wrap: wrap;
   gap: 1rem;
   padding: 1rem;
 
   @media (max-width: 768px) {
     flex-direction: column;
-    align-items: stretch; // Full width items
+    align-items: stretch;
 
-    // Target the title/left side to ensure it doesn't look weird stretched
     >div:first-child {
-      text-align: left; // Or center if preferred
+      text-align: left;
       margin-bottom: 0.5rem;
     }
 
-    // Target the actions/right side (filters, button)
     >div:last-child {
       display: flex;
       flex-direction: column;
       gap: 0.75rem;
       width: 100%;
 
-      // Ensure children of the right side (inputs, buttons) take full width
       >* {
         width: 100%;
-        margin: 0 !important; // Override any margins
+        margin: 0 !important;
       }
 
-      // Fix input widths specifically
       .mat-mdc-form-field {
         width: 100%;
       }

@@ -1,62 +1,102 @@
-<div class="row">
-    <ng-container *ngIf="!editMode">
-        <div class="col-6 labelText" *ngIf="walletDetails">
-            Current wallet balance : {{walletDetails.wallet_balance}}
-        </div>
-        <div class="col-6">
-            <button  class="btn btn-primary btn-sm me-2" (click)="changeBalance('add')">Add Money</button>
-            <button  class="btn btn-danger btn-sm" (click)="changeBalance('deduct')">Deduct Money</button>
-        </div>
-    </ng-container>
-    <ng-container *ngIf="editMode">
-        <div class="col-2">
-            <label for="moneyAmt" *ngIf="actionType === 'add'">Amount to Be Added</label>
-            <label for="moneyAmt" *ngIf="actionType === 'deduct'">Amount to Be Deducted</label>
-            <input type="number" id="moneyAmt" class="form-control" [(ngModel)]="walletObj.rewardsPoints">
-        </div>
-        <div class="col-4">
-            <label for="remarks">Remarks</label>
-            <input type="text" id="remarks" class="form-control" [(ngModel)]="walletObj.remark">
-        </div>
-        <div class="col-6">
-            <button class="btn btn-primary btn-sm me-2" (click)="updateWallet('add')" *ngIf="actionType === 'add'">Add</button>
-            <button class="btn btn-success btn-sm me-2" (click)="updateWallet('deduct')" *ngIf="actionType === 'deduct'">Deduct</button>
-            <button class="btn btn-danger btn-sm" (click)="editMode = !editMode">Cancel</button>
-        </div>
-    </ng-container>
-    <div *ngIf="walletList.length > 0 && !editMode">
-        <div *ngFor="let wallet of walletList" class="cardDesign">
-            <div class="row">
-                <div class="col-sm-12 col-md-4 col-lg-3">
-                    <span class="labelText">Name : </span>{{wallet.customerName}}
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-3">
-                    <span class="labelText">Status : </span>{{wallet.status}}
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-3">
-                    <span class="labelText">Transaction Points : </span>{{wallet.transaction_points}}
-                </div>
-                <div class="col-sm-12 col-md-4 col-lg-3">
-                    <span class="labelText">Earlier Wallet Balance : </span>{{wallet.wallet_balance}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12 col-md-4 col-lg-3">
-                    <span class="labelText"> Transaction Type : </span>{{wallet.transactionType}}
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-3">
-                    <span class="labelText">Credited On : </span>{{wallet.created_at | date: 'd/M/yy'}}
-                </div>
-                <div class="col-sm-12 col-md-6 col-lg-6">
-                    <span class="labelText">Remark : </span>{{wallet.remark}}
-                </div>
-            </div>
-        </div>
-        <button  type="button" class="btn btn-success btn-sm"
-        (click)="getMore()">Load More</button>    
+<div class="customer-wallet pb-4">
 
-        <div class="center" *ngIf="walletList.length === 0 && !editMode">
-            No Records Found
+    <!-- Balance & Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card p-4 shadow-sm h-100">
+                <div class="d-flex flex-column justify-content-between h-100">
+                    <div>
+                        <h5 class="card-title text-muted mb-1">Current Wallet Balance</h5>
+                        <h2 class="fw-bold text-success mb-0" *ngIf="walletDetails?.wallet_balance; else zeroBal">
+                            {{ walletDetails.wallet_balance | currency:'INR' }}
+                        </h2>
+                        <ng-template #zeroBal>
+                            <h2 class="fw-bold text-muted mb-0">₹0.00</h2>
+                        </ng-template>
+                    </div>
+                    <div class="pt-3 d-flex gap-2">
+                        <button mat-flat-button color="primary" (click)="openTransactionDialog('add')">
+                            <mat-icon>add</mat-icon> Add Money
+                        </button>
+                        <button mat-stroked-button color="warn" (click)="openTransactionDialog('deduct')">
+                            <mat-icon>remove</mat-icon> Deduct Money
+                        </button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
+
+    <!-- Filters -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body py-2">
+            <div class="d-flex align-items-center gap-3">
+                <span class="text-muted small fw-bold text-uppercase">Filter By Wallet Type:</span>
+                <mat-chip-listbox aria-label="Wallet Type Filter" [(ngModel)]="selectedWalletType"
+                    (ngModelChange)="onFilterChange()">
+                    <mat-chip-option *ngFor="let type of walletTypeFilterList" [value]="type.value"
+                        [selected]="selectedWalletType === type.value">
+                        {{ type.viewValue }}
+                    </mat-chip-option>
+                </mat-chip-listbox>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction List -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h5 class="card-title mb-3">Transaction History</h5>
+
+            <div *ngFor="let tx of walletList" class="transaction-card p-3 mb-2 rounded bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Wallet Type Chip -->
+                        <span class="status-chip" [ngClass]="getWalletTypeColorClass(tx.walletType)"
+                            *ngIf="tx.walletType">
+                            {{ tx.walletType | titlecase }}
+                        </span>
+                        <small class="text-muted">{{ tx.created_at | date:'MMM d, y, h:mm a' }}</small>
+                    </div>
+
+                    <div [ngClass]="{'text-success': getTxnTypeColorClass(tx.transactionType) === 'green', 'text-danger': getTxnTypeColorClass(tx.transactionType) === 'red'}"
+                        class="fw-bold fs-5">
+                        {{ tx.transaction_points | currency:'INR' }}
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-2 border-top pt-2">
+                    <div class="col-12 col-md-6" *ngIf="tx.remark">
+                        <div class="detail-label">Remark</div>
+                        <div class="detail-value text-muted small">{{ tx.remark }}</div>
+                    </div>
+                    <div class="col-6 col-md-3" *ngIf="tx.transactionType">
+                        <div class="detail-label">Txn Type</div>
+                        <div class="detail-value">
+                            <span class="status-chip" [ngClass]="getTxnTypeChipColor(tx.transactionType)">
+                                {{ tx.transactionType }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" *ngIf="tx.wallet_balance">
+                        <div class="detail-label">Previous Balance</div>
+                        <div class="detail-value text-muted small">{{ tx.wallet_balance | currency:'INR' }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="walletList.length === 0" class="text-center py-5 text-muted">
+                <mat-icon class="mb-2"
+                    style="font-size: 48px; width: 48px; height: 48px; opacity: 0.5;">account_balance_wallet</mat-icon>
+                <p>No transactions found</p>
+            </div>
+
+            <!-- Paginator -->
+            <mat-paginator [length]="estimatedTotal" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+                (page)="onPageChange($event)" aria-label="Select page">
+            </mat-paginator>
+
+        </div>
+    </div>
+
 </div>

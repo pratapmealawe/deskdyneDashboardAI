@@ -1,0 +1,14 @@
+.image-container {
+    max-height: 60vh;
+    overflow: auto;
+    text-align: center;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 4px;
+
+    img {
+        max-width: 100%;
+        display: block;
+        margin: 0 auto;
+    }
+}

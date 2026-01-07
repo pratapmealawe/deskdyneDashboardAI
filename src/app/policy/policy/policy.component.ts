@@ -29,7 +29,7 @@ export class PolicyComponent implements OnInit {
     private runtimeStorageService: RuntimeStorageService,
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -103,11 +103,11 @@ export class PolicyComponent implements OnInit {
 
   async confirmDelete(id: any): Promise<void> {
     try {
-      this.confirmationModalService.modal(
-        'Are you sure, you want to delete this Policy?',
-        () => this.deletePolicy(id),
-        this
-      );
+      this.confirmationModalService.modal({
+        msg: 'Are you sure you want to delete this Policy?',
+        callback: () => this.deletePolicy(id), // Modified to pass 'id' correctly
+        context: this
+      });
     } catch (e) {
       console.log('error while Deleting Policy ', e);
     }

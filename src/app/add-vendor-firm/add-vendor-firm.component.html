@@ -10,9 +10,9 @@
             </div>
 
             <!-- Validity Badge -->
-            <div class="status-badge" [ngClass]="form.valid ? 'valid' : 'invalid'">
-                <mat-icon>{{ form.valid ? 'check_circle' : 'error' }}</mat-icon>
-                <span>{{ form.valid ? 'Valid' : 'Invalid' }}</span>
+            <div class="status-badge" [ngClass]="isFormValid ? 'valid' : 'invalid'">
+                <mat-icon>{{ isFormValid ? 'check_circle' : 'error' }}</mat-icon>
+                <span>{{ isFormValid ? 'Valid' : 'Invalid' }}</span>
             </div>
         </div>
     </div>
@@ -32,7 +32,7 @@
                             <div class="col-12 col-md-6">
                                 <mat-form-field appearance="outline" class="w-100">
                                     <mat-label>Vendor Firm Name</mat-label>
-                                    <input matInput formControlName="vendorFirmName" appOnlyAlpha />
+                                    <input matInput formControlName="vendorFirmName" />
                                     <mat-error *ngIf="hasError(form,'vendorFirmName','required')">Required</mat-error>
                                     <mat-error *ngIf="hasError(form,'vendorFirmName','pattern')">Invalid
                                         format</mat-error>
@@ -267,12 +267,12 @@
     <div class="action-bar">
         <!-- Update Button -->
         <button mat-raised-button *ngIf="showUpdate" (click)="submit('update')" color="primary" class="px-5"
-            [disabled]="!form.valid">
+            [disabled]="!isFormValid">
             Update Vendor Firm
         </button>
         <!-- Submit Button -->
         <button mat-raised-button *ngIf="!showUpdate" (click)="submit()" color="primary" class="px-5"
-            [disabled]="!form.valid">
+            [disabled]="!isFormValid">
             Add Vendor Firm
         </button>
     </div>

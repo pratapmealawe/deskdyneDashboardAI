@@ -1,5 +1,27 @@
-.bgpadding1 {
-  padding: 16px;
+@import '/src/styles.scss';
+
+.vendor-header {
+  @include responsive-header;
+  background-color: transparent;
+}
+
+.header-actions {
+  @include responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
+
+  .input-wrapper {
+    min-width: 200px;
+
+    @media(max-width: 768px) {
+      width: 100%;
+      display: block !important;
+    }
+  }
+}
+
+.search-input {
+  @include mat-form-field-responsive();
 }
 
 .filter-card {
@@ -14,19 +36,18 @@
 }
 
 .feedback-card {
-  border-radius: 12px;
+  @include card-design($white);
   padding: 4px 8px;
 }
 
 .labelText {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #757575;
+  @include labelText;
+  color: $primary-offset-color2;
 }
 
 .labelData {
-  font-size: 0.95rem;
-  color: #212121;
+  @include labelData;
+  color: $textPrimary;
   word-break: break-word;
 }
 
@@ -37,7 +58,7 @@
 }
 
 .ack-edit {
-  border-top: 1px solid #eee;
+  border-top: 1px solid $border-color;
   padding-top: 8px;
 }
 

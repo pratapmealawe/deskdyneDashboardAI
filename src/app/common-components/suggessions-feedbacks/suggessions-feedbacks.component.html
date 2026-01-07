@@ -1,21 +1,22 @@
-<div class="bgpadding1">
-
-  <!-- Header + filters -->
-  <div class="d-flex flex-wrap align-items-center justify-content-between w-100 gap-3">
-    <h2 class="page-title mb-1">Feedback List</h2>
-
-    <div class="filter-inputs">
-      <mat-form-field appearance="outline" class="filter-field w-100">
-        <mat-label>Search</mat-label>
-        <input matInput [ngModel]="searchText" (input)="searchFilter($event)"
+<div class="vendor-header">
+  <div>
+    <h4 class="m-0 fw-semibold">Feedback List</h4>
+  </div>
+  <div class="header-actions">
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <input matInput type="text" [ngModel]="searchText" (input)="searchFilter($event)"
           placeholder="Search by name, phone, org, empId, order no..." />
-        <button *ngIf="searchText" matSuffix mat-icon-button (click)="clearSearch()">
-          <mat-icon>close</mat-icon>
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+          <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
     </div>
-  </div>
 
+  </div>
+</div>
+
+<div class="container-fluid">
   <!-- Feedback list -->
   <div *ngIf="pagedFeedback.length > 0; else noRecords">
     <div class="feedback-list">

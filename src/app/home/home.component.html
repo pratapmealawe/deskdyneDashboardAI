@@ -31,16 +31,16 @@
             <h3 class="gallery-title">Photo Gallery</h3>
         </div>
         <div class="col-12">
-            <div class="swiper-wrapper-container" *ngIf="carouselImages.length > 0; else noImages">
-                <ngb-carousel [interval]="3000" [showNavigationArrows]="true" [showNavigationIndicators]="true">
-                    <ng-template ngbSlide *ngFor="let imgUrl of carouselImages">
-                        <div class="picsum-img-wrapper" style="text-align: center;">
-                            <img [src]="imageUrl + imgUrl" alt="Gallery Image" class="gallery-image img-fluid"
-                                style="max-height: 400px; object-fit: cover;">
-                        </div>
-                    </ng-template>
-                </ngb-carousel>
-            </div>
+            <swiper-container #swiper navigation="false" pagination="false" pagination-clickable="false"
+                autoplay-delay="3000" space-between="20" slides-per-view="1" centered-slides="false"
+                breakpoints='{"640": {"slidesPerView": 2}, "1024": {"slidesPerView": 3}, "1280": {"slidesPerView": 4}}'>
+
+                <swiper-slide *ngFor="let imgUrl of carouselImages">
+                    <div class="slide-content">
+                        <img [src]="imageUrl + imgUrl" alt="Gallery Image" class="gallery-image">
+                    </div>
+                </swiper-slide>
+            </swiper-container>
             <ng-template #noImages>
                 <div class="text-center text-muted p-5 bg-light rounded">
                     <p>Loading gallery images...</p>
