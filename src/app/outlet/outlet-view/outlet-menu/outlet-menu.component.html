@@ -2,21 +2,21 @@
 
   <!-- TOP ACTIONS -->
   <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
-    <button mat-raised-button color="primary" *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
-      Add Menu
+    <button class="btn-add" mat-flat-button *ngIf="true || btnPolicy?.addMenu" (click)="open(); resetValues()">
+      <mat-icon>add</mat-icon> Add Menu
     </button>
 
     <div class="d-flex align-items-center gap-2 flex-wrap">
-      <button mat-stroked-button color="primary" (click)="openMenu()">
-        Add Master Menu
+      <button class="btn-add" mat-stroked-button (click)="openMenu()">
+        <mat-icon>playlist_add</mat-icon> Add Master Menu
       </button>
 
-      <button mat-stroked-button color="primary" (click)="openOutlet()">
-        Copy Menu
+      <button class="btn-import" mat-stroked-button (click)="openOutlet()">
+        <mat-icon>content_copy</mat-icon> Copy Menu
       </button>
 
-      <button mat-stroked-button color="primary" (click)="excelExport()">
-        Export Excel
+      <button class="btn-export-excel" mat-stroked-button (click)="excelExport()">
+        <mat-icon>file_download</mat-icon> Export Excel
       </button>
     </div>
   </div>
@@ -93,9 +93,9 @@
 
                     <!-- Desktop Actions (moved to top right) -->
                     <div class="d-none d-md-flex gap-1">
-                      <mat-icon *ngIf="true || btnPolicy?.editMenu" color="primary" class="small-icon-btn"
-                        (click)="edit(item, i)" matTooltip="Edit item">edit</mat-icon>
-                      <mat-icon *ngIf="true || btnPolicy?.deleteMenu" color="warn" class="small-icon-btn"
+                      <mat-icon *ngIf="true || btnPolicy?.editMenu" class="action-icon edit" (click)="edit(item, i)"
+                        matTooltip="Edit item">edit</mat-icon>
+                      <mat-icon *ngIf="true || btnPolicy?.deleteMenu" class="action-icon delete"
                         (click)="showPopup(item, i)" matTooltip="Delete item">delete</mat-icon>
                     </div>
                   </div>

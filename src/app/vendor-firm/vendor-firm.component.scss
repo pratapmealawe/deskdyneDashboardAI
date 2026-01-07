@@ -22,6 +22,8 @@
 
 .search-input {
   @include mat-form-field-responsive();
+  background-color: white;
+  border-radius: 10px;
 }
 
 .cardDesign {

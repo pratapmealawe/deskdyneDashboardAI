@@ -24,7 +24,7 @@
     <!-- INCIDENT LIST -->
     <div class="incident-page">
       <div class="d-flex gap-2 mt-3 justify-content-end">
-        <button mat-raised-button color="primary" *ngIf="
+        <button class="btn-add" mat-raised-button color="primary" *ngIf="
             orgAdmin?.role === 'ORGADMIN' &&
             isFilterApplied &&
             filterObj?.cafeteria_id
@@ -69,7 +69,7 @@
               <div class="col-12 col-md-3">
                 <div class="labelText mb-1">Change Status</div>
                 <div class="statusBtn">
-                  <button mat-stroked-button color="primary" [disabled]="orgAdmin?.role === 'ORGADMIN'"
+                  <button class="btn-edit" mat-stroked-button color="primary" [disabled]="orgAdmin?.role === 'ORGADMIN'"
                     *ngIf="incident.status !== 'resolved'" (click)="
                     openChangeStatus(
                       incident,
@@ -89,7 +89,7 @@
                     }}
                   </button>
 
-                  <button mat-stroked-button color="warn" [disabled]="orgAdmin?.role === 'ORGADMIN'"
+                  <button class="btn-delete" mat-stroked-button color="warn" [disabled]="orgAdmin?.role === 'ORGADMIN'"
                     *ngIf="incident.status === 'inReview' || incident.status === 'resolved'"
                     (click)="openChangeStatus(incident, 'blocked')">
                     {{ 'blocked' | titlecase }}

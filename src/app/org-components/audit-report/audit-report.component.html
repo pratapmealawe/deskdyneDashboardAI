@@ -39,16 +39,16 @@
             </div>
 
             <div class="col-12 col-md-3">
-                <button mat-raised-button color="primary" (click)="filterSubmitted()"
-                    [disabled]="!selectedOrgId || !selectedCafeId || !selectedDate">
-                    Submit
+                <button class="btn-view" mat-raised-button color="primary" (click)="filterSubmitted()"
+                    [disabled]="!selectedDate">
+                    <mat-icon>filter_list</mat-icon> Filter
                 </button>
             </div>
         </div>
     </mat-card>
 
     <div class="d-flex justify-content-end mt-3" *ngIf="this.orgAdmin?.role !== 'ORGADMIN'">
-        <button mat-raised-button color="primary" (click)="openCreateReportDialog()">
+        <button class="btn-add" mat-raised-button color="primary" (click)="openCreateReportDialog()">
             <mat-icon>add</mat-icon> Create New Report
         </button>
     </div>

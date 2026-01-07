@@ -103,8 +103,8 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <input matInput type="number" placeholder="0-100" formControlName="subsidy" appOnlyNumber />
                   </mat-form-field>
-                  <button mat-stroked-button color="primary" type="button" (click)="updateOrglevelSubsidy()"
-                    style="height: 56px;">Update</button>
+                  <button class="btn-update" mat-raised-button color="primary" type="button"
+                    (click)="updateOrglevelSubsidy()" style="height: 56px;"><mat-icon>update</mat-icon> Update</button>
                 </div>
               </div>
             </div>
@@ -306,16 +306,16 @@
 
     <!-- STICKY ACTION BAR -->
     <div class="action-bar">
-      <button mat-stroked-button color="warn" type="button" (click)="back()"
-        matTooltip="Discard Changes">Cancel</button>
+      <button class="btn-delete" mat-stroked-button color="warn" type="button" (click)="back()"
+        matTooltip="Discard Changes"><mat-icon>cancel</mat-icon> Cancel</button>
 
-      <button mat-raised-button color="primary" type="button" (click)="updateOrg()"
+      <button class="btn-update" mat-raised-button color="primary" type="button" (click)="updateOrg()"
         [disabled]="form.invalid || poc.length === 0 || cafeteria.length === 0" matTooltip="Save Changes"
         *ngIf="showUpdate && ((btnPolicy?.editOrganization) ?? true)">
         <mat-icon>save</mat-icon> Update Organization
       </button>
 
-      <button mat-raised-button color="primary" type="button" (click)="addOrg()"
+      <button class="btn-add" mat-raised-button color="primary" type="button" (click)="addOrg()"
         [disabled]="form.invalid || poc.length === 0 || cafeteria.length === 0" matTooltip="Create Organization"
         *ngIf="!showUpdate && ((btnPolicy?.addOrganization) ?? true)">
         <mat-icon>check_circle</mat-icon> Create Organization

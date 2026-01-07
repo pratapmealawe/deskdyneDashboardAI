@@ -36,12 +36,9 @@
 
         <!-- Fetch button -->
         <div class="col-md-4">
-            <button mat-raised-button color="primary" class="w-100" (click)="fetchData()"
-                [disabled]="dateGroup.invalid || loading">
-                <ng-container *ngIf="!loading; else loadingTpl">Fetch Data</ng-container>
-                <ng-template #loadingTpl>
-                    <mat-icon class="me-1 spin">sync</mat-icon> Loading...
-                </ng-template>
+            <button class="btn-view" mat-raised-button color="primary" class="w-100" (click)="fetchData()"
+                [disabled]="loading">
+                <mat-icon>refresh</mat-icon> Fetch
             </button>
         </div>
     </div>

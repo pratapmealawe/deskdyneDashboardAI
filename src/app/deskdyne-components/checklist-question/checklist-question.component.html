@@ -9,10 +9,7 @@
       <mat-form-field appearance="outline" class="w-100 search-input">
         <mat-select [formControl]="typeControl" placeholder="All Types">
           <mat-option value="">All Types</mat-option>
-          <mat-option
-            *ngFor="let type of checklistTypes"
-            [value]="type"
-          >
+          <mat-option *ngFor="let type of checklistTypes" [value]="type">
             {{ type }}
           </mat-option>
         </mat-select>
@@ -22,30 +19,16 @@
     <!-- SEARCH FIELD -->
     <div class="input-wrapper">
       <mat-form-field appearance="outline" class="w-100 search-input">
-        <input
-          matInput
-          type="text"
-          placeholder="Search question..."
-          [formControl]="searchControl"
-        />
-        <button
-          mat-icon-button
-          matSuffix
-          aria-label="Search"
-          class="search-icon"
-        >
+        <input matInput type="text" placeholder="Search question..." [formControl]="searchControl" />
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
     </div>
 
     <!-- ADD BUTTON -->
-    <button
-      mat-raised-button
-      color="primary"
-      (click)="openQuestionDialog('add')"
-      *ngIf="true || btnPolicy?.addChecklist"
-    >
+    <button class="btn-add" mat-raised-button color="primary" (click)="openQuestionDialog('add')"
+      *ngIf="true || btnPolicy?.addChecklist">
       <mat-icon>add_circle</mat-icon>
       Add Checklist Question
     </button>
@@ -53,10 +36,7 @@
 </div>
 
 <div class="container-fluid">
-  <div
-    *ngIf="filteredChecklistQuestions && filteredChecklistQuestions.length === 0"
-    class="center mt-5"
-  >
+  <div *ngIf="filteredChecklistQuestions && filteredChecklistQuestions.length === 0" class="center mt-5">
     No Checklist Question Found
   </div>
 
@@ -82,23 +62,13 @@
           </div>
 
           <div class="col-md-1 d-flex align-items-center gap-3 justify-content-end">
-            <mat-icon
-              *ngIf="true || btnPolicy?.editChecklist"
-              (click)="openQuestionDialog('edit', Question)"
-              color="primary"
-              class="edit"
-              matTooltip="Edit"
-            >
+            <mat-icon *ngIf="true || btnPolicy?.editChecklist" (click)="openQuestionDialog('edit', Question)"
+              class="action-icon edit" matTooltip="Edit">
               edit
             </mat-icon>
 
-            <mat-icon
-              *ngIf="true || btnPolicy?.deleteChecklist"
-              (click)="showPopup(Question)"
-              color="warn"
-              class="edit"
-              matTooltip="Delete"
-            >
+            <mat-icon *ngIf="true || btnPolicy?.deleteChecklist" (click)="showPopup(Question)"
+              class="action-icon delete" matTooltip="Delete">
               delete
             </mat-icon>
           </div>
@@ -107,14 +77,8 @@
     </div>
 
     <div class="paginator">
-      <mat-paginator
-        [length]="filteredChecklistQuestions.length || 0"
-        [pageSize]="pageSize"
-        [pageIndex]="pageIndex"
-        [pageSizeOptions]="[10, 20, 50, 100]"
-        (page)="onPageChange($event)"
-        aria-label="Select page"
-      >
+      <mat-paginator [length]="filteredChecklistQuestions.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPageChange($event)" aria-label="Select page">
       </mat-paginator>
     </div>
   </div>

@@ -164,11 +164,11 @@
 
   <!-- STICKY ACTION BAR -->
   <div class="action-bar">
-    <button mat-stroked-button color="warn" type="button" (click)="onCancel()">
-      Cancel
+    <button class="btn-delete" mat-stroked-button color="warn" type="button" (click)="onCancel()">
+      <mat-icon>cancel</mat-icon> Cancel
     </button>
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || submitting">
-      {{ editMode ? 'Update Admin' : 'Create Admin' }}
+    <button class="btn-add" mat-raised-button color="primary" type="submit" [disabled]="form.invalid || submitting">
+      <mat-icon>check_circle</mat-icon> {{ editMode ? 'Update Admin' : 'Create Admin' }}
     </button>
   </div>
 </form>

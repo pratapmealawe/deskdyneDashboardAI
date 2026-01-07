@@ -27,6 +27,8 @@
 
 .search-input {
     @include mixin.mat-form-field-responsive();
+    background-color: white;
+    border-radius: 10px;
 }
 
 // Keyframes
