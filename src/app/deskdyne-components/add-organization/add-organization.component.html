@@ -9,6 +9,14 @@
       <div class="heading">
         {{ showUpdate ? 'Edit Organization' : 'Add New Organization' }}
       </div>
+
+      <!-- Validity Badge -->
+      <div class="status-badge"
+        [ngClass]="(form.valid && poc.length > 0 && cafeteria.length > 0) ? 'valid' : 'invalid'">
+        <mat-icon>{{ (form.valid && poc.length > 0 && cafeteria.length > 0) ? 'check_circle' : 'error'
+          }}</mat-icon>
+        <span>{{ (form.valid && poc.length > 0 && cafeteria.length > 0) ? 'Valid' : 'Invalid' }}</span>
+      </div>
     </div>
   </div>
 

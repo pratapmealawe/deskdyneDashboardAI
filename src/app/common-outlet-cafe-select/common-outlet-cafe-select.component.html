@@ -4,7 +4,7 @@
         <mat-form-field appearance="outline" class="w-100">
             <mat-label>Organization</mat-label>
 
-            <mat-select [disabled]="config?.disableOrg || loadingOrgs" [value]="selected.orgId"
+            <mat-select [disabled]="config.disableOrg || loadingOrgs" [value]="selected.orgId"
                 (valueChange)="onOrgChange($event)">
                 <mat-option [value]="''" disabled>Select Organization</mat-option>
                 <mat-option *ngFor="let o of orglist" [value]="o._id">
@@ -21,7 +21,7 @@
         <mat-form-field appearance="outline" class="w-100">
             <mat-label>Cafeteria</mat-label>
 
-            <mat-select [disabled]="config?.disableCafe || !orgDetails" [value]="selected.cafeId"
+            <mat-select [disabled]="config.disableCafe || !orgDetails" [value]="selected.cafeId"
                 (valueChange)="onCafeChange($event)">
                 <mat-option [value]="''" disabled>Select Cafeteria</mat-option>
                 <mat-option *ngFor="let c of cafeList" [value]="c.cafeteria_id">
@@ -32,11 +32,11 @@
     </div>
 
     <!-- ===== Outlet (only in outlet mode) ===== -->
-    <div class="col-12 col-md-3" *ngIf="config?.mode === 'outlet'">
+    <div class="col-12 col-md-3" *ngIf="config.mode === 'outlet'">
         <mat-form-field appearance="outline" class="w-100">
             <mat-label>Outlet</mat-label>
 
-            <mat-select [disabled]="config?.disableOutlet || !selected.cafeId || loadingOutlets"
+            <mat-select [disabled]="config.disableOutlet || !selected.cafeId || loadingOutlets"
                 [value]="selected.outletId" (valueChange)="onOutletChange($event)">
                 <mat-option [value]="''" disabled>Select Outlet</mat-option>
                 <mat-option *ngFor="let o of outletList" [value]="o._id">
@@ -49,11 +49,11 @@
     </div>
 
     <!-- ===== Date Range (optional) ===== -->
-    <div class="col-12 col-md-3" *ngIf="config?.showDateRange">
+    <div class="col-12 col-md-3" *ngIf="config.showDateRange">
         <form [formGroup]="dateForm">
             <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Date range</mat-label>
-                <mat-date-range-input [rangePicker]="picker" [min]="config?.minDate" [max]="config?.maxDate">
+                <mat-date-range-input [rangePicker]="picker" [min]="config.minDate" [max]="config.maxDate">
                     <input matStartDate placeholder="From" formControlName="dateFrom" />
                     <input matEndDate placeholder="To" formControlName="dateTo" />
                 </mat-date-range-input>

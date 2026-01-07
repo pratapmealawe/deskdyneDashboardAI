@@ -132,7 +132,7 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         font-weight: 700;
-        color: $text-muted;
+        color: $primary-offset-color2;
       }
 
       .btn-group {
@@ -250,7 +250,7 @@
           left: 1rem;
           top: 50%;
           transform: translateY(-50%);
-          color: $text-muted;
+          color: $primary-offset-color2;
           pointer-events: none;
         }
 
@@ -279,7 +279,7 @@
           background: $white;
           border: 1px solid $border-color;
           border-radius: 50%;
-          color: $text-muted;
+          color: $primary-offset-color2;
           cursor: pointer;
           padding: 0;
           width: 20px;
@@ -329,7 +329,7 @@
       top: 0;
       bottom: 0;
       width: 4px;
-      background: $text-muted;
+      background: $primary-offset-color2;
     }
 
     &:hover {
@@ -354,12 +354,12 @@
     &.type-info,
     &.status-info {
       &::before {
-        background: $color-primary;
+        background: $primary-color;
       }
 
       .method-badge {
-        background: rgba($color-primary, 0.1);
-        color: darken($color-primary, 10%);
+        background: rgba($primary-color, 0.1);
+        color: darken($primary-color, 10%);
       }
     }
 
@@ -372,7 +372,7 @@
     .label {
       font-size: 0.7rem;
       text-transform: uppercase;
-      color: $text-muted;
+      color: $primary-offset-color2;
       font-weight: 700;
     }
 
@@ -422,7 +422,7 @@
           align-items: center;
           gap: 0.5rem;
           font-size: 0.85rem;
-          color: $text-muted;
+          color: $primary-offset-color2;
           font-family: 'Monaco', monospace;
 
           i {
@@ -495,7 +495,7 @@
 
   i {
     font-size: 3rem;
-    color: $text-muted;
+    color: $primary-offset-color2;
     margin-bottom: 1rem;
     display: block;
   }
@@ -508,7 +508,7 @@
   }
 
   p {
-    color: $text-muted;
+    color: $primary-offset-color2;
   }
 }
 
@@ -552,7 +552,7 @@
       border: none;
       background: transparent;
       font-size: 1.5rem;
-      color: $text-muted;
+      color: $primary-offset-color2;
       transition: color 0.2s;
 
       &:hover {
