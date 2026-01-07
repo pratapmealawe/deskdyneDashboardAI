@@ -27,6 +27,8 @@
 
 .search-input {
     @include mixin.mat-form-field-responsive();
+    background-color: white;
+    border-radius: 10px;
 }
 
 // Keyframes
@@ -61,9 +63,9 @@
 
 .stat-card {
     background: #fff;
-    border-radius: 12px;
+    border-radius: color.$border-radius-lg;
     padding: 1.25rem;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    box-shadow: color.$box-shadow-card;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -73,7 +75,7 @@
 
     &:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+        box-shadow: color.$box-shadow-card-hover;
     }
 
     &.active {
@@ -102,23 +104,23 @@
     }
 
     &.warning-bg {
-        background-color: #fff7e6;
-        color: #faad14;
+        background-color: color.$color-warning-bg;
+        color: color.$color-warning;
     }
 
     &.error-bg {
-        background-color: #fff1f0;
-        color: #ff4d4f;
+        background-color: color.$color-error-bg;
+        color: color.$color-error;
     }
 
     &.primary-bg {
-        background-color: #e6f7ff;
-        color: #1890ff;
+        background-color: color.$color-info-bg;
+        color: color.$color-info;
     }
 
     &.success-bg {
-        background-color: #f6ffed;
-        color: #52c41a;
+        background-color: color.$color-success-bg;
+        color: color.$color-success;
     }
 }
 
@@ -242,51 +244,7 @@
     border-radius: 50%;
 }
 
-.status-chip {
-    display: inline-block;
-    padding: 4px 12px;
-    border-radius: 100px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-transform: capitalize;
-    letter-spacing: 0.3px;
 
-    &.paymentInprogress {
-        background: #fff7e6;
-        color: #d48806;
-        border: 1px solid #ffe58f;
-    }
-
-    &.paymentFailed {
-        background: #fff1f0;
-        color: #cf1322;
-        border: 1px solid #ffccc7;
-    }
-
-    &.placed {
-        background: #e0e7ff;
-        color: #3730a3;
-        border: 1px solid #c7d2fe;
-    }
-
-    &.completed {
-        background: #f6ffed;
-        color: #389e0d;
-        border: 1px solid #b7eb8f;
-    }
-
-    &.cancelled {
-        background: #fff1f0;
-        color: #cf1322;
-        border: 1px solid #ffccc7;
-    }
-
-    &.readyOrder {
-        background: #e6f7ff;
-        color: #096dd9;
-        border: 1px solid #91d5ff;
-    }
-}
 
 .item-list {
     max-height: 180px;

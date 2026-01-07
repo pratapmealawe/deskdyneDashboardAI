@@ -38,7 +38,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   @ViewChild('masterMenu') masterMenu!: TemplateRef<any>;
   @ViewChild('selectOutletModal') selectOutletModal!: TemplateRef<any>;
 
-  @ViewChild(MatPaginator) menuPaginator!: MatPaginator;
+  // @ViewChild(MatPaginator) menuPaginator!: MatPaginator; // Removed
 
   categoryList = categoryList;
 
@@ -58,6 +58,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   // outlet copy
   selectedOutlet: any = null;
   outletMenuList: any[] = [];
+  filteredOutletMenuList: any[] = [];
+  searchTermCopyMenu: string = '';
 
   // master menu
   filteredMasterMenuList: any[] = [];
@@ -85,9 +87,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
 
-  // pagination
-  menuPageSize = 10;
-  menuPageIndex = 0;
+  // pagination removed
+
 
   constructor(
     private fb: FormBuilder,
@@ -125,7 +126,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       this.showCard = false;
     }
 
-    this.menuPageIndex = 0;
     this.applyMenuFilters();
   }
 
@@ -171,8 +171,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
 
-    this.menuPageIndex = 0;
-    this.updateMenuPagination();
+    // Show all items (no pagination)
+    this.groupedMenuList = this.buildGroupedMenu(this.filteredMenuList);
   }
 
   private buildGroupedMenu(list: any[]) {
@@ -191,18 +191,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     }));
   }
 
-  updateMenuPagination() {
-    const start = this.menuPageIndex * this.menuPageSize;
-    const end = start + this.menuPageSize;
-    const slice = this.filteredMenuList.slice(start, end);
-    this.groupedMenuList = this.buildGroupedMenu(slice);
-  }
+  // Pagination methods removed
 
-  onMenuPageChange(event: PageEvent) {
-    this.menuPageIndex = event.pageIndex;
-    this.menuPageSize = event.pageSize;
-    this.updateMenuPagination();
-  }
 
   onOutletChange() {
     if (this.selectedOutlet) {
@@ -210,6 +200,19 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     } else {
       this.outletMenuList = [];
     }
+    this.applyCopyMenuFilter();
+  }
+
+  applyCopyMenuFilter() {
+    let temp = this.outletMenuList || [];
+    if (this.searchTermCopyMenu) {
+      const term = this.searchTermCopyMenu.toLowerCase();
+      temp = temp.filter((item: any) =>
+        (item.itemName || '').toLowerCase().includes(term) ||
+        (item.description || '').toLowerCase().includes(term)
+      );
+    }
+    this.filteredOutletMenuList = temp;
   }
 
   // NUMBER VALIDATIONS
@@ -411,6 +414,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.imageReplaced = true;
     this.uploadStatus = false;
     this.imageUrl = this.selectedMasterItem?.imageUrl;
+
+    console.log(this.transformedMenuItems);
 
     try {
       const res = await this.apiMainService.addOutletList(
@@ -661,10 +666,10 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     const menu = this.menuInfo;
     const event = this.eventInfo;
 
-    menu.isActive = event.target.checked;
+    menu.isActive = event.checked;
 
     const menuObj = {
-      isActive: event.target.checked,
+      isActive: event.checked,
     };
 
     await this.apiMainService.changeMenuActivation(
@@ -687,7 +692,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.menuInfo = menu;
     this.eventInfo = event;
     this.confirmationModalService.modal({
-      msg: `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'
+      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'
         } ${menu.itemName} Item`,
       callback: this.changeMenuActivation,
       context: this

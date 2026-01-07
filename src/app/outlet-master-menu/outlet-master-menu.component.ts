@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
@@ -23,7 +22,8 @@ export class OutletMasterMenuComponent implements OnInit {
   @ViewChild('content') content: any;
   @ViewChild('comboContent') comboContent: any;
   categorySelected: boolean = false;
-  form: any;
+  // form: any;
+  form!: import('@angular/forms').FormGroup; // Fix type for better intellisense if needed
   selectedCategory: any;
   subcategoryList: any = [];
   uploadedImageFile: any;
@@ -41,6 +41,9 @@ export class OutletMasterMenuComponent implements OnInit {
   menuInfo: any;
   eventInfo: any;
   filteredMenuList: any[] = []
+  masterMenuList: any[] = []; // Store original list
+  searchTerm: string = '';
+  selectedCategoryFilter: string = '';
   mealTimeList = [
     {
       "mealType": "Fullday",
@@ -75,7 +78,6 @@ export class OutletMasterMenuComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
@@ -105,6 +107,35 @@ export class OutletMasterMenuComponent implements OnInit {
       this.showCard = true;
     }
 
+    // Keep a copy of full list
+    if (!this.masterMenuList.length && this.filteredMenuList.length) {
+      this.masterMenuList = [...this.filteredMenuList];
+    }
+
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    let temp = [...this.masterMenuList];
+
+    // 1. Text Search
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      temp = temp.filter(item =>
+        (item.itemName && item.itemName.toLowerCase().includes(term)) ||
+        (item.description && item.description.toLowerCase().includes(term))
+      );
+    }
+
+    // 2. Category Filter
+    if (this.selectedCategoryFilter && this.selectedCategoryFilter !== 'all') {
+      temp = temp.filter(item => item.category === this.selectedCategoryFilter);
+    }
+
+    // 3. Sort
+    this.filteredMenuList = temp.sort((a: any, b: any) => a.precedence - b.precedence);
+
+    this.showCard = this.filteredMenuList.length > 0;
     this.groupItemsByCategory();
   }
 
@@ -494,21 +525,21 @@ export class OutletMasterMenuComponent implements OnInit {
   }
 
   open() {
-    this.modalService
-      .open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
-      .result.then(
-        (result) => {
-          if (result === 'add') {
-            this.submit();
-          } else if (result === 'update') {
-            this.updateMenu(this.menuId);
-          }
-          this.resetValues();
-        },
-        (reason) => {
-          console.log(`Model Dismissed`);
-        }
-      );
+    const dialogRef = this.dialog.open(this.content, {
+      width: '90%',
+      maxWidth: '1000px',
+      disableClose: true,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === 'add') {
+        this.submit();
+      } else if (result === 'update') {
+        this.updateMenu(this.menuId);
+      }
+      this.resetValues();
+    });
   }
 
   showPopup(item: any, i: any) {
@@ -534,39 +565,43 @@ export class OutletMasterMenuComponent implements OnInit {
   }
 
   async changeMenuActivation() {
-    let menu = this.menuInfo;
-    let event = this.eventInfo;
-    menu.isActive = event.target.checked;
+    const menu = this.menuInfo;
+    const event = this.eventInfo;
+    menu.isActive = event.checked;
 
     const menuObj = {
-      isActive: event.target.checked,
+      isActive: event.checked,
     };
 
-    let outletMastermenu = await this.apiMainService.changeMasterMenuActivation(
-      menu._id,
-      menuObj
-    );
-    console.log(outletMastermenu);
-
+    try {
+      const outletMastermenu = await this.apiMainService.changeMasterMenuActivation(
+        menu._id,
+        menuObj
+      );
+      console.log(outletMastermenu);
+    } catch (error) {
+      console.log(error);
+      // Revert if API fails
+      menu.isActive = !event.checked;
+      event.source.checked = !event.checked;
+    }
   }
 
   showPopupForItemActivation(menu: any, event: any) {
     this.menuInfo = menu;
     this.eventInfo = event;
     this.confirmationModalService.modal({
-      msg: `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
+      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
       callback: this.changeMenuActivation,
       context: this,
     });
   }
 
   defineDescription() {
-    this.modalService
-      .open(this.comboContent, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'xl',
-      })
-      .result.then((result) => { });
+    this.dialog.open(this.comboContent, {
+      width: '90%',
+      maxWidth: '1000px',
+    }).afterClosed().subscribe(result => { });
   }
 
   comboout(event: any) {

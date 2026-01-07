@@ -17,19 +17,19 @@
                     </div>
 
                     <div class="btnDiv pt-3 d-flex gap-2 justify-content-center flex-wrap">
-                        <button mat-flat-button color="primary" *ngIf="vendorFirmInfo?.bank_details?.bankVerified"
-                            (click)="openTxnDialog('Transfer', 'wallet')" aria-label="Transfer Wallet Balance">
-                            Transfer Wallet Balance
+                        <button class="btn-import" mat-flat-button (click)="openTxnDialog('Transfer', 'wallet')"
+                            aria-label="Transfer Wallet Balance">
+                            <mat-icon>swap_horiz</mat-icon> Transfer Wallet Balance
                         </button>
 
-                        <button mat-flat-button color="primary" (click)="openTxnDialog('Credit')"
+                        <button class="btn-credit" mat-flat-button (click)="openTxnDialog('Credit')"
                             aria-label="Credit Wallet">
-                            Credit Wallet Balance
+                            <mat-icon>add</mat-icon> Credit Wallet Balance
                         </button>
 
-                        <button mat-stroked-button color="warn" [disabled]="!walletBalance || walletBalance <= 0"
+                        <button class="btn-debit" mat-stroked-button [disabled]="!walletBalance || walletBalance <= 0"
                             (click)="openTxnDialog('Debit')" aria-label="Debit amount (disabled when wallet is zero)">
-                            Debit Wallet Balance
+                            <mat-icon>remove_circle</mat-icon> Debit Wallet Balance
                         </button>
                     </div>
                 </div>
@@ -58,10 +58,10 @@
                     </div>
 
                     <div class="pt-3 d-flex justify-content-start">
-                        <button mat-flat-button color="primary" *ngIf="subsidyBalance > 0"
+                        <button class="btn-import" mat-flat-button *ngIf="subsidyBalance > 0"
                             [disabled]="!subsidyBalance || subsidyBalance <= 0"
                             (click)="openTxnDialog('Transfer', 'subsidy')" aria-label="Transfer subsidy to wallet">
-                            Transfer Subsidy To Wallet Balance
+                            <mat-icon>swap_horiz</mat-icon> Transfer Subsidy To Wallet Balance
                         </button>
                     </div>
                 </div>
@@ -90,10 +90,10 @@
                     </div>
 
                     <div class="pt-3 d-flex justify-content-start">
-                        <button mat-flat-button color="primary" *ngIf="dailyBalance > 0"
+                        <button class="btn-import" mat-flat-button *ngIf="dailyBalance > 0"
                             [disabled]="!dailyBalance || dailyBalance <= 0" (click)="openTxnDialog('Transfer', 'daily')"
                             aria-label="Transfer daily balance to wallet">
-                            Transfer Daily Balance To Wallet Balance
+                            <mat-icon>swap_horiz</mat-icon> Transfer Daily Balance To Wallet Balance
                         </button>
                     </div>
                 </div>

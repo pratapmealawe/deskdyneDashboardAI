@@ -472,7 +472,7 @@ export class ApiMainService {
   }
 
   getAllIncidents() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllIncidents);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllIncidents, null, null, true);
   }
 
   getIncidentsByDateAndFilters(data: any) {

@@ -1,13 +1,12 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
 .vendor-header {
-  @include mixin.responsive-header;
+  @include responsive-header;
   background-color: transparent;
 }
 
 .header-actions {
-  @include mixin.responsive-flex-wrapper(1rem);
+  @include responsive-flex-wrapper(1rem);
   flex-grow: 1;
   justify-content: flex-end;
 
@@ -22,20 +21,22 @@
 }
 
 .search-input {
-  @include mixin.mat-form-field-responsive();
+  @include mat-form-field-responsive();
+  background-color: white;
+  border-radius: 10px;
 }
 
 .cardDesign {
-  @include mixin.vertical-line();
-  @include mixin.card-design(color.$primary-offset-color1);
+  @include vertical-line();
+  @include card-design($primary-offset-color1);
 }
 
 .labelText {
-  @include mixin.labelText;
+  @include labelText;
 }
 
 .labelData {
-  @include mixin.labelData;
+  @include labelData;
 }
 
 .edit {
@@ -53,18 +54,18 @@
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: $border-radius-lg;
   font-size: 11px;
   font-weight: 500;
 
   &.verified {
-    background-color: #e6f4ea;
-    color: #1e8e3e;
+    background-color: $color-success-bg;
+    color: $color-success;
   }
 
   &.unverified {
-    background-color: #fce8e6;
-    color: #d93025;
+    background-color: $color-error-bg;
+    color: $color-error;
   }
 
   mat-icon {

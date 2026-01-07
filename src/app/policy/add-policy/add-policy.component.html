@@ -85,12 +85,12 @@
 
   <!-- ACTION BUTTONS -->
   <div class="action-buttons">
-    <button mat-raised-button color="primary" *ngIf="!editMode" (click)="addPolicy()">
+    <button class="btn-add" mat-raised-button *ngIf="!editMode" (click)="addPolicy()">
       <mat-icon>add</mat-icon>
       Save
     </button>
 
-    <button mat-raised-button color="primary" *ngIf="editMode" (click)="updatePolicy()">
+    <button class="btn-update" mat-raised-button *ngIf="editMode" (click)="updatePolicy()">
       <mat-icon>system_update_alt</mat-icon>
       Update
     </button>

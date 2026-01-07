@@ -107,7 +107,7 @@
         <div class="modern-card mb-4">
           <div class="card-header">
             <h3><mat-icon>location_on</mat-icon> Addresses</h3>
-            <button mat-stroked-button color="primary" (click)="addAddress()"
+            <button class="btn-add" mat-flat-button (click)="addAddress()"
               [disabled]="!this.form.get('vendorId').value">
               <mat-icon>add</mat-icon> Add Address
             </button>
@@ -152,8 +152,7 @@
         <div class="modern-card mb-4">
           <div class="card-header">
             <h3><mat-icon>storefront</mat-icon> Outlets</h3>
-            <button mat-stroked-button color="primary" (click)="addOutlet()"
-              [disabled]="!this.form.get('vendorId').value">
+            <button class="btn-add" mat-flat-button (click)="addOutlet()" [disabled]="!this.form.get('vendorId').value">
               <mat-icon>add</mat-icon> Add Outlet
             </button>
           </div>
@@ -194,9 +193,9 @@
 
     <!-- STICKY ACTION BAR -->
     <div class="action-bar">
-      <button mat-raised-button color="primary" (click)="submit('update')" [disabled]="!isAddVendorValid()"
+      <button class="btn-update" mat-raised-button (click)="submit('update')" [disabled]="!isAddVendorValid()"
         *ngIf="showUpdate && (btnPolicy?.editVendor ?? true)">
-        Update Vendor
+        <mat-icon>update</mat-icon> Update Vendor
       </button>
 
       <button mat-raised-button color="primary" (click)="submit()" [disabled]="!isAddVendorValid()"
@@ -233,7 +232,9 @@
         </div>
       </div>
       <div class="d-flex justify-content-end mt-3">
-        <button mat-raised-button (click)="getSelectedOutlets()" color="primary">Add Selected</button>
+        <button class="btn-add" mat-raised-button (click)="getSelectedOutlets()" color="primary">
+          <mat-icon>add</mat-icon> Add Selected
+        </button>
       </div>
     </div>
     <ng-template #noOutlets>
@@ -275,7 +276,9 @@
         </div>
       </mat-radio-group>
       <div class="d-flex justify-content-end mt-3">
-        <button mat-raised-button color="primary" (click)="addSelectedAddress()">Add Selected</button>
+        <button class="btn-add" mat-raised-button color="primary" (click)="addSelectedAddress()">
+          <mat-icon>add</mat-icon> Add Selected
+        </button>
       </div>
     </div>
     <ng-template #noAddress>

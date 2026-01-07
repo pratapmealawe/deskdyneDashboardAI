@@ -1,21 +1,20 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
 /* Transaction Cards */
 .transaction-card {
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    border: 1px solid #e0e0e0;
+    border: 1px solid $border-color;
     position: relative;
 
     &:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+        box-shadow: $box-shadow-card-hover;
     }
 
     &.pending-neft-card {
-        border-left: 4px solid #f47c22 !important;
+        border-left: 4px solid $color-warning !important;
         /* Orange to match original pulsing, or stick to blue if preferred. Original was orange pulsate. */
-        background-color: #fdf6f0 !important;
+        background-color: $color-warning-bg !important;
         animation: pulsate-border 2s infinite;
     }
 }
@@ -40,41 +39,41 @@
     align-items: center;
     gap: 0.25rem;
     padding: 0.25rem 0.75rem;
-    border-radius: 50rem;
+    border-radius: $border-radius-pill;
     font-size: 0.75rem;
     font-weight: 600;
-    background-color: #f8f9fa; // Default gray
-    color: #6c757d;
+    background-color: $background-color; // Default gray
+    color: $primary-offset-color2;
     border: 1px solid transparent;
 
     &.green {
-        background-color: rgba(75, 223, 16, 0.1);
-        color: #4bdf10;
-        border-color: rgba(75, 223, 16, 0.2);
+        background-color: $color-success-bg;
+        color: $color-success;
+        border-color: $color-success-border;
     }
 
     &.orange {
-        background-color: rgba(244, 124, 34, 0.1);
-        color: #f47c22;
-        border-color: rgba(244, 124, 34, 0.2);
+        background-color: $color-warning-bg;
+        color: $color-warning;
+        border-color: $color-warning-border;
     }
 
     &.red {
-        background-color: rgba(255, 0, 0, 0.1);
-        color: red;
-        border-color: rgba(255, 0, 0, 0.2);
+        background-color: $color-error-bg;
+        color: $color-error;
+        border-color: $color-error-border;
     }
 
     &.primary2 {
-        background-color: rgba(185, 4, 28, 0.1);
-        color: #b9041c;
-        border-color: rgba(185, 4, 28, 0.2);
+        background-color: $color-error-bg;
+        color: $color-error;
+        border-color: $color-error-border;
     }
 }
 
 .detail-label {
     font-size: 0.75rem;
-    color: #888;
+    color: $primary-offset-color2;
     text-transform: uppercase;
     margin-bottom: 2px;
 }
@@ -82,7 +81,7 @@
 .detail-value {
     font-size: 0.9rem;
     font-weight: 500;
-    color: #333;
+    color: $textPrimary;
     word-break: break-all;
 }
 
@@ -90,8 +89,8 @@
 .skeleton {
     height: 100px;
     margin-bottom: 1rem;
-    background: #f0f0f0;
-    border-radius: 8px;
+    background: $background-color;
+    border-radius: $border-radius-md;
     animation: pulse 1.5s infinite ease-in-out;
 }
 
@@ -115,7 +114,7 @@
     align-items: center;
     gap: 4px;
     font-size: 0.75rem;
-    color: #f47c22;
+    color: $color-warning;
     // background-color: #e7f1ff; 
     padding: 2px 8px;
     border-radius: 12px;

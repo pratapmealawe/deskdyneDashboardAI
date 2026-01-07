@@ -6,7 +6,7 @@
         (change)="handleFileInput($event)" />
       <img (click)="fileInput.click()" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
         class="uploadedImage mb-2" />
-      <button type="button" mat-stroked-button color="primary" (click)="fileInput.click()">
+      <button class="btn-import" type="button" mat-stroked-button color="primary" (click)="fileInput.click()">
         <mat-icon class="me-1">file_upload</mat-icon>
         Upload
       </button>
@@ -159,20 +159,20 @@
   <!-- BUTTONS -->
   <div class="mt-2 d-flex gap-2">
     <div *ngIf="(editType === 'new' && true) || btnPolicy?.addFoodItem">
-      <button type="submit" mat-flat-button color="primary" [disabled]="foodItemForm.invalid">
-        Submit
+      <button class="btn-add" type="submit" mat-flat-button color="primary" [disabled]="foodItemForm.invalid">
+        <mat-icon>check_circle</mat-icon> Submit
       </button>
     </div>
 
     <div *ngIf="(editType === 'edit' && true) || btnPolicy?.editFoodItem">
-      <button type="submit" mat-flat-button color="primary" [disabled]="foodItemForm.invalid">
-        Update
+      <button class="btn-update" type="submit" mat-flat-button color="primary" [disabled]="foodItemForm.invalid">
+        <mat-icon>update</mat-icon> Update
       </button>
     </div>
 
     <div>
-      <button type="button" mat-stroked-button color="warn" (click)="goToPreviousPage('cancel')">
-        Cancel
+      <button class="btn-delete" type="button" mat-stroked-button color="warn" (click)="goToPreviousPage('cancel')">
+        <mat-icon>cancel</mat-icon> Cancel
       </button>
     </div>
   </div>

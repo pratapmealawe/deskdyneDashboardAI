@@ -1,0 +1,39 @@
+@import '/src/styles.scss';
+
+.vendor-header {
+    @include responsive-header;
+    background-color: transparent;
+}
+
+.header-actions {
+    @include responsive-flex-wrapper(1rem);
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.cardDesign {
+    @include vertical-line();
+    @include card-design($primary-offset-color1);
+    margin-bottom: 1rem;
+}
+
+.labelText {
+    @include labelText;
+}
+
+.labelData {
+    @include labelData;
+}
+
+.center {
+    text-align: center;
+    margin-top: 2rem;
+    color: $primary-offset-color2;
+    font-weight: 500;
+}
+
+// Pagination styling overrides if needed, 
+// otherwise standard bootstrap pagination works fine.
+.pagination {
+    margin-bottom: 0;
+}

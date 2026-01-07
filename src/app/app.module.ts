@@ -16,6 +16,7 @@ import { HeaderComponent } from './header/header.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { MatButtonModule } from '@angular/material/button';
     BrowserAnimationsModule,
     MatDatepickerModule,
     MatDialogModule,
-    MatButtonModule
+    MatButtonModule,
+    MatTooltipModule
   ],
   providers: [],
   bootstrap: [AppComponent],
