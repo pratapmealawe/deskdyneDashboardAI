@@ -1,22 +1,43 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
 .image-option {
-    border: 2px solid #ddd;
-    border-radius: 8px;
-    padding: 6px;
     cursor: pointer;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 5px;
+    transition: all 0.2s;
     text-align: center;
-    width: 90px;
-    transition: all 0.2s ease;
+    width: 100px;
+    background-color: #f8f9fa;
 
     img {
-        width: 100%;
-        height: 60px;
+        width: 80px;
+        height: 80px;
         object-fit: cover;
-        border-radius: 6px;
-        margin-bottom: 4px;
+        border-radius: 4px;
+        margin-bottom: 5px;
+    }
+
+    small {
+        display: block;
+        font-size: 0.75rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &:hover {
+        background-color: #e9ecef;
     }
 
     &.selected {
-        border-color: var(--bs-primary);
-        background: rgba(13, 110, 253, 0.1);
+        border-color: color.$primary-color1;
+        background-color: rgba(color.$primary-color1, 0.1);
+
+        small {
+            color: color.$primary-color1;
+            font-weight: 600;
+        }
     }
 }

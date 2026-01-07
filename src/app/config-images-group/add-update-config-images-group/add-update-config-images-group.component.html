@@ -1,34 +1,54 @@
 <div class="modal-header">
-    <h5 class="modal-title">
+    <h2 class="modal-title m-0 fs-5 fw-semibold">
         {{ isEdit ? 'Update' : 'Add' }} Image Group Config
-    </h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()"></button>
+    </h2>
+    <button mat-icon-button (click)="closeModal()">
+        <mat-icon>close</mat-icon>
+    </button>
 </div>
 
 <div class="modal-body">
     <form #configForm="ngForm" (ngSubmit)="saveConfig()">
+
+        <!-- Group Name -->
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>Group Name</mat-label>
+            <input matInput [(ngModel)]="formData.name" name="name" required placeholder="Enter group name">
+        </mat-form-field>
+
+        <!-- Image Selection -->
         <div class="mb-3">
-            <label for="groupName" class="form-label">Name</label>
-            <input id="groupName" type="text" class="form-control" [(ngModel)]="formData.name" name="name" required
-                placeholder="Enter group name" />
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Select Images</label>
-            <div class="d-flex flex-wrap gap-2">
+            <label class="d-block mb-2 fw-medium text-muted small">Select Images</label>
+            <div class="d-flex flex-wrap gap-2 p-3 border rounded bg-light"
+                style="max-height: 400px; overflow-y: auto;">
                 <div *ngFor="let img of allImages" class="image-option"
-                    [class.selected]="formData.imageData?.includes(img.imageUrl)" (click)="toggleImageSelection(img._id,img.imageUrl)">
-                    <img [src]="serverUrl + img.imageUrl" />
-                    <small>{{ img.name }}</small>
+                    [class.selected]="formData.imageData?.includes(img.imageUrl)"
+                    (click)="toggleImageSelection(img._id, img.imageUrl)">
+                    <img *ngIf="img.imageUrl" [src]="serverUrl + img.imageUrl" [alt]="img.imageName"
+                        (error)="img.imageUrl = null" />
+                    <div *ngIf="!img.imageUrl"
+                        class="d-flex align-items-center justify-content-center bg-secondary text-white rounded"
+                        style="width: 80px; height: 80px;">
+                        <span style="font-size: 10px;">No Image</span>
+                    </div>
+                    <small [matTooltip]="img.imageName">{{ img.imageName }}</small>
                 </div>
+
+                <div *ngIf="!allImages?.length" class="text-center w-100 py-4 text-muted">
+                    No images available. Please add config images first.
+                </div>
+            </div>
+            <div class="form-text mt-1" *ngIf="formData.imageData?.length">
+                {{ formData.imageData.length }} image(s) selected
             </div>
         </div>
 
     </form>
 </div>
 
-<div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="closeModal()">Cancel</button>
-    <button type="submit" class="btn btn-primary" [disabled]="isSaveDisabled" (click)="saveConfig()">
+<div class="modal-footer border-0 pt-0">
+    <button mat-stroked-button color="warn" (click)="closeModal()">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="isSaveDisabled" (click)="saveConfig()">
         {{ isEdit ? 'Update' : 'Create' }}
     </button>
 </div>

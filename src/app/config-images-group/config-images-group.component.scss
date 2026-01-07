@@ -1,0 +1,40 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.vendor-header {
+    @include mixin.responsive-header;
+    background-color: transparent;
+}
+
+.header-actions {
+    @include mixin.responsive-flex-wrapper(1rem);
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.cardDesign {
+    @include mixin.vertical-line();
+    @include mixin.card-design(color.$primary-offset-color1);
+    margin-bottom: 1rem;
+}
+
+.labelText {
+    @include mixin.labelText;
+}
+
+.labelData {
+    @include mixin.labelData;
+}
+
+.center {
+    text-align: center;
+    margin-top: 2rem;
+    color: #666;
+    font-weight: 500;
+}
+
+// Pagination styling overrides if needed, 
+// otherwise standard bootstrap pagination works fine.
+.pagination {
+    margin-bottom: 0;
+}
