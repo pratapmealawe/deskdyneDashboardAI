@@ -9,7 +9,7 @@
                 Audit Logs
             </button>
             <button class="tab-btn" [class.active]="selectedStatus === 'DBLogs'" (click)="getMLDBLogs()"
-                *ngIf="access?.serverLogs">
+                *ngIf="access.serverLogs">
                 DB Logs
             </button>
         </div>
@@ -33,6 +33,24 @@
                     <button class="btn-filter" [class.active]="selectedDBStatus === '1000'"
                         (click)="selectedStatus === 'AuditLogs' ? getLineBasedAuditLogs('1000') : getLineBasedLogs('1000')">
                         1000
+                    </button>
+                </div>
+            </div>
+
+            <!-- Level Filter -->
+            <div class="filter-group">
+                <label>Level</label>
+                <div class="btn-group">
+                    <button class="btn-filter" [class.active]="selectedLevel === 'All'" (click)="filterByLevel('All')">
+                        All
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedLevel === 'ProLogs'"
+                        (click)="filterByLevel('ProLogs')">
+                        Info
+                    </button>
+                    <button class="btn-filter" [class.active]="selectedLevel === 'ErrorLogs'"
+                        (click)="filterByLevel('ErrorLogs')">
+                        Error
                     </button>
                 </div>
             </div>

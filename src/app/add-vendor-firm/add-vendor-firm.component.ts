@@ -51,7 +51,6 @@ export class AddVendorFirmComponent {
   pocBtn: string = 'Submit';
   cafeterialist: any;
 
-
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
@@ -467,7 +466,7 @@ export class AddVendorFirmComponent {
 
   get isFormValid(): boolean {
     // Valid if form controls are valid AND at least one address AND at least one outlet
-    return this.form.valid && this.addressList.length > 0 && this.selectedOutletsList.length > 0;
+    return this.form.valid && this.addressList.length > 0;
   }
 
 

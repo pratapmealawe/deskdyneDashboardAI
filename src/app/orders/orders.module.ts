@@ -5,6 +5,8 @@ import { OrdersRoutingModule } from './orders-routing.module';
 import { OrdersComponent } from './orders.component';
 import { OrderCardModule } from '../order-card/order-card.module';
 import { FormsModule } from '@angular/forms';
+import { CommonOutletCafeSelectModule } from '../common-outlet-cafe-select/common-outlet-cafe-select.module';
+import { MaterialModule } from '../material.module';
 
 
 @NgModule({
@@ -15,7 +17,9 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     OrdersRoutingModule,
     OrderCardModule,
-    FormsModule
+    FormsModule,
+    CommonOutletCafeSelectModule,
+    MaterialModule,
   ]
 })
 export class OrdersModule { }

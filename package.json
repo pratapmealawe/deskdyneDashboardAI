@@ -40,6 +40,7 @@
     "highcharts": "^11.4.8",
     "highcharts-angular": "^4.0.1",
     "jquery": "^3.7.1",
+    "ng-otp-input": "^2.0.9",
     "number-to-words": "^1.2.4",
     "pdfmake": "^0.2.20",
     "qrcode": "^1.5.4",

@@ -10,7 +10,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
   styleUrls: ['./add-update-config-images-group.component.scss']
 })
 export class AddUpdateConfigImagesGroupComponent {
-@Input() isEdit: boolean = false;
+  @Input() isEdit: boolean = false;
   @Input() editId?: string;
   @Input() formData: any = { name: '', imageData: [] };
   serverUrl = environment.imageUrl;
@@ -30,14 +30,20 @@ export class AddUpdateConfigImagesGroupComponent {
   async getAllConfigImages(): Promise<void> {
     try {
       const response = await this.apiMainService.getAllConfigImages();
-      this.allImages = response?.length ? response : [];
+      // console.log('AddUpdateConfigImagesGroup: config images response', response);
+      if (Array.isArray(response) && response.length > 0) {
+        this.allImages = response;
+      } else {
+        this.allImages = [];
+      }
+      console.log('AddUpdateConfigImagesGroup: allImages set to', this.allImages);
     } catch (error) {
       console.error('❌ Error fetching config images:', error);
       this.toasterService.error('Failed to load config images');
     }
   }
 
-  toggleImageSelection(imageId: string,imageUrl:string): void {
+  toggleImageSelection(imageId: string, imageUrl: string): void {
     if (!this.formData.imageData) {
       this.formData.imageData = [];
     }
@@ -48,8 +54,8 @@ export class AddUpdateConfigImagesGroupComponent {
       this.formData.imageData.push(imageUrl);
     }
   }
-  slectedImage(img:any){
-console.log(img,"img");
+  slectedImage(img: any) {
+    console.log(img, "img");
   }
 
   async saveConfig(): Promise<void> {

@@ -21,7 +21,7 @@
         </button>
 
         <!-- Export Button -->
-        <button mat-stroked-button color="primary" (click)="exportWalletStatement()">
+        <button class="btn-export-excel" mat-stroked-button (click)="exportWalletStatement()">
             <mat-icon>file_download</mat-icon> Export to Excel
         </button>
     </div>
@@ -118,7 +118,7 @@
                 </div>
             </div>
 
-            <div *ngIf="!transactionHistoryList?.length && !loading" class="text-muted text-center mt-3">
+            <div *ngIf="!transactionHistoryList.length && !loading" class="text-muted text-center mt-3">
                 No transactions yet.
             </div>
         </ng-template>

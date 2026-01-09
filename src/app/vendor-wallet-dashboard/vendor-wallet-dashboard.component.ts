@@ -28,4 +28,5 @@ export class VendorWalletDashboardComponent {
 
   ngOnInit(): void {
   }
+
 }

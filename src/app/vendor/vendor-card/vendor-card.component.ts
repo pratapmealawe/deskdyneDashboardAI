@@ -66,11 +66,11 @@ export class VendorCardComponent implements OnInit {
 
   showPopup(vendor: any) {
     this.vendorInfo = vendor;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${this.vendorInfo.vendorName} vendor`,
-      this.deleteVendor,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this Vendor?',
+      callback: this.deleteVendor,
+      context: this
+    });
   }
 
   onPageChange(event: any) {

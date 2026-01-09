@@ -12,6 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 import { MatTabsModule } from '@angular/material/tabs';
 
 
@@ -32,6 +33,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatButtonModule,
     MatInputModule,
     MatPaginatorModule,
+    MatIconModule,
     MatTabsModule,
   ],
   exports: [VendorDailyReportComponent]

@@ -52,8 +52,7 @@
 
 <mat-dialog-actions align="end" class="mt-3">
     <button mat-button (click)="close()" [disabled]="loading">Cancel</button>
-    <button mat-raised-button color="primary" (click)="submit()"
-        [disabled]="form.invalid || loading || (mode === 'create' && !selectedFile)">
-        {{ loading ? 'Saving...' : 'Save' }}
+    <button class="btn-add" mat-raised-button color="primary" (click)="submit()" [disabled]="form.invalid || loading">
+        <mat-icon>add</mat-icon> Create
     </button>
 </mat-dialog-actions>

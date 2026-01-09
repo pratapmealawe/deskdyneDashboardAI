@@ -323,6 +323,9 @@ export class ApiConfigService {
       getAllVendorWallet: p('/api/getAllVendorWallet', 'GET'),
       addBulkWalletBalance: p('/api/addBulkWalletBalance', 'POST'),
       getCustomerWalletListByOrgId: p('/api/getCustomerWalletListByOrgId', 'POST'),
+      getAllCurrentOrders: p('/api/getAllCurrentOrders', 'GET'),
+      updatescanOrder: p('/api/updatescanOrder', 'POST'),
+      validateJusPayPaymentTransaction: p('/api/validateJusPayPaymentTransaction', 'POST'),
       copyDailyOrderMenu:p('/api/copyDailyOrderMenu', 'POST'),
       addBulkDailyOrderMenu:p('/api/addBulkDailyOrderMenu', 'POST'),
     }

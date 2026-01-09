@@ -1,17 +1,16 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
 .cardDesign {
-  @include mixin.vertical-line();
-  @include mixin.card-design(color.$primary-offset-color1);
+  @include vertical-line();
+  @include card-design($primary-offset-color1);
 }
 
 .labelText {
-  @include mixin.labelText;
+  @include labelText;
 }
 
 .labelData {
-  @include mixin.labelData;
+  @include labelData;
 }
 
 .action-icon {
@@ -28,19 +27,19 @@
   align-items: center;
   gap: 4px;
   padding: 2px 8px;
-  border-radius: 12px;
+  border-radius: $border-radius-lg;
   font-size: 11px;
   font-weight: 500;
   width: fit-content;
 
   &.verified {
-    background-color: #e6f4ea;
-    color: #1e8e3e;
+    background-color: $color-success-bg;
+    color: $color-success;
   }
 
   &.unverified {
-    background-color: #fce8e6;
-    color: #d93025;
+    background-color: $color-error-bg;
+    color: $color-error;
   }
 
   mat-icon {
@@ -51,6 +50,6 @@
 }
 
 .empty-outlet {
-  @include mixin.card-design(color.$primary-offset-color1);
+  @include card-design($primary-offset-color1);
   height: 100px;
 }

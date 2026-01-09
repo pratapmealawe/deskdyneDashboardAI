@@ -16,8 +16,8 @@
         </div>
 
         <div class="col-12 col-md-3 d-flex justify-content-end">
-            <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit">
-                Submit
+            <button class="btn-view" mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit">
+                <mat-icon>visibility</mat-icon> View Report
             </button>
         </div>
     </div>
@@ -44,11 +44,11 @@
 
             <!-- Buttons -->
             <div class="d-flex flex-column gap-2 ms-auto">
-                <button mat-raised-button color="primary" (click)="exportDatewiseSummaryExcel()">
-                    Excel Export
+                <button class="btn-export-excel" mat-stroked-button (click)="exportDatewiseSummaryExcel()">
+                    <mat-icon>file_download</mat-icon> Excel Export
                 </button>
-                <button mat-stroked-button color="primary" (click)="exportItemwiseSummaryExcel()">
-                    Detail breakdown
+                <button class="btn-view" mat-stroked-button (click)="exportItemwiseSummaryExcel()">
+                    <mat-icon>list_alt</mat-icon> Detail breakdown
                 </button>
             </div>
         </div>

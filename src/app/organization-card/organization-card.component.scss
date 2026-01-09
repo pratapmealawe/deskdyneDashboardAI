@@ -1,18 +1,17 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
 /* -------------------- ORGANIZATION CARD -------------------- */
 .cardDesign {
-  @include mixin.vertical-line();
-  @include mixin.card-design(color.$primary-offset-color1);
+  @include vertical-line();
+  @include card-design($primary-offset-color1);
 }
 
 .labelText {
-  @include mixin.labelText;
+  @include labelText;
 }
 
 .labelData {
-  @include mixin.labelData;
+  @include labelData;
 }
 
 .org-image-div {
@@ -62,7 +61,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   width: 80%;
-  background: color.$white;
+  background: $white;
   border-radius: 8px;
   padding: 16px;
   box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.3);
@@ -85,11 +84,11 @@
 /* -------------------- TABLE -------------------- */
 
 .table-header {
-  background-color: color.$primary-offset-color1;
+  background-color: $primary-offset-color1;
   font-weight: 600;
   text-transform: uppercase;
   font-size: 13px;
-  color: color.$textPrimary;
+  color: $textPrimary;
 
   th.mat-header-cell {
     border-bottom: none;
@@ -102,7 +101,7 @@
 }
 
 .mat-row.table-row {
-  background-color: color.$white;
+  background-color: $white;
   transition: 0.2s ease-in-out;
   border-radius: 12px;
   margin-bottom: 10px;
@@ -112,7 +111,7 @@
     rgba(0, 0, 0, 0.23) 0px 0px 5px;
 
   &:hover {
-    background-color: color.$primary-offset-color2;
+    background-color: $primary-offset-color2;
     transform: translateY(-2px);
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
   }
@@ -158,9 +157,9 @@ th:last-child {
 }
 
 .icon {
-  color: color.$error-color !important;
+  color: $color-error !important;
 }
 
 .icon-check {
-  color: color.$success-color !important;
+  color: $color-success !important;
 }

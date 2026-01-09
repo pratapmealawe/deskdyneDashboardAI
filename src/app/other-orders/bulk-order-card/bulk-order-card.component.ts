@@ -418,11 +418,11 @@ export class BulkOrderCardComponent implements OnInit {
   }
 
   confirmTransfer() {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to transfer this order to ${this.searchedVendor?.vendorFirmDetails?.vendorFirmName} - ${this.searchedVendor?.vendorName}`,
-      () => this.performOrderTransfer(),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to transfer this order to ${this.searchedVendor?.vendorFirmDetails?.vendorFirmName} - ${this.searchedVendor?.vendorName}`,
+      callback: () => this.performOrderTransfer(),
+      context: this
+    });
   }
 
   async performOrderTransfer() {

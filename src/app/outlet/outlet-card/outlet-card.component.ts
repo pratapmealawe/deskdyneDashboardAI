@@ -43,11 +43,11 @@ export class OutletCardComponent implements OnInit {
 
   showPopup(outlet: any) {
     this.outletInfo = outlet;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${this.outletInfo.outletName}?`,
-      this.deleteOutletFunc,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this Outlet?',
+      callback: this.deleteOutletFunc,
+      context: this
+    });
   }
 
   async deleteOutletFunc() {

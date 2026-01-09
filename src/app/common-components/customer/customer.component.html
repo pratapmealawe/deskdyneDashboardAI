@@ -34,20 +34,19 @@
         <!-- Search -->
         <div class="col-12 col-md-6 text-md-end">
             <!-- Export buttons -->
-            <div class="d-flex justify-content-end mb-2">
-                <button mat-stroked-button *ngIf=" filteredCustomerList?.length && !isOrgAdmin" class="me-2"
+            <div class="d-flex justify-content-end mb-2 gap-2">
+                <button class="btn-import" mat-stroked-button *ngIf=" filteredCustomerList?.length && !isOrgAdmin"
                     (click)="openBulkWalletDialog()">
-                    <mat-icon class="me-1">upload_file</mat-icon>
-                    Bulk Wallet Add
+                    <mat-icon>upload_file</mat-icon> Bulk Wallet Add
                 </button>
-                <button mat-stroked-button class="me-2" *ngIf="filteredCustomerList?.length" (click)="exportToExcel()">
-                    <mat-icon class="me-1">grid_on</mat-icon>
-                    Export Excel
+                <button class="btn-export-excel" mat-stroked-button *ngIf="filteredCustomerList?.length"
+                    (click)="exportToExcel()">
+                    <mat-icon>file_download</mat-icon> Export Excel
                 </button>
 
-                <button mat-stroked-button color="warn" *ngIf="filteredCustomerList?.length" (click)="exportToPdf()">
-                    <mat-icon class="me-1">picture_as_pdf</mat-icon>
-                    Export PDF
+                <button class="btn-export-pdf" mat-stroked-button *ngIf="filteredCustomerList?.length"
+                    (click)="exportToPdf()">
+                    <mat-icon>picture_as_pdf</mat-icon> Export PDF
                 </button>
             </div>
         </div>
@@ -89,10 +88,8 @@
                         </div>
 
                         <div *ngIf="!isOrgAdmin" class="col-12 col-md-1 text-md-end mt-2 mt-md-0">
-                            <button mat-icon-button color="primary" (click)="viewCustomer(user)"
-                                matTooltip="View details">
-                                <mat-icon>visibility</mat-icon>
-                            </button>
+                            <mat-icon color="primary" (click)="viewCustomer(user)" class="action-icon view"
+                                matTooltip="View details">visibility</mat-icon>
                         </div>
                     </div>
                 </mat-card>

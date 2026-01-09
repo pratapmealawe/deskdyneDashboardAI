@@ -80,11 +80,12 @@ export class FaqComponent implements OnInit {
     this.addnewFAQ = false;
     this.faqObj = faqObj;
   }
-  showPopup(faqObj: any) {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${faqObj.question}`,
-      () => this.deleteFAQ(faqObj._id),
-      this
-    );
+  showPopup(faq: any) {
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${faq.topic}?`,
+      callback: this.deleteFAQ, // Changed to deleteFAQ to match existing method
+      context: this,
+      data: faq._id
+    });
   }
 }
