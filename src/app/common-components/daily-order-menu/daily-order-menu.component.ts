@@ -102,11 +102,11 @@ export class DailyOrderMenuComponent implements OnInit {
   }
 
   onDelete(element: any) {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${element.selectedMealType} meal type`,
-      () => this.deleteMealType(element),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${element.selectedMealType} meal type`,
+      callback: () => this.deleteMealType(element),
+      context: this
+    });
   }
 
   deleteMealType(element: any): void {
@@ -145,11 +145,11 @@ export class DailyOrderMenuComponent implements OnInit {
   }
 
   onDeleteSubMenu(selectedMealType: any, element: any) {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${element.itemName} meal type`,
-      () => this.deleteSubMealType(selectedMealType, element),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${element.itemName} meal type`,
+      callback: () => this.deleteSubMealType(selectedMealType, element),
+      context: this
+    });
   }
 
   deleteSubMealType(selectedMealType: any, element: any): void {
