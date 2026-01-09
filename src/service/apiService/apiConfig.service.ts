@@ -292,7 +292,6 @@ export class ApiConfigService {
       getImageGroupConfigByName: p('/api/getImageGroupConfigByName', 'GET'),
       getServerLogs: p('/public/getServerLogs', 'POST'),
       getAuditLogs: p('/utility/getAuditLogs', 'POST'),
-
       addCategoryMealAweOutlet: p('/api/addCategoryMealAweOutlet', 'POST'),
       deleteCategoryMealAweOutlet: p('/api/deleteCategoryMealAweOutlet', 'POST'),
       updateCategoryMealAweOutlet: p('/api/updateCategoryMealAweOutlet', 'POST'),
@@ -314,11 +313,11 @@ export class ApiConfigService {
       getDailyOrderMenuByCafeteriaId: p('/api/getDailyOrderMenuByCafeteriaId', 'GET'),
       updateMealType: p('/api/updateMealType', 'POST'),
       deleteMealType: p('/api/deleteMealType', 'POST'),
-      addMealConfig :p('/api/addMealConfig', 'POST'),
-      updateMealConfig:p('/api/updateMealConfig', 'POST'),
-      deleteMealConfig:p('/api/deleteMealConfig', 'POST'),
-      isActiveAndDeActiveMealConfig:p('/api/isActiveAndDeActiveMealConfig', 'POST'),
-      addVendorDetails:p('/api/addVendorDetails', 'POST'),
+      addMealConfig: p('/api/addMealConfig', 'POST'),
+      updateMealConfig: p('/api/updateMealConfig', 'POST'),
+      deleteMealConfig: p('/api/deleteMealConfig', 'POST'),
+      isActiveAndDeActiveMealConfig: p('/api/isActiveAndDeActiveMealConfig', 'POST'),
+      addVendorDetails: p('/api/addVendorDetails', 'POST'),
       checkJusPayPayoutStatus: p('/utility/checkJusPayPayoutStatus', 'GET'),
       getAllVendorWallet: p('/api/getAllVendorWallet', 'GET'),
       addBulkWalletBalance: p('/api/addBulkWalletBalance', 'POST'),
@@ -326,8 +325,8 @@ export class ApiConfigService {
       getAllCurrentOrders: p('/api/getAllCurrentOrders', 'GET'),
       updatescanOrder: p('/api/updatescanOrder', 'POST'),
       validateJusPayPaymentTransaction: p('/api/validateJusPayPaymentTransaction', 'POST'),
-      copyDailyOrderMenu:p('/api/copyDailyOrderMenu', 'POST'),
-      addBulkDailyOrderMenu:p('/api/addBulkDailyOrderMenu', 'POST'),
+      copyDailyOrderMenu: p('/api/copyDailyOrderMenu', 'POST'),
+      addBulkDailyOrderMenu: p('/api/addBulkDailyOrderMenu', 'POST'),
     }
   }
 }

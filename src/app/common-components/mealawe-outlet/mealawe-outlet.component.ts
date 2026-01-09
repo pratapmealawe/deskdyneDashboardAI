@@ -202,16 +202,20 @@ export class MealaweOutletComponent implements AfterViewInit {
   }
 
   deleteCategoryMealAweOutlet(categoryName: string) {
-    this.confirmationModalService.modal(`Are you sure you want to delete ${categoryName}?`, async () => {
-      try {
-        await this.apiMainService.deleteCategoryMealAweOutlet(this.cafeteriaId, { categoryName });
-        this.toaster.success(`${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} deleted`);
-        this.getMealAweOutletByCafeteria();
-      } catch (err) {
-        console.error(`❌ Delete error:`, err);
-        this.toaster.error(`Delete failed. No changes applied.`);
-      }
-    }, this);
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete ${categoryName}?`,
+      callback: async () => {
+        try {
+          await this.apiMainService.deleteCategoryMealAweOutlet(this.cafeteriaId, { categoryName });
+          this.toaster.success(`${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} deleted`);
+          this.getMealAweOutletByCafeteria();
+        } catch (err) {
+          console.error(`❌ Delete error:`, err);
+          this.toaster.error(`Delete failed. No changes applied.`);
+        }
+      },
+      context: this
+    });
   }
 
 
