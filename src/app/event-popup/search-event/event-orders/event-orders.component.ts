@@ -308,7 +308,7 @@ export class EventOrdersComponent implements OnInit {
     totalsRow.font = { bold: true };
 
     const fileName =
-      `outlet_orders_${this.eventObj?.eventPopupName || 'eventPopup'}` +
+      `event_orders_${this.eventObj?.eventPopupName || 'eventPopup'}` +
       `_${new Date().toISOString().slice(0, 10)}.xlsx`;
 
     const buffer = await workbook.xlsx.writeBuffer();

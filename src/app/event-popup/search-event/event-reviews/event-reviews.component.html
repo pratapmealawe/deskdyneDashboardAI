@@ -1,89 +1,40 @@
-<div class="bgsidepadding1">
-    <div class="mt-2" *ngIf="feedbackList.length>0">
-        <div class="row cardDesign list-group" *ngFor="let feedback of feedbackList; let i = index">
-            <div class="list-group-item">
-                <div class="row">
-                    <!-- <div class="orderNo">Order No: {{feedback.feedbackOrderNo}} Feedback Information</div> -->
-                    <div class="header3 bgTopDownpadding1 order-sub-header" (click)="showDetails = ! showDetails">Order
-                        No: {{feedback.feedbackOrderNo}}
-                        <span class="right">
-                            <i class="bi bi-chevron-down" *ngIf="!showDetails"></i>
-                            <i class="bi bi-chevron-up" *ngIf="showDetails"></i>
-                        </span>
-                    </div>
-                    <ng-container *ngIf="showDetails">
-                        <ng-container *ngFor="let item of feedback.itemlist;index as k">
-                            <div class="cardDesignfeddback">
-                                <ng-container *ngIf="item.itemContains.length>0">
-
-                                    <div class="feedbackCard">
-                                        <div>Menu Name: <div>{{item.itemName}}</div>
-                                        </div>
-                                        <div class="d-flex w-100 align-items-center">
-                                            <hr class="flex-grow-1">
-                                            <span class="mx-2">Menu Contains</span>
-                                            <hr class="flex-grow-1">
-                                        </div>
-                                        <ng-container *ngFor="let itemContent of item.itemContains; index as ic">
-                                            <div class="cardDesign">
-                                                <div class="row">
-                                                    <div class="col-4 col-md-4 col-lg-4">
-                                                        <div>Contain Name: <div>
-                                                                {{itemContent.name}}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4 col-md-4 col-lg-4">
-                                                        <div>Ratings: <div>
-                                                                {{itemContent.starRatingKitchen}}</div>
-                                                        </div>
-                                                    </div>
-                                                    <ng-container *ngIf="itemContent.kitchenFeedback">
-                                                        <div class="col-4 col-md-4 col-lg-4">
-                                                            <div>FeedBack: <div>
-                                                                    {{itemContent.kitchenFeedback}}</div>
-                                                            </div>
-                                                        </div>
-                                                    </ng-container>
-                                                </div>
-                                            </div>
-                                        </ng-container>
-                                    </div>
-                                </ng-container>
-                                <ng-container *ngIf="item.itemContains.length==0">
-                                    <div class="feedbackCard">
-                                        <div class="col-sm-12 col-md-10 col-lg-10">
-                                            <div class="row">
-                                                <div class="col-4 col-md-4 col-lg-4">
-                                                    <div>Menu Name: <div>{{item.itemName}}</div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-4 col-md-4 col-lg-4">
-                                                    <div>Ratings: <div>{{item.starRatingKitchen}}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <ng-container *ngIf="item.kitchenFeedback">
-                                                    <div class="col-4 col-md-4 col-lg-4">
-                                                        <div>Ratings: <div>{{item.kitchenFeedback}}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </ng-container>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </ng-container>
-                            </div>
-                        </ng-container>
-                    </ng-container>
-                </div>
+<div class="container-fluid py-4">
+    <!-- FILTERS CARD -->
+    <mat-card class="mb-3 filter-card">
+        <div class="row g-3 align-items-end p-3">
+            <!-- Date range -->
+            <div class="col-12 col-md-4">
+                <form [formGroup]="dateForm">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Date range</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input matStartDate placeholder="From" formControlName="dateFrom" />
+                            <input matEndDate placeholder="To" formControlName="dateTo" />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                </form>
             </div>
+
+            <!-- Submit button -->
+            <div class="col-12 col-md-3 d-flex justify-content-md-end">
+                <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="!dateForm.valid || !eventObj">
+                    Apply
+                </button>
+            </div>
+
         </div>
-        <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm mt-2 me-2" (click)="getMore()">Load
-            More</button>
+    </mat-card>
+    <div class="mt-2" *ngIf="feedbackList.length > 0">
+        <div class="row cardDesign list-group" *ngFor="let feedback of feedbackList; let i = index">
+            <app-org-order [order]="feedback"></app-org-order>
+        </div>
+        <!-- Paginator -->
+        <mat-paginator [length]="feedbackList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+            [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPageChange($event)">
+        </mat-paginator>
     </div>
-    <div class="center labelText mt-2" *ngIf="feedbackList.length==0">
-        No Feedback found
-    </div>
-</div>
+    <mat-card class="center labelText mt-2 py-2 rounded-4" *ngIf="feedbackList.length == 0">
+        No Reviews found
+    </mat-card>

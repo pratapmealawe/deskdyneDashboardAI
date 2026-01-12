@@ -20,6 +20,6 @@ import { OrgOrderComponent } from './org-order/org-order.component';
     CommonOutletCafeSelectModule,
     MaterialModule
 ],
-  exports: [OrgReviewsComponent]
+  exports: [OrgReviewsComponent, OrgOrderComponent]
 })
 export class OrgReviewsModule { }

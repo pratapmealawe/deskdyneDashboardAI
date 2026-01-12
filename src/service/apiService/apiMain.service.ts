@@ -522,6 +522,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getfeedbacklistByfilter, data);
   }
 
+  getFeedbackByOrderByOrderType(filter: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getFeedbackByOrderByOrderType, filter);
+  }
+
   employeeAdd(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.employeeAdd, data);
   }

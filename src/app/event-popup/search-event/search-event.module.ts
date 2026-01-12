@@ -13,6 +13,8 @@ import { EventReviewsComponent } from './event-reviews/event-reviews.component';
 import { EventCardComponent } from './event-card/event-card.component';
 import { EventViewComponent } from './event-view/event-view.component';
 import { HighchartsChartModule } from "highcharts-angular";
+import { OrgReviewsModule } from 'src/app/org-components/org-reviews/org-reviews.module';
+import { OrgOrdersModule } from "src/app/org-components/org-orders/org-orders.module";
 
 
 
@@ -32,7 +34,9 @@ import { HighchartsChartModule } from "highcharts-angular";
     FormsModule,
     MaterialModule,
     OutletViewModule,
-    HighchartsChartModule
+    HighchartsChartModule,
+    OrgReviewsModule,
+    OrgOrdersModule
 ]
 })
 export class SearchEventModule { }

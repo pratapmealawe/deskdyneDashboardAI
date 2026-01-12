@@ -85,9 +85,9 @@
     </mat-card>
 
     <!-- SINGLE EMPTY STATE -->
-    <div *ngIf="!loading && filteredOrders.length === 0" class="text-center text-muted py-4">
+    <mat-card class="center labelText mt-2 py-2 rounded-4" *ngIf="!loading && filteredOrders.length === 0">
         No orders found for selected filters.
-    </div>
+    </mat-card>
 
     <!-- LIST VIEW WITH NEW CARD DESIGN -->
     <ng-container *ngIf="!isShowChart && filteredOrders.length > 0">

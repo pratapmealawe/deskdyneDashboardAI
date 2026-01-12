@@ -142,9 +142,10 @@
     </div>
   </div>
 
-  <div class="center labelText mt-2" *ngIf="!showCard">
-    No items found
-  </div>
+  <mat-card class="center labelText mt-2 py-2 rounded-4" *ngIf="!showCard">
+    No Menus found
+  </mat-card>
+
 
   <!-- ADD / EDIT MENU DIALOG TEMPLATE -->
   <ng-template #content let-modal>

@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 @Component({
@@ -10,31 +11,73 @@ export class EventReviewsComponent implements OnInit {
 
   @Input() eventObj: any;
   feedbackList: any = Array();
+  // form
+  dateForm: FormGroup<{
+    dateFrom: FormControl<Date | null>;
+    dateTo: FormControl<Date | null>;
+  }>;
+
+  //pagination
+  pageIndex = 0;
   pageNo = 1;
-  nextOn = true;
-  showDetails: boolean = false;
-  constructor(private apiMainService: ApiMainService) { }
+  pageSize = 10;
+
+  constructor(private apiMainService: ApiMainService, private fb: FormBuilder) {
+
+    this.dateForm = this.fb.group({
+      dateFrom: new FormControl<Date | null>(null),
+      dateTo: new FormControl<Date | null>(null),
+    });
+
+  }
 
   ngOnInit(): void {
-    this.getFeedbacklist();
-  }
-
-  //Need to change API
-  async getFeedbacklist() {
-    let filter = {
-      orgId: this.eventObj.organizationDetails.organizationId,
-      outletId: this.eventObj._id,
-    }
-    let feedbackList = await this.apiMainService.gettfeedbacklist(this.pageNo, filter);
-    if (feedbackList && feedbackList.length > 0) {
-      this.feedbackList = [...this.feedbackList, ...feedbackList];
+    const today = new Date();
+    this.dateForm.patchValue({
+      dateFrom: today,
+      dateTo: today,
+    });
+    if (this.eventObj) {
+      this.getFeedbacklist();
     } else {
-      this.nextOn = false;
+      this.feedbackList = [];
     }
   }
 
-  getMore() {
-    this.pageNo++;
+  async getFeedbacklist() {
+    try {
+      const dateFrom: Date | null = this.dateForm.get('dateFrom')?.value || null;
+      const dateTo: Date | null = this.dateForm.get('dateTo')?.value || null;
+
+      let filter = {
+        outletId: this.eventObj._id,
+        orderType: "eventOrder",
+        fromDate: dateFrom,
+        toDate: dateTo,
+        page: this.pageNo,
+        limit: this.pageSize
+      }
+
+      let res = await this.apiMainService.getFeedbackByOrderByOrderType(filter);
+      if (res && res.feedbackList.length > 0) {
+        this.feedbackList = res.feedbackList;
+      } else {
+        this.feedbackList = [];
+      }
+    } catch (e) {
+      console.log('error while fetching feedback list', e);
+      this.feedbackList = [];
+    }
+  }
+
+  onSubmit() {
+    this.pageNo = 1;
     this.getFeedbacklist();
   }
+
+  onPageChange(event: any) {
+    this.pageNo = event.pageIndex + 1;
+    this.getFeedbacklist();
+  }
+
 }

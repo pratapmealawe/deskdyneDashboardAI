@@ -129,6 +129,7 @@ export class ApiConfigService {
       updateIncident: p('/api/updateIncident', 'PUT'),
       deleteIncident: p('/api/deleteIncident', 'DELETE'),
       getfeedbacklistByfilter: p('/api/getfeedbacklistByfilter', 'POST'),
+      getFeedbackByOrderByOrderType: p('/api/getFeedbackByOrderByOrderType', 'POST'),
       updateOutletMenu: p('/api/updateOutletMenu', 'POST'),
       updateQrMenu: p('/api/updateQrMenu', 'POST'),
       updateOutletMasterMenu: p('/api/updateOutletMasterMenu', 'PUT'),
