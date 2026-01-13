@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ToasterService } from 'src/app/toaster/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { PolicyService } from 'src/service/policy.service';
 
 @Component({
@@ -42,7 +42,7 @@ export class EventCardComponent implements OnInit {
   showPopup(event: any) {
     this.eventInfo = event;
     this.confirmationModalService.modal({
-      msg:`Are you sure, you want to delete ${this.eventInfo.eventPopupName}?`,
+      msg: `Are you sure, you want to delete ${this.eventInfo.eventPopupName}?`,
       callback: this.deleteOutletFunc,
       context: this
     });

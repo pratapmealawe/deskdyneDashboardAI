@@ -4,11 +4,11 @@ import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { categoryList } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
@@ -484,17 +484,17 @@ export class EventMenuComponent implements OnInit {
     this.back.emit(true);
   }
 
-async changeMenuActivation(isActive: boolean, menu: any) {
-  menu.isActive = isActive;
-  await this.apiMainService.toggleMenuItemStatus(this.eventObj._id,menu._id);
-}
+  async changeMenuActivation(isActive: boolean, menu: any) {
+    menu.isActive = isActive;
+    await this.apiMainService.toggleMenuItemStatus(this.eventObj._id, menu._id);
+  }
 
   showPopup(item: any, i: any) {
     this.foodItem = item;
     this.confirmationModalService.modal({
-     msg: `Are you sure, you want to delete ${item.itemName}`,
-     callback: this.deleteFoodItem,
-     context: this
+      msg: `Are you sure, you want to delete ${item.itemName}`,
+      callback: this.deleteFoodItem,
+      context: this
     });
   }
 
@@ -506,7 +506,7 @@ async changeMenuActivation(isActive: boolean, menu: any) {
     this.eventInfo = event;
 
     this.confirmationModalService.modal({
-      msg:`Are you sure you want to ${newState ? 'Enable' : 'Disable'} ${menu.itemName} Item?`,
+      msg: `Are you sure you want to ${newState ? 'Enable' : 'Disable'} ${menu.itemName} Item?`,
       callback: () => this.handleConfirm(newState, menu),   // Yes
       context: () => this.handleCancel(event, oldState)    // No
     });
