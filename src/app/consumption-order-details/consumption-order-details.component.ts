@@ -6,11 +6,11 @@ import { saveAs } from 'file-saver';
 
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
 import { ExcelService } from 'src/service/excel.service';
 import { CommonSelectConfig, SubmitPayload } from '../common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ToasterService } from '../toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-consumption-order-details',

@@ -1,10 +1,4 @@
-// Theme Colors
-$primary-color: #e62841;
-$secondary-color: #15a292;
-$warning-color: #ffb300;
-$white: #ffffff;
-$text-dark: #1a1a1a;
-$backdrop-color: rgba(0, 0, 0, 0.4);
+@import 'src/styles.scss';
 
 .dialog-wrapper {
     position: fixed;
@@ -59,7 +53,7 @@ $backdrop-color: rgba(0, 0, 0, 0.4);
         color: $text-dark;
 
         .warning-icon {
-            color: $warning-color;
+            color: $color-warning;
             font-size: 18px;
         }
     }

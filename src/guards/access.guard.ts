@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 
 @Injectable({

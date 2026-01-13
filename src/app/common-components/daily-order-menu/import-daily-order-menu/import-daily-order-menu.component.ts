@@ -4,7 +4,7 @@ import { MaterialModule } from 'src/app/material.module';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 @Component({

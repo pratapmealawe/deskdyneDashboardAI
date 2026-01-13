@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToasterService } from './toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 
 @Component({

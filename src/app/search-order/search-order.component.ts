@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from '../toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-search-order',

@@ -1,4 +1,4 @@
-import { ConfirmationModalService } from './confirmation-modal.service';
+import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 
 
@@ -7,25 +7,25 @@ import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
   templateUrl: 'confirmation-modal.component.html',
   styleUrls: ['confirmation-modal.component.scss']
 })
-export class ConfirmationModalComponent implements OnInit{
+export class ConfirmationModalComponent implements OnInit {
   showDialog = false;
 
-  modalObj:any = {};
+  modalObj: any = {};
   constructor(private confimationModalService: ConfirmationModalService) {
     console.log('this is confirmation-modal')
   }
-  ngOnInit(){
-      this.confimationModalService.confimationModalSubject.subscribe((modalObj:any) => {
-        if(modalObj.msg){
-          this.modalObj = modalObj;
-          this.showDialog = true;
-        }
-      });
+  ngOnInit() {
+    this.confimationModalService.confimationModalSubject.subscribe((modalObj: any) => {
+      if (modalObj.msg) {
+        this.modalObj = modalObj;
+        this.showDialog = true;
+      }
+    });
   }
-  cancel(){
+  cancel() {
     this.showDialog = false;
   }
-  confirm(){
+  confirm() {
     this.modalObj.callback.apply(this.modalObj.context);
     this.cancel();
   }

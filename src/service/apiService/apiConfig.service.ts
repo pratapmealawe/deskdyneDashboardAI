@@ -327,6 +327,7 @@ export class ApiConfigService {
       validateJusPayPaymentTransaction: p('/api/validateJusPayPaymentTransaction', 'POST'),
       copyDailyOrderMenu: p('/api/copyDailyOrderMenu', 'POST'),
       addBulkDailyOrderMenu: p('/api/addBulkDailyOrderMenu', 'POST'),
+      getClusterb2bBulkOrderList: p('/api/getClusterb2bBulkOrderList', 'POST'),
     }
   }
 }

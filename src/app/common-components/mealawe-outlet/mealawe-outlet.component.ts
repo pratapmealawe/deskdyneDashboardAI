@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { AddEditPackageCategoryComponent } from './add-edit-package-category/add-edit-package-category.component';

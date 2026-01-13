@@ -16,7 +16,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { categoryList } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';

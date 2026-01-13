@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 

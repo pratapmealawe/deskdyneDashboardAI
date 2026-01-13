@@ -4,7 +4,7 @@ import { MatRadioChange } from '@angular/material/radio';
 import { NavigationEnd, Router } from '@angular/router';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { GoogleMapService } from 'src/service/google-map.service';

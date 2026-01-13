@@ -1,10 +1,4 @@
-// Theme Colors (Matches styles.scss)
-$error-color: #e62841;
-$success-color: #15a292;
-$warning-color: #ffb300;
-$info-color: #a4a4a4;
-$white: #ffffff;
-$text-dark: #1a1a1a;
+@import 'src/styles.scss';
 
 .toasterPosition {
     position: fixed;
@@ -117,47 +111,47 @@ $text-dark: #1a1a1a;
 
 /* Modifiers based on Type */
 .success {
-    border-left: 6px solid $success-color;
+    border-left: 6px solid $color-success;
 
     .icon-container {
-        color: $success-color;
+        color: $color-success;
     }
 
     .progress-fill {
-        background-color: $success-color;
+        background-color: $color-success;
     }
 
     // Optional: Subtle gradient background tint
-    background: linear-gradient(135deg, rgba($success-color, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    background: linear-gradient(135deg, rgba($color-success, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
 .error,
 .alarm {
-    border-left: 6px solid $error-color;
+    border-left: 6px solid $color-error;
 
     .icon-container {
-        color: $error-color;
+        color: $color-error;
     }
 
     .progress-fill {
-        background-color: $error-color;
+        background-color: $color-error;
     }
 
-    background: linear-gradient(135deg, rgba($error-color, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    background: linear-gradient(135deg, rgba($color-error, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
 .warning {
-    border-left: 6px solid $warning-color;
+    border-left: 6px solid $color-warning;
 
     .icon-container {
-        color: $warning-color;
+        color: $color-warning;
     }
 
     .progress-fill {
-        background-color: $warning-color;
+        background-color: $color-warning;
     }
 
-    background: linear-gradient(135deg, rgba($warning-color, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+    background: linear-gradient(135deg, rgba($color-warning, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
 }
 
 .info {

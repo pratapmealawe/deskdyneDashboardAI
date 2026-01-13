@@ -731,6 +731,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
+  getClusterb2bBulkOrderList(status: any, page: any, limit: number) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterb2bBulkOrderList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
+  }
+
   updateb2bFoodOrder(order: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateb2bFoodOrder, order);
   }

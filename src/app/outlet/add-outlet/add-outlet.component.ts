@@ -14,7 +14,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { DataFormatService } from 'src/service/data-format.service';
 import { PolicyService } from 'src/service/policy.service';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 
 interface MealTiming {
   mealType: string;
