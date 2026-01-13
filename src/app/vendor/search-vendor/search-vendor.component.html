@@ -1,37 +1,31 @@
-<div class="container-fluid pe-4 ps-4">
-  <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-4 ">
-    <div class="g-0">
-      <h4 class="m-0 fw-semibold">Vendor</h4>
-    </div>
-    <div class="d-flex justify-content-end align-items-center gap-3">
-      <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
-        <mat-form-field appearance="outline" class="search-input">
-          <input matInput type="text" placeholder="Search Vendor..." [formControl]="searchControl" />
-          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-            <mat-icon>search</mat-icon> </button>
-        </mat-form-field>
-      </div>
-      <button mat-raised-button color="primary" class="text-nowrap" (click)="addVendor()">
-        <mat-icon>add_business</mat-icon>
-        Add Vendor
-      </button>
-    </div>
-    <div class="d-inline-flex d-md-none w-100" >
-      <mat-form-field appearance="outline" class="search-input w-100">
-        <input matInput type="text" placeholder="Search Vendor..." [formControl]="searchControl" />
-        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-          <mat-icon>search</mat-icon> </button>
+<div class="vendor-header">
+  <div>
+    <h4 class="m-0 fw-semibold">Vendor Management</h4>
+  </div>
+  <div class="header-actions">
+    <div class="input-wrapper me-3">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <input matInput type="text" placeholder="Seach Vendor Firm" [formControl]="searchControl" />
+        <button mat-icon-button matSuffix>
+          <mat-icon>search</mat-icon>
+        </button>
       </mat-form-field>
     </div>
+    <button class="btn-add" mat-flat-button (click)="addVendor()">
+      <mat-icon>add_business</mat-icon>
+      Add Vendor
+    </button>
   </div>
-  <div *ngIf="vendorList && vendorList.length === 0" class="text-center text-muted my-5">
+</div>
+
+<div class="container-fluid">
+  <div *ngIf="vendorList && vendorList.length === 0; else vendorListTmp" class="center text-muted mt-5">
     No Vendor Found
   </div>
-  <div class="d-flex flex-wrap gap-3  w-auto" *ngIf="vendorList && vendorList.length > 0">
-    <div class="w-100" *ngIf="vendorList && vendorList.length > 0">
-      <div class="mb-5">
-        <app-vendor-card [vendorFirm]="filterVendorDuplicate" (deleted)="getAllVendors()"></app-vendor-card>
-      </div>
+
+  <ng-template #vendorListTmp>
+    <div class="mb-5">
+      <app-vendor-card [vendorFirm]="filterVendorDuplicate" (deleted)="getAllVendors()"></app-vendor-card>
     </div>
-  </div>
+  </ng-template>
 </div>

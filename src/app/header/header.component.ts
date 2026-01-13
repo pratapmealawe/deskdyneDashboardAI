@@ -142,7 +142,20 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Search Order', route: 'searchOrder', showChild: true },
       ],
     },
-
+    {
+      name: 'Vendor Wallet Dashboard',
+      showParent: true,
+      route: 'vendorWalletDashboard',
+      image: 'Users_white',
+      imageblue: 'Users_blue',
+    },
+    {
+      name: 'Vendor Payout',
+      showParent: true,
+      route: 'vendorPayout',
+      image: 'Users_white',
+      imageblue: 'Users_blue',
+    },
     {
       name: 'Users',
       showParent: true,
@@ -168,8 +181,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Incident Reporting',
       showParent: true,
-      // showBadge: true,
-      // count: this.inReviewIncidentsCount$,
+      showBadge: true,
+      count: this.inReviewIncidentsCount$,
       route: 'orgIncidentManagement',
       image: 'Incident reporting_white',
       imageblue: 'Incident reporting_blue',
@@ -460,11 +473,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.getAdminProfile();
     this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
     this.suggestionsFeedbackService.fetchAllEnquiries();
-    // this.getInReviewIncidents();
+    this.getInReviewIncidents();
     this.setActiveStateFromRoute(this.router.url);
-    // this.pollingSub = interval(30_000).subscribe(() => {
-    //   this.getInReviewIncidents();
-    // });
+    this.pollingSub = interval(30_000).subscribe(() => {
+      this.getInReviewIncidents();
+    });
   }
 
   async getInReviewIncidents() {

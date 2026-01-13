@@ -2,10 +2,11 @@
     <mat-card class="p-3">
         <mat-card-title>Select Cafeteria</mat-card-title>
         <mat-radio-group color="primary" [(ngModel)]="selectedCafeteria">
-            <mat-radio-button *ngFor="let cafeteria of orgObj.cafeteriaList" [id]="cafeteria._id" name="CafeteriaName" [value]="cafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
+            <mat-radio-button *ngFor="let cafeteria of orgObj.cafeteriaList" [id]="cafeteria._id" name="CafeteriaName"
+                [value]="cafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
         </mat-radio-group>
     </mat-card>
-     <div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="24px"></div>
+    <div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="24px"></div>
     <mat-card fxFlex class="p-3">
         <mat-card-title class="d-flex justify-content-between align-items-center mb-2">
             <div>Entry Consumption Menu</div>
@@ -23,16 +24,13 @@
                             <mat-form-field appearance="outline" class="w-100">
                                 <input matInput placeholder="Item Name" [(ngModel)]="consumptionItem.itemName"
                                     #itemName="ngModel" name="itemName{{i}}" required maxlength="40" minlength="3"
-                                    required appOnlyAlpha />
+                                    required />
                                 <mat-error *ngIf="itemName.invalid && (itemName.dirty || itemName.touched)">
                                     <ng-container *ngIf="itemName.errors?.['required']">
                                         Item Name is required.
                                     </ng-container>
                                     <ng-container *ngIf="itemName.errors?.['maxlength']">
-                                        Maximum 40 digits allowed.
-                                    </ng-container>
-                                    <ng-container *ngIf="itemName.errors?.['appOnlyNumber']">
-                                        Only Alpha are allowed.
+                                        Maximum 40 characters allowed.
                                     </ng-container>
                                 </mat-error>
                             </mat-form-field>
@@ -124,44 +122,44 @@
             </div>
         </ng-container>
     </mat-card>
+</div>
+<ng-template #content let-modal>
+    <div class="dialog-header p-4">
+        <div mat-dialog-title>Update Consumption Menu</div>
+        <button mat-icon-button aria-label="Close dialog" class="close-button" (click)="modal.close()">
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
-    <ng-template #content let-modal>
-        <div class="dialog-header p-4">
-            <div mat-dialog-title>Update Consumption Menu</div>
-            <button mat-icon-button aria-label="Close dialog" class="close-button" (click)="modal.close()">
-                <mat-icon>close</mat-icon>
-            </button>
-        </div>
-        <mat-dialog-content>
-            <form [formGroup]="MealForm" class="form-grid p-3">
-                <div class="form-group">
-                    <label class="form-label">Item Name </label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput formControlName="itemName" />
-                    </mat-form-field>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Price</label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput type="number" formControlName="mealPrice" />
-                    </mat-form-field>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Min Guarantees</label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput type="number" formControlName="minGuarantees" />
-                    </mat-form-field>
-                </div>
-                <!-- <mat-label class="mt-8">Select MealType</mat-label>
+    <mat-dialog-content>
+        <form [formGroup]="MealForm" class="form-grid p-3">
+            <div class="form-group">
+                <label class="form-label">Item Name </label>
+                <mat-form-field appearance="outline" class="w-100">
+                    <input matInput formControlName="itemName" />
+                </mat-form-field>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Price</label>
+                <mat-form-field appearance="outline" class="w-100">
+                    <input matInput type="number" formControlName="mealPrice" />
+                </mat-form-field>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Min Guarantees</label>
+                <mat-form-field appearance="outline" class="w-100">
+                    <input matInput type="number" formControlName="minGuarantees" />
+                </mat-form-field>
+            </div>
+            <!-- <mat-label class="mt-8">Select MealType</mat-label>
                 <mat-chip-listbox multiple formControlName="selctedmealtype" class="chip-list">
                     <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
                         {{ chip.mealType }}
                     </mat-chip-option>
                 </mat-chip-listbox> -->
-            </form>
-        </mat-dialog-content>
-        <mat-dialog-actions class="actions d-flex justify-content-end gap-2 p-3">
-            <button mat-stroked-button (click)="modal.close()">Cancel</button>
-            <button mat-flat-button color="primary" (click)="updateMealTypeList()">Update</button>
-        </mat-dialog-actions>
-    </ng-template>
+        </form>
+    </mat-dialog-content>
+    <mat-dialog-actions class="actions d-flex justify-content-end gap-2 p-3">
+        <button mat-stroked-button (click)="modal.close()">Cancel</button>
+        <button mat-flat-button color="primary" (click)="updateMealTypeList()">Update</button>
+    </mat-dialog-actions>
+</ng-template>

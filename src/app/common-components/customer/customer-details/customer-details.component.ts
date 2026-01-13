@@ -12,7 +12,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 export class CustomerDetailsComponent implements OnInit {
   @Input() userDetails: any
   imageUrl = '';
-  pocDetails:any
+  pocDetails: any
 
   constructor(private toasterService: ToasterService, private confirmationModalService: ConfirmationModalService, private apiMainService: ApiMainService) { }
 
@@ -23,8 +23,11 @@ export class CustomerDetailsComponent implements OnInit {
   }
 
   confirmDelete() {
-    this.confirmationModalService.modal(`Are you sure you want to delete this user ${this.userDetails?.userName}? User will be removed from all lists.`,  this.deleteUser
-    , this)
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete this user ${this.userDetails?.userName}? User will be removed from all lists.`,
+      callback: this.deleteUser,
+      context: this
+    })
   }
 
   async getUserPocDetails() {
@@ -35,7 +38,7 @@ export class CustomerDetailsComponent implements OnInit {
       const res = await this.apiMainService.fetchtOrgInfo(body)
       console.log(res);
       this.pocDetails = res
-    } catch(err:any)  {
+    } catch (err: any) {
       console.log(err);
     }
   }

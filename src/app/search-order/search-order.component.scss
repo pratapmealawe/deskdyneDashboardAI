@@ -1,13 +1,16 @@
-@import "/src/styles.scss";
+@import '/src/styles.scss';
 
-.status-wrapper{
-    label{
-        margin-bottom:0;
-    }
+.cardDesign {
+    @include card-design($white);
+    border: 1px solid $border-color;
+    box-shadow: $box-shadow-sm;
 }
 
-.list-group-item{
-    // background-color:#f1eeee;
-    margin-bottom:12px;
-    border-color:#a3a3a3;
+.dense-field {
+    @include mat-form-field-responsive;
+}
+
+.center {
+    text-align: center;
+    font-size: 1.1rem;
 }

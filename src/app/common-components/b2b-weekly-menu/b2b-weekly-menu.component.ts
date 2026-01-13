@@ -295,11 +295,13 @@ export class B2bWeeklyMenuComponent implements OnInit {
 
   showPopup(foodItem: any, i: any) {
     this.index = i;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${foodItem.itemName} Item`,
-      this.deleteItem,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this menu?',
+      callback: this.deleteItem,
+      context: this,
+      data: foodItem
+    });
   }
 
 }
+

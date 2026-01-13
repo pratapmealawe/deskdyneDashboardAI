@@ -2,7 +2,7 @@ import { Component, OnInit, Input, ViewChild, ElementRef, Inject, Optional } fro
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -66,7 +66,7 @@ export class VendorComplianceComponent implements OnInit {
   @ViewChild('panFileRef') panFileRef!: ElementRef;
 
   constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer,
-    private modalService: NgbModal, private policyService: PolicyService,
+    private policyService: PolicyService,
     private localStorageService: LocalStorageService, private matDialog: MatDialog,
     @Optional() public dialogRef: MatDialogRef<VendorComplianceComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
@@ -210,26 +210,26 @@ export class VendorComplianceComponent implements OnInit {
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef: NgbModalRef = this.modalService.open(ImageCropperComponent,
-              {
-                ariaLabelledBy: 'modal-basic-title', size: 'xl', backdrop: 'static',
-                centered: true
-              });
-            modalRef.result.then((result: any) => {
+            const dialogRef = this.matDialog.open(ImageCropperComponent, {
+              width: '50%',
+              panelClass: 'image-cropper-dialog',
+              disableClose: true,
+              data: {
+                imageUrl: imageUrl,
+                imageWidth: 600,
+                imageHeight: height * 2
+              }
+            });
+
+            dialogRef.afterClosed().subscribe((result: any) => {
               console.log('Closed with:', result);
               if (result && result.croppedImages) {
                 console.log('croppedImages ', result.croppedImages);
                 this.uploadedCompliance[filename] = result.croppedImages.file;
-                // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];  
+                // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];
                 this.compliance[filename] = result.croppedImages.resizeDataUrl;
               }
-            }, (reason: any) => {
-              console.log(`Model Dismissed`);
             });
-            modalRef.componentInstance.uploadedImageUrl = imageUrl;
-            modalRef.componentInstance.imageWidth = 600;
-            modalRef.componentInstance.imageHeight = height * 2;
-            // modalRef.componentInstance.aspectRatio = 1; 
           } catch (error) {
             console.log('error while changes kitchen opened status ', error);
           }

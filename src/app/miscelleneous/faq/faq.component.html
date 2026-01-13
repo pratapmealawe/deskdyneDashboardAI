@@ -1,115 +1,104 @@
-<div class="bgpadding1">
-  <!-- <div class="row mb-3">
-        <div class="labelText">Application</div>
-        <div class="col-6 col-md-4 col-lg-3 mt-2">
-            <span class="me-2" [ngClass]="{tileSelected: server === 'ML'}" (click)="server = 'ML';getAllFAQs('ML')">
-                <span class="tileLabel header4 countTile">MealAwe</span>
-            </span>
-        </div>
-    </div> -->
-  <span
-    class="addBtn mt-2"
-    (click)="addFAQ()"
-    *ngIf="!addnewFAQ && true || btnPolicy?.addFaq"
-    >+</span
-  >
+<div class="vendor-header">
+  <div>
+    <h4 class="m-0 fw-semibold">FAQ Management</h4>
+  </div>
+  <div class="header-actions">
+    <button mat-raised-button color="primary" *ngIf="!addnewFAQ && (true || btnPolicy?.addFaq)" (click)="addFAQ()">
+      <mat-icon>add</mat-icon> Add FAQ
+    </button>
+  </div>
+</div>
 
-  <div class="mt-2" *ngIf="editMode">
-    <div class="labelText" *ngIf="!addnewFAQ && true || btnPolicy?.editFaq">
-      Update FAQ
-    </div>
-    <div>
-      <div>
-        <label class="labelText" for="variableName">Question</label>
-        <input
-          type="text"
-          class="form-control"
-          id="variableName"
-          [(ngModel)]="faqObj.question"
-          placeholder="name"
-        />
+<div class="container-fluid pb-4">
+
+  <!-- Edit Mode Section -->
+  <div *ngIf="editMode" class="bgpadding3 mb-4">
+    <div class="labelText mb-3" *ngIf="!addnewFAQ">Update FAQ</div>
+    <div class="labelText mb-3" *ngIf="addnewFAQ">Add New FAQ</div>
+
+    <div class="row g-3">
+      <div class="col-12">
+        <label class="labelText mb-2" for="question">Question</label>
+        <input type="text" class="form-control" id="question" [(ngModel)]="faqObj.question"
+          placeholder="Enter question" />
       </div>
-      <div>
-        <label class="labelText" for="variableValue">Answer</label>
-        <input
-          type="text"
-          class="form-control"
-          id="variableValue"
-          [(ngModel)]="faqObj.answer"
-          placeholder="value"
-        />
+
+      <div class="col-12">
+        <label class="labelText mb-2" for="answer">Answer</label>
+        <textarea type="text" class="form-control" id="answer" [(ngModel)]="faqObj.answer" placeholder="Enter answer"
+          style="height: auto; min-height: 80px; padding-top: 10px;"></textarea>
       </div>
-      <div>
-        <div class="labelText mt-2">FAQ for</div>
-        <div class="mt-2">
-          <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="radio"
-              id="DDVendor"
-              value="DDVendor"
-              [(ngModel)]="faqObj.faqFor"
-              name="itemType"
-            />
-            <label class="form-check-label labelText" for="DDVendor"
-              >DDVendor</label
-            >
+
+      <div class="col-12">
+        <label class="labelText mb-2">FAQ For</label>
+        <div class="d-flex align-items-center gap-3">
+          <div class="form-check">
+            <input class="form-check-input" type="radio" id="DDVendor" value="DDVendor" [(ngModel)]="faqObj.faqFor"
+              name="faqTarget">
+            <label class="form-check-label" for="DDVendor">DDVendor</label>
           </div>
+          <!-- Add more radio buttons if needed for other targets like 'User' -->
         </div>
       </div>
     </div>
-    <div class="mt-2">
-      <span class="inline me-2" *ngIf="addnewFAQ && true || btnPolicy?.addFaq">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm"
-          (click)="submitnewFAQ(faqObj)"
-        >
-          Submit
-        </button>
-      </span>
-      <span class="inline me-2" *ngIf="!addnewFAQ && true || btnPolicy?.editFaq">
-        <button
-          type="button"
-          class="btn btn-primary btn-sm"
-          (click)="updateFAQ(faqObj)"
-        >
-          Update
-        </button>
-      </span>
-      <span class="inline me-2">
-        <button type="button" class="btn btn-danger btn-sm" (click)="cancel()">
-          Cancel
-        </button>
-      </span>
+
+    <div class="mt-4 d-flex gap-2">
+      <button *ngIf="addnewFAQ && (true || btnPolicy?.addFaq)" mat-raised-button color="primary"
+        (click)="submitnewFAQ(faqObj)">
+        Submit
+      </button>
+
+      <button *ngIf="!addnewFAQ && (true || btnPolicy?.editFaq)" mat-raised-button color="primary"
+        (click)="updateFAQ(faqObj)">
+        Update
+      </button>
+
+      <button mat-stroked-button color="warn" (click)="cancel()">
+        Cancel
+      </button>
     </div>
   </div>
 
-  <div class="mt-2" *ngIf="!editMode">
+  <!-- List Section -->
+  <div *ngIf="!editMode">
+    <div *ngIf="allFAQs && allFAQs.length === 0" class="center">
+      No FAQs Found
+    </div>
+
     <div *ngFor="let faq of allFAQs" class="cardDesign">
-      <div class="row">
-        <div class="col-10 col-md-10 col-lg-11">
-          <div class="labelText">{{ faq.question }}</div>
-          <div class="labelData">{{ faq.answer }}</div>
-          <div class="labelData">FAQ For: {{ faq.faqFor }}</div>
-        </div>
-        <div class="col-2 col-md-2 col-lg-1 alignRight">
-          <i
-            *ngIf="true || btnPolicy?.editFaq"
-            class="bi bi-pencil-square bgsidepadding5 pointer"
-            (click)="editFAQ(faq)"
-          ></i>
-          <i
-            *ngIf="true || btnPolicy?.deleteFaq"
-            class="bi bi-trash-fill bgsidepadding5 pointer"
-            (click)="showPopup(faq)"
-          ></i>
+      <div class="container-fluid">
+        <div class="row align-items-start">
+
+          <!-- Content -->
+          <div class="col-md-10">
+            <div class="mb-2">
+              <span class="labelText me-2">Q:</span>
+              <span class="fw-bold">{{ faq.question }}</span>
+            </div>
+            <div class="mb-2">
+              <span class="labelText me-2">A:</span>
+              <span class="labelData">{{ faq.answer }}</span>
+            </div>
+            <div>
+              <span class="badge bg-light text-dark border">For: {{ faq.faqFor }}</span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="col-md-2 d-flex align-items-center justify-content-end p-0 gap-2">
+            <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editFaq" (click)="editFAQ(faq)"
+              matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteFaq" (click)="showPopup(faq)"
+              matTooltip="Delete">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
 
-  <div class="center" *ngIf="!editMode && allFAQs.length === 0">
-    No Records Found
-  </div>
 </div>

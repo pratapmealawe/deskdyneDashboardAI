@@ -214,6 +214,7 @@ export class ApiConfigService {
       getVcEmployeeByPhoneNo: p('/api/getVcEmployeeByPhoneNo', 'GET'),
       verifyVcEmployeeByPhoneNo: p('/api/verifyVcEmployeeByPhoneNo', 'GET'),
       fetchOutletOrdersbysearchObj: p('/api/fetchOutletOrdersbysearchObj', 'POST'),
+      fetchAllOutletOrdersbysearchObj: p('/api/fetchAllOutletOrdersbysearchObj', 'POST'),
       fetchConsumptionOrdersbysearchObj: p('/api/fetchConsumptionOrdersbysearchObj', 'POST'),
       fetchFoodOrderPackagebysearchObj: p('/api/fetchFoodOrderPackagebysearchObj', 'POST'),
       getStaticTotalCounts: p('/api/getStaticTotalCounts', 'GET'),
@@ -310,13 +311,11 @@ export class ApiConfigService {
       getImageGroupConfigByName: p('/api/getImageGroupConfigByName', 'GET'),
       getServerLogs: p('/public/getServerLogs', 'POST'),
       getAuditLogs: p('/utility/getAuditLogs', 'POST'),
-
       addCategoryMealAweOutlet: p('/api/addCategoryMealAweOutlet', 'POST'),
       deleteCategoryMealAweOutlet: p('/api/deleteCategoryMealAweOutlet', 'POST'),
       updateCategoryMealAweOutlet: p('/api/updateCategoryMealAweOutlet', 'POST'),
       getDefaultCategories: p('/api/getDefaultCategories', 'GET'),
       updateWeeklyMenuCategory: p('/api/updateWeeklyMenuCategory', 'POST'),
-
       saveMealAweOutlet: p('/api/saveMealAweOutlet', 'POST'),
       updateMealAweOutlet: p('/api/updateMealAweOutlet', 'POST'),
       getMealAweOutletByCafeteria: p('/api/getMealAweOutletByCafeteria', 'GET'),
@@ -329,6 +328,13 @@ export class ApiConfigService {
       deleteCategoryConfig: p('/api/deleteCategoryConfig', 'POST'),
       changeCategoryStatus: p('/api/changeCategoryStatus', 'POST'),
       createDefaultCategories: p('/api/createDefaultCategories', 'POST'),
+      checkJusPayPayoutStatus: p('/utility/checkJusPayPayoutStatus', 'GET'),
+      getAllVendorWallet: p('/api/getAllVendorWallet', 'GET'),
+      addBulkWalletBalance: p('/api/addBulkWalletBalance', 'POST'),
+      getCustomerWalletListByOrgId: p('/api/getCustomerWalletListByOrgId', 'POST'),
+      getAllCurrentOrders: p('/api/getAllCurrentOrders', 'GET'),
+      updatescanOrder: p('/api/updatescanOrder', 'POST'),
+      validateJusPayPaymentTransaction: p('/api/validateJusPayPaymentTransaction', 'POST'),
     }
   }
 }

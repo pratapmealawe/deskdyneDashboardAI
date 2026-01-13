@@ -1,3 +1,5 @@
+@import '/src/styles.scss';
+
 .banner-preview {
     display: flex;
     flex-wrap: wrap;
@@ -7,10 +9,10 @@
 .banner-item {
     position: relative;
     cursor: move;
-    border: 1px solid #ccc;
+    border: 1px solid $border-color;
     padding: 4px;
     border-radius: 4px;
-    background: #f5f5f5;
+    background: $background-color;
 }
 
 .banner-item .remove-btn {

@@ -28,7 +28,7 @@ export class B2bFoodItemCardComponent implements OnInit {
   constructor(
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -40,11 +40,11 @@ export class B2bFoodItemCardComponent implements OnInit {
   }
 
   showPopup(): void {
-    this.confirmationModalService.modal(
-      `Are you sure you want to delete "${this.foodItem?.itemName}"?`,
-      this.deleteFoodItem,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this food item?',
+      callback: this.deleteFoodItem,
+      context: this
+    });
   }
 
   editFoodItem(): void {

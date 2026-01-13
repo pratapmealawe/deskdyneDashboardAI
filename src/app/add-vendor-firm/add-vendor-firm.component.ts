@@ -45,6 +45,7 @@ export class AddVendorFirmComponent {
   vendorLocation: any
   dialogRef!: MatDialogRef<any>;
   @ViewChild('outletModal') outlet: any;
+  outletMatDialogRef: any; // Ref for the outlet dialog
   // @ViewChild('complianceModal') compliance: any; // Removed as we use MatDialog type
   @ViewChild('geolocation') geolocation: any;
   @ViewChild('addAddress') address: any;
@@ -56,7 +57,6 @@ export class AddVendorFirmComponent {
   btnPolicy: any;
   pocBtn: string = 'Submit';
   cafeterialist: any;
-
 
   constructor(
     private fb: FormBuilder,
@@ -320,7 +320,8 @@ export class AddVendorFirmComponent {
       const finalObj = {
         ...this.form.value,
         outletList: this.selectedOutletsList,
-        popup_details: this.selectedPopupsList
+        popup_details: this.selectedPopupsList,
+        address: this.addressList // Ensure address list is sent
       };
       const formData = this.objectToFormData(finalObj);
 
@@ -425,8 +426,10 @@ export class AddVendorFirmComponent {
         }
       }
     });
-    const dialogRef = this.dialog.getDialogById('OUTLET_DIALOG');
-    dialogRef?.close();
+    // this.modalService.dismissAll(); // Incorrect for MatDialog
+    if (this.outletMatDialogRef) {
+      this.outletMatDialogRef.close();
+    }
   }
 
   deleteOutlet(index: number) {
@@ -523,7 +526,7 @@ export class AddVendorFirmComponent {
       console.error('TemplateRef outletDialog is not available');
       return;
     }
-    this.dialog.open(this.outletDialog, {
+    this.outletMatDialogRef = this.dialog.open(this.outletDialog, {
       width: '1000px',
       disableClose: false
     });
@@ -577,5 +580,10 @@ export class AddVendorFirmComponent {
     this.showModalOutletListforPopup = false;
     this.modalService.dismissAll();
   }
+  get isFormValid(): boolean {
+    // Valid if form controls are valid AND at least one address AND at least one outlet
+    return this.form.valid && this.addressList.length > 0;
+  }
+
 
 }

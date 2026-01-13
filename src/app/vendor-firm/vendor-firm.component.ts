@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -27,9 +27,10 @@ export class VendorFirmComponent {
   showSearchSection = true;
   vendorInfo: any;
   searchControl = new FormControl('');
-  pageSize: number = 5;
+  pageSize: number = 10;
   pageIndex: number = 0;
   pagedVendorFirm: any[] = [];
+  filteredList: any[] = [];
 
 
   constructor(
@@ -38,7 +39,8 @@ export class VendorFirmComponent {
     private policyService: PolicyService,
     private localStorageService: LocalStorageService,
     private confirmationModalService: ConfirmationModalService,
-    private searchService: SearchFilterService
+    private searchService: SearchFilterService,
+    private activatedRoute: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -55,9 +57,12 @@ export class VendorFirmComponent {
           config,
           value ?? ''
         )
-        this.pagedVendorFirm = [...result]
+        this.filteredList = [...result]
+        this.pageIndex = 0;
+        this.updateCard();
       } else {
-        this.pagedVendorFirm = [...this.vendorList]
+        this.filteredList = [...this.vendorList]
+        this.pageIndex = 0;
         this.updateCard()
       }
     })
@@ -66,7 +71,8 @@ export class VendorFirmComponent {
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
-      this.pagedVendorFirm = await this.apiMainService.getAllVendorFirms();
+      this.filteredList = [...this.vendorList];
+      this.updateCard();
       console.log(this.pagedVendorFirm, "pagee vendir ");
     } catch (error) {
       console.log('getAllVendor', error);
@@ -91,11 +97,12 @@ export class VendorFirmComponent {
 
   showPopup(vendorFirm: any) {
     this.vendorFirmInfo = vendorFirm;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${vendorFirm.vendorFirmName} vendor firm`,
-      this.deleteVendorFirm,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this firm?',
+      callback: this.deleteVendorFirm,
+      context: this,
+      data: vendorFirm._id
+    });
   }
 
 
@@ -119,10 +126,10 @@ export class VendorFirmComponent {
     this.updateCard();
   }
   updateCard() {
-    if (!this.vendorList) return;
+    if (!this.filteredList) return;
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
-    this.pagedVendorFirm = this.vendorList.slice(start, end);
+    this.pagedVendorFirm = this.filteredList.slice(start, end);
 
   }
 }

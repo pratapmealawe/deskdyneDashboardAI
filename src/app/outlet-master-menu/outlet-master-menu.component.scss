@@ -2,16 +2,235 @@
 @use '/src/styles.scss' as color;
 @import 'src/styles.scss';
 
+.admin-header {
+  @include mixin.responsive-header;
+  background-color: transparent;
+}
+
+.header-actions {
+  @include mixin.responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
+
+  .input-wrapper {
+    min-width: 200px;
+
+    @media(max-width: 768px) {
+      width: 100%;
+      display: block !important;
+    }
+  }
+}
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
+  background-color: white;
+  border-radius: 10px;
+}
+
+.outlet-menu {
+  .cursor-pointer {
+    cursor: pointer;
+  }
+}
+
+/* Filters */
+.outlet-menu-filters {
+  mat-form-field {
+    width: 100%;
+  }
+}
+
+/* Category section */
+.menu-category {
+  margin-bottom: 16px;
+}
+
+.menu-category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 4px 8px 4px;
+}
+
+.category-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f3f4ff;
+}
+
+.category-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $primary-color1;
+}
+
+.category-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.category-count {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Menu item card */
+.menu-item-card {
+  margin-bottom: 10px;
+}
+
+.menu-item-card-inner {
+  display: flex;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  align-items: stretch;
+}
+
+/* Thumbnail */
+.menu-thumb {
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.menu-thumb-img {
+  width: 80px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Veg / Non-veg indicator using existing classes */
+.typeIcon {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  width: 18px;
+  height: 18px;
+}
+
+/* Middle content */
+.menu-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Header row inside card */
+.menu-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.menu-title-block {
+  min-width: 0;
+}
+
+.menu-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menu-subtitle {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+/* Small meta chips row */
+.menu-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.meta-block {
+  min-width: 80px;
+}
+
+.meta-label {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.meta-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Description */
+.menu-desc {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #4b5563;
+  max-height: 36px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline;
+}
+
+/* Meal chips */
+.menu-mealchips {
+  margin-top: 6px;
+}
+
+.menu-mealchips-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.menu-meal-chip {
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.menu-active-chip {
+  mat-checkbox {
+    font-size: 12px;
+  }
+}
+
+/* Right actions */
+.menu-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 4px;
+}
+
+/* General image style (kept from earlier) */
+.uploadedImage {
+  width: 150px;
+  height: 150px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+/* Hidden file input */
 .uploadInput {
   display: none;
 }
 
-.uploadedImage {
-  width: 100px;
-  height: 100px;
-  cursor: pointer;
-}
-
+/* Upload button under preview */
 .uploadIcon {
   width: 84px;
   background: $secondary-color3;
@@ -20,15 +239,17 @@
   color: white;
   position: relative;
   top: -15px;
-  left: 8px;
+  left: 34px;
   font-size: 13px;
   padding: 4px 0px;
   cursor: pointer;
 }
 
+/* Nutrition chips */
 .chip-option {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  gap: 8px;
   padding: 10px;
 
   .title {
@@ -39,7 +260,24 @@
     font-size: x-small;
   }
 }
-.addtnc,
+
+.mat-mdc-chip.mat-mdc-standard-chip {
+  --mdc-chip-container-height: 32px; // lower height looks better in cards
+}
+
+/* Nutrition +/- buttons */
+.addtnc {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: white;
+  text-align: center;
+  font-size: 19px;
+  margin: 2px;
+  background: $secondary-color3;
+}
+
 .removetnc {
   display: inline-block;
   width: 30px;
@@ -49,144 +287,56 @@
   text-align: center;
   font-size: 19px;
   margin: 2px;
-}
-.addtnc {
-  background: $secondary-color3;
-}
-.removetnc {
   background: $primary-color1;
 }
-.search-input,
-.filter-field {
-  @include mixin.mat-form-field-responsive();
-}
 
-.uploadedImage,
-.img-fluid {
-  max-width: 100%;
-  height: auto;
-}
-
-.cardDesign {
-  @include mixin.card-design(color.$primary-offset-color1);
-  padding:1rem !important;
-}
-
-.nutrition-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  align-items: end;
-  border-radius: 8px;
-}
-
-@media (max-width: 992px) {
-  .nutrition-row {
-    grid-template-columns: repeat(2, 1fr);
+/* Responsive behaviour */
+@media (max-width: 767.98px) {
+  .menu-item-card-inner {
+    flex-direction: column;
+    align-items: flex-start;
   }
-}
 
-@media (max-width: 576px) {
-  .nutrition-row {
-    grid-template-columns: 1fr;
+  .menu-thumb-img {
+    width: 72px;
+    height: 72px;
   }
-  .delete-col {
-    justify-content: flex-start;
+
+  .menu-actions {
+    flex-direction: row;
+    align-self: flex-end;
+    margin-top: 4px;
   }
-}
 
-.main-content,
-.main-contents {
-  display: flex;
-}
-
-.main-content {
-  width: 100%;
-}
-
-.main-contents {
-  justify-content: space-between;
-  align-items: anchor-center;
-  padding-left: 17px;
-  width: 90%;
-  gap: 20px;
-}
-
-.content {
-  flex: 1;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-
-.action-btn {
-  display: flex;
-  gap: 12px;
-  min-width: 120px;
-  justify-content: center;
-  align-items: center;
-  height: -webkit-fill-available;
-}
-
-.upload-box {
-  text-align: center;
-}
-
-.upload-preview {
-  width: 130px;
-  height: 130px;
-  background: #e2e8f0;
-  border-radius: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-bottom: 12px;
-  mat-icon {
-    font-size: 40px;
-    color: #90a4ae;
-  }
-}
-
-@media (max-width: 991px) {
-  .main-contents {
+  .menu-meta-row {
     gap: 12px;
   }
-  .content {
-    grid-template-columns: 1fr;
-  }
-  .action-btn {
-    min-width: 100px;
-  }
 }
 
-@media (max-width: 768px) {
-  .cardDesign {
-    padding: 15px !important;
-  }
-  .main-content{
-    display: block;
-  
-  }
-  .main-contents {
-    flex-direction: column;
-    gap: 20px;
-      margin-top:1rem
-  }
-  .img-fluid{
-    width: -webkit-fill-available;
-  }
-  .content {
-    width: 100%;
-grid-template-columns: 1fr 1fr;
-  }
-  .action-btn {
-    width: 100%;
-    flex-direction: row;
-    justify-content: space-between;
-    padding-top: 8px;
-  }
-  .action-btn button,
-  .action-btn mat-checkbox {
-    margin-right: 5px;
-  }
+
+/* NEW STYLES */
+.small-icon-btn {
+  width: 24px !important;
+  height: 24px !important;
+  line-height: 24px !important;
+}
+
+.scale-08 {
+  transform: scale(0.8);
+  transform-origin: left center;
+}
+
+.meal-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: $primary-color1;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.small-fab {
+  transform: scale(0.8);
 }

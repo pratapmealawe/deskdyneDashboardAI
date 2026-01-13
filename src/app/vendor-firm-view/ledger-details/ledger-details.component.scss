@@ -1,11 +1,99 @@
+@import '/src/styles.scss';
+
 /* Bootstrap handles most layout; keep Material form field compact */
 .status-filter {
   min-width: 220px;
+}
+
+/* --- Card Design --- */
+.transaction-card {
+  background-color: $white;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-card;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: $box-shadow-card-hover;
+    border-color: $primary-offset-color2;
+  }
+
+  /* detail labels */
+  .detail-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: $primary-offset-color2;
+    font-weight: 600;
+    margin-bottom: 2px;
+  }
+
+  .detail-value {
+    font-size: 0.95rem;
+    color: $textPrimary;
+    font-weight: 500;
+  }
+}
+
+/* --- Status & Type Chips --- */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: $border-radius-xl;
+  font-size: 0.8rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+
+  i {
+    font-size: 0.9rem;
+  }
+
+  /* Specific styling overrides if needed, distinct from bootstrap util classes */
+  &.bg-primary {
+    background-color: $color-info-bg !important;
+    color: $color-info !important;
+  }
+
+  &.bg-success {
+    background-color: $color-success-bg !important;
+    color: $color-success !important;
+  }
+
+  &.bg-warning {
+    background-color: $color-warning-bg !important;
+    color: $color-warning !important;
+  }
+
+  &.bg-info {
+    background-color: $color-info-bg !important;
+    color: $color-info !important;
+  }
+
+  &.bg-secondary {
+    background-color: $background-color !important;
+    color: $primary-offset-color2 !important;
+  }
+}
+
+/* --- Typography & Spacing --- */
+h5.card-title {
+  font-weight: 700;
+  color: $textPrimary;
 }
 
 /* Optional: tighter card spacing on small screens */
 @media (max-width: 576px) {
   .status-filter {
     width: 100%;
+  }
+
+  .transaction-card {
+    margin-bottom: 1rem;
   }
 }

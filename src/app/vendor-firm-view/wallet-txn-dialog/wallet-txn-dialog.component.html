@@ -48,10 +48,10 @@
     </mat-form-field>
   </div>
 
-  <div mat-dialog-actions class="justify-content-end">
+  <div mat-dialog-actions class="justify-content-end gap-2">
     <button mat-button (click)="onClose()" [disabled]="loading">Cancel</button>
-    <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="form.invalid || loading">
-      {{ loading ? 'Saving...' : 'Save' }}
+    <button class="btn-add" mat-flat-button (click)="onSubmit()" [disabled]="form.invalid || loading">
+      <mat-icon>save</mat-icon> {{ loading ? 'Saving...' : 'Save' }}
     </button>
   </div>
 </div>

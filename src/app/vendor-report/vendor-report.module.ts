@@ -12,6 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatIconModule } from '@angular/material/icon';
 import { CommonOutletCafeSelectModule } from '../common-outlet-cafe-select/common-outlet-cafe-select.module';
 import { ItemBreakdownComponent } from './item-breakdown/item-breakdown.component';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -31,6 +32,7 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatIconModule,
     MatDialogModule,
     MatButtonModule,
     MatInputModule,

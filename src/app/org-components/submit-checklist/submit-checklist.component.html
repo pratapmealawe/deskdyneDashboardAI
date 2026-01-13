@@ -59,9 +59,9 @@
     </div>
 
     <div class="header-actions mt-3">
-      <button mat-raised-button color="primary" class="me-2" [disabled]="!canSubmit()" (click)="submitChecklist()"
-        *ngIf="!editMode && (true || btnPolicy?.addChecklist)">
-        Save
+      <button class="btn-add" mat-raised-button color="primary" class="me-2" [disabled]="!canSubmit()"
+        (click)="submitChecklist()">
+        <mat-icon>check_circle</mat-icon> Submit Checklist
       </button>
     </div>
   </mat-card>

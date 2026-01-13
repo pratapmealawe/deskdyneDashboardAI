@@ -1,7 +1,8 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { BankTransactionService } from 'src/service/bank-transaction.service';
 
 export interface WalletTxnDialogData {
   vendorFirmId: string;
@@ -29,7 +30,8 @@ export class WalletTxnDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: WalletTxnDialogData,
     private dialogRef: MatDialogRef<WalletTxnDialogComponent, WalletTxnDialogResult>,
     private fb: FormBuilder,
-    private api: ApiMainService
+    private api: ApiMainService,
+    private bankTransactionService: BankTransactionService
   ) {
     this.form = this.fb.group({
       amount: [null, [Validators.required, Validators.min(0.01)]],
@@ -71,17 +73,23 @@ export class WalletTxnDialogComponent {
           });
         } else if (this.data.transferSource === 'subsidy') {
           // Subsidy → wallet (existing)
+          console.log('Subsidy → wallet (existing)');
           await this.api.moveSubsidyToWallet({
             vendorFirmId: this.data.vendorFirmId,
             amount: +amt.toFixed(2),
             remark
           });
         } else if (this.data.transferSource === 'wallet') {
+          // Calculate charges and mode
+          const result = this.bankTransactionService.calculateTransferModeAndCharges(+amt);
+
           // Wallet → BANK API
           await this.api.transferWalletListToBankManual({
             vendorFirmId: this.data.vendorFirmId,
-            amount: +amt.toFixed(2),
-            remark
+            amount: +result.finalTransferAmount.toFixed(2),
+            remark,
+            mode: result.mode,
+            bankTransactionCharge: Number(result.charge)
           });
         }
       } else {

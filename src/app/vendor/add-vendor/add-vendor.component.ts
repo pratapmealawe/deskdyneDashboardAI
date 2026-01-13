@@ -38,7 +38,7 @@ export class AddVendorCommponent {
   addressList: any = [];
   showEditModalOutletList = false;
   vendorId: number = 0
-  title:string = ' Add Vendor '
+  title: string = ' Add Vendor '
 
   @ViewChild('outletModal') outlet: any;
   @ViewChild('addressModal') address: any;
@@ -71,32 +71,24 @@ export class AddVendorCommponent {
 
   createForm() {
     this.form = this.fb.group({
-      vendorName: ['',[Validators.required]],
-      vendorPhoneNo: ['',[Validators.required]],
-      vendorEmail: ['',[Validators.required]],
-      vendorRole: ['',[Validators.required]],
-      vendorId: ['',[Validators.required]],
-      accessType: ['',[Validators.required]],
-      // address: this.fb.group({
-      //   address1: [''],
-      //   address2: [''],
-      //   landmark: [''],
-      //   location: [''],
-      //   city: [''],
-      // }),
-      // geolocation: this.fb.group({
-      //   lat: [''],
-      //   lng: [''],
-      // }),
+      vendorName: ['', [Validators.required]],
+      vendorPhoneNo: ['', [Validators.required]],
+      vendorEmail: ['', [Validators.required]],
+      vendorRole: ['', [Validators.required]],
+      vendorId: ['', [Validators.required]],
+      accessType: ['', [Validators.required]],
     });
+  }
+
+  // Helper for template
+  get f() {
+    return this.form.controls;
   }
 
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
-      if (this.vendorId) {
-        this.changeVendorFirm({ value: this.vendorId });
-      }
+      this.vendorId && this.changeVendorFirm(this.vendorId, true)
     } catch (error) {
       console.error(error);
     }
@@ -128,11 +120,11 @@ export class AddVendorCommponent {
     return formData;
   }
 
-    async changeVendorFirm(e: any) {
-    this.getVendorFirmById(e.value);
-    this.vendorId = e.value
-    if (e.value) {
-      const vendorFirm = this.vendorList.find((item: any) => item?._id === e.value)
+  async changeVendorFirm(e: any, isInitial: boolean = false) {
+    this.vendorId = isInitial ? e : e.value
+    this.getVendorFirmById(this.vendorId);
+    if (this.vendorId) {
+      const vendorFirm = this.vendorList.find((item: any) => item?._id === this.vendorId)
       if (vendorFirm?.outletList.length > 0) {
         this.outletByCafeteriaList = vendorFirm?.outletList
       }
@@ -331,19 +323,19 @@ export class AddVendorCommponent {
     return form.get(control)?.hasError(error);
   }
 
-onRadioClick(address: any) {
-  this.selectedAddress = address;
-}
-isAddVendorValid(): boolean {
-  return (
-    this.form.valid &&
-    this.selectedOutletsList.length > 0 &&
-    this.selectedAddressList.length > 0
-  );
-}
-toggleCheckbox(outlet: any) {
-  outlet.isChecked = !outlet.isChecked;
-}
+  onRadioClick(address: any) {
+    this.selectedAddress = address;
+  }
+  isAddVendorValid(): boolean {
+    return (
+      this.form.valid &&
+      this.selectedOutletsList.length > 0 &&
+      this.selectedAddressList.length > 0
+    );
+  }
+  toggleCheckbox(outlet: any) {
+    outlet.isChecked = !outlet.isChecked;
+  }
 
 toggleCheckboxforPopup(popup: any) {
   popup.isChecked = !popup.isChecked;

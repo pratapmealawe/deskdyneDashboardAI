@@ -46,10 +46,10 @@
           </div>
 
           <div>
-            <button mat-raised-button class="mat-small-btn" color="primary"
+            <button class="btn-view" mat-raised-button class="mat-small-btn" color="primary"
               *ngIf="vendor?.vendorFirmDetails?.vendorFirmId?.compliance"
               (click)="addComplience($event, vendor?.vendorFirmDetails?.vendorFirmId)">
-              Compliance
+              <mat-icon>verified</mat-icon> Compliance
             </button>
           </div>
         </div>
@@ -65,10 +65,10 @@
           </div>
 
           <div class="mt-2">
-            <button mat-raised-button class="w-100" color="primary"
+            <button class="btn-view" mat-raised-button class="w-100" color="primary"
               *ngIf="vendor?.vendorFirmDetails?.vendorFirmId?.compliance"
               (click)="addComplience($event, vendor?.vendorFirmDetails?.vendorFirmId)">
-              Compliance
+              <mat-icon>verified</mat-icon> Compliance
             </button>
           </div>
         </div>

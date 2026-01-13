@@ -56,7 +56,7 @@ export class DailyBulkCardComponent implements OnInit {
     private modalService: NgbModal,
     private googleMapService: GoogleMapService,
     private toasterService: ToasterService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (this.orderInput) {
@@ -614,11 +614,11 @@ export class DailyBulkCardComponent implements OnInit {
   }
 
   confirmTransfer(): void {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to transfer this order to ${this.searchedVendor?.vendorFirmDetails?.vendorFirmName} - ${this.searchedVendor?.vendorName}?`,
-      () => this.performOrderTransfer(),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to transfer this order to ${this.searchedVendor?.vendorFirmDetails?.vendorFirmName} - ${this.searchedVendor?.vendorName}?`,
+      callback: () => this.performOrderTransfer(),
+      context: this
+    });
   }
 
   cancelTransfer(): void {

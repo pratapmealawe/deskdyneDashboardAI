@@ -13,8 +13,11 @@ export class LedgerDetailsComponent implements OnInit {
   fromDate: string | null = null;
   toDate: string | null = null;
 
-  /** Raw page items from API (unfiltered) */
-  private pageItems: any[] = [];
+  /** Raw page items from API (all items) */
+  allItems: any[] = [];
+
+  /** Raw page items from API (unfiltered) - kept for compatibility if needed or removal */
+  pageItems: any[] = [];
 
   /** What the template renders after status filtering */
   displayedLedgers: any[] = [];
@@ -26,7 +29,7 @@ export class LedgerDetailsComponent implements OnInit {
   /** Pagination state */
   page = 1;
   limit = 10;
-  totalCount: number | null = null;    // null => unknown from server
+  totalCount: number | null = null;    // null => unknown
   totalPages: number | null = null;
   hasNextPage = false;
   isLoading = false;
@@ -34,24 +37,26 @@ export class LedgerDetailsComponent implements OnInit {
   /** Status filter (Material Select + Bootstrap layout) */
   selectedStatuses: Array<'New' | 'InProgress' | 'Closed'> = ['New'];
 
-  constructor(private apiMainService: ApiMainService) {}
+  searchOrderNo = '';
+
+  constructor(private apiMainService: ApiMainService) { }
 
   ngOnInit(): void {
     const todayISO = new Date().toISOString();
     this.fromDate = todayISO;
     this.toDate = todayISO;
-    this.fetchPage(1);
-    this.getVendorLedgerBalance()
+    this.fetchData();
+    this.getVendorLedgerBalance();
   }
 
   async getVendorLedgerBalance() {
     // this.vendorFirmInfo._id
     try {
-      const res = await this.apiMainService.getTotalVendorLedgerBalanceByFirm(this.vendorFirmInfo._id)
+      const res = await this.apiMainService.getTotalVendorLedgerBalanceByFirm(this.vendorFirmInfo._id);
       console.log(res);
-      
-      this.totalVendorLegersBalance = res.totalBalance
-    } catch(err:any) {
+
+      this.totalVendorLegersBalance = res.totalBalance;
+    } catch (err: any) {
       console.log(err);
     }
   }
@@ -67,105 +72,171 @@ export class LedgerDetailsComponent implements OnInit {
     return 'New';
   }
 
-  /** Apply status filter on current page and recompute page-scope balance */
+  /** Apply status filter on all items and slice for current page */
   private applyFilters() {
     const allowed = new Set(this.selectedStatuses);
-    const filtered = this.pageItems.filter(it => allowed.has(this.normalizeStatus(it.status)));
-    this.displayedLedgers = filtered;
+    const searchStr = (this.searchOrderNo || '').trim().toLowerCase();
 
+    // 1. Filter all items
+    const filtered = this.allItems.filter(it => {
+      const matchStatus = allowed.has(this.normalizeStatus(it.status));
+      const matchSearch = !searchStr || String(it.orderNo || '').toLowerCase().includes(searchStr);
+      return matchStatus && matchSearch;
+    });
+
+    this.totalCount = filtered.length;
+    this.totalPages = Math.ceil(this.totalCount / this.limit) || 1;
+
+    // 2. Pagination Logic: Slice the filtered array
+    const startIndex = (this.page - 1) * this.limit;
+    const endIndex = startIndex + this.limit;
+
+    this.displayedLedgers = filtered.slice(startIndex, endIndex);
+
+    // Update local variables for compatibility if needed
+    this.pageItems = this.displayedLedgers;
+
+    this.hasNextPage = this.page < this.totalPages;
   }
 
-  /** Fetch a page (supports common API shapes) */
-  async fetchPage(page: number) {
+  /** Fetch all data once */
+  async fetchData() {
     if (!this.vendorFirmInfo?._id) return;
     this.isLoading = true;
 
     try {
+      // Remove page/limit to get all data if API supports it, 
+      // otherwise user might need to adjust API or loop. 
+      // Assuming API returns all if page/limit ommitted or high limit.
       const body: any = {
         vendorFirmId: this.vendorFirmInfo._id,
         fromDate: this.fromDate,
         toDate: this.toDate,
-        page,
-        limit: this.limit,
       };
 
       const res = await this.apiMainService.getVendorLedgerByFirmAndTypeAndDate(body);
 
       let items: any[] = [];
-      let total: number | null = null;
 
       if (Array.isArray(res)) {
         items = res;
       } else if (res && Array.isArray(res.items)) {
         items = res.items;
-        total = typeof res.total === 'number' ? res.total : null;
       } else if (res && Array.isArray(res.docs)) {
         items = res.docs;
-        total = typeof res.totalDocs === 'number' ? res.totalDocs : null;
-        if (typeof res.page === 'number') this.page = res.page;
-        if (typeof res.limit === 'number') this.limit = res.limit;
       } else {
         items = res || [];
       }
 
-      this.pageItems = items;
-      this.page = page;
+      this.allItems = items;
 
-      this.totalCount = total;
-      this.totalPages = (total && this.limit) ? Math.max(1, Math.ceil(total / this.limit)) : null;
-      this.hasNextPage = total !== null ? (this.totalPages! > this.page) : (items.length === this.limit);
+      // Reset to first page on new fetch
+      this.page = 1;
 
-      // Apply status filter to fresh page
       this.applyFilters();
 
     } catch (error) {
       console.error('Error while fetching ledger', error);
-      this.pageItems = [];
+      this.allItems = [];
       this.displayedLedgers = [];
-      this.totalVendorLegersBalance = 0;
-      this.totalCount = null;
-      this.totalPages = null;
+      this.pageItems = []; // clear compatibility
+      this.totalCount = 0;
+      this.totalPages = 0;
       this.hasNextPage = false;
     } finally {
       this.isLoading = false;
     }
   }
 
-  /** Material paginator -> backend page/limit */
+  /** Kept for backward compat name, but redirects to fetchData */
+  fetchPage(page: number) {
+    // If called with a specific page, we just set the page and re-apply filters if data exists
+    if (this.allItems.length > 0) {
+      this.page = page;
+      this.applyFilters();
+    } else {
+      // If no data, fetch it (ignores page argument for fetching, but could set it)
+      this.fetchData();
+    }
+  }
+
+  /** Material paginator -> local page/limit update */
   onPage(e: PageEvent) {
-    const nextPage = e.pageIndex + 1;
-    const nextSize = e.pageSize;
-
-    // update page size if changed
-    if (this.limit !== nextSize) this.limit = nextSize;
-
-    // fetch requested page
-    this.fetchPage(nextPage);
+    this.page = e.pageIndex + 1;
+    this.limit = e.pageSize;
+    this.applyFilters();
   }
 
   /** Material select changed */
   onStatusChanged() {
     if (this.selectedStatuses.length === 0) {
-      // Keep at least one selected; default back to New
       this.selectedStatuses = ['New'];
     }
-
-    // Client-side re-filter current page:
+    this.page = 1; // Reset to first page on filter change
     this.applyFilters();
+  }
 
-    // Or switch to server-side filtering:
-    // this.fetchPage(1);
+  /** Search trigger */
+  onSearch() {
+    this.page = 1; // Reset to first page on search
+    this.applyFilters();
   }
 
   /** Backward compatibility if called elsewhere */
   async getVendorLedger() {
-    this.fetchPage(1);
+    this.fetchData();
   }
 
-  /** Provide a robust length to Material paginator even if total is unknown */
+  /** Provide a robust length to Material paginator */
   get paginatorLength(): number {
-    if (this.totalCount !== null) return this.totalCount;
-    // Approximate length so paginator enables "Next" when applicable
-    return (this.page - 1) * this.limit + this.displayedLedgers.length + (this.hasNextPage ? 1 : 0);
+    return this.totalCount || 0;
+  }
+
+  // --- UI Helpers ---
+
+  getBillingTypeColorClass(type: string | undefined): string {
+    if (!type) return 'bg-secondary text-white';
+    switch (type.toLowerCase()) {
+      case 'ecommerce': return 'bg-info text-dark';
+      case 'subscription': return 'bg-primary text-white';
+      default: return 'bg-secondary text-white';
+    }
+  }
+
+  getOrderTypeColorClass(type: string | undefined): string {
+    if (!type) return 'bg-light text-dark border';
+    switch (type.toLowerCase()) {
+      case 'preorder': return 'bg-warning text-dark';
+      case 'ondemand': return 'bg-success text-white';
+      default: return 'bg-light text-dark border';
+    }
+  }
+
+  getStatusColorClass(status: string | undefined): string {
+    const s = this.normalizeStatus(status);
+    switch (s) {
+      case 'New': return 'bg-primary text-white';
+      case 'InProgress': return 'bg-warning text-dark';
+      case 'Closed': return 'bg-success text-white';
+      default: return 'bg-secondary text-white';
+    }
+  }
+
+  getStatusIcon(status: string | undefined): string {
+    const s = this.normalizeStatus(status);
+    switch (s) {
+      case 'New': return 'bi-hourglass-split';
+      case 'InProgress': return 'bi-arrow-repeat';
+      case 'Closed': return 'bi-check-circle-fill';
+      default: return 'bi-question-circle';
+    }
+  }
+
+  getLedgerDisplayAmount(ledger: any): number {
+    if (ledger.billingType === 'ecommerce') {
+      return ledger.vendorLedgerAmt || 0;
+    } else {
+      return (ledger.vendorRevenueSharingLedgerAmt || 0) - (ledger.subsidyAmount || 0);
+    }
   }
 }

@@ -7,33 +7,33 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 })
 export class OutletFeedbackComponent implements OnInit {
   @Input() outletObj: any;
-  feedbackList:any=Array();
-  pageNo=1;
-  nextOn=true;
-  showDetails: boolean = false;
-  constructor( private apiMainService: ApiMainService) { }
+  feedbackList: any = Array();
+  pageNo = 1;
+  nextOn = true;
+
+  constructor(private apiMainService: ApiMainService) { }
 
   ngOnInit(): void {
-    console.log(this.outletObj,"<------this.outletObj------->");
+    console.log(this.outletObj, "<------this.outletObj------->");
     this.getFeedbacklist();
   }
 
 
-  async getFeedbacklist(){
-    let filter={
-      orgId:this.outletObj.organizationDetails.organizationId,
-      outletId:this.outletObj._id,
+  async getFeedbacklist() {
+    let filter = {
+      orgId: this.outletObj.organizationDetails.organizationId,
+      outletId: this.outletObj._id,
     }
-    let feedbackList= await this.apiMainService.gettfeedbacklist(this.pageNo,filter);
-    if(feedbackList && feedbackList.length >0){
-      this.feedbackList = [...this.feedbackList,...feedbackList];
-    }else{
-      this.nextOn =false;
+    let feedbackList = await this.apiMainService.gettfeedbacklist(this.pageNo, filter);
+    if (feedbackList && feedbackList.length > 0) {
+      this.feedbackList = [...this.feedbackList, ...feedbackList];
+    } else {
+      this.nextOn = false;
     }
   }
 
-  getMore(){
+  getMore() {
     this.pageNo++;
-    this.getFeedbacklist();  
+    this.getFeedbacklist();
   }
 }

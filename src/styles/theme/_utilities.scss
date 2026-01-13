@@ -1,0 +1,40 @@
+/* Global Utility Classes */
+
+.custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #ccc;
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background-color: #f1f1f1;
+    }
+}
+
+.center {
+    text-align: center;
+}
+
+.alignRight {
+    text-align: right;
+}
+
+.right {
+    float: right;
+}
+
+.left {
+    float: left;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.bold {
+    font-weight: 500;
+}

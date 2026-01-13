@@ -30,10 +30,10 @@ export class OrderCardComponent implements OnInit {
   showStatusHistory: boolean = false;
 
 
-  constructor() {}
-  ngOnInit(): void {}
+  constructor() { }
+  ngOnInit(): void { }
 
-  viewOrder(order:any){
+  viewOrder(order: any) {
     this.showless = false;
   }
   showLess() {

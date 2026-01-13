@@ -37,11 +37,11 @@ export interface HistoryEntry {
   changedByInfo: SubmittedByInfo;
   prevStatus?: 'created' | 'acknowledged' | 'inReview' | 'blocked' | 'resolved';
   changedToStatus:
-    | 'created'
-    | 'acknowledged'
-    | 'inReview'
-    | 'blocked'
-    | 'resolved';
+  | 'created'
+  | 'acknowledged'
+  | 'inReview'
+  | 'blocked'
+  | 'resolved';
   changedAt?: Date;
   remark?: string;
 }
@@ -121,7 +121,7 @@ export class OrgIncidentManagementComponent implements OnInit {
     private modalService: NgbModal,
     private router: Router,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -171,8 +171,8 @@ export class OrgIncidentManagementComponent implements OnInit {
               this.orgAdmin?.role === 'ORGADMIN'
                 ? this.orgAdmin?.orgDetails?._id
                 : this.isEdit
-                ? this.incidentObj.orgDetails?.orgId
-                : '',
+                  ? this.incidentObj.orgDetails?.orgId
+                  : '',
             disabled: true,
           },
           Validators.required,
@@ -294,8 +294,8 @@ export class OrgIncidentManagementComponent implements OnInit {
       name:
         this.orgAdmin?.role === 'ADMIN'
           ? this.adminList.find(
-              (item: any) => item._id === this.assignedToInfo.id
-            )?.name
+            (item: any) => item._id === this.assignedToInfo.id
+          )?.name
           : this.orgAdmin.name,
     };
 
@@ -470,11 +470,11 @@ export class OrgIncidentManagementComponent implements OnInit {
 
   async deleteIncident(incident: IncidentManagement) {
     this.deleteIncidentObj = incident;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete Incident ${incident.incidentSubject}`,
-      this.deleteIncidentApi,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete Incident ${incident.incidentSubject}?`,
+      callback: this.deleteIncidentApi,
+      context: this
+    });
   }
 
   async deleteIncidentApi() {

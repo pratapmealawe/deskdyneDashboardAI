@@ -6,6 +6,9 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { UtilityService } from 'src/service/utility.service';
+import { register } from 'swiper/element/bundle';
+
+register();
 
 @Component({
   selector: 'app-home',

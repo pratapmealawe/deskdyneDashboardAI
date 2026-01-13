@@ -1,11 +1,11 @@
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
 // Variables linked to main theme
-$primary-color: color.$secondary-color3;
-$bg-color: color.$background-color;
-$card-bg: color.$white;
-$text-secondary: color.$primary-offset-color2;
-$border-color: #e5e7eb; // Using grey
+$primary-color: $secondary-color3;
+$bg-color: $background-color;
+$card-bg: $white;
+$text-secondary: $primary-offset-color2;
+$border-color: $border-color; // Using global border color
 
 .form-header {
   display: flex;
@@ -17,7 +17,7 @@ $border-color: #e5e7eb; // Using grey
   .heading {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #111827; // Using theme color
+    color: $textPrimary; // Using theme color
   }
 }
 
@@ -32,15 +32,15 @@ $border-color: #e5e7eb; // Using grey
   transition: all 0.3s ease;
 
   &.valid {
-    background-color: #d1fae5;
-    color: #065f46;
-    border: 1px solid #a7f3d0;
+    background-color: $color-success-bg;
+    color: $color-success;
+    border: 1px solid $color-success;
   }
 
   &.invalid {
-    background-color: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fecaca;
+    background-color: $color-error-bg;
+    color: $color-error;
+    border: 1px solid $color-error;
   }
 
   mat-icon {

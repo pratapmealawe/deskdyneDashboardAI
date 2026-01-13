@@ -10,7 +10,7 @@ import {
   TemplateRef,
 } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
@@ -38,7 +38,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   @ViewChild('masterMenu') masterMenu!: TemplateRef<any>;
   @ViewChild('selectOutletModal') selectOutletModal!: TemplateRef<any>;
 
-  @ViewChild(MatPaginator) menuPaginator!: MatPaginator;
+  // @ViewChild(MatPaginator) menuPaginator!: MatPaginator; // Removed
 
   categoryList = categoryList;
 
@@ -58,6 +58,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   // outlet copy
   selectedOutlet: any = null;
   outletMenuList: any[] = [];
+  filteredOutletMenuList: any[] = [];
+  searchTermCopyMenu: string = '';
 
   // master menu
   filteredMasterMenuList: any[] = [];
@@ -85,13 +87,11 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
 
-  // pagination
-  menuPageSize = 10;
-  menuPageIndex = 0;
+  // pagination removed
+
 
   constructor(
     private fb: FormBuilder,
-    private modalService: NgbModal, // used only for ImageCropper
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
@@ -126,7 +126,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       this.showCard = false;
     }
 
-    this.menuPageIndex = 0;
     this.applyMenuFilters();
   }
 
@@ -172,8 +171,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
 
-    this.menuPageIndex = 0;
-    this.updateMenuPagination();
+    // Show all items (no pagination)
+    this.groupedMenuList = this.buildGroupedMenu(this.filteredMenuList);
   }
 
   private buildGroupedMenu(list: any[]) {
@@ -192,18 +191,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     }));
   }
 
-  updateMenuPagination() {
-    const start = this.menuPageIndex * this.menuPageSize;
-    const end = start + this.menuPageSize;
-    const slice = this.filteredMenuList.slice(start, end);
-    this.groupedMenuList = this.buildGroupedMenu(slice);
-  }
+  // Pagination methods removed
 
-  onMenuPageChange(event: PageEvent) {
-    this.menuPageIndex = event.pageIndex;
-    this.menuPageSize = event.pageSize;
-    this.updateMenuPagination();
-  }
 
   onOutletChange() {
     if (this.selectedOutlet) {
@@ -211,6 +200,19 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     } else {
       this.outletMenuList = [];
     }
+    this.applyCopyMenuFilter();
+  }
+
+  applyCopyMenuFilter() {
+    let temp = this.outletMenuList || [];
+    if (this.searchTermCopyMenu) {
+      const term = this.searchTermCopyMenu.toLowerCase();
+      temp = temp.filter((item: any) =>
+        (item.itemName || '').toLowerCase().includes(term) ||
+        (item.description || '').toLowerCase().includes(term)
+      );
+    }
+    this.filteredOutletMenuList = temp;
   }
 
   // NUMBER VALIDATIONS
@@ -346,29 +348,27 @@ export class OutletMenuComponent implements OnInit, OnChanges {
         reader.onload = async (_event) => {
           const imageUrl = reader.result;
           try {
-            const modalRef = this.modalService.open(ImageCropperComponent, {
-              ariaLabelledBy: 'modal-basic-title',
-              size: 'xl',
-              backdrop: 'static',
-              centered: true,
-            });
-            modalRef.result.then(
-              (result: any) => {
-                if (result && result.croppedImages) {
-                  this.uploadedImageFile = result.croppedImages.file;
-                  this.imageUrl = result.croppedImages.resizeDataUrl;
-                  this.uploadStatus = true;
-                  this.imageReplaced = true;
-                }
-              },
-              () => {
-                console.log('Image cropper dismissed');
+            const dialogRef = this.dialog.open(ImageCropperComponent, {
+              width: '50%',
+              panelClass: 'image-cropper-dialog',
+              disableClose: true,
+              data: {
+                imageUrl: imageUrl,
+                imageWidth: 150,
+                imageHeight: 150,
+                aspectRatio: 1
               }
-            );
-            modalRef.componentInstance.uploadedImageUrl = imageUrl;
-            modalRef.componentInstance.imageWidth = 150;
-            modalRef.componentInstance.imageHeight = 150;
-            modalRef.componentInstance.aspectRatio = 1;
+            });
+
+            dialogRef.afterClosed().subscribe((result: any) => {
+              if (result && result.croppedImages) {
+                this.uploadedImageFile = result.croppedImages.file;
+                this.imageUrl = result.croppedImages.resizeDataUrl;
+                this.uploadStatus = true;
+                this.imageReplaced = true;
+              }
+            });
+
           } catch (e) {
             console.log('error while opening image cropper', e);
           }
@@ -393,6 +393,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.imageUrl = this.selectedMasterItem?.imageUrl;
 
     try {
+      console.log("selectedItems", this.selectedItems);
+
       const res = await this.apiMainService.addOutletList(
         this.outletObj._id,
         { outletList: this.selectedItems }
@@ -412,6 +414,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     this.imageReplaced = true;
     this.uploadStatus = false;
     this.imageUrl = this.selectedMasterItem?.imageUrl;
+
+    console.log(this.transformedMenuItems);
 
     try {
       const res = await this.apiMainService.addOutletList(
@@ -599,7 +603,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   onItemToggle(item: any, event: any) {
-    const checkbox = event.target as HTMLInputElement;
+    const checkbox = event;
+
     if (checkbox.checked) {
       this.selectedItems.push(item);
     } else {
@@ -610,7 +615,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   onMenuItemToggle(item: any, event: any) {
-    const checkbox = event.target as HTMLInputElement;
+    const checkbox = event;
 
     if (checkbox.checked) {
       this.selectedMenuItems.push(item);
@@ -661,10 +666,10 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     const menu = this.menuInfo;
     const event = this.eventInfo;
 
-    menu.isActive = event.target.checked;
+    menu.isActive = event.checked;
 
     const menuObj = {
-      isActive: event.target.checked,
+      isActive: event.checked,
     };
 
     await this.apiMainService.changeMenuActivation(
@@ -676,22 +681,22 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   showPopup(item: any, i: any) {
     this.foodItem = item;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${item.itemName}`,
-      this.deleteFoodItem,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${item.itemName}`,
+      callback: this.deleteFoodItem,
+      context: this
+    });
   }
 
   showPopupForItemActivation(menu: any, event: any) {
     this.menuInfo = menu;
     this.eventInfo = event;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'
-      } ${menu.itemName} Item`,
-      this.changeMenuActivation,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'
+        } ${menu.itemName} Item`,
+      callback: this.changeMenuActivation,
+      context: this
+    });
   }
 
   // MAT DIALOG OPENERS

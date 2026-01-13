@@ -1,48 +1,175 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@import '/src/styles.scss';
 
-.cardDesign {
-  @include mixin.card-design(color.$primary-offset-color1);
-}
+// Variables
+$primary-color: $secondary-color3;
+$bg-color: $background-color;
+$card-bg: $white;
+$text-secondary: $primary-offset-color2;
 
-.input-group {
-  width: 17%;
-}
-
-.search-icon {
-  margin-top: -5px;
-}
-
-.search-input {
-  @include mixin.mat-form-field-responsive();
-}
-
-.selectStyle {
-  border: 1px solid #dee2e6;
-  border-radius: 6px;
-  width: 100%;
-  height: 37.5px;
-}
-
-.selectParent {
+.form-header {
   display: flex;
-  flex-direction: row;
-  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding-bottom: 1rem;
 
-  .selectStyle {
-    padding: 5px;
-    width: 50%;
+  .heading {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: $textPrimary;
   }
 }
 
-.cardDesign {
-  cursor: pointer;
-  padding: 10px;
-  margin-bottom: 10px;
-  transition: border-color 0.3s, background-color 0.3s;
+.action-bar {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(5px);
+  border-top: 1px solid $border-color;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+  width: 100%;
 }
 
-.cardDesign.selected-card {
-  border-color: #007bff;
-  background-color: #e7f1ff;
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: $border-radius-pill;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+
+  &.valid {
+    background-color: $color-success-bg;
+    color: $color-success;
+    border: 1px solid $color-success-border;
+  }
+
+  &.invalid {
+    background-color: $color-error-bg;
+    color: $color-error;
+    border: 1px solid $color-error-border;
+  }
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+.modern-card {
+  background: $card-bg;
+  border-radius: $border-radius-lg;
+  box-shadow: $box-shadow-md;
+  border: 1px solid $border-color;
+  overflow: hidden;
+  height: fit-content;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 1.5rem;
+
+  .card-header {
+    background: $background-color;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid $border-color;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: $textPrimary;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .card-body {
+    padding: 1.5rem;
+  }
+}
+
+// Switches & Radios
+.switch-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+// Inner Lists (Address/Outlet)
+.list-item-card {
+  background: $primary-offset-color4;
+  border: 1px solid $border-color;
+  border-radius: $border-radius-md;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  position: relative;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $primary-color;
+    background: $color-info-bg;
+  }
+
+  .row {
+    margin: 0;
+  }
+
+  .labelText {
+    font-size: 0.75rem;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.25rem;
+  }
+
+  .labelData {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: $textPrimary;
+    word-break: break-word;
+  }
+}
+
+.no-data {
+  text-align: center;
+  padding: 2rem;
+  color: $text-secondary;
+  background: $background-color;
+  border-radius: $border-radius-md;
+  border: 1px dashed $border-color;
+
+  p {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+}
+
+// Modal specific styles
+.cardDesign {
+  cursor: pointer;
+  border-radius: $border-radius-md;
+  border: 1px solid $border-color;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: $background-color;
+  }
+
+  &.selected-card {
+    border-color: $primary-color;
+    background-color: $color-info-bg;
+  }
 }

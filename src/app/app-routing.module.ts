@@ -63,6 +63,8 @@ const routes: Routes = [
   { path: 'pastOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
   { path: 'viewEnquiries', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/org-registry/org-registry.module').then(m => m.OrgRegistryModule) },
   { path: 'consumptionOrders', loadChildren: () => import('./consumption-order-details/consumption-order-details.module').then(m => m.ConsumptionOrderDetailsModule) },
+  { path: 'vendorPayout', canActivate: [accessGuard], loadChildren: () => import('./vendor-payout/vendor-payout.module').then(m => m.VendorPayoutModule) },
+  { path: 'vendorWalletDashboard', canActivate: [accessGuard], loadChildren: () => import('./vendor-wallet-dashboard/vendor-wallet-dashboard.module').then(m => m.VendorWalletDashboardModule) },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }
 ];

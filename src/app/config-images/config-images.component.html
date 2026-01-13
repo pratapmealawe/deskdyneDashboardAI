@@ -1,54 +1,98 @@
-<div class="container-fluid">
-    <span class="addBtn" (click)="addImage()" >+</span>
-
-    <div *ngIf="editMode" class="bgpadding3">
-        <div class="labelText" *ngIf="addnewImage">Add New Config Image</div>
-        <div class="labelData" *ngIf="!addnewImage">Update Config Image</div>
-        <div class="row">
-            <div class="col-12">
-                <label for="imageName">Image Name</label>
-                <input type="text" class="form-control" id="imageName" [(ngModel)]="imageObj.imageName"
-                    placeholder="name">
-            </div>
-            <div class="col-12 bgToppadding1">
-                <input #f type="file" class="uploadInput" accept="image/*" capture="camera"
-                    (change)="handleFileInput($event)">
-                <img (click)="f.click()" [src]="imageUrl?imageUrl:'assets/images/dummyUpload.png'"
-                    class="uploadedImage" />
-                <div class="uploadIcon" (click)="f.click()">Upload <i class="bi bi-upload"></i></div>
-            </div>
-        </div>
-        <div class="mt-2">
-            <div class="inline me-2" *ngIf="addnewImage">
-                <button type="button" class="btn btn-primary btn-sm"
-                    (click)="submitnewVariable(imageObj)">Submit</button>
-            </div>
-            <div class="inline me-2" *ngIf="!addnewImage">
-                <button type="button" class="btn btn-primary btn-sm"
-                    (click)="updateConfigImage(imageObj)">Update</button>
-            </div>
-            <div class="inline">
-                <button type="button" class="btn btn-danger btn-sm" (click)="cancel()">Cancel</button>
-            </div>
-        </div>
+<div class="vendor-header">
+    <div>
+        <h4 class="m-0 fw-semibold">Config Images</h4>
     </div>
+    <div class="header-actions">
+        <button mat-raised-button color="primary" *ngIf="!editMode && (true || access?.addVariable)"
+            (click)="addImage()">
+            <mat-icon>add</mat-icon> Add Image
+        </button>
+    </div>
+</div>
 
-    <div *ngIf="!editMode">
-        <div class="row">
-            <div class="col-6 col-md-3 col-lg-2 cardDesign cardMargin" *ngFor="let image of allImages">
-                <div class="right"><i class="bi bi-pencil-square pointer bgsidepadding5"
-                        (click)="editConfigImage(image)" ></i></div>
-                <div>{{image.imageName}}</div>
+<div class="container-fluid pb-4">
+    <!-- Edit Mode Section -->
+    <div *ngIf="editMode" class="bgpadding3 mb-4">
+        <div class="labelText mb-3" *ngIf="addnewImage">Add New Config Image</div>
+        <div class="labelText mb-3" *ngIf="!addnewImage">Update Config Image</div>
 
-                <div class="img-div">
-                    <img [src]="serverUrl + image.imageUrl" />
+        <div class="row g-4">
+            <!-- Image Name Configuration -->
+            <div class="col-md-6">
+                <p class="labelText mb-2">Image Name</p>
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Image Name</mat-label>
+                    <input matInput type="text" [(ngModel)]="imageObj.imageName" placeholder="Enter image name">
+                    <button *ngIf="imageObj.imageName" matSuffix mat-icon-button aria-label="Clear"
+                        (click)="imageObj.imageName=''">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+            </div>
+
+            <!-- Image Upload Section -->
+            <div class="col-md-6 d-flex flex-column align-items-start">
+                <label class="labelText mb-2">Image Preview</label>
+                <div class="d-flex flex-column align-items-center">
+                    <input #f type="file" class="uploadInput" accept="image/*" (change)="handleFileInput($event)">
+                    <img (click)="f.click()" [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'"
+                        class="uploadedImage shadow-sm" />
+                    <div class="uploadIcon mt-2" (click)="f.click()">
+                        <mat-icon class="align-middle fs-6"
+                            style="font-size: 18px; width: 18px; height: 18px;">cloud_upload</mat-icon>
+                        Click to Upload
+                    </div>
                 </div>
-                <div>{{image.imageUrl}}</div>
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button *ngIf="addnewImage" mat-raised-button color="primary" (click)="submitnewVariable(imageObj)">
+                Submit
+            </button>
+
+            <button *ngIf="!addnewImage" mat-raised-button color="primary" (click)="updateConfigImage(imageObj)">
+                Update
+            </button>
+
+            <button mat-stroked-button color="warn" (click)="cancel()">
+                Cancel
+            </button>
+        </div>
+    </div>
+
+    <!-- List Section -->
+    <div *ngIf="!editMode">
+        <div *ngIf="allImages && allImages.length === 0" class="center">
+            No Images Found
+        </div>
+
+        <div class="row">
+            <div *ngFor="let image of allImages" class="col-sm-6 col-md-4 col-lg-3 mb-3">
+                <div class="cardDesign p-3 h-100 d-flex flex-column ">
+                    <!-- Header (Name + Edit) -->
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <div class="labelText text-truncate pe-2" [matTooltip]="image.imageName">{{image.imageName}}
+                        </div>
+                        <button mat-icon-button color="primary" class="scale-icon"
+                            style="height: 24px; width: 24px; line-height: 24px;" (click)="editConfigImage(image)">
+                            <mat-icon style="font-size: 18px;">edit</mat-icon>
+                        </button>
+                    </div>
+
+                    <!-- Image Display -->
+                    <div class="img-div flex-grow-1">
+                        <img [src]="serverUrl + image.imageUrl" [alt]="image.imageName" />
+                    </div>
+
+                    <!-- Path Display (Optional, can be hidden if too technical) -->
+                    <div class="labelData mt-2 text-truncate text-muted small" [matTooltip]="image.imageUrl">
+                        {{image.imageUrl}}
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="center" *ngIf="!editMode && allImages.length === 0">
-        No Records Found
-    </div>
 </div>

@@ -12,6 +12,7 @@ import { VendorReportModule } from "../vendor-report/vendor-report.module";
 import { MaterialModule } from '../material.module';
 import { VendorDailyReportModule } from "../vendor-daily-report/vendor-daily-report.module";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { WalletTransactionHistoryModule } from '../common-components/wallet-transaction-history/wallet-transaction-history.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     VendorReportModule,
     VendorDailyReportModule,
     FormsModule,
+    VendorDailyReportModule,
+    FormsModule,
     ReactiveFormsModule,
+    WalletTransactionHistoryModule
   ],
   exports: [VendorFirmViewComponent]
 })

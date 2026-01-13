@@ -11,7 +11,7 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 export class OutletViewComponent implements OnInit {
   @Input() outlet: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  selectedtab:number = 0 ; 
+  selectedtab: number = 0;
   outletViewList = [
     { name: 'Basic Details', path: 'outlet-details' },
     { name: 'Menu', path: 'outlet-menu' },
@@ -25,6 +25,7 @@ export class OutletViewComponent implements OnInit {
   constructor(private router: Router, private sendDataToComponent: SendDataToComponent) { }
 
   ngOnInit(): void {
+    window.scrollTo(0, 0)
   }
 
   gotToTab(tab: string) {
@@ -43,8 +44,8 @@ export class OutletViewComponent implements OnInit {
     this.outlet = event;
   }
 
-  onTabChange(event:MatTabChangeEvent){
-     const selectedIndex = this.outletViewList[event.index];
-     this.gotToTab(selectedIndex.path);
+  onTabChange(event: MatTabChangeEvent) {
+    const selectedIndex = this.outletViewList[event.index];
+    this.gotToTab(selectedIndex.path);
   }
 }
