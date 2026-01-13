@@ -28,7 +28,7 @@
     </mat-card>
     <div class="mt-2" *ngIf="feedbackList.length > 0">
         <div class="row cardDesign list-group" *ngFor="let feedback of feedbackList; let i = index">
-            <app-org-order [order]="feedback"></app-org-order>
+            <!-- <app-org-order [order]="feedback"></app-org-order> -->
         </div>
         <!-- Paginator -->
         <mat-paginator [length]="feedbackList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"

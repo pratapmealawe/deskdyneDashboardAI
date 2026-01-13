@@ -41,11 +41,11 @@ export class EventCardComponent implements OnInit {
 
   showPopup(event: any) {
     this.eventInfo = event;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${this.eventInfo.eventPopupName}?`,
-      this.deleteOutletFunc,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg:`Are you sure, you want to delete ${this.eventInfo.eventPopupName}?`,
+      callback: this.deleteOutletFunc,
+      context: this
+    });
   }
 
   async deleteOutletFunc() {

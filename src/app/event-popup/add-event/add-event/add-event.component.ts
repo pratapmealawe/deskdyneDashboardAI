@@ -301,9 +301,9 @@ export class AddEventComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result === 'add') {
-        this.confirmationModal.modal(
-          'Are you sure you want to change Organization and Cafeteria?',
-          () => {
+        this.confirmationModal.modal({
+          msg: 'Are you sure you want to change Organization and Cafeteria?',
+          callback: () => {
             const selected = this.formattedOrgList.find(
               (org: any) => org.key === this.selectedOrgCafeteria
             );
@@ -311,8 +311,8 @@ export class AddEventComponent implements OnInit {
               this.seletedCafetria = { ...selected };
             }
           },
-          this
-        );
+          context: this
+        });
       }
     });
   }
