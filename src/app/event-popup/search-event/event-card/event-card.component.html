@@ -1,0 +1,46 @@
+<div class="container-fuild pe-3 ps-3">
+  <div class="event-card" *ngFor="let event of eventUpdated">
+    <div>
+      <div class="labelText">Organization Name</div>
+      <div class="labelData">{{ event?.organizationName }}</div>
+    </div>
+    <div class="rows" *ngFor="let event of event.outletList">
+      <div class="d-flex flex-wrap p-3">
+        <div class="col-6 col-md-5 col-lg-2">
+          <div class="labelText">Event Popup Name</div>
+          <div class="labelData">{{ event.eventPopupName }}</div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+          <div class="labelText">Opened</div>
+          <div class="labelData"> <mat-chip [ngClass]="event.eventPopupOpened ? 'green' : 'red'"> {{ (event.eventPopupOpened ?
+              'true' : 'false') | titlecase }}</mat-chip></div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+          <div class="labelText">Subsidy</div>
+          <div class="labelData">&#8377; {{ event?.subsidy }}</div>
+        </div>
+        <div class="col-6 col-md-2 col-lg-1">
+          <div class="labelText">Precedence</div>
+          <div class="labelData">{{ event?.precedence }}</div>
+        </div>
+        <div class="col-6 col-md-6 col-lg-5">
+          <div class="labelText ">Event Popup Description</div>
+          <div class="labelData desc" [matTooltip]="event.eventPopupDescription" [matTooltipPosition]="'below'">{{
+            event.eventPopupDescription }}</div>
+        </div>
+        <div class="col-6 col-md-6 col-lg-1">
+          <div class="d-flex align-items-center gap-2">
+            <mat-icon *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(event)" color="primary"> visibility
+            </mat-icon>
+            <mat-icon (click)="showPopup(event)" color="warn"> delete </mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="empty-event d-flex justify-content-center mb-2 align-items-center" *ngIf="event.length == 0">
+    <h6>No data found</h6>
+  </div>
+  <mat-paginator [length]="event.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+    [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)"></mat-paginator>
+</div>

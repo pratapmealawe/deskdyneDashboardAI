@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from '../../toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { ExcelService } from 'src/service/excel.service';
 import { DatePipe } from '@angular/common';
 

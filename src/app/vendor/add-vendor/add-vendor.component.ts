@@ -1,5 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import {
@@ -23,8 +24,10 @@ export class AddVendorCommponent {
   showError = false;
   showUpdate = false;
   outletByCafeteriaList: any;
+  popupsByVendorFirm: any = [];
   showModalOutletList = false;
   selectedOutletsList: any = [];
+  selectedPopupsList: any = [];
   defaultRole: any = 'Cashier';
 
   showAddbutton: any = false;
@@ -39,6 +42,7 @@ export class AddVendorCommponent {
 
   @ViewChild('outletModal') outlet: any;
   @ViewChild('addressModal') address: any;
+  @ViewChild('popupModal') popupModal: any;
   selectedAddressList: any = [];
   selectedAddress: any = null;  // holds the selected address object
 
@@ -53,7 +57,8 @@ export class AddVendorCommponent {
     public modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private dialog: MatDialog,
   ) {
   }
 
@@ -85,6 +90,7 @@ export class AddVendorCommponent {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
       this.vendorId && this.changeVendorFirm(this.vendorId, true)
     } catch (error) {
+      console.error(error);
     }
   }
 
@@ -125,20 +131,29 @@ export class AddVendorCommponent {
     }
   }
 
-  async getVendorFirmById(event: any) {
-    const vendorFirmId = event;
+  async getVendorFirmById(vendorFirmId: any) {
     const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
     this.addressList = res.address;
+    this.popupsByVendorFirm = res.popup_details || [];
   }
 
   updateVendor() {
     const vendor = this.runtimeStorageService.getCacheData('VENDOR_EDIT');
+    let accessType = '';
+    if (vendor?.isOutletAccess) {
+      accessType = 'outlet';
+    } else if (vendor?.isDailyAndBulkAccess) {
+      accessType = 'daily_bulk';
+    } else if (vendor?.isPopupAccess) {
+      accessType = 'popup';
+    }
     if (vendor && vendor._id) {
       this.selectedVendor = vendor;
       this.showUpdate = true;
       this.defaultRole = vendor.vendorRole;
       this.selectedOutletsList = vendor.outletList;
       this.selectedAddressList = vendor.addressList;
+      this.selectedPopupsList = vendor.popup_Details || [];
       this.form.patchValue({
         vendorName: vendor.vendorName,
         vendorPhoneNo: vendor.vendorPhoneNo,
@@ -146,11 +161,16 @@ export class AddVendorCommponent {
         vendorRole: vendor.vendorRole,
         address: vendor.address,
         geolocation: vendor.geolocation,
-        accessType: vendor.isOutletAccess ? 'outlet' : 'daily_bulk',
+        accessType: accessType,
         vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
       });
-      this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : ""
+      this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "";
+      this.getAllVendors(); // to bind values of outletByCafeteriaList and popupsByVendorFirm after edit
     }
+  }
+
+  isAnyPopupSelected(): boolean {
+    return this.popupsByVendorFirm?.some((p: any) => p.isChecked);
   }
 
   async submit(type?: any) {
@@ -163,9 +183,11 @@ export class AddVendorCommponent {
         ...this.form.value,
         isOutletAccess: this.form.value.accessType === 'outlet' ? true : false,
         isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk' ? true : false,
+        isPopupAccess: this.form.value.accessType === 'popup' ? true : false,
         outletList: this.selectedOutletsList,
         vendorFirmDetails: vendorFirmDetails,
-        addressList: this.selectedAddressList
+        addressList: this.selectedAddressList,
+        popup_Details: this.selectedPopupsList
       };
 
       const formData = this.objectToFormData(finalObj);
@@ -313,6 +335,48 @@ export class AddVendorCommponent {
   }
   toggleCheckbox(outlet: any) {
     outlet.isChecked = !outlet.isChecked;
+  }
+
+toggleCheckboxforPopup(popup: any) {
+  popup.isChecked = !popup.isChecked;
+}
+  addPopup() {
+    if (!this.popupModal) {
+      console.error('TemplateRef popup is not available');
+      return;
+    }
+    this.dialog.open(this.popupModal, {
+      width: '1000px',
+      disableClose: false
+    });
+  }
+
+  getSelectedPopups(){
+    this.selectedPopupsList = [];
+    this.popupsByVendorFirm.forEach((elm: any) => {
+      if (elm.isChecked) {
+        let outletPresent = false;
+        this.selectedPopupsList.forEach((savedOutlet: any) => {
+          if (savedOutlet.popupId === elm.popupId) {
+            outletPresent = true;
+          }
+        });
+        if (!outletPresent) {
+          this.selectedPopupsList.push({
+            popupId: elm.popupId,
+            popupName: elm.popupName,
+            popupType: elm.popupType,
+            cafeteriaDetails: elm.cafeteriaDetails,
+            organizationDetails: elm.organizationDetails,
+          });
+        }
+      }
+    });
+    this.dialog.closeAll();
+  }
+
+  deletePopup(index: number) {
+    this.selectedPopupsList.splice(index, 1);
   }
 
 }

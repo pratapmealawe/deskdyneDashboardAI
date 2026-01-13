@@ -1,0 +1,191 @@
+@import 'src/styles.scss';
+
+.addOutlet {
+  position: absolute;
+  right: 5px;
+  top: 100px;
+}
+
+.labelText {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.labelData {
+  font-size: 13px;
+}
+
+.uploadInput {
+  display: none;
+}
+
+.image-card {
+  cursor: pointer;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+}
+
+.uploadedImage {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.uploadIcon {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 4px 8px;
+  background: $secondary-color3;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 13px;
+}
+
+.mainCheckDiv {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: #f8f8f8;
+  border-radius: 16px;
+  padding: 12px 16px;
+  width: fit-content;
+
+  mat-checkbox,
+  mat-radio-button {
+    font-size: 13px;
+  }
+
+  mat-divider[vertical] {
+    height: 24px;
+  }
+}
+
+.preorder-radio-group {
+  display: flex;
+  gap: 16px;
+}
+
+.cardDesign {
+  padding: 12px 16px;
+}
+
+.bgpadding1 {
+  margin-bottom: 12px;
+}
+
+.time-field {
+  margin-top: 4px;
+}
+
+.mandatory {
+  color: red;
+  margin-left: 2px;
+}
+
+.org-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.org-item {
+  padding: 8px 4px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.org-item.selected {
+  background: rgba(79, 70, 229, 0.08);
+}
+
+label {
+  margin-bottom: 0;
+}
+
+.time-input-wrapper {
+  margin-top: 4px;
+}
+
+.time-input {
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid rgba(0, 0, 0, 0.23);
+  font-size: 13px;
+  background-color: #fff;
+  box-sizing: border-box;
+  height: 40px;
+}
+
+.time-input:focus {
+  outline: none;
+  border-color: #3f51b5;
+  box-shadow: 0 0 0 1px rgba(63, 81, 181, 0.3);
+}
+
+.time-input::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.banner-div {
+  border: solid 1px #ccc;
+  padding: 20px 10px;
+  border-radius: 5px;
+
+  display: flex;
+  justify-content: center;
+}
+
+.banner-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.banner-title {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  width: 100%;
+}
+
+.preview-box {
+  position: relative;
+}
+
+.banner-thumb {
+  width: 130px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.delete-btn {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: #ff5a5a;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  padding: 0;
+}

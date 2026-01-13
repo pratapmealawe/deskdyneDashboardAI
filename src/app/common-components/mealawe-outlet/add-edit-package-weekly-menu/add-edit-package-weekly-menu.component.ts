@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { MlApiMainService } from 'src/service/apiService/mlApiMain.service';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-add-edit-package-weekly-menu',

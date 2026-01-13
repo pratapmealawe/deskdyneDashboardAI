@@ -7,8 +7,8 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { interval, Subscription } from 'rxjs';
 import { CommonSelectConfig } from '../common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
-import { ToasterService } from '../toaster/toaster.service';
+import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-orders',

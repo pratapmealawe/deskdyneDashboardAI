@@ -1,7 +1,9 @@
-import { Component, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
 
 @Component({
   selector: 'app-emp-poll-card',
@@ -9,68 +11,78 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
   styleUrls: ['./emp-poll-card.component.scss']
 })
 export class EmpPollCardComponent {
-  @ViewChild("showEmployeeList") showEmployeeList: any;
   @Input() orderInput: any;
-  @Input() day: any;
-  showless: boolean = true;
   order: any;
-  editMode: boolean = false;
-  showOrderDetails: boolean = true;
-  showPOCDetails: boolean = false;
-  showKitchenDetails: boolean = false;
-  showPaymentDetails: boolean = false;
-  showStatusHistory: boolean = false;
-  showOrgDetails: boolean = false;
-  showCreateBtn: any = false;
+  showCreateBtn: boolean = true;
 
-  constructor(private apiMainService: ApiMainService, private sendDataToComponent: SendDataToComponent, private modalService: NgbModal,) { }
+  constructor(
+    private apiMainService: ApiMainService,
+    private sendDataToComponent: SendDataToComponent,
+    private modalService: NgbModal,
+    private confirmationModalService: ConfirmationModalService,
+    private localStorageService: LocalStorageService
+  ) { }
 
   ngOnInit() {
-    this.checkCutoff(this.orderInput, this.day);
+    this.order = this.orderInput;
+    this.checkCutoff(this.order);
   }
 
-  async createOrder() {
-    try {
-      await this.apiMainService.createOrderFromPollObj(this.order);
-      this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id })
-    } catch (error) {
-      console.log(error)
-    }
+  createOrder() {
+    this.confirmationModalService.modal({
+      msg: "Are you sure you want to create this order?",
+      callback: () => {
+        const adminId = this.localStorageService.getCacheData('ADMIN_ID');
+        if (adminId) {
+          this.orderInput.actionBy = adminId;
+        }
+        this.apiMainService.createOrderFromPollObj(this.orderInput).then(() => {
+          this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id });
+        }, (err) => {
+          console.log(err)
+        });
+      },
+      context: this
+    });
   }
 
-  checkCutoff(order: any, day: any) {
-    const item = order.itemList[0];
-    if (day === 'today' && item.isSameDay) {
-      const cutoffDate = new Date();
+  totalDeliveryCharge: number = 0;
+
+  checkCutoff(order: any) {
+    this.totalDeliveryCharge = 0;
+    this.showCreateBtn = false;
+    if (order && order.mealTypeList && order.mealTypeList.length > 0) {
+      let isAnyActive = false;
       const currDate = new Date();
-      const endTime = item.cutOffTime.split(":")[0];
-      const endTimeMin = parseInt(item.cutOffTime.split(":")[1]);
-      cutoffDate.setHours(endTime, endTimeMin, 0, 0);
-      if (currDate > cutoffDate) {
-        this.showCreateBtn = true;
+      let orderDate = new Date();
+      if (order.deliveryDate) {
+        orderDate = new Date(order.deliveryDate);
+      } else if (order.pollDate) {
+        orderDate = new Date(order.pollDate);
       }
+
+      order.mealTypeList.forEach((item: any) => {
+        this.totalDeliveryCharge += (item.deliveryCharge || 0);
+        // if (order.pollStatus === 'active') {
+        const cutoffDate = new Date(orderDate);
+        if (!item.isSameDay) {
+          cutoffDate.setDate(cutoffDate.getDate() - 1);
+        }
+        if (item.cutOffTime) {
+          const [hours, minutes] = item.cutOffTime.split(':');
+          cutoffDate.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        }
+        if (currDate.getTime() > cutoffDate.getTime()) {
+          isAnyActive = true;
+        }
+        // }
+      });
+
+      this.showCreateBtn = isAnyActive;
     }
   }
 
-  toggleEditMode() {
-    this.editMode = !this.editMode
+  openModal(content: any) {
+    this.modalService.open(content, { centered: true, size: 'md', scrollable: true });
   }
-
-  showLess() {
-    this.showless = true;
-  }
-
-  viewOrder(order: any) {
-    this.order = order;
-    this.showless = false;
-  }
-  openshowEmployeeList() {
-    this.modalService.open(this.showEmployeeList, { ariaLabelledBy: 'modal-basic-title', size: 'md', backdrop: false, centered: true })
-      .result.then((result) => {
-        console.log(`Closed with: ${result}`);
-      }, (reason) => {
-        console.log(`Model Dismissed`);
-      });
-  }
-
 }

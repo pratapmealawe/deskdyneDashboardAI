@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { OtherOrdersRoutingModule } from './other-orders-routing.module';
 import { OtherOrdersComponent } from './other-orders.component';
 import { EmpPollCardComponent } from './emp-poll-card/emp-poll-card.component';
