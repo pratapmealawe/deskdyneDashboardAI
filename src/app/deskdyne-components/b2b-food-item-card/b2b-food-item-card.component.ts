@@ -5,7 +5,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core';
-import { ConfirmationModalService } from '../../confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from '../../../service/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
 import { PolicyService } from 'src/service/policy.service';
 

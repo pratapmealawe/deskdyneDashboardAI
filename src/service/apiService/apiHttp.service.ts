@@ -1,9 +1,10 @@
+import { SessionTimeoutService } from '../session-timeout.service';
 import { LoaderstatusService } from './../../app/main-loader/loaderstatus.service';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RuntimeStorageService } from '../runtime-storage.service';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { LocalStorageService } from '../local-storage.service';
 import { Router } from '@angular/router';
 
@@ -20,7 +21,7 @@ export class ApiHttpService {
     private loaderstatusService: LoaderstatusService,
     private toasterService: ToasterService,
     private localStorageService: LocalStorageService,
-    private runtimeStorageService: RuntimeStorageService,
+    private sessionTimeoutService: SessionTimeoutService,
     public router: Router
   ) { }
 
@@ -51,9 +52,7 @@ export class ApiHttpService {
     return (error: any) => {
       this.loaderstatusService.hide();
       if (error && error.status === 401) {
-        this.localStorageService.resetAllCacheData();
-        this.runtimeStorageService.resetAllCacheData();
-        this.router.navigate(['/login']);
+        this.sessionTimeoutService.showSessionTimeoutModal();
       } else if (error && error.error && error.error.msg) {
         this.toasterService.error(error.error.msg);
         reject(error);

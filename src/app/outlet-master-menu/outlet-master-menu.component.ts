@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';

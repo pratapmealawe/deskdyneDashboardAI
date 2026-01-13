@@ -6,7 +6,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
-import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 
 @Component({
   selector: 'app-vendor-wallet-dashboard',

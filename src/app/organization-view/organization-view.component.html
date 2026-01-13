@@ -38,7 +38,7 @@
       <ng-container *ngIf="!view.subTabs?.length" [ngSwitch]="view.path">
         <app-org-details *ngSwitchCase="'orgDetails'" [orgObj]="organization"></app-org-details>
         <app-mealawe-outlet *ngSwitchCase="'mealAweOutlet'" [orgObj]="organization"></app-mealawe-outlet>
-        <app-b2b-weekly-menu *ngSwitchCase="'b2bWeeklyMenu'" [orgObj]="organization"></app-b2b-weekly-menu>
+        <app-daily-order-menu *ngSwitchCase="'dailyOrderMenu'" [orgObj]="organization"></app-daily-order-menu>
         <app-consumption-order *ngSwitchCase="'consumptionOrder'" [orgObj]="organization"></app-consumption-order>
         <app-employee-list *ngSwitchCase="'employeeList'" [orgObj]="organization"></app-employee-list>
         <app-outlet-employee *ngSwitchCase="'outletEmployee'" [orgObj]="organization"></app-outlet-employee>

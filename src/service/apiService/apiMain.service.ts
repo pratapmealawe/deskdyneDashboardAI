@@ -731,23 +731,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealPackage, data);
   }
 
-  B2BFetchWeeklyMenu(orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2BFetchWeeklyMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
-  }
-
-  updateWeeklyMenuItem(menuObj: any, orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateWeeklyMenuItem;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method }, menuObj);
-  }
 
   updateBulkB2BDailyFoodOrder(order: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkB2BDailyFoodOrder, order);
   }
 
-  B2BweeklyMenuAdd(menuObj: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2BweeklyMenuAdd, menuObj);
-  }
 
   getGeneralAppFeeback(page?: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getGeneralAppFeeback;
@@ -803,6 +791,11 @@ export class ApiMainService {
 
   getb2bBulkDailyOrderList(status: any, page: any, limit: number) {
     const urlObj = this.apiConfigService.apiEndPointObj.getb2bBulkDailyOrderList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
+  }
+
+  getClusterb2bBulkOrderList(status: any, page: any, limit: number) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterb2bBulkOrderList;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
@@ -1474,6 +1467,43 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDefaultCategories, data);
   }
 
+  dailyOrderMenuAdd(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.dailyOrderMenuAdd, data);
+  }
+
+  getDailyOrderMenuByCafeteriaId(cafeeteriaId: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getDailyOrderMenuByCafeteriaId
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method });
+  }
+
+  updateMealType(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateMealType, data);
+  }
+
+  deleteMealType(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMealType, data);
+  }
+
+  addMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addMealConfig, data);
+  }
+
+  updateMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateMealConfig, data);
+  }
+
+  deleteMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMealConfig, data);
+  }
+
+  isActiveAndDeActiveMealConfig(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.isActiveAndDeActiveMealConfig, data);
+  }
+
+  addVendorDetails(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addVendorDetails, data);
+  }
+
   checkJusPayPayoutStatus(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.checkJusPayPayoutStatus;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
@@ -1501,5 +1531,13 @@ export class ApiMainService {
   validateJusPayPaymentTransaction(payload: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.validateJusPayPaymentTransaction;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+  }
+
+  copyDailyOrderMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyDailyOrderMenu, data);
+  }
+
+  addBulkDailyOrderMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkDailyOrderMenu, data);
   }
 }

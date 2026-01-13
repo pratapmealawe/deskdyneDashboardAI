@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ToasterService } from '../../..//toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-combo-popup',

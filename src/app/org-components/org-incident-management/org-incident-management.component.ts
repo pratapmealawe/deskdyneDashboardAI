@@ -7,7 +7,7 @@ import { PageEvent } from '@angular/material/paginator';
 
 import { AddIncidentDialogComponent } from './add-incident-dialog/add-incident-dialog.component';
 import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
