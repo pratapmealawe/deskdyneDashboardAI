@@ -102,6 +102,65 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, outlet);
   }
 
+  savePopupOutlet(outletObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.savePopupOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, outletObj);
+  }
+
+  updatePopupOutlet(id: any, outletObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updatePopupOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, outletObj);
+  }
+
+  getPopupOutlets() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getPopupOutlets);
+  }
+
+  getPopupOutletsById(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getPopupOutletsById;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  deletePopupOutlet(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deletePopupOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  togglePopupOutletStatus(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.togglePopupOutletStatus;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  saveMenuItem(outletId: any, payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.saveMenuItem;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, payload);
+  }
+
+  getMenuItems(outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getMenuItems;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}/menu`, method: urlObj.method });
+  }
+
+  getMenuItemById(outletId: any, menuId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getMenuItemById;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}/menu/${menuId}`, method: urlObj.method });
+  }
+
+  updateMenuItem(outletId: any, menuId: any, payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateMenuItem;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}/menu/${menuId}`, method: urlObj.method }, payload);
+  }
+
+  deleteMenuItem(outletId: any, menuId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteMenuItem;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}/menu/${menuId}`, method: urlObj.method });
+  }
+
+  toggleMenuItemStatus(outletId: any, menuId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.toggleMenuItemStatus;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}/menu/${menuId}`, method: urlObj.method });
+  }
+
   fetchCategories() {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchCategories);
   }
@@ -461,6 +520,10 @@ export class ApiMainService {
 
   getfeedbacklistByfilter(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getfeedbacklistByfilter, data);
+  }
+
+  getFeedbackByOrderByOrderType(filter: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getFeedbackByOrderByOrderType, filter);
   }
 
   employeeAdd(data: any) {
@@ -1016,6 +1079,24 @@ export class ApiMainService {
 
   fetchCompletedOutletOrdersbysearchObj(payload: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchCompletedOutletOrdersbysearchObj, payload);
+  }
+
+  fetchCompletedEventOrdersbysearchObj(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchCompletedEventOrdersbysearchObj, payload);
+  }
+
+  fetchPastEventOrdersbyOutletId(id: any, page: any, orderType?: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchPastEventOrdersbyOutletId;
+    let url = urlObj.url + `/${id}/${page}`;
+    return this.apiHttpService.REQUEST(
+      { url, method: urlObj.method },
+      orderType ? { orderType } : {}
+    );
+  }
+
+  getPopupOutletsByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getPopupOutletsByOrgId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 
   fetchDailyBulkOrdersbysearchObj(payload: any) {

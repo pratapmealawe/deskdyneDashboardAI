@@ -71,6 +71,7 @@ export class AddOrganizationComponent implements OnInit {
     { key: 'isEmployeeEmailLogin', label: 'Is Employee Email Login' },
     { key: 'showSiteExecutive', label: 'Show Site Executive' },
     { key: 'showchecklist', label: 'Show Checklist' },
+    { key: 'showEventPopup', label: 'Show Event Popup' },
     { key: 'showSodexo', label: 'Show Sodexo' },
   ];
 
@@ -159,6 +160,7 @@ export class AddOrganizationComponent implements OnInit {
       isEmployeeEmailLogin: [false],
       showComplienceTracker: [false],
       showConsumptionOrder: [false],
+      showEventPopup: [false],
       showSodexo: [false],
       cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
       cafeteria_id: [id, Validators.required],
