@@ -65,6 +65,7 @@ export class AddOrganizationComponent implements OnInit {
     { key: 'showEmpPolls', label: 'Show Emp Poll Card' },
     { key: 'showVirtualCafe', label: 'Show Virtual Cafeteria' },
     { key: 'showSaas', label: 'Show Outlet' },
+    { key: 'showQrCode', label: 'Show Qr Code' },
     { key: 'showCompanyWallet', label: 'Show Company Wallet' },
     { key: 'showComplienceTracker', label: 'Show Compliance Tracker' },
     { key: 'showConsumptionOrder', label: 'Show Consumption Order' },
