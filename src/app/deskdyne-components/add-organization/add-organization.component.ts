@@ -12,6 +12,8 @@ import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
 
+import { SetGeolocationComponent } from 'src/app/set-geolocation/set-geolocation.component';
+
 @Component({
   selector: 'app-add-organization',
   templateUrl: './add-organization.component.html',
@@ -20,7 +22,7 @@ import { REGEX } from 'src/shared/constants/regex';
 export class AddOrganizationComponent implements OnInit {
   @ViewChild('content') content: any;
   @ViewChild('pocContent') pocContent: any;
-  @ViewChild('geolocation') geolocation: any;
+  // @ViewChild('geolocation') geolocation: any;
 
   // New Dialog Templates
   @ViewChild('pocDialogTemplate') pocDialogTemplate!: TemplateRef<any>;
@@ -532,22 +534,27 @@ export class AddOrganizationComponent implements OnInit {
     }
   }
 
+
   // Map Logic - Updated to use Dialog Form Group
   toggleMapForDialog() {
-    const dialogRef = this.dialog.open(this.geolocation, {
+    const dialogRef = this.dialog.open(SetGeolocationComponent, {
       width: '800px',
       disableClose: true,
       panelClass: 'custom-dialog-container',
-      autoFocus: false
+      autoFocus: false,
+      data: {
+        selectedCenter: this.cafeteriaFormGroup.get('cafeteria_location')?.value
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result === 'add') {
+      if (result) { // Result contains { location, latlng }
+        this.cafeLocation = result;
         // Update the isolated form group
-        this.cafeteriaFormGroup.controls['address2'].patchValue(this.cafeLocation.location);
+        this.cafeteriaFormGroup.controls['address2'].patchValue(result.location);
         this.cafeteriaFormGroup.controls['cafeteria_location'].patchValue({
-          lat: this.cafeLocation.latlng.lat,
-          lng: this.cafeLocation.latlng.lng
+          lat: result.latlng.lat,
+          lng: result.latlng.lng
         });
         // Cluster Logic
         this.updateClusterForDialog();
