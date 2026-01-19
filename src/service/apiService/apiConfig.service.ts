@@ -187,14 +187,7 @@ export class ApiConfigService {
       verifyQrEmployeeByPhoneNo: p('/api/verifyQrEmployeeByPhoneNo', 'GET'),
       vcEmployeeAdd: p('/api/vcEmployeeAdd', 'POST'),
       vcEmployeeByOrgId: p('/api/vcEmployeeByOrgId', 'GET'),
-      employeeWalletByOrgId: p('/api/employeeWalletByOrgId', 'GET'),
-      updateEmployeeCashback: p('/api/updateEmployeeCashbackList', 'POST'),
-      addVcEmployeeList: p('/api/addVcEmployeeList', 'POST'),
-      addEmployeeWalletList: p('/api/addEmployeeWalletList', 'POST'),
-      deleteVcEmployee: p('/api/deleteVcEmployee', 'DELETE'),
-      deleteEmployeeWallet: p('/api/deleteEmployeeWallet', 'DELETE'),
-      updateVcEmployee: p('/api/updateVcEmployee', 'POST'),
-      updateEmployeeWallet: p('/api/updateEmployeeWallet', 'POST'),
+
       getVcEmployeeByPhoneNo: p('/api/getVcEmployeeByPhoneNo', 'GET'),
       verifyVcEmployeeByPhoneNo: p('/api/verifyVcEmployeeByPhoneNo', 'GET'),
       fetchOutletOrdersbysearchObj: p('/api/fetchOutletOrdersbysearchObj', 'POST'),
@@ -328,6 +321,8 @@ export class ApiConfigService {
       copyDailyOrderMenu: p('/api/copyDailyOrderMenu', 'POST'),
       addBulkDailyOrderMenu: p('/api/addBulkDailyOrderMenu', 'POST'),
       getClusterb2bBulkOrderList: p('/api/getClusterb2bBulkOrderList', 'POST'),
+      updateCompanyWalletCafeteriaDetails: p('/api/updateCompanyWalletCafeteriaDetails', 'POST'),
+      getCompanyWalletCafeteriaDetails: p('/api/getCompanyWalletCafeteriaDetails', 'POST'),
     }
   }
 }

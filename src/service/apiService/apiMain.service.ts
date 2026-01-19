@@ -799,6 +799,14 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addOutletEmployeeList, body);
   }
 
+  updateCompanyWalletCafeteriaDetails(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateCompanyWalletCafeteriaDetails, payload);
+  }
+
+  getCompanyWalletCafeteriaDetails(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCompanyWalletCafeteriaDetails, payload);
+  }
+
   outletEmployeeByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.outletEmployeeByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
@@ -860,32 +868,13 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addVcEmployeeList, body);
   }
 
-  addEmployeeWalletList(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addEmployeeWalletList, body);
-  }
-
   vcEmployeeByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.vcEmployeeByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 
-  employeeWalletByOrgId(orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.employeeWalletByOrgId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
-  }
-
-  updateEmployeeCashback(orgId: any, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployeeCashback;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method }, body);
-  }
-
   deleteVcEmployee(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteVcEmployee;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  deleteEmployeeWallet(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.deleteEmployeeWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
@@ -896,11 +885,6 @@ export class ApiMainService {
 
   updateVcEmployee(id: any, body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateVcEmployee;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
-  }
-
-  updateEmployeeWallet(id: any, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployeeWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
 

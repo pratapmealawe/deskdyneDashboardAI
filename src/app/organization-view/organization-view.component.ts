@@ -53,7 +53,7 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'Outlet Employee', path: 'outletEmployee' },
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
     { name: 'Guest Employee', path: 'guestEmployeeList' },
-    { name: 'Employee wallet', path: 'employeeWallet' },
+    { name: 'Company Wallet', path: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];
 

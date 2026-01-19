@@ -9,7 +9,6 @@ import { CakeMenuComponent } from '../common-components/cake-menu/cake-menu.comp
 import { ConsumptionOrderComponent } from '../common-components/consumption-order/consumption-order.component';
 import { DailyOrderMenuComponent } from '../common-components/daily-order-menu/daily-order-menu.component';
 import { EmployeeListComponent } from '../common-components/employee-list/employee-list.component';
-import { EmployeeWalletComponent } from '../common-components/employee-wallet/employee-wallet.component';
 import { GuestEmployeeListComponent } from '../common-components/guest-employee-list/guest-employee-list.component';
 import { LuxMenuComponent } from '../common-components/lux-menu/lux-menu.component';
 import { MealaweOutletComponent } from '../common-components/mealawe-outlet/mealawe-outlet.component';
@@ -29,6 +28,7 @@ import { MaterialModule } from '../material.module';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OrganizationViewComponent } from './organization-view.component';
+import { CompanyWalletComponent } from '../common-components/company-wallet/company-wallet.component';
 
 @NgModule({
   declarations: [
@@ -47,13 +47,13 @@ import { OrganizationViewComponent } from './organization-view.component';
     OrgComplianceComponent,
     OutletEmployeeComponent,
     VcEmployeeComponent,
-    EmployeeWalletComponent,
     ConsumptionOrderComponent,
     CakeMenuComponent,
     SweetMenuComponent,
     LuxMenuComponent,
     MealaweOutletComponent,
-    QrEmployeeComponent
+    QrEmployeeComponent,
+    CompanyWalletComponent
   ],
   imports: [
     CommonModule,
