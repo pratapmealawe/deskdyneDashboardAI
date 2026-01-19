@@ -1540,4 +1540,102 @@ export class ApiMainService {
   addBulkDailyOrderMenu(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkDailyOrderMenu, data);
   }
+
+  getAllB2bBulkMenus(): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllB2bBulkMenus;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
+  }
+
+  copyB2bBulkMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyB2bBulkMenu, data);
+  }
+
+  getB2bBulkMenuByCategory(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getB2bBulkMenuByCategory, data);
+  }
+
+  B2B_assignVendorForBulkMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_assignVendorForBulkMenu, data);
+  }
+
+  B2B_fetchBulkMealMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkMealMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_saveBulkMealMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveBulkMealMenu, data);
+  }
+
+  B2B_fetchIndividualMealMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndividualMealMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_saveIndividualMealMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveIndividualMealMenu, data);
+  }
+
+  B2B_fetchBulkSnackMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkSnackMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_saveBulkSnacksMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveBulkSnacksMenu, data);
+  }
+
+  B2B_fetchIndividualSnacksMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndividualSnacksMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_saveIndividualSnacksMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveIndividualSnacksMenu, data);
+  }
+
+  B2B_fetchPredefinedFoodBoxMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchPredefinedFoodBoxMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_savePredefinedFoodBoxMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_savePredefinedFoodBoxMenu, data);
+  }
+
+  B2B_fetchCustomizedFoodBoxMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchCustomizedFoodBoxMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_saveCustomizedFoodBoxMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveCustomizedFoodBoxMenu, data);
+  }
+
+  B2B_fetchCakeMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchCakeMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_saveCakeMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveCakeMenu, data);
+  }
+
+  B2B_fetchSweetMenu(cafeId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchSweetMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  }
+
+  B2B_saveSweetMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveSweetMenu, data);
+  }
+
+  B2B_fetchLuxMenu(orgId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchLuxMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  B2B_saveLuxMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveLuxMenu, data);
+  }
 }

@@ -29,6 +29,8 @@ import { MaterialModule } from '../material.module';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OrganizationViewComponent } from './organization-view.component';
+import { OrganizationAddVendorComponent } from './organization-add-vendor/organization-add-vendor.component';
+import { OrganizationCopyBulkMenuComponent } from './organization-copy-bulk-menu/organization-copy-bulk-menu.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +55,9 @@ import { OrganizationViewComponent } from './organization-view.component';
     SweetMenuComponent,
     LuxMenuComponent,
     MealaweOutletComponent,
-    QrEmployeeComponent
+    QrEmployeeComponent,
+    OrganizationAddVendorComponent,
+    OrganizationCopyBulkMenuComponent
   ],
   imports: [
     CommonModule,

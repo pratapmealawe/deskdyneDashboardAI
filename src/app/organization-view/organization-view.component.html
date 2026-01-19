@@ -6,31 +6,61 @@
   class="custom-tabs">
   <mat-tab *ngFor="let view of orgViewList; let mainIndex = index" [label]="view.name">
     <ng-container *ngIf="selectedMainTabIndex === mainIndex">
+      <!-- Common Header for Bulk Menu Section - Placed above tabs -->
+      <div *ngIf="showBulkMenuHeader && organization?.cafeteriaList?.length > 0" class="mb-4">
+        <mat-card class="p-3">
+          <mat-card-title>Select Cafeteria</mat-card-title>
+          <mat-radio-group color="primary" [(ngModel)]="selectedCafeteria">
+            <mat-radio-button *ngFor="let cafeteria of organization.cafeteriaList" [id]="cafeteria._id"
+              name="CafeteriaName" [value]="cafeteria" (change)="onCafeteriaChange($event)">
+              {{cafeteria.cafeteria_name}}
+            </mat-radio-button>
+          </mat-radio-group>
+          <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
+            <button mat-raised-button color="primary" *ngIf="!isVendorAssigned" (click)="assignVendor()">
+              <mat-icon>add</mat-icon>
+              Assign Vendor
+            </button>
+            <button mat-raised-button color="primary" *ngIf="isVendorAssigned" (click)="changeVendor()">
+              <mat-icon>edit</mat-icon>
+              Change Vendor
+            </button>
+            <button mat-raised-button color="primary" (click)="copyMenu()">
+              <mat-icon>content_copy</mat-icon>
+              Copy Menu
+            </button>
+            <button mat-raised-button color="primary" (click)="exportMenu()">
+              <mat-icon>cloud_download</mat-icon>
+              Download Menu
+            </button>
+          </div>
+        </mat-card>
+      </div>
       <mat-tab-group *ngIf="view.subTabs?.length" [(selectedIndex)]="selectedSubTabIndex"
         (selectedIndexChange)="onSubTabChange($event)" class="custom-tabs">
         <mat-tab *ngFor="let sub of view.subTabs; let subIndex = index" [label]="sub.name">
           <ng-container *ngIf="selectedSubTabIndex === subIndex">
-            <mat-tab-group *ngIf="sub.childTabs?.length" [(selectedIndex)]="selectedChildTabIndex" class="custom-tabs">
+            <mat-tab-group *ngIf="sub.childTabs?.length" [(selectedIndex)]="selectedChildTabIndex" (selectedIndexChange)="onChildTabChange($event)" class="custom-tabs">
               <mat-tab *ngFor="let child of sub.childTabs; let childIndex = index" [label]="child.name">
                 <ng-container *ngIf="selectedChildTabIndex === childIndex" [ngSwitch]="child.path">
-                  <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization"></app-org-bulk-menu>
+                  <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-bulk-menu>
                   <app-org-individual-menu *ngSwitchCase="'individualMealsMenu'"
-                    [orgObj]="organization"></app-org-individual-menu>
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-individual-menu>
                   <app-org-bulk-snackbox-menu *ngSwitchCase="'bulkSnacksMenu'"
-                    [orgObj]="organization"></app-org-bulk-snackbox-menu>
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-bulk-snackbox-menu>
                   <app-org-individual-snackbox-menu *ngSwitchCase="'individualSnacksMenu'"
-                    [orgObj]="organization"></app-org-individual-snackbox-menu>
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-individual-snackbox-menu>
                   <app-org-predefined-snackbox-menu *ngSwitchCase="'predefinedSnackBoxMenu'"
-                    [orgObj]="organization"></app-org-predefined-snackbox-menu>
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-predefined-snackbox-menu>
                   <app-org-customized-snackbox-menu *ngSwitchCase="'customizedSnackBoxMenu'"
-                    [orgObj]="organization"></app-org-customized-snackbox-menu>
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-customized-snackbox-menu>
                 </ng-container>
               </mat-tab>
             </mat-tab-group>
             <ng-container *ngIf="!sub.childTabs?.length" [ngSwitch]="sub.path">
-              <app-cake-menu *ngSwitchCase="'cakeMenu'" [orgObj]="organization"></app-cake-menu>
-              <app-sweet-menu *ngSwitchCase="'sweetMenu'" [orgObj]="organization"></app-sweet-menu>
-              <app-lux-menu *ngSwitchCase="'luxMenu'" [orgObj]="organization"></app-lux-menu>
+              <app-cake-menu *ngSwitchCase="'cakeMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-cake-menu>
+              <app-sweet-menu *ngSwitchCase="'sweetMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-sweet-menu>
+              <app-lux-menu *ngSwitchCase="'luxMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-lux-menu>
             </ng-container>
           </ng-container>
         </mat-tab>

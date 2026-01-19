@@ -1,7 +1,11 @@
 import {
   Component,
+  EventEmitter,
   Input,
+  OnChanges,
   OnInit,
+  Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -47,6 +51,7 @@ interface CakeMenuMeta {
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
   itemList?: CakeMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -54,8 +59,10 @@ interface CakeMenuMeta {
   templateUrl: './cake-menu.component.html',
   styleUrls: ['./cake-menu.component.scss'],
 })
-export class CakeMenuComponent implements OnInit {
+export class CakeMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: CakeMenuItem[] = [];
@@ -87,8 +94,14 @@ export class CakeMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getBulkMenuItems();
+    this.getBulkMenuItemsByCafeteriaId();
     this.getAllB2BFoodItemList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getBulkMenuItemsByCafeteriaId();
+    }
   }
 
   async copyOrgMenu(): Promise<void> {
@@ -112,12 +125,30 @@ export class CakeMenuComponent implements OnInit {
     }
   }
 
-  async getBulkMenuItems(): Promise<void> {
+  // async getBulkMenuItems(): Promise<void> {
+  //   try {
+  //     const menuItems: CakeMenuMeta =
+  //       await this.api.b2b_fetchBulkCakeMenu(this.orgObj._id);
+  //     this.bulkMenuFetched = menuItems || {};
+  //     this.bulkMenuList = menuItems.itemList || [];
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  async getBulkMenuItemsByCafeteriaId(): Promise<void> {
+    if (!this.selectedCafeteria) return;
     try {
-      const menuItems: CakeMenuMeta =
-        await this.api.b2b_fetchBulkCakeMenu(this.orgObj._id);
-      this.bulkMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
+      const menuItems: CakeMenuMeta = await this.api.B2B_fetchCakeMenu(this.selectedCafeteria._id);
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.bulkMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+      } else {
+        this.isVendorAssigned.emit(false);
+        this.bulkMenuFetched = {};
+        this.bulkMenuList = [];
+      }
     } catch (error) {
       console.log(error);
     }
@@ -190,8 +221,12 @@ export class CakeMenuComponent implements OnInit {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'cake',
+      subCategory: 'cakeMenu',
       moq: this.bulkMenuFetched.moq,
       slabLimit1: this.bulkMenuFetched.slabLimit1,
       slabLimit2: this.bulkMenuFetched.slabLimit2,
@@ -199,24 +234,54 @@ export class CakeMenuComponent implements OnInit {
       dateLimit1: this.bulkMenuFetched.dateLimit1,
       dateLimit2: this.bulkMenuFetched.dateLimit2,
       dateLimit3: this.bulkMenuFetched.dateLimit3,
-      slab1DeliveryPrice: this.bulkMenuFetched.slab1DeliveryPrice,
-      slab2DeliveryPrice: this.bulkMenuFetched.slab2DeliveryPrice,
-      slab3DeliveryPrice: this.bulkMenuFetched.slab3DeliveryPrice,
-      slab4DeliveryPrice: this.bulkMenuFetched.slab4DeliveryPrice,
+      slab1DeliveryPrice: this.bulkMenuFetched.slab1DeliveryPrice ?? 0,
+      slab2DeliveryPrice: this.bulkMenuFetched.slab2DeliveryPrice ?? 0,
+      slab3DeliveryPrice: this.bulkMenuFetched.slab3DeliveryPrice ?? 0,
+      slab4DeliveryPrice: this.bulkMenuFetched.slab4DeliveryPrice ?? 0,
       itemList: [...this.bulkMenuList],
     };
 
     try {
-      console.log(bulkMenuObj);
-      await this.api.b2b_updateBulkCakeMenu(bulkMenuObj);
+      await this.api.B2B_saveCakeMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getBulkMenuItems();
-    } catch (e) {
-      console.log('error while saving kitchen');
+      await this.getBulkMenuItemsByCafeteriaId();
+    } catch (error) {
+      console.error('error while saving cake menu', error);
     }
   }
 
+  async editBulkMenuNew(): Promise<void> {
+    const bulkMenuObj = {
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'cake',
+      subCategory: 'cakeMenu',
+      moq: this.bulkMenuFetched.moq,
+      slabLimit1: this.bulkMenuFetched.slabLimit1,
+      slabLimit2: this.bulkMenuFetched.slabLimit2,
+      slabLimit3: this.bulkMenuFetched.slabLimit3,
+      dateLimit1: this.bulkMenuFetched.dateLimit1,
+      dateLimit2: this.bulkMenuFetched.dateLimit2,
+      dateLimit3: this.bulkMenuFetched.dateLimit3,
+      slab1DeliveryPrice: this.bulkMenuFetched.slab1DeliveryPrice ?? 0,
+      slab2DeliveryPrice: this.bulkMenuFetched.slab2DeliveryPrice ?? 0,
+      slab3DeliveryPrice: this.bulkMenuFetched.slab3DeliveryPrice ?? 0,
+      slab4DeliveryPrice: this.bulkMenuFetched.slab4DeliveryPrice ?? 0,
+      itemList: [...this.bulkMenuList],
+    };
+
+    try {
+      await this.api.B2B_saveCakeMenu(bulkMenuObj);
+      this.changesMade = false;
+      this.slabEditMode = false;
+      await this.getBulkMenuItemsByCafeteriaId();
+    } catch (error) {
+      console.error('error while saving cake menu', error);
+    }
+  }
   disableSave(): boolean {
     if (!this.bulkMenuList.length) return true;
 

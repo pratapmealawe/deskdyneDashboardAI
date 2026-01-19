@@ -1,7 +1,11 @@
 import {
   Component,
+  EventEmitter,
   Input,
+  OnChanges,
   OnInit,
+  Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -48,6 +52,7 @@ interface LuxMenuMeta {
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
   itemList?: LuxMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -55,8 +60,10 @@ interface LuxMenuMeta {
   templateUrl: './lux-menu.component.html',
   styleUrls: ['./lux-menu.component.scss'],
 })
-export class LuxMenuComponent implements OnInit {
+export class LuxMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: LuxMenuItem[] = [];
@@ -84,12 +91,18 @@ export class LuxMenuComponent implements OnInit {
     { key: 'slab4Price' as const, label: 'Slab 4' },
   ];
 
-  constructor(private api: ApiMainService, private dialog: MatDialog) {}
+  constructor(private api: ApiMainService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getBulkMenuItems();
+    this.getBulkMenuItemsByCafeteriaId();
     this.getAllB2BFoodItemList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getBulkMenuItemsByCafeteriaId();
+    }
   }
 
   async copyOrgMenu(): Promise<void> {
@@ -113,12 +126,29 @@ export class LuxMenuComponent implements OnInit {
     }
   }
 
-  async getBulkMenuItems(): Promise<void> {
+  // async getBulkMenuItems(): Promise<void> {
+  //   try {
+  //     const menuItems: LuxMenuMeta =
+  //       await this.api.b2b_fetchBulkLuxMenu(this.orgObj._id);
+  //     this.bulkMenuFetched = menuItems || {};
+  //     this.bulkMenuList = menuItems.itemList || [];
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  async getBulkMenuItemsByCafeteriaId(): Promise<void> {
     try {
-      const menuItems: LuxMenuMeta =
-        await this.api.b2b_fetchBulkLuxMenu(this.orgObj._id);
-      this.bulkMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
+      const menuItems: LuxMenuMeta = await this.api.B2B_fetchLuxMenu(this.selectedCafeteria._id);
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.bulkMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+      } else {
+        this.isVendorAssigned.emit(false);
+        this.bulkMenuFetched = {};
+        this.bulkMenuList = [];
+      }
     } catch (error) {
       console.log(error);
     }
@@ -195,8 +225,12 @@ export class LuxMenuComponent implements OnInit {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'lux',
+      subCategory: 'luxMenu',
       moq: this.bulkMenuFetched.moq,
       slabLimit1: this.bulkMenuFetched.slabLimit1,
       slabLimit2: this.bulkMenuFetched.slabLimit2,
@@ -204,21 +238,20 @@ export class LuxMenuComponent implements OnInit {
       dateLimit1: this.bulkMenuFetched.dateLimit1,
       dateLimit2: this.bulkMenuFetched.dateLimit2,
       dateLimit3: this.bulkMenuFetched.dateLimit3,
-      slab1DeliveryPrice: this.bulkMenuFetched.slab1DeliveryPrice,
-      slab2DeliveryPrice: this.bulkMenuFetched.slab2DeliveryPrice,
-      slab3DeliveryPrice: this.bulkMenuFetched.slab3DeliveryPrice,
-      slab4DeliveryPrice: this.bulkMenuFetched.slab4DeliveryPrice,
+      slab1DeliveryPrice: this.bulkMenuFetched.slab1DeliveryPrice ?? 0,
+      slab2DeliveryPrice: this.bulkMenuFetched.slab2DeliveryPrice ?? 0,
+      slab3DeliveryPrice: this.bulkMenuFetched.slab3DeliveryPrice ?? 0,
+      slab4DeliveryPrice: this.bulkMenuFetched.slab4DeliveryPrice ?? 0,
       itemList: [...this.bulkMenuList],
     };
 
     try {
-      console.log(bulkMenuObj);
-      await this.api.b2b_updateBulkLuxMenu(bulkMenuObj);
+      await this.api.B2B_saveLuxMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getBulkMenuItems();
-    } catch (e) {
-      console.log('error while saving kitchen');
+      await this.getBulkMenuItemsByCafeteriaId();
+    } catch (error) {
+      console.error('error while saving lux menu', error);
     }
   }
 
