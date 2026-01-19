@@ -1,8 +1,11 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { PageEvent } from '@angular/material/paginator';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
 
 @Component({
   selector: 'app-outlet-employee',
@@ -10,257 +13,403 @@ import { ExcelService } from 'src/service/excel.service';
   styleUrls: ['./outlet-employee.component.scss']
 })
 export class OutletEmployeeComponent implements OnInit {
-  employeeList: any;
-  @ViewChild("content") content: any;
-  @ViewChild("delete") delete: any;
   @Input() orgObj: any;
-  empId: any;
-  form: any;
-  showMultipleEmployeeForm = false;
-  multipleEmployeeform: any;
-  addMultipleEmploeeList: any = [];
-  disableSubmit: any = false;
-  showRemoveForm = false;
-  showAddMoreForm = true;
-  employeeObj: any;
-  confirmDelete: boolean = false;
-  deleteId: any;
-  deleteEmployeeName: any = '';
-  selectedCafeteria: any;
-  selectedCafeteriaName: any;
-  selectedCafeteriaId: any;
-  showAllEmployee = true;
-  message = '';
-  deletedEmployee: any;
-  showError: boolean = false;
-  isuploadEmployeeData = false;
-  uploadEmployeeData: any;
-  uploadEmployeeObj: any;
-  uploadedFile: any;
-  fileName: any
 
-  constructor(private apiMainService: ApiMainService, private excelService: ExcelService, private modalService: NgbModal, private fb: FormBuilder) {
+  // ViewChildren for Dialog Templates if we keep them inline
+  @ViewChild('addEditDialog') addEditDialog!: TemplateRef<any>;
+  @ViewChild('deleteDialog') deleteDialog!: TemplateRef<any>;
+
+  employeeList: any[] = [];
+
+  selectedCafeteria: any;
+  selectedCafeteriaName: string | null = null;
+  selectedCafeteriaId: string | null = null;
+
+  showMultipleEmployeeForm = false;
+  bulkForm!: FormGroup;
+  disableSubmit = false;
+
+  loading = false;
+  pageSize = 10;
+  pageIndex = 0;
+  pageSizeOptions = [5, 10, 25, 50];
+
+  // Dialog related
+  dialogForm!: FormGroup;
+  currentDialogRef: any;
+  isEditMode = false;
+  currentEmployeeId: string | null = null;
+  employeeToDelete: any = null;
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private fb: FormBuilder,
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) { }
+
+  ngOnInit(): void {
+    this.initBulkForm();
+    this.initDialogForm();
+    this.initCafeteriaDefaults();
+    this.getEmployeeListByOrgId();
   }
 
-  ngOnInit() {
-    this.getEmployeeListByOrgId();
-    this.form = this.fb.group({
-      organization_name: this.orgObj.organization_name,
-      organization_id: this.orgObj._id,
+  // ---------- INIT ----------
+
+  private initBulkForm(): void {
+    this.bulkForm = this.fb.group({
+      employees: this.fb.array([])
+    });
+    this.addBulkRow(); // start with 1 row
+  }
+
+  get employeesFA(): FormArray {
+    return this.bulkForm.get('employees') as FormArray;
+  }
+
+  private createBulkEmployeeGroup(): FormGroup {
+    return this.fb.group({
       employeeName: ['', Validators.required],
       employeeId: ['', Validators.required],
-      employeePhoneNo: ['', Validators.required],
-      employeeEmail: ['', Validators.required],
-    })
-    this.employeeObj = {
-      organization_name: this.orgObj.organization_name,
-      organization_id: this.orgObj._id,
-      employeeName: '',
-      employeeId: '',
-      employeePhoneNo: '',
-      employeeEmail: '',
-    }
+      employeePhoneNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      employeeEmail: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  private initDialogForm(): void {
+    this.dialogForm = this.fb.group({
+      employeeName: ['', Validators.required],
+      employeeId: ['', Validators.required],
+      employeePhoneNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      employeeEmail: ['', [Validators.required, Validators.email]]
+    });
+  }
+
+  private initCafeteriaDefaults(): void {
     if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
       this.selectedCafeteria = this.orgObj.cafeteriaList[0];
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     }
-    this.multipleEmployeeform = this.fb.group({
-      employee: this.fb.array([this.createEmployeeForm()])
-    })
   }
-  createEmployeeForm() {
-    return this.fb.group({
-      name: '',
-    });
-  }
-  addMoreEmployee() {
-    this.addMultipleEmploeeList.push({ ...this.employeeObj });
-    this.showRemoveForm = true;
-    this.showAddMoreForm = false;
-  }
-  addMultipleEmployee() {
-    this.addMultipleEmploeeList.length = 0;
-    if (this.selectedCafeteria) {
-      this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
-      this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
 
-    } else {
-      alert('select cafeteria');
-      return;
-    }
-    this.addMultipleEmploeeList.push({ ...this.employeeObj });
-    this.showMultipleEmployeeForm = true;
-  }
-  onCafeteriaChange(event: any) {
-    // console.log('radio change event', event.target.checked);
+  // ---------- CAFETERIA ----------
+
+  onCafeteriaChange(): void {
+    if (!this.selectedCafeteria) return;
     this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
     this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+    this.resetPagination();
   }
-  removeEmployeeForm(index: any) {
-    this.addMultipleEmploeeList.splice(index, 1)
-    if (this.addMultipleEmploeeList.length == 1) {
-      this.showRemoveForm = false;
-      this.showAddMoreForm = true;
-    }
 
-  }
-  async getEmployeeListByOrgId() {
+  // ---------- API ----------
+
+  async getEmployeeListByOrgId(): Promise<void> {
+    if (!this.orgObj?._id) return;
     try {
-      this.employeeList = await this.apiMainService.outletEmployeeByOrgId(this.orgObj._id);
-      console.log('employee list', this.employeeList);
+      this.loading = true;
+      // Using existing API call for outlet employees
+      this.employeeList = await this.apiMainService.outletEmployeeByOrgId(this.orgObj._id) || [];
+      this.resetPagination();
     } catch (error) {
-      console.log(error)
+      console.error(error);
+      this.snackBar.open('Failed to fetch employees', 'Close', { duration: 3000 });
+    } finally {
+      this.loading = false;
     }
   }
 
-  showAddMultipleEmployee() {
-    this.showMultipleEmployeeForm = true;
-  }
-  async submitMultipleEmployee() {
-    this.addMultipleEmploeeList.forEach((emp: any) => {
-      if (emp && !emp.employeeName || !emp.employeeId || !emp.employeePhoneNo || !emp.employeeEmail) {
-        this.disableSubmit = true;
-      }
-      else {
-        this.disableSubmit = false;
-      }
-    })
-    if (this.disableSubmit) {
+  // ---------- ADD / EDIT (SINGLE) USING MATERIAL DIALOG ----------
+
+  openAddDialog(): void {
+    if (!this.selectedCafeteria) {
+      this.snackBar.open('Please select a cafeteria first', 'Close', { duration: 2500 });
       return;
     }
-    try {
-      this.addMultipleEmploeeList.forEach((el: any) => {
-        el.cafeteria_name = this.selectedCafeteriaName;
-        el.cafeteria_id = this.selectedCafeteriaId;
-      })
-      const employeeList = [...this.addMultipleEmploeeList];
-      const res = await this.apiMainService.addOutletEmployeeList(employeeList);
-      if (res && res.length > 0) {
-        this.addMultipleEmploeeList = res;
-      }
-    } catch (error: any) {
-      console.log(error);
-      const errorArr = error?.error?.msg?.skippedEmployees;
+    this.isEditMode = false;
+    this.currentEmployeeId = null;
+    this.dialogForm.reset();
 
-      if (Array.isArray(errorArr) && errorArr.length > 0) {
-        errorArr.forEach(emp => {
-          alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
-        });
-      }
-    }
-    this.getEmployeeListByOrgId();
-    this.showMultipleEmployeeForm = false;
+    this.currentDialogRef = this.dialog.open(this.addEditDialog, {
+      width: '500px',
+      autoFocus: true
+    });
   }
-  editEmployee(employee: any) {
-    this.modalService.open(this.content);
-    this.empId = employee._id;
 
-    this.form.patchValue({
+  openEditDialog(employee: any): void {
+    this.isEditMode = true;
+    this.currentEmployeeId = employee._id;
+    this.dialogForm.patchValue({
       employeeName: employee.employeeName,
       employeeId: employee.employeeId,
       employeePhoneNo: employee.employeePhoneNo,
       employeeEmail: employee.employeeEmail
-    })
+    });
+
+    this.currentDialogRef = this.dialog.open(this.addEditDialog, {
+      width: '500px',
+      autoFocus: true
+    });
   }
-  async updateEmployee(id: any, employeeObj: any) {
+
+  async saveEmployee(): Promise<void> {
+    if (this.dialogForm.invalid) {
+      this.dialogForm.markAllAsTouched();
+      return;
+    }
+
+    const formVal = this.dialogForm.value;
+    const payload = {
+      ...formVal,
+      organization_name: this.orgObj.organization_name,
+      organization_id: this.orgObj._id,
+      cafeteria_name: this.selectedCafeteriaName,
+      cafeteria_id: this.selectedCafeteriaId
+    };
+
     try {
-      const formdata = { ...employeeObj }
-      const res = await this.apiMainService.updateOutletEmployee(id, formdata);
-      console.log('response', res);
-      if (res && res._id) {
+      if (this.isEditMode && this.currentEmployeeId) {
+        const res = await this.apiMainService.updateOutletEmployee(this.currentEmployeeId, payload);
+        if (res && res._id) {
+          this.snackBar.open('Employee updated successfully', 'Close', { duration: 2500 });
+        }
+      } else {
+        // For Add, we use the list API generally or single if available. 
+        // Original uses addOutletEmployeeList for bulk.
+        // We can use the same bulk API for single add properly wrapped.
+        const listPayload = [payload];
+        const res = await this.apiMainService.addOutletEmployeeList(listPayload);
+        if (res && res.length > 0) {
+          this.snackBar.open('Employee added successfully', 'Close', { duration: 2500 });
+        }
+      }
+      this.currentDialogRef.close();
+      this.getEmployeeListByOrgId();
+    } catch (error: any) {
+      console.error(error);
+      this.snackBar.open('Failed to save employee', 'Close', { duration: 3000 });
+    }
+  }
+
+  // ---------- DELETE ----------
+
+  deleteEmployee(employee: any): void {
+    this.employeeToDelete = employee;
+    this.currentDialogRef = this.dialog.open(this.deleteDialog, {
+      width: '400px',
+      autoFocus: false
+    });
+  }
+
+  async confirmDelete(): Promise<void> {
+    if (!this.employeeToDelete) return;
+    try {
+      await this.apiMainService.deleteOutletEmployee(this.employeeToDelete._id);
+      this.snackBar.open('Employee deleted', 'Close', { duration: 2500 });
+      this.getEmployeeListByOrgId();
+      this.currentDialogRef.close();
+    } catch (error) {
+      console.error(error);
+      this.snackBar.open('Failed to delete employee', 'Close', { duration: 3000 });
+    }
+  }
+
+  // ---------- BULK ADD ----------
+
+  showBulkForm(): void {
+    if (!this.selectedCafeteria) {
+      this.snackBar.open('Please select a cafeteria first', 'Close', { duration: 2500 });
+      return;
+    }
+    this.showMultipleEmployeeForm = true;
+  }
+
+  hideBulkForm(): void {
+    this.showMultipleEmployeeForm = false;
+    this.bulkForm.reset();
+    this.employeesFA.clear();
+    this.addBulkRow();
+    this.disableSubmit = false;
+  }
+
+  addBulkRow(): void {
+    this.employeesFA.push(this.createBulkEmployeeGroup());
+  }
+
+  removeBulkRow(index: number): void {
+    if (this.employeesFA.length === 1) return;
+    this.employeesFA.removeAt(index);
+  }
+
+  async submitMultipleEmployee(): Promise<void> {
+    this.disableSubmit = false;
+
+    this.bulkForm.markAllAsTouched();
+    if (this.bulkForm.invalid) {
+      this.disableSubmit = true;
+      return;
+    }
+
+    if (!this.selectedCafeteriaId || !this.selectedCafeteriaName) {
+      this.snackBar.open('Cafeteria info missing', 'Close', { duration: 2500 });
+      return;
+    }
+
+    const employeesPayload: any[] = [];
+
+    for (const emp of this.employeesFA.value) {
+      employeesPayload.push({
+        organization_name: this.orgObj.organization_name,
+        organization_id: this.orgObj._id,
+        cafeteria_name: this.selectedCafeteriaName,
+        cafeteria_id: this.selectedCafeteriaId,
+        employeeName: emp.employeeName,
+        employeeId: emp.employeeId,
+        employeePhoneNo: emp.employeePhoneNo,
+        employeeEmail: emp.employeeEmail
+      });
+    }
+
+    try {
+      const res = await this.apiMainService.addOutletEmployeeList(employeesPayload);
+      if (res && res.length > 0) {
+        this.snackBar.open('Employees added successfully', 'Close', { duration: 2500 });
         this.getEmployeeListByOrgId();
+        this.hideBulkForm();
       }
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      console.error(error);
+      const errorArr = error?.error?.msg?.skippedEmployees;
+      if (Array.isArray(errorArr) && errorArr.length > 0) {
+        errorArr.forEach((emp: any) => {
+          alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
+        });
+      } else {
+        this.snackBar.open('Failed to add employees', 'Close', { duration: 3000 });
+      }
     }
-    this.getEmployeeListByOrgId();
-
   }
 
-  deleteConfirmed(deletedEmployee: any) {
-    this.confirmDelete = true;
-    this.deleteEmployee(deletedEmployee);
-    this.modalService.dismissAll();
-    this.confirmDelete = false;
+  // ---------- FILTERED EMPLOYEES FOR SELECTED CAFETERIA ----------
+
+  get filteredEmployees(): any[] {
+    if (!this.selectedCafeteriaId) return this.employeeList || [];
+    return (this.employeeList || []).filter(
+      (emp) => emp.cafeteria_id === this.selectedCafeteriaId
+    );
   }
-  async deleteEmployee(employee: any) {
-    this.deleteEmployeeName = employee.employeeName;
-    this.deletedEmployee = employee;
-    this.modalService.open(this.delete);
+
+  private resetPagination(): void {
+    this.pageIndex = 0;
+  }
+
+  get pagedEmployees(): any[] {
+    const start = this.pageIndex * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredEmployees.slice(start, end);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+  }
+
+  // ---------- EXCEL HELPERS ----------
+
+  async downloadExcelTemplate(): Promise<void> {
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Outlet Employees Template');
+
+    // Header row
+    worksheet.addRow(['Employee ID', 'Employee Name', 'Phone No', 'Email']);
+
+    // Style header
+    const headerRow = worksheet.getRow(1);
+    headerRow.font = { bold: true };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    worksheet.columns = [
+      { key: 'employeeId', width: 15 },
+      { key: 'employeeName', width: 25 },
+      { key: 'employeePhoneNo', width: 15 },
+      { key: 'employeeEmail', width: 30 }
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type:
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    });
+    saveAs(blob, 'outlet_employees_template.xlsx');
+  }
+
+  async onExcelUpload(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
     try {
-      if (this.confirmDelete) {
-        console.log(this.confirmDelete);
-        console.log('employee', employee)
-        const deletedEmployee = await this.apiMainService.deleteOutletEmployee(employee._id);
-        this.getEmployeeListByOrgId();
-        console.log(deletedEmployee);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
+      const worksheet = workbook.worksheets[0];
 
-  async onFileChange(evt: any) {
-    this.isuploadEmployeeData = true;
-    try {
-      const target: DataTransfer = <DataTransfer>(evt.target);
-      if (target.files.length !== 1) throw new Error('Cannot use multiple files');
-      let data: any = await this.excelService.upload(target.files[0])
-      console.log('target.files[0]', data);
-      console.log(target.files[0].name);
-      this.fileName = target.files[0].name;
-      if (data && data.files && data.files.length > 0) {
-        data = target.files;
+      // Clear existing rows
+      this.employeesFA.clear();
+
+      worksheet.eachRow((row, rowNumber) => {
+        // Skip header
+        if (rowNumber === 1) return;
+
+        const idCell = row.getCell(1).value;
+        const nameCell = row.getCell(2).value;
+        const phoneCell = row.getCell(3).value;
+        const emailCell = row.getCell(4).value;
+
+        const employeeId = (idCell || '').toString().trim();
+        const employeeName = (nameCell || '').toString().trim();
+        const phone = (phoneCell || '').toString().trim();
+        let email = '';
+        if (emailCell && typeof emailCell === 'object' && 'text' in emailCell) {
+          // ExcelJS hyperlink cell -> { text, hyperlink }
+          email = (emailCell as any).text?.toString().trim() || '';
+        } else {
+          email = (emailCell || '').toString().trim();
+        }
+
+        // Skip completely empty rows
+        if (!employeeId && !employeeName && !phone && !email) return;
+
+        const group = this.createBulkEmployeeGroup();
+        group.patchValue({
+          employeeId,
+          employeeName,
+          employeePhoneNo: phone,
+          employeeEmail: email
+        });
+
+        this.employeesFA.push(group);
+      });
+
+      if (this.employeesFA.length === 0) {
+        // if nothing parsed, keep at least one empty row
+        this.addBulkRow();
+        this.snackBar.open('No valid rows found in Excel', 'Close', {
+          duration: 3000
+        });
+      } else {
+        this.snackBar.open('Excel imported successfully', 'Close', {
+          duration: 2500
+        });
       }
-      this.uploadEmployeeData = data
-      console.log('uploaded excel data', this.uploadEmployeeData);
-      if (this.uploadEmployeeData && this.uploadEmployeeData.length > 0) {
-        this.addMultipleEmploeeList.length = 0;
-        this.uploadEmployeeData.forEach((elm: any) => {
-          if (!(typeof elm[0] === 'undefined') && elm[0] != null && elm[0] != '' && elm[0] != 'Emp Name') {
-            this.employeeObj.employeeName = elm[0];
-            this.employeeObj.employeeId = elm[1];
-            this.employeeObj.employeePhoneNo = elm[2];
-            this.employeeObj.employeeEmail = elm[3];
-            console.log('uploaded employee object', this.employeeObj)
-            const employeeList: any = []
-            employeeList.push({
-              cafeteria_name: this.selectedCafeteriaName,
-              cafeteria_id: this.selectedCafeteriaId,
-              ...this.employeeObj
-            })
-            this.addMultipleEmploeeList.push(...employeeList);
-            console.log(this.addMultipleEmploeeList)
-            if (this.addMultipleEmploeeList.length == this.uploadEmployeeData.length) {
-              this.employeeObj = {
-                organization_name: this.orgObj.organization_name,
-                organization_id: this.orgObj._id,
-                employeeName: '',
-                employeeId: '',
-                employeePhoneNo: '',
-                employeeEmail: '',
-              }
-            }
-          }
-        })
-      }
-      this.showMultipleEmployeeForm = true;
-      this.showRemoveForm = true;
-      this.showAddMoreForm = false;
-    } catch (error) {
-      console.log(error)
+    } catch (err) {
+      console.error('Error reading Excel file', err);
+      this.snackBar.open('Failed to read Excel file', 'Close', {
+        duration: 3000
+      });
+    } finally {
+      (event.target as HTMLInputElement).value = '';
     }
   }
-    cancelMultipleEmployee() {
-        this.showMultipleEmployeeForm = false;
-        this.showAddMoreForm = true;
-        this.showRemoveForm = false;
-        this.fileName = null
-        // if (this.fileInputRef) {
-        //     this.fileInputRef.nativeElement.value = '';
-        // }
-        // this.employeeForm?.reset();
-        // this.uploadedEmployeeList = [];
-    }
 }

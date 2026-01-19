@@ -47,6 +47,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchAllOutlets);
   }
 
+  fetchAllOutletsTest() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchAllOutletsTest);
+  }
+
   getAllOutletMasterMenus() {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllOutletMasterMenus);
   }

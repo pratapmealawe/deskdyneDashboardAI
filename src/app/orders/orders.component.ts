@@ -242,12 +242,10 @@ export class OrdersComponent implements OnInit, OnDestroy {
     const currentTime = Date.now();
     const diffInMinutes = (currentTime - orderTime) / (1000 * 60);
 
-    return diffInMinutes > 8;
+    return diffInMinutes > 20;
   }
 
   ngOnDestroy() {
     this.pollingSub?.unsubscribe();
   }
-
-
 }

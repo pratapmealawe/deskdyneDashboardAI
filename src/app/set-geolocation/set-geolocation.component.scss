@@ -1,20 +1,23 @@
 @import "/src/styles.scss";
 
-.map{
+.map {
     height: 60vh;
     width: 100%;
 }
-.searchAddress{
+
+.searchAddress {
     // position: relative;
     // bottom: -31px;
     // z-index: 2;
 }
-.searchInput{
+
+.searchInput {
     // width: 85%;
     // border-radius: 5px;
     width: 100%;
 }
-.currentLocation{
+
+.currentLocation {
     font-size: 12px;
     font-weight: bold;
     background: $secondary-color3;
@@ -22,7 +25,13 @@
     border-radius: 5px;
     text-align: center;
     cursor: pointer;
-        display: flex;
+    display: flex;
     align-items: center;
     justify-content: center;
+}
+
+// Fix for Google Maps Autocomplete dropdown in Dialogs
+::ng-deep .pac-container {
+    z-index: 100000 !important;
+    pointer-events: auto;
 }
