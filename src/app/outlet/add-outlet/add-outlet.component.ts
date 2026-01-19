@@ -22,6 +22,15 @@ interface MealTiming {
   acceptOrderTill: string;
 }
 
+interface SectionConfig {
+  sectionName: string;
+  sectionType: string;
+}
+
+interface CabinConfig {
+  cabinName: string;
+}
+
 @Component({
   selector: 'app-add-outlet',
   templateUrl: './add-outlet.component.html',
@@ -43,6 +52,8 @@ export class AddOutletComponent implements OnInit {
   formattedOrgList: any[] = [];
   selectedOrgCafeteria: string | undefined;
   seletedCafetria: any;
+
+  sectionTypes: string[] = ['alacarte', 'live'];
 
   outletSubsidy = 0;
 
@@ -82,13 +93,23 @@ export class AddOutletComponent implements OnInit {
     return this.form.get('mealTimings') as FormArray;
   }
 
+  get sectionConfig(): FormArray {
+    return this.form.get('sectionConfig') as FormArray;
+  }
+
+  get cabinConfig(): FormArray {
+    return this.form.get('cabinConfig') as FormArray;
+  }
+
   private createForm(): void {
     this.form = this.fb.group({
       outletName: ['', Validators.required],
       outletDescription: ['', Validators.required],
 
       outletOpened: [true],
+      isSectionWiseMenu: [false],
       isPreOrder: [false],
+      isCabinOrder: [false],
       preOrderMealType: ['lunch'],
       isSatAvailable: [false],
       isSunAvailable: [false],
@@ -106,6 +127,8 @@ export class AddOutletComponent implements OnInit {
       billingType: ['revenueSharing', Validators.required],
 
       mealTimings: this.fb.array([]),
+      sectionConfig: this.fb.array([]),
+      cabinConfig: this.fb.array([]),
     });
 
     // default one timing per standard meal type
@@ -138,10 +161,48 @@ export class AddOutletComponent implements OnInit {
     });
   }
 
-  private addDefaultMealTimings(): void {
+  addDefaultMealTimings(): void {
     this.mealTypes.forEach((type) => {
       this.mealTimings.push(this.createMealTimingGroup(type));
     });
+  }
+
+  createSectionConfigGroup(
+    sectionName: string = '',
+    sectionType: string = 'alacarte'
+  ): FormGroup {
+    return this.fb.group({
+      sectionName: [sectionName, Validators.required],
+      sectionType: [sectionType, Validators.required],
+    });
+  }
+
+  addSectionConfig(): void {
+    this.sectionConfig.push(this.createSectionConfigGroup());
+    this.sectionConfig.markAsDirty();
+  }
+
+  removeSectionConfig(index: number): void {
+    this.sectionConfig.removeAt(index);
+    this.sectionConfig.markAsDirty();
+  }
+
+  createCabinConfigGroup(
+    cabinName: string = '',
+  ): FormGroup {
+    return this.fb.group({
+      cabinName: [cabinName, Validators.required],
+    });
+  }
+
+  addCabinConfig(): void {
+    this.cabinConfig.push(this.createCabinConfigGroup());
+    this.cabinConfig.markAsDirty();
+  }
+
+  removeCabinConfig(index: number): void {
+    this.cabinConfig.removeAt(index);
+    this.cabinConfig.markAsDirty();
   }
 
   addMealTiming(): void {
@@ -185,7 +246,9 @@ export class AddOutletComponent implements OnInit {
         // outletType REMOVED
 
         outletOpened: outlet.outletOpened ?? false,
+        isSectionWiseMenu: outlet.isSectionWiseMenu ?? false,
         isPreOrder: outlet.isPreOrder ?? false,
+        isCabinOrder: outlet.isCabinOrder ?? false,
         preOrderMealType: outlet.preOrderMealType ?? 'lunch',
         isSatAvailable: outlet.isSatAvailable ?? false,
         isSunAvailable: outlet.isSunAvailable ?? false,
@@ -195,6 +258,24 @@ export class AddOutletComponent implements OnInit {
         precedence: outlet.precedence ?? 0,
         billingType: outlet.billingType ?? 'revenueSharing',
       });
+
+      this.sectionConfig.clear();
+      if (outlet.sectionConfig && Array.isArray(outlet.sectionConfig)) {
+        outlet.sectionConfig.forEach((sec: SectionConfig) => {
+          this.sectionConfig.push(
+            this.createSectionConfigGroup(sec.sectionName, sec.sectionType)
+          );
+        });
+      }
+
+      this.cabinConfig.clear();
+      if (outlet.cabinConfig && Array.isArray(outlet.cabinConfig)) {
+        outlet.cabinConfig.forEach((cab: CabinConfig) => {
+          this.cabinConfig.push(
+            this.createCabinConfigGroup(cab.cabinName)
+          );
+        });
+      }
 
       this.validateMealTimings();
     }
@@ -310,6 +391,8 @@ export class AddOutletComponent implements OnInit {
         cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
         organizationDetails: this.seletedCafetria.organizationDetails,
         mealTiming: this.mealTimings.value, // send array
+        sectionConfig: this.sectionConfig.value,
+        cabinConfig: this.cabinConfig.value,
         ...formValue,
       };
 

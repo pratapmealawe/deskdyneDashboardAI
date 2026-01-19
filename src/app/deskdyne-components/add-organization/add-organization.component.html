@@ -546,18 +546,7 @@
 
 <!-- Existing Helpers for Location / POC Alert / Approver Selection Modal -->
 
-<ng-template #geolocation>
-  <div class="dialog-header compact-header" style="padding: 0.5rem 1rem;">
-    <h2 mat-dialog-title class="m-0 fs-5">Geolocation</h2>
-    <button mat-icon-button mat-dialog-close><mat-icon>close</mat-icon></button>
-  </div>
-  <mat-dialog-content class="pb-3 text-center">
-    <app-set-geolocation class="padding-bottom" (sendLocation)="updateLocation($event)"></app-set-geolocation>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end">
-    <button mat-raised-button color="primary" [mat-dialog-close]="'add'">Add</button>
-  </mat-dialog-actions>
-</ng-template>
+<!-- Geolocation Template Removed -->
 
 <ng-template #content>
   <div class="dialog-header compact-header" style="padding: 0.5rem 1rem;">

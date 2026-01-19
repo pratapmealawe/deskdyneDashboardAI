@@ -1,0 +1,21 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.addOutlet {
+    position: absolute;
+    right: 5px;
+    top: 100px;
+}
+
+.cardDesign {
+    @include mixin.card-design(color.$primary-offset-color1);
+}
+
+.search-input {
+    @include mixin.mat-form-field-responsive();
+}
+
+.input-group,
+.search-input {
+    width: -webkit-fill-available !important;
+}

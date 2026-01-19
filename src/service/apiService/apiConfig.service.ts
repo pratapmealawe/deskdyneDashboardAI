@@ -6,12 +6,14 @@ import { Injectable } from '@angular/core';
 })
 export class ApiConfigService {
   private baseUrl: string = environment.serverUrl;
+  private baseUrlTest: string = environment.serverUrl;
   apiEndPointObj: any;
   constructor() {
     this.init();
   }
   private init() {
     const p = (path: string, method: string) => ({ url: `${this.baseUrl}${path}`, method });
+    const c = (path: string, method: string) => ({ url: `${'https://api.deskdyne.com'}${path}`, method });
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
@@ -21,6 +23,7 @@ export class ApiConfigService {
       verifyOTP: p('/authadmin/verifyOTP', 'POST'),
       logout: p('/authadmin/logout', 'GET'),
       fetchAllOutlets: p('/api/fetchAllOutlets', 'GET'),
+      fetchAllOutletsTest: c('/api/fetchAllOutlets', 'GET'),
       getAllOutletMasterMenus: p('/api/getAllOutletMasterMenus', 'GET'),
       getOrgList: p('/api/getOrgList', 'GET'),
       saveOutlet: p('/api/saveOutlet', 'POST'),
@@ -31,6 +34,18 @@ export class ApiConfigService {
       updateOutletNoImages: p('/api/updateOutletNoImages', 'POST'),
       fetchCategories: p('/api/fetchCategories', 'GET'),
       saveCategories: p('/api/saveCategories', 'POST'),
+      savePopupOutlet: p('/api/savePopupOutlet', 'POST'),
+      updatePopupOutlet: p('/api/updatePopupOutlet', 'PUT'),
+      getPopupOutlets: p('/api/getPopupOutlets', 'GET'),
+      getPopupOutletsById: p('/api/getPopupOutletsById', 'GET'),
+      deletePopupOutlet: p('/api/deletePopupOutlet', 'DELETE'),
+      togglePopupOutletStatus: p('/api/togglePopupOutletStatus', 'PATCH'),
+      saveMenuItem: p('/api/saveMenuItem', 'POST'),
+      getMenuItems: p('/api/getMenuItems', 'GET'),
+      getMenuItemById: p('/api/getMenuItemById', 'GET'),
+      updateMenuItem: p('/api/updateMenuItem', 'PUT'),
+      deleteMenuItem: p('/api/deleteMenuItem', 'DELETE'),
+      toggleMenuItemStatus: p('/api/toggleMenuItemStatus', 'PATCH'),
       saveVendor: p('/api/saveVendor', 'POST'),
       getAllVendors: p('/api/getAllVendors', 'GET'),
       getVendorWallet: p('/api/getVendorWallet', 'GET'),
@@ -117,6 +132,7 @@ export class ApiConfigService {
       updateIncident: p('/api/updateIncident', 'PUT'),
       deleteIncident: p('/api/deleteIncident', 'DELETE'),
       getfeedbacklistByfilter: p('/api/getfeedbacklistByfilter', 'POST'),
+      getFeedbackByOrderByOrderType: p('/api/getFeedbackByOrderByOrderType', 'POST'),
       updateOutletMenu: p('/api/updateOutletMenu', 'POST'),
       updateQrMenu: p('/api/updateQrMenu', 'POST'),
       updateOutletMasterMenu: p('/api/updateOutletMasterMenu', 'PUT'),
@@ -222,6 +238,9 @@ export class ApiConfigService {
       checkUserWallet: p('/api/checkUserWallet', 'POST'),
       fetchPastOutletOrdersbysearchObj: p('/api/fetchPastOutletOrdersbysearchObj', 'POST'),
       fetchCompletedOutletOrdersbysearchObj: p('/api/fetchCompletedOutletOrdersbysearchObj', 'POST'),
+      fetchCompletedEventOrdersbysearchObj: p('/api/fetchCompletedEventOrdersbysearchObj', 'POST'),
+      fetchPastEventOrdersbyOutletId: p('/api/fetchPastEventOrdersbyOutletId', 'GET'),
+      getPopupOutletsByOrgId: p('/api/getPopupOutletsByOrgId', 'GET'),
       fetchDailyBulkOrdersbysearchObj: p('/api/fetchDailyBulkOrdersbysearchObj', 'POST'),
       fetchDailyBulkOrdersbyOrgId: p('/api/fetchDailyBulkOrdersbyOrgId', 'POST'),
       getOrg: p('/api/getOrg', 'GET'),
