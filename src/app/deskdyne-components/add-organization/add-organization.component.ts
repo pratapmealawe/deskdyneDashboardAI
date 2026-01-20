@@ -32,7 +32,7 @@ export class AddOrganizationComponent implements OnInit {
   viewOrg: any;
   showUpdate: boolean = false;
   adminSelected: any = [];
-  roleList = ['poc', 'admin', 'superAdmin'];
+  roleList = ['poc', 'admin'];
 
   pocSelected: any;
   cafeSelected: any;
