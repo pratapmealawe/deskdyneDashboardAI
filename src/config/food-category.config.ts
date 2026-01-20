@@ -23,3 +23,11 @@ export let categoryList = [
     { title: "Add On", value: "Add on" },
     { title: "MRP", value: "MRP" },
 ];
+
+
+export const nutritionListOptions = [
+    { title: "Protein", value: "1"  },
+    { title: "Fat", value: "2" },
+    { title: "Carbohydrate", value: "3" },
+    { title: "Fibre", value: "4" },
+];

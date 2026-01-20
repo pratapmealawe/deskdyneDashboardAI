@@ -18,7 +18,7 @@ import { saveAs } from 'file-saver';
 
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
-import { categoryList } from 'src/config/food-category.config';
+import { categoryList , nutritionListOptions} from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -41,7 +41,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   // @ViewChild(MatPaginator) menuPaginator!: MatPaginator; // Removed
 
   categoryList = categoryList;
-
+  nutritionListOptions = nutritionListOptions;
   form!: FormGroup;
 
   selectedCategory: any;

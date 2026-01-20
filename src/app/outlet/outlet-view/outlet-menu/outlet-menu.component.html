@@ -361,9 +361,10 @@
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Nutrition Name</mat-label>
                     <mat-select formControlName="nutritionName">
-                      <mat-option value="Protein">Protein</mat-option>
-                      <mat-option value="Fat">Fat</mat-option>
-                    </mat-select>
+                      <mat-option *ngFor="let option of nutritionListOptions" [value]="option.value">
+                        {{ option.title }}
+                      </mat-option>
+                      </mat-select>
                   </mat-form-field>
                 </div>
 
