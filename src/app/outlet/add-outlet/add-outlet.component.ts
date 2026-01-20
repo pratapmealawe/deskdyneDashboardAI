@@ -27,6 +27,10 @@ interface SectionConfig {
   sectionType: string;
 }
 
+interface CabinConfig {
+  cabinName: string;
+}
+
 @Component({
   selector: 'app-add-outlet',
   templateUrl: './add-outlet.component.html',
@@ -93,6 +97,10 @@ export class AddOutletComponent implements OnInit {
     return this.form.get('sectionConfig') as FormArray;
   }
 
+  get cabinConfig(): FormArray {
+    return this.form.get('cabinConfig') as FormArray;
+  }
+
   private createForm(): void {
     this.form = this.fb.group({
       outletName: ['', Validators.required],
@@ -101,6 +109,7 @@ export class AddOutletComponent implements OnInit {
       outletOpened: [true],
       isSectionWiseMenu: [false],
       isPreOrder: [false],
+      isCabinOrder: [false],
       preOrderMealType: ['lunch'],
       isSatAvailable: [false],
       isSunAvailable: [false],
@@ -119,6 +128,7 @@ export class AddOutletComponent implements OnInit {
 
       mealTimings: this.fb.array([]),
       sectionConfig: this.fb.array([]),
+      cabinConfig: this.fb.array([]),
     });
 
     // default one timing per standard meal type
@@ -177,6 +187,24 @@ export class AddOutletComponent implements OnInit {
     this.sectionConfig.markAsDirty();
   }
 
+  createCabinConfigGroup(
+    cabinName: string = '',
+  ): FormGroup {
+    return this.fb.group({
+      cabinName: [cabinName, Validators.required],
+    });
+  }
+
+  addCabinConfig(): void {
+    this.cabinConfig.push(this.createCabinConfigGroup());
+    this.cabinConfig.markAsDirty();
+  }
+
+  removeCabinConfig(index: number): void {
+    this.cabinConfig.removeAt(index);
+    this.cabinConfig.markAsDirty();
+  }
+
   addMealTiming(): void {
     this.mealTimings.push(this.createMealTimingGroup());
     this.mealTimings.markAsDirty();
@@ -220,6 +248,7 @@ export class AddOutletComponent implements OnInit {
         outletOpened: outlet.outletOpened ?? false,
         isSectionWiseMenu: outlet.isSectionWiseMenu ?? false,
         isPreOrder: outlet.isPreOrder ?? false,
+        isCabinOrder: outlet.isCabinOrder ?? false,
         preOrderMealType: outlet.preOrderMealType ?? 'lunch',
         isSatAvailable: outlet.isSatAvailable ?? false,
         isSunAvailable: outlet.isSunAvailable ?? false,
@@ -235,6 +264,15 @@ export class AddOutletComponent implements OnInit {
         outlet.sectionConfig.forEach((sec: SectionConfig) => {
           this.sectionConfig.push(
             this.createSectionConfigGroup(sec.sectionName, sec.sectionType)
+          );
+        });
+      }
+
+      this.cabinConfig.clear();
+      if (outlet.cabinConfig && Array.isArray(outlet.cabinConfig)) {
+        outlet.cabinConfig.forEach((cab: CabinConfig) => {
+          this.cabinConfig.push(
+            this.createCabinConfigGroup(cab.cabinName)
           );
         });
       }
@@ -354,6 +392,7 @@ export class AddOutletComponent implements OnInit {
         organizationDetails: this.seletedCafetria.organizationDetails,
         mealTiming: this.mealTimings.value, // send array
         sectionConfig: this.sectionConfig.value,
+        cabinConfig: this.cabinConfig.value,
         ...formValue,
       };
 
