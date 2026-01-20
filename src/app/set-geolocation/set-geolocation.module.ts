@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SetGeolocationComponent } from './set-geolocation.component';
+import { MaterialModule } from '../material.module';
 
 
 @NgModule({
@@ -11,9 +12,10 @@ import { SetGeolocationComponent } from './set-geolocation.component';
   imports: [
     CommonModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MaterialModule
   ],
-  exports:[
+  exports: [
     SetGeolocationComponent
   ]
 })

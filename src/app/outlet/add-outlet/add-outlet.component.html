@@ -64,6 +64,10 @@
             <mat-slide-toggle formControlName="isPreOrder" color="primary">
               Pre-Order Enabled
             </mat-slide-toggle>
+
+            <mat-slide-toggle formControlName="isCabinOrder" color="primary">
+              Cabin Order Enabled
+            </mat-slide-toggle>
           </div>
 
           <div class="mt-4" *ngIf="form.get('isPreOrder')?.value">
@@ -72,6 +76,7 @@
               <mat-radio-group formControlName="preOrderMealType" class="d-flex gap-3 mb-2">
                 <mat-radio-button value="lunch">Lunch</mat-radio-button>
                 <mat-radio-button value="dinner">Dinner</mat-radio-button>
+                <mat-radio-button value="breakfast">Breakfast</mat-radio-button>
               </mat-radio-group>
 
               <mat-checkbox formControlName="isSatAvailable">Saturday Available</mat-checkbox>
@@ -319,6 +324,53 @@
                 <div class="col-12" *ngIf="sectionConfig.controls.length === 0">
                   <div class="text-center text-muted py-4">
                     No sections added. Click "Add" to configure sections.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- CABIN CONFIG (FULL WIDTH) -->
+  <div class="row g-4 mt-1" *ngIf="form.get('isCabinOrder')?.value">
+    <div class="col-12">
+      <div class="modern-card mb-4">
+        <div class="card-header d-flex justify-content-between">
+          <h3><mat-icon>meeting_room</mat-icon> Cabin Configuration</h3>
+          <button mat-flat-button color="primary" type="button" (click)="addCabinConfig()">
+            <mat-icon>add</mat-icon> Add
+          </button>
+        </div>
+        <div class="card-body">
+          <div formArrayName="cabinConfig">
+            <div class="container-fluid p-0">
+              <div class="row g-3">
+                <div class="col-12 col-xl-6" *ngFor="let group of cabinConfig.controls; let i = index"
+                  [formGroupName]="i">
+                  <div class="meal-timing-card h-100 mb-0">
+                    <div class="timing-header">
+                      <h4>Cabin {{ i + 1 }}</h4>
+                      <button mat-icon-button color="warn" (click)="removeCabinConfig(i)">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+
+                    <div class="row align-items-center">
+                      <div class="col-12 col-md-6 mb-2 mb-md-0">
+                        <mat-form-field appearance="outline" class="w-100 dense-field">
+                          <mat-label>Cabin Name</mat-label>
+                          <input matInput formControlName="cabinName" placeholder="e.g. CEO Cabin" />
+                          <mat-error *ngIf="group.get('cabinName')?.invalid">*Required</mat-error>
+                        </mat-form-field>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-12" *ngIf="cabinConfig.controls.length === 0">
+                  <div class="text-center text-muted py-4">
+                    No cabins added. Click "Add" to configure cabins.
                   </div>
                 </div>
               </div>

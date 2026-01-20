@@ -6,12 +6,14 @@ import { Injectable } from '@angular/core';
 })
 export class ApiConfigService {
   private baseUrl: string = environment.serverUrl;
+  private baseUrlTest: string = environment.serverUrl;
   apiEndPointObj: any;
   constructor() {
     this.init();
   }
   private init() {
     const p = (path: string, method: string) => ({ url: `${this.baseUrl}${path}`, method });
+    const c = (path: string, method: string) => ({ url: `${'https://api.deskdyne.com'}${path}`, method });
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
@@ -21,6 +23,7 @@ export class ApiConfigService {
       verifyOTP: p('/authadmin/verifyOTP', 'POST'),
       logout: p('/authadmin/logout', 'GET'),
       fetchAllOutlets: p('/api/fetchAllOutlets', 'GET'),
+      fetchAllOutletsTest: c('/api/fetchAllOutlets', 'GET'),
       getAllOutletMasterMenus: p('/api/getAllOutletMasterMenus', 'GET'),
       getOrgList: p('/api/getOrgList', 'GET'),
       saveOutlet: p('/api/saveOutlet', 'POST'),

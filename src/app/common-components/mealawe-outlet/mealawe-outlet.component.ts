@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ToasterService } from 'src/service/toaster.service';
@@ -13,7 +13,7 @@ import { AddEditPackageWeeklyMenuComponent } from './add-edit-package-weekly-men
   templateUrl: './mealawe-outlet.component.html',
   styleUrls: ['./mealawe-outlet.component.scss']
 })
-export class MealaweOutletComponent implements AfterViewInit {
+export class MealaweOutletComponent implements OnInit {
   @Input() orgObj: any;
   serverUrl = environment.mlImageUrl;
   serverDDUrl = environment.imageUrl;
@@ -43,12 +43,14 @@ export class MealaweOutletComponent implements AfterViewInit {
     private toaster: ToasterService,
   ) { }
 
-  ngAfterViewInit(): void {
-    this.getDefaultCategories();
-    this.cafeteriaList = [...(this.orgObj?.cafeteriaList || [])];
-    if (this.cafeteriaList.length > 0) {
-      this.selectedCafeteria = this.cafeteriaList[0];
-      this.getMealAweOutletByCafeteria();
+  ngOnInit(): void {
+    if (this.orgObj?.cafeteriaList) {
+      this.cafeteriaList = [...this.orgObj.cafeteriaList];
+      if (this.cafeteriaList.length > 0) {
+        this.getDefaultCategories();
+        this.selectedCafeteria = this.cafeteriaList[0];
+        this.getMealAweOutletByCafeteria();
+      }
     }
   }
 
@@ -57,7 +59,7 @@ export class MealaweOutletComponent implements AfterViewInit {
   }
 
   get cafeteriaId(): any {
-    return this.selectedCafeteria?._id;
+    return this.selectedCafeteria?.cafeteria_id;
   }
 
   async getDefaultCategories(): Promise<void> {

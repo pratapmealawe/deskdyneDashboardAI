@@ -519,6 +519,7 @@ export class VendorComplianceComponent implements OnInit {
   }
 
   downloadFile(fileUrl: string | SafeResourceUrl): void {
+    console.log(fileUrl);
     let urlString: string = '';
 
     // Get the raw URL string from the sanitized object

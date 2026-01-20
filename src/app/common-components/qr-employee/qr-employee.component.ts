@@ -467,6 +467,8 @@ export class QrEmployeeComponent implements OnInit {
   }
 
   downloadEmployeeCardPdf(employee: any): void {
+    console.log(employee);
+
     // 1. Validation
     if (!employee.qrCode) {
       this.snackBar.open('QR not available for this employee', 'Close', { duration: 2500 });
@@ -565,58 +567,71 @@ export class QrEmployeeComponent implements OnInit {
         // SIDE 1: QR & DETAILS
         // ============================================
         {
+          // Vertical centering: (170 - 80) / 2 = 45
           margin: [0, 45, 0, 0],
-          table: {
-            widths: ['48%', '4%', '48%'],
-            body: [
-              [
-                // QR
-                {
-                  image: employee.qrCode,
-                  width: qrSize,
-                  height: qrSize,
-                  alignment: 'right',
-                  margin: [0, 0, 5, 0]
-                },
-                // Line
-                {
-                  canvas: [{ type: 'line', x1: 0, y1: 0, x2: 0, y2: 85, lineWidth: 1, lineColor: dividerColor }],
-                  alignment: 'center',
-                },
-                // Details
-                {
-                  margin: [10, 18, 0, 0],
-                  stack: [
+          columns: [
+            { width: '*', text: '' }, // Left spacer
+            {
+              width: 'auto',
+              table: {
+                widths: [qrSize, 10, 'auto'], // Fixed QR, Spacer, Auto Text
+                body: [
+                  [
+                    // QR
                     {
-                      text: employee.employeeName || 'Test User',
-                      fontSize: 12,
-                      bold: true,
-                      color: textColor,
-                      font: 'Roboto',
-                      margin: [0, 0, 0, 8]
+                      image: employee.qrCode,
+                      width: qrSize,
+                      height: qrSize,
+                      alignment: 'right',
+                      margin: [0, 0, 0, 0]
                     },
+                    // Line
                     {
-                      table: {
-                        widths: [10, '*'],
-                        body: [
-                          [
-                            { text: '📞', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
-                            { text: employee.employeePhoneNo || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 4] }
-                          ],
-                          [
-                            { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
-                            { text: employee.employeeEmail || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 0] }
-                          ]
-                        ]
-                      },
-                      layout: 'noBorders'
+                      canvas: [{ type: 'line', x1: 5, y1: 0, x2: 5, y2: 80, lineWidth: 1, lineColor: dividerColor }],
+                      alignment: 'center',
+                      margin: [0, 0, 0, 0]
+                    },
+                    // Details
+                    {
+                      margin: [0, 10, 0, 0], // Align text vertically with QR center roughly
+                      stack: [
+                        {
+                          text: employee.employeeName || 'Test User',
+                          fontSize: 12,
+                          bold: true,
+                          color: textColor,
+                          font: 'Roboto',
+                          margin: [0, 0, 0, 5]
+                        },
+                        {
+                          table: {
+                            widths: [10, 'auto'], // Auto width for email to fit tight
+                            body: [
+                              [
+                                { text: '📞', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                                { text: employee.employeePhoneNo || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 4] }
+                              ],
+                              [
+                                { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                                { text: employee.employeeEmail || '', color: textColor, fontSize: 7, bold: true, margin: [0, 0, 0, 0] }
+                              ],
+                              [
+                                { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                                { text: 'ML89', color: textColor, fontSize: 7, bold: true, margin: [0, 0, 0, 0] }
+                              ],
+                            ]
+                          },
+                          layout: 'noBorders'
+                        }
+                      ]
                     }
                   ]
-                }
-              ]
-            ]
-          },
-          layout: 'noBorders'
+                ]
+              },
+              layout: 'noBorders'
+            },
+            { width: '*', text: '' } // Right spacer
+          ]
         },
 
         // ============================================
@@ -625,9 +640,17 @@ export class QrEmployeeComponent implements OnInit {
         { text: '', pageBreak: 'before' },
         {
           // Wrapper to center the columns vertically on the page
-          // (PageHeight 170 - ContentHeight ~75) / 2 = ~47.5
-          margin: [0, 48, 0, 0],
+          margin: [0, 40, 0, 0],
           columns: slide2Columns
+        },
+        // Add Organization Name below logos
+        {
+          text: employee.organization_name || this.orgObj?.organization_name || '',
+          color: textColor,
+          bold: true,
+          fontSize: 12,
+          alignment: 'center',
+          margin: [0, 15, 0, 0]
         }
       ]
     };
@@ -703,10 +726,22 @@ export class QrEmployeeComponent implements OnInit {
     }
     slide2Columns.push({ width: '*', text: '' });
 
-    // The common page definition
+    // The common page definition (Back Side)
     const commonBackPage = {
-      margin: [0, 48, 0, 0],
-      columns: slide2Columns,
+      stack: [
+        {
+          margin: [0, 40, 0, 0],
+          columns: slide2Columns,
+        },
+        {
+          text: this.orgObj?.organization_name || '',
+          color: textColor,
+          bold: true,
+          fontSize: 12,
+          alignment: 'center',
+          margin: [0, 15, 0, 0]
+        }
+      ],
       // Force page break after this common page so employees start on next page
       pageBreak: 'after'
     };
@@ -717,9 +752,6 @@ export class QrEmployeeComponent implements OnInit {
 
     // Loop employees
     this.filteredEmployees.forEach((employee, index) => {
-      // If no QR, maybe skip or show placeholder. 
-      // User requirement implies downloading all, so we include them even if QR missing (maybe just blank or text).
-      // But typically we need QR. Let's assume valid employees or just handle gracefully.
       const qrImage = employee.qrCode ? {
         image: employee.qrCode,
         width: qrSize,
@@ -736,52 +768,60 @@ export class QrEmployeeComponent implements OnInit {
       };
 
       const employeePage = {
-        margin: [0, 45, 0, 0],
-        table: {
-          widths: ['48%', '4%', '48%'],
-          body: [
-            [
-              // QR
-              qrImage,
-              // Line
-              {
-                canvas: [{ type: 'line', x1: 0, y1: 0, x2: 0, y2: 85, lineWidth: 1, lineColor: dividerColor }],
-                alignment: 'center',
-              },
-              // Details
-              {
-                margin: [10, 18, 0, 0],
-                stack: [
+        margin: [0, 45, 0, 0], // Vertical centering
+        columns: [
+          { width: '*', text: '' }, // Left spacer
+          {
+            width: 'auto',
+            table: {
+              widths: [qrSize, 10, 'auto'], // Fixed QR, Spacer, Auto Text
+              body: [
+                [
+                  // QR
+                  qrImage,
+                  // Line
                   {
-                    text: employee.employeeName || 'No Name',
-                    fontSize: 12,
-                    bold: true,
-                    color: textColor,
-                    font: 'Roboto',
-                    margin: [0, 0, 0, 8]
+                    canvas: [{ type: 'line', x1: 5, y1: 0, x2: 5, y2: 80, lineWidth: 1, lineColor: dividerColor }],
+                    alignment: 'center',
+                    margin: [0, 0, 0, 0]
                   },
+                  // Details
                   {
-                    table: {
-                      widths: [10, '*'],
-                      body: [
-                        [
-                          { text: '📞', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
-                          { text: employee.employeePhoneNo || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 4] }
-                        ],
-                        [
-                          { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
-                          { text: employee.employeeEmail || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 0] }
-                        ]
-                      ]
-                    },
-                    layout: 'noBorders'
+                    margin: [0, 10, 0, 0],
+                    stack: [
+                      {
+                        text: employee.employeeName || 'No Name',
+                        fontSize: 12,
+                        bold: true,
+                        color: textColor,
+                        font: 'Roboto',
+                        margin: [0, 0, 0, 5]
+                      },
+                      {
+                        table: {
+                          widths: [10, 'auto'],
+                          body: [
+                            [
+                              { text: '📞', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                              { text: employee.employeePhoneNo || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 4] }
+                            ],
+                            [
+                              { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                              { text: employee.employeeEmail || '', color: textColor, fontSize: 7, bold: true, margin: [0, 0, 0, 0] }
+                            ]
+                          ]
+                        },
+                        layout: 'noBorders'
+                      }
+                    ]
                   }
                 ]
-              }
-            ]
-          ]
-        },
-        layout: 'noBorders',
+              ]
+            },
+            layout: 'noBorders'
+          },
+          { width: '*', text: '' } // Right spacer
+        ],
         // Add pageBreak 'after' for all except the last one
         pageBreak: (index === this.filteredEmployees.length - 1) ? undefined : 'after'
       };

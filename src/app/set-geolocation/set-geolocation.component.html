@@ -1,12 +1,26 @@
-<div class="fullheight">
+<h2 mat-dialog-title class="m-0 fs-5">Set Location</h2>
+
+<mat-dialog-content class="fullheight">
     <div class="searchAddress row mb-2">
-        <div class="col-sm-12 col-md-3 col-lg-2 currentLocation" (click)="goToCurrentLocation()">Current Location</div>
-        <div class="col-sm-12 col-md-9 col-lg-10">
-            <input [(ngModel)]="searchText" class="searchInput" id="searchLocation" type='text'
+        <div class="col-sm-12 col-md-3 col-lg-3 currentLocation" (click)="goToCurrentLocation()">
+            <mat-icon class="icon-sm">my_location</mat-icon> Current
+        </div>
+        <div class="col-sm-12 col-md-9 col-lg-9">
+            <input #searchLocationInput [(ngModel)]="searchText" class="searchInput" id="searchLocation" type='text'
                 placeholder="Search Location">
         </div>
     </div>
-    <div class="row">
+    <div class="position-relative">
         <div [id]="mapid" class="map"></div>
     </div>
-</div>
+    <div class="mt-2 text-muted small" *ngIf="location">
+        <strong>Selected:</strong> {{ location }}
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="confirmSelection()" [disabled]="!selectedLocationData">
+        Confirm Location
+    </button>
+</mat-dialog-actions>
