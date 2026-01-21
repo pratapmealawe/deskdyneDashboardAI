@@ -58,12 +58,12 @@
                                 </div>
                                 <div class="info-block" style="min-width: 140px;">
                                     <span class="label">Time Window</span>
-                                    <span class="value text-nowrap">{{element.deliveryTimeFrom}} -
-                                        {{element.deliveryTimeTo}}</span>
+                                    <span class="value text-nowrap">{{formatTime(element.deliveryTimeFrom)}} -
+                                        {{formatTime(element.deliveryTimeTo)}}</span>
                                 </div>
                                 <div class="info-block" style="min-width: 80px;">
                                     <span class="label">Cut Off</span>
-                                    <span class="value">{{element.cutOffTime}}</span>
+                                    <span class="value">{{formatTime(element.cutOffTime)}}</span>
                                 </div>
                                 <div class="info-block" style="min-width: 80px;">
                                     <span class="label">Same Day</span>

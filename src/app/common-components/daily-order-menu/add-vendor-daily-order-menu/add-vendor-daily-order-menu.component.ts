@@ -75,6 +75,7 @@ export class AddVendorDailyOrderMenuComponent implements OnInit {
   saveChanges() {
     if (this.vendorForm.invalid) {
       this.toaster.error('Please fill all the fields');
+      this.vendorForm.markAllAsTouched();
       return;
     }
     const payload = {

@@ -39,7 +39,7 @@ export class UtilityService {
       let orderList: any = {};
       const response = await Promise.all([
         this.apiMainService.getCurrentB2BOrdersCount(),
-        this.apiMainService.getCurrentB2BDailyOrdersCount(),
+        this.apiMainService.getCurrentDailyOrdersCount(),
         this.apiMainService.getDailyFoodOrdersCount()
       ]);
       if (response[0] && response[1] && response[2]) {
