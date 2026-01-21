@@ -24,7 +24,7 @@
         </div>
         <div class="small-text text-secondary">
           Delivery: <span class="text-dark fw-medium">{{ orderInput?.deliveryDate | date: 'MMM d' }} • {{
-            getParsedDate(orderInput?.itemList?.[0]?.deliveryTimeFrom) | date: 'shortTime' }}</span>
+            formatTime12Hour(orderInput?.itemList?.[0]?.deliveryTimeFrom) }}</span>
         </div>
       </div>
     </div>
@@ -79,7 +79,7 @@
         </div>
         <div class="small-text text-secondary">
           Delivery: <span class="text-dark fw-medium">{{ order?.deliveryDate | date: 'MMM d' }} • {{
-            getParsedDate(order?.itemList?.[0]?.deliveryTimeFrom) | date: 'shortTime' }}</span>
+            formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }}</span>
         </div>
       </div>
     </div>
@@ -254,9 +254,8 @@
 
         <div class="d-flex justify-content-between mb-2">
           <span class="small text-muted">Slot</span>
-          <span class="fw-bold text-dark small">{{ getParsedDate(order?.itemList?.[0]?.deliveryTimeFrom) | date:
-            'shortTime' }} - {{
-            getParsedDate(order?.itemList?.[0]?.deliveryTimeTo) | date: 'shortTime' }}</span>
+          <span class="fw-bold text-dark small">{{ formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }} - {{
+            formatTime12Hour(order?.itemList?.[0]?.deliveryTimeTo) }}</span>
         </div>
 
         <div class="d-flex justify-content-between">
@@ -265,7 +264,7 @@
         </div>
       </div>
     </div>
-    <div class="col-lg-6 col-md-6">
+    <div class="col-lg-6 col-md-6" *ngIf="order?.beforePackingImageUrl || order?.afterPackingImageUrl">
       <div class="h-100 p-3 border rounded bg-white info-block">
         <div class="d-flex align-items-center gap-2 mb-3">
           <i class="bi bi-images text-secondary"></i>
@@ -274,13 +273,13 @@
           </span>
         </div>
         <div class="d-flex gap-4">
-          <div class="mb-3">
+          <div class="mb-3" *ngIf="order?.beforePackingImageUrl">
             <span class="small text-muted d-block mb-1">Before Packing</span>
             <div class="image-box" (click)="openImagePreview(packaeImageModel,imageUrl + order?.beforePackingImageUrl)">
               <img [src]="imageUrl + order?.beforePackingImageUrl" class="img-fluid rounded" alt="Before Packing" />
             </div>
           </div>
-          <div class="mb-3">
+          <div class="mb-3" *ngIf="order?.afterPackingImageUrl">
             <span class="small text-muted d-block mb-1">After Packing</span>
             <div class="image-box" (click)="openImagePreview(packaeImageModel,imageUrl + order?.afterPackingImageUrl)">
               <img [src]="imageUrl + order?.afterPackingImageUrl" class="img-fluid rounded" alt="After Packing" />

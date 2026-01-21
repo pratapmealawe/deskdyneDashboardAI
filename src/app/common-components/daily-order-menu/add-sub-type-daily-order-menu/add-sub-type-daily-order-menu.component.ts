@@ -19,7 +19,7 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
     mealPrice: new FormControl(null, [Validators.required, Validators.min(0)]),
     payAmtToKitchen: new FormControl(null, [Validators.required, Validators.min(0)]),
     days: new FormArray([])
-  });
+  }, { validators: this.priceValidator });
   daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   constructor(
@@ -75,6 +75,16 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
       itemDescription: new FormControl('', Validators.required),
       notApplicable: new FormControl(false)
     });
+  }
+
+
+  priceValidator(control: any): { [key: string]: boolean } | null {
+    const mealPrice = control.get('mealPrice')?.value;
+    const payAmtToKitchen = control.get('payAmtToKitchen')?.value;
+    if (mealPrice !== null && payAmtToKitchen !== null && mealPrice <= payAmtToKitchen) {
+      return { 'priceInvalid': true };
+    }
+    return null;
   }
 
   onSubmit(): void {

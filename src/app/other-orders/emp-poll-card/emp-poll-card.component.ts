@@ -85,4 +85,16 @@ export class EmpPollCardComponent {
   openModal(content: any) {
     this.modalService.open(content, { centered: true, size: 'md', scrollable: true });
   }
+
+  formatTime12Hour(time: string): string {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    let h = parseInt(hours);
+    const m = parseInt(minutes);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12;
+    h = h ? h : 12;
+    const mStr = m < 10 ? '0' + m : m;
+    return `${h}:${mStr} ${ampm}`;
+  }
 }

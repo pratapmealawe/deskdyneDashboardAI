@@ -85,7 +85,7 @@ export class DailyBulkCardComponent implements OnInit {
         order.actionBy = adminId;
       }
       order.startManualDelivery = true;
-      await this.apiMainService.updateBulkB2BDailyFoodOrder(order);
+      await this.apiMainService.updateBulkDailyFoodOrder(order);
       this.order.orderstatus = status;
       if (deliveryCharge !== undefined && deliveryCharge !== null) {
         const oldCharge = this.order.deliveryCharge || 0;
@@ -244,5 +244,17 @@ export class DailyBulkCardComponent implements OnInit {
   openImagePreview(content: any, imageSrc: string) {
     this.previewImageSrc = imageSrc;
     this.modalService.open(content, { size: 'lg', centered: true, ariaLabelledBy: 'modal-basic-title' });
+  }
+
+  formatTime12Hour(time: string): string {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    let h = parseInt(hours);
+    const m = parseInt(minutes);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12;
+    h = h ? h : 12;
+    const mStr = m < 10 ? '0' + m : m;
+    return `${h}:${mStr} ${ampm}`;
   }
 }
