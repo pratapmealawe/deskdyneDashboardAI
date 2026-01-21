@@ -335,11 +335,15 @@
             </mat-form-field>
           </div>
 
-          <!-- NUTRITION -->
           <div class="col-12 mt-3">
-            <label class="labelText form-label mb-1">
-              Nutrition Information
-            </label>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <label class="labelText form-label mb-0">
+                Nutrition Information
+              </label>
+              <mat-icon class="info-icon" [matTooltip]="energyTooltip" matTooltipPosition="right">
+                info_outline
+              </mat-icon>
+            </div>
 
             <div class="col-12 mb-2">
               <mat-form-field appearance="outline" class="w-100">
@@ -364,7 +368,7 @@
                       <mat-option *ngFor="let option of nutritionListOptions" [value]="option.value">
                         {{ option.title }}
                       </mat-option>
-                      </mat-select>
+                    </mat-select>
                   </mat-form-field>
                 </div>
 
@@ -380,7 +384,7 @@
                     <mat-label>Nutrition Unit</mat-label>
                     <mat-select formControlName="nutritionUnit">
                       <mat-option value="gm">gm</mat-option>
-                      <mat-option value="ml">ml</mat-option>
+                      <!-- <mat-option value="ml">ml</mat-option> -->
                     </mat-select>
                   </mat-form-field>
                 </div>

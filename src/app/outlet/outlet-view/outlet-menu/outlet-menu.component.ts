@@ -18,7 +18,7 @@ import { saveAs } from 'file-saver';
 
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
-import { categoryList , nutritionListOptions} from 'src/config/food-category.config';
+import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
@@ -88,6 +88,13 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   selectedCategoryFilter: string = '';
 
   // pagination removed
+  energyTooltip = `
+Nutrient Conversion Factors:
+• Protein: 4 kcal/g
+• Carbohydrates: 4 kcal/g
+• Fat: 9 kcal/g
+• Fiber: 2 kcal/g
+`;
 
 
   constructor(
@@ -256,6 +263,34 @@ export class OutletMenuComponent implements OnInit, OnChanges {
         }),
       ]),
     });
+
+    this.form.get('nutritionList')?.valueChanges.subscribe(() => {
+      this.calculateEnergyValue();
+    });
+  }
+
+  calculateEnergyValue() {
+    const nutritionList = this.form.get('nutritionList')?.value as any[];
+    if (!nutritionList) return;
+
+    let totalEnergy = 0;
+    nutritionList.forEach((item) => {
+      const value = parseFloat(item.nutritionValue) || 0;
+      // Protein: 4, Fat: 9, Carbohydrate: 4, Fibre: 2
+      // Using values from nutritionListOptions in food-category.config.ts
+      // Protein: "1", Fat: "2", Carbohydrate: "3", Fibre: "4"
+      if (item.nutritionName === '1') {
+        totalEnergy += value * 4;
+      } else if (item.nutritionName === '2') {
+        totalEnergy += value * 9;
+      } else if (item.nutritionName === '3') {
+        totalEnergy += value * 4;
+      } else if (item.nutritionName === '4') {
+        totalEnergy += value * 2;
+      }
+    });
+
+    this.form.get('energyValue')?.patchValue(totalEnergy, { emitEvent: false });
   }
 
 

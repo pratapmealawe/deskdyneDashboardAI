@@ -426,3 +426,22 @@
 .small-fab {
   transform: scale(0.8);
 }
+
+.info-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  color: #6b7280;
+  cursor: help;
+  display: flex;
+
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--primary-color1, #3b82f6);
+  }
+}
+
+::ng-deep .mat-mdc-tooltip {
+  white-space: pre-line !important;
+}
