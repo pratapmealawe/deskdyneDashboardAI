@@ -17,11 +17,21 @@
             </mat-radio-button>
           </mat-radio-group>
           <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
+            <button mat-raised-button color="primary" type="button" *ngIf="!isCategoryActive"
+              (click)="openCategoryModal(toggleCategory)">
+              <mat-icon>check</mat-icon>
+              Activate Menu
+            </button>
+            <button mat-raised-button color="warn" type="button" *ngIf="isCategoryActive"
+              (click)="openCategoryModal(toggleCategory)">
+              <mat-icon>block</mat-icon>
+              De-Activate Menu
+            </button>
             <button mat-raised-button color="primary" *ngIf="!isVendorAssigned" (click)="assignVendor()">
               <mat-icon>add</mat-icon>
               Assign Vendor
             </button>
-            <button mat-raised-button color="primary" *ngIf="isVendorAssigned" (click)="changeVendor()">
+            <button mat-raised-button color="warn" *ngIf="isVendorAssigned" (click)="changeVendor()">
               <mat-icon>edit</mat-icon>
               Change Vendor
             </button>
@@ -40,7 +50,8 @@
         (selectedIndexChange)="onSubTabChange($event)" class="custom-tabs">
         <mat-tab *ngFor="let sub of view.subTabs; let subIndex = index" [label]="sub.name">
           <ng-container *ngIf="selectedSubTabIndex === subIndex">
-            <mat-tab-group *ngIf="sub.childTabs?.length" [(selectedIndex)]="selectedChildTabIndex" (selectedIndexChange)="onChildTabChange($event)" class="custom-tabs">
+            <mat-tab-group *ngIf="sub.childTabs?.length" [(selectedIndex)]="selectedChildTabIndex"
+              (selectedIndexChange)="onChildTabChange($event)" class="custom-tabs">
               <mat-tab *ngFor="let child of sub.childTabs; let childIndex = index" [label]="child.name">
                 <ng-container *ngIf="selectedChildTabIndex === childIndex" [ngSwitch]="child.path">
                   <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-bulk-menu>
@@ -58,9 +69,16 @@
               </mat-tab>
             </mat-tab-group>
             <ng-container *ngIf="!sub.childTabs?.length" [ngSwitch]="sub.path">
-              <app-cake-menu *ngSwitchCase="'cakeMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-cake-menu>
-              <app-sweet-menu *ngSwitchCase="'sweetMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-sweet-menu>
-              <app-lux-menu *ngSwitchCase="'luxMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-lux-menu>
+              <app-cake-menu *ngSwitchCase="'cakeMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria"
+                (isVendorAssigned)="checkVendorAssigned($event)"></app-cake-menu>
+              <app-sweet-menu *ngSwitchCase="'sweetMenu'" [orgObj]="organization"
+                [selectedCafeteria]="selectedCafeteria"
+                (isVendorAssigned)="checkVendorAssigned($event)"></app-sweet-menu>
+              <app-lux-menu *ngSwitchCase="'luxMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria"
+                (isVendorAssigned)="checkVendorAssigned($event)"></app-lux-menu>
+              <app-pantry-menu *ngSwitchCase="'pantryMenu'" [orgObj]="organization"
+                [selectedCafeteria]="selectedCafeteria"
+                (isVendorAssigned)="checkVendorAssigned($event)"></app-pantry-menu>
             </ng-container>
           </ng-container>
         </mat-tab>
@@ -82,3 +100,32 @@
     </ng-container>
   </mat-tab>
 </mat-tab-group>
+
+<ng-template #toggleCategory let-modal>
+  <div class="modal-header">
+    <div class="modal-title delete-modal-title">
+      {{ isCategoryActive ? 'De-Activate Category' : 'Activate Category' }}
+    </div>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body text-center">
+    <p>
+      Are you sure you want to
+      <strong>
+        {{ isCategoryActive ? 'de-activate' : 'activate' }}
+      </strong>
+      this category?
+    </p>
+
+    <button class="btn" [ngClass]="isCategoryActive ? 'btn-danger' : 'btn-success'" (click)="toggleActivation()">
+      Yes
+    </button>
+
+    <button class="btn btn-secondary ml-2" (click)="modal.dismiss()">
+      No
+    </button>
+  </div>
+</ng-template>

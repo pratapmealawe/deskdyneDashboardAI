@@ -350,6 +350,7 @@ export class ApiConfigService {
       getAllB2bBulkMenus: p('/api/getAllB2bBulkMenus', 'GET'),
       copyB2bBulkMenu: p('/api/copyB2bBulkMenu', 'POST'),
       getB2bBulkMenuByCategory: p('/api/getB2bBulkMenuByCategory', 'POST'),
+      toggleCategoryStatus: p('/api/toggleCategoryStatus', 'POST'),
       B2B_assignVendorForBulkMenu: p('/api/B2B_assignVendorForBulkMenu', 'PATCH'),
       B2B_fetchIndividualMealMenu: p('/api/B2B_fetchIndividualMealMenu', 'GET'),
       B2B_saveIndividualMealMenu: p('/api/B2B_saveIndividualMealMenu', 'POST'),
@@ -369,6 +370,8 @@ export class ApiConfigService {
       B2B_saveSweetMenu: p('/api/B2B_saveSweetMenu', 'POST'),
       B2B_fetchLuxMenu: p('/api/B2B_fetchLuxMenu', 'GET'),
       B2B_saveLuxMenu: p('/api/B2B_saveLuxMenu', 'POST'),
+      B2B_fetchPantryMenu: p('/api/B2B_fetchPantryMenu', 'GET'),
+      B2B_savePantryMenu: p('/api/B2B_savePantryMenu', 'POST'),
     }
   }
 }

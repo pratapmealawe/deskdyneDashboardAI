@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { PolicyService } from 'src/service/policy.service';
 import { OrganizationAddVendorComponent } from './organization-add-vendor/organization-add-vendor.component';
@@ -7,6 +7,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ToasterService } from 'src/service/toaster.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-organization-view',
@@ -16,6 +17,7 @@ import { ToasterService } from 'src/service/toaster.service';
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
   @Output() back = new EventEmitter<boolean>();
+  @ViewChild('toggleCategory') toggleCategory: any;
   selectedMainTabIndex = 0;
   selectedSubTabIndex = 0;
   selectedChildTabIndex = 0;
@@ -51,6 +53,7 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Cake', path: 'cakeMenu' },
         { name: 'Sweet', path: 'sweetMenu' },
         { name: 'Lux', path: 'luxMenu' },
+        { name: 'Pantry', path: 'pantryMenu' },
       ],
     },
     { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
@@ -63,18 +66,21 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'Employee wallet', path: 'employeeWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];
-  // Add these properties
+  isCategoryActive = true;
   selectedCafeteria: any;
   isVendorAssigned: boolean = false;
   showBulkMenuHeader = false;
+  private modalRef!: NgbModalRef;
 
-  constructor(private policyService: PolicyService, private dialog: MatDialog, private apiService: ApiMainService, private toaster: ToasterService) { }
+  constructor(private policyService: PolicyService, private dialog: MatDialog, private apiService: ApiMainService,
+    private toaster: ToasterService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.orgViewList = this.orgViewList.filter((item) => this.btnPolicy[item.path] !== false);
     this.initializeTabs();
     this.initializeCafeteria();
+    this.checkCategoryStatus();
   }
 
   goBack(): void {
@@ -119,16 +125,12 @@ export class OrganizationViewComponent implements OnInit {
     if (subTab?.childTabs?.length) {
       this.selectedChildTabIndex = 0;
     }
+    this.checkCategoryStatus();
   }
 
   onChildTabChange(index: number): void {
     this.selectedChildTabIndex = index;
-
-    const selectedSubTab =
-      this.bulkMenuSection?.subTabs?.[this.selectedSubTabIndex];
-
-    const selectedChildTab =
-      selectedSubTab?.childTabs?.[index];
+    const selectedSubTab = this.bulkMenuSection?.subTabs?.[this.selectedSubTabIndex];
   }
 
   get selectedMain(): any {
@@ -151,6 +153,54 @@ export class OrganizationViewComponent implements OnInit {
 
   onCafeteriaChange(event: any): void {
     this.selectedCafeteria = event.value;
+  }
+
+  openCategoryModal(content: any): void {
+    if (content) {
+      this.modalRef = this.modalService.open(content, {
+        centered: true,
+        backdrop: 'static'
+      });
+    }
+  }
+
+  toggleActivation(): void {
+
+    const payload = {
+      organizationId: this.organization._id,
+      cafeteriaId: this.selectedCafeteria._id,
+      mainCategory: this.selectedBulkMenuPath?.sub,
+    };
+    try {
+      this.apiService.toggleCategoryStatus(payload).then((res: any) => {
+        if (res) {
+          this.toaster.success('Category status updated successfully');
+          this.modalRef.close();
+          this.checkCategoryStatus();
+        }
+      })
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  checkCategoryStatus(): boolean {
+    const payload = {
+      organizationId: this.organization._id,
+      cafeteriaId: this.selectedCafeteria._id,
+      mainCategory: this.selectedBulkMenuPath?.sub,
+      subCategory: this.selectedBulkMenuPath?.childPath
+    };
+    try {
+      this.apiService.getB2bBulkMenuByCategory(payload).then((res: any) => {
+        if (res) {
+          this.isCategoryActive = res.isCategoryActive;
+        }
+      })
+    } catch (e) {
+      console.log(e);
+    }
+    return this.isCategoryActive;
   }
 
   assignVendor(): void {

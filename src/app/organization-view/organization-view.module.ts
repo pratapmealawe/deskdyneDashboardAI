@@ -31,6 +31,7 @@ import { OrgComplianceComponent } from './organization-compliance/organization-c
 import { OrganizationViewComponent } from './organization-view.component';
 import { OrganizationAddVendorComponent } from './organization-add-vendor/organization-add-vendor.component';
 import { OrganizationCopyBulkMenuComponent } from './organization-copy-bulk-menu/organization-copy-bulk-menu.component';
+import { PantryMenuComponent } from '../common-components/pantry-menu/pantry-menu.component';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { OrganizationCopyBulkMenuComponent } from './organization-copy-bulk-menu
     CakeMenuComponent,
     SweetMenuComponent,
     LuxMenuComponent,
+    PantryMenuComponent,
     MealaweOutletComponent,
     QrEmployeeComponent,
     OrganizationAddVendorComponent,

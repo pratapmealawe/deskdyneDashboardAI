@@ -1558,6 +1558,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getB2bBulkMenuByCategory, data);
   }
 
+  toggleCategoryStatus(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.toggleCategoryStatus, data);
+  }
+
   B2B_assignVendorForBulkMenu(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_assignVendorForBulkMenu, data);
   }
@@ -1642,4 +1646,14 @@ export class ApiMainService {
   B2B_saveLuxMenu(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveLuxMenu, data);
   }
+
+  B2B_fetchPantryMenu(orgId: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchPantryMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  B2B_savePantryMenu(data: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_savePantryMenu, data);
+  }
+
 }
