@@ -45,6 +45,13 @@ export const timeValidator: ValidatorFn = (control: AbstractControl): Validation
   styleUrls: ['./add-daily-order-menu.component.scss']
 })
 export class AddDailyOrderMenuComponent implements OnInit {
+  mealTypeOptions = [
+    { label: 'Breakfast', value: 'Breakfast' },
+    { label: 'Lunch', value: 'Lunch' },
+    { label: 'High Tea', value: 'HighTea' },
+    { label: 'Dinner', value: 'Dinner' }
+  ];
+
   deliveryForm: FormGroup = new FormGroup({
     selectedMealType: new FormControl('Breakfast', Validators.required),
     deliveryMOQ: new FormControl('', [Validators.required, Validators.min(1)]),
@@ -52,7 +59,6 @@ export class AddDailyOrderMenuComponent implements OnInit {
     deliveryTimeFrom: new FormControl('12:00', Validators.required),
     deliveryTimeTo: new FormControl('12:00', Validators.required),
     cutOffTime: new FormControl('12:00', Validators.required),
-    isSameDay: new FormControl(false)
   }, { validators: timeValidator });
 
   constructor(
@@ -64,8 +70,21 @@ export class AddDailyOrderMenuComponent implements OnInit {
 
   ngOnInit(): void {
     console.log(this.data, 'data');
+    if (this.data.existingMealTypes) {
+      this.mealTypeOptions = this.mealTypeOptions.filter(option => {
+        // If editing, keep the current meal type
+        if (this.data.mealType && this.data.mealType.selectedMealType === option.value) {
+          return true;
+        }
+        // Otherwise, filter out already existing meal types
+        return !this.data.existingMealTypes.includes(option.value);
+      });
+    }
+
     if (this.data.mealType) {
       this.deliveryForm.patchValue(this.data.mealType);
+    } else if (this.mealTypeOptions.length > 0) {
+      this.deliveryForm.get('selectedMealType')?.setValue(this.mealTypeOptions[0].value);
     }
   }
 
