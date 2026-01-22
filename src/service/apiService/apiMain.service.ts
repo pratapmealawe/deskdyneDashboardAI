@@ -736,8 +736,8 @@ export class ApiMainService {
   }
 
 
-  updateBulkB2BDailyFoodOrder(order: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkB2BDailyFoodOrder, order);
+  updateBulkDailyFoodOrder(order: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkDailyFoodOrder, order);
   }
 
 
@@ -793,8 +793,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getb2bBulkDailyOrderList(status: any, page: any, limit: number) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getb2bBulkDailyOrderList;
+  getBulkDailyOrderList(status: any, page: any, limit: number) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
@@ -811,8 +811,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentB2BOrdersCount);
   }
 
-  getCurrentB2BDailyOrdersCount() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentB2BDailyOrdersCount);
+  getCurrentDailyOrdersCount() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount);
   }
 
   getCafeteriasPollingList(deliveryDate: any) {
@@ -1216,14 +1216,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${lng}/${lat}`, method: urlObj.method });
   }
 
-  updateB2BDailyManualDelivery(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateB2BDailyManualDelivery;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
   updateB2BManualDelivery(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateB2BManualDelivery;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
+
   createDeliveryTask(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDeliveryTask, data);
   }

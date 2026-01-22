@@ -116,7 +116,7 @@ export class OtherOrdersComponent implements OnInit {
     } else if (this.selectedTab === 'bulkOrders') {
       this.getb2bBulkOrderList();
     } else if (this.selectedTab === 'adminOrders') {
-      this.getb2bBulkDailyOrderList();
+      this.getBulkDailyOrderList();
     }
   }
 
@@ -205,10 +205,9 @@ export class OtherOrdersComponent implements OnInit {
     });
   }
 
-  getb2bBulkDailyOrderList() {
-    this.apiMainService.getCurrentB2BDailyOrdersCount().then((res: any) => {
+  getBulkDailyOrderList() {
+    this.apiMainService.getCurrentDailyOrdersCount().then((res: any) => {
       if (res) {
-        console.log(res, 'getCurrentB2BDailyOrdersCount');
         this.adminOrderStatusList.forEach((status: any) => {
           status.count = res[status.value];
         });
@@ -219,7 +218,7 @@ export class OtherOrdersComponent implements OnInit {
     this.getLatestBulkDailyOrderStatusList(this.selectedStatus);
   }
 
- getb2bBulkOrderList() {
+  getb2bBulkOrderList() {
     this.apiMainService.getCurrentB2BOrdersCount().then((res: any) => {
       if (res) {
         console.log(res, 'getCurrentB2BOrdersCount');
@@ -230,10 +229,10 @@ export class OtherOrdersComponent implements OnInit {
     }, (error: any) => {
       console.log(error)
     });
-  this.bulkOrderStatusList.forEach((status: any) => {
-    status.count = 0;
-  });
-}
+    this.bulkOrderStatusList.forEach((status: any) => {
+      status.count = 0;
+    });
+  }
 
   async getLatestBulkDailyOrderStatusList(status: any) {
     this.selectedStatus = status;
@@ -247,7 +246,7 @@ export class OtherOrdersComponent implements OnInit {
   async getOrderStatusList(status: string, pageNum: number) {
     try {
       this.page = pageNum;
-      this.apiMainService.getb2bBulkDailyOrderList(status, this.page, this.pageLimit).then((res: any) => {
+      this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit).then((res: any) => {
         if (res) {
           this.filteredList = res.orderList;
           this.totalCount = res.totalCount;
@@ -313,7 +312,7 @@ export class OtherOrdersComponent implements OnInit {
   get visiblePages(): (number | string)[] {
     const total = this.totalPages;
     const current = this.page;
-    const delta = 2; 
+    const delta = 2;
     const range: number[] = [];
     const rangeWithDots: (number | string)[] = [];
     let l: number | undefined;
