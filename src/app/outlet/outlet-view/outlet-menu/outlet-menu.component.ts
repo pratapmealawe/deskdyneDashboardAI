@@ -860,4 +860,13 @@ Nutrient Conversion Factors:
     });
     saveAs(blob, fileName);
   }
+
+  isOptionSelected(value: string): boolean {
+  const selectedValues = this.nutrition_Lists.controls
+    .map(control => control.get('nutritionName')?.value)
+    .filter(v => v !== null && v !== undefined);
+
+  return selectedValues.includes(value);
+}
+
 }
