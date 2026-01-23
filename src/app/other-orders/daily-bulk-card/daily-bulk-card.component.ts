@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
@@ -14,6 +14,7 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 export class DailyBulkCardComponent implements OnInit {
   @ViewChild('actionModal') actionModal: any;
   @Input() orderInput: any;
+  @Output() updateOrder = new EventEmitter<any>();
   imageUrl = environment.imageUrl;
   showStatusHistory: boolean = true;
   showless: boolean = true;
@@ -55,6 +56,23 @@ export class DailyBulkCardComponent implements OnInit {
     return `status-${normalized}`;
   }
 
+  getStatusLabel(status: string): string {
+    if (!status) return '';
+    const labels: { [key: string]: string } = {
+      'placed': 'Placed',
+      'accepted': 'Accepted',
+      'preparing': 'Preparing',
+      'readyForDelivery': 'Ready For Delivery',
+      'deliveryBoyAssigned': 'Agent Assigned',
+      'handedOverToDeliveryBoy': 'Handed Over',
+      'onTheWay': 'On The Way',
+      'delivered': 'Delivered',
+      'completed': 'Completed',
+      'cancelled': 'Cancelled'
+    };
+    return labels[status] || status;
+  }
+
   getParsedDate(timeStr: string): Date | null {
     if (!timeStr) return null;
     const parts = timeStr.split(':');
@@ -74,7 +92,6 @@ export class DailyBulkCardComponent implements OnInit {
     try {
       const order: any = { ...this.order, orderstatus: status };
       if (comment) {
-        order.constnum = comment;
         order.comment = comment;
       }
       if (deliveryCharge !== undefined && deliveryCharge !== null) {
@@ -97,6 +114,10 @@ export class DailyBulkCardComponent implements OnInit {
         }
       }
       this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', {
+        reload: true,
+        _id: this.order._id
+      });
+      this.updateOrder.emit({
         reload: true,
         _id: this.order._id
       });
@@ -156,7 +177,7 @@ export class DailyBulkCardComponent implements OnInit {
       case 'readyForDelivery':
         this.orderStage = 4;
         this.actionList = [
-          { label: 'Assign Agent', action: 'assignAgent', color: 'primary', icon: 'check', commentRequired: false, message: 'Assign a delivery agent to this order.' },
+          { label: 'Assign Agent', action: 'assignAgent', color: 'primary', icon: 'check', commentRequired: true, message: 'Assign a delivery agent to this order.' },
           { label: 'Delivery Cost Change', action: 'deliveryCostChange', color: 'warn', icon: 'close', commentRequired: true, message: 'Update delivery cost for this order.' }
         ]
         break;
