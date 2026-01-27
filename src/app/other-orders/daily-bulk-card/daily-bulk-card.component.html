@@ -5,7 +5,7 @@
       <div class="d-flex align-items-center gap-2">
         <span class="labelData">#{{ orderInput?.orderNo }}</span>
         <span class="status-badge" [ngClass]="getStatusClass(orderInput?.orderstatus)">
-          {{ orderInput?.orderstatus | uppercase }}
+          {{ getStatusLabel(orderInput?.orderstatus) | uppercase }}
         </span>
       </div>
     </div>
@@ -60,7 +60,7 @@
       <div class="d-flex align-items-center gap-2">
         <span class="labelData">#{{ order?.orderNo }}</span>
         <span class="status-badge" [ngClass]="getStatusClass(order?.orderstatus)">
-          {{ order?.orderstatus }}
+          {{ getStatusLabel(order?.orderstatus) }}
         </span>
       </div>
     </div>
@@ -346,13 +346,16 @@
         </div>
         <div class="d-flex flex-column" style="line-height: 1.2;">
           <span class="text-secondary fw-bold text-uppercase mb-1" style="font-size: 10px; letter-spacing: 0.5px;">
-            {{ log?.orderstatus }}
+            {{ getStatusLabel(log?.orderstatus) }}
           </span>
           <span class="text-dark fw-bold" style="font-size: 12px;">
             {{ log?.updatedOn | date: 'd MMM y, h:mm a' }}
           </span>
           <span class="text-muted fw-normal" style="font-size: 11px;">
             • by {{ log?.actionBy || 'System Admin' }}
+          </span>
+          <span class="text-secondary fst-italic mt-1" style="font-size: 11px;" *ngIf="log?.comment">
+            "{{ log?.comment }}"
           </span>
         </div>
       </div>
