@@ -117,6 +117,12 @@ $border-color: $border-color; // Using global border color
     align-items: start;
   }
 
+  .popup-item-grid {
+    display: grid;
+    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .grid-item {
     .labelText {
       font-size: 0.75rem;

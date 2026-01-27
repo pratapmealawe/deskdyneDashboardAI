@@ -131,6 +131,15 @@
                   </div>
                 </div>
 
+                <!-- Section Config display -->
+                <div class="menu-mealchips mt-2" *ngIf="outletObj?.isSectionWiseMenu && item.sectionConfig">
+                  <div class="menu-mealchips-list">
+                    <span class="meal-badge" style="background-color: #e0f2f1; color: #00695c;">
+                      {{ item.sectionConfig.sectionName }} ({{ item.sectionConfig.sectionType | titlecase }})
+                    </span>
+                  </div>
+                </div>
+
                 <!-- Mobile Actions -->
                 <div class="d-flex d-md-none justify-content-end mt-2 gap-2">
                   <button mat-mini-fab color="primary" class="small-fab" *ngIf="true || btnPolicy?.editMenu"
@@ -308,6 +317,22 @@
             <div class="text-danger small mt-1" *ngIf="f['category'].invalid && f['category'].touched">
               Category is required
             </div>
+          </div>
+
+          <!-- SECTION CONFIG -->
+          <div class="col-12 mt-3" *ngIf="outletObj?.isSectionWiseMenu && outletObj?.sectionConfig?.length > 0">
+            <label class="labelText form-label mb-1">
+              Outlet Section
+            </label>
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Select Section</mat-label>
+              <mat-select formControlName="sectionConfig" [compareWith]="compareSection">
+                <mat-option [value]="null">None</mat-option>
+                <mat-option *ngFor="let section of outletObj.sectionConfig" [value]="section">
+                  {{ section.sectionName }} ({{ section.sectionType | titlecase }})
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
           </div>
 
           <!-- NUTRITION -->

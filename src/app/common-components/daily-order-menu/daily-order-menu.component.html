@@ -58,22 +58,14 @@
                                 </div>
                                 <div class="info-block" style="min-width: 140px;">
                                     <span class="label">Time Window</span>
-                                    <span class="value text-nowrap">{{element.deliveryTimeFrom}} -
-                                        {{element.deliveryTimeTo}}</span>
+                                    <span class="value text-nowrap">{{formatTime(element.deliveryTimeFrom)}} -
+                                        {{formatTime(element.deliveryTimeTo)}}</span>
                                 </div>
                                 <div class="info-block" style="min-width: 80px;">
                                     <span class="label">Cut Off</span>
-                                    <span class="value">{{element.cutOffTime}}</span>
+                                    <span class="value">{{formatTime(element.cutOffTime)}}</span>
                                 </div>
-                                <div class="info-block" style="min-width: 80px;">
-                                    <span class="label">Same Day</span>
-                                    <div>
-                                        <span class="badge rounded-pill"
-                                            [ngClass]="element.isSameDay ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
-                                            {{element.isSameDay ? 'Yes' : 'No'}}
-                                        </span>
-                                    </div>
-                                </div>
+
                             </div>
                         </mat-panel-title>
                         <mat-panel-description class="flex-grow-0">
@@ -112,6 +104,15 @@
                                             <div class="info-block kitchen-pay" style="min-width: 100px;">
                                                 <span class="label">Kitchen Pay</span>
                                                 <span class="value">{{config.payAmtToKitchen | currency : 'INR'}}</span>
+                                            </div>
+                                            <div class="info-block" style="min-width: 80px;">
+                                                <span class="label">Same Day</span>
+                                                <div>
+                                                    <span class="badge rounded-pill"
+                                                        [ngClass]="config.isSameDay ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                                                        {{config.isSameDay ? 'Yes' : 'No'}}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </mat-panel-title>

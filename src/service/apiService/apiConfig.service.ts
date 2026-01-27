@@ -6,12 +6,14 @@ import { Injectable } from '@angular/core';
 })
 export class ApiConfigService {
   private baseUrl: string = environment.serverUrl;
+  private baseUrlTest: string = environment.serverUrl;
   apiEndPointObj: any;
   constructor() {
     this.init();
   }
   private init() {
     const p = (path: string, method: string) => ({ url: `${this.baseUrl}${path}`, method });
+    const c = (path: string, method: string) => ({ url: `${'https://api.deskdyne.com'}${path}`, method });
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
@@ -21,6 +23,7 @@ export class ApiConfigService {
       verifyOTP: p('/authadmin/verifyOTP', 'POST'),
       logout: p('/authadmin/logout', 'GET'),
       fetchAllOutlets: p('/api/fetchAllOutlets', 'GET'),
+      fetchAllOutletsTest: c('/api/fetchAllOutlets', 'GET'),
       getAllOutletMasterMenus: p('/api/getAllOutletMasterMenus', 'GET'),
       getOrgList: p('/api/getOrgList', 'GET'),
       saveOutlet: p('/api/saveOutlet', 'POST'),
@@ -31,6 +34,18 @@ export class ApiConfigService {
       updateOutletNoImages: p('/api/updateOutletNoImages', 'POST'),
       fetchCategories: p('/api/fetchCategories', 'GET'),
       saveCategories: p('/api/saveCategories', 'POST'),
+      savePopupOutlet: p('/api/savePopupOutlet', 'POST'),
+      updatePopupOutlet: p('/api/updatePopupOutlet', 'PUT'),
+      getPopupOutlets: p('/api/getPopupOutlets', 'GET'),
+      getPopupOutletsById: p('/api/getPopupOutletsById', 'GET'),
+      deletePopupOutlet: p('/api/deletePopupOutlet', 'DELETE'),
+      togglePopupOutletStatus: p('/api/togglePopupOutletStatus', 'PATCH'),
+      saveMenuItem: p('/api/saveMenuItem', 'POST'),
+      getMenuItems: p('/api/getMenuItems', 'GET'),
+      getMenuItemById: p('/api/getMenuItemById', 'GET'),
+      updateMenuItem: p('/api/updateMenuItem', 'PUT'),
+      deleteMenuItem: p('/api/deleteMenuItem', 'DELETE'),
+      toggleMenuItemStatus: p('/api/toggleMenuItemStatus', 'PATCH'),
       saveVendor: p('/api/saveVendor', 'POST'),
       getAllVendors: p('/api/getAllVendors', 'GET'),
       getVendorWallet: p('/api/getVendorWallet', 'GET'),
@@ -117,6 +132,7 @@ export class ApiConfigService {
       updateIncident: p('/api/updateIncident', 'PUT'),
       deleteIncident: p('/api/deleteIncident', 'DELETE'),
       getfeedbacklistByfilter: p('/api/getfeedbacklistByfilter', 'POST'),
+      getFeedbackByOrderByOrderType: p('/api/getFeedbackByOrderByOrderType', 'POST'),
       updateOutletMenu: p('/api/updateOutletMenu', 'POST'),
       updateQrMenu: p('/api/updateQrMenu', 'POST'),
       updateOutletMasterMenu: p('/api/updateOutletMasterMenu', 'PUT'),
@@ -146,7 +162,7 @@ export class ApiConfigService {
       generateInvoice: p('/api/generateInvoice', 'GET'),
       getMealPackageList: p('/api/getMealPackageList', 'GET'),
       saveMealPackage: p('/api/saveMealPackage', 'POST'),
-      updateBulkB2BDailyFoodOrder: p('/api/updateBulkB2BDailyFoodOrder', 'POST'),
+      updateBulkDailyFoodOrder: p('/api/updateBulkDailyFoodOrder', 'POST'),
       getGeneralAppFeeback: p('/api/getGeneralAppFeeback', 'GET'),
       getGeneralAppFeebackCount: p('/api/getGeneralAppFeebackCount', 'GET'),
       feedbackacknowledge: p('/api/feedbackacknowledge', 'PUT'),
@@ -158,7 +174,7 @@ export class ApiConfigService {
       B2B_fooditem: p('/api/B2B_fooditem', 'POST'),
       updateB2BfoodItem: p('/api/updateB2BfoodItem', 'POST'),
       getb2bBulkOrderList: p('/api/getb2bBulkOrderList', 'POST'),
-      getb2bBulkDailyOrderList: p('/api/getb2bBulkDailyOrderList', 'POST'),
+      getBulkDailyOrderList: p('/api/getBulkDailyOrderList', 'POST'),
       getCurrentB2BOrdersCount: p('/api/getCurrentB2BOrdersCount', 'GET'),
       updateb2bFoodOrder: p('/api/updateb2bFoodOrder', 'POST'),
       createOrderFromPollObj: p('/api/createOrderFromPollObj', 'POST'),
@@ -215,6 +231,9 @@ export class ApiConfigService {
       checkUserWallet: p('/api/checkUserWallet', 'POST'),
       fetchPastOutletOrdersbysearchObj: p('/api/fetchPastOutletOrdersbysearchObj', 'POST'),
       fetchCompletedOutletOrdersbysearchObj: p('/api/fetchCompletedOutletOrdersbysearchObj', 'POST'),
+      fetchCompletedEventOrdersbysearchObj: p('/api/fetchCompletedEventOrdersbysearchObj', 'POST'),
+      fetchPastEventOrdersbyOutletId: p('/api/fetchPastEventOrdersbyOutletId', 'GET'),
+      getPopupOutletsByOrgId: p('/api/getPopupOutletsByOrgId', 'GET'),
       fetchDailyBulkOrdersbysearchObj: p('/api/fetchDailyBulkOrdersbysearchObj', 'POST'),
       fetchDailyBulkOrdersbyOrgId: p('/api/fetchDailyBulkOrdersbyOrgId', 'POST'),
       getOrg: p('/api/getOrg', 'GET'),
@@ -242,7 +261,7 @@ export class ApiConfigService {
       b2b_updateCustomizedSnackBox: p('/api/b2b_updateCustomizedSnackBox', 'POST'),
       getCafeteriasPollingList: p('/api/getCafeteriasPollingList', 'POST'),
       getDailyFoodOrdersCount: p('/api/getDailyFoodOrdersCount', 'GET'),
-      getCurrentB2BDailyOrdersCount: p('/api/getCurrentB2BDailyOrdersCount', 'GET'),
+      getCurrentDailyOrdersCount: p('/api/getCurrentDailyOrdersCount', 'GET'),
       searchVendorProfile: p('/api/searchVendorProfile', 'GET'),
       getNearestVendors: p('/api/getNearestVendors', 'GET'),
       getdeliveryAmount: p('/api/quote', 'POST'),
@@ -253,7 +272,6 @@ export class ApiConfigService {
       createShadowFaxTask: p('/api/createShadowFaxTask', 'POST'),
       cancelPidge3PLOrder: p('/api/cancelPidge3PLOrder', 'PUT'),
       cancelShadowFaxTask: p('/api/cancelShadowFaxTask', 'PUT'),
-      updateB2BDailyManualDelivery: p('/api/updateB2BDailyManualDelivery', 'PUT'),
       updateB2BManualDelivery: p('/api/updateB2BManualDelivery', 'GET'),
       trackDeliveryTask: p('/api/trackdeliveryTask', 'GET'),
       getVendorById: p('/api/getVendorById', 'GET'),

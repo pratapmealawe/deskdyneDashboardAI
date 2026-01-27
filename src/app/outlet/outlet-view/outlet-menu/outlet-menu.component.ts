@@ -247,6 +247,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       description: ['', [Validators.maxLength(200)]],
       doNotChangeInFuture: [false],
       energyValue: [10],
+      sectionConfig: [null],
       nutritionList: this.fb.array([
         this.fb.group({
           nutritionName: [''],
@@ -277,6 +278,8 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   patchFormValue(item: any) {
+    console.log(item);
+
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
@@ -291,6 +294,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       doNotChangeInFuture: item.doNotChangeInFuture,
       description: item.description,
       energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
+      sectionConfig: item.sectionConfig || null,
       nutritionList: item.nutritionInfo
         ? [...item.nutritionInfo.nutritionList]
         : [],
@@ -487,6 +491,14 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
+      if (this.form.value.sectionConfig) {
+        const payload = {
+          ...this.form.value.sectionConfig,
+          sectionId: this.form.value.sectionConfig._id,
+        };
+        formData.append('sectionConfig', JSON.stringify(payload));
+      }
+
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
         this.menuId,
@@ -576,6 +588,14 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
+      if (this.form.value.sectionConfig) {
+        const payload = {
+          ...this.form.value.sectionConfig,
+          sectionId: this.form.value.sectionConfig._id,
+        };
+        formData.append('sectionConfig', JSON.stringify(payload));
+      }
+
       const res = await this.apiMainService.addOutletMenu(
         formData,
         this.outletObj._id
@@ -597,6 +617,18 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   // SELECTION HELPERS
+  compareSection(o1: any, o2: any): boolean {
+    if (!o1 || !o2) {
+      return o1 === o2;
+    }
+    // Check various ID combinations since saved item has sectionId but list has _id
+    if (o1._id && o2._id) return o1._id === o2._id;
+    if (o1.sectionId && o2._id) return o1.sectionId === o2._id;
+    if (o1._id && o2.sectionId) return o1._id === o2.sectionId;
+    if (o1.sectionId && o2.sectionId) return o1.sectionId === o2.sectionId;
+    return false;
+  }
+
   onItemSelected(item: any) {
     this.selectedMasterItem = item;
     console.log('Selected Master Menu Item:', item);
