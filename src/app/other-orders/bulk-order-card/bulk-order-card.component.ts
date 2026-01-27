@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, OnInit } from '@angular/core';
+import { Component, Input, ViewChild, OnInit, Output, EventEmitter } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ToasterService } from 'src/service/toaster.service';
@@ -18,7 +18,7 @@ export class BulkOrderCardComponent implements OnInit {
   @ViewChild('contentkitchen') contentkitchen: any;
   @ViewChild('selectKitchenModal') selectKitchenModal: any;
   @Input() orderInput: any;
-
+  @Output() statusChange = new EventEmitter<boolean>();
   imageUrl = environment.imageUrl;
 
   showless: boolean = true;
@@ -109,7 +109,7 @@ export class BulkOrderCardComponent implements OnInit {
       if (status === 'readyForDelivery' && !this.order.startManualDelivery) {
         this.startDeliveryProcess();
       }
-
+      this.statusChange.emit(true);
       this.checkOrderCondition();
     } catch (error) {
       console.log('error while changing status', error);

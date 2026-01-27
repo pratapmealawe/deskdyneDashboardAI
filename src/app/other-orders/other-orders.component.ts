@@ -25,6 +25,7 @@ export class OtherOrdersComponent implements OnInit {
     { label: 'Completed', value: 'completed', count: 0 },
   ];
   bulkOrderStatusList = [
+    { label: 'Waiting For Approval', value: 'waitingForApproval', count: 0 },
     { label: 'Placed', value: 'placed', count: 0 },
     { label: 'Accepted', value: 'accepted', count: 0 },
     { label: 'Preparing', value: 'preparing', count: 0 },
@@ -44,6 +45,7 @@ export class OtherOrdersComponent implements OnInit {
   selectedOrg: any = null;
   selectedCafeteria: any = null;
   selectedStatus: string = 'placed';
+  bulkOrderSelectedStatus: string = 'waitingForApproval';
   page: number = 1;
   pageLimit: number = 10;
   totalCount: number = 0;
@@ -115,6 +117,7 @@ export class OtherOrdersComponent implements OnInit {
       this.getEmployeePollList(this.selectedPollDate);
     } else if (this.selectedTab === 'bulkOrders') {
       this.getb2bBulkOrderList();
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
     } else if (this.selectedTab === 'adminOrders') {
       this.getBulkDailyOrderList();
     }
@@ -221,7 +224,6 @@ export class OtherOrdersComponent implements OnInit {
   getb2bBulkOrderList() {
     this.apiMainService.getCurrentB2BOrdersCount().then((res: any) => {
       if (res) {
-        console.log(res, 'getCurrentB2BOrdersCount');
         this.bulkOrderStatusList.forEach((status: any) => {
           status.count = res[status.value];
         });
@@ -277,9 +279,10 @@ export class OtherOrdersComponent implements OnInit {
   }
 
   getClusterb2bBulkOrderList(status: string, pageNum: number) {
+    this.bulkOrderSelectedStatus = status;
     this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit).then((res: any) => {
       if (res) {
-        this.filteredList = res.orderList;
+        this.filteredList = res;
         this.totalCount = res.totalCount;
         this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
         if (this.filteredList && this.filteredList.length > 0) {
@@ -301,6 +304,12 @@ export class OtherOrdersComponent implements OnInit {
     }, (error: any) => {
       console.log(error)
     });
+  }
+
+  onStatusChanged(status: any) {
+    if(status){
+      this.getb2bBulkOrderList();
+    }
   }
 
   onPageSizeChange(newSize: number) {

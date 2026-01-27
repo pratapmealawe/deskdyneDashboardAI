@@ -403,7 +403,7 @@
         <!-- Action Buttons -->
         <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="action-buttons" *ngIf="editMode">
-                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus === 'placed'"
+                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus === 'placed' || order?.orderstatus === 'waitingForApproval'"
                     (click)="acceptRejectOrder('accepted')">Accept Order</button>
                 <button class="btn btn-warning btn-sm fw-medium" *ngIf="orderStage === 2"
                     (click)="acceptRejectOrder('preparing')">Preparing</button>
@@ -416,7 +416,7 @@
                     (click)="tranferToAnotherKitchen()">Change Vendor</button>
                 <button class="btn btn-success btn-sm fw-medium" *ngIf="orderStage === 4 || orderStage === 5"
                     (click)="acceptRejectOrder('delivered')">Delivered</button>
-                <button class="btn btn-outline-danger btn-sm fw-medium" *ngIf="orderStage === 1 || orderStage === 2"
+                <button class="btn btn-outline-danger btn-sm fw-medium" *ngIf="orderStage === 1 || orderStage === 2 || order?.orderstatus === 'waitingForApproval'"
                     (click)="acceptRejectOrder('cancelled')">Cancel Order</button>
                 <button class="btn btn-dark btn-sm fw-medium" *ngIf="orderStage >= 4"
                     (click)="payAmtToKitchen()">Complete & Add to Wallet</button>

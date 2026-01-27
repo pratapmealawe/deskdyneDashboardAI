@@ -209,6 +209,8 @@ export class OrganizationViewComponent implements OnInit {
       organizationId: this.organization._id,
       cafeteriaId: this.selectedCafeteria._id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: this.selectedBulkMenuPath?.sub,
+      subCategory: this.selectedBulkMenuPath?.childPath
     }
     this.openModal(OrganizationAddVendorComponent, payload);
   }
@@ -219,6 +221,8 @@ export class OrganizationViewComponent implements OnInit {
       organizationId: this.organization._id,
       cafeteriaId: this.selectedCafeteria._id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: this.selectedBulkMenuPath?.sub,
+      subCategory: this.selectedBulkMenuPath?.childPath
     }
     this.openModal(OrganizationAddVendorComponent, payload);
   }
@@ -286,8 +290,9 @@ export class OrganizationViewComponent implements OnInit {
       disableClose: false
     });
     dialogRef.afterClosed().subscribe((result) => {
-      // Handle any post-close logic here
-      console.log('Modal closed with result:', result);
+      if (result?.data?.vendorDetails) {
+        this.checkVendorAssigned(true);
+      }
     });
   }
 

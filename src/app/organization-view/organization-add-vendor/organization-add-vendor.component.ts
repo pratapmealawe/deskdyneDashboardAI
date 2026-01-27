@@ -75,6 +75,8 @@ export class OrganizationAddVendorComponent {
     const payload = {
       organizationId: this.data.organizationId,
       cafeteriaId: this.data.cafeteriaId,
+      mainCategory: this.data.mainCategory,
+      subCategory: this.data.subCategory,
       vendorDetails: this.vendorForm.getRawValue(),
     }
     this.apiMainService.B2B_assignVendorForBulkMenu(payload).then((res) => {
