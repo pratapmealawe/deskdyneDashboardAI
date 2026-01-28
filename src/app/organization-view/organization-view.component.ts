@@ -46,7 +46,7 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Lux', path: 'luxMenu' },
       ],
     },
-    { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
+    { name: 'Virtual Cafeteria Outlet', path: 'virtualCafeteriaOutlet' },
     { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
     { name: 'Consumption Menu', path: 'consumptionOrder' },
     { name: 'Employee List', path: 'employeeList' },

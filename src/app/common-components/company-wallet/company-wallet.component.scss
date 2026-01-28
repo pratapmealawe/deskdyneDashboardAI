@@ -125,6 +125,13 @@ $border-color: #e9ecef;
         line-height: 32px;
         min-width: 32px; // Ensure it doesn't shrink
         padding: 0;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+
+        &:hover {
+            background-color: #f1f3f5;
+        }
 
         mat-icon {
             font-size: 20px;
@@ -163,4 +170,23 @@ $border-color: #e9ecef;
         background-color: darken($primary, 10%);
         border-color: darken($primary, 10%);
     }
+}
+
+/* Manual Entry Grid */
+.entry-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) 100px;
+    gap: 11px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .entry-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.button-container {
+    height: 100%;
 }

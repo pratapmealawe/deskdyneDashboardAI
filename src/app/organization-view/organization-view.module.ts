@@ -6,6 +6,7 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { CakeMenuComponent } from '../common-components/cake-menu/cake-menu.component';
+import { CompanyWalletComponent } from '../common-components/company-wallet/company-wallet.component';
 import { ConsumptionOrderComponent } from '../common-components/consumption-order/consumption-order.component';
 import { DailyOrderMenuComponent } from '../common-components/daily-order-menu/daily-order-menu.component';
 import { EmployeeListComponent } from '../common-components/employee-list/employee-list.component';
@@ -28,7 +29,6 @@ import { MaterialModule } from '../material.module';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OrganizationViewComponent } from './organization-view.component';
-import { CompanyWalletComponent } from '../common-components/company-wallet/company-wallet.component';
 
 @NgModule({
   declarations: [
@@ -64,7 +64,8 @@ import { CompanyWalletComponent } from '../common-components/company-wallet/comp
     MaterialModule,
     DragDropModule,
     QRCodeModule,
-    DirectivesModule
+    QRCodeModule,
+    DirectivesModule,
   ],
   exports: [OrganizationViewComponent, OrgOutletOrdersComponent],
 })

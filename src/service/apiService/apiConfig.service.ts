@@ -341,6 +341,13 @@ export class ApiConfigService {
       getClusterb2bBulkOrderList: p('/api/getClusterb2bBulkOrderList', 'POST'),
       updateCompanyWalletCafeteriaDetails: p('/api/updateCompanyWalletCafeteriaDetails', 'POST'),
       getCompanyWalletCafeteriaDetails: p('/api/getCompanyWalletCafeteriaDetails', 'POST'),
+      bulkUpdateCompanyWalletCafeteriaDetails: p('/api/bulkUpdateCompanyWalletCafeteriaDetails', 'POST'),
+      deleteCompanyWalletCafeteriaDetails: p('/api/deleteCompanyWalletCafeteriaDetails', 'DELETE'),
+      createAutoRule: p('/api/createAutoRule', 'POST'),
+      getAutoRules: p('/api/getAutoRules', 'GET'),
+      updateAutoRule: p('/api/updateAutoRule', 'PUT'),
+      deleteAutoRule: p('/api/deleteAutoRule', 'DELETE'),
+      toggleAutoRule: p('/api/toggleAutoRule', 'PUT'),
     }
   }
 }

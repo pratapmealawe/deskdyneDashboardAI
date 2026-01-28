@@ -874,6 +874,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCompanyWalletCafeteriaDetails, payload);
   }
 
+  bulkUpdateCompanyWalletCafeteriaDetails(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkUpdateCompanyWalletCafeteriaDetails, payload);
+  }
+
   outletEmployeeByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.outletEmployeeByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
@@ -1524,5 +1528,34 @@ export class ApiMainService {
 
   addBulkDailyOrderMenu(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkDailyOrderMenu, data);
+  }
+
+  deleteCompanyWalletCafeteriaDetails(id: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteCompanyWalletCafeteriaDetails;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  createAutoRule(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createAutoRule, data);
+  }
+
+  getAutoRules(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAutoRules;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  updateAutoRule(id: any, data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateAutoRule;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
+  }
+
+  deleteAutoRule(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteAutoRule;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  toggleAutoRule(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.toggleAutoRule;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 }

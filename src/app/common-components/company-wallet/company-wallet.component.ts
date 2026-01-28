@@ -2,6 +2,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEmployeeCompanyWalletComponent } from './add-employee-company-wallet/add-employee-company-wallet.component';
+import { AddMultipleEmployeeCompanyWalletComponent } from './add-multiple-employee-company-wallet/add-multiple-employee-company-wallet.component';
+import { AddAutoRuleComponent } from './add-auto-rule/add-auto-rule.component';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 
 @Component({
   selector: 'app-company-wallet',
@@ -16,10 +22,16 @@ export class CompanyWalletComponent implements OnInit {
   searchQuery: string = '';
   displayedEmployees: any[] = [];
   currentPage: number = 1;
-  itemsPerPage: number = 3;
+  itemsPerPage: number = 10;
   totalPages: number = 0;
+  autoRules: any[] = [];
+  searchSubject = new Subject<string>();
 
-  constructor(private apiMainService: ApiMainService, private dialog: MatDialog) { }
+  constructor(
+    private apiMainService: ApiMainService,
+    private dialog: MatDialog,
+    private confirmationModalService: ConfirmationModalService
+  ) { }
 
   ngOnInit(): void {
     if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
@@ -28,12 +40,24 @@ export class CompanyWalletComponent implements OnInit {
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     }
     this.fetchEmployees();
+    this.fetchAutoRules();
+
+    this.searchSubject.pipe(
+      debounceTime(500),
+      distinctUntilChanged()
+    ).subscribe(searchText => {
+      this.searchQuery = searchText;
+      this.currentPage = 1;
+      this.fetchEmployees();
+    });
   }
 
   onCafeteriaChange(event: any) {
     this.selectedCafeteria = event.value;
     this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
     this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+    this.currentPage = 1; // Reset to page 1 on cafeteria change
+    this.fetchEmployees();
   }
 
   fetchEmployees() {
@@ -47,7 +71,7 @@ export class CompanyWalletComponent implements OnInit {
     this.apiMainService.getCompanyWalletCafeteriaDetails(payload).then((res: any) => {
       if (res && res.data) {
         this.displayedEmployees = res.data;
-        this.totalPages = Math.ceil((res.count || 0) / this.itemsPerPage); 
+        this.totalPages = Math.ceil((res.count || 0) / this.itemsPerPage);
       } else {
         this.displayedEmployees = [];
         this.totalPages = 0;
@@ -58,8 +82,7 @@ export class CompanyWalletComponent implements OnInit {
   }
 
   onSearchChange() {
-    this.currentPage = 1;
-    this.fetchEmployees();
+    this.searchSubject.next(this.searchQuery);
   }
 
   onPageChange(page: number) {
@@ -91,7 +114,7 @@ export class CompanyWalletComponent implements OnInit {
           rangeWithDots.push('...');
         }
       }
-  +    rangeWithDots.push(i);
+      rangeWithDots.push(i);
       l = i;
     });
 
@@ -121,12 +144,53 @@ export class CompanyWalletComponent implements OnInit {
   }
 
   addMultipleEmployee() {
+    const dialogRef = this.dialog.open(AddMultipleEmployeeCompanyWalletComponent, {
+      width: '600px',
+      data: {
+        orgObj: this.orgObj,
+        selectedCafeteria: this.selectedCafeteria
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchEmployees();
+      }
+    });
   }
 
   editUser(element: any) {
+    const dialogRef = this.dialog.open(AddEmployeeCompanyWalletComponent, {
+      width: '600px',
+      data: {
+        orgObj: this.orgObj,
+        cafeteriaList: this.orgObj?.cafeteriaList || [],
+        employee: element
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchEmployees();
+      }
+    });
   }
 
   deleteUser(element: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this employee?',
+      context: this,
+      callback: () => {
+        this.apiMainService.deleteCompanyWalletCafeteriaDetails(element._id).then((res: any) => {
+          if (res && res.status) {
+            this.fetchEmployees();
+            this.fetchAutoRules();
+          }
+        }, (error) => {
+          console.error("Error deleting employee:", error);
+        });
+      }
+    });
   }
 
   addEmployee() {
@@ -144,5 +208,74 @@ export class CompanyWalletComponent implements OnInit {
         this.fetchEmployees();
       }
     });
+  }
+
+  fetchAutoRules() {
+    if (!this.orgObj || !this.orgObj._id) return;
+    this.apiMainService.getAutoRules(this.orgObj._id).then((res: any) => {
+      this.autoRules = res || [];
+    });
+  }
+
+  addAutoRule() {
+    const dialogRef = this.dialog.open(AddAutoRuleComponent, {
+      width: '600px',
+      data: { orgObj: this.orgObj, autoRules: this.autoRules }
+    });
+
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) this.fetchAutoRules();
+    });
+  }
+
+  editRule(rule: any) {
+    const dialogRef = this.dialog.open(AddAutoRuleComponent, {
+      width: '600px',
+      data: { orgObj: this.orgObj, rule: rule, autoRules: this.autoRules }
+    });
+    dialogRef.afterClosed().subscribe(res => {
+      if (res) this.fetchAutoRules();
+    });
+  }
+
+  deleteRule(rule: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to delete this rule?',
+      context: this,
+      callback: () => {
+        this.apiMainService.deleteAutoRule(rule._id).then(res => {
+          this.fetchAutoRules();
+        });
+      }
+    });
+  }
+
+  toggleRule(rule: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to toggle this rule?',
+      context: this,
+      callback: () => {
+        this.apiMainService.toggleAutoRule(rule._id).then(res => {
+          this.fetchAutoRules();
+        });
+      }
+    });
+  }
+
+  getCafeteriaName(rule: any): string {
+    if (rule.cafeteriaName) return rule.cafeteriaName;
+    if (rule.cafeteria_name) return rule.cafeteria_name;
+
+    const id = rule.cafeteriaId || rule.cafeteria_id;
+    if (!id) return '-';
+    if (this.orgObj && this.orgObj.cafeteriaList) {
+      const cafe = this.orgObj.cafeteriaList.find((c: any) => c.cafeteriaId === id);
+      if (cafe) return cafe.cafeteria_name;
+    }
+    return id;
+  }
+
+  getEmployeeName(rule: any): string {
+    return rule.employeeName || rule.employee_name || rule.employeeId || rule.employee_id || '-';
   }
 }
