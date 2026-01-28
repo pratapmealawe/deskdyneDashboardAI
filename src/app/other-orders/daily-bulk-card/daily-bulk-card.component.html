@@ -45,7 +45,7 @@
     <div class="col-lg-2 col-md-1 d-flex flex-column align-items-end ms-auto">
       <div class="labelText mb-1">TOTAL</div>
       <div class="d-flex align-items-center gap-3">
-        <span class="fw-bold fs-6">₹ {{ orderInput?.amount }}</span>
+        <span class="fw-bold fs-6">₹ {{ (orderInput?.amount || 0) | number : '1.2-2' }}</span>
         <button class="btn btn-sm btn-light rounded-circle p-1" style="width: 28px; height: 28px;">
           <i class="bi bi-chevron-down"></i>
         </button>
@@ -100,7 +100,7 @@
     <div class="col-lg-2 col-md-1 d-flex flex-column align-items-end ms-auto">
       <div class="labelText mb-1">TOTAL</div>
       <div class="d-flex align-items-center gap-2">
-        <span class="fw-bold fs-6">₹ {{ order?.amount }}</span>
+        <span class="fw-bold fs-6">₹ {{ (order?.amount || 0) | number : '1.2-2' }}</span>
         <button class="btn btn-sm btn-light rounded-circle p-1" style="width: 28px; height: 28px;"
           (click)="showless= !showless" title="Collapse">
           <i class="bi bi-chevron-up"></i>
@@ -124,10 +124,10 @@
                   <span class="small text-muted fs-11">({{item?.mealType}})/</span>
                   <span class="small text-muted fs-11">({{item?.itemName}})</span>
                 </span>
-                <span class="small text-muted fs-11">&#64; ₹ {{ item?.mealPrice || 0 }}/unit *{{item?.count}}</span>
+                <span class="small text-muted fs-11">&#64; ₹ {{ (item?.mealPrice || 0) | number : '1.2-2' }}/unit *{{item?.count}}</span>
               </div>
             </div>
-            <div class="fw-bold text-dark">₹ {{ ((item?.mealPrice || 0) * item?.count) || 0 }}</div>
+            <div class="fw-bold text-dark">₹ {{ ((item?.mealPrice || 0) * item?.count) | number : '1.2-2' }}</div>
           </div>
         </div>
         <div class="rounded p-2 mt-3 d-flex align-items-start gap-2 note-container" *ngIf="order?.specialRequest">
@@ -146,24 +146,25 @@
         </div>
         <div class="d-flex justify-content-between mb-2">
           <span class="small text-muted">Subtotal</span>
-          <span class="fw-bold">₹ {{ order?.subTotal || order?.amount }}</span>
+          <!-- {{order | json}} -->
+          <span class="fw-bold">₹ {{ (order?.orderAmount || 0) | number : '1.2-2' }}</span>
         </div>
         <div class="d-flex justify-content-between mb-2">
           <span class="small text-muted">Delivery Cost</span>
-          <span class="fw-bold">₹ {{ order?.deliveryCharge || 0 }}</span>
+          <span class="fw-bold">₹ {{ (order?.deliveryCharge || 0) | number : '1.2-2' }}</span>
         </div>
         <div class="d-flex justify-content-between mb-3">
           <span class="small text-muted">Tax</span>
-          <span class="fw-bold">₹ {{ order?.taxes || 0 }}</span>
+          <span class="fw-bold">₹ {{ (order?.taxes || 0 )| number : '1.2-2' }}</span>
         </div>
         <div class="d-flex justify-content-between pt-2 border-top mb-3">
           <span class="fw-bold">Total Amount</span>
-          <span class="fw-bold text-primary fs-5">₹ {{ order?.amount }}</span>
+          <span class="fw-bold text-primary fs-5">₹ {{ order?.amount | number : '1.2-2' }}</span>
         </div>
         <div
           class="bg-success-subtle text-success p-2 rounded d-flex justify-content-between align-items-center small fw-bold">
           <span>Paid to Kitchen</span>
-          <span>₹ {{ order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0 }}</span>
+          <span>₹ {{ (order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0) | number : '1.2-2' }}</span>
         </div>
       </div>
     </div>

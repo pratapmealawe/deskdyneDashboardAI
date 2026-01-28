@@ -94,6 +94,7 @@ export class DailyBulkCardComponent implements OnInit {
       if (comment) {
         order.comment = comment;
       }
+      const oldDeliveryCharge = this.order.deliveryCharge || 0;
       if (deliveryCharge !== undefined && deliveryCharge !== null) {
         order.deliveryCharge = deliveryCharge;
       }
@@ -102,17 +103,17 @@ export class DailyBulkCardComponent implements OnInit {
         order.actionBy = adminId;
       }
       order.startManualDelivery = true;
-      await this.apiMainService.updateBulkDailyFoodOrder(order);
       this.order.orderstatus = status;
       if (deliveryCharge !== undefined && deliveryCharge !== null) {
-        const oldCharge = this.order.deliveryCharge || 0;
-        this.order.amount = (this.order.amount || 0) - oldCharge + deliveryCharge;
+        this.order.amount = ((this.order.amount || 0) - oldDeliveryCharge) + deliveryCharge;
         this.order.deliveryCharge = deliveryCharge;
         if (this.orderInput) {
           this.orderInput.amount = this.order.amount;
           this.orderInput.deliveryCharge = this.order.deliveryCharge;
         }
       }
+      this.order = this.orderInput;
+      await this.apiMainService.updateBulkDailyFoodOrder(this.order);
       this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', {
         reload: true,
         _id: this.order._id
