@@ -1653,4 +1653,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_savePantryMenu, data);
   }
 
+  B2B_changeVendor(payload: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_changeVendor, payload);
+  }
+
 }

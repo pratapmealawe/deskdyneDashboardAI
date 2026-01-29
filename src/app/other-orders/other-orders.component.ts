@@ -279,6 +279,7 @@ export class OtherOrdersComponent implements OnInit {
   }
 
   getClusterb2bBulkOrderList(status: string, pageNum: number) {
+    this.page = pageNum;
     this.bulkOrderSelectedStatus = status;
     this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit).then((res: any) => {
       if (res) {
@@ -307,15 +308,23 @@ export class OtherOrdersComponent implements OnInit {
   }
 
   onStatusChanged(status: any) {
-    if(status){
+    if (status) {
       this.getb2bBulkOrderList();
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
     }
   }
 
   onPageSizeChange(newSize: number) {
     this.pageLimit = newSize;
     this.page = 1;
-    this.getOrderStatusList(this.selectedStatus, this.page);
+
+    if (this.selectedTab === 'adminOrders') {
+      this.getOrderStatusList(this.selectedStatus, this.page);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
+    }
   }
 
   get visiblePages(): (number | string)[] {
@@ -345,20 +354,44 @@ export class OtherOrdersComponent implements OnInit {
   }
 
   goToPage(pageNum: number | string) {
-    if (typeof pageNum === 'number' && pageNum !== this.page && pageNum >= 1 && pageNum <= this.totalPages) {
+    if (typeof pageNum !== 'number' || pageNum === this.page) return;
+
+    this.page = pageNum;
+
+    if (this.selectedTab === 'adminOrders') {
       this.getOrderStatusList(this.selectedStatus, pageNum);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, pageNum);
     }
   }
 
   previous(page: number) {
-    if (page > 1) {
-      this.getOrderStatusList(this.selectedStatus, page - 1);
+    if (page <= 1) return;
+
+    const newPage = page - 1;
+
+    if (this.selectedTab === 'adminOrders') {
+      this.getOrderStatusList(this.selectedStatus, newPage);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, newPage);
     }
   }
 
   next(page: number) {
-    if (!this.paginationOver) {
-      this.getOrderStatusList(this.selectedStatus, page + 1);
+    if (this.paginationOver || page >= this.totalPages) return;
+
+    const newPage = page + 1;
+
+    if (this.selectedTab === 'adminOrders') {
+      this.getOrderStatusList(this.selectedStatus, newPage);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, newPage);
     }
   }
 }

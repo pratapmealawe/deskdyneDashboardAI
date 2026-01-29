@@ -157,7 +157,6 @@ export class CakeMenuComponent implements OnInit, OnChanges {
   async getAllB2BFoodItemList(): Promise<void> {
     try {
       this.foodItemList = await this.api.getAllB2BFooditems();
-      console.log(this.foodItemList);
     } catch (e) {
       console.log('error while fetching food items');
     }

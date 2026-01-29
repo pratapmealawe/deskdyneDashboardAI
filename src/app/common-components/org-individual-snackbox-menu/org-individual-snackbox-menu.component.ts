@@ -145,7 +145,6 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
   async getIndSnackMenuItemsByCafeteriaId(): Promise<void> {
     try {
       const menuItems: SnackMenuMeta = await this.api.B2B_fetchIndividualSnacksMenu(this.selectedCafeteria._id);
-      console.log(menuItems, "MenuItems");
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.indSnacksMenuFetched = menuItems || {};

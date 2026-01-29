@@ -148,7 +148,7 @@ export class ApiConfigService {
       B2B_updateIndMenu: p('/api/b2b_updateIndMenu', 'POST'),
       B2B_fetchBulkSnacksMenu: p('/api/b2b_fetchBulkSnacksMenu', 'GET'),
       B2B_Bulk_SnackMenuAdd: p('/api/b2b_updateBulkSnacksMenu', 'POST'),
-      B2B_fetchIndSnacksMenu: p('/api/b2b_fetchIndividualSnacksMenu', 'GET'),
+      // B2B_fetchIndSnacksMenu: p('/api/b2b_fetchIndividualSnacksMenu', 'GET'),
       B2B_updateIndividualSnacksMenu: p('/api/b2b_updateIndividualSnacksMenu', 'POST'),
       getAllB2BFooditems: p('/api/getAllB2BFooditems', 'GET'),
       deleteB2BFoodItem: p('/api/deleteB2BFoodItem', 'POST'),
@@ -371,6 +371,7 @@ export class ApiConfigService {
       B2B_saveLuxMenu: p('/api/B2B_saveLuxMenu', 'POST'),
       B2B_fetchPantryMenu: p('/api/B2B_fetchPantryMenu', 'GET'),
       B2B_savePantryMenu: p('/api/B2B_savePantryMenu', 'POST'),
+      B2B_changeVendor: p('/api/changeVendor', 'PATCH'),
     }
   }
 }
