@@ -394,4 +394,12 @@ export class OtherOrdersComponent implements OnInit {
       this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, newPage);
     }
   }
+  
+  refreshOrderList() {
+    if (this.selectedTab === 'adminOrders') {
+      this.getBulkDailyOrderList();
+    } else if (this.selectedTab === 'bulkOrders') {
+      this.getb2bBulkOrderList();
+    }
+  }
 }

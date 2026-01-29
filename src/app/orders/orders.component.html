@@ -89,6 +89,7 @@
                 <div class="stat-label">Completed</div>
             </div>
         </div>
+
     </div>
 
     <!-- Totals Section (Only show if data exists) -->
@@ -122,111 +123,104 @@
             <div class="row g-3">
                 <div class="col-12" *ngFor="let row of filteredList">
                     <mat-card class="order-card h-100 shadow-sm border-0">
-                        <div class="order-card-inner h-100">
-                            <!-- LEFT SIDE: header / meta -->
-                            <div class="order-left">
-                                <mat-card-header class="p-0 mb-3">
-                                    <div mat-card-avatar class="order-avatar">
-                                        {{ row.customerName?.[0] || 'C' }}
+                        <div class="order-card-inner">
+                            <!-- LEFT PANEL: Context & Customer -->
+                            <div class="order-left-panel">
+                                <div class="order-meta-group">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <div class="label">Order #</div>
+                                            <div class="value-large text-truncate" style="max-width: 120px;">
+                                                {{ row.orderNo }}
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <div class="label">Token</div>
+                                            <div class="value-large text-primary">#{{ row.tokenNo || '-' }}</div>
+                                        </div>
                                     </div>
-                                    <div class="order-header-text overflow-hidden">
-                                        <mat-card-title class="text-truncate fs-6 mb-1">
-                                            #{{ row.orderNo }}
-                                        </mat-card-title>
-                                        <mat-card-subtitle class="small">
-                                            Token: <strong>{{ row.tokenNo || '-' }}</strong>
-                                            <div class="text-muted" style="font-size: 0.75rem;"> {{ row.SubmitedDate ||
-                                                row.orderDate | date: 'MMM d, h:mm a' }}</div>
-                                        </mat-card-subtitle>
+                                    <div class="value-date">
+                                        {{ row.SubmitedDate || row.orderDate | date: 'MMM d, y, h:mm a' }}
                                     </div>
-                                </mat-card-header>
-
-                                <div class="mb-3">
-                                    <span class="status-chip" [ngClass]="row.orderstatus">
-                                        {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
-                                    </span>
                                 </div>
 
-                                <!-- Customer & order details -->
-                                <div class="order-meta small text-muted">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Customer:</span>
-                                        <span class="fw-medium text-dark text-end">{{ row.customerName }}</span>
-                                    </div>
+                                <div class="badges-container">
+                                    <span class="status-pill" [ngClass]="row.orderstatus">
+                                        {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
+                                    </span>
 
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span>Mobile:</span>
-                                        <span class="fw-medium text-dark text-end">{{ row.customerPhoneNo }}</span>
+                                    <div class="meta-badge" *ngIf="row.isCabinOrder">
+                                        <span>Cabin: {{row.cabinConfig?.cabinName}}</span>
                                     </div>
-
-                                    <div class="d-flex justify-content-between mb-1"
-                                        *ngIf="row.organizationDetails?.organization_name">
-                                        <span>Org:</span>
-                                        <span class="fw-medium text-dark text-end text-truncate w-50">{{
-                                            row.organizationDetails?.organization_name }}</span>
+                                    <div class="meta-badge" *ngIf="row.organizationDetails?.organization_name">
+                                        <mat-icon>business</mat-icon> {{ row.organizationDetails?.organization_name }}
                                     </div>
+                                    <div class="meta-badge" *ngIf="row.cafeteriaDetails?.cafeteria_name">
+                                        <mat-icon>store</mat-icon> {{ row.cafeteriaDetails?.cafeteria_name }}
+                                    </div>
+                                </div>
 
-                                    <div class="d-flex justify-content-between mb-1"
-                                        *ngIf="row.cafeteriaDetails?.cafeteria_name">
-                                        <span>Cafe:</span>
-                                        <span class="fw-medium text-dark text-end text-truncate w-50">{{
-                                            row.cafeteriaDetails?.cafeteria_name }}</span>
+                                <div class="customer-profile">
+                                    <div class="avatar-circle">
+                                        {{ row.customerName?.[0] || 'C' }}
+                                    </div>
+                                    <div class="customer-info">
+                                        <h6 class="text-truncate" style="max-width: 150px;">{{ row.customerName }}</h6>
+                                        <p>{{ row.customerPhoneNo }}</p>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- RIGHT SIDE: items + amounts -->
-                            <div class="order-right">
-                                <!-- Items -->
-                                <div class="flex-grow-1">
-                                    <strong class="d-block mb-2 small text-uppercase text-muted">Items</strong>
-                                    <div class="item-list custom-scrollbar">
-                                        <div class="item-row" *ngFor="let i of (row.itemList || row.itemlist)">
-                                            <div class="item-name text-truncate">
-                                                <span class="fw-medium">{{ i.itemName }}</span>
-                                                <span class="badge bg-light text-dark ms-1" *ngIf="i.count > 1">x{{
-                                                    i.count }}</span>
+                            <!-- RIGHT PANEL: Items & Actions -->
+                            <div class="order-right-panel">
+                                <div class="items-section">
+                                    <span class="section-title">Order Items ({{ (row.itemList || row.itemlist)?.length
+                                        || 0 }})</span>
+
+                                    <div class="item-list-container">
+                                        <div class="item-row-new" *ngFor="let i of (row.itemList || row.itemlist)">
+                                            <div class="item-info">
+                                                <span class="qty" *ngIf="i.count > 1">{{ i.count }}x</span>
+                                                <span class="name">{{ i.itemName }}</span>
                                             </div>
-                                            <div class="item-price fw-semibold">
+                                            <div class="item-price">
                                                 ₹{{ i.price | number : '1.2-2' }}
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <hr class="my-2 opacity-50">
+                                <div class="order-footer">
+                                    <div class="financials">
+                                        <div class="fin-item">
+                                            <span>Item Total</span>
+                                            <span>₹{{ row.itemAmount | number : '1.2-2' }}</span>
+                                        </div>
 
-                                <!-- Amounts -->
-                                <div class="amounts-summary small">
-                                    <div class="d-flex justify-content-between mb-1">
-                                        <span class="text-muted">Item Total</span>
-                                        <span>₹{{ row.itemAmount | number : '1.2-2' }}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-1 text-success"
-                                        *ngIf="row.moneyWalletPointsUsed">
-                                        <span>Wallet</span>
-                                        <span>- ₹{{ row.moneyWalletPointsUsed | number : '1.2-2' }}</span>
-                                    </div>
-                                    <div class="d-flex justify-content-between mt-2 pt-2 border-top">
-                                        <span class="fw-bold">Total Paid</span>
-                                        <span class="fw-bold fs-6">₹{{ (row.amount || 0) + (row.moneyWalletPointsUsed ||
-                                            0) | number : '1.2-2' }}</span>
-                                    </div>
-                                </div>
+                                        <div class="fin-item text-success" *ngIf="row.moneyWalletPointsUsed">
+                                            <span>Wallet</span>
+                                            <span>- ₹{{ row.moneyWalletPointsUsed | number : '1.2-2' }}</span>
+                                        </div>
 
-                                <!-- Actions -->
-                                <div class="mt-3" *ngIf="row.orderstatus === 'placed'">
-                                    <button mat-stroked-button color="warn" class="w-100 rounded-pill"
-                                        (click)="cancelOrder(row)">
-                                        Cancel Order
-                                    </button>
-                                </div>
-                                <div class="mt-3"
-                                    *ngIf="row.orderstatus === 'paymentInprogress' && isPaymentValidationVisible(row)">
-                                    <button mat-stroked-button color="warn" class="w-100 rounded-pill"
-                                        (click)="validateJusPayPaymentTransaction(row._id)">
-                                        Validate Payment
-                                    </button>
+                                        <div class="fin-item total-paid">
+                                            <span>Total Paid</span>
+                                            <span>₹{{ (row.amount || 0) + (row.moneyWalletPointsUsed || 0) | number :
+                                                '1.2-2' }}</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="action-row">
+                                        <button mat-stroked-button color="warn" class="rounded-pill"
+                                            *ngIf="row.orderstatus === 'placed'" (click)="cancelOrder(row)">
+                                            Cancel
+                                        </button>
+
+                                        <button mat-flat-button color="warn" class="rounded-pill"
+                                            *ngIf="row.orderstatus === 'paymentInprogress' && isPaymentValidationVisible(row)"
+                                            (click)="validateJusPayPaymentTransaction(row._id)">
+                                            Validate Payment
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>

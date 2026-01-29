@@ -4,10 +4,7 @@
 .vendor-header {
     @include mixin.responsive-header;
     background-color: transparent;
-}
-
-.tileSelected {
-    color: white !important;
+    margin-bottom: 1rem;
 }
 
 .header-actions {
@@ -44,12 +41,6 @@
 
 .spin {
     animation: spin 1s linear infinite;
-}
-
-.vendor-header {
-    @include mixin.responsive-header;
-    background-color: transparent;
-    margin-bottom: 1rem;
 }
 
 // ----------------------------------------------------------------------
@@ -130,7 +121,7 @@
 }
 
 .stat-value {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
     font-weight: 700;
     line-height: 1.2;
     color: #1f1f1f;
@@ -138,62 +129,12 @@
 }
 
 .stat-label {
-    font-size: 0.875rem;
+    font-size: 0.8rem;
     color: #8c8c8c;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
-// ----------------------------------------------------------------------
-// Filter & Header Section
-// ----------------------------------------------------------------------
-.filter-card {
-    .card-body {
-        padding: 0;
-    }
-}
-
-// ----------------------------------------------------------------------
-// Totals Badges
-// ----------------------------------------------------------------------
-.total-badge {
-    display: inline-flex;
-    flex-direction: column;
-    padding: 0.5rem 1rem;
-    background: #fff;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    min-width: 120px;
-
-    .label {
-        font-size: 0.75rem;
-        color: #666;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 2px;
-    }
-
-    .value {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #333;
-    }
-
-    &.primary {
-        background: #e8eaf6;
-        border-color: #c5cae9;
-
-        .label {
-            color: #3949ab;
-        }
-
-        .value {
-            color: #1a237e;
-        }
-    }
-}
-
 
 // ----------------------------------------------------------------------
 // Order Card - Premium Redesign
@@ -398,7 +339,7 @@
             background: #eef2ff;
             color: #4f46e5;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             padding: 2px 8px;
             border-radius: 4px;
         }
@@ -406,11 +347,12 @@
         .name {
             font-weight: 500;
             color: #334155;
-            font-size: 0.95rem;
+            font-size: 0.75rem;
         }
     }
 
     .item-price {
+        font-size: 0.75rem;
         font-weight: 600;
         color: #334155;
     }
@@ -423,30 +365,27 @@
     border-top: 1px solid #f1f5f9;
     padding: 1rem 1.5rem;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
 
     @media (max-width: 768px) {
-        flex-direction: column;
         align-items: stretch;
     }
 }
 
 .financials {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
-
-    @media (max-width: 480px) {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-    }
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
 
     .fin-item {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        text-align: left;
 
         span:first-child {
             font-size: 0.75rem;
@@ -459,7 +398,7 @@
         }
 
         &.total-paid span:last-child {
-            font-size: 1.1rem;
+            font-size: 0.85rem;
             color: #4f46e5;
         }
     }
@@ -523,16 +462,5 @@
         padding-right: 0;
         padding-bottom: 16px;
         margin-bottom: 16px;
-    }
-
-    .stats-grid {
-        grid-template-columns: repeat(2, 1fr); // 2x2 on mobile
-        gap: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .stats-grid {
-        grid-template-columns: 1fr; // Stack on very small screens
     }
 }

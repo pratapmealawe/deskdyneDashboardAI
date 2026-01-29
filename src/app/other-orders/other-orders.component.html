@@ -35,7 +35,8 @@
                     <div class="d-flex flex-column gap-3">
                         <div *ngFor="let order of filteredList">
                             <ng-container *ngIf="order.orderType === 'dailyBulk' && selectedTab === 'adminOrders'">
-                                <app-daily-bulk-card [orderInput]="order"></app-daily-bulk-card>
+                                <app-daily-bulk-card [orderInput]="order"
+                                    (updateOrder)="refreshOrderList()"></app-daily-bulk-card>
                             </ng-container>
                         </div>
                     </div>
