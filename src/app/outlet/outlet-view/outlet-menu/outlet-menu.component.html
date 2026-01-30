@@ -364,8 +364,10 @@
                 <div class="col-md-3">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Nutrition Name</mat-label>
-                    <mat-select formControlName="nutritionName">
-                      <mat-option *ngFor="let option of nutritionListOptions" [value]="option.value"  [disabled]="isOptionSelected(option.value)">
+                    <mat-select formControlName="nutritionName" (selectionChange)="onNutritionSelect($event.value, i)"
+                      [compareWith]="compareNutrition">
+                      <mat-option *ngFor="let option of nutritionListOptions" [value]="option"
+                        [disabled]="isOptionSelected(option.id, i)">
                         {{ option.title }}
                       </mat-option>
                     </mat-select>

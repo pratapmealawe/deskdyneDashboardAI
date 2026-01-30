@@ -257,6 +257,7 @@ Nutrient Conversion Factors:
       sectionConfig: [null],
       nutritionList: this.fb.array([
         this.fb.group({
+          nutritionId: [null],
           nutritionName: [''],
           nutritionValue: [''],
           nutritionUnit: [''],
@@ -276,16 +277,15 @@ Nutrient Conversion Factors:
     let totalEnergy = 0;
     nutritionList.forEach((item) => {
       const value = parseFloat(item.nutritionValue) || 0;
-      // Protein: 4, Fat: 9, Carbohydrate: 4, Fibre: 2
-      // Using values from nutritionListOptions in food-category.config.ts
-      // Protein: "1", Fat: "2", Carbohydrate: "3", Fibre: "4"
-      if (item.nutritionName === '1') {
+      const nutritionId = item.nutritionId;
+
+      if (nutritionId === 1) { // Protein
         totalEnergy += value * 4;
-      } else if (item.nutritionName === '2') {
+      } else if (nutritionId === 2) { // Fat
         totalEnergy += value * 9;
-      } else if (item.nutritionName === '3') {
+      } else if (nutritionId === 3) { // Carbohydrate
         totalEnergy += value * 4;
-      } else if (item.nutritionName === '4') {
+      } else if (nutritionId === 4) { // Fibre
         totalEnergy += value * 2;
       }
     });
@@ -301,6 +301,7 @@ Nutrient Conversion Factors:
   addNutritionLists() {
     this.nutrition_Lists.push(
       this.fb.group({
+        nutritionId: [null],
         nutritionName: [''],
         nutritionValue: [''],
         nutritionUnit: [''],
@@ -338,7 +339,20 @@ Nutrient Conversion Factors:
     if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
       this.nutrition_Lists.clear();
       item.nutritionInfo.nutritionList.forEach((nutrition: any) => {
-        this.nutrition_Lists.push(this.fb.group(nutrition));
+        const nutrientID = nutrition.nutrientID || nutrition.nutritionId;
+        const nutrientName = nutrition.nutrientname || nutrition.nutritionName;
+
+        // Find matching option from config
+        const option = this.nutritionListOptions.find(o =>
+          o.id === nutrientID || o.id === Number(nutrientName)
+        );
+
+        this.nutrition_Lists.push(this.fb.group({
+          nutritionId: [option ? option.id : nutrientID],
+          nutritionName: [option ? option : Number(nutrientName)],
+          nutritionValue: [nutrition.nutritionValue || 0],
+          nutritionUnit: [nutrition.nutritionUnit || 'gm']
+        }));
       });
     }
   }
@@ -519,10 +533,16 @@ Nutrient Conversion Factors:
         mealTypes.includes(meal.mealType)
       );
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
+      const nutritionListMapped = this.form.value.nutritionList.map((item: any) => ({
+        nutritionId: item.nutritionId,
+        nutritionValue: item.nutritionValue,
+        nutritionUnit: item.nutritionUnit,
+        nutrientname: item.nutritionName && typeof item.nutritionName === 'object' ? item.nutritionName.title : item.nutritionName
+      }));
 
       const nutritionInfo = {
         energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList,
+        nutritionList: nutritionListMapped,
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
@@ -617,9 +637,16 @@ Nutrient Conversion Factors:
       );
       formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
 
+      const nutritionListMapped = this.form.value.nutritionList.map((item: any) => ({
+        nutritionId: item.nutritionId,
+        nutritionValue: item.nutritionValue,
+        nutritionUnit: item.nutritionUnit,
+        nutrientname: item.nutritionName && typeof item.nutritionName === 'object' ? item.nutritionName.title : item.nutritionName
+      }));
+
       const nutritionInfo = {
         energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList,
+        nutritionList: nutritionListMapped,
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
@@ -861,12 +888,25 @@ Nutrient Conversion Factors:
     saveAs(blob, fileName);
   }
 
-  isOptionSelected(value: string): boolean {
-  const selectedValues = this.nutrition_Lists.controls
-    .map(control => control.get('nutritionName')?.value)
-    .filter(v => v !== null && v !== undefined);
+  onNutritionSelect(option: any, index: number) {
+    if (option) {
+      this.nutrition_Lists.at(index).patchValue({
+        nutritionId: option.id
+      });
+    }
+  }
 
-  return selectedValues.includes(value);
-}
+  isOptionSelected(optionId: number, currentIndex: number): boolean {
+    const selectedIds = this.nutrition_Lists.controls
+      .map((control, idx) => (idx !== currentIndex ? control.get('nutritionId')?.value : null))
+      .filter(id => id !== null && id !== undefined);
+
+    return selectedIds.includes(optionId);
+  }
+
+  compareNutrition(o1: any, o2: any): boolean {
+    if (!o1 || !o2) return o1 === o2;
+    return o1.id === o2.id;
+  }
 
 }
