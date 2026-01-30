@@ -182,7 +182,7 @@ export class CompanyWalletComponent implements OnInit {
       context: this,
       callback: () => {
         this.apiMainService.deleteCompanyWalletCafeteriaDetails(element._id).then((res: any) => {
-          if (res && res.status) {
+          if (res) {
             this.fetchEmployees();
             this.fetchAutoRules();
           }
