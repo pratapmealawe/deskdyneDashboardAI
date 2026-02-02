@@ -37,7 +37,8 @@ export class OrganizationCopyBulkMenuComponent implements OnInit {
     },
     { mainCategory: 'cake', subCategory: [] },
     { mainCategory: 'sweet', subCategory: [] },
-    { mainCategory: 'lux', subCategory: [] }
+    { mainCategory: 'lux', subCategory: [] },
+    { mainCategory: 'pantry', subCategory: [] }
   ];
   selectedMainCategory: string | null = null;
   selectedSubCategory: string | null = null;
@@ -100,7 +101,7 @@ export class OrganizationCopyBulkMenuComponent implements OnInit {
     if (!this.selectedMainCategory) {
       this.toaster.warning('Please select a category to copy from');
       return;
-    }   
+    }
     const payload = {
       organizationId: this.data.organizationId,
       cafeteriaId: this.data.cafeteriaId,

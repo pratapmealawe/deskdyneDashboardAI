@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -42,6 +42,7 @@ interface SnackMenuMeta {
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
   itemList?: SnackMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -49,29 +50,23 @@ interface SnackMenuMeta {
   templateUrl: './employee-bulk-snack-menu.component.html',
   styleUrls: ['./employee-bulk-snack-menu.component.scss']
 })
-export class EmployeeBulkSnackMenuComponent {
+export class EmployeeBulkSnackMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
-
   bulkMenuList: SnackMenuItem[] = [];
   bulkSnacksMenuFetched: SnackMenuMeta = {};
-
   menuSearchText = '';
   searchText = '';
-
   imageUrl = environment.imageUrl;
-
   slabEditMode = false;
   changesMade = false;
-
   foodItemList: any[] = [];
   orgChoices: Org[] = [];
   orgSelected: string | null = null;
-
   selectedFoodItems: any[] = [];
   index: number | null = null;
-
-  // For looping slab fields in template
   slabFields = [
     { key: 'slab1Price' as const, label: 'Slab 1' },
     { key: 'slab2Price' as const, label: 'Slab 2' },
@@ -83,8 +78,14 @@ export class EmployeeBulkSnackMenuComponent {
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getBulkSnackMenuItems();
+    this.getEmployeeBulkSnackMenuByCafeteria();
     this.getAllB2BFoodItemList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getEmployeeBulkSnackMenuByCafeteria();
+    }
   }
 
   async copyOrgMenu(): Promise<void> {
@@ -96,7 +97,7 @@ export class EmployeeBulkSnackMenuComponent {
       this.bulkSnacksMenuFetched = menuItems || {};
       this.bulkMenuList = menuItems.itemList || [];
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -105,19 +106,24 @@ export class EmployeeBulkSnackMenuComponent {
       const orgChoices = await this.api.getOrgList();
       this.orgChoices = orgChoices || [];
     } catch (error) {
-      console.log('cafeteria fetch error', error);
+      console.error('cafeteria fetch error', error);
     }
   }
 
-  async getBulkSnackMenuItems(): Promise<void> {
+  async getEmployeeBulkSnackMenuByCafeteria(): Promise<void> {
     try {
-      const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnacksMenu(
-        this.orgObj._id
-      );
-      this.bulkSnacksMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
+      const menuItems: SnackMenuMeta = await this.api.getEmployeeBulkSnackMenu(this.selectedCafeteria._id);
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.bulkSnacksMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+      } else {
+        this.bulkSnacksMenuFetched = {};
+        this.bulkMenuList = [];
+        this.isVendorAssigned.emit(false);
+      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -125,7 +131,7 @@ export class EmployeeBulkSnackMenuComponent {
     try {
       this.foodItemList = await this.api.getAllB2BFooditems();
     } catch (e) {
-      console.log('error while fetching food items');
+      console.error('error while fetching food items');
     }
   }
 
@@ -187,8 +193,12 @@ export class EmployeeBulkSnackMenuComponent {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'snacks',
+      subCategory: 'employeebulkSnacksMenu',
       moq: this.bulkSnacksMenuFetched.moq,
       slabLimit1: this.bulkSnacksMenuFetched.slabLimit1,
       slabLimit2: this.bulkSnacksMenuFetched.slabLimit2,
@@ -204,12 +214,12 @@ export class EmployeeBulkSnackMenuComponent {
     };
 
     try {
-      await this.api.B2B_Bulk_SnackMenuAdd(bulkMenuObj);
+      await this.api.saveEmployeeBulkSnackMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getBulkSnackMenuItems();
+      await this.getEmployeeBulkSnackMenuByCafeteria();
     } catch (e) {
-      console.log('error while saving kitchen');
+      console.error("error while saving employee bulk snack menu", e);
     }
   }
 

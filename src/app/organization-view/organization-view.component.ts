@@ -83,6 +83,7 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Cake', path: 'employeecakeMenu' },
         { name: 'Sweet', path: 'employeesweetMenu' },
         { name: 'Lux', path: 'employeeluxMenu' },
+        { name: 'Pantry', path: 'employeepantryMenu' },
       ],
     },
     { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
@@ -136,7 +137,7 @@ export class OrganizationViewComponent implements OnInit {
     this.selectedChildTabIndex = 0;
 
     const main = this.orgViewList[index];
-    this.showBulkMenuHeader = main?.path === 'bulkMenuSection';
+    this.showBulkMenuHeader = main?.path === 'bulkMenuSection' || main?.path === 'employeebulkmenu';
     if (main?.subTabs?.length) {
       const firstSub = main.subTabs[0];
       if (firstSub?.childTabs?.length) {

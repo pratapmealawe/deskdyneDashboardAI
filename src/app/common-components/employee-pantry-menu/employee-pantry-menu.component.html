@@ -27,61 +27,57 @@
     <div class="slab-row" *ngIf="bulkMenuList.length">
         <mat-form-field appearance="outline">
             <mat-label>MOQ</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.moq" [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.moq" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Slab Limit 1</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.slabLimit1" [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slabLimit1" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Slab Limit 2</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.slabLimit2" [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slabLimit2" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Slab Limit 3</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.slabLimit3" [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slabLimit3" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Date Limit 1</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.dateLimit1" [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.dateLimit1" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Date Limit 2</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.dateLimit2" [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.dateLimit2" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Date Limit 3</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.dateLimit3" [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.dateLimit3" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Slab 1 Delivery</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.slab1DeliveryPrice"
-                [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab1DeliveryPrice" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Slab 2 Delivery</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.slab2DeliveryPrice"
-                [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab2DeliveryPrice" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Slab 3 Delivery</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.slab3DeliveryPrice"
-                [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab3DeliveryPrice" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <mat-form-field appearance="outline">
             <mat-label>Slab 4 Delivery</mat-label>
-            <input matInput type="number" [(ngModel)]="snackMenuFetched.slab4DeliveryPrice"
-                [disabled]="!slabEditMode" />
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab4DeliveryPrice" [disabled]="!slabEditMode" />
         </mat-form-field>
 
         <button mat-icon-button (click)="toggleSlabEdit()">
@@ -102,7 +98,7 @@
     <!-- Menu list -->
     <div *ngIf="bulkMenuList.length; else noItems">
         <mat-card class="item-card"
-            *ngFor="let foodItem of bulkMenuList | filter : menuSearchText : 'itemName'; index as i">
+            *ngFor="let foodItem of bulkMenuList | filter: menuSearchText : 'itemName'; index as i">
 
             <!-- Top row: image + info + actions -->
             <div class="item-card-main">
@@ -114,6 +110,16 @@
                         <span class="label">Item Name</span>
                         <span *ngIf="!foodItem.edit">{{ foodItem.itemName }}</span>
                         <input *ngIf="foodItem.edit" class="dd-input" type="text" [(ngModel)]="foodItem.itemName" />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="item-desc">
+                        <span class="label">Description</span>
+                        <span *ngIf="!foodItem.edit" class="description">
+                            {{ foodItem.itemDescription }}
+                        </span>
+                        <input *ngIf="foodItem.edit" class="dd-input" type="text"
+                            [(ngModel)]="foodItem.itemDescription" />
                     </div>
 
                     <!-- Meta -->
@@ -190,14 +196,13 @@
                     </div>
                 </div>
             </div>
-
         </mat-card>
     </div>
 
     <!-- Submit -->
     <div class="submit-row" *ngIf="bulkMenuList.length">
         <button mat-flat-button color="primary" (click)="editBulkMenu()" [disabled]="disableSave()">
-            Save Predefined Snackbox Menu
+            Save Pantry Menu
         </button>
     </div>
 
@@ -216,7 +221,7 @@
 
         <div class="item-list">
             <mat-selection-list [(ngModel)]="selectedFoodItems">
-                <mat-list-option *ngFor="let foodItem of foodItemList | filter : searchText : 'itemName'"
+                <mat-list-option *ngFor="let foodItem of foodItemList | filter: searchText : 'itemName'"
                     [value]="foodItem">
                     <div class="list-item">
                         <div class="name">{{ foodItem.itemName }}</div>

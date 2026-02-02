@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -42,6 +42,7 @@ interface IndMenuMeta {
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
   itemList?: IndMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -49,28 +50,22 @@ interface IndMenuMeta {
   templateUrl: './employee-individual-meal-menu.component.html',
   styleUrls: ['./employee-individual-meal-menu.component.scss']
 })
-export class EmployeeIndividualMealMenuComponent {
+export class EmployeeIndividualMealMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
-
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
   bulkMenuList: IndMenuItem[] = [];
   indMenuFetched: IndMenuMeta = {};
-
   menuSearchText = '';
   searchText = '';
-
   imageUrl = environment.imageUrl;
-
   slabEditMode = false;
   changesMade = false;
-
   foodItemList: any[] = [];
   orgChoices: Org[] = [];
   orgSelected: string | null = null;
-
   selectedFoodItems: any[] = [];
-
-  // for looping slab fields in template
   slabFields = [
     { key: 'slab1Price' as const, label: 'Slab 1' },
     { key: 'slab2Price' as const, label: 'Slab 2' },
@@ -85,8 +80,14 @@ export class EmployeeIndividualMealMenuComponent {
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getIndividualMenu();
+    this.getEmployeeIndividualMenuByCafeteria();
     this.getAllB2BFoodItemList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getEmployeeIndividualMenuByCafeteria();
+    }
   }
 
   async copyOrgMenu(): Promise<void> {
@@ -111,14 +112,21 @@ export class EmployeeIndividualMealMenuComponent {
     }
   }
 
-  async getIndividualMenu(): Promise<void> {
+  async getEmployeeIndividualMenuByCafeteria(): Promise<void> {
     if (!this.orgObj?._id) return;
     try {
-      const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMenu(
-        this.orgObj._id
-      );
+      const menuItems: IndMenuMeta = await this.api.getEmployeeIndividualMealMenu(this.selectedCafeteria._id);
       this.indMenuFetched = menuItems || {};
       this.bulkMenuList = menuItems.itemList || [];
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.indMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+      } else {
+        this.indMenuFetched = {};
+        this.bulkMenuList = [];
+        this.isVendorAssigned.emit(false);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -190,8 +198,12 @@ export class EmployeeIndividualMealMenuComponent {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'meals',
+      subCategory: 'employeeindividualMealsMenu',
       moq: this.indMenuFetched.moq,
       slabLimit1: this.indMenuFetched.slabLimit1,
       slabLimit2: this.indMenuFetched.slabLimit2,
@@ -207,12 +219,12 @@ export class EmployeeIndividualMealMenuComponent {
     };
 
     try {
-      await this.api.B2B_saveIndMenu(bulkMenuObj);
+      await this.api.saveEmployeeIndividualMealMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getIndividualMenu();
+      await this.getEmployeeIndividualMenuByCafeteria();
     } catch (e) {
-      console.error('error while saving individual menu');
+      console.error('error while saving employee individual menu', e);
     }
   }
 

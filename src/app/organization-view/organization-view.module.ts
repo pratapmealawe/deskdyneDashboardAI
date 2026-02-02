@@ -41,6 +41,7 @@ import { EmployeeIndividualSnackMenuComponent } from '../common-components/emplo
 import { EmployeeLuxMenuComponent } from '../common-components/employee-lux-menu/employee-lux-menu.component';
 import { EmployeePredefinedFoodboxMenuComponent } from '../common-components/employee-predefined-foodbox-menu/employee-predefined-foodbox-menu.component';
 import { EmployeeSweetMenuComponent } from '../common-components/employee-sweet-menu/employee-sweet-menu.component';
+import { EmployeePantryMenuComponent } from '../common-components/employee-pantry-menu/employee-pantry-menu.component';
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -76,7 +77,8 @@ import { EmployeeSweetMenuComponent } from '../common-components/employee-sweet-
     EmployeeIndividualSnackMenuComponent,
     EmployeeLuxMenuComponent,
     EmployeePredefinedFoodboxMenuComponent,
-    EmployeeSweetMenuComponent
+    EmployeeSweetMenuComponent,
+    EmployeePantryMenuComponent
   ],
   imports: [
     CommonModule,

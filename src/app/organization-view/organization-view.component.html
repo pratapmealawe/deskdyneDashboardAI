@@ -54,17 +54,52 @@
               (selectedIndexChange)="onChildTabChange($event)" class="custom-tabs">
               <mat-tab *ngFor="let child of sub.childTabs; let childIndex = index" [label]="child.name">
                 <ng-container *ngIf="selectedChildTabIndex === childIndex" [ngSwitch]="child.path">
-                  <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-bulk-menu>
-                  <app-org-individual-menu *ngSwitchCase="'individualMealsMenu'"
-                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-individual-menu>
-                  <app-org-bulk-snackbox-menu *ngSwitchCase="'bulkSnacksMenu'"
-                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-bulk-snackbox-menu>
-                  <app-org-individual-snackbox-menu *ngSwitchCase="'individualSnacksMenu'"
-                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-individual-snackbox-menu>
-                  <app-org-predefined-snackbox-menu *ngSwitchCase="'predefinedSnackBoxMenu'"
-                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-predefined-snackbox-menu>
-                  <app-org-customized-snackbox-menu *ngSwitchCase="'customizedSnackBoxMenu'"
-                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)"></app-org-customized-snackbox-menu>
+                  <!-- Bulk Menu section -->
+                  <app-org-bulk-menu *ngSwitchCase="'bulkMealsMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-org-bulk-menu>
+                  <app-org-individual-menu *ngSwitchCase="'individualMealsMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-org-individual-menu>
+                  <app-org-bulk-snackbox-menu *ngSwitchCase="'bulkSnacksMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-org-bulk-snackbox-menu>
+                  <app-org-individual-snackbox-menu *ngSwitchCase="'individualSnacksMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-org-individual-snackbox-menu>
+                  <app-org-predefined-snackbox-menu *ngSwitchCase="'predefinedSnackBoxMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-org-predefined-snackbox-menu>
+                  <app-org-customized-snackbox-menu *ngSwitchCase="'customizedSnackBoxMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-org-customized-snackbox-menu>
+                  <!-- employee bulk menu-->
+                  <app-employee-bulk-meal-menu *ngSwitchCase="'employeebulkMealsMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-employee-bulk-meal-menu>
+
+                  <app-employee-individual-meal-menu *ngSwitchCase="'employeeindividualMealsMenu'"
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-employee-individual-meal-menu>
+
+                  <app-employee-bulk-snack-menu *ngSwitchCase="'employeebulkSnacksMenu'" [orgObj]="organization"
+                    [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)"></app-employee-bulk-snack-menu>
+
+                  <app-employee-individual-snack-menu *ngSwitchCase="'employeeindividualSnacksMenu'"
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)">
+                  </app-employee-individual-snack-menu>
+
+                  <app-employee-predefined-foodbox-menu *ngSwitchCase="'employeepredefinedSnackBoxMenu'"
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)">
+                  </app-employee-predefined-foodbox-menu>
+
+                  <app-employee-customized-foodbox-menu *ngSwitchCase="'employeecustomizedSnackBoxMenu'"
+                    [orgObj]="organization" [selectedCafeteria]="selectedCafeteria"
+                    (isVendorAssigned)="checkVendorAssigned($event)">
+                  </app-employee-customized-foodbox-menu>
                 </ng-container>
               </mat-tab>
             </mat-tab-group>
@@ -79,6 +114,22 @@
               <app-pantry-menu *ngSwitchCase="'pantryMenu'" [orgObj]="organization"
                 [selectedCafeteria]="selectedCafeteria"
                 (isVendorAssigned)="checkVendorAssigned($event)"></app-pantry-menu>
+              <!-- employee menu single -->
+              <app-employee-cake-menu *ngSwitchCase="'employeecakeMenu'" [orgObj]="organization"
+                [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)">
+              </app-employee-cake-menu>
+
+              <app-employee-sweet-menu *ngSwitchCase="'employeesweetMenu'" [orgObj]="organization"
+                [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)">
+              </app-employee-sweet-menu>
+
+              <app-employee-lux-menu *ngSwitchCase="'employeeluxMenu'" [orgObj]="organization"
+                [selectedCafeteria]="selectedCafeteria" (isVendorAssigned)="checkVendorAssigned($event)">
+              </app-employee-lux-menu>
+
+              <app-employee-pantry-menu *ngSwitchCase="'employeepantryMenu'" [orgObj]="organization"
+                [selectedCafeteria]="selectedCafeteria"
+                (isVendorAssigned)="checkVendorAssigned($event)"></app-employee-pantry-menu>
             </ng-container>
           </ng-container>
         </mat-tab>

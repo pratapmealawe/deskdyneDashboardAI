@@ -3,32 +3,29 @@ import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
-
 interface Org {
   _id: string;
   organization_name: string;
 }
 
-interface SnackMenuItem {
+interface PantryMenuItem {
   itemName: string;
   imageUrl: string;
+  itemDescription: string;
   itemType: 'Veg' | 'NonVeg' | 'Jain';
   itemServingType: 'perUnit' | 'perPerson' | 'perQuantity';
   servingQuantity?: number;
   servingQuantityUnit?: string;
-
   slab1Price: number;
   slab2Price: number;
   slab3Price: number;
   slab4Price: number;
-
   payAmtToKitchen: number;
   mainMenuItemId: string;
-
   edit?: boolean;
 }
 
-interface SnackMenuMeta {
+interface PantryMenuMeta {
   moq?: number;
   slabLimit1?: number;
   slabLimit2?: number;
@@ -40,22 +37,25 @@ interface SnackMenuMeta {
   slab2DeliveryPrice?: number;
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
-  itemList?: SnackMenuItem[];
+  itemList?: PantryMenuItem[];
   vendorDetails?: any;
 }
 
+
 @Component({
-  selector: 'app-employee-customized-foodbox-menu',
-  templateUrl: './employee-customized-foodbox-menu.component.html',
-  styleUrls: ['./employee-customized-foodbox-menu.component.scss']
+  selector: 'app-employee-pantry-menu',
+  templateUrl: './employee-pantry-menu.component.html',
+  styleUrls: ['./employee-pantry-menu.component.scss']
 })
-export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges {
+
+export class EmployeePantryMenuComponent implements OnInit, OnChanges {
+
   @Input() orgObj!: Org;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
-  bulkMenuList: SnackMenuItem[] = [];
-  snackMenuFetched: SnackMenuMeta = {};
+  bulkMenuList: PantryMenuItem[] = [];
+  bulkMenuFetched: PantryMenuMeta = {};
   menuSearchText = '';
   searchText = '';
   imageUrl = environment.imageUrl;
@@ -76,22 +76,21 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getEmployeeCustomizedSnackBoxMenuItems();
+    this.getEmployeePantryMenuByCafeteria();
     this.getAllB2BFoodItemList();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedCafeteria']) {
-      this.getEmployeeCustomizedSnackBoxMenuItems();
+      this.getEmployeePantryMenuByCafeteria();
     }
   }
 
   async copyOrgMenu(): Promise<void> {
     try {
       if (!this.orgSelected) return;
-      const menuItems: SnackMenuMeta =
-        await this.api.b2b_customizedSnackboxFetch(this.orgSelected);
-      this.snackMenuFetched = menuItems || {};
+      const menuItems: PantryMenuMeta = await this.api.b2b_fetchBulkLuxMenu(this.orgSelected);
+      this.bulkMenuFetched = menuItems || {};
       this.bulkMenuList = menuItems.itemList || [];
     } catch (error) {
       console.error(error);
@@ -107,15 +106,15 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
     }
   }
 
-  async getEmployeeCustomizedSnackBoxMenuItems(): Promise<void> {
+  async getEmployeePantryMenuByCafeteria(): Promise<void> {
     try {
-      const menuItems: SnackMenuMeta = await this.api.getEmployeeCustomizedFoodBoxMenu(this.selectedCafeteria._id);
+      const menuItems: PantryMenuMeta = await this.api.getEmployeePantryMenu(this.selectedCafeteria._id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
-        this.snackMenuFetched = menuItems || {};
+        this.bulkMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
       } else {
-        this.snackMenuFetched = {};
+        this.bulkMenuFetched = {};
         this.bulkMenuList = [];
         this.isVendorAssigned.emit(false);
       }
@@ -132,12 +131,12 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
     }
   }
 
-  editFoodItem(foodItem: SnackMenuItem): void {
+  editFoodItem(foodItem: PantryMenuItem): void {
     foodItem.edit = true;
     this.changesMade = true;
   }
 
-  onDeleteItem(index: number, foodItem: SnackMenuItem): void {
+  onDeleteItem(index: number, foodItem: PantryMenuItem): void {
     const ok = confirm(
       `Are you sure, you want to delete ${foodItem.itemName} item?`
     );
@@ -167,9 +166,11 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
   }
 
   prepareB2BMenuList(selected: any[]): void {
-    const newItems: SnackMenuItem[] = selected.map((fooditem) => ({
+    const newItems: PantryMenuItem[] = selected.map((fooditem) => ({
       itemName: fooditem.itemName,
       imageUrl: fooditem.imageUrl,
+      itemDescription: fooditem.itemDescription,
+      itemFlavour: fooditem.itemFlavour,
       itemType: fooditem.itemType,
       itemServingType: fooditem.itemServingType,
       slab1Price: fooditem.slab1Price,
@@ -180,6 +181,9 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
       mainMenuItemId: fooditem._id,
       servingQuantity: fooditem.servingQuantity,
       servingQuantityUnit: fooditem.servingQuantityUnit,
+      packagingCost: fooditem.packagingCost,
+      packagingDescription: fooditem.packagingDescription,
+      group: fooditem.group,
       edit: true,
     }));
 
@@ -193,29 +197,29 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
       organization_name: this.orgObj.organization_name,
       cafeteriaId: this.selectedCafeteria._id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
-      mainCategory: 'foodbox',
-      subCategory: 'employeecustomizedSnackBoxMenu',
-      moq: this.snackMenuFetched.moq,
-      slabLimit1: this.snackMenuFetched.slabLimit1,
-      slabLimit2: this.snackMenuFetched.slabLimit2,
-      slabLimit3: this.snackMenuFetched.slabLimit3,
-      dateLimit1: this.snackMenuFetched.dateLimit1,
-      dateLimit2: this.snackMenuFetched.dateLimit2,
-      dateLimit3: this.snackMenuFetched.dateLimit3,
-      slab1DeliveryPrice: this.snackMenuFetched.slab1DeliveryPrice,
-      slab2DeliveryPrice: this.snackMenuFetched.slab2DeliveryPrice,
-      slab3DeliveryPrice: this.snackMenuFetched.slab3DeliveryPrice,
-      slab4DeliveryPrice: this.snackMenuFetched.slab4DeliveryPrice,
+      mainCategory: 'pantry',
+      subCategory: 'employeepantryMenu',
+      moq: this.bulkMenuFetched.moq,
+      slabLimit1: this.bulkMenuFetched.slabLimit1,
+      slabLimit2: this.bulkMenuFetched.slabLimit2,
+      slabLimit3: this.bulkMenuFetched.slabLimit3,
+      dateLimit1: this.bulkMenuFetched.dateLimit1,
+      dateLimit2: this.bulkMenuFetched.dateLimit2,
+      dateLimit3: this.bulkMenuFetched.dateLimit3,
+      slab1DeliveryPrice: this.bulkMenuFetched.slab1DeliveryPrice,
+      slab2DeliveryPrice: this.bulkMenuFetched.slab2DeliveryPrice,
+      slab3DeliveryPrice: this.bulkMenuFetched.slab3DeliveryPrice,
+      slab4DeliveryPrice: this.bulkMenuFetched.slab4DeliveryPrice,
       itemList: [...this.bulkMenuList],
     };
 
     try {
-      await this.api.saveEmployeeCustomizedFoodBoxMenu(bulkMenuObj);
+      await this.api.saveEmployeePantryMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getEmployeeCustomizedSnackBoxMenuItems();
+      await this.getEmployeePantryMenuByCafeteria();
     } catch (e) {
-      console.error('error while saving employee customized foodbox menu', e);
+      console.error('error while saving employee pantry menu', e);
     }
   }
 
@@ -223,7 +227,7 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
     if (!this.bulkMenuList.length) return true;
 
     return this.bulkMenuList.some((item) => {
-      if (!item.itemName) return true;
+      if (!item.itemName || !item.itemDescription) return true;
       if (
         item.slab1Price == null ||
         item.slab2Price == null ||

@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -37,13 +37,12 @@ interface SnackMenuMeta {
   dateLimit1?: number;
   dateLimit2?: number;
   dateLimit3?: number;
-
   slab1DeliveryPrice?: number;
   slab2DeliveryPrice?: number;
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
-
   itemList?: SnackMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -51,29 +50,23 @@ interface SnackMenuMeta {
   templateUrl: './employee-individual-snack-menu.component.html',
   styleUrls: ['./employee-individual-snack-menu.component.scss']
 })
-export class EmployeeIndividualSnackMenuComponent {
+export class EmployeeIndividualSnackMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
-
   bulkMenuList: SnackMenuItem[] = [];
   indSnacksMenuFetched: SnackMenuMeta = {};
-
   menuSearchText = '';
   searchText = '';
-
   imageUrl = environment.imageUrl;
-
   slabEditMode = false;
   changesMade = false;
-
   foodItemList: any[] = [];
   orgChoices: Org[] = [];
   orgSelected: string | null = null;
-
   selectedFoodItems: any[] = [];
   index: number | null = null;
-
-  // For looping slab fields in template
   slabFields = [
     { key: 'slab1Price' as const, label: 'Slab 1' },
     { key: 'slab2Price' as const, label: 'Slab 2' },
@@ -85,8 +78,14 @@ export class EmployeeIndividualSnackMenuComponent {
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getIndSnackMenuItems();
+    this.getEmployeeIndividualSnackMenuByCafeteria();
     this.getAllB2BFoodItemList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getEmployeeIndividualSnackMenuByCafeteria();
+    }
   }
 
   async copyOrgMenu(): Promise<void> {
@@ -98,7 +97,7 @@ export class EmployeeIndividualSnackMenuComponent {
       this.indSnacksMenuFetched = menuItems || {};
       this.bulkMenuList = menuItems.itemList || [];
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -107,19 +106,24 @@ export class EmployeeIndividualSnackMenuComponent {
       const orgChoices = await this.api.getOrgList();
       this.orgChoices = orgChoices || [];
     } catch (error) {
-      console.log('cafeteria fetch error', error);
+      console.error('cafeteria fetch error', error);
     }
   }
 
-  async getIndSnackMenuItems(): Promise<void> {
+  async getEmployeeIndividualSnackMenuByCafeteria(): Promise<void> {
     try {
-      const menuItems: SnackMenuMeta = await this.api.B2B_fetchIndSnacksMenu(
-        this.orgObj._id
-      );
-      this.indSnacksMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
+      const menuItems: SnackMenuMeta = await this.api.getEmployeeIndividualSnackMenu(this.selectedCafeteria._id);
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.indSnacksMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+      } else {
+        this.indSnacksMenuFetched = {};
+        this.bulkMenuList = [];
+        this.isVendorAssigned.emit(false);
+      }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 
@@ -127,7 +131,7 @@ export class EmployeeIndividualSnackMenuComponent {
     try {
       this.foodItemList = await this.api.getAllB2BFooditems();
     } catch (e) {
-      console.log('error while fetching food items');
+      console.error('error while fetching food items');
     }
   }
 
@@ -189,8 +193,12 @@ export class EmployeeIndividualSnackMenuComponent {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'snacks',
+      subCategory: 'employeeindividualSnacksMenu',
       moq: this.indSnacksMenuFetched.moq,
       slabLimit1: this.indSnacksMenuFetched.slabLimit1,
       slabLimit2: this.indSnacksMenuFetched.slabLimit2,
@@ -206,12 +214,12 @@ export class EmployeeIndividualSnackMenuComponent {
     };
 
     try {
-      await this.api.B2B_Ind_SnackMenuAdd(bulkMenuObj);
+      await this.api.saveEmployeeIndividualSnackMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getIndSnackMenuItems();
+      await this.getEmployeeIndividualSnackMenuByCafeteria();
     } catch (e) {
-      console.log('error while saving kitchen');
+      console.error('error while saving employee individual snack menu', e);
     }
   }
 
