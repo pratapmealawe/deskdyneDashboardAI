@@ -1051,6 +1051,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}/${page}/${limit}`, method: urlObj.method });
   }
 
+  getUserTransactionHistoryByFromDate(customerId: string, fromDate: string, toDate: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getUserTransactionHistoryByFromDate;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${customerId}/${fromDate}/${toDate}`, method: urlObj.method });
+  }
+
   getWalletBalance(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getWalletBalance;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
@@ -1558,5 +1563,10 @@ export class ApiMainService {
 
   updateBulkOrdersListPaymentFailed(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkOrdersListPaymentFailed, data);
+  }
+
+  checkSession() {
+    const urlObj = this.apiConfigService.apiEndPointObj.checkSession;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
   }
 }
