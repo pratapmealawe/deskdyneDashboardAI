@@ -1,7 +1,11 @@
 import {
   Component,
+  EventEmitter,
   Input,
+  OnChanges,
   OnInit,
+  Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -48,6 +52,7 @@ interface IndMenuMeta {
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
   itemList?: IndMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -55,8 +60,10 @@ interface IndMenuMeta {
   templateUrl: './org-individual-menu.component.html',
   styleUrls: ['./org-individual-menu.component.scss'],
 })
-export class OrgIndividualMenuComponent implements OnInit {
+export class OrgIndividualMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: IndMenuItem[] = [];
@@ -87,13 +94,20 @@ export class OrgIndividualMenuComponent implements OnInit {
   constructor(
     private api: ApiMainService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getIndividualMenu();
+    this.getIndividualMenuItemsByCafeteriaId();
     this.getAllB2BFoodItemList();
   }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getIndividualMenuItemsByCafeteriaId();
+    }
+  }
+
 
   async copyOrgMenu(): Promise<void> {
     if (!this.orgSelected) return;
@@ -117,14 +131,31 @@ export class OrgIndividualMenuComponent implements OnInit {
     }
   }
 
-  async getIndividualMenu(): Promise<void> {
-    if (!this.orgObj?._id) return;
+  // async getIndividualMenu(): Promise<void> {
+  //   if (!this.orgObj?._id) return;
+  //   try {
+  //     const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMenu(
+  //       this.orgObj._id
+  //     );
+  //     this.indMenuFetched = menuItems || {};
+  //     this.bulkMenuList = menuItems.itemList || [];
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+  async getIndividualMenuItemsByCafeteriaId(): Promise<void> {
+    if (!this.selectedCafeteria) return;
     try {
-      const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMenu(
-        this.orgObj._id
-      );
-      this.indMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
+      const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMealMenu(this.selectedCafeteria._id);
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.indMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+      } else {
+        this.indMenuFetched = {};
+        this.bulkMenuList = [];
+        this.isVendorAssigned.emit(false);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -196,8 +227,12 @@ export class OrgIndividualMenuComponent implements OnInit {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'meals',
+      subCategory: 'individualMealsMenu',
       moq: this.indMenuFetched.moq,
       slabLimit1: this.indMenuFetched.slabLimit1,
       slabLimit2: this.indMenuFetched.slabLimit2,
@@ -213,12 +248,12 @@ export class OrgIndividualMenuComponent implements OnInit {
     };
 
     try {
-      await this.api.B2B_saveIndMenu(bulkMenuObj);
+      await this.api.B2B_saveIndividualMealMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getIndividualMenu();
-    } catch (e) {
-      console.error('error while saving individual menu');
+      await this.getIndividualMenuItemsByCafeteriaId();
+    } catch (error) {
+      console.error('error while saving individual menu', error);
     }
   }
 

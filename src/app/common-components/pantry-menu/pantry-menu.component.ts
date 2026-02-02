@@ -1,26 +1,18 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  TemplateRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges, TemplateRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
+
 
 interface Org {
   _id: string;
   organization_name: string;
 }
 
-interface SnackMenuItem {
+interface PantryMenuItem {
   itemName: string;
   imageUrl: string;
+  itemDescription: string;
   itemFlavour: string;
   itemType: 'Veg' | 'NonVeg' | 'Jain';
   itemServingType: 'perUnit' | 'perPerson' | 'perQuantity';
@@ -32,13 +24,17 @@ interface SnackMenuItem {
   slab3Price: number;
   slab4Price: number;
 
+  packagingCost?: number;
+  packagingDescription?: string;
+  group?: string;
+
   payAmtToKitchen: number;
   mainMenuItemId: string;
 
   edit?: boolean;
 }
 
-interface SnackMenuMeta {
+interface PantryMenuMeta {
   moq?: number;
   slabLimit1?: number;
   slabLimit2?: number;
@@ -46,29 +42,27 @@ interface SnackMenuMeta {
   dateLimit1?: number;
   dateLimit2?: number;
   dateLimit3?: number;
-
   slab1DeliveryPrice?: number;
   slab2DeliveryPrice?: number;
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
-
-  itemList?: SnackMenuItem[];
+  itemList?: PantryMenuItem[];
   vendorDetails?: any;
 }
 
 @Component({
-  selector: 'app-org-individual-snackbox-menu',
-  templateUrl: './org-individual-snackbox-menu.component.html',
-  styleUrls: ['./org-individual-snackbox-menu.component.scss'],
+  selector: 'app-pantry-menu',
+  templateUrl: './pantry-menu.component.html',
+  styleUrls: ['./pantry-menu.component.scss']
 })
-export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
+export class PantryMenuComponent {
   @Input() orgObj!: Org;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
-  bulkMenuList: SnackMenuItem[] = [];
-  indSnacksMenuFetched: SnackMenuMeta = {};
+  bulkMenuList: PantryMenuItem[] = [];
+  bulkMenuFetched: PantryMenuMeta = {};
 
   menuSearchText = '';
   searchText = '';
@@ -83,7 +77,6 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
   orgSelected: string | null = null;
 
   selectedFoodItems: any[] = [];
-  index: number | null = null;
 
   // For looping slab fields in template
   slabFields = [
@@ -97,24 +90,22 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getIndSnackMenuItemsByCafeteriaId();
+    this.getBulkMenuItemsByCafeteriaId();
     this.getAllB2BFoodItemList();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedCafeteria']) {
-      this.getIndSnackMenuItemsByCafeteriaId();
+      this.getBulkMenuItemsByCafeteriaId();
     }
   }
-
 
   async copyOrgMenu(): Promise<void> {
     try {
       if (!this.orgSelected) return;
-      const menuItems: SnackMenuMeta = await this.api.B2B_fetchIndSnacksMenu(
-        this.orgSelected
-      );
-      this.indSnacksMenuFetched = menuItems || {};
+      const menuItems: PantryMenuMeta =
+        await this.api.b2b_fetchBulkSweetMenu(this.orgSelected);
+      this.bulkMenuFetched = menuItems || {};
       this.bulkMenuList = menuItems.itemList || [];
     } catch (error) {
       console.log(error);
@@ -130,28 +121,28 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
     }
   }
 
-  // async getIndSnackMenuItems(): Promise<void> {
+  // async getBulkMenuItems(): Promise<void> {
   //   try {
-  //     const menuItems: SnackMenuMeta = await this.api.B2B_fetchIndSnacksMenu(
-  //       this.orgObj._id
-  //     );
-  //     this.indSnacksMenuFetched = menuItems || {};
+  //     const menuItems: PantryMenuMeta =
+  //       await this.api.b2b_fetchBulkSweetMenu(this.orgObj._id);
+  //     this.bulkMenuFetched = menuItems || {};
   //     this.bulkMenuList = menuItems.itemList || [];
   //   } catch (error) {
   //     console.log(error);
   //   }
   // }
 
-  async getIndSnackMenuItemsByCafeteriaId(): Promise<void> {
+  async getBulkMenuItemsByCafeteriaId(): Promise<void> {
+    if (!this.selectedCafeteria) return;
     try {
-      const menuItems: SnackMenuMeta = await this.api.B2B_fetchIndividualSnacksMenu(this.selectedCafeteria._id);
+      const menuItems: PantryMenuMeta = await this.api.B2B_fetchPantryMenu(this.selectedCafeteria._id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
-        this.indSnacksMenuFetched = menuItems || {};
+        this.bulkMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
       } else {
         this.isVendorAssigned.emit(false);
-        this.indSnacksMenuFetched = {};
+        this.bulkMenuFetched = {};
         this.bulkMenuList = [];
       }
     } catch (error) {
@@ -167,12 +158,12 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
     }
   }
 
-  editFoodItem(foodItem: SnackMenuItem): void {
+  editFoodItem(foodItem: PantryMenuItem): void {
     foodItem.edit = true;
     this.changesMade = true;
   }
 
-  onDeleteItem(index: number, foodItem: SnackMenuItem): void {
+  onDeleteItem(index: number, foodItem: PantryMenuItem): void {
     const ok = confirm(
       `Are you sure, you want to delete ${foodItem.itemName} item?`
     );
@@ -194,7 +185,7 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
         autoFocus: false,
       })
       .afterClosed()
-      .subscribe((result) => {
+      .subscribe((result: any) => {
         if (result === 'add') {
           this.prepareB2BMenuList(this.selectedFoodItems);
         }
@@ -202,9 +193,10 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
   }
 
   prepareB2BMenuList(selected: any[]): void {
-    const newItems: SnackMenuItem[] = selected.map((fooditem) => ({
+    const newItems: PantryMenuItem[] = selected.map((fooditem) => ({
       itemName: fooditem.itemName,
       imageUrl: fooditem.imageUrl,
+      itemDescription: fooditem.itemDescription,
       itemFlavour: fooditem.itemFlavour,
       itemType: fooditem.itemType,
       itemServingType: fooditem.itemServingType,
@@ -216,6 +208,7 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
       mainMenuItemId: fooditem._id,
       servingQuantity: fooditem.servingQuantity,
       servingQuantityUnit: fooditem.servingQuantityUnit,
+      group: fooditem.group,
       edit: true,
     }));
 
@@ -229,29 +222,29 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
       organization_name: this.orgObj.organization_name,
       cafeteriaId: this.selectedCafeteria._id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
-      mainCategory: 'snacks',
-      subCategory: 'individualSnacksMenu',
-      moq: this.indSnacksMenuFetched.moq,
-      slabLimit1: this.indSnacksMenuFetched.slabLimit1,
-      slabLimit2: this.indSnacksMenuFetched.slabLimit2,
-      slabLimit3: this.indSnacksMenuFetched.slabLimit3,
-      dateLimit1: this.indSnacksMenuFetched.dateLimit1,
-      dateLimit2: this.indSnacksMenuFetched.dateLimit2,
-      dateLimit3: this.indSnacksMenuFetched.dateLimit3,
-      slab1DeliveryPrice: this.indSnacksMenuFetched.slab1DeliveryPrice ?? 0,
-      slab2DeliveryPrice: this.indSnacksMenuFetched.slab2DeliveryPrice ?? 0,
-      slab3DeliveryPrice: this.indSnacksMenuFetched.slab3DeliveryPrice ?? 0,
-      slab4DeliveryPrice: this.indSnacksMenuFetched.slab4DeliveryPrice ?? 0,
+      mainCategory: 'pantry',
+      subCategory: 'pantryMenu',
+      moq: this.bulkMenuFetched.moq,
+      slabLimit1: this.bulkMenuFetched.slabLimit1,
+      slabLimit2: this.bulkMenuFetched.slabLimit2,
+      slabLimit3: this.bulkMenuFetched.slabLimit3,
+      dateLimit1: this.bulkMenuFetched.dateLimit1,
+      dateLimit2: this.bulkMenuFetched.dateLimit2,
+      dateLimit3: this.bulkMenuFetched.dateLimit3,
+      slab1DeliveryPrice: this.bulkMenuFetched.slab1DeliveryPrice ?? 0,
+      slab2DeliveryPrice: this.bulkMenuFetched.slab2DeliveryPrice ?? 0,
+      slab3DeliveryPrice: this.bulkMenuFetched.slab3DeliveryPrice ?? 0,
+      slab4DeliveryPrice: this.bulkMenuFetched.slab4DeliveryPrice ?? 0,
       itemList: [...this.bulkMenuList],
     };
 
     try {
-      await this.api.B2B_saveIndividualSnacksMenu(bulkMenuObj);
+      await this.api.B2B_savePantryMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getIndSnackMenuItemsByCafeteriaId();
+      await this.getBulkMenuItemsByCafeteriaId();
     } catch (error) {
-      console.error('error while saving individual snack menu', error);
+      console.error('error while saving sweet menu', error);
     }
   }
 
@@ -259,7 +252,7 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
     if (!this.bulkMenuList.length) return true;
 
     return this.bulkMenuList.some((item) => {
-      if (!item.itemName) return true;
+      if (!item.itemName || !item.itemDescription) return true;
       if (
         item.slab1Price == null ||
         item.slab2Price == null ||
