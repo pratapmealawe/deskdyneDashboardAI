@@ -90,10 +90,12 @@ export class DailyBulkCardComponent implements OnInit {
 
   async acceptRejectOrder(status: string, comment?: string, deliveryCharge?: number): Promise<void> {
     try {
-      const order: any = { ...this.order, orderstatus: status };
+      console.log('status', status);
+      let order: any = { ...this.order, orderstatus: status };
       if (comment) {
         order.comment = comment;
       }
+      const oldDeliveryCharge = this.order.deliveryCharge || 0;
       if (deliveryCharge !== undefined && deliveryCharge !== null) {
         order.deliveryCharge = deliveryCharge;
       }
@@ -102,17 +104,16 @@ export class DailyBulkCardComponent implements OnInit {
         order.actionBy = adminId;
       }
       order.startManualDelivery = true;
-      await this.apiMainService.updateBulkDailyFoodOrder(order);
       this.order.orderstatus = status;
       if (deliveryCharge !== undefined && deliveryCharge !== null) {
-        const oldCharge = this.order.deliveryCharge || 0;
-        this.order.amount = (this.order.amount || 0) - oldCharge + deliveryCharge;
+        this.order.amount = ((this.order.amount || 0) - oldDeliveryCharge) + deliveryCharge;
         this.order.deliveryCharge = deliveryCharge;
         if (this.orderInput) {
           this.orderInput.amount = this.order.amount;
-          this.orderInput.deliveryCharge = this.order.deliveryCharge;
+          order.deliveryCharge = this.order.deliveryCharge;
         }
       }
+      await this.apiMainService.updateBulkDailyFoodOrder(order);
       this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', {
         reload: true,
         _id: this.order._id

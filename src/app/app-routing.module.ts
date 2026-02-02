@@ -26,6 +26,7 @@ const routes: Routes = [
   { path: 'policy', canActivate: [accessGuard], loadChildren: () => import('./policy/policy/policy.module').then(m => m.PolicyModule) },
   { path: 'addPolicy', canActivate: [accessGuard], loadChildren: () => import('./policy/add-policy/add-policy.module').then(m => m.AddPolicyModule) },
   { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule) },
+  { path: 'allOrders', canActivate: [accessGuard], loadChildren: () => import('./all-orders/all-orders.module').then(m => m.AllOrdersModule) },
   { path: 'outletMasterMenu', canActivate: [accessGuard], loadChildren: () => import('./outlet-master-menu/outlet-master-menu.module').then(m => m.OutletMasterMenuModule) },
   { path: 'searchOrder', canActivate: [accessGuard], loadChildren: () => import('./search-order/search-order.module').then(m => m.SearchOrderModule) },
   { path: 'b2bAddorg', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/add-organization/add-organization.module').then(m => m.AddOrganizationModule) },

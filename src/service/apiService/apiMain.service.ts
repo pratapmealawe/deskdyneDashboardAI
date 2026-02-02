@@ -1522,12 +1522,30 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
   }
 
+  validateJusPayPaymentTransactionManual(payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.validateJusPayPaymentTransactionManual;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
+  }
+
   copyDailyOrderMenu(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyDailyOrderMenu, data);
   }
 
   addBulkDailyOrderMenu(data: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addBulkDailyOrderMenu, data);
+  }
+
+  getOutletOrdersByStatus(status: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletOrdersByStatus;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${status}`, method: urlObj.method });
+  }
+
+  updateBulkOrdersList(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkOrdersList, data);
+  }
+
+  updateBulkOrdersListPaymentFailed(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkOrdersListPaymentFailed, data);
   }
 
   deleteCompanyWalletCafeteriaDetails(id: any): Promise<any> {
