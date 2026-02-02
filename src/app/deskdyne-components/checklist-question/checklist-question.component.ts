@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { combineLatest, startWith } from 'rxjs';
 
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ChecklistQuestionDialogComponent } from './checklist-question-dialog/checklist-question-dialog.component';

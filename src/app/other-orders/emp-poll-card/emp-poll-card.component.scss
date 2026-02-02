@@ -1,49 +1,128 @@
 @import 'src/styles.scss';
 
-.bi-file-plus{
-    font-size: 23px;
-}
-.view{
-    cursor:pointer;
-}
-.order-sub-header{
-    background-color:$primary-offset-color3;
-    margin-bottom:5px;
-    padding:5px;
-    font-weight:500;
-    cursor:pointer;
-}
-.less{
-    font-size:16px;
+// Utilities
+.extra-small-text {
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
 }
 
-.bilingDiv {
-    background-image: url('~src/assets/images/cartReceipt.png');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    padding: 14px 12px 10px 12px;
-    line-height: 20px;
+.cursor-pointer {
+    cursor: pointer;
+}
 
-    .receiptText {
-        font-size: 11px;
-        font-weight: 700;
-        color: #676f8199;
-        position: relative;
-        top: -10px;
-        line-height: 20px;
+// Hover effects
+.hover-primary:hover {
+    color: $primary-color2 !important;
+}
+
+.hover-danger-dark:hover {
+    color: darken($color-error, 15%) !important;
+}
+
+// Badge refinements
+.bg-success-subtle {
+    background-color: lighten($color-success, 45%) !important;
+    color: $color-success !important;
+}
+
+.bg-warning-subtle {
+    background-color: lighten(#ffc107, 35%) !important;
+    color: darken(#ffc107, 15%) !important;
+}
+
+// Modal (existing)
+.modal-header .close {
+    padding: 1rem 1rem;
+    margin: -1rem -1rem -1rem auto;
+}
+
+// New Design Specifics
+.bg-purple-subtle {
+    background-color: #F3E5F5 !important;
+    color: #9C27B0 !important;
+}
+
+.bg-blue-subtle {
+    background-color: #E3F2FD !important;
+    color: #1976D2 !important;
+}
+
+.text-justify {
+    text-align: justify;
+}
+
+.card {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+}
+
+.avatar-circle {
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+.main-card-hover {
+    transition: all 0.2s ease-in-out;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+// Responsive borders for grid layout
+@media (min-width: 768px) {
+    .border-start-md {
+        border-left: 1px solid #dee2e6 !important;
     }
 
-    .receipt-parent {
-        display: flex;
-        flex-direction: row;
-    
-        .left-div {
-            width: 50%;
-        }
-    
-        .right-div {
-            width: 50%;
-            text-align: right;
-        }
+    .border-end-md {
+        border-right: 1px solid #dee2e6 !important;
+    }
+}
+
+.item-row {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+        background-color: #e9ecef !important;
+    }
+}
+
+.item-title {
+    font-size: 0.9rem;
+    line-height: 1.2;
+}
+
+.item-price {
+    font-size: 0.95rem;
+}
+
+@media (max-width: 576px) {
+    .badge {
+        font-size: 0.65rem !important;
+        padding: 0.35em 0.6em !important;
+    }
+
+    .item-title {
+        font-size: 0.85rem;
+    }
+
+    .d-flex.gap-3 {
+        // Adjust gap for smaller screens
+        gap: 0.5rem !important;
     }
 }

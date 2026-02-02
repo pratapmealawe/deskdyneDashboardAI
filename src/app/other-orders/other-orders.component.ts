@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { b2b_orders_mapper } from 'src/config/b2b_orders.mapping.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { UtilityService } from 'src/service/utility.service';
 
 @Component({
   selector: 'app-other-orders',
@@ -10,94 +8,91 @@ import { UtilityService } from 'src/service/utility.service';
   styleUrls: ['./other-orders.component.scss']
 })
 export class OtherOrdersComponent implements OnInit {
-  selectedStatus = '';
-  b2bSelectedStatus: any = '';
-  bulkSelectedStatus: any = '';
-  selectedGroup = ''
-  currentOrderStatusList: any = [];
-  page = 1;
-  day: any;
-  lastPage = 1;
-  pageLimit = 200;
-  pageFirstEntry = 1;
-  pageLastEntry = 1;
-  paginationOver = false;
-  filteredList: any[] = [];
-  b2b_orders_mapper: any = b2b_orders_mapper;
-  orderStatusCountObj: any = {
-    paymentInprogress: 0,
-    paymentFailed: 0,
-    acceptedOrder: 0,
-    deliveredOrder: 0,
-    deliveryBoyAssigned: 0,
-    handedOverToDeliveryBoy: 0,
-    newOrder: 0,
-    onTheWay: 0,
-    preparingOrder: 0,
-    readyToDeliveryOrder: 0,
-    autoCancelled: 0,
-    rejectedByKitchen: 0,
-    cancelledByKitchen: 0,
-    cancelledByUser: 0,
-    bulkOrder: 0,
-    placed: 0,
-    approved: 0,
-    preApproved: 0,
-    decline: 0,
-    waitingForApproval: 0,
-    completed: 0,
-  };
-
-  // tabs
   orderTypeList = [
-    {
-      name: 'Admin Orders',
-      path: 'adminOrders', // This matches the data logic
-    },
-    {
-      name: 'Bulk Orders',
-      path: 'bulkOrders',
-    },
-    {
-      name: 'Employee Poll',
-      path: 'employeePoll',
-    },
+    { name: 'Admin Orders', path: 'adminOrders', },
+    { name: 'Bulk Orders', path: 'bulkOrders', },
+    { name: 'Employee Poll', path: 'employeePoll', }
   ];
-
+  adminOrderStatusList = [
+    { label: 'Placed', value: 'placed', count: 0 },
+    { label: 'Accepted', value: 'accepted', count: 0 },
+    { label: 'Preparing', value: 'preparing', count: 0 },
+    { label: 'Ready For Delivery', value: 'readyForDelivery', count: 0 },
+    { label: 'Agent Assigned', value: 'deliveryBoyAssigned', count: 0 },
+    { label: 'Handed Over', value: 'handedOverToDeliveryBoy', count: 0 },
+    { label: 'On The Way', value: 'onTheWay', count: 0 },
+    { label: 'Delivered', value: 'delivered', count: 0 },
+    { label: 'Completed', value: 'completed', count: 0 },
+  ];
+  bulkOrderStatusList = [
+    { label: 'Placed', value: 'placed', count: 0 },
+    { label: 'Accepted', value: 'accepted', count: 0 },
+    { label: 'Preparing', value: 'preparing', count: 0 },
+    { label: 'Ready For Delivery', value: 'readyForDelivery', count: 0 },
+    { label: 'Agent Assigned', value: 'deliveryBoyAssigned', count: 0 },
+    { label: 'Handed Over', value: 'handedOverToDeliveryBoy', count: 0 },
+    { label: 'On The Way', value: 'onTheWay', count: 0 },
+    { label: 'Delivered', value: 'delivered', count: 0 },
+    { label: 'Completed', value: 'completed', count: 0 },
+  ];
   selectedTabIndex = 0;
   selectedTab = 'adminOrders';
-
-  // Maps selected group to the current status key for chips
-  // Default selections
-  selectedAdminGroup = 'dailyBulk';
-  selectedBulkGroup = 'b2b';
-  selectedPollGroup = 'empPolls';
-
-
-  constructor(private apiMainService: ApiMainService, private sendDataToComponent: SendDataToComponent, private utilityService: UtilityService) { }
+  filteredList: any[] = [];
+  selectedPollDate: Date = new Date();
+  orgList: any = [];
+  cafeteriaList: any = [];
+  selectedOrg: any = null;
+  selectedCafeteria: any = null;
+  selectedStatus: string = 'placed';
+  page: number = 1;
+  pageLimit: number = 10;
+  totalCount: number = 0;
+  totalPages: number = 0;
+  pageSizeOptions: number[] = [10, 20, 50, 100];
+  paginationOver = false;
+  lastPage: number = 1;
+  searchPhone: string = '';
+  pageFirstEntry: number = 1;
+  pageLastEntry: number = 1;
+  constructor(
+    private apiMainService: ApiMainService,
+    private sendDataToComponent: SendDataToComponent,
+  ) { }
 
   ngOnInit(): void {
-    this.getCurrentOrders(false);
+    this.getOrgList();
     this.subscribeEvents();
+    this.onTabChange({ index: 0 });
   }
 
-  // Handle Tab Change
-  onTabChange(event: any): void {
-    this.selectedTabIndex = event.index;
-    this.selectedTab = this.orderTypeList[event.index].path;
-    // Reset filters on tab change if needed, or keep state
-    this.filteredList = [];
-    this.page = 1;
+  getOrgList() {
+    this.apiMainService.getOrgList().then((res: any) => {
+      if (res && res.length > 0) {
+        this.orgList = res;
+      }
+    });
   }
 
+  onOrgChange(event: any) {
+    if (event) {
+      this.selectedOrg = event._id;
+      this.cafeteriaList = event.cafeteriaList || [];
+    } else {
+      this.selectedOrg = null;
+      this.cafeteriaList = [];
+    }
+  }
+
+  onDateChange(event: any) {
+    this.selectedPollDate = event.value;
+    this.getEmployeePollList(this.selectedPollDate);
+  }
 
 
   subscribeEvents() {
     this.sendDataToComponent.subscribe('UPDATE_BULK_ORDER_PAGE', (data) => {
       if (data && data.reload) {
-        this.getCurrentOrders(false);
         let selectedIndex = -1;
-        let b2bselectedIndex = -1;
         this.filteredList.forEach((ele, index) => {
           if (ele._id === data._id) {
             selectedIndex = index;
@@ -110,158 +105,259 @@ export class OtherOrdersComponent implements OnInit {
     });
   }
 
-  reloadPage() {
-    this.getCurrentOrders(false);
+  onTabChange(event: any): void {
+    this.selectedTabIndex = event.index;
+    this.selectedTab = this.orderTypeList[event.index].path;
+    this.filteredList = [];
+    this.page = 1;
+    if (this.selectedTab === 'employeePoll') {
+      this.selectedPollDate = new Date();
+      this.getEmployeePollList(this.selectedPollDate);
+    } else if (this.selectedTab === 'bulkOrders') {
+      this.getb2bBulkOrderList();
+    } else if (this.selectedTab === 'adminOrders') {
+      this.getBulkDailyOrderList();
+    }
   }
 
-  async getLatestb2bOrderStatusList(status: any) {
-    this.selectedStatus = '';
-    this.bulkSelectedStatus = '';
-    this.b2bSelectedStatus = this.b2b_orders_mapper[status];
-    this.currentOrderStatusList = [];
-    this.filteredList = [];
+  getEmployeePollList(dateInput?: any) {
+    const targetDate = dateInput ? new Date(dateInput) : this.selectedPollDate;
     this.page = 1;
     this.lastPage = 1;
     this.paginationOver = false;
-    this.getOrderStatusList(this.b2bSelectedStatus, 1, true, false);
+    this.filteredList = [];
+    const payload: any = {
+      fromDate: targetDate,
+    };
+    if (this.selectedCafeteria) {
+      payload['cafeteriaId'] = this.selectedCafeteria;
+    }
+    if (this.searchPhone) {
+      payload['employeePhoneNo'] = this.searchPhone;
+    }
+    if (this.selectedOrg) {
+      payload['org_id'] = this.selectedOrg;
+    }
+    this.apiMainService.getAdminEmpPolls(payload).then((res: any[]) => {
+      if (res && res.length > 0) {
+        const groupedMap = new Map<string, any>();
+        res.forEach(order => {
+          if (!Array.isArray(order.mealTypeList)) return;
+          order.mealTypeList.forEach((meal: any) => {
+            if (meal.pollStatus === 'inactive') return;
+            const key = `${order.cafeteriaId}_${order.deliveryDate}_${order.orgId}_${meal.mealType}`;
+            if (!groupedMap.has(key)) {
+              const group = {
+                customerLocation: order.customerLocation,
+                pocDetails: order.pocDetails,
+                cafeteriaId: order.cafeteriaId,
+                deliveryDate: order.deliveryDate,
+                orgId: order.orgId,
+                cafeteriaName: order.cafeteriaName,
+                orgCity: order.orgCity,
+                orgName: order.orgName,
+                pollDate: order.pollDate,
+                mealType: meal.mealType,
+                mealTypeMap: new Map<string, any>(),
+                employeeList: []
+              };
+              groupedMap.set(key, group);
+            }
+            const group = groupedMap.get(key);
+            const empExists = group.employeeList.some(
+              (e: any) =>
+                e.employeeId === order.employeeId &&
+                e.deliveredItem === meal.deliveredItem
+            );
+            if (!empExists) {
+              group.employeeList.push({
+                employeeId: order.employeeId,
+                employeeName: order.employeeName,
+                employeePhoneNo: order.employeePhoneNo,
+                employeeEmail: order.employeeEmail,
+                deliveredItem: meal.deliveredItem,
+                mealPrice: meal.mealPrice || 0
+              });
+            }
+            if (meal.deliveredItem) {
+              const existing = group.mealTypeMap.get(meal.deliveredItem);
+              if (existing) {
+                existing.count += 1;
+                existing.totalAmount += meal.mealPrice || 0;
+              } else {
+                group.mealTypeMap.set(meal.deliveredItem, {
+                  ...meal,
+                  count: 1,
+                  totalAmount: meal.mealPrice || 0
+                });
+              }
+            }
+          });
+        });
+        this.filteredList = Array.from(groupedMap.values()).map(group => {
+          group.mealTypeList = Array.from(group.mealTypeMap.values());
+          delete group.mealTypeMap;
+          return group;
+        });
+      } else {
+        this.filteredList = [];
+      }
+    });
+  }
+
+  getBulkDailyOrderList() {
+    this.apiMainService.getCurrentDailyOrdersCount().then((res: any) => {
+      if (res) {
+        this.adminOrderStatusList.forEach((status: any) => {
+          status.count = res[status.value];
+        });
+      }
+    }, (error: any) => {
+      console.log(error)
+    });
+    this.getLatestBulkDailyOrderStatusList(this.selectedStatus);
+  }
+
+  getb2bBulkOrderList() {
+    this.apiMainService.getCurrentB2BOrdersCount().then((res: any) => {
+      if (res) {
+        console.log(res, 'getCurrentB2BOrdersCount');
+        this.bulkOrderStatusList.forEach((status: any) => {
+          status.count = res[status.value];
+        });
+      }
+    }, (error: any) => {
+      console.log(error)
+    });
+    this.bulkOrderStatusList.forEach((status: any) => {
+      status.count = 0;
+    });
   }
 
   async getLatestBulkDailyOrderStatusList(status: any) {
-    this.selectedStatus = '';
-    this.b2bSelectedStatus = '';
-    this.bulkSelectedStatus = status;
-    this.currentOrderStatusList = [];
+    this.selectedStatus = status;
     this.filteredList = [];
     this.page = 1;
     this.lastPage = 1;
     this.paginationOver = false;
-    this.getOrderStatusList(this.bulkSelectedStatus, 1, false, true);
+    this.getOrderStatusList(status, 1);
   }
 
-  async getOrderStatusList(status: string, page: number, showB2B: any, showDailyBulk: any) {
+  async getOrderStatusList(status: string, pageNum: number) {
     try {
-      this.page = page;
-      let orderList: any = [];
-      let bulkOrderList: any = [];
-      if (showB2B) {
-        orderList = await this.apiMainService.getb2bBulkOrderList(status, this.page, this.pageLimit)
-      }
-      else if (showDailyBulk) {
-        orderList = await this.apiMainService.getb2bBulkDailyOrderList(status, this.page, this.pageLimit)
-      }
-      console.log(orderList, "orderList");
-      if (orderList && orderList.length > 0) {
-        this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
-        this.pageLastEntry = this.pageFirstEntry + orderList.length - 1;
-        this.filteredList = orderList;
-        if (orderList.length < this.pageLimit) {
+      this.page = pageNum;
+      this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit).then((res: any) => {
+        if (res) {
+          this.filteredList = res.orderList;
+          this.totalCount = res.totalCount;
+          this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
+          if (this.filteredList && this.filteredList.length > 0) {
+            this.pageFirstEntry = ((pageNum - 1) * this.pageLimit) + 1;
+            this.pageLastEntry = this.pageFirstEntry + this.filteredList.length - 1;
+            if (this.filteredList.length < this.pageLimit) {
+              this.paginationOver = true;
+              this.lastPage = pageNum;
+            } else {
+              this.paginationOver = false;
+            }
+          }
+          else {
+            this.filteredList = [];
+            this.paginationOver = true;
+            this.lastPage = pageNum;
+          }
+        }
+      }, (error: any) => {
+        console.log(error)
+      })
+
+    } catch (error) {
+      console.log('error while searching orders ', error);
+    }
+  }
+
+  getClusterb2bBulkOrderList(status: string, pageNum: number) {
+    this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit).then((res: any) => {
+      if (res) {
+        this.filteredList = res.orderList;
+        this.totalCount = res.totalCount;
+        this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
+        if (this.filteredList && this.filteredList.length > 0) {
+          this.pageFirstEntry = ((pageNum - 1) * this.pageLimit) + 1;
+          this.pageLastEntry = this.pageFirstEntry + this.filteredList.length - 1;
+          if (this.filteredList.length < this.pageLimit) {
+            this.paginationOver = true;
+            this.lastPage = pageNum;
+          } else {
+            this.paginationOver = false;
+          }
+        }
+        else {
+          this.filteredList = [];
           this.paginationOver = true;
-          this.lastPage = page;
+          this.lastPage = pageNum;
         }
       }
-      else {
-        this.paginationOver = true;
-        this.lastPage = page;
-      }
-    } catch (error) {
-      console.log('error while searching orders ', error);
-    }
+    }, (error: any) => {
+      console.log(error)
+    });
   }
 
-  async getCurrentOrders(showAlarm: boolean) {
-    try {
-      this.selectedStatus = '';
-      this.currentOrderStatusList = [];
-      this.page = 1;
-      this.lastPage = 1;
-      this.paginationOver = false;
-      // const orderList:any = []
-      const orderList = await this.utilityService.getCurrentB2BOrdersCount(showAlarm);
-      console.log(orderList)
-      this.orderStatusCountObj = orderList;
-    } catch (error) {
-      console.log('error while searching orders ', error);
-    }
-  }
-
-  async getEmployeePollList(day: any) {
-    this.day = day;
+  onPageSizeChange(newSize: number) {
+    this.pageLimit = newSize;
     this.page = 1;
-    this.lastPage = 1;
-    this.paginationOver = false;
-    this.filteredList = [];
-    const currentDate = new Date();
-    currentDate.setHours(0, 0, 0, 0);
-    const after1Day = new Date((new Date()).setDate(currentDate.getDate() + 1)).setHours(0, 0, 0, 0);
-    const after2Day = new Date((new Date()).setDate(currentDate.getDate() + 2)).setHours(0, 0, 0, 0);
-    if (day === 'today') {
-      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: currentDate, deliveryEndDate: currentDate });
-      if (filteredList && filteredList.length > 0) {
-        console.log(filteredList)
-        this.filteredList = filteredList;
+    this.getOrderStatusList(this.selectedStatus, this.page);
+  }
+
+  get visiblePages(): (number | string)[] {
+    const total = this.totalPages;
+    const current = this.page;
+    const delta = 2;
+    const range: number[] = [];
+    const rangeWithDots: (number | string)[] = [];
+    let l: number | undefined;
+    for (let i = 1; i <= total; i++) {
+      if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
+        range.push(i);
       }
     }
-    else if (day === 'tomorrow') {
-      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: after1Day, deliveryEndDate: after1Day });
-      if (filteredList && filteredList.length > 0) {
-        this.filteredList = filteredList;
+    for (const i of range) {
+      if (l) {
+        if (i - l === 2) {
+          rangeWithDots.push(l + 1);
+        } else if (i - l !== 1) {
+          rangeWithDots.push('...');
+        }
       }
+      rangeWithDots.push(i);
+      l = i;
     }
-    else {
-      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: after2Day, deliveryEndDate: after2Day });
-      if (filteredList && filteredList.length > 0) {
-        this.filteredList = filteredList;
-      }
+    return rangeWithDots;
+  }
+
+  goToPage(pageNum: number | string) {
+    if (typeof pageNum === 'number' && pageNum !== this.page && pageNum >= 1 && pageNum <= this.totalPages) {
+      this.getOrderStatusList(this.selectedStatus, pageNum);
     }
   }
 
   previous(page: number) {
-    page--;
-    const status = this.selectedStatus ? true : false;
-    const bulk = this.bulkSelectedStatus ? true : false;
-    const b2b = this.b2bSelectedStatus ? true : false;
-    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus, page, b2b, bulk);
+    if (page > 1) {
+      this.getOrderStatusList(this.selectedStatus, page - 1);
+    }
   }
+
   next(page: number) {
-    page++;
-    const status = this.selectedStatus ? true : false;
-    const bulk = this.bulkSelectedStatus ? true : false;
-    const b2b = this.b2bSelectedStatus ? true : false;
-    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus, page, b2b, bulk);
+    if (!this.paginationOver) {
+      this.getOrderStatusList(this.selectedStatus, page + 1);
+    }
   }
-
-  setBtnGroup(group: any) {
-    this.selectedGroup = group;
+  
+  refreshOrderList() {
+    if (this.selectedTab === 'adminOrders') {
+      this.getBulkDailyOrderList();
+    } else if (this.selectedTab === 'bulkOrders') {
+      this.getb2bBulkOrderList();
+    }
   }
-
-  getPollingOrdersCount(): number {
-    const data = this.orderStatusCountObj?.dailyBulk;
-    if (!data) return 0;
-    return (data.placed || 0) + (data.accepted || 0) + (data.preparing || 0) + (data.cancelled || 0) + (data.completed || 0);
-  }
-
-  getPollingDeliveryCount(): number {
-    const data = this.orderStatusCountObj?.dailyBulk;
-    if (!data) return 0;
-    return (data.readyForDelivery || 0) + (data.deliveryBoyAssigned || 0) + (data.handedOverToDeliveryBoy || 0) + (data.onTheWay || 0) + (data.delivered || 0);
-  }
-
-  getB2BOrdersCount(): number {
-    const data = this.orderStatusCountObj?.b2bBulk;
-    if (!data) return 0;
-    return (data.waitingForApproval || 0) + (data.placed || 0) + (data.accepted || 0) + (data.preparing || 0) + (data.declined || 0) + (data.cancelled || 0) + (data.completed || 0);
-  }
-
-  getB2BDeliveryCount(): number {
-    const data = this.orderStatusCountObj?.b2bBulk;
-    if (!data) return 0;
-    return (data.readyForDelivery || 0) + (data.deliveryBoyAssigned || 0) + (data.handedOverToDeliveryBoy || 0) + (data.onTheWay || 0) + (data.delivered || 0);
-  }
-
-  getEmployeePollCount(): number {
-    const data = this.orderStatusCountObj?.empVote;
-    if (!data) return 0;
-    return (data.today || 0) + (data.tomorrow || 0) + (data.dayAfterTomorrow || 0);
-  }
-
 }

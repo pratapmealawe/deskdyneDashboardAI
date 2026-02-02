@@ -2,8 +2,8 @@ import { Component } from '@angular/core';
 import { AddUpdateConfigImagesGroupComponent } from './add-update-config-images-group/add-update-config-images-group.component';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from '../confirmation-modal/confirmation-modal.service';
-import { ToasterService } from '../toaster/toaster.service';
+import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-config-images-group',

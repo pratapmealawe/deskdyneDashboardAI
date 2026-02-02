@@ -13,6 +13,7 @@ import { MainLoaderComponent } from './main-loader/main-loader.component';
 import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
 import { HeaderComponent } from './header/header.component';
+import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +27,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ConfirmationModalComponent,
     ImageCropperComponent,
     HeaderComponent,
+    SessionTimeoutComponent,
   ],
   imports: [
     BrowserModule,

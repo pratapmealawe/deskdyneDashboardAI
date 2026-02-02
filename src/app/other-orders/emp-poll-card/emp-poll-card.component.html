@@ -1,285 +1,149 @@
-<div class="row" *ngIf="showless">
-    <div class="col-12 col-md-4 col-lg-3">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-6">
-                <div class="labelText">Meal Name</div>
-                <div class="labelData">{{orderInput.itemList[0].itemName}}</div>
+<div class="card shadow-sm border-0 rounded-3 h-100">
+    <div class="card-body p-3">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+            <div class="d-flex align-items-center gap-3">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge rounded-pill px-3 py-1 text-uppercase"
+                        style="background-color: #F3E5F5; color: #9C27B0; font-weight: 600; font-size: 0.7rem;">Employee
+                        Poll</span>
+                    <span class="badge bg-purple-subtle fw-normal rounded-pill px-2 py-1"
+                        style="font-size: 0.7rem; border: 1px solid rgba(156, 39, 176, 0.2);">{{order?.mealType}}</span>
+                </div>
+                <span class="text-muted small d-flex align-items-center">
+                    <i class="bi bi-calendar3 me-2"></i>
+                    {{(order?.deliveryDate) | date:'MMM d, y'}}
+                </span>
             </div>
-            <div class="col-6 col-md-5 col-lg-6">
-                <div class="labelText">POC Name</div>
-                <div class="labelData">{{orderInput.pocName}}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-3">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-6">
-                <div class="labelText">POC PhNo</div>
-                <div class="labelData">{{orderInput.pocPhoneNo}}</div>
-            </div>
-            <div class="col-6 col-md-5 col-lg-6">
-                <div class="labelText">POC Location</div>
-                <div class="labelData">{{orderInput.pocLocation}}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-6">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-3">
-                <div class="labelText">POC Role</div>
-                <div class="labelData">{{orderInput.pocRole}}</div>
-            </div>
-            <div class="col-6 col-md-5 col-lg-3">
-                <div class="labelText">Count</div>
-                <div class="labelData">{{orderInput.itemList[0].count}}</div>
-            </div>
-            <div class="col-6 col-md-5 col-lg-3">
-                <div class="labelText">Delivered Item</div>
-                <div class="labelData">{{orderInput.itemList[0].deliveredItem}}</div>
-            </div>
-            <div class="col-6 col-md-5 col-lg-3">
-                <div class="inline right view" (click)="viewOrder(orderInput)"><i class="bi bi-file-plus"></i></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-3">
-        <div class="row">
-            <div class="col-6 col-md-5 col-lg-6">
-                <div class="labelText">Organization Name</div>
-                <div class="labelData">{{orderInput.orgName}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-6">
-                <div class="labelText">Delivery Date</div>
-                <div class="labelData">{{orderInput.deliveryDate | date: 'MMM d, y'}}</div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-6">
-        <div class="row">
-            <div class="col-6 col-md-7 col-lg-3">
-                <div class="labelText">Delivery Time From</div>
-                <div class="labelData">{{orderInput.deliveryTimeFrom | date : 'shortTime'}}</div>
-            </div>
-            <div class="col-6 col-md-7 col-lg-3">
-                <div class="labelText">Delivery Time To</div>
-                <div class="labelData">{{orderInput.deliveryTimeTo | date : 'shortTime'}}</div>
-            </div>
-        </div>
-    </div>
-
-</div>
-
-<div class="bgpadding1" *ngIf="!showless">
-    <!-- <div class="right pointer less" (click)="showLess()">-</div> -->
-    <i class="bi bi-file-minus right pointer less" (click)="showLess()"></i>
-    <div class="right pointer me-1" (click)="toggleEditMode()">
-        <i class="bi bi-pencil-square" *ngIf="!editMode"></i>
-        <i class="bi bi bi-x" *ngIf="editMode"></i>
-    </div>
-    <div class="header3 bold">Order No. {{order.orderNo}} Information</div>
-    <div class="header3 order-sub-header" (click)="showOrderDetails = ! showOrderDetails">Order Details
-        <span class="right">
-            <i class="bi bi-chevron-down" *ngIf="!showOrderDetails"></i>
-            <i class="bi bi-chevron-up" *ngIf="showOrderDetails"></i>
-        </span>
-    </div>
-    <div class="row" *ngIf="showOrderDetails">
-        <div class="col-6 col-md-4 col-lg-2">
-            <div class="labelText">OrderNo</div>
-            <div class="labelData">{{order.orderNo}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-2">
-            <div class="labelText">Order Status</div>
-            <div class="labelData">
-                {{order.orderstatus}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-2">
-            <div class="labelText">Order Type</div>
-            <div class="labelData">{{order.orderType}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-2">
-            <div class="labelText">Order Date</div>
-            <div class="labelData">{{order.orderDate | date: 'MMM d, y'}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-2">
-            <div class="labelText">Delivery Date</div>
-            <div class="labelData">{{order.deliveryDate | date: 'MMM d, y'}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-2">
-            <div class="labelText">Delivery Slot</div>
-            <div class="labelData">{{orderInput.deliveryTimeFrom | date : 'shortTime' }}-{{orderInput.deliveryTimeTo |
-                date :
-                'shortTime' }}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Special Request</div>
-            <div class="labelData">{{order.specialRequest}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Delivery Cost</div>
-            <div class="labelData">&#8377; {{order.deliveryCharge}}</div>
-        </div>
-        <!-- <div class="col-6 col-md-4 col-lg-3">
-            <div *ngIf="!packagingPriceEdit">
-                <div class="labelText">Packaging Cost</div>
-                <div class="labelData">{{order.packagingCost}}</div>
-                <button class="btn btn-primary btn-sm" (click)="packagingPriceEdit = !packagingPriceEdit" *ngIf="editMode">Edit</button>
-            </div>
-            
-            <div *ngIf="packagingPriceEdit">
-                <input type="number" [(ngModel)]="order.packagingCost">
-                <div class="mt-1">
-                    <button class="btn btn-primary btn-sm me-2" (click)="confirmEditPackagingPrice()">Confirm</button>
-                    <button class="btn btn-danger btn-sm" (click)="cancelEditPackagingPrice()">Cancel</button>
+            <div class="d-flex align-items-center gap-3 text-secondary small">
+                <div class="d-flex align-items-center gap-1" title="Cutoff Time">
+                    <i class="bi bi-clock text-danger"></i>
+                    <span class="fw-medium">{{formatTime12Hour(order?.mealTypeList?.[0]?.cutOffTime)}}</span>
+                </div>
+                <div class="border-start ps-3 d-flex align-items-center gap-1" title="Delivery Cost">
+                    <i class="bi bi-truck text-dark"></i>
+                    <span class="fw-medium">₹{{totalDeliveryCharge || 0}}</span>
                 </div>
             </div>
-        </div> -->
-        <div class="col-6 col-md-4 col-lg-12">
-            <span class="bold labeltext">Items:</span>
-            <span class="labelData">
-                <div *ngFor="let item of order.itemList; index as i">
-                    {{item.itemName}} - QTY :
-                    {{item.count}}
-                    - Price: &#8377; {{order.amount}}
-                </div>
-            </span>
         </div>
-    </div>
-
-    <div class="header3 order-sub-header" (click)="showOrgDetails = !showOrgDetails">Organization Details
-        <span class="right">
-            <i class="bi bi-chevron-down" *ngIf="!showOrgDetails"></i>
-            <i class="bi bi-chevron-up" *ngIf="showOrgDetails"></i>
-        </span>
-    </div>
-    <div class="row" *ngIf="showOrgDetails">
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Org Name</div>
-            <div class="labelData">{{order.orgName}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Org City</div>
-            <div class="labelData">{{order.orgCity}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Org Location</div>
-            <div class="labelData">{{order.orgLocation}}</div>
-        </div>
-    </div>
-
-    <div class="header3 order-sub-header" (click)="showPOCDetails = !showPOCDetails">Customer Details
-        <span class="right">
-            <i class="bi bi-chevron-down" *ngIf="!showPOCDetails"></i>
-            <i class="bi bi-chevron-up" *ngIf="showPOCDetails"></i>
-        </span>
-    </div>
-    <div class="row" *ngIf="showPOCDetails">
-        <div class="col-6 col-md-4 col-lg-4">
-            <div class="labelText">Poc Name</div>
-            <div class="labelData">{{order.pocName}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-4">
-            <div class="labelText">Poc Phone</div>
-            <div class="labelData">{{order.pocPhoneNo}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-4">
-            <div class="labelText">Poc Email</div>
-            <div class="labelData">{{order.pocEmail}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-4">
-            <div class="labelText">POC Location</div>
-            <div class="labelData">Location: {{order.pocLocation}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-4">
-            <div class="labelText">POC Role</div>
-            <div class="labelData">Location: {{order.pocRole}}</div>
-        </div>
-        <!-- <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Approver Name</div>
-            <div class="labelData">{{order.approver_name}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Approver Phone</div>
-            <div class="labelData">{{order.approver_phoneNo}}</div>
-        </div>
-        <div class="col-6 col-md-4 col-lg-3">
-            <div class="labelText">Approver Email</div>
-            <div class="labelData">{{order.approver_email}}</div>
-        </div> -->
-        <!-- <div class="col-6 col-md-12 col-lg-12" *ngIf="order.customerLocation">
-            <span class="labelText">Customer Geolocation : </span>latitude- {{order.customerLocation.geolocation.lat}},
-            longitude- {{order.customerLocation.geolocation.lng}}
-        </div> -->
-    </div>
-    <div class="header3 order-sub-header" (click)="showPaymentDetails = ! showPaymentDetails">Payment Details
-        <span class="right">
-            <i class="bi bi-chevron-down" *ngIf="!showPaymentDetails"></i>
-            <i class="bi bi-chevron-up" *ngIf="showPaymentDetails"></i>
-        </span>
-    </div>
-    <div class="row" *ngIf="showPaymentDetails">
-        <div class="col-12 col-md-4 col-lg-6">
-            <div class="bgTopDownpadding2 mt-1">
-                <div class="bilingDiv">
-                    <div class="receiptText">
-                        <div size="12">Receipt:</div>
-                    </div>
-                    <div class="header5 receipt3 receipt-parent">
-                        <div class="left-div">Order Amount</div>
-                        <div class="right-div dark">&#8377;
-                            <span>{{order.amount}}</span>
+        <div class="row align-items-center gy-3">
+            <div class="col-12 col-md-4 col-lg-3">
+                <div class="d-flex flex-column gap-2 h-100 justify-content-center">
+                    <div *ngFor="let meal of order?.mealTypeList"
+                        class="item-row d-flex justify-content-between align-items-center p-2 rounded-2 bg-light">
+                        <div>
+                            <h6 class="fw-bold text-dark mb-1 item-title">{{meal?.deliveredItem || 'N/A'}}</h6>
+                            <div class="d-flex align-items-center gap-2 mt-1">
+                                <span class="badge bg-blue-subtle fw-normal rounded-pill px-2 py-1"
+                                    style="font-size: 0.7rem; border: 1px solid rgba(25, 118, 210, 0.2);">{{meal?.itemName}}</span>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div class="fw-bold text-dark item-price">₹{{meal?.mealPrice * meal?.count}}</div>
+                            <div class="text-muted extra-small-text">Qty: {{meal?.count}}</div>
                         </div>
                     </div>
-                    <div class="header5 receipt-parent">
-                        <div class="left-div">Taxes</div>
-                        <div class="right-div">&#8377; {{order.taxes}}</div>
+                    <div *ngIf="!order?.mealTypeList?.length" class="text-muted small fst-italic">No items found</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 col-lg-3 border-start-md border-end-md">
+                <div class="d-flex align-items-center gap-3 h-100">
+                    <div class="d-flex align-items-center justify-content-center rounded-3 flex-shrink-0"
+                        style="width: 40px; height: 40px; background-color: #E3F2FD; color: #1976D2;">
+                        <i class="bi bi-shop fs-5"></i>
                     </div>
-
-                    <!-- <div class="header5 receipt-parent">
-                        <div class="left-div">Discount</div>
-                        <div class="right-div">(-)&#8377; {{order.discount}}</div>
+                    <div class="overflow-hidden">
+                        <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.9rem;">
+                            {{order?.orgName || 'N/A'}}
+                            <span class="text-muted fw-normal ms-1">| {{order?.cafeteriaName|| 'N/A'}}</span>
+                        </h6>
+                        <div class="text-muted small text-truncate mt-1">
+                            <i class="bi bi-geo-alt-fill me-1 text-secondary" style="font-size: 0.7rem;"></i>
+                            {{order?.customerLocation?.address || order?.orgCity || 'N/A'}}
+                        </div>
                     </div>
-
-                    <div class="header5 receipt-parent">
-                        <div class="left-div">Voucher Discount</div>
-                        <div class="right-div">(-)&#8377; {{order.voucherDiscount}}</div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4 col-lg-3 border-end-md">
+                <div class="d-flex align-items-center gap-3 h-100">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center bg-secondary bg-opacity-10 text-secondary flex-shrink-0"
+                        style="width: 36px; height: 36px;">
+                        <i class="bi bi-person fs-5"></i>
                     </div>
-
-                    <div class="header5 receipt-parent">
-                        <div class="left-div">Packaging Cost By User</div>
-                        <div class="right-div">&#8377; {{order.packagingCostByUser}}</div>
-                    </div> -->
-
-                    <div class="header5 receipt-parent discount">
-                        <div class="left-div">Total</div>
-                        <div class="right-div bold">
-                            &#8377;{{order.amount}}</div>
+                    <div class="overflow-hidden">
+                        <div class="fw-bold text-dark text-truncate" style="font-size: 0.9rem;">
+                            {{order?.pocDetails?.pocName}}
+                            <span class="text-muted fw-normal small">({{order?.pocDetails?.pocRole || 'poc'}})</span>
+                        </div>
+                        <div class="text-primary small text-truncate mt-1" style="font-size: 0.8rem;">
+                            <i class="bi bi-telephone-fill me-1"></i> {{order?.pocDetails?.pocPhoneNo}}
+                        </div>
+                        <div class="text-primary small text-truncate mt-1" style="font-size: 0.8rem;">
+                            <i class="bi bi-envelope-fill me-1"></i> {{order?.pocDetails?.pocEmail}}
+                        </div>
                     </div>
+                </div>
+            </div>
+            <div class="col-12 col-lg-3 text-lg-end mt-3 mt-lg-0">
+                <div class="d-flex gap-2 justify-content-md-end justify-content-start align-items-center">
+                    <button mat-flat-button color="primary" (click)="openModal(employeeListModal)">
+                        Employees ({{orderInput?.employeeList?.length || 0}})
+                    </button>
+                    <!-- *ngIf="order?.pollStatus === 'active'" -->
+                    <ng-container>
+                        <button mat-flat-button color="primary" (click)="createOrder()" *ngIf="showCreateBtn">
+                            Create
+                        </button>
+                        <span matTooltip="Order will be created after cutoff time" *ngIf="!showCreateBtn"
+                            class="d-inline-block" tabindex="0">
+                            <button mat-stroked-button color="primary" disabled style="pointer-events: none;">
+                                Create
+                            </button>
+                        </span>
+                    </ng-container>
+                    <button mat-stroked-button color="warn" disabled *ngIf="order?.pollStatus === 'inactive'">
+                        Poll Closed
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    <button class="btn btn-primary btn-sm" (click)="openshowEmployeeList()" >Employee List</button>
-    <span class="bgTopDownpadding1" *ngIf="editMode">
-        <span class="me-2">
-            <button class="btn btn-primary btn-sm ms-2" (click)="createOrder()" *ngIf="showCreateBtn">Create Order</button>
-        </span>
-    </span>
 </div>
-<ng-template #showEmployeeList let-modal>
-    <div class="modal-header">
-        <h4 class="modal-title" id="modal-basic-title">Employee List</h4>
-        <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-            <span aria-hidden="true">&times;</span>
-        </button>
+
+<ng-template #employeeListModal let-modal>
+    <div class="modal-header border-0 p-4 d-flex justify-content-between align-items-center">
+        <h6 class="modal-title fw-bold text-secondary small text-uppercase mb-0">EMPLOYEES
+            ({{orderInput?.employeeList?.length || 0}})
+        </h6>
+        <i class="bi bi-x-lg text-secondary cursor-pointer" (click)="modal.dismiss('Cross click')"></i>
     </div>
-    <div class="modal-body">
-        <ul *ngFor="let emp of order.excelReportlist">
-            <li *ngIf="emp.employeeVote=='YES'">{{emp.employeeName}}</li>
-        </ul>
+    <div class="modal-body bg-light p-4">
+        <div class="d-flex flex-column gap-3">
+            <div *ngFor="let emp of orderInput?.employeeList" class="bg-white p-3 rounded-3 border-0 shadow-sm">
+                <div class="d-flex gap-3 align-items-center">
+                    <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold flex-shrink-0 text-white"
+                        style="width: 45px; height: 45px; background: linear-gradient(135deg, #FF9800, #F57C00); font-size: 1.2rem;">
+                        {{emp?.employeeName?.charAt(0) || 'U'}}
+                    </div>
+                    <div class="flex-grow-1 overflow-hidden">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <div class="fw-bold text-dark text-truncate" style="font-size: 1rem;">{{emp?.employeeName ||
+                                'N/A'}}</div>
+                            <span
+                                class="badge bg-success-subtle fw-bold rounded-pill border border-success border-opacity-25">
+                                {{emp?.deliveredItem}}
+                            </span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="text-muted text-truncate gap-2 d-flex align-items-center"
+                                style="font-size: 0.85rem;">
+                                <span><i class="bi bi-envelope me-1"></i>{{emp?.employeeEmail || 'N/A'}}</span>
+                                <span class="text-muted opacity-50">|</span>
+                                <span><i class="bi bi-telephone me-1"></i>{{emp?.employeePhoneNo || 'N/A'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </ng-template>

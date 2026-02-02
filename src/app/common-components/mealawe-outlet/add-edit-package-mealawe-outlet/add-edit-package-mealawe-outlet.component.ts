@@ -128,7 +128,7 @@ export class AddEditPackageMealaweOutletComponent implements OnInit {
         return;
       }
       const { _id: org_id, organization_name } = orgObj;
-      const { _id: cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = selectedCafeteria;
+      const { cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = selectedCafeteria;
       const { itemList } = this.packageForm.getRawValue();
       const mergedMeals = itemList.map((item: any) => {
         const originalMeal = this.meals.find(m => m._id === item.masterMenuId);

@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';

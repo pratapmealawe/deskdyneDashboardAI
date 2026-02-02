@@ -1,833 +1,418 @@
-<!-- COLLAPSED / SUMMARY VIEW -->
-<div class="daily-card mb-2" *ngIf="showless">
+<div class="daily-card mb-2" *ngIf="showless" (click)="showless= !showless">
   <div class="row align-items-center">
-    <!-- Order basic info -->
-    <div class="col-12 col-md-4 col-lg-3 mb-2 mb-md-0">
-      <div class="row">
-        <div class="col-6 col-md-5 col-lg-6 mb-2">
-          <div class="labelText">Order No.</div>
-          <div class="labelData">{{ orderInput?.orderNo }}</div>
+    <div class="col-lg-2 col-md-3 d-flex flex-column border-sep">
+      <div class="labelText mb-1">ORDER NO.</div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="labelData">#{{ orderInput?.orderNo }}</span>
+        <span class="status-badge" [ngClass]="getStatusClass(orderInput?.orderstatus)">
+          {{ getStatusLabel(orderInput?.orderstatus) | uppercase }}
+        </span>
+      </div>
+    </div>
+    <div class="col-lg-2 col-md-2 d-flex flex-column border-sep">
+      <div class="labelText mb-1">TYPE</div>
+      <div class="labelData d-flex align-items-center gap-1">
+        <i class="bi bi-box-seam text-secondary"></i>
+        <span> Daily Bulk</span>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
+      <div class="labelText mb-1">TIMELINE</div>
+      <div class="d-flex flex-column">
+        <div class="small-text text-secondary mb-1">
+          Ordered: <span class="text-dark fw-medium">{{ orderInput?.orderDate | date: 'MMM d, y' }}</span>
         </div>
-        <div class="col-6 col-md-5 col-lg-6 mb-2">
-          <div class="labelText">Order Date</div>
-          <div class="labelData">
-            {{ orderInput?.orderDate | date: 'MMM d, y' }}
-          </div>
+        <div class="small-text text-secondary">
+          Delivery: <span class="text-dark fw-medium">{{ orderInput?.deliveryDate | date: 'MMM d' }} • {{
+            formatTime12Hour(orderInput?.itemList?.[0]?.deliveryTimeFrom) }}</span>
         </div>
       </div>
     </div>
-
-    <!-- POC info -->
-    <div class="col-12 col-md-5 col-lg-5 mb-2 mb-md-0">
-      <div class="row">
-        <div class="col-6 col-md-6 col-lg-3 mb-2">
-          <div class="labelText">POC Name</div>
-          <div class="labelData text-truncate">{{ orderInput?.pocName }}</div>
+    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
+      <div class="labelText mb-1">CUSTOMER POC</div>
+      <div class="d-flex align-items-center gap-2">
+        <div class="avatar-circle-sm bg-primary-subtle text-primary fw-bold"
+          style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+          {{ orderInput?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() }}
         </div>
-        <div class="col-6 col-md-6 col-lg-3 mb-2">
-          <div class="labelText">POC Phone</div>
-          <div class="labelData">{{ orderInput?.pocPhoneNo }}</div>
-        </div>
-        <div class="col-6 col-md-6 col-lg-3 mb-2">
-          <div class="labelText">POC Location</div>
-          <div class="labelData text-truncate">
-            {{ orderInput?.pocLocation }}
-          </div>
-        </div>
-        <div class="col-6 col-md-6 col-lg-3 mb-2">
-          <div class="labelText">POC Role</div>
-          <div class="labelData text-truncate">{{ orderInput?.pocRole }}</div>
+        <div class="d-flex flex-column">
+          <span class="labelData text-truncate text-truncate-120">{{ orderInput?.pocDetails?.pocName }}</span>
+          <span class="small-text text-secondary text-truncate text-truncate-120">{{
+            orderInput?.pocDetails?.pocLocation }}</span>
         </div>
       </div>
     </div>
-
-    <!-- Status + type -->
-    <div class="col-12 col-md-3 col-lg-3 mb-2 mb-md-0">
-      <div class="row">
-        <div class="col-6 col-md-6 mb-2">
-          <div class="labelText">Status</div>
-          <div class="labelData">
-            <span class="status-badge" [ngClass]="getStatusClass(orderInput?.orderstatus)">
-              {{ orderInput?.orderstatus }}
-            </span>
-          </div>
-        </div>
-        <div class="col-6 col-md-6 mb-2">
-          <div class="labelText">Order Type</div>
-          <div class="labelData">{{ orderInput?.orderType }}</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- View icon -->
-    <div class="col-12 col-md-12 col-lg-1 d-flex justify-content-end">
-      <div
-        class="inline view"
-        *ngIf="orderInput?._id"
-        (click)="viewOrder(orderInput)"
-      >
-        <i class="bi bi-file-plus"></i>
-      </div>
-    </div>
-  </div>
-
-  <!-- Quick highlights row -->
-  <div class="row mt-2">
-    <div class="col-12 col-md-4 col-lg-3 mb-2">
-      <div class="row">
-        <div class="col-6 col-md-6">
-          <div class="labelText">Item Name</div>
-          <div class="labelData text-truncate">
-            {{ orderInput?.itemList?.[0]?.itemName }}
-          </div>
-        </div>
-        <div class="col-6 col-md-6">
-          <div class="labelText">Item Count</div>
-          <div class="labelData">
-            {{ orderInput?.itemList?.[0]?.count }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-3 mb-2">
-      <div class="row">
-        <div class="col-6 col-md-6">
-          <div class="labelText">Delivered</div>
-          <div class="labelData">
-            {{ orderInput?.itemList?.[0]?.deliveredItem }}
-          </div>
-        </div>
-        <div class="col-6 col-md-6">
-          <div class="labelText">Org Name</div>
-          <div class="labelData text-truncate">{{ orderInput?.orgName }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-4 col-lg-3 mb-2">
-      <div class="row">
-        <div class="col-6 col-md-6">
-          <div class="labelText">Org Location</div>
-          <div class="labelData text-truncate">
-            {{ orderInput?.orgLocation }}
-          </div>
-        </div>
-        <div class="col-6 col-md-6">
-          <div class="labelText">Delivery Date</div>
-          <div class="labelData">
-            {{ orderInput?.deliveryDate | date: 'MMM d, y' }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-6 col-lg-3 mb-2">
-      <div class="labelText">Delivery Slot</div>
-      <div class="labelData">
-        {{ orderInput?.itemList?.[0]?.deliveryTimeFrom | date: 'shortTime' }}
-        -
-        {{ orderInput?.itemList?.[0]?.deliveryTimeTo | date: 'shortTime' }}
-      </div>
-    </div>
-
-    <!-- Delivery status quick chips -->
-    <div class="col-12 col-md-6 col-lg-3 mb-2" *ngIf="orderInput?.deliveryTaskState || orderInput?.deliveryVendor">
-      <div class="row">
-        <div class="col-6" *ngIf="orderInput?.deliveryTaskState">
-          <div class="labelText bold">Delivery State</div>
-          <div class="labelData">
-            <span class="chip chip-delivery">
-              {{ orderInput?.deliveryTaskState }}
-            </span>
-          </div>
-        </div>
-        <div class="col-6" *ngIf="orderInput?.deliveryVendor">
-          <div class="labelText">Partner</div>
-          <div class="labelData">{{ orderInput?.deliveryVendor }}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-6 col-lg-3 mb-2" *ngIf="orderInput?.pickupEta || orderInput?.dropoffEta || orderInput?.runnerName">
-      <div class="row">
-        <div class="col-4" *ngIf="orderInput?.pickupEta">
-          <div class="labelText bold">Pickup ETA</div>
-          <div class="labelData">{{ orderInput?.pickupEta }} mins</div>
-        </div>
-        <div class="col-4" *ngIf="orderInput?.dropoffEta">
-          <div class="labelText bold">Dropoff ETA</div>
-          <div class="labelData">{{ orderInput?.dropoffEta }} mins</div>
-        </div>
-        <div class="col-4" *ngIf="orderInput?.runnerName">
-          <div class="labelText bold">Runner</div>
-          <div class="labelData text-truncate">
-            {{ orderInput?.runnerName }}
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col-12 col-md-6 col-lg-3 mb-2" *ngIf="orderInput?.runnerPhone || orderInput?.deliveryTaskId || orderInput?.sfx_order_id">
-      <div class="row">
-        <div class="col-6" *ngIf="orderInput?.runnerPhone">
-          <div class="labelText bold">Runner Phone</div>
-          <div class="labelData">{{ orderInput?.runnerPhone }}</div>
-        </div>
-        <div class="col-6" *ngIf="orderInput?.deliveryTaskId">
-          <div class="labelText">Delivery Task ID</div>
-          <div class="labelData text-truncate">
-            {{ orderInput?.deliveryTaskId }}
-          </div>
-        </div>
-        <div class="col-12 mt-2" *ngIf="orderInput?.sfx_order_id">
-          <div class="labelText">ShadowFax ID</div>
-          <div class="labelData text-truncate">
-            {{ orderInput?.sfx_order_id }}
-          </div>
-        </div>
+    <div class="col-lg-2 col-md-1 d-flex flex-column align-items-end ms-auto">
+      <div class="labelText mb-1">TOTAL</div>
+      <div class="d-flex align-items-center gap-3">
+        <span class="fw-bold fs-6">₹ {{ (orderInput?.amount || 0) | number : '1.2-2' }}</span>
+        <button class="btn btn-sm btn-light rounded-circle p-1" style="width: 28px; height: 28px;">
+          <i class="bi bi-chevron-down"></i>
+        </button>
       </div>
     </div>
   </div>
 </div>
-
-<!-- EXPANDED / DETAIL VIEW -->
-<div class="bgpadding1 daily-card--expanded" *ngIf="!showless">
-  <div class="expanded-header d-flex justify-content-between align-items-center mb-2">
-    <div>
-      <div class="header3 bold mb-1">Order No. {{ order?.orderNo }} Information</div>
-      <span class="status-badge" [ngClass]="getStatusClass(order?.orderstatus)">
-        {{ order?.orderstatus }}
-      </span>
-      <span class="tag ms-2" *ngIf="order?.orderType">{{ order?.orderType }}</span>
-    </div>
-
-    <div class="d-flex align-items-center">
-      <div class="right pointer me-2" (click)="toggleEditMode()">
-        <i class="bi bi-pencil-square" *ngIf="!editMode"></i>
-        <i class="bi bi-x" *ngIf="editMode"></i>
-      </div>
-      <i class="bi bi-file-minus right pointer less" (click)="showLess()"></i>
-    </div>
-  </div>
-
-  <!-- ORDER DETAILS -->
-  <div class="header3 order-sub-header" (click)="toggleSection('order')">
-    Order Details
-    <span class="right">
-      <i class="bi bi-chevron-down" *ngIf="!showOrderDetails"></i>
-      <i class="bi bi-chevron-up" *ngIf="showOrderDetails"></i>
-    </span>
-  </div>
-
-  <div class="row" *ngIf="showOrderDetails">
-    <div class="col-6 col-md-4 col-lg-2">
-      <div class="labelText">Order No.</div>
-      <div class="labelData">{{ order?.orderNo }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2">
-      <div class="labelText">Order Status</div>
-      <div class="labelData">
+<div class="daily-card daily-card--expanded mb-2" *ngIf="!showless">
+  <div class="row align-items-center mb-4 pb-3 border-bottom expanded-header">
+    <div class="col-lg-2 col-md-3 d-flex flex-column border-sep">
+      <div class="labelText mb-1">ORDER NO.</div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="labelData">#{{ order?.orderNo }}</span>
         <span class="status-badge" [ngClass]="getStatusClass(order?.orderstatus)">
-          {{ order?.orderstatus }}
+          {{ getStatusLabel(order?.orderstatus) }}
         </span>
       </div>
     </div>
-    <div class="col-6 col-md-4 col-lg-2">
-      <div class="labelText">Order Type</div>
-      <div class="labelData">{{ order?.orderType }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2">
-      <div class="labelText">Order Date</div>
-      <div class="labelData">{{ order?.orderDate | date: 'MMM d, y' }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2">
-      <div class="labelText">Delivery Date</div>
-      <div class="labelData">{{ order?.deliveryDate | date: 'MMM d, y' }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-2">
-      <div class="labelText">Delivery Slot</div>
-      <div class="labelData">
-        {{ order?.itemList?.[0]?.deliveryTimeFrom | date: 'shortTime' }} -
-        {{ order?.itemList?.[0]?.deliveryTimeTo | date: 'shortTime' }}
+    <div class="col-lg-2 col-md-2 d-flex flex-column border-sep">
+      <div class="labelText mb-1">TYPE</div>
+      <div class="labelData d-flex align-items-center gap-1">
+        <i class="bi bi-box-seam text-secondary"></i>
+        <span>Daily Bulk</span>
       </div>
     </div>
-
-    <div class="col-12 col-md-6 col-lg-3">
-      <div class="labelText">Special Request</div>
-      <div class="labelData">{{ order?.specialRequest || '—' }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Delivery Cost</div>
-      <div class="labelData">{{ order?.deliveryCharge || 0 }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Delivered Items</div>
-      <div class="labelData">{{ order?.itemList?.[0]?.deliveredItem }}</div>
-    </div>
-
-    <!-- Delivery amount paid by Mealawe -->
-    <div class="col-12 col-md-6 col-lg-3">
-      <div *ngIf="!addDeliveryCost">
-        <div class="labelText" *ngIf="order?.deliveryAmtPaidByMealawe">
-          Delivery Cost by Mealawe
+    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
+      <div class="labelText mb-1">TIMELINE</div>
+      <div class="d-flex flex-column">
+        <div class="small-text text-secondary mb-1">
+          Ordered: <span class="text-dark fw-medium">{{ order?.orderDate | date: 'MMM d, y' }}</span>
         </div>
-        <div class="labelData" *ngIf="order?.deliveryAmtPaidByMealawe">
-          {{ order?.deliveryAmtPaidByMealawe }}
+        <div class="small-text text-secondary">
+          Delivery: <span class="text-dark fw-medium">{{ order?.deliveryDate | date: 'MMM d' }} • {{
+            formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }}</span>
         </div>
-
-        <button
-          class="btn btn-primary btn-sm mt-1"
-          *ngIf="editMode"
-          (click)="addDeliveryCost = true"
-        >
-          {{ order?.deliveryAmtPaidByMealawe ? 'Edit Delivery Cost by Mealawe' : 'Add Delivery Cost by Mealawe' }}
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
+      <div class="labelText mb-1">CUSTOMER POC</div>
+      <div class="d-flex align-items-center gap-2">
+        <div class="avatar-circle-sm bg-primary-subtle text-primary fw-bold"
+          style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
+          {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() }}
+        </div>
+        <div class="d-flex flex-column">
+          <span class="labelData text-truncate text-truncate-120">{{ order?.pocDetails?.pocName }}</span>
+          <span class="small-text text-secondary text-truncate text-truncate-120">{{
+            order?.pocDetails?.pocLocation }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-2 col-md-1 d-flex flex-column align-items-end ms-auto">
+      <div class="labelText mb-1">TOTAL</div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="fw-bold fs-6">₹ {{ (order?.amount || 0) | number : '1.2-2' }}</span>
+        <button class="btn btn-sm btn-light rounded-circle p-1" style="width: 28px; height: 28px;"
+          (click)="showless= !showless" title="Collapse">
+          <i class="bi bi-chevron-up"></i>
         </button>
       </div>
-
-      <div *ngIf="addDeliveryCost">
-        <input
-          type="number"
-          class="form-control form-control-sm"
-          [(ngModel)]="order.deliveryAmtPaidByMealawe"
-        />
-        <div class="mt-2 d-flex gap-2">
-          <button class="btn btn-primary btn-sm me-2" (click)="confirmDeliveryCost()">
-            Confirm
-          </button>
-          <button class="btn btn-outline-secondary btn-sm" (click)="cancelDeliveryCost()">
-            Cancel
-          </button>
+    </div>
+  </div>
+  <div class="row g-3 mb-4">
+    <div class="col-lg-4 col-md-12">
+      <div class="h-100 p-3 border rounded bg-white info-block d-flex flex-column justify-content-between">
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-utensils text-primary" style="font-size: 14px;"></i>
+            <span class="fw-bold small text-primary order-items-header text-uppercase">ORDER ITEMS</span>
+          </div>
+          <div class="d-flex align-items-center justify-content-between mb-3" *ngFor="let item of order?.itemList">
+            <div class="d-flex align-items-center gap-3">
+              <div class="d-flex flex-column">
+                <span class="fw-bold text-dark fs-14">
+                  {{ item?.deliveredItem }}
+                  <span class="small text-muted fs-11">({{item?.mealType}})/</span>
+                  <span class="small text-muted fs-11">({{item?.itemName}})</span>
+                </span>
+                <span class="small text-muted fs-11">&#64; ₹ {{ (item?.mealPrice || 0) | number : '1.2-2' }}/unit *{{item?.count}}</span>
+              </div>
+            </div>
+            <div class="fw-bold text-dark">₹ {{ ((item?.mealPrice || 0) * item?.count) | number : '1.2-2' }}</div>
+          </div>
+        </div>
+        <div class="rounded p-2 mt-3 d-flex align-items-start gap-2 note-container" *ngIf="order?.specialRequest">
+          <i class="bi bi-megaphone-fill mt-1 note-icon"></i>
+          <span class="small note-text">
+            <strong class="note-label">Note:</strong> {{ order?.specialRequest }}
+          </span>
         </div>
       </div>
     </div>
-
-    <!-- Items & item amount -->
-    <div class="col-12 mt-2">
-      <div class="labelText bold">Items</div>
-      <div class="labelData">
-        <div *ngFor="let item of order?.itemList; index as i">
-          {{ item?.itemName }} - QTY: {{ item?.count }} - Price: &#8377;
-          {{ order?.amount }}
+    <div class="col-lg-4 col-md-12">
+      <div class="h-100 p-3 border rounded bg-white info-block">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-folder2-open text-secondary"></i>
+          <span class="small fw-bold text-secondary text-uppercase section-uppercase">PAYMENT DETAILS</span>
         </div>
-      </div>
-
-      <div class="row mt-2 align-items-center">
-        <div class="col-sm-12 col-md-4 col-lg-3 labelText">
-          Amount Paid to Kitchen: &#8377; {{ order?.itemAmount }}
+        <div class="d-flex justify-content-between mb-2">
+          <span class="small text-muted">Subtotal</span>
+          <!-- {{order | json}} -->
+          <span class="fw-bold">₹ {{ (order?.orderAmount || 0) | number : '1.2-2' }}</span>
         </div>
-
-        <div class="col-sm-12 col-md-4 col-lg-3 labelText" *ngIf="itemPriceEdit">
-          <input
-            type="number"
-            class="form-control form-control-sm"
-            [(ngModel)]="order.itemAmount"
-          />
+        <div class="d-flex justify-content-between mb-2">
+          <span class="small text-muted">Delivery Cost</span>
+          <span class="fw-bold">₹ {{ (order?.deliveryCharge || 0) | number : '1.2-2' }}</span>
         </div>
-
+        <div class="d-flex justify-content-between mb-3">
+          <span class="small text-muted">Tax</span>
+          <span class="fw-bold">₹ {{ (order?.taxes || 0 )| number : '1.2-2' }}</span>
+        </div>
+        <div class="d-flex justify-content-between pt-2 border-top mb-3">
+          <span class="fw-bold">Total Amount</span>
+          <span class="fw-bold text-primary fs-5">₹ {{ order?.amount | number : '1.2-2' }}</span>
+        </div>
         <div
-          class="col-sm-12 col-md-4 col-lg-3 labelText"
-          *ngIf="!order?.amtAfterCommisionPaidToKitchen && editMode"
-        >
-          <button
-            *ngIf="!itemPriceEdit"
-            class="btn btn-primary btn-sm"
-            (click)="editItemPrice()"
-          >
-            Edit Price
-          </button>
-          <div *ngIf="itemPriceEdit" class="mt-1">
-            <button class="btn btn-primary btn-sm me-2" (click)="confirmEditItemPrice()">
-              Confirm
-            </button>
-            <button class="btn btn-outline-secondary btn-sm" (click)="cancelEditItemPrice()">
-              Cancel
-            </button>
-          </div>
+          class="bg-success-subtle text-success p-2 rounded d-flex justify-content-between align-items-center small fw-bold">
+          <span>Paid to Kitchen</span>
+          <span>₹ {{ (order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0) | number : '1.2-2' }}</span>
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- ORGANIZATION DETAILS -->
-  <div class="header3 order-sub-header" (click)="toggleSection('org')">
-    Organization Details
-    <span class="right">
-      <i class="bi bi-chevron-down" *ngIf="!showOrgDetails"></i>
-      <i class="bi bi-chevron-up" *ngIf="showOrgDetails"></i>
-    </span>
-  </div>
-  <div class="row" *ngIf="showOrgDetails">
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Org Name</div>
-      <div class="labelData">{{ order?.orgName }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Org City</div>
-      <div class="labelData">{{ order?.orgCity }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Org Location</div>
-      <div class="labelData">{{ order?.orgLocation }}</div>
-    </div>
-  </div>
-
-  <!-- KITCHEN DETAILS -->
-  <div class="header3 order-sub-header" (click)="toggleSection('kitchen')">
-    Vendor Kitchen Details
-    <span class="right">
-      <i class="bi bi-chevron-down" *ngIf="!showKitchenDetails"></i>
-      <i class="bi bi-chevron-up" *ngIf="showKitchenDetails"></i>
-    </span>
-  </div>
-  <div class="row" *ngIf="showKitchenDetails">
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Vendor Firm Name</div>
-      <div class="labelData">{{ order?.vendorFirmName }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Vendor Name</div>
-      <div class="labelData">{{ order?.vendorName }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3">
-      <div class="labelText">Vendor Phone No.</div>
-      <div class="labelData">{{ order?.vendorPhoneNo }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3" *ngIf="order?.amtAfterCommisionPaidToKitchen">
-      <div class="labelText">Amount Paid to Kitchen</div>
-      <div class="labelData">&#8377; {{ order?.amtAfterCommisionPaidToKitchen }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-3" *ngIf="order?.kitchenDiscount">
-      <div class="labelText">Kitchen Discount</div>
-      <div class="labelData">&#8377; {{ order?.kitchenDiscount }}</div>
-    </div>
-  </div>
-
-  <!-- CUSTOMER DETAILS -->
-  <div class="header3 order-sub-header" (click)="toggleSection('poc')">
-    Customer Details
-    <span class="right">
-      <i class="bi bi-chevron-down" *ngIf="!showPOCDetails"></i>
-      <i class="bi bi-chevron-up" *ngIf="showPOCDetails"></i>
-    </span>
-  </div>
-  <div class="row" *ngIf="showPOCDetails">
-    <div class="col-6 col-md-4 col-lg-4">
-      <div class="labelText">POC Name</div>
-      <div class="labelData">{{ order?.pocName }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-4">
-      <div class="labelText">POC Phone</div>
-      <div class="labelData">{{ order?.pocPhoneNo }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-4">
-      <div class="labelText">POC Email</div>
-      <div class="labelData text-truncate">{{ order?.pocEmail }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-4">
-      <div class="labelText">POC Location</div>
-      <div class="labelData">{{ order?.pocLocation }}</div>
-    </div>
-    <div class="col-6 col-md-4 col-lg-4">
-      <div class="labelText">POC Role</div>
-      <div class="labelData">{{ order?.pocRole }}</div>
-    </div>
-  </div>
-
-  <!-- DELIVERY DETAILS -->
-  <div class="header3 order-sub-header" (click)="toggleSection('delivery')">
-    Delivery Details
-    <span class="right">
-      <i class="bi bi-chevron-down" *ngIf="!showDeliveryDetails"></i>
-      <i class="bi bi-chevron-up" *ngIf="showDeliveryDetails"></i>
-    </span>
-  </div>
-  <div class="row" *ngIf="showDeliveryDetails">
-    <div class="col-sm-12 col-md-4 col-lg-3">
-      <div class="labelText">Manual Delivery</div>
-      <div class="labelData">{{ order?.startManualDelivery ? 'Yes' : 'No' }}</div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-4" *ngIf="order?.deliveryVendor">
-      <div class="labelText">Delivery Vendor</div>
-      <div class="labelData">{{ order?.deliveryVendor }}</div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-4" *ngIf="order?.deliveryTaskId">
-      <div class="labelText">Delivery Task ID</div>
-      <div class="labelData text-truncate">{{ order?.deliveryTaskId }}</div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-4" *ngIf="order?.sfx_order_id">
-      <div class="labelText">ShadowFax ID</div>
-      <div class="labelData text-truncate">{{ order?.sfx_order_id }}</div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order?.deliveryTaskState">
-      <div class="labelText">Delivery Task State</div>
-      <div class="labelData">
-        <span class="chip chip-delivery">{{ order?.deliveryTaskState }}</span>
-      </div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order?.pickupEta">
-      <div class="labelText">Pickup ETA</div>
-      <div class="labelData">{{ order?.pickupEta }} mins</div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order?.dropoffEta">
-      <div class="labelText">Dropoff ETA</div>
-      <div class="labelData">{{ order?.dropoffEta }} mins</div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order?.runnerName">
-      <div class="labelText">Runner Name</div>
-      <div class="labelData text-truncate">{{ order?.runnerName }}</div>
-    </div>
-    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order?.runnerPhone">
-      <div class="labelText">Runner Phone</div>
-      <div class="labelData">{{ order?.runnerPhone }}</div>
-    </div>
-  </div>
-
-  <!-- PAYMENT DETAILS -->
-  <div class="header3 order-sub-header" (click)="toggleSection('payment')">
-    Payment Details
-    <span class="right">
-      <i class="bi bi-chevron-down" *ngIf="!showPaymentDetails"></i>
-      <i class="bi bi-chevron-up" *ngIf="showPaymentDetails"></i>
-    </span>
-  </div>
-  <div class="row" *ngIf="showPaymentDetails">
-    <div class="col-12 col-md-6 col-lg-6">
-      <div class="bgTopDownpadding2 mt-1">
-        <div class="bilingDiv">
-          <div class="receiptText">
-            <div>Receipt</div>
-          </div>
-          <div class="header5 receipt3 receipt-parent">
-            <div class="left-div">Order Amount</div>
-            <div class="right-div dark">
-              &#8377; <span>{{ order?.amount }}</span>
+    <div class="col-lg-4 col-md-12">
+      <div class="row gap-2">
+        <div class="col-lg-12">
+          <div class="h-100 p-3 border rounded bg-white info-block">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-building text-secondary"></i>
+              <span class="small fw-bold text-secondary text-uppercase section-uppercase">ORGANIZATION</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small text-muted">Name</span>
+              <span class="small fw-bold text-dark text-truncate" title="{{ order?.orgName }}">
+                {{order.cafeteriaName}} ({{ order?.orgName}})
+              </span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small text-muted">City</span>
+              <span class="small fw-bold text-dark">{{ order?.customerLocation?.address || order?.orgCity }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="small text-muted">Location</span>
+              <span class="small fw-bold text-dark text-end text-truncate text-truncate-60p"
+                title="{{ order?.customerLocation?.location }}">{{ order?.customerLocation?.location }}</span>
             </div>
           </div>
-          <div class="header5 receipt-parent">
-            <div class="left-div">Taxes</div>
-            <div class="right-div">&#8377; {{ order?.taxes }}</div>
-          </div>
-          <div class="header5 receipt-parent discount">
-            <div class="left-div">Total</div>
-            <div class="right-div bold">
-              &#8377; {{ order?.amount }}
+        </div>
+        <div class="col-lg-12">
+          <div class="h-100 p-3 border rounded bg-white info-block">
+            <div class="d-flex align-items-center gap-2 mb-3">
+              <i class="bi bi-shop text-secondary"></i>
+              <span class="small fw-bold text-secondary text-uppercase section-uppercase">VENDOR</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small text-muted">Firm</span>
+              <span class="small fw-bold text-dark text-truncate" title="{{ order?.vendorFirmName }}">{{
+                order?.vendorFirmName
+                }}</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="small text-muted">Name</span>
+              <span class="small fw-bold text-dark text-truncate" title="{{ order?.vendorName }}">{{ order?.vendorName
+                }}</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="small text-muted">Phone</span>
+              <span class="small fw-bold text-dark">{{ order?.vendorPhoneNo }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+  <div class="row g-3 mb-4">
+    <div class="col-lg-3 col-md-6">
+      <div class="h-100 p-3 border rounded bg-white info-block">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-person text-secondary"></i>
+          <span class="small fw-bold text-secondary text-uppercase section-uppercase">CUSTOMER</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="small text-muted">POC</span>
+          <span class="small fw-bold text-dark text-truncate" title="{{ order?.pocDetails?.pocName }}">{{
+            order?.pocDetails?.pocName }}</span>
+        </div>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="small text-muted">Phone</span>
+          <span class="small fw-bold text-dark">{{ order?.pocDetails?.pocPhoneNo }}</span>
+        </div>
+        <div class="d-flex justify-content-between">
+          <span class="small text-muted">Email</span>
+          <span class="small fw-bold text-dark text-truncate text-truncate-60p" title="{{
+            order?.pocDetails?.pocEmail }}">{{ order?.pocDetails?.pocEmail }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6">
+      <div class="h-100 p-3 border rounded bg-white info-block">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-truck text-secondary"></i>
+          <span class="small fw-bold text-secondary text-uppercase section-uppercase">DELIVERY</span>
+        </div>
 
-  <!-- STATUS HISTORY -->
-  <div class="header3 order-sub-header" (click)="toggleSection('status')">
-    Status History
-    <span class="right">
-      <i class="bi bi-chevron-down" *ngIf="!showStatusHistory"></i>
-      <i class="bi bi-chevron-up" *ngIf="showStatusHistory"></i>
-    </span>
+        <div class="d-flex justify-content-between mb-2">
+          <span class="small text-muted">Manual</span>
+          <span class="fw-bold text-dark small">{{ order?.startManualDelivery ? 'Yes' : 'No' }}</span>
+        </div>
+
+        <div class="d-flex justify-content-between mb-2">
+          <span class="small text-muted">Slot</span>
+          <span class="fw-bold text-dark small">{{ formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }} - {{
+            formatTime12Hour(order?.itemList?.[0]?.deliveryTimeTo) }}</span>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <span class="small text-muted">Mode</span>
+          <span class="fw-bold text-dark small">{{ order?.deliveryVendor || 'Standard' }}</span>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 col-md-6" *ngIf="order?.beforePackingImageUrl || order?.afterPackingImageUrl">
+      <div class="h-100 p-3 border rounded bg-white info-block">
+        <div class="d-flex align-items-center gap-2 mb-3">
+          <i class="bi bi-images text-secondary"></i>
+          <span class="small fw-bold text-secondary text-uppercase section-uppercase">
+            ORDER IMAGES
+          </span>
+        </div>
+        <div class="d-flex gap-4">
+          <div class="mb-3" *ngIf="order?.beforePackingImageUrl">
+            <span class="small text-muted d-block mb-1">Before Packing</span>
+            <div class="image-box" (click)="openImagePreview(packaeImageModel,imageUrl + order?.beforePackingImageUrl)">
+              <img [src]="imageUrl + order?.beforePackingImageUrl" class="img-fluid rounded" alt="Before Packing" />
+            </div>
+          </div>
+          <div class="mb-3" *ngIf="order?.afterPackingImageUrl">
+            <span class="small text-muted d-block mb-1">After Packing</span>
+            <div class="image-box" (click)="openImagePreview(packaeImageModel,imageUrl + order?.afterPackingImageUrl)">
+              <img [src]="imageUrl + order?.afterPackingImageUrl" class="img-fluid rounded" alt="After Packing" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="row" *ngIf="showStatusHistory">
-    <div
-      class="col-sm-12 col-md-4 col-lg-3 mb-2"
-      *ngFor="let history of order?.statusHistory; index as i"
-    >
-      <div class="labelText">{{ history?.orderstatus }}</div>
-      <div class="labelText">
-        {{ history?.updatedOn | date: 'd-MMM-yyyy h:mm a' }}
+  <div class="order-history-section mb-4 border rounded p-3 bg-white" *ngIf="order?.employeePollDetails?.length">
+    <div class="d-flex align-items-center justify-content-between cursor-pointer"
+      (click)="showEmployees = !showEmployees">
+      <div class="d-flex align-items-center gap-2">
+        <span class="small fw-bold text-secondary text-uppercase section-uppercase">EMPLOYEE DETAILS</span>
       </div>
-      <div class="labelData">{{ history?.updatedBy }}</div>
-      <div class="labelData">{{ history?.updateByType }}</div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="small text-muted">{{ order?.employeePollDetails?.length || 0 }} employees</span>
+        <i class="bi bi-chevron-down text-secondary" [class.rotate-180]="showEmployees"></i>
+      </div>
+    </div>
+    <div class="mt-3" *ngIf="showEmployees">
+      <div class="d-flex flex-wrap gap-3">
+        <div class="d-flex align-items-center gap-3 p-2 border rounded bg-white shadow-sm" style="min-width: 200px;"
+          *ngFor="let emp of order?.employeePollDetails">
+          <div
+            class="avatar-circle-sm bg-primary-subtle text-primary fw-bold rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
+            style="width: 40px; height: 40px; font-size: 14px;">
+            {{ emp?.employeeName?.substring(0,2)?.toUpperCase() }}
+          </div>
+          <div class="d-flex flex-column text-start" style="line-height: 1.3;">
+            <span class="text-dark fw-bold" style="font-size: 13px;">{{ emp?.employeeName }}</span>
+            <span class="text-muted" style="font-size: 11px;" *ngIf="emp?.employeePhoneNo">
+              {{ emp?.employeePhoneNo}}
+            </span>
+            <span class="text-muted" style="font-size: 11px;" *ngIf="emp?.employeeEmail">
+              {{ emp?.employeeEmail }}
+            </span>
+            <span class="text-dark fw-medium" style="font-size: 11px;" *ngIf="emp?.deliveredItem">
+              {{ emp?.deliveredItem }}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
-  <!-- IMAGES -->
-  <div class="row bgTopDownpadding1" *ngIf="order?.beforePackingImageUrl || order?.afterPackingImageUrl">
-    <div class="col-sm-6 col-md-6 col-lg-4 orderImage" *ngIf="order?.beforePackingImageUrl">
-      <img [src]="imageUrl + order.beforePackingImageUrl" alt="Before packing" />
+  <div class="order-history-section mb-4 border rounded p-3 bg-white">
+    <div class="d-flex align-items-center justify-content-between cursor-pointer"
+      (click)="showStatusHistory = !showStatusHistory">
+      <div class="d-flex align-items-center gap-2">
+        <i class="bi bi-clock-history text-secondary"></i>
+        <span class="small fw-bold text-secondary text-uppercase section-uppercase">ORDER HISTORY</span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <span class="small text-muted">{{ order?.statusHistory?.length || 0 }} updates</span>
+        <i class="bi bi-chevron-down text-secondary" [class.rotate-180]="showStatusHistory"></i>
+      </div>
     </div>
-    <div class="col-sm-6 col-md-6 col-lg-4 orderImage" *ngIf="order?.afterPackingImageUrl">
-      <img [src]="imageUrl + order.afterPackingImageUrl" alt="After packing" />
+    <div class="mt-3 d-flex gap-3 flex-wrap" *ngIf="showStatusHistory">
+      <div class="d-flex align-items-center gap-3 p-2 rounded px-3" *ngFor="let log of order?.statusHistory"
+        style="background-color: #eff6ff; border: 1px solid #dbeafe;width: fit-content;">
+        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm"
+          style="width: 36px; height: 36px; min-width: 36px;">
+          <i class="bi bi-clock-fill" style="font-size: 16px;"></i>
+        </div>
+        <div class="d-flex flex-column" style="line-height: 1.2;">
+          <span class="text-secondary fw-bold text-uppercase mb-1" style="font-size: 10px; letter-spacing: 0.5px;">
+            {{ getStatusLabel(log?.orderstatus) }}
+          </span>
+          <span class="text-dark fw-bold" style="font-size: 12px;">
+            {{ log?.updatedOn | date: 'd MMM y, h:mm a' }}
+          </span>
+          <span class="text-muted fw-normal" style="font-size: 11px;">
+            • by {{ log?.actionBy || 'System Admin' }}
+          </span>
+          <span class="text-secondary fst-italic mt-1" style="font-size: 11px;" *ngIf="log?.comment">
+            "{{ log?.comment }}"
+          </span>
+        </div>
+      </div>
+      <div class="text-muted small fst-italic" *ngIf="!order?.statusHistory?.length">No history available</div>
     </div>
   </div>
-
-  <!-- ACTION BUTTONS (STAGE BASED) -->
-  <ng-container *ngIf="!orderTransferStart">
-    <!-- Stage 1: accept -->
-    <div class="bgTopDownpadding1" *ngIf="editMode && orderStage === 1">
-      <button class="btn btn-primary btn-sm me-2" (click)="acceptRejectOrder('accepted')">
-        Accept Order
-      </button>
-    </div>
-
-    <!-- Stage 2: cancel / preparing / transfer -->
-    <div class="bgTopDownpadding1" *ngIf="editMode && orderStage === 2">
-      <button class="btn btn-outline-danger btn-sm me-2" (click)="acceptRejectOrder('cancelled')">
-        Cancel Order
-      </button>
-      <button class="btn btn-primary btn-sm me-2" (click)="acceptRejectOrder('preparing')">
-        Preparing
-      </button>
-      <button class="btn btn-outline-primary btn-sm" (click)="tranferToAnotherKitchen()">
-        Change Vendor
-      </button>
-    </div>
-
-    <!-- Stage 3: mark ready / transfer / set manual -->
-    <div class="bgTopDownpadding1" *ngIf="editMode && orderStage === 3">
-      <button class="btn btn-primary btn-sm me-2" (click)="acceptRejectOrder('readyForDelivery')">
-        Ready for Delivery
-      </button>
-      <button class="btn btn-outline-primary btn-sm me-2" (click)="tranferToAnotherKitchen()">
-        Change Vendor
-      </button>
-      <button
-        class="btn btn-outline-danger btn-sm"
-        *ngIf="!order?.startManualDelivery"
-        (click)="setManualDelivery()"
-      >
-        Set Manual Delivery
-      </button>
-    </div>
-
-    <!-- Stage 4: delivery start options / delivered -->
-    <div class="bgTopDownpadding1" *ngIf="orderStage === 4">
-      <div class="mb-2">
-        <button
-          class="btn btn-outline-primary btn-sm me-2"
-          *ngIf="editMode && (!order?.deliveryTaskState || order?.deliveryTaskState === 'cancelled')"
-          (click)="startDeliveryProcess()"
-        >
-          Start Any Delivery Process
-        </button>
-        <button
-          class="btn btn-outline-primary btn-sm me-2"
-          *ngIf="editMode && (!order?.deliveryTaskState || order?.deliveryTaskState === 'cancelled')"
-          (click)="startPidgeDeliveryProcess()"
-        >
-          Start Pidge Delivery
-        </button>
-        <button
-          class="btn btn-outline-primary btn-sm me-2"
-          *ngIf="editMode && (!order?.deliveryTaskState || order?.deliveryTaskState === 'cancelled')"
-          (click)="startPorterDeliveryProcess()"
-        >
-          Start Porter Delivery
-        </button>
-        <button
-          class="btn btn-outline-primary btn-sm me-2"
-          *ngIf="editMode && (!order?.deliveryTaskState || order?.deliveryTaskState === 'cancelled')"
-          (click)="startShadowFaxDeliveryProcess()"
-        >
-          Start ShadowFax Delivery
-        </button>
-
-        <!-- Cancel specific vendors -->
-        <button
-          class="btn btn-outline-danger btn-sm me-2"
-          *ngIf="editMode && order?.deliveryVendor === 'Pidge' && order?.deliveryTaskState !== 'cancelled'"
-          (click)="cancelPidge3PLOrder()"
-        >
-          Cancel Pidge Delivery
-        </button>
-        <button
-          class="btn btn-outline-danger btn-sm me-2"
-          *ngIf="editMode && order?.deliveryVendor === 'Porter' && order?.deliveryTaskState !== 'cancelled'"
-          (click)="cancelPorterDelivery()"
-        >
-          Cancel Porter Delivery
-        </button>
-        <button
-          class="btn btn-outline-danger btn-sm me-2"
-          *ngIf="editMode && order?.deliveryVendor === 'ShadowFax' && order?.deliveryTaskState !== 'cancelled'"
-          (click)="cancelShadowFaxDelivery()"
-        >
-          Cancel ShadowFax Delivery
-        </button>
-      </div>
-
-      <div *ngIf="editMode">
-        <button class="btn btn-primary btn-sm me-2" (click)="acceptRejectOrder('delivered')">
-          Mark as Delivered
-        </button>
-        <button
-          class="btn btn-outline-danger btn-sm"
-          *ngIf="!order?.startManualDelivery"
-          (click)="setManualDelivery()"
-        >
-          Set Manual Delivery
-        </button>
-      </div>
-    </div>
-
-    <!-- Stage 5: on the way, can mark delivered -->
-    <div class="bgTopDownpadding1" *ngIf="editMode && orderStage === 5">
-      <button class="btn btn-primary btn-sm me-2" (click)="acceptRejectOrder('delivered')">
-        Mark as Delivered
-      </button>
-    </div>
-
-    <!-- Stage 2–4: show manual delivery if not set -->
-    <div class="bgTopDownpadding1" *ngIf="editMode && (orderStage === 2 || orderStage === 3 || orderStage === 4) && !order?.startManualDelivery">
-      <button class="btn btn-outline-danger btn-sm" (click)="setManualDelivery()">
-        Set Manual Delivery
-      </button>
-    </div>
-
-    <!-- Stage 6: pay vendor -->
-    <div class="bgTopDownpadding1" *ngIf="editMode && orderStage === 6 && !order?.amtPaidToKitchen && !order?.amtAfterCommisionPaidToKitchen">
-      <button class="btn btn-success btn-sm" (click)="payAmtToKitchen()">
-        Complete Order & Pay Vendor
-      </button>
-    </div>
-  </ng-container>
-
-  <!-- TRANSFER TO ANOTHER KITCHEN -->
-  <div *ngIf="orderTransferStart" class="bgTopDownpadding1">
-    <div class="header3 labelText mb-3">Search New Vendor</div>
-
-    <div class="row mb-3">
-      <div class="col-sm-12 col-md-4 col-lg-3 mb-2">
-        <button class="btn btn-outline-primary btn-sm w-100" (click)="searchNearKitchen()">
-          Search Nearby Vendors
-        </button>
-      </div>
-    </div>
-
-    <div class="row mb-3">
-      <div class="col-sm-12 col-md-4 col-lg-3 mb-2">
-        <label class="labelText" for="kitchenId">
-          Vendor <span class="mandatory">*</span>
-        </label>
-        <input
-          type="text"
-          id="kitchenId"
-          class="form-control labelData"
-          [(ngModel)]="searchVendor"
-          placeholder="Search by vendor phone / ID"
-        />
-      </div>
-      <div class="col-sm-12 col-md-4 col-lg-3 mb-2">
-        <button class="btn btn-primary btn-sm w-100" (click)="searchKitchen()">
-          Search Vendor
-        </button>
-      </div>
-    </div>
-
-    <div class="row" *ngIf="searchedVendor?._id">
-      <div class="col-sm-12 col-md-4 col-lg-3 mb-2">
-        <span class="labelText">Vendor Firm Name:</span>
-        <span class="labelData">
-          {{ searchedVendor?.vendorFirmDetails?.vendorFirmName }}
-        </span>
-      </div>
-      <div class="col-sm-12 col-md-4 col-lg-3 mb-2">
-        <span class="labelText">Vendor Name:</span>
-        <span class="labelData">{{ searchedVendor?.vendorName }}</span>
-      </div>
-      <div class="col-sm-12 col-md-4 col-lg-2 mb-2">
-        <span class="labelText">Vendor Phone:</span>
-        <span class="labelData">{{ searchedVendor?.vendorPhoneNo }}</span>
-      </div>
-      <div class="col-sm-12 col-md-4 col-lg-2 mb-2">
-        <span class="labelText">Distance:</span>
-        <span class="labelData">{{ searchedVendor?.distance }}</span>
-      </div>
-      <div class="col-sm-12 col-md-12 col-lg-12 mb-2">
-        <span class="labelText">Address</span>
-        <span class="labelData">
-          {{ searchedVendor?.addressList?.[0]?.address1 }},
-          {{ searchedVendor?.addressList?.[0]?.address2 }},
-          Landmark: {{ searchedVendor?.addressList?.[0]?.landmark }}
-        </span>
-      </div>
-    </div>
-
-    <div class="row bgTopDownpadding1">
-      <div class="col-sm-12 col-md-4 col-lg-3 mb-2">
-        <button class="btn btn-outline-secondary btn-sm w-100" (click)="cancelTransfer()">
-          Cancel
-        </button>
-      </div>
-      <div class="col-sm-12 col-md-4 col-lg-3 mb-2" *ngIf="searchedVendor?._id">
-        <button class="btn btn-primary btn-sm w-100" (click)="confirmTransfer()">
-          Confirm Transfer
-        </button>
-      </div>
+  <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div class="d-flex align-items-center gap-2">
+      <ng-container *ngFor="let action of actionList">
+        <button class="btn btn-sm fw-medium px-3"
+          [ngClass]="action.color === 'warn' ? 'btn-outline-danger' : 'btn-primary'"
+          (click)="handleAction(action.action)">{{ action.label }}</button>
+      </ng-container>
     </div>
   </div>
 </div>
-
-<!-- NEARBY KITCHEN MODAL -->
-<ng-template #contentkitchen let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Nearby Vendors</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
+<ng-template #actionModal let-modal>
+  <div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold text-dark">{{activeModalAction}}</h5>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
-
   <div class="modal-body">
-    <ul class="list-group">
-      <li
-        class="list-group-item"
-        *ngFor="let kitchen of nearKitchenList | sort: 'distance' : -1"
-      >
-        <div class="row align-items-center" *ngIf="order?.vendorId !== kitchen?._id">
-          <div class="col-sm-12 col-md-2 col-lg-1 labelData">
-            <input
-              type="radio"
-              [(ngModel)]="nearestKitchen"
-              name="kitchen"
-              [value]="kitchen._id"
-            />
-          </div>
-          <div class="col-sm-12 col-md-5 col-lg-5 labelData">
-            {{ kitchen?.vendorName }} - {{ kitchen?.vendorPhoneNo }} -
-            {{ kitchen?.vendorEmail }}
-          </div>
-          <div class="col-sm-12 col-md-5 col-lg-3 labelData">
-            {{ kitchen?.vendorFirmDetails?.vendorFirmName }}
-          </div>
-        </div>
-      </li>
-    </ul>
-
-    <button
-      class="btn btn-outline-primary btn-sm mt-2"
-      (click)="loadMoreKitchen()"
-      *ngIf="showLoadMoreKitchen"
-    >
-      Load More
-    </button>
+    <p class="text-secondary small mb-3" *ngIf="modalMessage">{{ modalMessage }}</p>
+    <div class="mb-3" *ngIf="showDeliveryInput">
+      <label class="form-label small fw-bold text-secondary">Delivery Charge</label>
+      <div class="input-group">
+        <span class="input-group-text bg-light border-end-0">₹</span>
+        <input type="number" class="form-control border-start-0 ps-0" [(ngModel)]="deliveryChargesFromModal"
+          placeholder="0">
+      </div>
+    </div>
+    <div class="mb-3" *ngIf="commentRequired">
+      <label class="form-label small fw-bold text-secondary">Comment <span class="text-danger"
+          *ngIf="commentRequired">*</span></label>
+      <textarea class="form-control" rows="3" [(ngModel)]="statusComment" placeholder="Enter comment..."
+        [required]="commentRequired"></textarea>
+      <div class="text-danger small mt-1" *ngIf="commentRequired && !statusComment">
+        Comment is required to proceed.
+      </div>
+    </div>
   </div>
-
-  <div class="modal-footer">
-    <button type="button" class="btn btn-primary btn-sm" (click)="checkdistance()">
-      Add
-    </button>
+  <div class="modal-footer border-0 pt-0">
+    <button type="button" class="btn btn-light btn-sm fw-medium px-3" (click)="modal.dismiss('cancel')">Cancel</button>
+    <button type="button" class="btn btn-primary btn-sm fw-medium px-4" (click)="confirmAction()"
+      [disabled]="commentRequired && !statusComment">Confirm</button>
   </div>
 </ng-template>
-
-<!-- DISTANCE CONFIRM MODAL -->
-<ng-template #selectKitchenModal let-modal>
+<ng-template #packaeImageModel let-modal>
   <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Confirm Selection</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
+    <h6 class="modal-title">Package Image</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
   </div>
-  <div class="modal-body">
-    <p class="lead text-center">
-      Selected kitchen distance is greater than 6 KM. Do you want to pay extra to proceed?
-    </p>
-  </div>
-  <div class="modal-footer d-flex justify-content-center">
-    <button type="button" class="btn btn-outline-secondary btn-sm mr-2" (click)="modal.dismiss('cancel')">
-      Cancel
-    </button>
-    <button type="button" class="btn btn-danger btn-sm" (click)="modal.close('add')">
-      Select
-    </button>
+
+  <div class="modal-body text-center">
+    <img [src]="previewImageSrc" alt="Package Image" class="img-fluid rounded"
+      style="max-height: 70vh; object-fit: contain" />
   </div>
 </ng-template>

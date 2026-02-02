@@ -1,0 +1,78 @@
+.day-card {
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border-color: #b3d9ff;
+    }
+
+    &.selected {
+        background-color: #f8fbff;
+        border-color: #2196f3;
+
+        .card-header {
+            background-color: rgba(33, 150, 243, 0.05);
+            border-bottom-color: rgba(33, 150, 243, 0.1) !important;
+        }
+    }
+
+    .card-header {
+        padding: 8px 12px;
+        border-bottom: 1px solid #f0f0f0;
+        border-radius: 12px 12px 0 0;
+    }
+
+    .card-body {
+        padding: 12px;
+    }
+}
+
+.compact-field {
+    ::ng-deep .mat-mdc-form-field-flex {
+        padding-top: 0 !important;
+        align-items: center !important;
+    }
+
+    ::ng-deep .mat-mdc-text-field-wrapper {
+        padding-top: 0;
+        padding-bottom: 0;
+        height: 40px;
+    }
+
+    ::ng-deep .mat-mdc-form-field-infix {
+        padding-top: 8px !important;
+        padding-bottom: 8px !important;
+        min-height: 40px !important;
+    }
+
+    ::ng-deep .mat-mdc-input-element {
+        font-size: 13px;
+    }
+
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none; // Hide error space for very compact look if needed, or rely on dynamic sizing
+    }
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+    }
+
+    &:hover::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+    }
+}

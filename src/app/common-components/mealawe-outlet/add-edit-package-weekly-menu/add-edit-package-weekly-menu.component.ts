@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { MlApiMainService } from 'src/service/apiService/mlApiMain.service';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-add-edit-package-weekly-menu',
@@ -26,6 +26,7 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   selectedOrg: any;
   activeWeekIndex: number = 0;
   showRequiredError: boolean = false;
+  categoryKey: string = 'breakfast'; // Default or determined dynamically
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddEditPackageWeeklyMenuComponent>,
@@ -48,11 +49,19 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     if (this.data.cafeteriaList) {
       this.cafeteriaList = this.data.cafeteriaList;
     }
+
     if (this.data.selectedCafeteria) {
       this.cafeteriaList = this.cafeteriaList.filter(c => c._id !== this.data.selectedCafeteria._id);
     }
-    if (this.data?.category.weeklyMenu) {
-      this.weekMenuList = this.data?.category.weeklyMenu;
+
+    if (this.data?.category?.categoryName) {
+      this.categoryKey = this.data.category.categoryName.toLowerCase();
+    }
+
+    if (this.data?.category?.weeklyMenu && this.data.category.weeklyMenu.length > 0) {
+      // Deep copy to avoid mutating parent data before save
+      this.weekMenuList = JSON.parse(JSON.stringify(this.data.category.weeklyMenu));
+      this.selectedSource = 'custom';
       this.activeWeekIndex = this.weekMenuList.findIndex(w => w.isSelected);
       if (this.activeWeekIndex === -1) this.activeWeekIndex = 0;
     }
@@ -100,47 +109,70 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
 
   addNewWeek() {
     const nextWeekNumber = this.weekMenuList.length + 1;
-    const createEmptyMenu = () => {
-      return [
-        { day: 'Monday', description: '' },
-        { day: 'Tuesday', description: '' },
-        { day: 'Wednesday', description: '' },
-        { day: 'Thursday', description: '' },
-        { day: 'Friday', description: '' },
-        { day: 'Saturday', description: '' },
-        { day: 'Sunday', description: '' }
-      ];
+    const createEmptyMenu = (type: string) => {
+      const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+      return days.map((day, index) => ({
+        day,
+        type,
+        sequence: index + 1,
+        breakfast: { description: '' },
+        lunch: { description: '' },
+        dinner: { description: '' }
+      }));
     };
     const newWeek = {
       weekNumber: nextWeekNumber,
       isSelected: false,
-      vegMenuList: createEmptyMenu(),
-      nonvegMenuList: createEmptyMenu()
+      vegMenuList: createEmptyMenu('veg'),
+      nonvegMenuList: createEmptyMenu('nonveg')
     };
     this.weekMenuList.push(newWeek);
   }
 
-  saveMenu() {
+  deleteWeek(index: number) {
+    if (this.weekMenuList.length === 1) {
+      this.toastService.error("At least one week is required.");
+      return;
+    }
+    this.weekMenuList.splice(index, 1);
+    // Re-index remaining weeks
+    this.weekMenuList.forEach((w, i) => w.weekNumber = i + 1);
+
+    // Adjust active index
+    if (this.activeWeekIndex >= this.weekMenuList.length) {
+      this.activeWeekIndex = this.weekMenuList.length - 1;
+    }
+  }
+
+  async saveMenu() {
     const active = this.weekMenuList.some(w => w.isSelected);
     if (!active) {
       this.showRequiredError = true;
       return;
     }
+    // Validate descriptions
     for (let week of this.weekMenuList) {
-      for (let item of week.vegMenuList) {
-        if (!item.description || item.description.trim() === '') {
-          this.toastService.error("Please fill all required descriptions.");
-          return;
-        }
-      }
-      for (let item of week.nonvegMenuList) {
-        if (!item.description || item.description.trim() === '') {
-          this.toastService.error("Please fill all required descriptions.");
+      const allItems = [...week.vegMenuList, ...week.nonvegMenuList];
+      for (let item of allItems) {
+        // Dynamically check the description for the current category
+        const key = this.categoryKey || 'breakfast'; // Fallback
+        if (item[key] && (!item[key].description || item[key].description.trim() === '')) {
+          this.toastService.error(`Please fill all required descriptions for ${key}.`);
           return;
         }
       }
     }
-    this.dialogRef.close({ action: 'save', data: this.weekMenuList });
+    const body = {
+      cafeteriaId: this.data.selectedCafeteria._id,
+      weeklyMenu: this.weekMenuList,
+      categoryName: this.data.category.categoryName
+    }
+    try {
+      await this.apiMainService.updateWeeklyMenuCategory(body);
+      this.dialogRef.close();
+    } catch (error) {
+      console.error("❌ Loading failed", error);
+    }
   }
 
 

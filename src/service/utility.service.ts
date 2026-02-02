@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { ApiMainService } from './apiService/apiMain.service';
 import { SendDataToComponent } from './sendDataToComponent.service';
 import { WebNotificationService } from './webNotification.service';
@@ -39,7 +39,7 @@ export class UtilityService {
       let orderList: any = {};
       const response = await Promise.all([
         this.apiMainService.getCurrentB2BOrdersCount(),
-        this.apiMainService.getCurrentB2BDailyOrdersCount(),
+        this.apiMainService.getCurrentDailyOrdersCount(),
         this.apiMainService.getDailyFoodOrdersCount()
       ]);
       if (response[0] && response[1] && response[2]) {

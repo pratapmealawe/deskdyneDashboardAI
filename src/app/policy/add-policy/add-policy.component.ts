@@ -95,7 +95,10 @@ export class AddPolicyComponent {
       configImagesGroup: false,
       vendorPayout: false,
       auditReport: false,
+      eventPopup: false,
+      addEventPopup: false,
       vendorWalletDashboard: false,
+      allOrders: false,
     };
 
     const button_policies = {

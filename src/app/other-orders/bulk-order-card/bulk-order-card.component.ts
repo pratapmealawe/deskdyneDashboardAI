@@ -1,7 +1,7 @@
 import { Component, Input, ViewChild, OnInit } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { B2bInvoiceService } from 'src/service/b2b-invoice.service';

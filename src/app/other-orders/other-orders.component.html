@@ -1,8 +1,4 @@
 <div class="container-fluid position-relative pb-4">
-    <button mat-icon-button class="mb-2 reloadIcon" (click)="reloadPage()" matTooltip="Reload Data">
-        <mat-icon>autorenew</mat-icon>
-    </button>
-
     <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)"
         class="custom-tabs py-3">
         <mat-tab *ngFor="let view of orderTypeList">
@@ -13,201 +9,217 @@
     </mat-tab-group>
 
     <div class="tab-content mt-2 pb-4">
-        <!-- ADMIN ORDERS TAB -->
         <div *ngIf="selectedTab === 'adminOrders'">
-            <div class="d-flex flex-column gap-3 mb-4">
-                <mat-button-toggle-group [(ngModel)]="selectedAdminGroup" name="adminGroup" aria-label="Order Group"
-                    class="custom-button-toggle">
-                    <mat-button-toggle value="dailyBulk">Polling Orders
-                        ({{getPollingOrdersCount()}})</mat-button-toggle>
-                    <mat-button-toggle value="poll_delivery">Polling Delivery Status
-                        ({{getPollingDeliveryCount()}})</mat-button-toggle>
-                </mat-button-toggle-group>
-
-                <!-- Status Chips: Polling Orders -->
-                <mat-chip-listbox class="status-chips-wrapper" *ngIf="selectedAdminGroup === 'dailyBulk'">
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('placed')"
-                        [selected]="bulkSelectedStatus === 'placed'">
-                        Placed <span class="chip-badge">{{orderStatusCountObj?.dailyBulk?.placed}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('accepted')"
-                        [selected]="bulkSelectedStatus === 'accepted'">
-                        Accepted <span class="chip-badge">{{orderStatusCountObj?.dailyBulk?.accepted}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('preparing')"
-                        [selected]="bulkSelectedStatus === 'preparing'">
-                        Preparing <span class="chip-badge">{{orderStatusCountObj?.dailyBulk?.preparing}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('cancelled')"
-                        [selected]="bulkSelectedStatus === 'cancelled'">
-                        Cancelled <span class="chip-badge">{{orderStatusCountObj?.dailyBulk?.cancelled}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('completed')"
-                        [selected]="bulkSelectedStatus === 'completed'">
-                        Completed <span class="chip-badge">{{orderStatusCountObj?.dailyBulk?.completed}}</span>
-                    </mat-chip-option>
-                </mat-chip-listbox>
-
-                <!-- Status Chips: Poll Delivery -->
-                <mat-chip-listbox class="status-chips-wrapper" *ngIf="selectedAdminGroup === 'poll_delivery'">
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('readyForDelivery')"
-                        [selected]="bulkSelectedStatus === 'readyForDelivery'">
-                        Ready For Delivery <span
-                            class="chip-badge">{{orderStatusCountObj?.dailyBulk?.readyForDelivery}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('deliveryBoyAssigned')"
-                        [selected]="bulkSelectedStatus === 'deliveryBoyAssigned'">
-                        Agent Assigned <span
-                            class="chip-badge">{{orderStatusCountObj?.dailyBulk?.deliveryBoyAssigned}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('handedOverToDeliveryBoy')"
-                        [selected]="bulkSelectedStatus === 'handedOverToDeliveryBoy'">
-                        Handed Over <span
-                            class="chip-badge">{{orderStatusCountObj?.dailyBulk?.handedOverToDeliveryBoy}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('onTheWay')"
-                        [selected]="bulkSelectedStatus === 'onTheWay'">
-                        On The Way <span class="chip-badge">{{orderStatusCountObj?.dailyBulk?.onTheWay}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestBulkDailyOrderStatusList('delivered')"
-                        [selected]="bulkSelectedStatus === 'delivered'">
-                        Delivered <span class="chip-badge">{{orderStatusCountObj?.dailyBulk?.delivered}}</span>
-                    </mat-chip-option>
-                </mat-chip-listbox>
-            </div>
-        </div>
-
-        <!-- BULK ORDERS TAB -->
-        <div *ngIf="selectedTab === 'bulkOrders'">
-            <div class="d-flex flex-column gap-3 mb-4">
-                <mat-button-toggle-group class="custom-button-toggle" [(ngModel)]="selectedBulkGroup" name="bulkGroup">
-                    <mat-button-toggle value="b2b">Event Bulk Order ({{getB2BOrdersCount()}})</mat-button-toggle>
-                    <mat-button-toggle value="bulk_delivery">Event Delivery Status
-                        ({{getB2BDeliveryCount()}})</mat-button-toggle>
-                </mat-button-toggle-group>
-
-                <!-- Chips: B2B Orders -->
-                <mat-chip-listbox class="status-chips-wrapper" *ngIf="selectedBulkGroup === 'b2b'">
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_waitingForApproval')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_waitingForApproval']">
-                        Waiting Approval <span
-                            class="chip-badge">{{orderStatusCountObj?.b2bBulk?.waitingForApproval}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_placed')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_placed']">
-                        Placed <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.placed}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_accepted')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_accepted']">
-                        Accepted <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.accepted}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_inprogress')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_inprogress']">
-                        Preparing <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.preparing}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_declined')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_declined']">
-                        Declined <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.declined}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_cancelled')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_cancelled']">
-                        Cancelled <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.cancelled}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('completed')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['completed']">
-                        Completed <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.completed}}</span>
-                    </mat-chip-option>
-                </mat-chip-listbox>
-
-                <!-- Chips: B2B Delivery -->
-                <mat-chip-listbox class="status-chips-wrapper" *ngIf="selectedBulkGroup === 'bulk_delivery'">
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_readyForDelivery')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_readyForDelivery']">
-                        Ready For Delivery <span
-                            class="chip-badge">{{orderStatusCountObj?.b2bBulk?.readyForDelivery}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_deliveryBoyAssigned')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_deliveryBoyAssigned']">
-                        Agent Assigned <span
-                            class="chip-badge">{{orderStatusCountObj?.b2bBulk?.deliveryBoyAssigned}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_handedOverToDeliveryBoy')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_handedOverToDeliveryBoy']">
-                        Handed Over <span
-                            class="chip-badge">{{orderStatusCountObj?.b2bBulk?.handedOverToDeliveryBoy}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_onTheWay')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_onTheWay']">
-                        On The Way <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.onTheWay}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getLatestb2bOrderStatusList('b2b_completed')"
-                        [selected]="b2bSelectedStatus === b2b_orders_mapper['b2b_completed']">
-                        Delivered <span class="chip-badge">{{orderStatusCountObj?.b2bBulk?.delivered}}</span>
-                    </mat-chip-option>
-                </mat-chip-listbox>
-            </div>
-        </div>
-
-        <!-- EMPLOYEE POLL TAB -->
-        <div *ngIf="selectedTab === 'employeePoll'">
-            <div class="d-flex flex-column gap-3 mb-4">
-                <div class="fw-bold">Employee Polls</div>
-                <mat-chip-listbox class="status-chips-wrapper">
-                    <mat-chip-option (click)="getEmployeePollList('today')" [selected]="day === 'today'">
-                        Today <span class="chip-badge">{{orderStatusCountObj?.empVote?.today}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getEmployeePollList('tomorrow')" [selected]="day === 'tomorrow'">
-                        Tomorrow <span class="chip-badge">{{orderStatusCountObj?.empVote?.tomorrow}}</span>
-                    </mat-chip-option>
-                    <mat-chip-option (click)="getEmployeePollList('dayAfterTomorrow')"
-                        [selected]="day === 'dayAfterTomorrow'">
-                        Day After <span class="chip-badge">{{orderStatusCountObj?.empVote?.dayAfterTomorrow}}</span>
-                    </mat-chip-option>
-                </mat-chip-listbox>
-            </div>
-        </div>
-
-
-        <!-- LIST AREA -->
-        <div class="orders-container">
-            <div *ngIf="filteredList.length > 0; else noRecord">
-                <!-- Pagination Controls -->
-                <div class="d-flex justify-content-end align-items-center mb-3 pagination-controls">
-                    <button mat-icon-button (click)="previous(page)" [disabled]="page === 1">
-                        <mat-icon>chevron_left</mat-icon>
-                    </button>
-                    <span class="text-muted small mx-2">
-                        Showing {{pageFirstEntry}} - {{pageLastEntry}}
-                    </span>
-                    <button mat-icon-button (click)="next(page)" [disabled]="paginationOver && page === lastPage">
-                        <mat-icon>chevron_right</mat-icon>
-                    </button>
+            <div class="orders-header-bar mb-4">
+                <div class="status-filters-container">
+                    <div class="status-item" *ngFor="let status of adminOrderStatusList"
+                        (click)="getLatestBulkDailyOrderStatusList(status.value)"
+                        [class.active]="selectedStatus === status.value">
+                        <span class="status-label">{{status.label}}</span>
+                        <span class="status-count" *ngIf="selectedStatus === status.value">{{status.count || 0}}</span>
+                        <span class="status-count-inactive" *ngIf="selectedStatus !== status.value">{{status.count ||
+                            0}}</span>
+                    </div>
                 </div>
+                <!-- <div class="filter-actions ps-3 ms-3 border-start">
+                    <button class="action-btn">
+                        <mat-icon>filter_list</mat-icon> Filter
+                    </button>
+                    <button class="action-btn">
+                        <mat-icon>sort</mat-icon> Sort
+                    </button>
+                </div> -->
+            </div>
+            <div class="orders-container">
+                <div *ngIf="filteredList.length > 0; else noRecord">
+                    <div class="d-flex flex-column gap-3">
+                        <div *ngFor="let order of filteredList">
+                            <ng-container *ngIf="order.orderType === 'dailyBulk' && selectedTab === 'adminOrders'">
+                                <app-daily-bulk-card [orderInput]="order"
+                                    (updateOrder)="refreshOrderList()"></app-daily-bulk-card>
+                            </ng-container>
+                        </div>
+                    </div>
+                    <div class="pagination-bar mb-3">
+                        <div class="pagination-info text-muted small d-flex align-items-center gap-3">
+                            <span>Showing <strong>{{pageFirstEntry}}</strong> to <strong>{{pageLastEntry}}</strong> of
+                                <strong>{{totalCount}}</strong> results</span>
 
-                <div class="d-flex flex-column gap-3">
-                    <div *ngFor="let order of filteredList">
-                        <ng-container
-                            *ngIf="(order.orderType === 'bulkMeals' || order.orderType === 'individualMeals' || order.orderType === 'bulkSnacks' || order.orderType === 'individualSnacks' || order.orderType === 'predefinedSnackbox' || order.orderType === 'customSnackbox') && b2bSelectedStatus && selectedTab === 'bulkOrders'">
-                            <app-bulk-order-card [orderInput]="order"></app-bulk-order-card>
-                        </ng-container>
-
-                        <ng-container *ngIf="order.orderType === 'dailyBulk' && selectedTab === 'adminOrders'">
-                            <app-daily-bulk-card [orderInput]="order"></app-daily-bulk-card>
-                        </ng-container>
-
-                        <ng-container *ngIf="order.orderType === 'empPolls' && selectedTab === 'employeePoll'">
-                            <app-emp-poll-card [day]="day" [orderInput]="order"></app-emp-poll-card>
-                        </ng-container>
+                            <div class="d-flex align-items-center gap-2 ps-3 ms-2"
+                                style="border-left: 1px solid #ccc; height: 24px;">
+                                <span>Rows per page:</span>
+                                <mat-form-field appearance="outline" class="page-size-select density-low">
+                                    <mat-select [value]="pageLimit" (selectionChange)="onPageSizeChange($event.value)">
+                                        <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
+                                            {{size}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="page-btn prev-btn" (click)="previous(page)" [disabled]="page === 1">
+                                <mat-icon>chevron_left</mat-icon>
+                            </button>
+                            <ng-container *ngFor="let p of visiblePages">
+                                <button *ngIf="p !== '...'" class="page-btn number-btn" [class.active]="p === page"
+                                    (click)="goToPage(p)">
+                                    {{p}}
+                                </button>
+                                <span *ngIf="p === '...'" class="dots">...</span>
+                            </ng-container>
+                            <button class="page-btn next-btn" (click)="next(page)"
+                                [disabled]="page === totalPages || totalPages === 0">
+                                <mat-icon>chevron_right</mat-icon>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <ng-template #noRecord>
-                <div class="text-center py-5 text-muted">
-                    <mat-icon class="fs-1 mb-2">inbox</mat-icon>
-                    <p>No Records Found for this filter</p>
+        </div>
+        <div *ngIf="selectedTab === 'bulkOrders'">
+            <div class="orders-header-bar mb-4">
+                <div class="status-filters-container">
+                    <div class="status-item" *ngFor="let status of bulkOrderStatusList"
+                        (click)="getClusterb2bBulkOrderList(status.value, page)"
+                        [class.active]="selectedStatus === status.value">
+                        <span class="status-label">{{status.label}}</span>
+                        <span class="status-count" *ngIf="selectedStatus === status.value">{{status.count || 0}}</span>
+                        <span class="status-count-inactive" *ngIf="selectedStatus !== status.value">{{status.count ||
+                            0}}</span>
+                    </div>
                 </div>
-            </ng-template>
+                <!-- <div class="filter-actions ps-3 ms-3 border-start">
+                    <button class="action-btn">
+                        <mat-icon>filter_list</mat-icon> Filter
+                    </button>
+                    <button class="action-btn">
+                        <mat-icon>sort</mat-icon> Sort
+                    </button>
+                </div> -->
+            </div>
+            <div class="orders-container">
+                <div *ngIf="filteredList.length > 0; else noRecord">
+                    <div class="d-flex flex-column gap-3">
+                        <div *ngFor="let order of filteredList">
+                            <app-bulk-order-card [orderInput]="order"></app-bulk-order-card>
+                        </div>
+                    </div>
+                    <div class="pagination-bar mb-3">
+                        <div class="pagination-info text-muted small d-flex align-items-center gap-3">
+                            <span>Showing <strong>{{pageFirstEntry}}</strong> to <strong>{{pageLastEntry}}</strong> of
+                                <strong>{{totalCount}}</strong> results</span>
+
+                            <div class="d-flex align-items-center gap-2 ps-3 ms-2"
+                                style="border-left: 1px solid #ccc; height: 24px;">
+                                <span>Rows per page:</span>
+                                <mat-form-field appearance="outline" class="page-size-select density-low">
+                                    <mat-select [value]="pageLimit" (selectionChange)="onPageSizeChange($event.value)">
+                                        <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
+                                            {{size}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="pagination-controls">
+                            <button class="page-btn prev-btn" (click)="previous(page)" [disabled]="page === 1">
+                                <mat-icon>chevron_left</mat-icon>
+                            </button>
+                            <ng-container *ngFor="let p of visiblePages">
+                                <button *ngIf="p !== '...'" class="page-btn number-btn" [class.active]="p === page"
+                                    (click)="goToPage(p)">
+                                    {{p}}
+                                </button>
+                                <span *ngIf="p === '...'" class="dots">...</span>
+                            </ng-container>
+                            <button class="page-btn next-btn" (click)="next(page)"
+                                [disabled]="page === totalPages || totalPages === 0">
+                                <mat-icon>chevron_right</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="selectedTab === 'employeePoll'">
+            <mat-card class="mb-4">
+                <mat-card-content class="d-flex flex-column gap-3">
+                    <div class="d-flex flex-wrap gap-3 align-items-start">
+                        <div class="d-flex flex-column gap-2">
+                            <div class="fw-bold text-muted small">Poll Date</div>
+                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
+                                <input matInput [matDatepicker]="picker" [(ngModel)]="selectedPollDate"
+                                    placeholder="mm/dd/yyyy">
+                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="fw-bold text-muted small">Organization Name</div>
+                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
+                                <mat-icon matPrefix class="text-muted mx-2">domain</mat-icon>
+                                <mat-select placeholder="All Organizations"
+                                    (selectionChange)="onOrgChange($event.value)">
+                                    <mat-option [value]="null">All Organizations</mat-option>
+                                    <mat-option *ngFor="let org of orgList" [value]="org">
+                                        {{org?.organization_name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="fw-bold text-muted small">Cafe Name</div>
+                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
+                                <mat-icon matPrefix class="text-muted mx-2">store</mat-icon>
+                                <mat-select [(ngModel)]="selectedCafeteria" placeholder="All Cafes">
+                                    <mat-option [value]="null">All Cafes</mat-option>
+                                    <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe?.cafeteria_id">
+                                        {{cafe?.cafeteria_name}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="fw-bold text-muted small">Search phone Number</div>
+                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
+                                <mat-icon matPrefix class="text-muted mx-2">search</mat-icon>
+                                <input matInput [(ngModel)]="searchPhone" placeholder="Phone Number">
+                            </mat-form-field>
+                        </div>
+                        <div class="d-flex flex-column gap-2">
+                            <div class="fw-bold text-muted small" style="visibility: hidden">&nbsp;</div>
+                            <button mat-raised-button color="primary" class="param-btn"
+                                (click)="getEmployeePollList(selectedPollDate)">
+                                <mat-icon>filter_list</mat-icon> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </mat-card-content>
+            </mat-card>
+            <div class="orders-container">
+                <div *ngIf="filteredList.length > 0; else noRecord">
+                    <div *ngFor="let group of filteredList" class="mb-1">
+                        <div class="row">
+                            <div class="col-12 mb-2">
+                                <app-emp-poll-card [orderInput]="group"></app-emp-poll-card>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+<ng-template #noRecord>
+    <div class="d-flex flex-column align-items-center justify-content-center py-5 my-5">
+        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3"
+            style="width: 100px; height: 100px;">
+            <mat-icon class="text-secondary opacity-50" style="transform: scale(2.5);">search_off</mat-icon>
+        </div>
+        <h4 class="fw-bold text-dark mb-2">No Orders Found</h4>
+        <p class="text-muted small text-center mb-0" style="max-width: 300px;">
+            We couldn't find any orders matching your filters. Try selecting a different date or clearing your search.
+        </p>
+    </div>
+</ng-template>

@@ -239,6 +239,51 @@
                     </div>
                 </div>
 
+                <div class="modern-card mb-3">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h3><mat-icon>store</mat-icon>Event Popup</h3>
+                        <div class="d-flex gap-2">
+                            <button mat-stroked-button color="primary" type="button" (click)="addPopup()">
+                                <mat-icon>calendar_month</mat-icon> Event Popup
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="no-data-placeholder" *ngIf="selectedPopupsList?.length === 0">
+                            <p>No popups found.</p>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6 col-lg-4" *ngFor="let popup of selectedPopupsList; index as i">
+                                <div class="list-card-item h-100 mb-0">
+                                    <div class="popup-item-grid">
+                                        <div class="grid-item">
+                                            <div class="labelText">Event Name</div>
+                                            <div class="labelData">{{ popup?.popupName }}</div>
+                                        </div>
+                                        <div class="grid-item">
+                                            <div class="labelText">Event Opened</div>
+                                            <div class="labelData">{{ popup.popupType ? 'Opened' : 'Closed' }}</div>
+                                        </div>
+                                        <div class="grid-item">
+                                            <div class="labelText">Organization</div>
+                                            <div class="labelData">{{ popup?.organizationDetails?.organization_name }}
+                                            </div>
+                                        </div>
+                                        <div class="grid-item">
+                                            <div class="labelText">Cafeteria Name</div>
+                                            <div class="labelData">{{ popup?.cafeteriaDetails?.cafeteria_name }}</div>
+                                        </div>
+                                        <div class="grid-item delete-btn">
+                                            <mat-icon (click)="deletePopup(i)" color="warn"
+                                                appAutoTooltip>delete</mat-icon>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Compliance / Enrollment Actions -->
                 <div class="d-flex justify-content-end align-items-center gap-3 mt-3">
                     <div *ngIf="form.controls['accountEnrollment'].value" class="uploaded-file-tag">
@@ -445,10 +490,7 @@
         </div>
     </ng-template>
 
-
-
     <!-- Compliance & Geo Modals (Kept generic) -->
-
     <ng-template #geolocation let-modal>
         <div class="modal-header">
             <h4 class="modal-title m-0">Geolocation</h4>
@@ -462,4 +504,58 @@
         </div>
     </ng-template>
 
+    <!-- Popup Modal -->
+    <ng-template #popupModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title m-0">Select Popup</h4>
+            <mat-icon (click)="modal.dismiss('cancel')" style="cursor:pointer">close</mat-icon>
+        </div>
+        <div class="modal-body p-3">
+            <div class="d-flex gap-3 justify-content-between">
+                <div class="field w-100">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Select Organization</mat-label>
+                        <mat-select (selectionChange)="getOrgName($event)">
+                            <mat-option *ngFor="let org of orgList" [value]="org.organization_name">
+                                {{ org.organization_name }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="field w-100">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Select Cafeteria</mat-label>
+                        <mat-select [disabled]="!orgName" (selectionChange)="selectCafeteriaForPopup($event)">
+                            <mat-option *ngFor="let cafeteria of cafeterialist" [value]="cafeteria">
+                                {{ cafeteria.cafeteria_name }} - {{ cafeteria.cafeteria_city }}
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="mt-3" *ngIf="showModalOutletListforPopup">
+                <h6 *ngIf="eventsByOrganization.length > 0"class="text-secondary mb-3">Available Popups</h6>
+                <h6 *ngIf="eventsByOrganization.length == 0" class="text-secondary text-center mb-3">No Available Popups for this Cafeteria</h6>
+                <div *ngFor="let event of eventsByOrganization" class="p-3 border rounded mb-2 gap-3">
+                    <div class="row d-flex align-items-center">
+                        <div class="col-2">
+                            <mat-checkbox #confirmed [(ngModel)]="event.isChecked" color="primary"></mat-checkbox>
+                        </div>
+                        <div class="col-2">
+                            <b>{{ event.eventPopupName }}</b>
+                        </div>
+                        <div class="col-2">
+                            {{ event.eventPopupOpened ? 'Opened' : 'Closed' }}
+                        </div>
+                        <div class="col-6 text-wrap">
+                            {{ event.eventPopupDescription }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer p-3">
+            <button type="submit" [disabled]="!isAnyPopupSelected" mat-flat-button color="primary" (click)="getSelectedPopups()">Add Popup</button>
+        </div>
+    </ng-template>
 </div>

@@ -1,11 +1,9 @@
-import { Component, Input, ViewChild, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { Component, Input, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { DeliveryOrderService } from 'src/service/delivery-order.service';
-import { GoogleMapService } from 'src/service/google-map.service';
+import { LocalStorageService } from 'src/service/local-storage.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
@@ -14,98 +12,39 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
   styleUrls: ['./daily-bulk-card.component.scss']
 })
 export class DailyBulkCardComponent implements OnInit {
+  @ViewChild('actionModal') actionModal: any;
   @Input() orderInput: any;
-  @ViewChild('contentkitchen') contentkitchen: any;
-  @ViewChild('selectKitchenModal') selectKitchenModal: any;
-
+  @Output() updateOrder = new EventEmitter<any>();
   imageUrl = environment.imageUrl;
-
-  showless = true;
+  showStatusHistory: boolean = true;
+  showless: boolean = true;
+  showEmployees: boolean = true;
   order: any;
-
-  editMode = false;
-  itemPriceEdit = false;
-  oldItemPrice = 0;
-
-  showOrderDetails = true;
-  showPOCDetails = false;
-  showKitchenDetails = false;
-  showPaymentDetails = false;
-  showDeliveryDetails = false;
-  showStatusHistory = false;
-  showOrgDetails = false;
-
-  addDeliveryCost = false;
-  orderTransferStart = false;
-
-  nearKitchenFullList: any[] = [];
-  nearKitchenList: any[] = [];
-  nearestKitchen = '';
-  searchedVendor: any = {};
-  transferDeliveryCharges = 0;
-  showLoadMoreKitchen = true;
-  searchVendor: any;
-  orderStage = 0;
-  kitchenmodal: any;
+  addDeliveryCost = 0;
+  statusComment: string = '';
+  activeModalAction: string = '';
+  tempStatus: string = '';
+  previewImageSrc: string = '';
+  orderStage: number = 1;
+  actionList: any[] = [];
+  modalRef?: NgbModalRef;
+  commentRequired: boolean = false;
+  showDeliveryInput: boolean = false;
+  deliveryChargesFromModal: number = 0;
+  modalMessage: string = '';
 
   constructor(
     private apiMainService: ApiMainService,
-    private deliveryOrderService: DeliveryOrderService,
+    private localStorageService: LocalStorageService,
     private sendDataToComponent: SendDataToComponent,
-    private confirmationModalService: ConfirmationModalService,
     private modalService: NgbModal,
-    private googleMapService: GoogleMapService,
     private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
     if (this.orderInput) {
-      // start with collapsed summary view, but we keep a reference for quick access
       this.order = { ...this.orderInput };
-      this.getDeliveryStatus();
-      this.checkOrderCondition();
-    }
-  }
-
-  // ===== UI HELPERS =====
-
-  viewOrder(order: any): void {
-    this.order = { ...order };
-    this.showless = false;
-    this.checkOrderCondition();
-  }
-
-  showLess(): void {
-    this.showless = true;
-  }
-
-  toggleEditMode(): void {
-    this.editMode = !this.editMode;
-  }
-
-  toggleSection(section: 'order' | 'org' | 'kitchen' | 'poc' | 'delivery' | 'payment' | 'status'): void {
-    switch (section) {
-      case 'order':
-        this.showOrderDetails = !this.showOrderDetails;
-        break;
-      case 'org':
-        this.showOrgDetails = !this.showOrgDetails;
-        break;
-      case 'kitchen':
-        this.showKitchenDetails = !this.showKitchenDetails;
-        break;
-      case 'poc':
-        this.showPOCDetails = !this.showPOCDetails;
-        break;
-      case 'delivery':
-        this.showDeliveryDetails = !this.showDeliveryDetails;
-        break;
-      case 'payment':
-        this.showPaymentDetails = !this.showPaymentDetails;
-        break;
-      case 'status':
-        this.showStatusHistory = !this.showStatusHistory;
-        break;
+      this.updateOrderStage();
     }
   }
 
@@ -117,564 +56,227 @@ export class DailyBulkCardComponent implements OnInit {
     return `status-${normalized}`;
   }
 
-  // ===== ITEM AMOUNT / DELIVERY COST =====
+  getStatusLabel(status: string): string {
+    if (!status) return '';
+    const labels: { [key: string]: string } = {
+      'placed': 'Placed',
+      'accepted': 'Accepted',
+      'preparing': 'Preparing',
+      'readyForDelivery': 'Ready For Delivery',
+      'deliveryBoyAssigned': 'Agent Assigned',
+      'handedOverToDeliveryBoy': 'Handed Over',
+      'onTheWay': 'On The Way',
+      'delivered': 'Delivered',
+      'completed': 'Completed',
+      'cancelled': 'Cancelled'
+    };
+    return labels[status] || status;
+  }
 
-  async confirmEditItemPrice(): Promise<void> {
+  getParsedDate(timeStr: string): Date | null {
+    if (!timeStr) return null;
+    const parts = timeStr.split(':');
+    if (parts.length < 2) return null;
+    const hours = +parts[0];
+    const minutes = +parts[1];
+
+    if (isNaN(hours) || isNaN(minutes)) return null;
+
+    const date = new Date();
+    date.setHours(hours);
+    date.setMinutes(minutes);
+    return date;
+  }
+
+  async acceptRejectOrder(status: string, comment?: string, deliveryCharge?: number): Promise<void> {
     try {
-      const order = { ...this.order };
-      await this.apiMainService.updateBulkB2BDailyFoodOrder(order);
-      this.itemPriceEdit = false;
-      this.checkOrderCondition();
-      this.toasterService.success?.(200); // if you have a success code
-    } catch (error) {
-      console.log('error while confirmEditItemPrice ', error);
-      this.toasterService.error(112);
-    }
-  }
-
-  async confirmDeliveryCost(): Promise<void> {
-    try {
-      const order = { ...this.order };
-      await this.apiMainService.updateBulkB2BDailyFoodOrder(order);
-      this.addDeliveryCost = false;
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while confirmDeliveryCost ', error);
-      this.toasterService.error(112);
-    }
-  }
-
-  editItemPrice(): void {
-    this.itemPriceEdit = true;
-    this.oldItemPrice = this.order?.itemAmount || 0;
-  }
-
-  cancelEditItemPrice(): void {
-    this.itemPriceEdit = false;
-    this.order.itemAmount = this.oldItemPrice;
-  }
-
-  cancelDeliveryCost(): void {
-    this.addDeliveryCost = false;
-  }
-
-  // ===== ORDER STATUS =====
-
-  async acceptRejectOrder(status: string): Promise<void> {
-    try {
-      const order = { ...this.order, orderstatus: status };
-      await this.apiMainService.updateBulkB2BDailyFoodOrder(order);
-
+      console.log('status', status);
+      let order: any = { ...this.order, orderstatus: status };
+      if (comment) {
+        order.comment = comment;
+      }
+      const oldDeliveryCharge = this.order.deliveryCharge || 0;
+      if (deliveryCharge !== undefined && deliveryCharge !== null) {
+        order.deliveryCharge = deliveryCharge;
+      }
+      const adminId = this.localStorageService.getCacheData('ADMIN_ID');
+      if (adminId) {
+        order.actionBy = adminId;
+      }
+      order.startManualDelivery = true;
       this.order.orderstatus = status;
-      this.checkOrderCondition();
+      if (deliveryCharge !== undefined && deliveryCharge !== null) {
+        this.order.amount = ((this.order.amount || 0) - oldDeliveryCharge) + deliveryCharge;
+        this.order.deliveryCharge = deliveryCharge;
+        if (this.orderInput) {
+          this.orderInput.amount = this.order.amount;
+          order.deliveryCharge = this.order.deliveryCharge;
+        }
+      }
+      await this.apiMainService.updateBulkDailyFoodOrder(order);
       this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', {
         reload: true,
         _id: this.order._id
       });
-
-      if (status === 'readyForDelivery' && !this.order.startManualDelivery) {
-        this.startDeliveryProcess();
-      }
+      this.updateOrder.emit({
+        reload: true,
+        _id: this.order._id
+      });
+      this.updateOrderStage();
     } catch (error) {
       console.log('error while changing status', error);
       this.toasterService.error(112);
     }
   }
 
-  async setManualDelivery(): Promise<void> {
-    try {
-      const order = await this.apiMainService.updateB2BDailyManualDelivery(this.order._id);
-      if (order && order._id) {
-        this.order = order;
-        this.checkOrderCondition();
-      }
-    } catch (error) {
-      console.log('error while setManualDelivery order ', error);
-      this.toasterService.error(112);
-    }
+  openActionModal(content: any, action: string, status: string, commentRequired: boolean = false, message: string = '', showDeliveryInput: boolean = false) {
+    this.activeModalAction = action;
+    this.tempStatus = status;
+    this.statusComment = '';
+    this.commentRequired = commentRequired;
+    this.modalMessage = message;
+    this.showDeliveryInput = showDeliveryInput;
+    this.deliveryChargesFromModal = this.order.deliveryCharge || 0;
+    this.modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
   }
 
-  async startDeliveryProcess(): Promise<void> {
-    try {
-      const deliveryOrder: any = await this.deliveryOrderService.createTask(this.order, 'All', 'DDDaily');
-      this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
-      this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;
-      this.order.deliveryVendor = deliveryOrder.deliveryVendor;
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while creating delivery task', error);
-      this.toasterService.error(112);
-    }
-  }
-
-  async payAmtToKitchen(): Promise<void> {
-    try {
-      this.order.orderstatus = 'completed';
-      const response = await this.apiMainService.updateBulkB2BDailyFoodOrder(this.order);
-      console.log('payment to kitchen successful', response);
-      this.checkOrderCondition();
-      this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', {
-        reload: true,
-        _id: this.order._id
-      });
-    } catch (error) {
-      console.log('error while changing status', error);
-      this.toasterService.error(112);
-    }
-  }
-
-  checkOrderCondition(): void {
-    if (!this.order) {
+  confirmAction() {
+    if (this.commentRequired && !this.statusComment) {
+      this.toasterService.error('Comment is required');
       return;
     }
+    const deliveryCharge = this.showDeliveryInput ? this.deliveryChargesFromModal : undefined;
+    this.acceptRejectOrder(this.tempStatus, this.statusComment, deliveryCharge);
+    if (this.modalRef) {
+      this.modalRef.close();
+    }
+  }
 
-    this.orderStage = 0;
-    switch (this.order.orderstatus) {
+  updateOrderStage() {
+    const status = this.order?.orderstatus;
+    if (!status) return;
+    switch (status) {
       case 'placed':
         this.orderStage = 1;
+        this.actionList = [
+          { label: 'Accept', action: 'accept', color: 'primary', icon: 'check', commentRequired: false, message: 'Are you sure you want to accept this order?' },
+          { label: 'Cancel', action: 'cancel', color: 'warn', icon: 'close', commentRequired: true, message: 'Are you sure you want to cancel this order?' }
+        ]
         break;
       case 'accepted':
         this.orderStage = 2;
+        this.actionList = [
+          { label: 'Prepairing', action: 'preparing', color: 'primary', icon: 'check', commentRequired: false, message: 'Is the order preparation started?' },
+        ]
         break;
       case 'preparing':
         this.orderStage = 3;
+        this.actionList = [
+          { label: 'Ready For Delivery', action: 'readyForDelivery', color: 'primary', icon: 'check', commentRequired: false, message: 'Is the order ready for delivery?' },
+        ]
         break;
       case 'readyForDelivery':
-        this.getDeliveryStatus();
         this.orderStage = 4;
+        this.actionList = [
+          { label: 'Assign Agent', action: 'assignAgent', color: 'primary', icon: 'check', commentRequired: true, message: 'Assign a delivery agent to this order.' },
+          { label: 'Delivery Cost Change', action: 'deliveryCostChange', color: 'warn', icon: 'close', commentRequired: true, message: 'Update delivery cost for this order.' }
+        ]
         break;
       case 'deliveryBoyAssigned':
-      case 'handedOverToDeliveryBoy':
-      case 'onTheWay':
-        this.getDeliveryStatus();
         this.orderStage = 5;
+        this.actionList = [
+          { label: 'Handover To Agent', action: 'handoverToAgent', color: 'primary', icon: 'check', commentRequired: false, message: 'Confirm handover to delivery agent.' },
+        ]
+        break;
+      case 'handedOverToDeliveryBoy':
+        this.orderStage = 6;
+        this.actionList = [
+          { label: 'On The Way', action: 'onTheWay', color: 'primary', icon: 'check', commentRequired: false, message: 'Confirm handover to delivery agent.' },
+        ]
+        break;
+      case 'onTheWay':
+        this.orderStage = 7;
+        this.actionList = [
+          { label: 'Delivered', action: 'delivered', color: 'primary', icon: 'check', commentRequired: false, message: 'Confirm order delivery.' },
+        ]
         break;
       case 'delivered':
-        this.orderStage = 6;
+        this.orderStage = 8;
+        this.actionList = [
+          { label: 'Complete', action: 'complete', color: 'primary', icon: 'check', commentRequired: false, message: 'Mark order as completed?' },
+        ]
+        break;
+      case 'completed':
+        this.orderStage = 9;
+        this.actionList = []
+        break;
+      case 'cancelled':
+        this.orderStage = 10;
+        this.actionList = []
         break;
       default:
-        this.orderStage = 0;
+        this.orderStage = 1;
         break;
     }
   }
 
-  // ===== DELIVERY STATUS =====
+  handleAction(action: string) {
+    const actionConfig = this.actionList.find(a => a.action === action);
+    const commentRequired = actionConfig?.commentRequired || false;
+    const label = actionConfig?.label || action;
+    const message = actionConfig?.message || '';
 
-  async getDeliveryStatus(): Promise<void> {
-    try {
-      if (this.order && this.order.deliveryTaskId) {
-        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(
-          this.order.deliveryTaskId,
-          this.order.deliveryVendor
-        );
-
-        this.order.deliveryTaskState = deliveryOrderStatus.state;
-
-        if (deliveryOrderStatus?.eta) {
-          this.order.pickupEta = deliveryOrderStatus.eta.pickup;
-          this.order.dropoffEta = deliveryOrderStatus.eta.dropoff;
-        }
-
-        if (deliveryOrderStatus?.sfx_order_id) {
-          this.order.sfx_order_id = deliveryOrderStatus.sfx_order_id;
-        }
-
-        if (deliveryOrderStatus?.runner) {
-          this.order.runnerName = deliveryOrderStatus.runner.name;
-          this.order.runnerPhone = deliveryOrderStatus.runner.phone_number;
-          this.order.runnerLocation = deliveryOrderStatus.runner.location;
-        }
-
-        if (
-          deliveryOrderStatus.state === 'runner_cancelled' ||
-          deliveryOrderStatus.state === 'cancelled'
-        ) {
-          this.order.runnerName = undefined;
-          this.order.runnerPhone = undefined;
-          this.order.runnerLocation = undefined;
-        }
-
-        if (deliveryOrderStatus.state === 'CANCELLED') {
-          this.order.deliveryTaskState = 'cancelled';
-        }
-      } else if (this.orderInput && this.orderInput.deliveryTaskId) {
-        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(
-          this.orderInput.deliveryTaskId,
-          this.orderInput.deliveryVendor
-        );
-
-        this.orderInput.deliveryTaskState = deliveryOrderStatus.state;
-
-        if (deliveryOrderStatus?.eta) {
-          this.orderInput.pickupEta = deliveryOrderStatus.eta.pickup;
-          this.orderInput.dropoffEta = deliveryOrderStatus.eta.dropoff;
-        }
-
-        if (deliveryOrderStatus?.sfx_order_id) {
-          this.orderInput.sfx_order_id = deliveryOrderStatus.sfx_order_id;
-        }
-
-        if (deliveryOrderStatus?.runner) {
-          this.orderInput.runnerName = deliveryOrderStatus.runner.name;
-          this.orderInput.runnerPhone = deliveryOrderStatus.runner.phone_number;
-          this.orderInput.runnerLocation = deliveryOrderStatus.runner.location;
-        }
-
-        if (
-          deliveryOrderStatus.state === 'runner_cancelled' ||
-          deliveryOrderStatus.state === 'cancelled'
-        ) {
-          this.orderInput.runnerName = undefined;
-          this.orderInput.runnerPhone = undefined;
-          this.orderInput.runnerLocation = undefined;
-        }
-      }
-    } catch (error) {
-      console.log('error while fetching delivery status', error);
+    switch (action) {
+      case 'cancel':
+        this.openActionModal(this.actionModal, label, 'cancelled', commentRequired, message);
+        break;
+      case 'accept':
+        this.openActionModal(this.actionModal, label, 'accepted', commentRequired, message);
+        break;
+      case 'preparing':
+        this.openActionModal(this.actionModal, label, 'preparing', commentRequired, message);
+        break;
+      case 'readyForDelivery':
+        this.openActionModal(this.actionModal, label, 'readyForDelivery', commentRequired, message);
+        break;
+      case 'assignAgent':
+        this.openActionModal(this.actionModal, label, 'deliveryBoyAssigned', commentRequired, message);
+        break;
+      case 'handoverToAgent':
+        this.openActionModal(this.actionModal, label, 'handedOverToDeliveryBoy', commentRequired, message);
+        break;
+      case 'delivered':
+        this.openActionModal(this.actionModal, label, 'delivered', commentRequired, message);
+        break;
+      case 'complete':
+        this.openActionModal(this.actionModal, label, 'completed', commentRequired, message);
+        break;
+      case 'placeOrder':
+        this.openActionModal(this.actionModal, label, 'placed', commentRequired, message);
+        break;
+      case 'deliveryCostChange':
+        this.openActionModal(this.actionModal, label, this.order.orderstatus, commentRequired, message, true);
+        break;
+      case 'onTheWay':
+        this.openActionModal(this.actionModal, label, 'onTheWay', commentRequired, message);
+        break;
     }
   }
 
-  // ===== DELIVERY PROVIDER WRAPPERS =====
-
-  async startDunzoDeliveryProcess(): Promise<void> {
-    try {
-      const deliveryOrder: any = {}; // hook with your service when ready
-      this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
-      this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;
-      this.order.deliveryVendor = deliveryOrder.deliveryVendor;
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while creating DUNZO delivery task', error);
-    }
+  openImagePreview(content: any, imageSrc: string) {
+    this.previewImageSrc = imageSrc;
+    this.modalService.open(content, { size: 'lg', centered: true, ariaLabelledBy: 'modal-basic-title' });
   }
 
-  async startPorterDeliveryProcess(): Promise<void> {
-    try {
-      const deliveryOrder: any = {}; // integrate when needed
-      this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
-      this.order.deliveryTaskState = 'open';
-      this.order.deliveryVendor = 'Porter';
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while creating PORTER delivery task', error);
-    }
-  }
-
-  async startShadowFaxDeliveryProcess(): Promise<void> {
-    try {
-      const deliveryOrder: any = {}; // integrate when needed
-      this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
-      this.order.deliveryTaskState = 'ACCEPTED';
-      this.order.deliveryVendor = 'ShadowFax';
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while creating SHADOWFAX delivery task', error);
-    }
-  }
-
-  async startPidgeDeliveryProcess(): Promise<void> {
-    try {
-      const deliveryOrder: any = await this.deliveryOrderService.createTask(
-        this.order,
-        'PIDGE',
-        'DDDaily'
-      );
-      this.order.deliveryTaskId = deliveryOrder.deliveryTaskId;
-      this.order.deliveryTaskState = deliveryOrder.deliveryTaskState;
-      this.order.deliveryVendor = 'Pidge';
-      this.checkOrderCondition();
-    } catch (error) {
-      console.log('error while creating PIDGE delivery task', error);
-    }
-  }
-
-  async cancelPorterDelivery(): Promise<void> {
-    try {
-      await this.apiMainService.cancelPorterTask(this.order.deliveryTaskId);
-      this.getDeliveryStatus();
-    } catch (error) {
-      console.log('error while cancelling PORTER delivery task', error);
-    }
-  }
-
-  async cancelShadowFaxDelivery(): Promise<void> {
-    try {
-      await this.apiMainService.cancelShadowFaxDelivery(this.order.deliveryTaskId);
-      this.getDeliveryStatus();
-    } catch (error) {
-      console.log('error while cancelling SHADOWFAX delivery task', error);
-    }
-  }
-
-  async cancelPidge3PLOrder(): Promise<void> {
-    try {
-      await this.apiMainService.cancelPidge3PLOrder(this.order.deliveryTaskId);
-      this.getDeliveryStatus();
-    } catch (error) {
-      console.log('error while cancelling PIDGE delivery task', error);
-    }
-  }
-
-  // ===== TRANSFER TO ANOTHER KITCHEN =====
-
-  tranferToAnotherKitchen(): void {
-    this.orderTransferStart = true;
-  }
-
-  async searchNearKitchen(): Promise<void> {
-    try {
-      const lng = this.order?.customerLocation?.geolocation?.lng;
-      const lat = this.order?.customerLocation?.geolocation?.lat;
-      if (lng == null || lat == null) {
-        this.toasterService.error(112);
-        return;
-      }
-
-      const kitchenList = await this.apiMainService.getNearestVendors(lng, lat);
-      this.nearKitchenFullList = kitchenList || [];
-      await this.openKitchen(this.nearKitchenFullList);
-    } catch (error) {
-      console.log('searchNearKitchen error ', error);
-      this.toasterService.error(112);
-    }
-  }
-
-  async openKitchen(kitchenList: any[]): Promise<void> {
-    const topTen = kitchenList.slice(0, 10);
-    const enriched = await this.calculateDistance(topTen, 0);
-    this.nearKitchenList = enriched as any[];
-    this.kitchenmodal = this.modalService.open(this.contentkitchen, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
-      windowClass: 'menuModel'
-    });
-
-    this.kitchenmodal.result.then(
-      (result: any) => {
-        if (result === 'add') {
-          let selectedKitchen: any = {};
-          this.nearKitchenList.forEach((k) => {
-            if (k._id === this.nearestKitchen) {
-              selectedKitchen = k;
-            }
-          });
-          if (selectedKitchen && selectedKitchen._id) {
-            this.searchedVendor = { ...selectedKitchen };
-          }
-        }
-        this.nearestKitchen = '';
-      },
-      () => {
-        this.showLoadMoreKitchen = true;
-        this.nearestKitchen = '';
-      }
-    );
-  }
-
-  calculateDistance(kitchenList: any[], index: number): Promise<any[]> {
-    return new Promise(async (resolve) => {
-      try {
-        if (index === kitchenList.length) {
-          resolve(kitchenList);
-        } else {
-          const [googleRes, dunzoRes] = await Promise.all([
-            this.googleMapService.getKitchenDistance(kitchenList[index], this.order.customerLocation.geolocation),
-            this.getDunzoDeliveryDistance(kitchenList[index], this.order.customerLocation.geolocation)
-          ]);
-
-          const kitchenObj: any = googleRes;
-          if (dunzoRes) {
-            kitchenObj.dunzoDistance = dunzoRes.distance;
-            kitchenObj.estimated_price = dunzoRes.estimated_price;
-          }
-
-          kitchenList[index] = kitchenObj;
-          const res = await this.calculateDistance(kitchenList, index + 1);
-          resolve(res);
-        }
-      } catch (error) {
-        console.log('error while calculate Distance', error);
-        resolve(kitchenList);
-      }
-    });
-  }
-
-  async getDunzoDeliveryDistance(kitchenObj: any, customerLatLng: any): Promise<any> {
-    try {
-      const kitchenLatLng = kitchenObj.geolocation;
-      const deliveryObj = {
-        optimised_route: true,
-        pickup_details: [{ ...kitchenLatLng, reference_id: 'pickup_location' }],
-        drop_details: [{ ...customerLatLng, reference_id: 'drop_location' }]
-      };
-      const quoteObj = await this.apiMainService.getdeliveryAmount(deliveryObj);
-      return quoteObj;
-    } catch (error) {
-      console.log('error while fetching dunzo quote ', error);
-      return null;
-    }
-  }
-
-  async loadMoreKitchen(): Promise<void> {
-    const current = this.nearKitchenList.length;
-    const next = current + 10;
-
-    if (next >= this.nearKitchenFullList.length) {
-      this.showLoadMoreKitchen = false;
-    }
-
-    let nextList = this.nearKitchenFullList.slice(current, current + 10);
-    nextList = await this.calculateDistance(nextList, 0);
-    this.nearKitchenList = [...this.nearKitchenList, ...nextList];
-  }
-
-  async getDeliveryChargeQuote(): Promise<void> {
-    try {
-      const customerLatLng = this.order.customerLocation.geolocation;
-      const vendorLatLng = this.searchedVendor.geolocation;
-      const deliveryObj = {
-        optimised_route: true,
-        pickup_details: [{ ...vendorLatLng, reference_id: 'pickup_location' }],
-        drop_details: [{ ...customerLatLng, reference_id: 'drop_location' }]
-      };
-      const quoteObj = await this.apiMainService.getdeliveryAmount(deliveryObj);
-      this.transferDeliveryCharges = quoteObj.estimated_price;
-    } catch (error) {
-      console.log('error while fetching dunzo quote ', error);
-    }
-  }
-
-  async searchKitchen(): Promise<void> {
-    try {
-      if (!this.searchVendor) {
-        return;
-      }
-
-      const query = this.searchVendor; // keep as string; backend uses regex
-      const vendor = await this.apiMainService.searchVendorProfile(query);
-
-      if (vendor && vendor.length > 0) {
-        const newVendor = vendor[0];
-        this.searchedVendor = newVendor;
-      } else {
-        this.toasterService.error(113);
-      }
-    } catch (error) {
-      console.log('searchKitchen error', error);
-      this.toasterService.error(112);
-    }
-  }
-
-  async performOrderTransfer(): Promise<void> {
-    try {
-      const orderObj = { ...this.order };
-
-      if (orderObj.transferHistory && orderObj.transferHistory.length === 0) {
-        orderObj.firstVendorName = orderObj.vendorName;
-      }
-
-      orderObj.vendorId = this.searchedVendor._id;
-      orderObj.vendorFirmId = this.searchedVendor?.vendorFirmDetails?.vendorFirmId;
-      orderObj.vendorFirmName = this.searchedVendor?.vendorFirmDetails?.vendorFirmName;
-      orderObj.vendorName = this.searchedVendor.vendorName;
-      orderObj.vendorPhoneNo = this.searchedVendor.vendorPhoneNo;
-      orderObj.vendorAddress = this.searchedVendor.addressList[0];
-      orderObj.vendorGeolocation = this.searchedVendor.addressList[0]?.geolocation;
-      orderObj.deliveryByMealaweBoy = this.searchedVendor.deliveryByMealaweBoy;
-      orderObj.skipWalletPayment = this.searchedVendor.skipWalletPayment;
-
-      // if (this.searchedVendor.distance) {
-      //   orderObj.distance = this.searchedVendor.distance;
-      // } else {
-      //   const kitchenObj: any = await this.googleMapService.getKitchenDistance(
-      //     this.searchedVendor,
-      //     this.order.customerLocation.geolocation
-      //   );
-      //   orderObj.distance = kitchenObj.distance;
-      // }
-
-      orderObj.orderTransferred = true;
-      orderObj.transferHistory = orderObj.transferHistory || [];
-      orderObj.transferHistory.push({
-        vendorName: this.order.vendorName,
-        vendorFirmName: this.order.vendorFirmName,
-        vendorPhoneNo: this.order.vendorPhoneNo
-      });
-
-      const order = await this.apiMainService.performBulkDailyOrderTransfer(orderObj);
-      if (order && order._id) {
-        this.order = { ...order };
-      }
-
-      this.cancelTransfer();
-    } catch (error) {
-      console.log('error while transferring order ', error);
-      this.toasterService.error(112);
-    }
-  }
-
-  confirmTransfer(): void {
-    this.confirmationModalService.modal({
-      msg: `Are you sure, you want to transfer this order to ${this.searchedVendor?.vendorFirmDetails?.vendorFirmName} - ${this.searchedVendor?.vendorName}?`,
-      callback: () => this.performOrderTransfer(),
-      context: this
-    });
-  }
-
-  cancelTransfer(): void {
-    this.orderTransferStart = false;
-    this.searchedVendor = {};
-    this.searchVendor = '';
-  }
-
-  checkdistance(): void {
-    const selectedKitchen = this.nearKitchenList.find(
-      (k: any) => k._id === this.nearestKitchen
-    );
-
-    if (!selectedKitchen) {
-      this.toasterService.error(113);
-      return;
-    }
-
-    if (selectedKitchen.distance > 6) {
-      const modalRef = this.modalService.open(this.selectKitchenModal, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'md',
-        windowClass: 'kitchenModel'
-      });
-
-      modalRef.result.then(
-        (result) => {
-          if (result === 'add') {
-            this.selectKitchen();
-          }
-          this.nearestKitchen = '';
-        },
-        () => {
-          this.showLoadMoreKitchen = true;
-          this.nearestKitchen = '';
-        }
-      );
-    } else {
-      this.selectKitchen();
-    }
-  }
-
-  selectKitchen(): void {
-    let selectedKitchen: any = {};
-    this.nearKitchenList.forEach((kitchen: any) => {
-      if (kitchen._id === this.nearestKitchen) {
-        selectedKitchen = kitchen;
-      }
-    });
-
-    if (selectedKitchen && selectedKitchen._id) {
-      this.searchedVendor = { ...selectedKitchen };
-    }
-
-    if (this.kitchenmodal) {
-      this.kitchenmodal.dismiss('add');
-    }
+  formatTime12Hour(time: string): string {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    let h = parseInt(hours);
+    const m = parseInt(minutes);
+    const ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12;
+    h = h ? h : 12;
+    const mStr = m < 10 ? '0' + m : m;
+    return `${h}:${mStr} ${ampm}`;
   }
 }

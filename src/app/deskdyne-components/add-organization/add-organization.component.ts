@@ -4,13 +4,15 @@ import { MatRadioChange } from '@angular/material/radio';
 import { NavigationEnd, Router } from '@angular/router';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToasterService } from 'src/app/toaster/toaster.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
+
+import { SetGeolocationComponent } from 'src/app/set-geolocation/set-geolocation.component';
 
 @Component({
   selector: 'app-add-organization',
@@ -20,7 +22,7 @@ import { REGEX } from 'src/shared/constants/regex';
 export class AddOrganizationComponent implements OnInit {
   @ViewChild('content') content: any;
   @ViewChild('pocContent') pocContent: any;
-  @ViewChild('geolocation') geolocation: any;
+  // @ViewChild('geolocation') geolocation: any;
 
   // New Dialog Templates
   @ViewChild('pocDialogTemplate') pocDialogTemplate!: TemplateRef<any>;
@@ -30,7 +32,7 @@ export class AddOrganizationComponent implements OnInit {
   viewOrg: any;
   showUpdate: boolean = false;
   adminSelected: any = [];
-  roleList = ['poc', 'admin', 'superAdmin'];
+  roleList = ['poc', 'admin'];
 
   pocSelected: any;
   cafeSelected: any;
@@ -65,12 +67,14 @@ export class AddOrganizationComponent implements OnInit {
     { key: 'showEmpPolls', label: 'Show Emp Poll Card' },
     { key: 'showVirtualCafe', label: 'Show Virtual Cafeteria' },
     { key: 'showSaas', label: 'Show Outlet' },
+    { key: 'showQrCode', label: 'Show Qr Code' },
     { key: 'showCompanyWallet', label: 'Show Company Wallet' },
     { key: 'showComplienceTracker', label: 'Show Compliance Tracker' },
     { key: 'showConsumptionOrder', label: 'Show Consumption Order' },
     { key: 'isEmployeeEmailLogin', label: 'Is Employee Email Login' },
     { key: 'showSiteExecutive', label: 'Show Site Executive' },
     { key: 'showchecklist', label: 'Show Checklist' },
+    { key: 'showEventPopup', label: 'Show Event Popup' },
     { key: 'showSodexo', label: 'Show Sodexo' },
   ];
 
@@ -159,6 +163,7 @@ export class AddOrganizationComponent implements OnInit {
       isEmployeeEmailLogin: [false],
       showComplienceTracker: [false],
       showConsumptionOrder: [false],
+      showEventPopup: [false],
       showSodexo: [false],
       cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
       cafeteria_id: [id, Validators.required],
@@ -529,22 +534,27 @@ export class AddOrganizationComponent implements OnInit {
     }
   }
 
+
   // Map Logic - Updated to use Dialog Form Group
   toggleMapForDialog() {
-    const dialogRef = this.dialog.open(this.geolocation, {
+    const dialogRef = this.dialog.open(SetGeolocationComponent, {
       width: '800px',
       disableClose: true,
       panelClass: 'custom-dialog-container',
-      autoFocus: false
+      autoFocus: false,
+      data: {
+        selectedCenter: this.cafeteriaFormGroup.get('cafeteria_location')?.value
+      }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result === 'add') {
+      if (result) { // Result contains { location, latlng }
+        this.cafeLocation = result;
         // Update the isolated form group
-        this.cafeteriaFormGroup.controls['address2'].patchValue(this.cafeLocation.location);
+        this.cafeteriaFormGroup.controls['address2'].patchValue(result.location);
         this.cafeteriaFormGroup.controls['cafeteria_location'].patchValue({
-          lat: this.cafeLocation.latlng.lat,
-          lng: this.cafeLocation.latlng.lng
+          lat: result.latlng.lat,
+          lng: result.latlng.lng
         });
         // Cluster Logic
         this.updateClusterForDialog();
