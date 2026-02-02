@@ -46,6 +46,35 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Lux', path: 'luxMenu' },
       ],
     },
+    {
+      name: 'Employee Bulk Menu', path: 'employeebulkmenu',
+      subTabs: [
+        {
+          name: 'Meals',
+          childTabs: [
+            { name: 'Bulk Meals Menu', path: 'employeebulkMealsMenu' },
+            { name: 'Individual Meals Menu', path: 'employeeindividualMealsMenu' },
+          ],
+        },
+        {
+          name: 'Snacks',
+          childTabs: [
+            { name: 'Bulk Snacks Menu', path: 'employeebulkSnacksMenu' },
+            { name: 'Individual Snacks Menu', path: 'employeeindividualSnacksMenu' },
+          ],
+        },
+        {
+          name: 'Foodbox',
+          childTabs: [
+            { name: 'Pre-Defined Snack Box', path: 'employeepredefinedSnackBoxMenu' },
+            { name: 'Customized Snack Box', path: 'employeecustomizedSnackBoxMenu' },
+          ],
+        },
+        { name: 'Cake', path: 'employeecakeMenu' },
+        { name: 'Sweet', path: 'employeesweetMenu' },
+        { name: 'Lux', path: 'employeeluxMenu' },
+      ],
+    },
     { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
     { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
     { name: 'Consumption Menu', path: 'consumptionOrder' },

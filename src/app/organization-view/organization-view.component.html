@@ -24,6 +24,23 @@
                     [orgObj]="organization"></app-org-predefined-snackbox-menu>
                   <app-org-customized-snackbox-menu *ngSwitchCase="'customizedSnackBoxMenu'"
                     [orgObj]="organization"></app-org-customized-snackbox-menu>
+                  <!-- employee -->
+                  <app-employee-bulk-meal-menu *ngSwitchCase="'employeebulkMealsMenu'" [orgObj]="organization">
+                  </app-employee-bulk-meal-menu>
+                  <app-employee-individual-meal-menu *ngSwitchCase="'employeeindividualMealsMenu'"
+                    [orgObj]="organization">
+                  </app-employee-individual-meal-menu>
+                  <app-employee-bulk-snack-menu *ngSwitchCase="'employeebulkSnacksMenu'" [orgObj]="organization">
+                  </app-employee-bulk-snack-menu>
+                  <app-employee-individual-snack-menu *ngSwitchCase="'employeeindividualSnacksMenu'"
+                    [orgObj]="organization">
+                  </app-employee-individual-snack-menu>
+                  <app-employee-predefined-foodbox-menu *ngSwitchCase="'employeepredefinedSnackBoxMenu'"
+                    [orgObj]="organization">
+                  </app-employee-predefined-foodbox-menu>
+                  <app-employee-customized-foodbox-menu *ngSwitchCase="'employeecustomizedSnackBoxMenu'"
+                    [orgObj]="organization">
+                  </app-employee-customized-foodbox-menu>
                 </ng-container>
               </mat-tab>
             </mat-tab-group>
@@ -31,6 +48,13 @@
               <app-cake-menu *ngSwitchCase="'cakeMenu'" [orgObj]="organization"></app-cake-menu>
               <app-sweet-menu *ngSwitchCase="'sweetMenu'" [orgObj]="organization"></app-sweet-menu>
               <app-lux-menu *ngSwitchCase="'luxMenu'" [orgObj]="organization"></app-lux-menu>
+              <!-- employee -->
+              <app-employee-cake-menu *ngSwitchCase="'employeecakeMenu'"
+                [orgObj]="organization"></app-employee-cake-menu>
+              <app-employee-sweet-menu *ngSwitchCase="'employeesweetMenu'" [orgObj]="organization">
+              </app-employee-sweet-menu>
+              <app-employee-lux-menu *ngSwitchCase="'employeeluxMenu'" [orgObj]="organization">
+              </app-employee-lux-menu>
             </ng-container>
           </ng-container>
         </mat-tab>
