@@ -68,15 +68,7 @@
                                     <span class="label">Cut Off</span>
                                     <span class="value">{{element.cutOffTime}}</span>
                                 </div>
-                                <div class="info-block" style="min-width: 80px;">
-                                    <span class="label">Same Day</span>
-                                    <div>
-                                        <span class="badge rounded-pill"
-                                            [ngClass]="element.isSameDay ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
-                                            {{element.isSameDay ? 'Yes' : 'No'}}
-                                        </span>
-                                    </div>
-                                </div>
+
                             </div>
                         </mat-panel-title>
                     </mat-expansion-panel-header>
@@ -91,7 +83,7 @@
                                     <mat-panel-title class="flex-grow-1">
                                         <div class="header-info-grid me-3">
                                             <div class="info-block" style="min-width: 110px;">
-                                                <span class="label">Item Name</span>
+                                                <span class="label">Meal Name</span>
                                                 <span class="value">{{config.itemName}}</span>
                                             </div>
                                             <div class="info-block meal-price" style="min-width: 100px;">
@@ -101,6 +93,15 @@
                                             <div class="info-block kitchen-pay" style="min-width: 100px;">
                                                 <span class="label">Kitchen Pay</span>
                                                 <span class="value">{{config.payAmtToKitchen | currency : 'INR'}}</span>
+                                            </div>
+                                            <div class="info-block" style="min-width: 80px;">
+                                                <span class="label">Same Day</span>
+                                                <div>
+                                                    <span class="badge rounded-pill"
+                                                        [ngClass]="config.isSameDay ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'">
+                                                        {{config.isSameDay ? 'Yes' : 'No'}}
+                                                    </span>
+                                                </div>
                                             </div>
                                         </div>
                                     </mat-panel-title>
