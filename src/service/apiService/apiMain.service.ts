@@ -776,10 +776,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.orgMealPackages, payload);
   }
 
-  getBulkDailyBillingDetails(payload: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getBulkDailyBillingDetails, payload);
-  }
-
   getAdminPastOrders(payload: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAdminPastOrders, payload);
   }
@@ -1575,5 +1571,25 @@ export class ApiMainService {
   toggleAutoRule(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.toggleAutoRule;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getCompanyWalletTransactionHistoryByPhoneNo(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCompanyWalletTransactionHistoryByPhoneNo;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
+  }
+
+  getCompanyWalletByPhoneNo(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCompanyWalletByPhoneNo;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
+  }
+
+  getTransactionsByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTransactionsByOrgId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  getCompanyOrganizationTransactionHistory(paylod: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCompanyOrganizationTransactionHistory;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, paylod);
   }
 }

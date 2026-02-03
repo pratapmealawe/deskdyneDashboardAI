@@ -5,6 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { WalletTransactionDialogComponent } from './wallet-transaction-dialog/wallet-transaction-dialog.component';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-customer-wallet',
@@ -134,6 +136,46 @@ export class CustomerWalletComponent implements OnInit {
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
     this.walletList = this.filteredTransactions.slice(start, end);
+  }
+
+  async exportToExcel() {
+    if (!this.filteredTransactions || this.filteredTransactions.length === 0) {
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Customer Wallet History');
+
+    // Headers
+    worksheet.columns = [
+      { header: 'Date', key: 'date', width: 25 },
+      { header: 'Wallet', key: 'walletType', width: 15 },
+      { header: 'Type', key: 'transactionType', width: 15 },
+      { header: 'Amount (₹)', key: 'amount', width: 15 },
+      { header: 'Balance (₹)', key: 'balance', width: 15 },
+      { header: 'Remark', key: 'remark', width: 40 },
+    ];
+
+    // Styling Header
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { horizontal: 'center' };
+
+    // Data
+    this.filteredTransactions.forEach(tx => {
+      worksheet.addRow({
+        date: new Date(tx.created_at).toLocaleString(),
+        walletType: tx.walletType || '-',
+        transactionType: tx.transactionType || '-',
+        amount: Number(tx.transaction_points) || 0,
+        balance: Number(tx.wallet_balance) || 0,
+        remark: tx.remark || '-'
+      });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    const fileName = `Customer_Wallet_History_${this.userObj.userName}_${new Date().getTime()}.xlsx`;
+    saveAs(blob, fileName);
   }
 
   // Helper for status styling (same as wallet-details)

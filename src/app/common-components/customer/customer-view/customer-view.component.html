@@ -21,6 +21,9 @@
       <div *ngSwitchCase="'wallet'" class="tab-pane fade show active">
         <app-customer-wallet [userObj]="userDetails"></app-customer-wallet>
       </div>
+      <div *ngSwitchCase="'companyWallet'" class="tab-pane fade show active">
+        <app-customer-company-wallet [userObj]="userDetails"></app-customer-company-wallet>
+      </div>  
       <div *ngSwitchCase="'outletOrders'" class="tab-pane fade show active">
         <app-customer-outlet-orders [userDetails]="userDetails"></app-customer-outlet-orders>
       </div>

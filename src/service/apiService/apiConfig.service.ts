@@ -352,6 +352,9 @@ export class ApiConfigService {
       updateAutoRule: p('/api/updateAutoRule', 'PUT'),
       deleteAutoRule: p('/api/deleteAutoRule', 'DELETE'),
       toggleAutoRule: p('/api/toggleAutoRule', 'PUT'),
+      getCompanyWalletTransactionHistoryByPhoneNo: p('/api/getCompanyWalletTransactionHistoryByPhoneNo', 'GET'),
+      getCompanyWalletByPhoneNo: p('/api/getCompanyWalletByPhoneNo', 'GET'),
+      getCompanyOrganizationTransactionHistory: p('/api/getCompanyOrganizationTransactionHistory', 'POST'),
     }
   }
 }

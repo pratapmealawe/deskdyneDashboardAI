@@ -147,15 +147,22 @@ export class VendorDailyReportComponent implements OnInit {
 
   private buildSummaries() {
     this.orderWise = this.orders.map((o: any) => {
-      const orderDateRaw =
-        o.orderDate?.$date || o.orderDate || o.createdAt || null;
+      const orderDateRaw = o.orderDate?.$date || o.orderDate || o.createdAt || null;
+
+      // Determine customer name with fallback
+      let customerName = '';
+      if (o.pocDetails?.pocName) {
+        customerName = o.pocDetails.pocName;
+      } else {
+        customerName = o.customerName || o.pocName || o.orgName || '';
+      }
 
       return {
         orderNo: Number(o.orderNo) || 0,
         orderDateIST: this.formatToIST(orderDateRaw),
-        customerName: o.customerName || o.pocName || o.orgName || '',
+        customerName: customerName,
         orderAmount: Number(o.orderAmount) || 0,
-        vendorLedgerAmt: Number(o.vendorLedgerAmt) || 0,
+        vendorLedgerAmt: Number(o.vendorLedgerAmt) || Number(o.amount) || 0, // Fallback to total amount if ledger not set
       };
     });
 
@@ -445,13 +452,14 @@ export class VendorDailyReportComponent implements OnInit {
       for (const it of items) {
         const itemName =
           it.itemName ||
+          it.mealConfigName ||
           it.deliveredItem ||
           it.mealName ||
           '';
 
         const mealPrice = Number(it.mealPrice) || 0;
         const qty = Number(it.count) || 0;
-        const payToKitchen = Number(it.payAmtToKitchen) || 0;
+        const payToKitchen = (it.payAmtToKitchen !== undefined) ? Number(it.payAmtToKitchen) : 0;
 
         totalQty += qty;
         totalPayToKitchenAmount += qty * payToKitchen;
