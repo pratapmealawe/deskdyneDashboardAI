@@ -1,13 +1,13 @@
-import { Component, Input, ViewChild, OnInit } from '@angular/core';
+import { Component, Input, ViewChild, OnInit, Output, EventEmitter, TemplateRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { B2bInvoiceService } from 'src/service/b2b-invoice.service';
 import { DeliveryOrderService } from 'src/service/delivery-order.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-bulk-order-card',
@@ -18,7 +18,7 @@ export class BulkOrderCardComponent implements OnInit {
   @ViewChild('contentkitchen') contentkitchen: any;
   @ViewChild('selectKitchenModal') selectKitchenModal: any;
   @Input() orderInput: any;
-
+  @Output() statusChange = new EventEmitter<boolean>();
   imageUrl = environment.imageUrl;
 
   showless: boolean = true;
@@ -53,6 +53,11 @@ export class BulkOrderCardComponent implements OnInit {
   orderStage = 0;
   kitchenmodal: any;
 
+  vendorForm!: FormGroup;
+  vendorFirmList: any[] = [];
+  vendorList: any[] = [];
+  isVendorAssigned: boolean = false;
+
   constructor(
     private sendDataToComponent: SendDataToComponent,
     private deliveryOrderService: DeliveryOrderService,
@@ -61,12 +66,14 @@ export class BulkOrderCardComponent implements OnInit {
     private googleMapService: GoogleMapService,
     private apiMainService: ApiMainService,
     private toasterService: ToasterService,
-    private b2bInvoice: B2bInvoiceService
+    private fb: FormBuilder
   ) { }
 
   ngOnInit(): void {
     // For summary card we can still show live delivery status if taskId is present
     this.getDeliveryStatus();
+    this.initializeForm();
+    this.getVendors();
   }
 
   /** Map status to CSS class for chips */
@@ -83,7 +90,7 @@ export class BulkOrderCardComponent implements OnInit {
     this.order = order;
     this.showless = false;
     this.checkOrderCondition();
-    // this.preparePage();
+    this.checkIsVendorAssigned();
   }
 
   showLess() {
@@ -92,6 +99,7 @@ export class BulkOrderCardComponent implements OnInit {
 
   toggleEditMode() {
     this.editMode = !this.editMode;
+    this.checkIsVendorAssigned();
   }
 
   async acceptRejectOrder(status: string) {
@@ -109,7 +117,7 @@ export class BulkOrderCardComponent implements OnInit {
       if (status === 'readyForDelivery' && !this.order.startManualDelivery) {
         this.startDeliveryProcess();
       }
-
+      this.statusChange.emit(true);
       this.checkOrderCondition();
     } catch (error) {
       console.log('error while changing status', error);
@@ -220,9 +228,7 @@ export class BulkOrderCardComponent implements OnInit {
     }
   }
 
-
   checkOrderCondition() {
-    console.log('checkOrderCondition...');
     if (this.order) {
       this.orderStage = 0;
 
@@ -687,4 +693,126 @@ export class BulkOrderCardComponent implements OnInit {
       this.kitchenmodal.dismiss('add');
     }
   }
+
+  onClickChangeVendor(changeVendor: TemplateRef<any>) {
+    this.modalService.open(changeVendor,
+      {
+        ariaLabelledBy: 'modal-basic-title',
+        centered: true,
+        size: 'lg',
+        windowClass: 'changeVendorModel'
+      });
+  }
+
+  async confirmChangeVendor() {
+    if (this.vendorForm.invalid) return;
+
+    const payload = {
+      orderId: this.order._id,
+      ...this.vendorForm.value
+    };
+    try {
+      const result = await this.apiMainService.B2B_changeVendor(payload);
+      if (result) {
+        this.statusChange.emit(true);
+        this.vendorForm.reset();
+        this.toasterService.success('Vendor changed successfully');
+        this.modalService.dismissAll();
+      }
+    } catch (e) {
+      console.error('Change vendor failed', e);
+    }
+
+  }
+
+  cancelChangeVendor() {
+    this.vendorForm.reset();
+    this.vendorForm.get('vendorId')?.setValue('');
+    this.modalService.dismissAll();
+  }
+
+  onVendorFirmChange(event: any) {
+    this.apiMainService.getVendorFirmById(event.value).then((res) => {
+      if (res) {
+        this.vendorForm.get('vendorFirmId')?.setValue(res._id);
+        this.vendorForm.get('vendorFirmName')?.setValue(res.vendorFirmName);
+        this.vendorList = this.vendorFirmList.find((firm: any) => firm.vendorFirmDetails.vendorFirmId === event.value)?.vendorList;
+      }
+    })
+  }
+
+  onVendorChange(event: any) {
+    const vendor = this.vendorList.find((vendor: any) => vendor._id === event.value);
+    this.vendorForm.get('vendorId')?.setValue(vendor._id);
+    this.vendorForm.get('vendorName')?.setValue(vendor.vendorName);
+    this.vendorForm.get('vendorPhoneNo')?.setValue(vendor.vendorPhoneNo);
+    this.vendorForm.get('vendorAddress.address1')?.setValue(vendor.address.address1);
+    this.vendorForm.get('vendorAddress.address2')?.setValue(vendor.address.address2);
+    this.vendorForm.get('vendorAddress.landmark')?.setValue(vendor.address.landmark);
+    this.vendorForm.get('vendorGeolocation.lat')?.setValue(vendor.geolocation.lat);
+    this.vendorForm.get('vendorGeolocation.lng')?.setValue(vendor.geolocation.lng);
+  }
+
+  private initializeForm() {
+    this.vendorForm = this.fb.group({
+      vendorFirmId: ['', Validators.required],
+      vendorFirmName: ['', Validators.required],
+      vendorId: ['', Validators.required],
+      vendorName: ['', Validators.required],
+      vendorPhoneNo: ['', Validators.required],
+      vendorAddress: this.fb.group({
+        address1: [''],
+        address2: [''],
+        landmark: [''],
+      }),
+      vendorGeolocation: this.fb.group({
+        lat: [''],
+        lng: ['']
+      })
+    })
+  }
+
+  private getVendors() {
+    this.apiMainService.searchVendor(undefined).then((res) => {
+      if (res && res.length > 0) {
+        const dailyAccessVendors = res.filter((vendor: any) => vendor.isDailyAndBulkAccess === true && vendor?.vendorFirmDetails?.vendorFirmName);
+        const firmMap = new Map();
+        dailyAccessVendors.forEach((vendor: any) => {
+          const firmId = vendor?.vendorFirmDetails?.vendorFirmId;
+          if (!firmMap.has(firmId)) {
+            firmMap.set(firmId, {
+              vendorFirmDetails: vendor.vendorFirmDetails,
+              vendorList: []
+            });
+          }
+          firmMap.get(firmId).vendorList.push(vendor);
+        });
+        this.vendorFirmList = [...firmMap.values()];
+      }
+    })
+  }
+
+private checkIsVendorAssigned(): void {
+  this.isVendorAssigned = !!this.order?.vendorDetails;
+}
+
+get canShowChangeVendor(): boolean {
+  if (!this.editMode || !this.order) {
+    return false;
+  }
+
+  if (this.order.orderstatus === 'placed') {
+    return true;
+  }
+
+  if (
+    this.order.orderstatus === 'waitingForApproval' &&
+    !this.isVendorAssigned
+  ) {
+    return true;
+  }
+
+  return false;
+}
+
 }

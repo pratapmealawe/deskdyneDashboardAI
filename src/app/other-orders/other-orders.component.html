@@ -82,10 +82,10 @@
                 <div class="status-filters-container">
                     <div class="status-item" *ngFor="let status of bulkOrderStatusList"
                         (click)="getClusterb2bBulkOrderList(status.value, page)"
-                        [class.active]="selectedStatus === status.value">
+                        [class.active]="bulkOrderSelectedStatus === status.value">
                         <span class="status-label">{{status.label}}</span>
-                        <span class="status-count" *ngIf="selectedStatus === status.value">{{status.count || 0}}</span>
-                        <span class="status-count-inactive" *ngIf="selectedStatus !== status.value">{{status.count ||
+                        <span class="status-count" *ngIf="bulkOrderSelectedStatus === status.value">{{status.count || 0}}</span>
+                        <span class="status-count-inactive" *ngIf="bulkOrderSelectedStatus !== status.value">{{status.count ||
                             0}}</span>
                     </div>
                 </div>
@@ -102,7 +102,7 @@
                 <div *ngIf="filteredList.length > 0; else noRecord">
                     <div class="d-flex flex-column gap-3">
                         <div *ngFor="let order of filteredList">
-                            <app-bulk-order-card [orderInput]="order"></app-bulk-order-card>
+                            <app-bulk-order-card [orderInput]="order" (statusChange)="onStatusChanged($event)"></app-bulk-order-card>
                         </div>
                     </div>
                     <div class="pagination-bar mb-3">

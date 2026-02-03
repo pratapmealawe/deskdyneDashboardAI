@@ -29,7 +29,19 @@ import { MaterialModule } from '../material.module';
 import { PdfuploadComponent } from '../pdfupload/pdfupload.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OrganizationViewComponent } from './organization-view.component';
-
+import { OrganizationAddVendorComponent } from './organization-add-vendor/organization-add-vendor.component';
+import { OrganizationCopyBulkMenuComponent } from './organization-copy-bulk-menu/organization-copy-bulk-menu.component';
+import { PantryMenuComponent } from '../common-components/pantry-menu/pantry-menu.component';
+import { EmployeeBulkMealMenuComponent } from '../common-components/employee-bulk-meal-menu/employee-bulk-meal-menu.component';
+import { EmployeeBulkSnackMenuComponent } from '../common-components/employee-bulk-snack-menu/employee-bulk-snack-menu.component';
+import { EmployeeCakeMenuComponent } from '../common-components/employee-cake-menu/employee-cake-menu.component';
+import { EmployeeCustomizedFoodboxMenuComponent } from '../common-components/employee-customized-foodbox-menu/employee-customized-foodbox-menu.component';
+import { EmployeeIndividualMealMenuComponent } from '../common-components/employee-individual-meal-menu/employee-individual-meal-menu.component';
+import { EmployeeIndividualSnackMenuComponent } from '../common-components/employee-individual-snack-menu/employee-individual-snack-menu.component';
+import { EmployeeLuxMenuComponent } from '../common-components/employee-lux-menu/employee-lux-menu.component';
+import { EmployeePredefinedFoodboxMenuComponent } from '../common-components/employee-predefined-foodbox-menu/employee-predefined-foodbox-menu.component';
+import { EmployeeSweetMenuComponent } from '../common-components/employee-sweet-menu/employee-sweet-menu.component';
+import { EmployeePantryMenuComponent } from '../common-components/employee-pantry-menu/employee-pantry-menu.component';
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -52,8 +64,21 @@ import { OrganizationViewComponent } from './organization-view.component';
     CakeMenuComponent,
     SweetMenuComponent,
     LuxMenuComponent,
+    PantryMenuComponent,
     MealaweOutletComponent,
-    QrEmployeeComponent
+    QrEmployeeComponent,
+    OrganizationAddVendorComponent,
+    OrganizationCopyBulkMenuComponent,
+    EmployeeBulkMealMenuComponent,
+    EmployeeBulkSnackMenuComponent,
+    EmployeeCakeMenuComponent,
+    EmployeeCustomizedFoodboxMenuComponent,
+    EmployeeIndividualMealMenuComponent,
+    EmployeeIndividualSnackMenuComponent,
+    EmployeeLuxMenuComponent,
+    EmployeePredefinedFoodboxMenuComponent,
+    EmployeeSweetMenuComponent,
+    EmployeePantryMenuComponent
   ],
   imports: [
     CommonModule,

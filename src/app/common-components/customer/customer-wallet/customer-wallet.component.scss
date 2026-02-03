@@ -16,6 +16,11 @@
         transform: translateY(-2px);
         box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     }
+
+    &.credit-row {
+        background-color: rgba(76, 175, 80, 0.08);
+        border-left: 3px solid #4CAF50;
+    }
 }
 
 .status-chip {
@@ -78,4 +83,16 @@
     font-weight: 500;
     color: #212529;
     word-break: break-all;
+}
+
+.date-range-field {
+    min-width: 250px;
+}
+
+.orange {
+    color: #fd7e14;
+}
+
+.text-muted {
+    color: #6c757d;
 }

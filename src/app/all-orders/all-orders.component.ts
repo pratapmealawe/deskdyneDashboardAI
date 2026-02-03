@@ -188,7 +188,7 @@ export class AllOrdersComponent implements OnInit {
     // > 30 mins
     const diffInMinutes = (currentTime - orderTime) / (1000 * 60);
 
-    return diffInMinutes > 30;
+    return diffInMinutes > 20;
   }
 
   async validatePayment(order: any) {
@@ -198,14 +198,12 @@ export class AllOrdersComponent implements OnInit {
         orderType: "outletOrder"
       });
 
-      console.log(res);
-
       if (res.status === 'success' || res.status === 'placed' || res.status === true) {
         this.toaster.success(res.message || 'Payment validated successfully');
-        this.getAllOrders();
       } else {
         this.toaster.error("Failed to validate payment transaction");
       }
+      this.getAllOrders();
     } catch (err) {
       console.error(err);
       this.toaster.error("Error validating payment");
