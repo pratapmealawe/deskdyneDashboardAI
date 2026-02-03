@@ -490,19 +490,7 @@
         </div>
     </ng-template>
 
-    <!-- Compliance & Geo Modals (Kept generic) -->
-    <ng-template #geolocation let-modal>
-        <div class="modal-header">
-            <h4 class="modal-title m-0">Geolocation</h4>
-            <mat-icon (click)="modal.dismiss('cancel')" style="cursor:pointer">close</mat-icon>
-        </div>
-        <div class="modal-body">
-            <app-set-geolocation (sendLocation)="updateLocation($event)"></app-set-geolocation>
-        </div>
-        <div class="modal-footer">
-            <button class="btn btn-primary" (click)="modal.close('add')">Add</button>
-        </div>
-    </ng-template>
+    <!-- Geolocation Modal - Now handled via MatDialog in TypeScript -->
 
     <!-- Popup Modal -->
     <ng-template #popupModal let-modal>
@@ -534,8 +522,9 @@
                 </div>
             </div>
             <div class="mt-3" *ngIf="showModalOutletListforPopup">
-                <h6 *ngIf="eventsByOrganization.length > 0"class="text-secondary mb-3">Available Popups</h6>
-                <h6 *ngIf="eventsByOrganization.length == 0" class="text-secondary text-center mb-3">No Available Popups for this Cafeteria</h6>
+                <h6 *ngIf="eventsByOrganization.length > 0" class="text-secondary mb-3">Available Popups</h6>
+                <h6 *ngIf="eventsByOrganization.length == 0" class="text-secondary text-center mb-3">No Available Popups
+                    for this Cafeteria</h6>
                 <div *ngFor="let event of eventsByOrganization" class="p-3 border rounded mb-2 gap-3">
                     <div class="row d-flex align-items-center">
                         <div class="col-2">
@@ -555,7 +544,8 @@
             </div>
         </div>
         <div class="modal-footer p-3">
-            <button type="submit" [disabled]="!isAnyPopupSelected" mat-flat-button color="primary" (click)="getSelectedPopups()">Add Popup</button>
+            <button type="submit" [disabled]="!isAnyPopupSelected" mat-flat-button color="primary"
+                (click)="getSelectedPopups()">Add Popup</button>
         </div>
     </ng-template>
 </div>
