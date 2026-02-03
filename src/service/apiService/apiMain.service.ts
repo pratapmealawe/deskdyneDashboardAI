@@ -1568,7 +1568,8 @@ export class ApiMainService {
   checkSession() {
     const urlObj = this.apiConfigService.apiEndPointObj.checkSession;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
-  
+  }
+
   getAllB2bBulkMenus(): Promise<any> {
     const urlObj = this.apiConfigService.apiEndPointObj.getAllB2bBulkMenus;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
@@ -1799,5 +1800,4 @@ export class ApiMainService {
   saveEmployeePantryMenu(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeePantryMenu, data);
   }
-}
 }
