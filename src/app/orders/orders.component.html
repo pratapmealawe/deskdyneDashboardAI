@@ -217,7 +217,7 @@
 
                                         <button mat-flat-button color="warn" class="rounded-pill"
                                             *ngIf="row.orderstatus === 'paymentInprogress' && isPaymentValidationVisible(row)"
-                                            (click)="validateJusPayPaymentTransaction(row._id)">
+                                            (click)="validatePayment(row)">
                                             Validate Payment
                                         </button>
                                     </div>

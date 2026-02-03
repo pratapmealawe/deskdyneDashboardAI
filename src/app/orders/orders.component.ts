@@ -185,17 +185,22 @@ export class OrdersComponent implements OnInit, OnDestroy {
     this.orderStatusCountObj = counts;
   }
 
-  async validateJusPayPaymentTransaction(orderId: string) {
-    const payload = {
-      foodOrderId: orderId,
-      orderType: "outletOrder"
-    };
-    const res = await this.apiMainService.validateJusPayPaymentTransaction(payload)
-    if (res.status === 'success' || res.status === 'placed' || res.status === true) {
-      this.toaster.success(res.message);
-      this.getOrderStatusList(this.selectedStatus);
-    } else {
-      this.toaster.error("Failed to validate payment transaction");
+  async validatePayment(order: any) {
+    try {
+      const res = await this.apiMainService.validateJusPayPaymentTransactionManual({
+        foodOrderId: order._id,
+        orderType: "outletOrder"
+      });
+
+      if (res.status === 'success' || res.status === 'placed' || res.status === true) {
+        this.toaster.success(res.message || 'Payment validated successfully');
+      } else {
+        this.toaster.error("Failed to validate payment transaction");
+      }
+      this.getLatestOrderStatusList(this.selectedStatus);
+    } catch (err) {
+      console.error(err);
+      this.toaster.error("Error validating payment");
     }
   }
 

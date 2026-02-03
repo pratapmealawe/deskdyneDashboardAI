@@ -59,7 +59,7 @@ const routes: Routes = [
   { path: 'submitChecklist', canActivate: [accessGuard], loadChildren: () => import('./org-components/submit-checklist/submit-checklist.module').then(m => m.SubmitChecklistModule) },
   { path: 'checklistHistory', canActivate: [accessGuard], loadChildren: () => import('./checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
   { path: 'foodItem', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
-  { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-current-orders/b2b-current-orders.module').then(m => m.B2bCurrentOrdersModule) },
+  // { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-current-orders/b2b-current-orders.module').then(m => m.B2bCurrentOrdersModule) },
   { path: 'otherOrder', canActivate: [accessGuard], loadChildren: () => import('./other-orders/other-orders.module').then(m => m.OtherOrdersModule) },
   { path: 'pastOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
   { path: 'viewEnquiries', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/org-registry/org-registry.module').then(m => m.OrgRegistryModule) },
