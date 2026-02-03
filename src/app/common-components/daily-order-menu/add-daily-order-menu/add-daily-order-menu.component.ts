@@ -26,14 +26,14 @@ export const timeValidator: ValidatorFn = (control: AbstractControl): Validation
     }
   }
 
-  if (from && cutOff && cutOff >= from) {
-    cutOffCtrl?.setErrors({ ...cutOffCtrl.errors, invalidCutOff: true });
-  } else {
-    if (cutOffCtrl?.hasError('invalidCutOff')) {
-      const { invalidCutOff, ...errors } = cutOffCtrl.errors as ValidationErrors;
-      cutOffCtrl.setErrors(Object.keys(errors).length ? errors : null);
-    }
-  }
+  // if (from && cutOff && cutOff >= from) {
+  //   cutOffCtrl?.setErrors({ ...cutOffCtrl.errors, invalidCutOff: true });
+  // } else {
+  //   if (cutOffCtrl?.hasError('invalidCutOff')) {
+  //     const { invalidCutOff, ...errors } = cutOffCtrl.errors as ValidationErrors;
+  //     cutOffCtrl.setErrors(Object.keys(errors).length ? errors : null);
+  //   }
+  // }
   return null;
 };
 
