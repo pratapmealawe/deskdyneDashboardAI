@@ -1,20 +1,23 @@
 <h2 mat-dialog-title class="m-0 fs-5">Set Location</h2>
 
-<mat-dialog-content class="fullheight">
-    <div class="searchAddress row mb-2">
-        <div class="col-sm-12 col-md-3 col-lg-3 currentLocation" (click)="goToCurrentLocation()">
-            <mat-icon class="icon-sm">my_location</mat-icon> Current
-        </div>
-        <div class="col-sm-12 col-md-9 col-lg-9">
-            <input #searchLocationInput [(ngModel)]="searchText" class="searchInput" id="searchLocation" type='text'
-                placeholder="Search Location">
-        </div>
+<mat-dialog-content class="fullheight pt-3">
+    <div class="search-row">
+        <button mat-stroked-button color="primary" class="current-location-btn" (click)="goToCurrentLocation()">
+            <mat-icon>my_location</mat-icon> Current
+        </button>
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search Location</mat-label>
+            <input matInput #searchLocationInput [(ngModel)]="searchText" id="searchLocation" type="text"
+                placeholder="Search for a location..." autocomplete="off" />
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
     </div>
-    <div class="position-relative">
+    <div class="map-container">
         <div [id]="mapid" class="map"></div>
     </div>
-    <div class="mt-2 text-muted small" *ngIf="location">
-        <strong>Selected:</strong> {{ location }}
+    <div class="selected-location" *ngIf="location">
+        <mat-icon class="location-icon">place</mat-icon>
+        <span>{{ location }}</span>
     </div>
 </mat-dialog-content>
 
