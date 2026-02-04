@@ -25,6 +25,7 @@ export class OtherOrdersComponent implements OnInit {
     { label: 'Completed', value: 'completed', count: 0 },
   ];
   bulkOrderStatusList = [
+    { label: 'Waiting For Approval', value: 'waitingForApproval', count: 0 },
     { label: 'Placed', value: 'placed', count: 0 },
     { label: 'Accepted', value: 'accepted', count: 0 },
     { label: 'Preparing', value: 'preparing', count: 0 },
@@ -44,6 +45,7 @@ export class OtherOrdersComponent implements OnInit {
   selectedOrg: any = null;
   selectedCafeteria: any = null;
   selectedStatus: string = 'placed';
+  bulkOrderSelectedStatus: string = 'waitingForApproval';
   page: number = 1;
   pageLimit: number = 10;
   totalCount: number = 0;
@@ -115,8 +117,9 @@ export class OtherOrdersComponent implements OnInit {
       this.getEmployeePollList(this.selectedPollDate);
     } else if (this.selectedTab === 'bulkOrders') {
       this.getb2bBulkOrderList();
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
     } else if (this.selectedTab === 'adminOrders') {
-      this.getb2bBulkDailyOrderList();
+      this.getBulkDailyOrderList();
     }
   }
 
@@ -205,10 +208,9 @@ export class OtherOrdersComponent implements OnInit {
     });
   }
 
-  getb2bBulkDailyOrderList() {
-    this.apiMainService.getCurrentB2BDailyOrdersCount().then((res: any) => {
+  getBulkDailyOrderList() {
+    this.apiMainService.getCurrentDailyOrdersCount().then((res: any) => {
       if (res) {
-        console.log(res, 'getCurrentB2BDailyOrdersCount');
         this.adminOrderStatusList.forEach((status: any) => {
           status.count = res[status.value];
         });
@@ -219,10 +221,9 @@ export class OtherOrdersComponent implements OnInit {
     this.getLatestBulkDailyOrderStatusList(this.selectedStatus);
   }
 
- getb2bBulkOrderList() {
+  getb2bBulkOrderList() {
     this.apiMainService.getCurrentB2BOrdersCount().then((res: any) => {
       if (res) {
-        console.log(res, 'getCurrentB2BOrdersCount');
         this.bulkOrderStatusList.forEach((status: any) => {
           status.count = res[status.value];
         });
@@ -230,10 +231,10 @@ export class OtherOrdersComponent implements OnInit {
     }, (error: any) => {
       console.log(error)
     });
-  this.bulkOrderStatusList.forEach((status: any) => {
-    status.count = 0;
-  });
-}
+    this.bulkOrderStatusList.forEach((status: any) => {
+      status.count = 0;
+    });
+  }
 
   async getLatestBulkDailyOrderStatusList(status: any) {
     this.selectedStatus = status;
@@ -247,7 +248,7 @@ export class OtherOrdersComponent implements OnInit {
   async getOrderStatusList(status: string, pageNum: number) {
     try {
       this.page = pageNum;
-      this.apiMainService.getb2bBulkDailyOrderList(status, this.page, this.pageLimit).then((res: any) => {
+      this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit).then((res: any) => {
         if (res) {
           this.filteredList = res.orderList;
           this.totalCount = res.totalCount;
@@ -278,9 +279,11 @@ export class OtherOrdersComponent implements OnInit {
   }
 
   getClusterb2bBulkOrderList(status: string, pageNum: number) {
+    this.page = pageNum;
+    this.bulkOrderSelectedStatus = status;
     this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit).then((res: any) => {
       if (res) {
-        this.filteredList = res.orderList;
+        this.filteredList = res;
         this.totalCount = res.totalCount;
         this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
         if (this.filteredList && this.filteredList.length > 0) {
@@ -304,16 +307,30 @@ export class OtherOrdersComponent implements OnInit {
     });
   }
 
+  onStatusChanged(status: any) {
+    if (status) {
+      this.getb2bBulkOrderList();
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
+    }
+  }
+
   onPageSizeChange(newSize: number) {
     this.pageLimit = newSize;
     this.page = 1;
-    this.getOrderStatusList(this.selectedStatus, this.page);
+
+    if (this.selectedTab === 'adminOrders') {
+      this.getOrderStatusList(this.selectedStatus, this.page);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
+    }
   }
 
   get visiblePages(): (number | string)[] {
     const total = this.totalPages;
     const current = this.page;
-    const delta = 2; 
+    const delta = 2;
     const range: number[] = [];
     const rangeWithDots: (number | string)[] = [];
     let l: number | undefined;
@@ -337,20 +354,52 @@ export class OtherOrdersComponent implements OnInit {
   }
 
   goToPage(pageNum: number | string) {
-    if (typeof pageNum === 'number' && pageNum !== this.page && pageNum >= 1 && pageNum <= this.totalPages) {
+    if (typeof pageNum !== 'number' || pageNum === this.page) return;
+
+    this.page = pageNum;
+
+    if (this.selectedTab === 'adminOrders') {
       this.getOrderStatusList(this.selectedStatus, pageNum);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, pageNum);
     }
   }
 
   previous(page: number) {
-    if (page > 1) {
-      this.getOrderStatusList(this.selectedStatus, page - 1);
+    if (page <= 1) return;
+
+    const newPage = page - 1;
+
+    if (this.selectedTab === 'adminOrders') {
+      this.getOrderStatusList(this.selectedStatus, newPage);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, newPage);
     }
   }
 
   next(page: number) {
-    if (!this.paginationOver) {
-      this.getOrderStatusList(this.selectedStatus, page + 1);
+    if (this.paginationOver || page >= this.totalPages) return;
+
+    const newPage = page + 1;
+
+    if (this.selectedTab === 'adminOrders') {
+      this.getOrderStatusList(this.selectedStatus, newPage);
+    }
+
+    if (this.selectedTab === 'bulkOrders') {
+      this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, newPage);
+    }
+  }
+  
+  refreshOrderList() {
+    if (this.selectedTab === 'adminOrders') {
+      this.getBulkDailyOrderList();
+    } else if (this.selectedTab === 'bulkOrders') {
+      this.getb2bBulkOrderList();
     }
   }
 }

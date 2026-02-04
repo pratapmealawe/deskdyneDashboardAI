@@ -17,7 +17,7 @@
             <div class="d-flex align-items-center gap-3 text-secondary small">
                 <div class="d-flex align-items-center gap-1" title="Cutoff Time">
                     <i class="bi bi-clock text-danger"></i>
-                    <span class="fw-medium">{{order?.mealTypeList?.[0]?.cutOffTime}}</span>
+                    <span class="fw-medium">{{formatTime12Hour(order?.mealTypeList?.[0]?.cutOffTime)}}</span>
                 </div>
                 <div class="border-start ps-3 d-flex align-items-center gap-1" title="Delivery Cost">
                     <i class="bi bi-truck text-dark"></i>

@@ -11,12 +11,12 @@ import { UtilityService } from 'src/service/utility.service';
 })
 export class B2bCurrentOrdersComponent implements OnInit {
   selectedStatus = '';
-  b2bSelectedStatus:any = '';
-  bulkSelectedStatus:any = '';
+  b2bSelectedStatus: any = '';
+  bulkSelectedStatus: any = '';
   selectedGroup = ''
   currentOrderStatusList: any = [];
   page = 1;
-  day:any;
+  day: any;
   lastPage = 1;
   pageLimit = 200;
   pageFirstEntry = 1;
@@ -44,17 +44,17 @@ export class B2bCurrentOrdersComponent implements OnInit {
     approved: 0,
     preApproved: 0,
     decline: 0,
-    waitingForApproval:0
+    waitingForApproval: 0
   };
 
-  constructor(private ddApiMainService:ApiMainService, private sendDataToComponent:SendDataToComponent, private utilityService:UtilityService){}
+  constructor(private ddApiMainService: ApiMainService, private sendDataToComponent: SendDataToComponent, private utilityService: UtilityService) { }
 
   ngOnInit(): void {
     this.getCurrentOrders(false);
     this.subscribeEvents();
   }
 
-  subscribeEvents(){
+  subscribeEvents() {
     this.sendDataToComponent.subscribe('UPDATE_BULK_ORDER_PAGE', (data) => {
       if (data && data.reload) {
         this.getCurrentOrders(false);
@@ -72,11 +72,11 @@ export class B2bCurrentOrdersComponent implements OnInit {
     });
   }
 
-  reloadPage(){
+  reloadPage() {
     this.getCurrentOrders(false);
   }
 
-  async getLatestb2bOrderStatusList(status:any){
+  async getLatestb2bOrderStatusList(status: any) {
     this.selectedStatus = '';
     this.bulkSelectedStatus = '';
     this.b2bSelectedStatus = this.b2b_orders_mapper[status];
@@ -88,7 +88,7 @@ export class B2bCurrentOrdersComponent implements OnInit {
     this.getOrderStatusList(this.b2bSelectedStatus, 1, true, false);
   }
 
-  async getLatestBulkDailyOrderStatusList(status:any){
+  async getLatestBulkDailyOrderStatusList(status: any) {
     this.selectedStatus = '';
     this.b2bSelectedStatus = '';
     this.bulkSelectedStatus = status;
@@ -100,16 +100,16 @@ export class B2bCurrentOrdersComponent implements OnInit {
     this.getOrderStatusList(this.bulkSelectedStatus, 1, false, true);
   }
 
-  async getOrderStatusList(status: string, page: number, showB2B:any, showDailyBulk:any) {
+  async getOrderStatusList(status: string, page: number, showB2B: any, showDailyBulk: any) {
     try {
       this.page = page;
       let orderList: any = [];
       let bulkOrderList: any = [];
-      if(showB2B){
-        orderList = await this.ddApiMainService.getb2bBulkOrderList(status,this.page, this.pageLimit)
+      if (showB2B) {
+        orderList = await this.ddApiMainService.getb2bBulkOrderList(status, this.page, this.pageLimit)
       }
-      else if(showDailyBulk){
-        orderList = await this.ddApiMainService.getb2bBulkDailyOrderList(status,this.page, this.pageLimit)
+      else if (showDailyBulk) {
+        orderList = await this.ddApiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit)
       }
       if (orderList && orderList.length > 0) {
         this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
@@ -137,39 +137,38 @@ export class B2bCurrentOrdersComponent implements OnInit {
       this.lastPage = 1;
       this.paginationOver = false;
       const orderList = await this.ddApiMainService.getCurrentB2BOrdersCount();
-      console.log(orderList)
       this.orderStatusCountObj = orderList;
     } catch (error) {
       console.log('error while searching orders ', error);
     }
   }
 
-  async getEmployeePollList(day:any){
+  async getEmployeePollList(day: any) {
     this.day = day;
     this.page = 1;
     this.lastPage = 1;
     this.paginationOver = false;
     this.filteredList = [];
     const currentDate = new Date();
-    currentDate.setHours(0,0,0,0);
-    const after1Day = new Date((new Date()).setDate(currentDate.getDate() + 1)).setHours(0,0,0,0);
-    const after2Day = new Date((new Date()).setDate(currentDate.getDate() + 2)).setHours(0,0,0,0);
-    if(day === 'today'){
-      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({deliveryStartDate:currentDate,deliveryEndDate:currentDate});
-      if(filteredList && filteredList.length > 0){
+    currentDate.setHours(0, 0, 0, 0);
+    const after1Day = new Date((new Date()).setDate(currentDate.getDate() + 1)).setHours(0, 0, 0, 0);
+    const after2Day = new Date((new Date()).setDate(currentDate.getDate() + 2)).setHours(0, 0, 0, 0);
+    if (day === 'today') {
+      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({ deliveryStartDate: currentDate, deliveryEndDate: currentDate });
+      if (filteredList && filteredList.length > 0) {
         console.log(filteredList)
         this.filteredList = filteredList;
       }
     }
-    else if(day === 'tomorrow'){
-      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({deliveryStartDate:after1Day,deliveryEndDate:after1Day});
-      if(filteredList && filteredList.length > 0){
+    else if (day === 'tomorrow') {
+      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({ deliveryStartDate: after1Day, deliveryEndDate: after1Day });
+      if (filteredList && filteredList.length > 0) {
         this.filteredList = filteredList;
       }
     }
-    else{
-      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({deliveryStartDate:after2Day,deliveryEndDate:after2Day});
-      if(filteredList && filteredList.length > 0){
+    else {
+      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({ deliveryStartDate: after2Day, deliveryEndDate: after2Day });
+      if (filteredList && filteredList.length > 0) {
         this.filteredList = filteredList;
       }
     }
@@ -180,14 +179,14 @@ export class B2bCurrentOrdersComponent implements OnInit {
     const status = this.selectedStatus ? true : false;
     const bulk = this.bulkSelectedStatus ? true : false;
     const b2b = this.b2bSelectedStatus ? true : false;
-    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus , page, b2b, bulk);
+    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus, page, b2b, bulk);
   }
   next(page: number) {
     page++;
     const status = this.selectedStatus ? true : false;
     const bulk = this.bulkSelectedStatus ? true : false;
     const b2b = this.b2bSelectedStatus ? true : false;
-    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus , page, b2b, bulk);
+    this.getOrderStatusList(status ? this.selectedStatus : bulk ? this.bulkSelectedStatus : this.b2bSelectedStatus, page, b2b, bulk);
   }
 
   setBtnGroup(group: any) {

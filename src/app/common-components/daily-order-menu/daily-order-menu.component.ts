@@ -86,6 +86,7 @@ export class DailyOrderMenuComponent implements OnInit {
       organizationId: this.orgObj._id,
       cafeteriaId: this.selectedCafeteriaId,
       cafeteriaName: this.selectedCafeteriaName,
+      existingMealTypes: this.deliverySettings.map(m => m.selectedMealType)
     }
     this.openModal(AddDailyOrderMenuComponent, payload);
   }
@@ -97,6 +98,7 @@ export class DailyOrderMenuComponent implements OnInit {
       cafeteriaId: this.selectedCafeteriaId,
       cafeteriaName: this.selectedCafeteriaName,
       mealType: element,
+      existingMealTypes: this.deliverySettings.map(m => m.selectedMealType)
     }
     this.openModal(AddDailyOrderMenuComponent, payload);
   }
@@ -311,7 +313,7 @@ export class DailyOrderMenuComponent implements OnInit {
             setting.deliveryTimeFrom,
             setting.deliveryTimeTo,
             setting.cutOffTime,
-            setting.isSameDay ? 'Yes' : 'No',
+            config.isSameDay ? 'Yes' : 'No',
             config.itemName,
             config.mealPrice,
             config.payAmtToKitchen
@@ -391,5 +393,15 @@ export class DailyOrderMenuComponent implements OnInit {
         this.getDailyOrderMenuByCafeteriaId();
       }
     });
+  }
+
+  formatTime(time: string): string {
+    if (!time) return '';
+    const [hours, minutes] = time.split(':');
+    let hour = parseInt(hours, 10);
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12;
+    hour = hour ? hour : 12; // the hour '0' should be '12'
+    return `${hour}:${minutes} ${ampm}`;
   }
 }

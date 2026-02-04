@@ -18,8 +18,9 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
     itemName: new FormControl('', Validators.required),
     mealPrice: new FormControl(null, [Validators.required, Validators.min(0)]),
     payAmtToKitchen: new FormControl(null, [Validators.required, Validators.min(0)]),
+    isSameDay: new FormControl(false),
     days: new FormArray([])
-  });
+  }, { validators: this.priceValidator });
   daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
   constructor(
@@ -36,7 +37,8 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
       this.menuForm.patchValue({
         itemName: data.itemName,
         mealPrice: data.mealPrice,
-        payAmtToKitchen: data.payAmtToKitchen
+        payAmtToKitchen: data.payAmtToKitchen,
+        isSameDay: data.isSameDay
       });
 
       // Populate days FormArray from weeklyMenu
@@ -77,18 +79,29 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
     });
   }
 
+
+  priceValidator(control: any): { [key: string]: boolean } | null {
+    const mealPrice = control.get('mealPrice')?.value;
+    const payAmtToKitchen = control.get('payAmtToKitchen')?.value;
+    if (mealPrice !== null && payAmtToKitchen !== null && mealPrice <= payAmtToKitchen) {
+      return { 'priceInvalid': true };
+    }
+    return null;
+  }
+
   onSubmit(): void {
     if (this.menuForm.valid) {
-      const formValue = this.menuForm.getRawValue();
+      const { itemName, mealPrice, payAmtToKitchen, isSameDay, days } = this.menuForm.getRawValue();
       let payload = {
         cafeteriaId: this.data.cafeteriaId,
         selectedMealType: this.data.selectedMealType,
         mealConfigId: null,
         mealConfigData: {
-          itemName: formValue.itemName,
-          mealPrice: formValue.mealPrice,
-          payAmtToKitchen: formValue.payAmtToKitchen,
-          weeklyMenu: formValue.days
+          itemName,
+          mealPrice,
+          payAmtToKitchen,
+          isSameDay,
+          weeklyMenu: days
         }
       };
       if (this.data.mealConfigId) {

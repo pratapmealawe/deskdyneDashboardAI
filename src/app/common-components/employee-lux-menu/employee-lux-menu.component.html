@@ -1,0 +1,260 @@
+<div class="container-fluid menuWrapper" *ngIf="orgObj">
+
+    <!-- Top bar: org select + copy + add item -->
+    <div class="top-bar">
+        <mat-form-field appearance="outline" class="org-field w-100">
+            <mat-label>Copy Organization Menu</mat-label>
+            <mat-select [(ngModel)]="orgSelected">
+                <mat-option [value]="null" disabled>-- select organization --</mat-option>
+                <mat-option *ngFor="let org of orgChoices" [value]="org._id">
+                    {{ org.organization_name }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <button mat-stroked-button color="primary" (click)="copyOrgMenu()" [disabled]="!orgSelected">
+            Copy Menu
+        </button>
+
+        <span class="spacer"></span>
+
+        <button mat-fab color="primary" class="add-btn" (click)="openAddItemDialog()">
+            <mat-icon>add</mat-icon>
+        </button>
+    </div>
+
+    <!-- Slab + date limits -->
+    <div class="slab-row" *ngIf="bulkMenuList.length">
+        <mat-form-field appearance="outline">
+            <mat-label>MOQ</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.moq" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Slab Limit 1</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slabLimit1" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Slab Limit 2</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slabLimit2" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Slab Limit 3</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slabLimit3" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Date Limit 1</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.dateLimit1" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Date Limit 2</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.dateLimit2" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Date Limit 3</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.dateLimit3" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Slab 1 Delivery</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab1DeliveryPrice" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Slab 2 Delivery</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab2DeliveryPrice" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Slab 3 Delivery</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab3DeliveryPrice" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+            <mat-label>Slab 4 Delivery</mat-label>
+            <input matInput type="number" [(ngModel)]="bulkMenuFetched.slab4DeliveryPrice" [disabled]="!slabEditMode" />
+        </mat-form-field>
+
+        <button mat-icon-button (click)="toggleSlabEdit()">
+            <mat-icon *ngIf="!slabEditMode">edit</mat-icon>
+            <mat-icon *ngIf="slabEditMode">check</mat-icon>
+        </button>
+    </div>
+
+    <!-- Search -->
+    <div class="search-row" *ngIf="bulkMenuList.length">
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search menu</mat-label>
+            <input matInput [(ngModel)]="menuSearchText" placeholder="Search by item name" />
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+    </div>
+
+    <!-- Menu list -->
+    <div *ngIf="bulkMenuList.length; else noItems">
+        <mat-card class="item-card"
+            *ngFor="let foodItem of bulkMenuList | filter: menuSearchText : 'itemName'; index as i">
+
+            <!-- Top row: image + info + actions -->
+            <div class="item-card-main">
+                <img class="kitchenMenuImage" [src]="imageUrl + foodItem.imageUrl" />
+
+                <div class="item-info">
+                    <!-- Item name -->
+                    <div class="item-name">
+                        <span class="label">Item Name</span>
+                        <span *ngIf="!foodItem.edit">{{ foodItem.itemName }}</span>
+                        <input *ngIf="foodItem.edit" class="dd-input" type="text" [(ngModel)]="foodItem.itemName" />
+                    </div>
+
+                    <!-- Description -->
+                    <div class="item-desc">
+                        <span class="label">Description</span>
+                        <span *ngIf="!foodItem.edit" class="description">
+                            {{ foodItem.itemDescription }}
+                        </span>
+                        <input *ngIf="foodItem.edit" class="dd-input" type="text"
+                            [(ngModel)]="foodItem.itemDescription" />
+                    </div>
+
+                    <!-- Meta -->
+                    <div class="item-meta">
+                        <div class="type-flavour">
+                            <span *ngIf="foodItem.itemType === 'Veg'" class="type-dot veg"></span>
+                            <span *ngIf="foodItem.itemType === 'NonVeg'" class="type-dot nonveg"></span>
+                            <span *ngIf="foodItem.itemType === 'Jain'" class="jain-badge">
+                                <span class="type-dot veg"></span> Jain
+                            </span>
+                            <span class="flavour">{{ foodItem.itemFlavour }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="item-actions">
+                    <button mat-icon-button color="primary" *ngIf="!foodItem.edit" (click)="editFoodItem(foodItem)">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" *ngIf="!foodItem.edit" (click)="onDeleteItem(i, foodItem)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                    <button mat-icon-button color="primary" *ngIf="foodItem.edit" (click)="foodItem.edit = false">
+                        <mat-icon>check</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Second row: serving + slabs + prices -->
+            <div class="item-card-secondary">
+                <!-- Serving -->
+                <div class="serving">
+                    <span *ngIf="foodItem.itemServingType === 'perUnit'">Per unit</span>
+                    <span *ngIf="foodItem.itemServingType === 'perPerson'">Per person</span>
+
+                    <div *ngIf="foodItem.itemServingType === 'perQuantity'" class="quantity">
+                        <span class="label">Quantity</span>
+
+                        <span *ngIf="!foodItem.edit">
+                            {{ foodItem.servingQuantity }} {{ foodItem.servingQuantityUnit }}
+                        </span>
+
+                        <div *ngIf="foodItem.edit" class="quantity-edit">
+                            <input class="dd-input dd-input-sm" type="number" [(ngModel)]="foodItem.servingQuantity" />
+                            <select class="dd-input dd-input-sm" [(ngModel)]="foodItem.servingQuantityUnit">
+                                <option value="Kg">Kg</option>
+                                <option value="gm">gm</option>
+                                <option value="L">L</option>
+                                <option value="ml">ml</option>
+                                <option value="Inch">Inch</option>
+                                <option value="cm">cm</option>
+                                <option value="Piece">Piece</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Price grid -->
+                <div class="price-grid">
+                    <!-- Slab prices -->
+                    <div class="price-cell" *ngFor="let slab of slabFields">
+                        <span class="label">{{ slab.label }}</span>
+                        <span *ngIf="!foodItem.edit">₹ {{ foodItem[slab.key] }}</span>
+                        <input *ngIf="foodItem.edit" class="dd-input" type="number" [(ngModel)]="foodItem[slab.key]" />
+                    </div>
+
+                    <!-- Pay to kitchen -->
+                    <div class="price-cell wide">
+                        <span class="label">Pay To Kitchen</span>
+                        <span *ngIf="!foodItem.edit">₹ {{ foodItem.payAmtToKitchen }}</span>
+                        <input *ngIf="foodItem.edit" class="dd-input" type="number"
+                            [(ngModel)]="foodItem.payAmtToKitchen" />
+                    </div>
+                </div>
+            </div>
+        </mat-card>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-row" *ngIf="bulkMenuList.length">
+        <button mat-flat-button color="primary" (click)="editBulkMenu()" [disabled]="disableSave()">
+            Save Lux Menu
+        </button>
+    </div>
+
+</div>
+
+<!-- Add item dialog -->
+<ng-template #itemDialog>
+    <h2 mat-dialog-title>Add Food Item</h2>
+
+    <mat-dialog-content>
+        <mat-form-field appearance="outline" class="search-field">
+            <mat-label>Search item</mat-label>
+            <input matInput [(ngModel)]="searchText" />
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="item-list">
+            <mat-selection-list [(ngModel)]="selectedFoodItems">
+                <mat-list-option *ngFor="let foodItem of foodItemList | filter: searchText : 'itemName'"
+                    [value]="foodItem">
+                    <div class="list-item">
+                        <div class="name">{{ foodItem.itemName }}</div>
+
+                        <!-- Slab prices row -->
+                        <div class="slabs">
+                            <span class="slab-pill">Slab1: ₹ {{ foodItem.slab1Price }}</span>
+                            <span class="slab-pill">Slab2: ₹ {{ foodItem.slab2Price }}</span>
+                            <span class="slab-pill">Slab3: ₹ {{ foodItem.slab3Price }}</span>
+                            <span class="slab-pill">Slab4: ₹ {{ foodItem.slab4Price }}</span>
+                        </div>
+
+                        <div class="meta">
+                            <span *ngIf="foodItem.itemType === 'Veg'" class="type-dot veg"></span>
+                            <span *ngIf="foodItem.itemType === 'NonVeg'" class="type-dot nonveg"></span>
+                            <span *ngIf="foodItem.itemType === 'Jain'" class="jain-badge">
+                                <span class="type-dot veg"></span> Jain
+                            </span>
+                        </div>
+                    </div>
+                </mat-list-option>
+            </mat-selection-list>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end">
+        <button mat-button mat-dialog-close>Cancel</button>
+        <button mat-flat-button color="primary" [mat-dialog-close]="'add'">
+            Add Selected
+        </button>
+    </mat-dialog-actions>
+</ng-template>
+
+<ng-template #noItems>
+    <div class="no-items">No items found</div>
+</ng-template>

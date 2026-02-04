@@ -27,28 +27,62 @@
         </div>
     </div>
 
-    <!-- Filters -->
+    <!-- Date Range & Filters -->
     <div class="card shadow-sm mb-3">
         <div class="card-body py-2">
-            <div class="d-flex align-items-center gap-3">
-                <span class="text-muted small fw-bold text-uppercase">Filter By Wallet Type:</span>
-                <mat-chip-listbox aria-label="Wallet Type Filter" [(ngModel)]="selectedWalletType"
-                    (ngModelChange)="onFilterChange()">
-                    <mat-chip-option *ngFor="let type of walletTypeFilterList" [value]="type.value"
-                        [selected]="selectedWalletType === type.value">
-                        {{ type.viewValue }}
-                    </mat-chip-option>
-                </mat-chip-listbox>
+            <div class="d-flex flex-wrap align-items-center gap-3">
+
+                <!-- Date Range Picker -->
+                <mat-form-field appearance="outline" class="date-range-field">
+                    <mat-label>Date Range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
+                        <input matStartDate placeholder="From" [(ngModel)]="dateRange.start" name="fromDate">
+                        <input matEndDate placeholder="To" [(ngModel)]="dateRange.end" name="toDate">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+
+                <button mat-flat-button color="primary" (click)="applyDateFilter()" [disabled]="isLoading">
+                    <mat-icon>search</mat-icon> Apply
+                </button>
+                <button mat-stroked-button (click)="clearDateFilter()" [disabled]="isLoading">
+                    Clear
+                </button>
+
+                <div class="ms-auto">
+                    <!-- Wallet Type Filter -->
+                    <span class="text-muted small fw-bold text-uppercase me-2">Type:</span>
+                    <mat-chip-listbox aria-label="Wallet Type Filter" [(ngModel)]="selectedWalletType"
+                        (ngModelChange)="onFilterChange()">
+                        <mat-chip-option *ngFor="let type of walletTypeFilterList" [value]="type.value"
+                            [selected]="selectedWalletType === type.value">
+                            {{ type.viewValue }}
+                        </mat-chip-option>
+                    </mat-chip-listbox>
+                </div>
+
+                <!-- Export Button -->
+                <button mat-stroked-button color="accent" (click)="exportToExcel()"
+                    [disabled]="isLoading || filteredTransactions.length === 0">
+                    <mat-icon>file_download</mat-icon> Export Excel
+                </button>
             </div>
         </div>
     </div>
 
+    <!-- Loading Spinner -->
+    <div class="d-flex justify-content-center my-4" *ngIf="isLoading">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
     <!-- Transaction List -->
-    <div class="card shadow-sm">
+    <div class="card shadow-sm" *ngIf="!isLoading">
         <div class="card-body">
             <h5 class="card-title mb-3">Transaction History</h5>
 
-            <div *ngFor="let tx of walletList" class="transaction-card p-3 mb-2 rounded bg-light">
+            <div *ngFor="let tx of walletList" class="transaction-card p-3 mb-2 rounded"
+                [ngClass]="{'credit-row': isCredit(tx.transactionType), 'bg-light': !isCredit(tx.transactionType)}">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <div class="d-flex align-items-center gap-2">
                         <!-- Wallet Type Chip -->
@@ -88,7 +122,7 @@
             <div *ngIf="walletList.length === 0" class="text-center py-5 text-muted">
                 <mat-icon class="mb-2"
                     style="font-size: 48px; width: 48px; height: 48px; opacity: 0.5;">account_balance_wallet</mat-icon>
-                <p>No transactions found</p>
+                <p>No transactions found for the selected date range</p>
             </div>
 
             <!-- Paginator -->
