@@ -63,6 +63,7 @@ export class CakeMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: CakeMenuItem[] = [];
@@ -138,19 +139,23 @@ export class CakeMenuComponent implements OnInit, OnChanges {
 
   async getBulkMenuItemsByCafeteriaId(): Promise<void> {
     if (!this.selectedCafeteria) return;
+    this.hasMenu.emit(false);
     try {
       const menuItems: CakeMenuMeta = await this.api.B2B_fetchCakeMenu(this.selectedCafeteria._id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.bulkMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
       } else {
         this.isVendorAssigned.emit(false);
         this.bulkMenuFetched = {};
         this.bulkMenuList = [];
+        this.hasMenu.emit(false);
       }
     } catch (error) {
       console.log(error);
+      this.hasMenu.emit(false);
     }
   }
 

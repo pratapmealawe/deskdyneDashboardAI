@@ -59,6 +59,7 @@ export class PantryMenuComponent {
   @Input() orgObj!: Org;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: PantryMenuItem[] = [];
@@ -135,18 +136,22 @@ export class PantryMenuComponent {
   async getBulkMenuItemsByCafeteriaId(): Promise<void> {
     if (!this.selectedCafeteria) return;
     try {
+      this.hasMenu.emit(false);
       const menuItems: PantryMenuMeta = await this.api.B2B_fetchPantryMenu(this.selectedCafeteria._id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.bulkMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
       } else {
         this.isVendorAssigned.emit(false);
         this.bulkMenuFetched = {};
         this.bulkMenuList = [];
+        this.hasMenu.emit(false);
       }
     } catch (error) {
       console.log(error);
+      this.hasMenu.emit(false);
     }
   }
 

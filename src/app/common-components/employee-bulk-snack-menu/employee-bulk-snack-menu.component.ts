@@ -54,6 +54,7 @@ export class EmployeeBulkSnackMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
   bulkMenuList: SnackMenuItem[] = [];
   bulkSnacksMenuFetched: SnackMenuMeta = {};
@@ -112,18 +113,22 @@ export class EmployeeBulkSnackMenuComponent implements OnInit, OnChanges {
 
   async getEmployeeBulkSnackMenuByCafeteria(): Promise<void> {
     try {
+      this.hasMenu.emit(false);
       const menuItems: SnackMenuMeta = await this.api.getEmployeeBulkSnackMenu(this.selectedCafeteria._id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.bulkSnacksMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
       } else {
         this.bulkSnacksMenuFetched = {};
         this.bulkMenuList = [];
         this.isVendorAssigned.emit(false);
+        this.hasMenu.emit(false);
       }
     } catch (error) {
       console.error(error);
+      this.hasMenu.emit(false);
     }
   }
 

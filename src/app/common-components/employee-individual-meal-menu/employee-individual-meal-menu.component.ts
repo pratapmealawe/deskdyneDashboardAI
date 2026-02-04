@@ -52,9 +52,10 @@ interface IndMenuMeta {
 })
 export class EmployeeIndividualMealMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
-  @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
+  @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
   bulkMenuList: IndMenuItem[] = [];
   indMenuFetched: IndMenuMeta = {};
   menuSearchText = '';
@@ -113,22 +114,24 @@ export class EmployeeIndividualMealMenuComponent implements OnInit, OnChanges {
   }
 
   async getEmployeeIndividualMenuByCafeteria(): Promise<void> {
-    if (!this.orgObj?._id) return;
+    if (!this.selectedCafeteria?._id) return;
     try {
+      this.hasMenu.emit(false);
       const menuItems: IndMenuMeta = await this.api.getEmployeeIndividualMealMenu(this.selectedCafeteria._id);
-      this.indMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.indMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
       } else {
         this.indMenuFetched = {};
         this.bulkMenuList = [];
         this.isVendorAssigned.emit(false);
+        this.hasMenu.emit(false);
       }
     } catch (error) {
       console.error(error);
+      this.hasMenu.emit(false);
     }
   }
 

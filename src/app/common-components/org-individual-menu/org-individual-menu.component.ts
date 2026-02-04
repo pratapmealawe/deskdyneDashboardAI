@@ -64,6 +64,7 @@ export class OrgIndividualMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: IndMenuItem[] = [];
@@ -146,18 +147,22 @@ export class OrgIndividualMenuComponent implements OnInit, OnChanges {
   async getIndividualMenuItemsByCafeteriaId(): Promise<void> {
     if (!this.selectedCafeteria) return;
     try {
+      this.hasMenu.emit(false);
       const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMealMenu(this.selectedCafeteria._id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.indMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
       } else {
         this.indMenuFetched = {};
         this.bulkMenuList = [];
         this.isVendorAssigned.emit(false);
+        this.hasMenu.emit(false);
       }
     } catch (error) {
       console.error(error);
+      this.hasMenu.emit(false);
     }
   }
 
