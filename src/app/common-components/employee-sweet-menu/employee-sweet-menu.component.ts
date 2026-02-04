@@ -55,6 +55,7 @@ export class EmployeeSweetMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
   @Input() selectedCafeteria: any;
   @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
   bulkMenuList: SweetMenuItem[] = [];
   bulkMenuFetched: SweetMenuMeta = {};
@@ -111,18 +112,22 @@ export class EmployeeSweetMenuComponent implements OnInit, OnChanges {
 
   async getEmployeeSweetMenuByCafeteria(): Promise<void> {
     try {
+      this.hasMenu.emit(false);
       const menuItems: SweetMenuMeta = await this.api.getEmployeeSweetMenu(this.selectedCafeteria._id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.bulkMenuFetched = menuItems || {};
         this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
       } else {
         this.bulkMenuFetched = {};
         this.bulkMenuList = [];
         this.isVendorAssigned.emit(false);
+        this.hasMenu.emit(false);
       }
     } catch (error) {
       console.error(error);
+      this.hasMenu.emit(false);
     }
   }
 

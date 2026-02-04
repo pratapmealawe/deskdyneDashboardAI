@@ -101,6 +101,7 @@ export class OrganizationViewComponent implements OnInit {
   isVendorAssigned: boolean = false;
   showBulkMenuHeader = false;
   private modalRef!: NgbModalRef;
+  isMenuAvailable = false;
 
   constructor(private policyService: PolicyService, private dialog: MatDialog, private apiService: ApiMainService,
     private toaster: ToasterService, private modalService: NgbModal) { }
@@ -212,6 +213,10 @@ export class OrganizationViewComponent implements OnInit {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  onMenuAvailabilityChange(hasMenu: boolean): void {
+    this.isMenuAvailable = hasMenu;
   }
 
   checkCategoryStatus(): boolean {
