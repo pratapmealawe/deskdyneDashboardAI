@@ -335,11 +335,15 @@
             </mat-form-field>
           </div>
 
-          <!-- NUTRITION -->
           <div class="col-12 mt-3">
-            <label class="labelText form-label mb-1">
-              Nutrition Information
-            </label>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <label class="labelText form-label mb-0">
+                Nutrition Information
+              </label>
+              <mat-icon class="info-icon" [matTooltip]="energyTooltip" matTooltipPosition="right">
+                info_outline
+              </mat-icon>
+            </div>
 
             <div class="col-12 mb-2">
               <mat-form-field appearance="outline" class="w-100">
@@ -360,9 +364,12 @@
                 <div class="col-md-3">
                   <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Nutrition Name</mat-label>
-                    <mat-select formControlName="nutritionName">
-                      <mat-option value="Protein">Protein</mat-option>
-                      <mat-option value="Fat">Fat</mat-option>
+                    <mat-select formControlName="nutritionName" (selectionChange)="onNutritionSelect($event.value, i)"
+                      [compareWith]="compareNutrition">
+                      <mat-option *ngFor="let option of nutritionListOptions" [value]="option"
+                        [disabled]="isOptionSelected(option.id, i)">
+                        {{ option.title }}
+                      </mat-option>
                     </mat-select>
                   </mat-form-field>
                 </div>
@@ -379,7 +386,7 @@
                     <mat-label>Nutrition Unit</mat-label>
                     <mat-select formControlName="nutritionUnit">
                       <mat-option value="gm">gm</mat-option>
-                      <mat-option value="ml">ml</mat-option>
+                      <!-- <mat-option value="ml">ml</mat-option> -->
                     </mat-select>
                   </mat-form-field>
                 </div>

@@ -1,7 +1,11 @@
 import {
   Component,
+  EventEmitter,
   Input,
+  OnChanges,
   OnInit,
+  Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -47,6 +51,7 @@ interface BulkMenuMeta {
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
   itemList?: BulkMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -54,8 +59,11 @@ interface BulkMenuMeta {
   templateUrl: './org-bulk-menu.component.html',
   styleUrls: ['./org-bulk-menu.component.scss'],
 })
-export class OrgBulkMenuComponent implements OnInit {
+export class OrgBulkMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: BulkMenuItem[] = [];
@@ -86,12 +94,19 @@ export class OrgBulkMenuComponent implements OnInit {
   constructor(
     private api: ApiMainService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getBulkMenuItems();
+    // this.getBulkMenuItems();
     this.getAllB2BFoodItemList();
+    this.getBulkMenuItemsByCafeteriaId();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getBulkMenuItemsByCafeteriaId();
+    }
   }
 
   async copyOrgMenu(): Promise<void> {
@@ -116,16 +131,38 @@ export class OrgBulkMenuComponent implements OnInit {
     }
   }
 
-  async getBulkMenuItems(): Promise<void> {
-    if (!this.orgObj?._id) return;
+  // async getBulkMenuItems(): Promise<void> {
+  //   if (!this.orgObj?._id) return;
+  //   try {
+  //     const menuItems: BulkMenuMeta = await this.api.B2B_fetchBulkMenu(
+  //       this.orgObj._id
+  //     );
+  //     this.bulkMenuFetched = menuItems || {};
+  //     this.bulkMenuList = menuItems.itemList || [];
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // }
+
+  async getBulkMenuItemsByCafeteriaId(): Promise<void> {
+    if (!this.selectedCafeteria) return;
     try {
-      const menuItems: BulkMenuMeta = await this.api.B2B_fetchBulkMenu(
-        this.orgObj._id
-      );
-      this.bulkMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
+      this.hasMenu.emit(false);
+      const menuItems: BulkMenuMeta = await this.api.B2B_fetchBulkMealMenu(this.selectedCafeteria._id);
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.bulkMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
+      } else {
+        this.bulkMenuFetched = {};
+        this.bulkMenuList = [];
+        this.isVendorAssigned.emit(false);
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.error(error);
+      this.hasMenu.emit(false);
     }
   }
 
@@ -198,8 +235,12 @@ export class OrgBulkMenuComponent implements OnInit {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'meals',
+      subCategory: 'bulkMealsMenu',
       moq: this.bulkMenuFetched.moq,
       slabLimit1: this.bulkMenuFetched.slabLimit1,
       slabLimit2: this.bulkMenuFetched.slabLimit2,
@@ -215,10 +256,10 @@ export class OrgBulkMenuComponent implements OnInit {
     };
 
     try {
-      await this.api.B2B_saveBulkMenu(bulkMenuObj);
+      await this.api.B2B_saveBulkMealMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getBulkMenuItems();
+      await this.getBulkMenuItemsByCafeteriaId();
     } catch (error) {
       console.error('error while saving bulk menu', error);
     }

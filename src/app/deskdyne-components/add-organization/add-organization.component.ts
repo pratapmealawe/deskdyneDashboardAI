@@ -76,6 +76,7 @@ export class AddOrganizationComponent implements OnInit {
     { key: 'showchecklist', label: 'Show Checklist' },
     { key: 'showEventPopup', label: 'Show Event Popup' },
     { key: 'showSodexo', label: 'Show Sodexo' },
+    { key: 'showEmployeeBulkMenu', label: 'Show Employee Bulk Menu' },
   ];
 
   constructor(
@@ -164,6 +165,7 @@ export class AddOrganizationComponent implements OnInit {
       showComplienceTracker: [false],
       showConsumptionOrder: [false],
       showEventPopup: [false],
+      showEmployeeBulkMenu: [false],
       showSodexo: [false],
       cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
       cafeteria_id: [id, Validators.required],
@@ -257,7 +259,7 @@ export class AddOrganizationComponent implements OnInit {
         this.poc.at(this.editingPocIndex).patchValue(pocData);
       } else {
         this.poc.push(this.fb.group(pocData)); // Need to recreate structure
-        // Fix: Above line needs correct structuring. 
+        // Fix: Above line needs correct structuring.
         // Simpler: push this.new_poc_details() then patch
         const newGroup = this.new_poc_details();
         newGroup.patchValue(pocData);
