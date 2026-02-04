@@ -337,9 +337,9 @@ export class AddVendorCommponent {
     outlet.isChecked = !outlet.isChecked;
   }
 
-toggleCheckboxforPopup(popup: any) {
-  popup.isChecked = !popup.isChecked;
-}
+  toggleCheckboxforPopup(popup: any) {
+    popup.isChecked = !popup.isChecked;
+  }
   addPopup() {
     if (!this.popupModal) {
       console.error('TemplateRef popup is not available');
@@ -351,7 +351,7 @@ toggleCheckboxforPopup(popup: any) {
     });
   }
 
-  getSelectedPopups(){
+  getSelectedPopups() {
     this.selectedPopupsList = [];
     this.popupsByVendorFirm.forEach((elm: any) => {
       if (elm.isChecked) {

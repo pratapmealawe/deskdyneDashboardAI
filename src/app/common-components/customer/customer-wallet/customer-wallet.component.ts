@@ -35,6 +35,11 @@ export class CustomerWalletComponent implements OnInit {
     { value: 'others', viewValue: 'Others' }
   ];
 
+  // Date Range
+  dateRange: { start: Date | null; end: Date | null } = { start: null, end: null };
+  maxDate = new Date();
+  isLoading = false;
+
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
@@ -43,6 +48,10 @@ export class CustomerWalletComponent implements OnInit {
   ) { }
 
   ngOnInit() {
+    // Initialize with current date
+    const today = new Date();
+    this.dateRange = { start: today, end: today };
+
     this.getWalletBalance();
     this.getWalletList();
   }
@@ -89,8 +98,7 @@ export class CustomerWalletComponent implements OnInit {
       }
       this.snackBar.open(`Money ${type === 'add' ? 'Added' : 'Deducted'} Successfully`, 'OK', { duration: 3000 });
       this.getWalletBalance();
-      // Reset pagination to first page on new transaction
-      this.getWalletList(); // Reload all data
+      this.getWalletList();
     } catch (error) {
       console.error(error);
       this.snackBar.open('Transaction Failed', 'OK', { duration: 3000 });
@@ -109,10 +117,41 @@ export class CustomerWalletComponent implements OnInit {
     this.updateView();
   }
 
+  applyDateFilter() {
+    this.pageIndex = 0;
+    if (this.paginator) this.paginator.firstPage();
+    this.getWalletList();
+  }
+
+  clearDateFilter() {
+    const today = new Date();
+    this.dateRange = { start: today, end: today };
+    this.getWalletList();
+  }
+
+  private formatDateForApi(date: Date): string {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   async getWalletList() {
+    if (!this.dateRange.start || !this.dateRange.end) {
+      this.snackBar.open('Please select a date range', 'OK', { duration: 3000 });
+      return;
+    }
+
     try {
-      // Fetch all transactions (client-side pagination)
-      const res: any = await this.apiMainService.userRewardsPointsHistory(this.userObj._id, 1, 1000); // Fetching large chunk
+      this.isLoading = true;
+      const fromDate = this.formatDateForApi(this.dateRange.start);
+      const toDate = this.formatDateForApi(this.dateRange.end);
+
+      const res: any = await this.apiMainService.getUserTransactionHistoryByFromDate(
+        this.userObj._id,
+        fromDate,
+        toDate
+      );
 
       if (res) {
         this.allTransactions = Array.isArray(res) ? res : (res.data || []);
@@ -120,11 +159,15 @@ export class CustomerWalletComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error loading wallet list', error);
+      this.allTransactions = [];
+      this.updateView();
+    } finally {
+      this.isLoading = false;
     }
   }
 
   updateView() {
-    // 1. Filter
+    // 1. Filter by wallet type
     let temp = this.allTransactions;
     if (this.selectedWalletType !== 'all') {
       temp = temp.filter(tx => tx.walletType?.toLowerCase() === this.selectedWalletType.toLowerCase());
@@ -138,47 +181,133 @@ export class CustomerWalletComponent implements OnInit {
     this.walletList = this.filteredTransactions.slice(start, end);
   }
 
+  // Excel Export
   async exportToExcel() {
     if (!this.filteredTransactions || this.filteredTransactions.length === 0) {
+      this.snackBar.open('No data to export', 'OK', { duration: 3000 });
       return;
     }
 
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Customer Wallet History');
+    try {
+      const wb = new ExcelJS.Workbook();
+      const ws = wb.addWorksheet('Wallet History');
 
-    // Headers
-    worksheet.columns = [
-      { header: 'Date', key: 'date', width: 25 },
-      { header: 'Wallet', key: 'walletType', width: 15 },
-      { header: 'Type', key: 'transactionType', width: 15 },
-      { header: 'Amount (₹)', key: 'amount', width: 15 },
-      { header: 'Balance (₹)', key: 'balance', width: 15 },
-      { header: 'Remark', key: 'remark', width: 40 },
-    ];
-
-    // Styling Header
-    worksheet.getRow(1).font = { bold: true };
-    worksheet.getRow(1).alignment = { horizontal: 'center' };
-
-    // Data
-    this.filteredTransactions.forEach(tx => {
-      worksheet.addRow({
-        date: new Date(tx.created_at).toLocaleString(),
-        walletType: tx.walletType || '-',
-        transactionType: tx.transactionType || '-',
-        amount: Number(tx.transaction_points) || 0,
-        balance: Number(tx.wallet_balance) || 0,
-        remark: tx.remark || '-'
+      // Headers
+      const headers = ['Date', 'Transaction Type', 'Wallet Type', 'Amount', 'Remark'];
+      const headerRow = ws.addRow(headers);
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true };
+        cell.alignment = { vertical: 'middle', horizontal: 'center' };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFEFEFEF' } };
+        cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
       });
-    });
 
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    const fileName = `Customer_Wallet_History_${this.userObj.userName}_${new Date().getTime()}.xlsx`;
-    saveAs(blob, fileName);
+      // Column widths
+      ws.columns = [
+        { width: 20 },
+        { width: 18 },
+        { width: 15 },
+        { width: 15 },
+        { width: 40 }
+      ];
+
+      // Data
+      const curFmt = '₹#,##0.00';
+      const dateFmt = 'dd-mmm-yyyy hh:mm AM/PM';
+      let totalAmount = 0;
+      let creditTotal = 0;
+      let debitTotal = 0;
+
+      this.filteredTransactions.forEach(tx => {
+        const amount = Number(tx.transaction_points || 0);
+        totalAmount += amount;
+
+        // Track credit/debit totals
+        const txType = (tx.transactionType || '').toLowerCase();
+        const isCredit = txType.includes('credit') || txType.includes('deposite') || txType.includes('add');
+        if (isCredit) {
+          creditTotal += amount;
+        } else {
+          debitTotal += amount;
+        }
+
+        const rowData = [
+          new Date(tx.created_at),
+          tx.transactionType || '-',
+          tx.walletType || '-',
+          amount,
+          tx.remark || ''
+        ];
+        const row = ws.addRow(rowData);
+
+        row.getCell(1).numFmt = dateFmt;
+        row.getCell(4).numFmt = curFmt;
+
+        // Light green background for credit rows
+        if (isCredit) {
+          row.eachCell({ includeEmpty: true }, (cell) => {
+            cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFE8F5E9' } };
+            cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+          });
+        } else {
+          row.eachCell({ includeEmpty: true }, (cell) => {
+            cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+          });
+        }
+      });
+
+      // Credit Total Row
+      const creditRow = ws.addRow(['', '', 'Credit Total', creditTotal, '']);
+      creditRow.getCell(3).font = { bold: true };
+      creditRow.getCell(3).alignment = { horizontal: 'right' };
+      creditRow.getCell(4).font = { bold: true };
+      creditRow.getCell(4).numFmt = curFmt;
+      creditRow.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4CAF50' } };
+      creditRow.getCell(4).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      creditRow.eachCell({ includeEmpty: true }, (cell) => {
+        cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+      });
+
+      // Debit Total Row
+      const debitRow = ws.addRow(['', '', 'Debit Total', debitTotal, '']);
+      debitRow.getCell(3).font = { bold: true };
+      debitRow.getCell(3).alignment = { horizontal: 'right' };
+      debitRow.getCell(4).font = { bold: true };
+      debitRow.getCell(4).numFmt = curFmt;
+      debitRow.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFF44336' } };
+      debitRow.getCell(4).font = { bold: true, color: { argb: 'FFFFFFFF' } };
+      debitRow.eachCell({ includeEmpty: true }, (cell) => {
+        cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+      });
+
+      // Grand Total Row
+      const totalRow = ws.addRow(['', '', 'Grand Total', totalAmount, '']);
+      totalRow.getCell(3).font = { bold: true };
+      totalRow.getCell(3).alignment = { horizontal: 'right' };
+      totalRow.getCell(4).font = { bold: true };
+      totalRow.getCell(4).numFmt = curFmt;
+      totalRow.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFD700' } };
+      totalRow.eachCell({ includeEmpty: true }, (cell) => {
+        cell.border = { top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' } };
+      });
+
+      // Save
+      const buf = await wb.xlsx.writeBuffer();
+      const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+
+      const userName = this.userObj?.userName?.replace(/\s+/g, '_') || 'Customer';
+      const dateLabel = this.dateRange.start
+        ? `${this.dateRange.start.getDate()}_${this.dateRange.start.getMonth() + 1}`
+        : 'All';
+      saveAs(blob, `Wallet_History_${userName}.xlsx`);
+
+    } catch (error) {
+      console.error('Export failed', error);
+      this.snackBar.open('Failed to export Excel', 'OK', { duration: 3000 });
+    }
   }
 
-  // Helper for status styling (same as wallet-details)
+  // Helper for status styling
   getTxnTypeColorClass(type: string): string {
     if (!type) return '';
     if (type === 'credit' || type.toLowerCase().includes('credit') || type.includes('added')) return 'green';
@@ -214,5 +343,11 @@ export class CustomerWalletComponent implements OnInit {
     if (t.includes('refund')) return 'purple';
     if (t.includes('order')) return 'blue';
     return 'gray';
+  }
+
+  isCredit(type: string | undefined): boolean {
+    if (!type) return false;
+    const t = type.toLowerCase();
+    return t.includes('credit') || t.includes('deposite') || t.includes('add');
   }
 }

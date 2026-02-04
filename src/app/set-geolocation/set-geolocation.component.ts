@@ -18,6 +18,8 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
   searchText: string = '';
 
   selectedLocationData: any = null;
+  private mapInstance: any = null;
+  private autocompleteInstance: any = null;
 
   @ViewChild('searchLocationInput') searchLocationInput!: ElementRef;
 
@@ -63,6 +65,8 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
         styles: GoogleStyle
       });
       map.setCenter(center);
+      this.mapInstance = map; // Store reference for autocomplete binding
+
       const mapbounds = new this.google.maps.LatLngBounds();
       mapbounds.extend(new this.google.maps.LatLng(center.lat + 0.1, center.lng + 0.1));
       mapbounds.extend(new this.google.maps.LatLng(center.lat - 0.1, center.lng - 0.1));
@@ -205,6 +209,18 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
   }
 
   findMySearchAddress(center: any) {
+    // Wait a bit for the DOM to fully render with Material form field
+    setTimeout(() => {
+      this.initAutocomplete(center);
+    }, 300);
+  }
+
+  private initAutocomplete(center: any) {
+    if (this.autocompleteInstance) {
+      // Already initialized
+      return;
+    }
+
     const defaultBounds = {
       north: center.lat + 0.1,
       south: center.lat - 0.1,
@@ -215,14 +231,36 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
     const options = {
       bounds: defaultBounds,
       strictBounds: false,
-      fields: ["geometry", "formatted_address", "name"] // Optimize fields
+      fields: ['geometry', 'formatted_address', 'name'],
+      componentRestrictions: { country: 'in' } // Restrict to India for better results
     };
 
-    if (this.searchLocationInput && this.searchLocationInput.nativeElement) {
-      const input = this.searchLocationInput.nativeElement;
+    // Try to get the input element - handle both native and Material input scenarios
+    let input: HTMLInputElement | null = null;
+
+    if (this.searchLocationInput?.nativeElement) {
+      // For matInput, the nativeElement IS the input element directly
+      input = this.searchLocationInput.nativeElement;
+    }
+
+    if (!input) {
+      // Fallback: try to find by ID
+      input = document.getElementById('searchLocation') as HTMLInputElement;
+    }
+
+    if (!input) {
+      console.warn('Search input not found for autocomplete');
+      return;
+    }
+
+    try {
       const autocomplete = new this.google.maps.places.Autocomplete(input, options);
-      // Bind to map to bias towards map view
-      // autocomplete.bindTo('bounds', map); // Need reference to map if we want to bind, but bounds options is often enough.
+      this.autocompleteInstance = autocomplete;
+
+      // Bind to map if available for better bounds biasing
+      if (this.mapInstance) {
+        autocomplete.bindTo('bounds', this.mapInstance);
+      }
 
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
@@ -231,15 +269,17 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
           return;
         }
 
-        // Manually get address if formatAddress is simple
         const address = {
           name: place.name,
           address: place.formatted_address,
           lat: place.geometry.location.lat(),
           lng: place.geometry.location.lng()
         };
+        this.searchText = place.formatted_address || place.name;
         this.updateLocation(address);
       });
+    } catch (error) {
+      console.error('Failed to initialize autocomplete:', error);
     }
   }
 

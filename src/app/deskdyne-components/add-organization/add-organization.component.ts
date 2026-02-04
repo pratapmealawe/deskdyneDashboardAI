@@ -538,7 +538,7 @@ export class AddOrganizationComponent implements OnInit {
   // Map Logic - Updated to use Dialog Form Group
   toggleMapForDialog() {
     const dialogRef = this.dialog.open(SetGeolocationComponent, {
-      width: '800px',
+      width: '900px',
       disableClose: true,
       panelClass: 'custom-dialog-container',
       autoFocus: false,

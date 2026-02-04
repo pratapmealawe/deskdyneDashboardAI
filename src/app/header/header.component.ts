@@ -25,9 +25,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
   imageUrl = environment.imageUrl;
   isOrgAdmin: boolean = false;
   orgDetails: any = {};
-  unAcknowledgedFeedbackCount$: Observable<number> = this.suggestionsFeedbackService.GeneralAppFeedbackCount$;
-  enquiryCount$: Observable<number> = this.suggestionsFeedbackService.enquiryCount$;
-  inReviewIncidentsCount$: any = new BehaviorSubject<number>(0);
+
+  // Count observables from service
+  unAcknowledgedFeedbackCount$ = this.suggestionsFeedbackService.GeneralAppFeedbackCount$;
+  enquiryCount$ = this.suggestionsFeedbackService.enquiryCount$;
+  inReviewIncidentsCount$ = this.suggestionsFeedbackService.incidentCount$;
 
   finalNavOption: any = [];
 
@@ -45,6 +47,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
       route: 'dashboard',
       image: 'Dashbaord_white_1',
       imageblue: 'Organization_dashbaord_blue',
+    },
+    {
+      name: 'Orders Dashboard',
+      showParent: true,
+      route: 'allOrders',
+      image: 'Billing_white',
+      imageblue: 'Billing_blue',
     },
     {
       name: 'Organization',
@@ -170,13 +179,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       image: 'Billing_white',
       imageblue: 'Billing_blue',
     },
-    {
-      name: 'All Orders',
-      showParent: true,
-      route: 'allOrders',
-      image: 'Billing_white',
-      imageblue: 'Billing_blue',
-    },
+
     {
       name: 'Food Items',
       showParent: true,
@@ -442,7 +445,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
   openChildSectionIndex = -1;
   selectedIndexpar: number = 0;
   selectedIndexchild: number = 0;
-  pollingSub!: Subscription;
   orgLogo!: any
 
   constructor(
@@ -478,27 +480,10 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.getAdminProfile();
-    this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
-    this.suggestionsFeedbackService.fetchAllEnquiries();
-    this.getInReviewIncidents();
     this.setActiveStateFromRoute(this.router.url);
-    this.pollingSub = interval(30_000).subscribe(() => {
-      this.getInReviewIncidents();
-    });
   }
 
-  async getInReviewIncidents() {
-    try {
-      const data = await this.apiMainService.getAllIncidents();
 
-      if (data && data.length > 0) {
-        const inReviewIncidents = data.filter((incident: any) => incident.status === "created").length;
-        this.inReviewIncidentsCount$.next(inReviewIncidents);
-      }
-    } catch (error) {
-      console.error('Error fetching incidents:', error);
-    }
-  }
 
   setActiveStateFromRoute(url: string): void {
     this.selectedIndex = -1;
