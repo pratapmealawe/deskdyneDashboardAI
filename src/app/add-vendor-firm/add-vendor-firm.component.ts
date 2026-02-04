@@ -5,12 +5,12 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatSelect, MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { log } from 'console';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
 import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
+import { SetGeolocationComponent } from '../set-geolocation/set-geolocation.component';
 
 
 @Component({
@@ -47,7 +47,6 @@ export class AddVendorFirmComponent {
   @ViewChild('outletModal') outlet: any;
   outletMatDialogRef: any; // Ref for the outlet dialog
   // @ViewChild('complianceModal') compliance: any; // Removed as we use MatDialog type
-  @ViewChild('geolocation') geolocation: any;
   @ViewChild('addAddress') address: any;
   @ViewChild('pocDetailsTemp') pocdetails: any;
   @ViewChild('popupModal') popupModal: any;
@@ -153,24 +152,26 @@ export class AddVendorFirmComponent {
     }
   }
   toggleMap(index?: any) {
-    this.modalService
-      .open(this.geolocation, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'lg',
-        windowClass: 'mapModel',
-      })
-      .result.then(
-        (result) => {
-          const geoGroup = this.addressForm.get('geolocation') as FormGroup;
-          geoGroup.patchValue({
-            lat: this.vendorLocation.latlng.lat,
-            lng: this.vendorLocation.latlng.lng,
-          });
-        },
-        (reason) => {
-          console.log(`Model Dismissed`);
-        }
-      );
+    const dialogRef = this.dialog.open(SetGeolocationComponent, {
+      width: '900px',
+      disableClose: true,
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      data: {
+        selectedCenter: this.addressForm.get('geolocation')?.value
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.vendorLocation = result;
+        const geoGroup = this.addressForm.get('geolocation') as FormGroup;
+        geoGroup.patchValue({
+          lat: result.latlng.lat,
+          lng: result.latlng.lng,
+        });
+      }
+    });
   }
 
   updateLocation(event: any) {

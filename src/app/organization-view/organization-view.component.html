@@ -155,7 +155,7 @@
       </mat-tab-group>
       <ng-container *ngIf="!view.subTabs?.length" [ngSwitch]="view.path">
         <app-org-details *ngSwitchCase="'orgDetails'" [orgObj]="organization"></app-org-details>
-        <app-mealawe-outlet *ngSwitchCase="'mealAweOutlet'" [orgObj]="organization"></app-mealawe-outlet>
+        <app-mealawe-outlet *ngSwitchCase="'virtualCafeteriaOutlet'" [orgObj]="organization"></app-mealawe-outlet>
         <app-daily-order-menu *ngSwitchCase="'dailyOrderMenu'" [orgObj]="organization"></app-daily-order-menu>
         <app-consumption-order *ngSwitchCase="'consumptionOrder'" [orgObj]="organization"></app-consumption-order>
         <app-employee-list *ngSwitchCase="'employeeList'" [orgObj]="organization"></app-employee-list>
@@ -164,7 +164,7 @@
         <app-guest-employee-list *ngSwitchCase="'guestEmployeeList'" [orgObj]="organization"></app-guest-employee-list>
         <app-organization-compliance *ngSwitchCase="'organizationCompliance'"
           [OrgObj]="organization"></app-organization-compliance>
-        <app-employee-wallet *ngSwitchCase="'employeeWallet'" [orgObj]="organization"></app-employee-wallet>
+        <app-company-wallet *ngSwitchCase="'companyWallet'" [orgObj]="organization"></app-company-wallet>
         <app-qr-employee *ngSwitchCase="'qrEmployee'" [orgObj]="organization"></app-qr-employee>
       </ng-container>
     </ng-container>

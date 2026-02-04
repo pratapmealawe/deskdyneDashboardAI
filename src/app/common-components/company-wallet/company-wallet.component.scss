@@ -1,0 +1,192 @@
+$primary: #3f51b5;
+$secondary: #6c757d;
+$success: #198754;
+$light-bg: #f8f9fa;
+$border-color: #e9ecef;
+
+.page-container {
+    padding: 24px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+}
+
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+.search-container {
+    position: relative;
+    max-width: 100%;
+
+    .search-icon {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #adb5bd;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+    }
+
+    input {
+        box-shadow: none !important;
+        font-size: 0.95rem;
+        color: #495057;
+
+        &::placeholder {
+            color: #adb5bd;
+        }
+
+        &:focus {
+            background-color: #fff !important;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.1) !important;
+        }
+    }
+}
+
+.table {
+    th {
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        color: #adb5bd; // Lighter gray for headers as per image
+        font-weight: 700;
+        vertical-align: middle;
+    }
+
+    td {
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        vertical-align: middle;
+    }
+
+    tbody tr {
+        transition: background-color 0.2s;
+
+        &:hover {
+            background-color: $light-bg;
+        }
+    }
+}
+
+.avatar {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+// Badge customizations to match image specific tones
+.bg-success-subtle {
+    background-color: #d1e7dd !important;
+    color: #0f5132 !important;
+}
+
+.bg-primary-subtle {
+    background-color: #cfe2ff !important;
+    color: #084298 !important;
+}
+
+.bg-warning-subtle {
+    background-color: #fff3cd !important;
+    color: #664d03 !important;
+}
+
+.text-warning {
+    color: #ffc107 !important;
+}
+
+.bg-info-subtle {
+    background-color: #cff4fc !important;
+    color: #055160 !important;
+}
+
+// Action buttons
+.action-btn {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
+}
+
+// Pagination
+.pagination-container {
+    .small-icon-btn {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        min-width: 32px; // Ensure it doesn't shrink
+        padding: 0;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+
+        &:hover {
+            background-color: #f1f3f5;
+        }
+
+        mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            line-height: 20px; // Vertical align
+        }
+
+        span {
+            font-size: 0.9rem;
+        }
+    }
+
+    .active-page-btn {
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        border-radius: 8px !important; // Soft square as per image
+        background-color: $primary;
+        color: white;
+        border: none;
+        padding: 0;
+        box-shadow: 0 2px 4px rgba($primary, 0.3); // Subtle shadow for depth
+
+        &:disabled {
+            opacity: 1; // Keep it fully visible even if disabled logic is used
+        }
+    }
+}
+
+.btn-primary {
+    background-color: $primary;
+    border-color: $primary;
+
+    &:hover {
+        background-color: darken($primary, 10%);
+        border-color: darken($primary, 10%);
+    }
+}
+
+/* Manual Entry Grid */
+.entry-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr) 100px;
+    gap: 11px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+@media (max-width: 768px) {
+    .entry-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.button-container {
+    height: 100%;
+}

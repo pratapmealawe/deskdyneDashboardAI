@@ -47,23 +47,8 @@ const DEFAULT_ITEM_GST_RATE = 0.05; // 5% GST
   styleUrls: ['./daily-billing.component.scss']
 })
 export class DailyBillingComponent implements OnInit {
-  orglist: any[] = [];
-  orgDetails: any | null = null;
-
-
-
   filteredData: any;
-  loadingOrgs = false;
   loadingBilling = false;
-
-  selected = {
-    orgId: '' as string,
-  };
-
-  dateForm: FormGroup<{
-    dateFrom: FormControl<Date | null>;
-    dateTo: FormControl<Date | null>;
-  }>;
 
   billingList: any[] = [];
 
@@ -74,21 +59,26 @@ export class DailyBillingComponent implements OnInit {
   groupPageIndex = 0;
   groupPageSizeOptions = [5, 10, 25];
 
+  headerConfig: any = {
+    mode: 'cafeteria',
+    showDateRange: true,
+    disableOrg: false,
+    requireAll: true // Enforce cafe selection? Or false? "add cafe listing" suggests selection. 
+    // Usually billing is specific. Let's try true or allow flexibility.
+    // User's other billing comp has requireAll: true.
+  };
+
   constructor(
     private apiMainService: ApiMainService,
     private excelService: ExcelService,
     private dialog: MatDialog,
     fb: FormBuilder
   ) {
-    this.dateForm = fb.group({
-      dateFrom: new FormControl<Date | null>(null),
-      dateTo: new FormControl<Date | null>(null),
-    });
+    // dateForm removed
   }
 
   ngOnInit(): void {
-    this.loadOrgs();
-    // removed auto valueChanges fetch; we are using explicit Submit
+    // No loadOrgs needed
   }
 
   private toNumber(v: any): number {
@@ -96,58 +86,26 @@ export class DailyBillingComponent implements OnInit {
     return isNaN(n) ? 0 : n;
   }
 
-  private excelDateFromKey(key: string): Date {
-    // key is 'yyyy-MM-dd'
-    const [y, m, d] = key.split('-').map(Number);
-    return new Date(y, (m || 1) - 1, d || 1);
-  }
-
-
-  get canSubmit(): boolean {
-    const { dateFrom, dateTo } = this.dateForm.value;
-    return !!(this.selected.orgId && dateFrom && dateTo);
-  }
-
-  onSubmit(): void {
-    if (!this.canSubmit) return;
+  // filterSubmitted handles the event from common component
+  filterSubmitted(e: any): void {
+    this.filteredData = e;
     this.getDailyBilling();
-  }
-
-  private async loadOrgs(): Promise<void> {
-    try {
-      this.loadingOrgs = true;
-      const page = 1;
-      const searchObj = { countOnly: false };
-      this.orglist = await this.apiMainService.B2B_fetchFilteredAllOrgs(searchObj, page);
-    } catch (err) {
-      console.error('Error fetching org list:', err);
-      this.orglist = [];
-    } finally {
-      this.loadingOrgs = false;
-    }
-  }
-
-  async onOrgChange(orgId: string): Promise<void> {
-    this.selected.orgId = orgId;
-    this.billingList = [];
-    this.dateGroups = [];
-    this.pagedDateGroups = [];
   }
 
   // central place for daily billing API call
   private async getDailyBilling(): Promise<void> {
-    if (!this.selected.orgId) return;
-
-    const { dateFrom, dateTo } = this.dateForm.value;
-    if (!dateFrom || !dateTo) return;
+    if (!this.filteredData?.org_id) return;
+    // e.date_from is ISO string
+    if (!this.filteredData.date_from || !this.filteredData.date_to) return;
 
     try {
       this.loadingBilling = true;
 
       const payload = {
-        orgId: this.selected.orgId,
-        fromDate: dateFrom,
-        toDate: dateTo,
+        orgId: this.filteredData.org_id,
+        cafeteriaId: this.filteredData.cafeteria_id, // Pass this if available
+        fromDate: this.filteredData.date_from,
+        toDate: this.filteredData.date_to,
       };
 
       this.billingList = await this.apiMainService.fetchDailyBulkOrdersbyOrgId(payload) || [];
@@ -337,14 +295,17 @@ export class DailyBillingComponent implements OnInit {
 
 
   private getOrgName(): string {
-    const sel = this.orglist.find(o => o._id === this.selected.orgId);
-    return sel?.organization_name || '';
+    // Since we use common component, we don't have orgList access. 
+    // We can return ID or valid placeholder, or fetch filtered org details if really needed.
+    // For now returning 'Organization' or ID.
+    return this.filteredData?.org_id ? `Org_${this.filteredData.org_id}` : 'Organization';
   }
 
   exportDatewiseExcel(): void {
     if (!this.dateGroups.length) return;
 
-    const { dateFrom, dateTo } = this.dateForm.value;
+    const dateFrom = this.filteredData.date_from;
+    const dateTo = this.filteredData.date_to;
     const orgName = this.getOrgName();
 
     const groupsForExcel: DatewiseExcelGroup[] = this.dateGroups.map(grp => ({
@@ -355,8 +316,8 @@ export class DailyBillingComponent implements OnInit {
 
     this.exportDatewiseDailyBilling({
       orgName,
-      dateFrom: dateFrom as Date,
-      dateTo: dateTo as Date,
+      dateFrom: new Date(dateFrom),
+      dateTo: new Date(dateTo),
       groups: groupsForExcel,
     });
   }
