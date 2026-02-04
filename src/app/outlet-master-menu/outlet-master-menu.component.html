@@ -247,48 +247,69 @@
           </div>
 
           <!-- Nutrition -->
-          <div class="col-12 mt-4">
-            <h4 class="fw-semibold small text-muted">Nutrition Information</h4>
-            <div class="col-12 col-md-6 mb-2">
+          <div class="col-12 mt-3">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <label class="labelText form-label mb-0">
+                Nutrition Information
+              </label>
+              <mat-icon class="info-icon" [matTooltip]="energyTooltip" matTooltipPosition="right">
+                info_outline
+              </mat-icon>
+            </div>
+
+            <div class="col-12 mb-2">
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Energy Value (kcal)</mat-label>
-                <input matInput type="number" formControlName="energyValue" />
+                <input matInput type="number" placeholder="Energy Value" formControlName="energyValue" />
               </mat-form-field>
             </div>
 
-            <div formArrayName="nutritionList">
-              <div class="row"
-                *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first; let last = last"
-                [formGroupName]="i">
+            <div class="col-12" [formArrayName]="'nutritionList'">
+              <label class="labelText d-block mb-1">Nutrition List:</label>
+
+              <div class="row" *ngFor="
+                  let poc of nutrition_Lists.controls;
+                  let i = index;
+                  let first = first;
+                  let last = last
+                " [formGroupName]="i">
                 <div class="col-md-3">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Name</mat-label>
-                    <input matInput formControlName="nutritionName" placeholder="Protein" />
-                    <mat-error *ngIf="nutritionHasError(i, 'nutritionName', 'required')">Required</mat-error>
+                    <mat-label>Nutrition Name</mat-label>
+                    <mat-select formControlName="nutritionName" (selectionChange)="onNutritionSelect($event.value, i)"
+                      [compareWith]="compareNutrition">
+                      <mat-option *ngFor="let option of nutritionListOptions" [value]="option"
+                        [disabled]="isOptionSelected(option.id, i)">
+                        {{ option.title }}
+                      </mat-option>
+                    </mat-select>
                   </mat-form-field>
                 </div>
+
                 <div class="col-md-3">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Value</mat-label>
-                    <input matInput formControlName="nutritionValue" placeholder="0" />
-                    <mat-error *ngIf="nutritionHasError(i, 'nutritionValue', 'required')">Required</mat-error>
+                    <mat-label>Nutrition Value</mat-label>
+                    <input matInput type="number" formControlName="nutritionValue" placeholder="Nutrition Value" />
                   </mat-form-field>
                 </div>
+
                 <div class="col-md-3">
                   <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Unit</mat-label>
-                    <input matInput formControlName="nutritionUnit" placeholder="gm" />
-                    <mat-error *ngIf="nutritionHasError(i, 'nutritionUnit', 'required')">Required</mat-error>
+                    <mat-label>Nutrition Unit</mat-label>
+                    <mat-select formControlName="nutritionUnit">
+                      <mat-option value="gm">gm</mat-option>
+                      <!-- <mat-option value="ml">ml</mat-option> -->
+                    </mat-select>
                   </mat-form-field>
                 </div>
-                <div class="col-md-3 d-flex align-items-center mb-3">
-                  <span *ngIf="last" class="addtnc cursor-pointer" (click)="addNutritionLists()">+</span>
-                  <span *ngIf="!first" class="removetnc cursor-pointer" (click)="removenNutritionLists(i)">-</span>
+
+                <div class="col-sm-2 col-md-2 col-lg-2 d-flex align-items-center">
+                  <span *ngIf="last" class="addtnc" (click)="addNutritionLists()">+</span>
+                  <span *ngIf="!first" class="removetnc" (click)="removenNutritionLists(i)">-</span>
                 </div>
               </div>
             </div>
           </div>
-
         </div>
       </form>
     </mat-dialog-content>
@@ -297,11 +318,11 @@
         <mat-icon>cancel</mat-icon> Cancel
       </button>
       <button class="btn-add" mat-raised-button color="primary" *ngIf="!showUpdateBtn" [disabled]="form.invalid"
-        (click)="modal.close('add')">
+        [mat-dialog-close]="'add'">
         <mat-icon>check_circle</mat-icon> Submit
       </button>
       <button class="btn-update" mat-raised-button color="primary" *ngIf="showUpdateBtn" [disabled]="form.invalid"
-        (click)="modal.close('update')">
+        [mat-dialog-close]="'update'">
         <mat-icon>update</mat-icon> Update
       </button>
     </mat-dialog-actions>
