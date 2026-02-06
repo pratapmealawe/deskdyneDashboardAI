@@ -14,6 +14,7 @@ export class EmpPollCardComponent {
   @Input() orderInput: any;
   order: any;
   showCreateBtn: boolean = true;
+  totalDeliveryCharge: number = 0;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -45,8 +46,6 @@ export class EmpPollCardComponent {
       context: this
     });
   }
-
-  totalDeliveryCharge: number = 0;
 
   checkCutoff(order: any) {
     this.totalDeliveryCharge = 0;

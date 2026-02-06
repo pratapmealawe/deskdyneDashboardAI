@@ -1,41 +1,45 @@
-<div class="vendor-header" *ngIf="showSearchSection">
-  <div>
-    <h4 class="m-0 fw-semibold">Organization</h4>
-  </div>
-  <div class="header-actions">
-    <div class="input-wrapper">
-      <mat-form-field appearance="outline" class="w-100 search-input">
-        <input matInput type="text" placeholder="Search organization..." [formControl]="searchControl" />
-        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-          <mat-icon>search</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
+<div class="org-page-container">
+  <div class="content-body">
+    <ng-container *ngIf="showSearchSection; else viewSection">
+      <div class="org-header-card">
+        <div class="header-content">
+          <div class="title-section">
+            <h1 class="page-title">Organization Management</h1>
+          </div>
+          <div class="actions-section" *ngIf="showSearchSection">
+            <div class="search-wrapper">
+              <mat-icon class="search-icon">search</mat-icon>
+              <input type="text" placeholder="Search organization..." [formControl]="searchControl" />
+            </div>
+            <button mat-flat-button color="primary" class="btn-add-org" (click)="addOrg()">
+              <mat-icon>add_business</mat-icon>
+              <span>Add Organization</span>
+            </button>
+          </div>
+        </div>
+      </div>
 
-    <button class="btn-add" mat-raised-button color="primary" (click)="addOrg()">
-      <mat-icon>add_business</mat-icon> Add Organization
-    </button>
-  </div>
-</div>
-
-
-<div class="container-fluid pb-4">
-  <ng-container *ngIf="showSearchSection; else viewSection">
-    <div *ngIf="orgList?.length > 0; else noRecords">
-      <div>
+      <div *ngIf="orgList?.length > 0; else noRecords">
         <app-organization-card [organization]="orgList" (view)="viewOrg($event)"
           (paginationConfig)="paginationConfig($event)">
         </app-organization-card>
       </div>
-    </div>
-  </ng-container>
-  <ng-template #viewSection>
-    <div class="bgsidepadding1" *ngIf="selectedOrg; else noRecords">
-      <app-organization-view [organization]="selectedOrg" (back)="toggleShowOrder($event)">
-      </app-organization-view>
-    </div>
-  </ng-template>
-  <ng-template #noRecords>
-    <div class="center mt-5">No Records Found</div>
-  </ng-template>
+    </ng-container>
+
+    <ng-template #viewSection>
+      <div *ngIf="selectedOrg; else noRecords">
+        <app-organization-view [organization]="selectedOrg" (back)="toggleShowOrder($event)">
+        </app-organization-view>
+      </div>
+    </ng-template>
+
+    <ng-template #noRecords>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">business</mat-icon>
+        <h3>No Organizations Found</h3>
+        <p>Get started by adding your first organization.</p>
+        <button mat-stroked-button color="primary" (click)="addOrg()">Add Organization</button>
+      </div>
+    </ng-template>
+  </div>
 </div>

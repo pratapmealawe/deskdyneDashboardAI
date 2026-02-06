@@ -256,9 +256,7 @@ export class AddOrganizationComponent implements OnInit {
       if (this.editingPocIndex !== null) {
         this.poc.at(this.editingPocIndex).patchValue(pocData);
       } else {
-        this.poc.push(this.fb.group(pocData)); // Need to recreate structure
-        // Fix: Above line needs correct structuring. 
-        // Simpler: push this.new_poc_details() then patch
+        // Create new Form Group with correct structure and push
         const newGroup = this.new_poc_details();
         newGroup.patchValue(pocData);
         this.poc.push(newGroup);

@@ -111,4 +111,13 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
     const findIndex = selectedSubTab[event.index]
     this.goToSubTab(findIndex.path)
   }
+
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'vendorFirmDetails': 'business',
+      'wallet': 'account_balance_wallet',
+      'orderReport': 'assessment'
+    };
+    return icons[path] || 'folder';
+  }
 }

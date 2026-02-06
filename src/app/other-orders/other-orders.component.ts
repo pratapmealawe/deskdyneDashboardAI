@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { orderStatusMapper } from 'src/config/order-status.config';
 
 @Component({
   selector: 'app-other-orders',
@@ -13,6 +16,7 @@ export class OtherOrdersComponent implements OnInit {
     { name: 'Bulk Orders', path: 'bulkOrders', },
     { name: 'Employee Poll', path: 'employeePoll', }
   ];
+  orderStatusMapper: any = orderStatusMapper;
   adminOrderStatusList = [
     { label: 'Placed', value: 'placed', count: 0 },
     { label: 'Accepted', value: 'accepted', count: 0 },
@@ -92,14 +96,12 @@ export class OtherOrdersComponent implements OnInit {
   subscribeEvents() {
     this.sendDataToComponent.subscribe('UPDATE_BULK_ORDER_PAGE', (data) => {
       if (data && data.reload) {
-        let selectedIndex = -1;
-        this.filteredList.forEach((ele, index) => {
-          if (ele._id === data._id) {
-            selectedIndex = index;
-          }
-        });
-        if (selectedIndex > -1) {
-          this.filteredList.splice(selectedIndex, 1);
+        if (this.selectedTab === 'employeePoll') {
+          this.getEmployeePollList(this.selectedPollDate);
+        } else if (this.selectedTab === 'bulkOrders') {
+          this.getb2bBulkOrderList();
+        } else if (this.selectedTab === 'adminOrders') {
+          this.getBulkDailyOrderList();
         }
       }
     });
@@ -140,12 +142,13 @@ export class OtherOrdersComponent implements OnInit {
     }
     this.apiMainService.getAdminEmpPolls(payload).then((res: any[]) => {
       if (res && res.length > 0) {
+        console.log(res);
         const groupedMap = new Map<string, any>();
         res.forEach(order => {
           if (!Array.isArray(order.mealTypeList)) return;
           order.mealTypeList.forEach((meal: any) => {
             if (meal.pollStatus === 'inactive') return;
-            const key = `${order.cafeteriaId}_${order.deliveryDate}_${order.orgId}_${meal.mealType}`;
+            const key = `${order.cafeteriaId}_${order.orgId}_${meal.itemName}`;
             if (!groupedMap.has(key)) {
               const group = {
                 customerLocation: order.customerLocation,
@@ -352,12 +355,147 @@ export class OtherOrdersComponent implements OnInit {
       this.getOrderStatusList(this.selectedStatus, page + 1);
     }
   }
-  
+
   refreshOrderList() {
     if (this.selectedTab === 'adminOrders') {
       this.getBulkDailyOrderList();
     } else if (this.selectedTab === 'bulkOrders') {
       this.getb2bBulkOrderList();
     }
+  }
+
+  async exportAdminOrdersToExcel() {
+    if (!this.filteredList || this.filteredList.length === 0) return;
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Admin Orders');
+
+    worksheet.columns = [
+      { header: 'Order No', key: 'orderNo', width: 15 },
+      { header: 'Date', key: 'orderDate', width: 20 },
+      { header: 'Delivery Date', key: 'deliveryDate', width: 20 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Customer Name', key: 'customerName', width: 20 },
+      { header: 'Customer Phone', key: 'customerPhone', width: 15 },
+      { header: 'Org Name', key: 'orgName', width: 25 },
+      { header: 'Cafe Name', key: 'cafeName', width: 20 },
+      { header: 'Items', key: 'items', width: 40 },
+      { header: 'Bill Amount', key: 'billAmount', width: 15 },
+      { header: 'Address', key: 'address', width: 30 },
+    ];
+
+    // Add Header Row
+    const headerRow = worksheet.getRow(1);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE0E0E0' }
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+
+    this.filteredList.forEach(order => {
+      const items = (order.itemList || [])
+        .map((i: any) => `${i.itemName} x${i.count}`)
+        .join(', ');
+
+      worksheet.addRow({
+        orderNo: order.orderNo || '-',
+        orderDate: this.formatDate(order.orderDate),
+        deliveryDate: order.deliveryDate ? this.formatDate(order.deliveryDate) : '-',
+        status: this.orderStatusMapper[order.orderstatus] || order.orderstatus,
+        customerName: order.customerName || '-',
+        customerPhone: order.customerPhoneNo || '-',
+        orgName: order.organizationDetails?.organization_name || '-',
+        cafeName: order.cafeteriaDetails?.cafeteria_name || '-',
+        items: items,
+        billAmount: order.amount || 0,
+        address: order.address || '-'
+      });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `Admin_Orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+  async exportEmployeePollToExcel() {
+    if (!this.filteredList || this.filteredList.length === 0) return;
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Employee Poll');
+
+    worksheet.columns = [
+      { header: 'Poll Date', key: 'pollDate', width: 15 },
+      { header: 'Delivery Date', key: 'deliveryDate', width: 15 },
+      { header: 'Org Name', key: 'orgName', width: 25 },
+      { header: 'Cafe Name', key: 'cafeName', width: 20 },
+      { header: 'Meal Type', key: 'mealType', width: 20 },
+      { header: 'Item Name', key: 'itemName', width: 25 },
+      { header: 'Price', key: 'price', width: 10 },
+      { header: 'Emp Name', key: 'empName', width: 20 },
+      { header: 'Emp Phone', key: 'empPhone', width: 15 },
+      { header: 'Emp Email', key: 'empEmail', width: 25 },
+    ];
+
+    // Add Header Row
+    const headerRow = worksheet.getRow(1);
+    headerRow.eachCell((cell) => {
+      cell.font = { bold: true };
+      cell.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE0E0E0' }
+      };
+      cell.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' }
+      };
+    });
+
+    // Flatten data
+    this.filteredList.forEach(group => {
+      if (group.employeeList && group.employeeList.length > 0) {
+        group.employeeList.forEach((emp: any) => {
+          worksheet.addRow({
+            pollDate: this.formatDate(group.pollDate),
+            deliveryDate: group.deliveryDate ? this.formatDate(group.deliveryDate) : '-',
+            orgName: group.orgName,
+            cafeName: group.cafeteriaName,
+            mealType: group.mealType,
+            itemName: emp.deliveredItem || '-',
+            price: emp.mealPrice || 0,
+            empName: emp.employeeName,
+            empPhone: emp.employeePhoneNo,
+            empEmail: emp.employeeEmail
+          });
+        });
+      }
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `Employee_Poll_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+  formatDate(dateInput: any): string {
+    if (!dateInput) return '-';
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return '-';
+
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0'); // 0-based month
+    const yyyy = date.getFullYear();
+
+    return `${dd}/${mm}/${yyyy}`;
   }
 }

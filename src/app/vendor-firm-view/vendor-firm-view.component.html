@@ -1,32 +1,49 @@
-<button mat-flat-button (click)="goBack()">
-  <mat-icon>arrow_back</mat-icon>
-  Back
-</button>
-<mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)" class="custom-tabs py-3">
-  <mat-tab *ngFor="let view of vendorViewList" class="custom-tabs">
-    <ng-template mat-tab-label class="custom-tabs">
-      {{ view.name }}
-    </ng-template>
-    <ng-container *ngIf="selectedTab === view.path">
-      <mat-tab-group *ngIf="view.subTabs?.length" [(selectedIndex)]="selectedSubTabIndex"
-        (selectedTabChange)="onTabSubChange($event)" class="mt-3"
-        [ngClass]="{ 'wallet-border': selectedTab === 'wallet' }">
-        <mat-tab *ngFor="let sub of getSubTab() ; let i = index" class="second-tab">
-          <ng-template mat-tab-label>
-            {{ sub.name }}
-          </ng-template>
-        </mat-tab>
-      </mat-tab-group>
+<div class="vendor-view-container">
+  <!-- Header Section -->
+  <div class="vendor-header-card">
+    <div class="header-left">
+      <button mat-icon-button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="title-section">
+        <h1 class="page-title">{{ vendor?.vendorFirmName || 'Vendor Details' }}</h1>
+        <p class="page-subtitle">Manage vendor information, wallet & reports</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tabs-container">
+    <div class="main-tabs">
+      <button *ngFor="let view of vendorViewList; let i = index" class="tab-btn" [class.active]="selectedTabIndex === i"
+        (click)="selectedTabIndex = i; gotToTab(view.path)">
+        <mat-icon class="tab-icon">{{ getTabIcon(view.path) }}</mat-icon>
+        <span>{{ view.name }}</span>
+      </button>
+    </div>
+
+    <!-- Sub Tabs -->
+    <div class="sub-tabs-wrapper" *ngIf="getSubTab()?.length">
+      <div class="sub-tabs">
+        <button *ngFor="let sub of getSubTab(); let i = index" class="sub-tab-btn"
+          [class.active]="selectedSubTabIndex === i" (click)="selectedSubTabIndex = i; goToSubTab(sub.path)">
+          {{ sub.name }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <ng-container [ngSwitch]="selectedTab">
+      <app-vendor-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-details>
     </ng-container>
-  </mat-tab>
-</mat-tab-group>
-<ng-container [ngSwitch]="selectedTab">
-  <app-vendor-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-details>
-</ng-container>
-<ng-container [ngSwitch]="selectedSubTab">
-  <app-wallet-details *ngSwitchCase="'walletDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-wallet-details>
-  <app-ledger-details *ngSwitchCase="'ledgerDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-ledger-details>
-  <app-vendor-report *ngSwitchCase="'vendorFirmReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-report>
-  <app-vendor-daily-report *ngSwitchCase="'vendorFirmDailyReport'"
-    [vendorFirmInfo]="vendorFirmInfo"></app-vendor-daily-report>
-</ng-container>
+    <ng-container [ngSwitch]="selectedSubTab">
+      <app-wallet-details *ngSwitchCase="'walletDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-wallet-details>
+      <app-ledger-details *ngSwitchCase="'ledgerDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-ledger-details>
+      <app-vendor-report *ngSwitchCase="'vendorFirmReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-report>
+      <app-vendor-daily-report *ngSwitchCase="'vendorFirmDailyReport'"
+        [vendorFirmInfo]="vendorFirmInfo"></app-vendor-daily-report>
+    </ng-container>
+  </div>
+</div>

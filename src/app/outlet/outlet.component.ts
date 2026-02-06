@@ -43,15 +43,35 @@ export class OutletComponent implements OnInit {
     this.searchOutlet();
     this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(value => { this.applyFilter(value) })
   }
+
   applyFilter(value: string) {
-    const config = { keys: ['organizationName'] };
-    const v = (value || '').trim();
-    this.pagedOutLet = v
-      ? [...this.searchService.searchData(this.filteredOutletList, config, v)]
-      : [...this.filteredOutletList];
-    console.log(this.pagedOutLet,"update value ");
+    const v = (value || '').trim().toLowerCase();
+    if (!v) {
+      this.pagedOutLet = [...this.filteredOutletList];
+    } else {
+      this.pagedOutLet = this.filteredOutletList
+        .map((org: any) => {
+          // Check if organization name matches
+          const orgMatches = org.organizationName?.toLowerCase().includes(v);
+          // Filter outlets that match the search term
+          const matchingOutlets = org.outletList?.filter((outlet: any) =>
+            outlet.outletName?.toLowerCase().includes(v)
+          ) || [];
+
+          if (orgMatches) {
+            // If org matches, return all outlets
+            return { ...org };
+          } else if (matchingOutlets.length > 0) {
+            // If outlets match, return org with only matching outlets
+            return { ...org, outletList: matchingOutlets };
+          }
+          return null;
+        })
+        .filter((org: any) => org !== null);
+    }
+    console.log(this.pagedOutLet, "update value ");
   }
-  
+
   async searchOutlet() {
     try {
       this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
@@ -80,7 +100,7 @@ export class OutletComponent implements OnInit {
         }
 
         this.filteredOutletList = Array.from(orgMap.values());
-        this.pagedOutLet = this.filteredOutletList 
+        this.pagedOutLet = this.filteredOutletList
       }
     } catch (error) {
       console.log('seachOutlet', error);

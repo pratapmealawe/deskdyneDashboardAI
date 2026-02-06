@@ -1,48 +1,282 @@
 @use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
+@use '/src/styles/theme/variable' as var;
 
-.cardDesign {
-  @include mixin.vertical-line();
-  @include mixin.card-design(color.$primary-offset-color1);
-}
-
-.labelText {
-  @include mixin.labelText;
-}
-
-.labelData {
-  @include mixin.labelData;
-}
-
-.theme-bg-header {
-  // background-color: #f8f9fa; // Light gray for firm header
-}
-
-.action-icon {
-  cursor: pointer;
-  transition: transform 0.2s;
+// Firm Wrapper Card
+.vendor-firm-wrapper {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  transition: box-shadow 0.3s ease;
 
   &:hover {
-    transform: scale(1.1);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
   }
 }
 
-.outlet-badge {
-  background-color: color.$primary-offset-color1;
-  // color: color.$primary-color;
-  padding: 2px 8px;
+// Firm Header
+.firm-header {
+  padding: 1.25rem 1.5rem;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #edf2f7;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  .firm-icon {
+    width: 42px;
+    height: 42px;
+    background-color: var.$primary-color1; // Brand Blue
+    color: white;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .firm-info {
+    flex-grow: 1;
+
+    .firm-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #718096;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .firm-name {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var.$primary-color2; // Brand Navy
+    }
+  }
+
+  .badge-count {
+    background-color: #e2e8f0;
+    color: #4a5568;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+}
+
+// Vendor Grid Layout
+.vendor-grid {
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+// Individual Vendor Card
+.vendor-item-card {
+  background-color: white;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
-  font-size: 0.75rem;
-  font-weight: 500;
-  // border: 1px solid color.$primary-color;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  position: relative;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var.$primary-color3;
+    box-shadow: 0 4px 12px rgba(var.$primary-color1, 0.1);
+  }
+
+  .card-top {
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #f1f1f1;
+
+    .vendor-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var.$primary-color3 0%, var.$primary-color1 100%);
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .vendor-identity {
+      flex-grow: 1;
+      overflow: hidden;
+
+      .vendor-name {
+        margin: 0 0 4px 0;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #2d3748;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .role-badge {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+        border-radius: 4px;
+        font-weight: 600;
+        display: inline-block;
+
+        &.admin {
+          background-color: var.$secondary-offset-color2; // Gold/Yellowish
+          color: #744210;
+        }
+
+        &.staff {
+          background-color: #e2e8f0;
+          color: #4a5568;
+        }
+      }
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 4px;
+
+      button {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        padding: 0;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+        }
+      }
+    }
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #4a5568;
+
+      .info-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #a0aec0;
+      }
+
+      .info-text {
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .access-pill {
+        background-color: rgba(var.$primary-color1, 0.1);
+        color: var.$primary-color1;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .card-footer-chips {
+    padding: 0.75rem 1.25rem;
+    background-color: #f7fafc;
+    border-top: 1px solid #edf2f7;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background-color: white;
+      border: 1px solid #e2e8f0;
+      color: #718096;
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+      }
+
+      &.outlet-chip {
+        color: var.$secondary-color; // Teal for outlet
+        background-color: rgba(var.$secondary-color, 0.08);
+        border-color: rgba(var.$secondary-color, 0.15);
+      }
+
+      &.popup-chip {
+        color: var.$primary-color1;
+        background-color: rgba(var.$primary-color1, 0.05);
+        border-color: rgba(var.$primary-color1, 0.1);
+      }
+    }
+  }
 }
 
-.empty-vendor {
-  @include mixin.card-design(color.$primary-offset-color1);
-  height: 100px;
+// Empty State
+.empty-state-card {
+  padding: 3rem;
+  text-align: center;
+  background: white;
+  border-radius: 16px;
+  box-shadow: var.$box-shadow-sm;
+
+  .empty-content {
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+      color: #cbd5e0;
+      margin-bottom: 1rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      color: #718096;
+    }
+  }
 }
 
-mat-paginator {
-  border-radius: 8px;
+.custom-paginator {
   background: transparent;
+  margin-top: 1rem;
+  border-radius: 8px;
 }
