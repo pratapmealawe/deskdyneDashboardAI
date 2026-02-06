@@ -11,8 +11,9 @@ export class ConfirmationModalService {
 
   data: any;
 
-  modal(modalObj: { msg: string; callback: Function; context: object; data?: any }) {
+  modal(modalObj: { msg: string; callback: Function; context: object; data?: any; cancelCallback?: Function }) {
     this.data = modalObj.data;
     this.confimationModalSubject.next(modalObj);
   }
 }
+

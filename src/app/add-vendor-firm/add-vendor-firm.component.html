@@ -13,10 +13,40 @@
                     </div>
                 </div>
 
-                <!-- Validity Badge -->
-                <div class="status-pill" [ngClass]="isFormValid ? 'valid' : 'invalid'">
-                    <mat-icon>{{ isFormValid ? 'check_circle' : 'info' }}</mat-icon>
-                    <span>{{ isFormValid ? 'Ready to Save' : 'Incomplete' }}</span>
+                <div class="header-right">
+                    <!-- Info Button -->
+                    <button mat-icon-button [matMenuTriggerFor]="infoMenu" class="info-btn"
+                        matTooltip="Required Fields">
+                        <mat-icon>info</mat-icon>
+                    </button>
+                    <mat-menu #infoMenu="matMenu">
+                        <div class="info-menu-content" (click)="$event.stopPropagation()">
+                            <div class="info-header">
+                                <mat-icon>checklist</mat-icon>
+                                <span>Required Fields</span>
+                            </div>
+                            <ul class="info-list required">
+                                <li><mat-icon>check_circle</mat-icon> Vendor Firm Name</li>
+                                <li><mat-icon>check_circle</mat-icon> Firm Phone & Email</li>
+                                <li><mat-icon>check_circle</mat-icon> TDS %</li>
+                                <li><mat-icon>check_circle</mat-icon> Bank Details</li>
+                            </ul>
+                            <div class="info-header mt-2">
+                                <mat-icon>stars</mat-icon>
+                                <span>Recommended</span>
+                            </div>
+                            <ul class="info-list recommended">
+                                <li><mat-icon>add_circle_outline</mat-icon> Addresses</li>
+                                <li><mat-icon>add_circle_outline</mat-icon> Linked Outlets</li>
+                            </ul>
+                        </div>
+                    </mat-menu>
+
+                    <!-- Validity Badge -->
+                    <div class="status-pill" [ngClass]="isFormValid ? 'valid' : 'invalid'">
+                        <mat-icon>{{ isFormValid ? 'check_circle' : 'info' }}</mat-icon>
+                        <span>{{ isFormValid ? 'Ready to Save' : 'Incomplete' }}</span>
+                    </div>
                 </div>
             </div>
         </div>

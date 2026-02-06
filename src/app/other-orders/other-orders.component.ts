@@ -58,6 +58,8 @@ export class OtherOrdersComponent implements OnInit {
   searchPhone: string = '';
   pageFirstEntry: number = 1;
   pageLastEntry: number = 1;
+  isLoading: boolean = false;
+  selectedAdminOrderDate: Date = new Date();
   constructor(
     private apiMainService: ApiMainService,
     private sendDataToComponent: SendDataToComponent,
@@ -69,12 +71,15 @@ export class OtherOrdersComponent implements OnInit {
     this.onTabChange({ index: 0 });
   }
 
-  getOrgList() {
-    this.apiMainService.getOrgList().then((res: any) => {
+  async getOrgList() {
+    try {
+      const res: any = await this.apiMainService.getOrgList();
       if (res && res.length > 0) {
         this.orgList = res;
       }
-    });
+    } catch (error) {
+      console.error('Error fetching org list:', error);
+    }
   }
 
   onOrgChange(event: any) {
@@ -90,6 +95,24 @@ export class OtherOrdersComponent implements OnInit {
   onDateChange(event: any) {
     this.selectedPollDate = event.value;
     this.getEmployeePollList(this.selectedPollDate);
+  }
+
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'adminOrders': 'receipt_long',
+      'bulkOrders': 'inventory_2',
+      'employeePoll': 'how_to_vote'
+    };
+    return icons[path] || 'folder';
+  }
+
+  onCustomTabChange(index: number): void {
+    this.onTabChange({ index });
+  }
+
+  onAdminOrderDateChange(event: any): void {
+    this.selectedAdminOrderDate = event.value;
+    this.getBulkDailyOrderList();
   }
 
 
@@ -122,7 +145,7 @@ export class OtherOrdersComponent implements OnInit {
     }
   }
 
-  getEmployeePollList(dateInput?: any) {
+  async getEmployeePollList(dateInput?: any) {
     const targetDate = dateInput ? new Date(dateInput) : this.selectedPollDate;
     this.page = 1;
     this.lastPage = 1;
@@ -140,7 +163,10 @@ export class OtherOrdersComponent implements OnInit {
     if (this.selectedOrg) {
       payload['org_id'] = this.selectedOrg;
     }
-    this.apiMainService.getAdminEmpPolls(payload).then((res: any[]) => {
+
+    try {
+      this.isLoading = true;
+      const res: any[] = await this.apiMainService.getAdminEmpPolls(payload);
       if (res && res.length > 0) {
         console.log(res);
         const groupedMap = new Map<string, any>();
@@ -205,36 +231,54 @@ export class OtherOrdersComponent implements OnInit {
       } else {
         this.filteredList = [];
       }
-    });
+    } catch (error) {
+      console.error('Error fetching employee poll list:', error);
+      this.filteredList = [];
+    } finally {
+      this.isLoading = false;
+    }
   }
 
-  getBulkDailyOrderList() {
-    this.apiMainService.getCurrentDailyOrdersCount().then((res: any) => {
+  async getBulkDailyOrderList() {
+    try {
+      this.isLoading = true;
+      const dateParam = this.selectedAdminOrderDate ?
+        new Date(this.selectedAdminOrderDate) :
+        new Date();
+      const res: any = await this.apiMainService.getCurrentDailyOrdersCount(dateParam);
       if (res) {
         this.adminOrderStatusList.forEach((status: any) => {
           status.count = res[status.value];
         });
       }
-    }, (error: any) => {
-      console.log(error)
-    });
+    } catch (error) {
+      console.error('Error fetching daily orders count:', error);
+    } finally {
+      this.isLoading = false;
+    }
     this.getLatestBulkDailyOrderStatusList(this.selectedStatus);
   }
 
-  getb2bBulkOrderList() {
-    this.apiMainService.getCurrentB2BOrdersCount().then((res: any) => {
+  async getb2bBulkOrderList() {
+    // Reset counts first
+    this.bulkOrderStatusList.forEach((status: any) => {
+      status.count = 0;
+    });
+
+    try {
+      this.isLoading = true;
+      const res: any = await this.apiMainService.getCurrentB2BOrdersCount();
       if (res) {
         console.log(res, 'getCurrentB2BOrdersCount');
         this.bulkOrderStatusList.forEach((status: any) => {
           status.count = res[status.value];
         });
       }
-    }, (error: any) => {
-      console.log(error)
-    });
-    this.bulkOrderStatusList.forEach((status: any) => {
-      status.count = 0;
-    });
+    } catch (error) {
+      console.error('Error fetching B2B orders count:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   async getLatestBulkDailyOrderStatusList(status: any) {
@@ -248,39 +292,12 @@ export class OtherOrdersComponent implements OnInit {
 
   async getOrderStatusList(status: string, pageNum: number) {
     try {
+      this.isLoading = true;
       this.page = pageNum;
-      this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit).then((res: any) => {
-        if (res) {
-          this.filteredList = res.orderList;
-          this.totalCount = res.totalCount;
-          this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
-          if (this.filteredList && this.filteredList.length > 0) {
-            this.pageFirstEntry = ((pageNum - 1) * this.pageLimit) + 1;
-            this.pageLastEntry = this.pageFirstEntry + this.filteredList.length - 1;
-            if (this.filteredList.length < this.pageLimit) {
-              this.paginationOver = true;
-              this.lastPage = pageNum;
-            } else {
-              this.paginationOver = false;
-            }
-          }
-          else {
-            this.filteredList = [];
-            this.paginationOver = true;
-            this.lastPage = pageNum;
-          }
-        }
-      }, (error: any) => {
-        console.log(error)
-      })
-
-    } catch (error) {
-      console.log('error while searching orders ', error);
-    }
-  }
-
-  getClusterb2bBulkOrderList(status: string, pageNum: number) {
-    this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit).then((res: any) => {
+      const dateStr = this.selectedAdminOrderDate ?
+        new Date(this.selectedAdminOrderDate) :
+        new Date();
+      const res: any = await this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit, dateStr);
       if (res) {
         this.filteredList = res.orderList;
         this.totalCount = res.totalCount;
@@ -294,16 +311,50 @@ export class OtherOrdersComponent implements OnInit {
           } else {
             this.paginationOver = false;
           }
-        }
-        else {
+        } else {
           this.filteredList = [];
           this.paginationOver = true;
           this.lastPage = pageNum;
         }
       }
-    }, (error: any) => {
-      console.log(error)
-    });
+    } catch (error) {
+      console.error('Error fetching order status list:', error);
+      this.filteredList = [];
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  async getClusterb2bBulkOrderList(status: string, pageNum: number) {
+    try {
+      this.isLoading = true;
+      this.selectedStatus = status;
+      const res: any = await this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit);
+      if (res) {
+        this.filteredList = res.orderList;
+        this.totalCount = res.totalCount;
+        this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
+        if (this.filteredList && this.filteredList.length > 0) {
+          this.pageFirstEntry = ((pageNum - 1) * this.pageLimit) + 1;
+          this.pageLastEntry = this.pageFirstEntry + this.filteredList.length - 1;
+          if (this.filteredList.length < this.pageLimit) {
+            this.paginationOver = true;
+            this.lastPage = pageNum;
+          } else {
+            this.paginationOver = false;
+          }
+        } else {
+          this.filteredList = [];
+          this.paginationOver = true;
+          this.lastPage = pageNum;
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching cluster B2B bulk order list:', error);
+      this.filteredList = [];
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   onPageSizeChange(newSize: number) {

@@ -13,12 +13,43 @@
           </div>
         </div>
 
-        <!-- Validity Badge -->
-        <div class="status-pill"
-          [ngClass]="(form.valid && poc.length > 0 && cafeteria.length > 0) ? 'valid' : 'invalid'">
-          <mat-icon>{{ (form.valid && poc.length > 0 && cafeteria.length > 0) ? 'check_circle' : 'info'
-            }}</mat-icon>
-          <span>{{ (form.valid && poc.length > 0 && cafeteria.length > 0) ? 'Ready to Save' : 'Incomplete' }}</span>
+        <div class="header-right">
+          <!-- Info Button -->
+          <button mat-icon-button [matMenuTriggerFor]="infoMenu" class="info-btn" matTooltip="Required Fields">
+            <mat-icon>info</mat-icon>
+          </button>
+          <mat-menu #infoMenu="matMenu">
+            <div class="info-menu-content" (click)="$event.stopPropagation()">
+              <div class="info-header">
+                <mat-icon>checklist</mat-icon>
+                <span>Required Fields</span>
+              </div>
+              <ul class="info-list required">
+                <li><mat-icon>check_circle</mat-icon> Organization Name</li>
+                <li><mat-icon>check_circle</mat-icon> Domain</li>
+                <li><mat-icon>check_circle</mat-icon> GSTIN</li>
+                <li><mat-icon>check_circle</mat-icon> Location & City</li>
+                <li><mat-icon>check_circle</mat-icon> Address Line 1</li>
+                <li><mat-icon>check_circle</mat-icon> At least 1 POC</li>
+                <li><mat-icon>check_circle</mat-icon> At least 1 Cafeteria</li>
+              </ul>
+              <div class="info-header mt-2">
+                <mat-icon>stars</mat-icon>
+                <span>Recommended</span>
+              </div>
+              <ul class="info-list recommended">
+                <li><mat-icon>add_circle_outline</mat-icon> Organization Logo</li>
+              </ul>
+            </div>
+          </mat-menu>
+
+          <!-- Validity Badge -->
+          <div class="status-pill"
+            [ngClass]="(form.valid && poc.length > 0 && cafeteria.length > 0) ? 'valid' : 'invalid'">
+            <mat-icon>{{ (form.valid && poc.length > 0 && cafeteria.length > 0) ? 'check_circle' : 'info'
+              }}</mat-icon>
+            <span>{{ (form.valid && poc.length > 0 && cafeteria.length > 0) ? 'Ready to Save' : 'Incomplete' }}</span>
+          </div>
         </div>
       </div>
     </div>

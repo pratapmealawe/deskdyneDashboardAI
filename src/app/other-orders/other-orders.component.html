@@ -1,71 +1,84 @@
-<div class="container-fluid position-relative pb-4">
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)"
-        class="custom-tabs py-3">
-        <mat-tab *ngFor="let view of orderTypeList">
-            <ng-template mat-tab-label>
-                {{ view.name }}
-            </ng-template>
-        </mat-tab>
-    </mat-tab-group>
+<div class="other-orders-container">
+    <!-- Tab Navigation -->
+    <div class="tabs-container">
+        <div class="main-tabs">
+            <button *ngFor="let view of orderTypeList; let i = index" class="tab-btn"
+                [class.active]="selectedTabIndex === i" (click)="onCustomTabChange(i)">
+                <mat-icon class="tab-icon">{{ getTabIcon(view.path) }}</mat-icon>
+                <span>{{ view.name }}</span>
+            </button>
+        </div>
+        <button mat-icon-button class="refresh-btn" (click)="refreshOrderList()" matTooltip="Refresh">
+            <mat-icon>refresh</mat-icon>
+        </button>
+    </div>
 
-    <div class="tab-content mt-2 pb-4">
-        <div *ngIf="selectedTab === 'adminOrders'">
-            <div class="orders-header-bar mb-4 d-flex justify-content-between align-items-center">
-                <div class="status-filters-container">
-                    <div class="status-item" *ngFor="let status of adminOrderStatusList"
-                        (click)="getLatestBulkDailyOrderStatusList(status.value)"
-                        [class.active]="selectedStatus === status.value">
-                        <span class="status-label">{{status.label}}</span>
-                        <span class="status-count" *ngIf="selectedStatus === status.value">{{status.count || 0}}</span>
-                        <span class="status-count-inactive" *ngIf="selectedStatus !== status.value">{{status.count ||
-                            0}}</span>
+    <!-- Loading Spinner -->
+    <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content" *ngIf="!isLoading">
+        <!-- Admin Orders Tab -->
+        <ng-container *ngIf="selectedTab === 'adminOrders'">
+            <div class="filter-card">
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <span class="filter-label">Order Date</span>
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-icon matPrefix>calendar_today</mat-icon>
+                            <input matInput [matDatepicker]="adminDatePicker" [(ngModel)]="selectedAdminOrderDate"
+                                (dateChange)="onAdminOrderDateChange($event)" placeholder="Select date">
+                            <mat-datepicker-toggle matIconSuffix [for]="adminDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #adminDatePicker></mat-datepicker>
+                        </mat-form-field>
                     </div>
-                </div>
-                <div class="filter-actions ps-3 ms-3">
-                    <!-- <button class="action-btn" mat-raised-button color="primary" (click)="exportAdminOrdersToExcel()">
-                        <mat-icon>file_download</mat-icon> Export
-                    </button> -->
+                    <div class="filter-item flex-grow-1">
+                        <span class="filter-label">Status</span>
+                        <div class="status-chips">
+                            <button *ngFor="let status of adminOrderStatusList" class="status-chip"
+                                [class.active]="selectedStatus === status.value"
+                                (click)="getLatestBulkDailyOrderStatusList(status.value)">
+                                <span>{{status.label}}</span>
+                                <span class="chip-count">{{status.count || 0}}</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
+
             <div class="orders-container">
                 <div *ngIf="filteredList.length > 0; else noRecord">
-                    <div class="d-flex flex-column gap-3">
-                        <div *ngFor="let order of filteredList">
-                            <ng-container *ngIf="order.orderType === 'dailyBulk' && selectedTab === 'adminOrders'">
-                                <app-daily-bulk-card [orderInput]="order"
-                                    (updateOrder)="refreshOrderList()"></app-daily-bulk-card>
-                            </ng-container>
-                        </div>
+                    <div class="orders-list">
+                        <ng-container *ngFor="let order of filteredList">
+                            <app-daily-bulk-card *ngIf="order.orderType === 'dailyBulk'" [orderInput]="order"
+                                (updateOrder)="refreshOrderList()"></app-daily-bulk-card>
+                        </ng-container>
                     </div>
-                    <div class="pagination-bar mb-3">
-                        <div class="pagination-info text-muted small d-flex align-items-center gap-3">
-                            <span>Showing <strong>{{pageFirstEntry}}</strong> to <strong>{{pageLastEntry}}</strong> of
-                                <strong>{{totalCount}}</strong> results</span>
 
-                            <div class="d-flex align-items-center gap-2 ps-3 ms-2"
-                                style="border-left: 1px solid #ccc; height: 24px;">
-                                <span>Rows per page:</span>
-                                <mat-form-field appearance="outline" class="page-size-select density-low">
-                                    <mat-select [value]="pageLimit" (selectionChange)="onPageSizeChange($event.value)">
-                                        <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
-                                            {{size}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
+                    <!-- Pagination -->
+                    <div class="pagination-card">
+                        <div class="pagination-info">
+                            <span>Showing <strong>{{pageFirstEntry}}</strong> to <strong>{{pageLastEntry}}</strong> of
+                                <strong>{{totalCount}}</strong></span>
+                            <mat-form-field appearance="outline" class="page-size-field">
+                                <mat-select [value]="pageLimit" (selectionChange)="onPageSizeChange($event.value)">
+                                    <mat-option *ngFor="let size of pageSizeOptions"
+                                        [value]="size">{{size}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div class="pagination-controls">
-                            <button class="page-btn prev-btn" (click)="previous(page)" [disabled]="page === 1">
+                            <button class="page-btn" (click)="previous(page)" [disabled]="page === 1">
                                 <mat-icon>chevron_left</mat-icon>
                             </button>
                             <ng-container *ngFor="let p of visiblePages">
-                                <button *ngIf="p !== '...'" class="page-btn number-btn" [class.active]="p === page"
-                                    (click)="goToPage(p)">
-                                    {{p}}
-                                </button>
-                                <span *ngIf="p === '...'" class="dots">...</span>
+                                <button *ngIf="p !== '...'" class="page-btn" [class.active]="p === page"
+                                    (click)="goToPage(p)">{{p}}</button>
+                                <span *ngIf="p === '...'" class="page-dots">...</span>
                             </ng-container>
-                            <button class="page-btn next-btn" (click)="next(page)"
+                            <button class="page-btn" (click)="next(page)"
                                 [disabled]="page === totalPages || totalPages === 0">
                                 <mat-icon>chevron_right</mat-icon>
                             </button>
@@ -73,64 +86,55 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div *ngIf="selectedTab === 'bulkOrders'">
-            <div class="orders-header-bar mb-4">
-                <div class="status-filters-container">
-                    <div class="status-item" *ngFor="let status of bulkOrderStatusList"
-                        (click)="getClusterb2bBulkOrderList(status.value, page)"
-                        [class.active]="selectedStatus === status.value">
-                        <span class="status-label">{{status.label}}</span>
-                        <span class="status-count" *ngIf="selectedStatus === status.value">{{status.count || 0}}</span>
-                        <span class="status-count-inactive" *ngIf="selectedStatus !== status.value">{{status.count ||
-                            0}}</span>
+        </ng-container>
+
+        <!-- Bulk Orders Tab -->
+        <ng-container *ngIf="selectedTab === 'bulkOrders'">
+            <div class="filter-card">
+                <div class="filter-row">
+                    <div class="filter-item flex-grow-1">
+                        <span class="filter-label">Status</span>
+                        <div class="status-chips">
+                            <button *ngFor="let status of bulkOrderStatusList" class="status-chip"
+                                [class.active]="selectedStatus === status.value"
+                                (click)="getClusterb2bBulkOrderList(status.value, 1)">
+                                <span>{{status.label}}</span>
+                                <span class="chip-count">{{status.count || 0}}</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
-                <!-- <div class="filter-actions ps-3 ms-3 border-start">
-                    <button class="action-btn">
-                        <mat-icon>filter_list</mat-icon> Filter
-                    </button>
-                    <button class="action-btn">
-                        <mat-icon>sort</mat-icon> Sort
-                    </button>
-                </div> -->
             </div>
+
             <div class="orders-container">
                 <div *ngIf="filteredList.length > 0; else noRecord">
-                    <div class="d-flex flex-column gap-3">
-                        <div *ngFor="let order of filteredList">
-                            <app-bulk-order-card [orderInput]="order"></app-bulk-order-card>
-                        </div>
+                    <div class="orders-list">
+                        <app-bulk-order-card *ngFor="let order of filteredList"
+                            [orderInput]="order"></app-bulk-order-card>
                     </div>
-                    <div class="pagination-bar mb-3">
-                        <div class="pagination-info text-muted small d-flex align-items-center gap-3">
-                            <span>Showing <strong>{{pageFirstEntry}}</strong> to <strong>{{pageLastEntry}}</strong> of
-                                <strong>{{totalCount}}</strong> results</span>
 
-                            <div class="d-flex align-items-center gap-2 ps-3 ms-2"
-                                style="border-left: 1px solid #ccc; height: 24px;">
-                                <span>Rows per page:</span>
-                                <mat-form-field appearance="outline" class="page-size-select density-low">
-                                    <mat-select [value]="pageLimit" (selectionChange)="onPageSizeChange($event.value)">
-                                        <mat-option *ngFor="let size of pageSizeOptions" [value]="size">
-                                            {{size}}
-                                        </mat-option>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
+                    <!-- Pagination -->
+                    <div class="pagination-card">
+                        <div class="pagination-info">
+                            <span>Showing <strong>{{pageFirstEntry}}</strong> to <strong>{{pageLastEntry}}</strong> of
+                                <strong>{{totalCount}}</strong></span>
+                            <mat-form-field appearance="outline" class="page-size-field">
+                                <mat-select [value]="pageLimit" (selectionChange)="onPageSizeChange($event.value)">
+                                    <mat-option *ngFor="let size of pageSizeOptions"
+                                        [value]="size">{{size}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div class="pagination-controls">
-                            <button class="page-btn prev-btn" (click)="previous(page)" [disabled]="page === 1">
+                            <button class="page-btn" (click)="previous(page)" [disabled]="page === 1">
                                 <mat-icon>chevron_left</mat-icon>
                             </button>
                             <ng-container *ngFor="let p of visiblePages">
-                                <button *ngIf="p !== '...'" class="page-btn number-btn" [class.active]="p === page"
-                                    (click)="goToPage(p)">
-                                    {{p}}
-                                </button>
-                                <span *ngIf="p === '...'" class="dots">...</span>
+                                <button *ngIf="p !== '...'" class="page-btn" [class.active]="p === page"
+                                    (click)="goToPage(p)">{{p}}</button>
+                                <span *ngIf="p === '...'" class="page-dots">...</span>
                             </ng-container>
-                            <button class="page-btn next-btn" (click)="next(page)"
+                            <button class="page-btn" (click)="next(page)"
                                 [disabled]="page === totalPages || totalPages === 0">
                                 <mat-icon>chevron_right</mat-icon>
                             </button>
@@ -138,91 +142,80 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div *ngIf="selectedTab === 'employeePoll'">
-            <mat-card class="mb-4">
-                <mat-card-content class="d-flex flex-column gap-3">
-                    <div class="d-flex flex-wrap gap-3 align-items-start">
-                        <div class="d-flex flex-column gap-2">
-                            <div class="fw-bold text-muted small">Poll Date</div>
-                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
-                                <input matInput [matDatepicker]="picker" [(ngModel)]="selectedPollDate"
-                                    placeholder="mm/dd/yyyy">
-                                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
-                            </mat-form-field>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="fw-bold text-muted small">Organization Name</div>
-                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
-                                <mat-icon matPrefix class="text-muted mx-2">domain</mat-icon>
-                                <mat-select placeholder="All Organizations"
-                                    (selectionChange)="onOrgChange($event.value)">
-                                    <mat-option [value]="null">All Organizations</mat-option>
-                                    <mat-option *ngFor="let org of orgList" [value]="org">
-                                        {{org?.organization_name}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="fw-bold text-muted small">Cafe Name</div>
-                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
-                                <mat-icon matPrefix class="text-muted mx-2">store</mat-icon>
-                                <mat-select [(ngModel)]="selectedCafeteria" placeholder="All Cafes">
-                                    <mat-option [value]="null">All Cafes</mat-option>
-                                    <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe?.cafeteria_id">
-                                        {{cafe?.cafeteria_name}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="fw-bold text-muted small">Search phone Number</div>
-                            <mat-form-field appearance="outline" style="width: 250px;" class="custom-field">
-                                <mat-icon matPrefix class="text-muted mx-2">search</mat-icon>
-                                <input matInput [(ngModel)]="searchPhone" placeholder="Phone Number">
-                            </mat-form-field>
-                        </div>
-                        <div class="d-flex flex-column gap-2">
-                            <div class="fw-bold text-muted small" style="visibility: hidden">&nbsp;</div>
-                            <div class="d-flex gap-2">
-                                <button mat-raised-button color="primary" class="param-btn"
-                                    (click)="getEmployeePollList(selectedPollDate)">
-                                    <mat-icon>filter_list</mat-icon> Apply
-                                </button>
-                                <button mat-stroked-button color="primary" class="param-btn"
-                                    (click)="exportEmployeePollToExcel()">
-                                    <mat-icon>file_download</mat-icon> Export
-                                </button>
-                            </div>
-                        </div>
+        </ng-container>
+
+        <!-- Employee Poll Tab -->
+        <ng-container *ngIf="selectedTab === 'employeePoll'">
+            <div class="filter-card">
+                <div class="filter-row">
+                    <div class="filter-item">
+                        <span class="filter-label">Poll Date</span>
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-icon matPrefix>event</mat-icon>
+                            <input matInput [matDatepicker]="pollDatePicker" [(ngModel)]="selectedPollDate"
+                                placeholder="Select date">
+                            <mat-datepicker-toggle matIconSuffix [for]="pollDatePicker"></mat-datepicker-toggle>
+                            <mat-datepicker #pollDatePicker></mat-datepicker>
+                        </mat-form-field>
                     </div>
-                </mat-card-content>
-            </mat-card>
-            <div class="orders-container">
-                <div *ngIf="filteredList.length > 0; else noRecord">
-                    <div *ngFor="let group of filteredList" class="mb-1">
-                        <div class="row">
-                            <div class="col-12 mb-2">
-                                <app-emp-poll-card [orderInput]="group"></app-emp-poll-card>
-                            </div>
-                        </div>
+                    <div class="filter-item">
+                        <span class="filter-label">Organization</span>
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-icon matPrefix>domain</mat-icon>
+                            <mat-select placeholder="All Organizations" (selectionChange)="onOrgChange($event.value)">
+                                <mat-option [value]="null">All Organizations</mat-option>
+                                <mat-option *ngFor="let org of orgList" [value]="org">
+                                    {{org?.organization_name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-label">Cafeteria</span>
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-icon matPrefix>store</mat-icon>
+                            <mat-select [(ngModel)]="selectedCafeteria" placeholder="All Cafes">
+                                <mat-option [value]="null">All Cafes</mat-option>
+                                <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe?.cafeteria_id">
+                                    {{cafe?.cafeteria_name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="filter-item">
+                        <span class="filter-label">Phone Number</span>
+                        <mat-form-field appearance="outline" class="filter-field">
+                            <mat-icon matPrefix>phone</mat-icon>
+                            <input matInput [(ngModel)]="searchPhone" placeholder="Search phone">
+                        </mat-form-field>
+                    </div>
+                    <div class="filter-actions">
+                        <button mat-flat-button color="primary" (click)="getEmployeePollList(selectedPollDate)">
+                            <mat-icon>filter_list</mat-icon> Apply
+                        </button>
+                        <button mat-stroked-button color="primary" (click)="exportEmployeePollToExcel()">
+                            <mat-icon>download</mat-icon> Export
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
+
+            <div class="orders-container">
+                <div *ngIf="filteredList.length > 0; else noRecord">
+                    <div class="orders-list">
+                        <app-emp-poll-card *ngFor="let group of filteredList" [orderInput]="group"></app-emp-poll-card>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
     </div>
 </div>
+
+<!-- No Record Template -->
 <ng-template #noRecord>
-    <div class="d-flex flex-column align-items-center justify-content-center py-5 my-5">
-        <div class="bg-light rounded-circle d-flex align-items-center justify-content-center mb-3"
-            style="width: 100px; height: 100px;">
-            <mat-icon class="text-secondary opacity-50" style="transform: scale(2.5);">search_off</mat-icon>
-        </div>
-        <h4 class="fw-bold text-dark mb-2">No Orders Found</h4>
-        <p class="text-muted small text-center mb-0" style="max-width: 300px;">
-            We couldn't find any orders matching your filters. Try selecting a different date or clearing your search.
-        </p>
+    <div class="empty-state">
+        <mat-icon>search_off</mat-icon>
+        <h3>No Orders Found</h3>
+        <p>We couldn't find any orders matching your criteria. Try adjusting your filters.</p>
     </div>
 </ng-template>

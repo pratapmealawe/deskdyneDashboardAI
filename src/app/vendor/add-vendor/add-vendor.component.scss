@@ -24,6 +24,12 @@
     gap: 1rem;
   }
 
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
   .back-btn {
     color: #6c757d;
     background: #f8f9fa;
@@ -33,6 +39,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .info-btn {
+    color: #64748b;
+
+    &:hover {
+      color: var.$primary-color1;
+    }
   }
 
   .page-title {
@@ -74,6 +88,62 @@
       width: 18px;
       height: 18px;
     }
+  }
+}
+
+// Info Menu Panel
+.info-menu-content {
+  padding: 1rem;
+  min-width: 250px;
+}
+
+.info-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e2e8f0;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #f59e0b;
+  }
+
+  span {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+}
+
+.info-list {
+  list-style: none;
+  margin: 0;
+  padding: 8px 0 0;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    font-size: 0.8rem;
+    color: #475569;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+  }
+
+  &.required li mat-icon {
+    color: #22c55e;
+  }
+
+  &.recommended li mat-icon {
+    color: #3b82f6;
   }
 }
 
