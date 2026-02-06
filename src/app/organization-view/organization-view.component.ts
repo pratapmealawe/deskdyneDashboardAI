@@ -139,6 +139,9 @@ export class OrganizationViewComponent implements OnInit {
 
     const main = this.orgViewList[index];
     this.showBulkMenuHeader = main?.path === 'bulkMenuSection' || main?.path === 'employeebulkmenu';
+    if (this.showBulkMenuHeader) {
+      this.checkCategoryStatus();
+    }
     if (main?.subTabs?.length) {
       const firstSub = main.subTabs[0];
       if (firstSub?.childTabs?.length) {
@@ -203,20 +206,28 @@ export class OrganizationViewComponent implements OnInit {
       mainCategory: this.selectedBulkMenuPath?.sub,
     };
     try {
-      this.apiService.toggleCategoryStatus(payload).then((res: any) => {
+      const isEmployeeMenu = this.selectedMainPath === 'employeebulkmenu';
+
+      const apiCall = isEmployeeMenu
+        ? this.apiService.toggleEmployeeMenuCategoryStatus(payload)
+        : this.apiService.toggleCategoryStatus(payload);
+
+      apiCall.then((res: any) => {
         if (res) {
           this.toaster.success('Category status updated successfully');
           this.modalRef.close();
           this.checkCategoryStatus();
         }
-      })
+      }).catch(err => console.error(err));
     } catch (e) {
       console.log(e);
     }
   }
 
   onMenuAvailabilityChange(hasMenu: boolean): void {
-    this.isMenuAvailable = hasMenu;
+    setTimeout(() => {
+      this.isMenuAvailable = hasMenu;
+    });
   }
 
   checkCategoryStatus(): boolean {
@@ -227,11 +238,21 @@ export class OrganizationViewComponent implements OnInit {
       subCategory: this.selectedBulkMenuPath?.childPath
     };
     try {
-      this.apiService.getB2bBulkMenuByCategory(payload).then((res: any) => {
+      const isEmployeeMenu = this.selectedMainPath === 'employeebulkmenu';
+
+      const apiCall = isEmployeeMenu
+        ? this.apiService.getEmployeeMenuByCategory(payload)
+        : this.apiService.getB2bBulkMenuByCategory(payload);
+
+      apiCall.then((res: any) => {
         if (res) {
-          this.isCategoryActive = res.isCategoryActive;
+          setTimeout(() => {
+            this.isCategoryActive = res?.isCategoryActive;
+          });
+        } else {
+          this.isCategoryActive = false;
         }
-      })
+      }).catch(err => console.error(err));
     } catch (e) {
       console.log(e);
     }
@@ -245,7 +266,8 @@ export class OrganizationViewComponent implements OnInit {
       cafeteriaId: this.selectedCafeteria._id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: this.selectedBulkMenuPath?.sub,
-      subCategory: this.selectedBulkMenuPath?.childPath
+      subCategory: this.selectedBulkMenuPath?.childPath,
+      selectedBulkMenuPath: this.selectedMainPath
     }
     this.openModal(OrganizationAddVendorComponent, payload);
   }
@@ -257,7 +279,8 @@ export class OrganizationViewComponent implements OnInit {
       cafeteriaId: this.selectedCafeteria._id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: this.selectedBulkMenuPath?.sub,
-      subCategory: this.selectedBulkMenuPath?.childPath
+      subCategory: this.selectedBulkMenuPath?.childPath,
+      selectedBulkMenuPath: this.selectedMainPath
     }
     this.openModal(OrganizationAddVendorComponent, payload);
   }
@@ -267,7 +290,9 @@ export class OrganizationViewComponent implements OnInit {
   );
 
   get selectedBulkMenuPath() {
-    const sub = this.bulkMenuSection?.subTabs?.[this.selectedSubTabIndex];
+    const mainPath = this.selectedMainPath;
+    const mainView = this.orgViewList.find(v => v.path === mainPath);
+    const sub = mainView?.subTabs?.[this.selectedSubTabIndex];
     let child = sub?.childTabs?.[this.selectedChildTabIndex];
 
     if (child?.path === 'predefinedSnackBoxMenu') {
@@ -276,14 +301,14 @@ export class OrganizationViewComponent implements OnInit {
       child = { ...child, path: 'customizedFoodBoxMenu' };
     }
 
-    const childPath = child?.path ?? (sub?.name?.toLowerCase() + 'Menu');
+    const childPath = child?.path ?? sub?.path;
 
     return {
-      main: 'bulkMenuSection',
+      main: mainPath,
       sub: sub?.name?.toLowerCase(),
       subPath: sub?.path,
       child: child?.name,
-      childPath: childPath
+      childPath
     };
   }
 
@@ -329,6 +354,10 @@ export class OrganizationViewComponent implements OnInit {
         this.checkVendorAssigned(true);
       }
     });
+  }
+
+  get selectedMainPath(): string | undefined {
+    return this.orgViewList[this.selectedMainTabIndex]?.path;
   }
 
   async generateExcelFile(menuData: any[]): Promise<void> {

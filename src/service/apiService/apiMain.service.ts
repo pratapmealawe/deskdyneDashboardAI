@@ -1692,11 +1692,11 @@ export class ApiMainService {
   }
 
   updateVendorForEmployeeBulkMenus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVendorForEmployeeBulkMenus, data);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVendorForEmployeeBulkMenu, data);
   }
 
   copyEmployeeBulkMenus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyEmployeeBulkMenus, data);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyEmployeeBulkMenu, data);
   }
 
   getEmployeeMenuByCategory(data: any) {
