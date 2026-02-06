@@ -179,6 +179,18 @@ export class AddVendorCommponent {
     return this.popupsByVendorFirm?.some((p: any) => p.isChecked);
   }
 
+  trimStringValues(obj: any): any {
+    if (obj instanceof File || obj instanceof Blob) return obj;
+    if (typeof obj === 'string') return obj.trim();
+    if (Array.isArray(obj)) return obj.map((v: any) => this.trimStringValues(v));
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        obj[key] = this.trimStringValues(obj[key]);
+      });
+    }
+    return obj;
+  }
+
   async submit(type?: any) {
     try {
       const vendorFirmDetails = {
@@ -196,7 +208,7 @@ export class AddVendorCommponent {
         popup_Details: this.selectedPopupsList
       };
 
-      const formData = this.objectToFormData(finalObj);
+      const formData = this.objectToFormData(this.trimStringValues(finalObj));
 
       if (type == 'update') {
         let updated = await this.apiMainService.updateVendor(

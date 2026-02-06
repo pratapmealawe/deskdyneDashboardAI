@@ -320,14 +320,29 @@ export class AddVendorFirmComponent {
     this.form.get('accountEnrollment').setValue('');
   }
 
+  trimStringValues(obj: any): any {
+    if (obj instanceof File || obj instanceof Blob) return obj;
+    if (typeof obj === 'string') return obj.trim();
+    if (Array.isArray(obj)) return obj.map((v: any) => this.trimStringValues(v));
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        obj[key] = this.trimStringValues(obj[key]);
+      });
+    }
+    return obj;
+  }
+
   async submit(type?: any) {
     try {
-      const finalObj = {
+      let finalObj = {
         ...this.form.value,
         outletList: this.selectedOutletsList,
         popup_details: this.selectedPopupsList,
         address: this.addressList // Ensure address list is sent
       };
+
+      finalObj = this.trimStringValues(finalObj);
+
       const formData = this.objectToFormData(finalObj);
 
       if (type == 'update') {

@@ -578,6 +578,18 @@ export class AddOrganizationComponent implements OnInit {
     this.adminSelected = admin.value;
   }
 
+  trimStringValues(obj: any): any {
+    if (obj instanceof File || obj instanceof Blob) return obj;
+    if (typeof obj === 'string') return obj.trim();
+    if (Array.isArray(obj)) return obj.map((v: any) => this.trimStringValues(v));
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        obj[key] = this.trimStringValues(obj[key]);
+      });
+    }
+    return obj;
+  }
+
   async addOrg() {
     try {
       this.markAllFieldsAsTouched(this.form);
@@ -586,7 +598,7 @@ export class AddOrganizationComponent implements OnInit {
         return;
       }
 
-      await this.apiMainService.B2B_addOrg(this.form.getRawValue());
+      await this.apiMainService.B2B_addOrg(this.trimStringValues(this.form.getRawValue()));
       this.clearRunTimeStorage();
       this.router.navigate(['b2bSearchOrg']);
     } catch (error) {
@@ -601,7 +613,7 @@ export class AddOrganizationComponent implements OnInit {
         this.scrollToFirstInvalidField();
         return;
       }
-      const raw = this.form.getRawValue();
+      const raw = this.trimStringValues(this.form.getRawValue());
       const formData = new FormData();
       // ... (FormData append logic same as before) ...
       formData.append('organization_name', raw.organization_name);
