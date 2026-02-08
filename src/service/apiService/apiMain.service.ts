@@ -793,9 +793,13 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getBulkDailyOrderList(status: any, page: any, limit: number) {
+  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
+    let url = urlObj.url + `/${page}/${limit}/${status}`;
+    if (date) {
+      url += `/${date}`;
+    }
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method });
   }
 
   getClusterb2bBulkOrderList(status: any, page: any, limit: number) {
@@ -811,8 +815,12 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentB2BOrdersCount);
   }
 
-  getCurrentDailyOrdersCount() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount);
+  getCurrentDailyOrdersCount(date?: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount;
+    if (date) {
+      return this.apiHttpService.REQUEST({ url: urlObj.url + `/${date}`, method: urlObj.method });
+    }
+    return this.apiHttpService.REQUEST(urlObj);
   }
 
   getCafeteriasPollingList(deliveryDate: any) {

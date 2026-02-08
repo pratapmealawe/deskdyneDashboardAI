@@ -727,8 +727,16 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'
         } ${menu.itemName} Item`,
       callback: this.changeMenuActivation,
+      cancelCallback: this.revertMenuActivation,
       context: this
     });
+  }
+
+  revertMenuActivation() {
+    // Revert the toggle to its original state
+    if (this.menuInfo) {
+      this.menuInfo.isActive = !this.eventInfo.checked;
+    }
   }
 
   // MAT DIALOG OPENERS

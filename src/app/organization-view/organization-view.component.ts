@@ -120,4 +120,22 @@ export class OrganizationViewComponent implements OnInit {
   get selectedChild(): any {
     return this.selectedSub?.childTabs?.[this.selectedChildTabIndex];
   }
+
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'orgDetails': 'business',
+      'organizationCompliance': 'verified_user',
+      'bulkMenuSection': 'restaurant_menu',
+      'mealAweOutlet': 'storefront',
+      'dailyOrderMenu': 'today',
+      'consumptionOrder': 'receipt_long',
+      'employeeList': 'people',
+      'outletEmployee': 'badge',
+      'vcEmployee': 'person_pin',
+      'guestEmployeeList': 'person_add',
+      'employeeWallet': 'account_balance_wallet',
+      'qrEmployee': 'qr_code'
+    };
+    return icons[path] || 'article';
+  }
 }

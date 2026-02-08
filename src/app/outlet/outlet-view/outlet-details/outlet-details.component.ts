@@ -33,4 +33,25 @@ export class OutletDetailsComponent implements OnInit {
     this.runtimeStorageService.setCacheData('OUTLET_EDIT', this.outletObj);
     this.router.navigate(['/addOutlet']);
   }
+
+  getInitials(name: string): string {
+    if (!name) return 'O';
+    const words = name.trim().split(' ');
+    if (words.length === 1) {
+      return words[0].charAt(0).toUpperCase();
+    }
+    return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+  }
+
+  getMealIcon(mealType: string): string {
+    const type = (mealType || '').toLowerCase();
+    const icons: { [key: string]: string } = {
+      'breakfast': 'free_breakfast',
+      'lunch': 'lunch_dining',
+      'dinner': 'dinner_dining',
+      'snacks': 'local_cafe',
+      'brunch': 'brunch_dining'
+    };
+    return icons[type] || 'restaurant';
+  }
 }

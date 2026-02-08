@@ -110,31 +110,37 @@
   </div>
   <div class="row g-3 mb-4">
     <div class="col-lg-4 col-md-12">
-      <div class="h-100 p-3 border rounded bg-white info-block d-flex flex-column justify-content-between">
-        <div>
-          <div class="d-flex align-items-center gap-2 mb-3">
-            <i class="bi bi-utensils text-primary" style="font-size: 14px;"></i>
-            <span class="fw-bold small text-primary order-items-header text-uppercase">ORDER ITEMS</span>
+      <div class="h-100 p-3 border rounded bg-white info-block d-flex flex-column">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <div class="icon-circle bg-primary-subtle text-primary">
+              <i class="bi bi-basket3-fill"></i>
+            </div>
+            <span class="fw-bold text-uppercase section-title">Order Items</span>
           </div>
-          <div class="d-flex align-items-center justify-content-between mb-3" *ngFor="let item of order?.itemList">
-            <div class="d-flex align-items-center gap-3">
-              <div class="d-flex flex-column">
-                <span class="fw-bold text-dark fs-14">
-                  {{ item?.deliveredItem }}
-                  <span class="small text-muted fs-11">({{item?.mealType}})/</span>
-                  <span class="small text-muted fs-11">({{item?.itemName}})</span>
-                </span>
-                <span class="small text-muted fs-11">&#64; ₹ {{ (item?.mealPrice || 0) | number : '1.2-2' }}/unit *{{item?.count}}</span>
+          <span class="item-count-badge">{{order?.itemList?.length || 0}} items</span>
+        </div>
+
+        <div class="order-items-list">
+          <div class="order-item-card" *ngFor="let item of order?.itemList">
+            <div class="item-left">
+              <div class="item-name">{{ item?.deliveredItem }}</div>
+              <div class="item-meta">
+                <span class="meta-tag meal-type">{{item?.mealType}}</span>
+                <span class="meta-tag item-type">{{item?.itemName}}</span>
               </div>
             </div>
-            <div class="fw-bold text-dark">₹ {{ ((item?.mealPrice || 0) * item?.count) | number : '1.2-2' }}</div>
+            <div class="item-right">
+              <div class="item-qty">×{{item?.count}}</div>
+              <div class="item-price">₹{{ (item?.mealPrice || 0) | number : '1.0-0' }}</div>
+              <div class="item-price-label">per unit</div>
+            </div>
           </div>
         </div>
-        <div class="rounded p-2 mt-3 d-flex align-items-start gap-2 note-container" *ngIf="order?.specialRequest">
-          <i class="bi bi-megaphone-fill mt-1 note-icon"></i>
-          <span class="small note-text">
-            <strong class="note-label">Note:</strong> {{ order?.specialRequest }}
-          </span>
+
+        <div class="note-container mt-auto" *ngIf="order?.specialRequest">
+          <i class="bi bi-chat-quote-fill note-icon"></i>
+          <span class="note-text">{{ order?.specialRequest }}</span>
         </div>
       </div>
     </div>

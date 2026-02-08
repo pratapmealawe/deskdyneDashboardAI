@@ -64,7 +64,7 @@ export class OrgDetailsComponent implements OnInit {
         outlet.vendors = this.getVendorsForOutlet(outlet._id);
       });
     });
-    this.filteredOutletList = merged;
+    this.filteredOutletList = merged || [];
   }
 
   getVendorsForOutlet(outletId: string) {
@@ -74,5 +74,14 @@ export class OrgDetailsComponent implements OnInit {
   editOrg() {
     this.runtimeStorageService.setCacheData('VIEW_ORG', this.orgObj);
     this.router.navigate(['b2bAddorg']);
+  }
+
+  getInitials(name: string): string {
+    if (!name) return 'O';
+    const words = name.trim().split(' ');
+    if (words.length === 1) {
+      return words[0].charAt(0).toUpperCase();
+    }
+    return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
   }
 }

@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { MatDialog } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import { EmployeeListDialogComponent } from './employee-list-dialog.component';
 
 @Component({
   selector: 'app-emp-poll-card',
@@ -14,11 +15,13 @@ export class EmpPollCardComponent {
   @Input() orderInput: any;
   order: any;
   showCreateBtn: boolean = true;
+  isCreating: boolean = false;
+  totalDeliveryCharge: number = 0;
 
   constructor(
     private apiMainService: ApiMainService,
     private sendDataToComponent: SendDataToComponent,
-    private modalService: NgbModal,
+    private dialog: MatDialog,
     private confirmationModalService: ConfirmationModalService,
     private localStorageService: LocalStorageService
   ) { }
@@ -28,25 +31,27 @@ export class EmpPollCardComponent {
     this.checkCutoff(this.order);
   }
 
-  createOrder() {
+  async createOrder() {
     this.confirmationModalService.modal({
       msg: "Are you sure you want to create this order?",
-      callback: () => {
-        const adminId = this.localStorageService.getCacheData('ADMIN_ID');
-        if (adminId) {
-          this.orderInput.actionBy = adminId;
-        }
-        this.apiMainService.createOrderFromPollObj(this.orderInput).then(() => {
+      callback: async () => {
+        try {
+          this.isCreating = true;
+          const adminId = this.localStorageService.getCacheData('ADMIN_ID');
+          if (adminId) {
+            this.orderInput.actionBy = adminId;
+          }
+          await this.apiMainService.createOrderFromPollObj(this.orderInput);
           this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id });
-        }, (err) => {
-          console.log(err)
-        });
+        } catch (err) {
+          console.error('Error creating order from poll:', err);
+        } finally {
+          this.isCreating = false;
+        }
       },
       context: this
     });
   }
-
-  totalDeliveryCharge: number = 0;
 
   checkCutoff(order: any) {
     this.totalDeliveryCharge = 0;
@@ -63,7 +68,6 @@ export class EmpPollCardComponent {
 
       order.mealTypeList.forEach((item: any) => {
         this.totalDeliveryCharge += (item.deliveryCharge || 0);
-        // if (order.pollStatus === 'active') {
         const cutoffDate = new Date(orderDate);
         if (!item.isSameDay) {
           cutoffDate.setDate(cutoffDate.getDate() - 1);
@@ -75,15 +79,18 @@ export class EmpPollCardComponent {
         if (currDate.getTime() > cutoffDate.getTime()) {
           isAnyActive = true;
         }
-        // }
       });
 
       this.showCreateBtn = isAnyActive;
     }
   }
 
-  openModal(content: any) {
-    this.modalService.open(content, { centered: true, size: 'md', scrollable: true });
+  openEmployeeDialog(): void {
+    this.dialog.open(EmployeeListDialogComponent, {
+      width: '500px',
+      maxHeight: '80vh',
+      data: { employeeList: this.orderInput?.employeeList }
+    });
   }
 
   formatTime12Hour(time: string): string {

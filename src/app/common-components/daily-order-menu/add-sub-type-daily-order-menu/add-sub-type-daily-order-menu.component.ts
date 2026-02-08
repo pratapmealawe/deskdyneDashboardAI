@@ -44,12 +44,14 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
       // Populate days FormArray from weeklyMenu
       if (data.weeklyMenu && Array.isArray(data.weeklyMenu)) {
         data.weeklyMenu.forEach((item: any) => {
+          const isNotApplicable = item.notApplicable || false;
           const dayGroup = new FormGroup({
             itemDay: new FormControl(item.itemDay, Validators.required),
-            itemName: new FormControl(item.itemName, Validators.required),
-            itemDescription: new FormControl(item.itemDescription, Validators.required),
-            notApplicable: new FormControl(item.notApplicable || false)
+            itemName: new FormControl(item.itemName, isNotApplicable ? Validators.required : []),
+            itemDescription: new FormControl(item.itemDescription, isNotApplicable ? Validators.required : []),
+            notApplicable: new FormControl(isNotApplicable)
           });
+          this.setupDayValidatorSubscription(dayGroup);
           this.days.push(dayGroup);
         });
       } else {
@@ -70,12 +72,38 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
     return this.menuForm.get('days') as FormArray;
   }
 
-  createDay(dayName: string): FormGroup {
-    return new FormGroup({
+  createDay(dayName: string, notApplicable: boolean = false): FormGroup {
+    const dayGroup = new FormGroup({
       itemDay: new FormControl(dayName, Validators.required),
-      itemName: new FormControl('', Validators.required),
-      itemDescription: new FormControl('', Validators.required),
-      notApplicable: new FormControl(false)
+      itemName: new FormControl('', notApplicable ? Validators.required : []),
+      itemDescription: new FormControl('', notApplicable ? Validators.required : []),
+      notApplicable: new FormControl(notApplicable)
+    });
+
+    this.setupDayValidatorSubscription(dayGroup);
+    return dayGroup;
+  }
+
+  private setupDayValidatorSubscription(dayGroup: FormGroup): void {
+    dayGroup.get('notApplicable')?.valueChanges.subscribe((isNotApplicable: boolean) => {
+      const itemNameCtrl = dayGroup.get('itemName');
+      const itemDescCtrl = dayGroup.get('itemDescription');
+
+      if (isNotApplicable) {
+        // Add required validators when checkbox is checked (day IS applicable)
+        itemNameCtrl?.setValidators(Validators.required);
+        itemDescCtrl?.setValidators(Validators.required);
+      } else {
+        // Clear validators when checkbox is unchecked (day NOT applicable)
+        itemNameCtrl?.clearValidators();
+        itemDescCtrl?.clearValidators();
+        // Clear values when not applicable
+        itemNameCtrl?.setValue('');
+        itemDescCtrl?.setValue('');
+      }
+
+      itemNameCtrl?.updateValueAndValidity();
+      itemDescCtrl?.updateValueAndValidity();
     });
   }
 
