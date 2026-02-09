@@ -1,5 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { PolicyService } from 'src/service/policy.service';
+import { OrganizationAddVendorComponent } from './organization-add-vendor/organization-add-vendor.component';
+import { OrganizationCopyBulkMenuComponent } from './organization-copy-bulk-menu/organization-copy-bulk-menu.component';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { ToasterService } from 'src/service/toaster.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-organization-view',
@@ -9,6 +17,7 @@ import { PolicyService } from 'src/service/policy.service';
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
   @Output() back = new EventEmitter<boolean>();
+  @ViewChild('toggleCategory') toggleCategory: any;
   selectedMainTabIndex = 0;
   selectedSubTabIndex = 0;
   selectedChildTabIndex = 0;
@@ -44,20 +53,58 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Cake', path: 'cakeMenu' },
         { name: 'Sweet', path: 'sweetMenu' },
         { name: 'Lux', path: 'luxMenu' },
+        { name: 'Pantry', path: 'pantryMenu' },
       ],
     },
-    { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
+    {
+      name: 'Employee Bulk Menu', path: 'employeebulkmenu',
+      subTabs: [
+        {
+          name: 'Meals',
+          childTabs: [
+            { name: 'Bulk Meals Menu', path: 'employeebulkMealsMenu' },
+            { name: 'Individual Meals Menu', path: 'employeeindividualMealsMenu' },
+          ],
+        },
+        {
+          name: 'Snacks',
+          childTabs: [
+            { name: 'Bulk Snacks Menu', path: 'employeebulkSnacksMenu' },
+            { name: 'Individual Snacks Menu', path: 'employeeindividualSnacksMenu' },
+          ],
+        },
+        {
+          name: 'Foodbox',
+          childTabs: [
+            { name: 'Pre-Defined Snack Box', path: 'employeepredefinedSnackBoxMenu' },
+            { name: 'Customized Snack Box', path: 'employeecustomizedSnackBoxMenu' },
+          ],
+        },
+        { name: 'Cake', path: 'employeecakeMenu' },
+        { name: 'Sweet', path: 'employeesweetMenu' },
+        { name: 'Lux', path: 'employeeluxMenu' },
+        { name: 'Pantry', path: 'employeepantryMenu' },
+      ],
+    },
+    { name: 'Virtual Cafeteria Outlet', path: 'virtualCafeteriaOutlet' },
     { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
     { name: 'Consumption Menu', path: 'consumptionOrder' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Outlet Employee', path: 'outletEmployee' },
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
     { name: 'Guest Employee', path: 'guestEmployeeList' },
-    { name: 'Employee wallet', path: 'employeeWallet' },
+    { name: 'Company Wallet', path: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];
+  isCategoryActive = true;
+  selectedCafeteria: any;
+  isVendorAssigned: boolean = false;
+  showBulkMenuHeader = false;
+  private modalRef!: NgbModalRef;
+  isMenuAvailable = false;
 
-  constructor(private policyService: PolicyService) { }
+  constructor(private policyService: PolicyService, private dialog: MatDialog, private apiService: ApiMainService,
+    private toaster: ToasterService, private modalService: NgbModal) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -89,6 +136,7 @@ export class OrganizationViewComponent implements OnInit {
     this.selectedChildTabIndex = 0;
 
     const main = this.orgViewList[index];
+    this.showBulkMenuHeader = main?.path === 'bulkMenuSection' || main?.path === 'employeebulkmenu';
     if (main?.subTabs?.length) {
       const firstSub = main.subTabs[0];
       if (firstSub?.childTabs?.length) {
@@ -102,11 +150,16 @@ export class OrganizationViewComponent implements OnInit {
     this.selectedChildTabIndex = 0;
 
     const main = this.orgViewList[this.selectedMainTabIndex];
-    const sub = main?.subTabs?.[index];
-
-    if (sub?.childTabs?.length) {
+    const subTab = this.bulkMenuSection?.subTabs?.[index];
+    if (subTab?.childTabs?.length) {
       this.selectedChildTabIndex = 0;
     }
+    this.checkCategoryStatus();
+  }
+
+  onChildTabChange(index: number): void {
+    this.selectedChildTabIndex = index;
+    const selectedSubTab = this.bulkMenuSection?.subTabs?.[this.selectedSubTabIndex];
   }
 
   get selectedMain(): any {

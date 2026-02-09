@@ -14,7 +14,8 @@ export class CustomerViewComponent implements OnInit, OnChanges {
     // { name: 'Past Orders', path: 'pastorders' },
     // { name: 'Past Meal Orders', path: 'pastmealorders' },
     { name: 'Outlet Orders', path: 'outletOrders' },
-    { name: 'Wallet', path: 'wallet' }
+    { name: 'Wallet', path: 'wallet' },
+    { name: 'Company Wallet', path: 'companyWallet' }
   ];
   selectedTab = 'userDetails';
   selectedTabIndex: number = 0;

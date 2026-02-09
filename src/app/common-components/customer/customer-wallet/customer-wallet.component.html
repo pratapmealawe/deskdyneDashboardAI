@@ -79,7 +79,13 @@
     <!-- Transaction List -->
     <div class="card shadow-sm" *ngIf="!isLoading">
         <div class="card-body">
-            <h5 class="card-title mb-3">Transaction History</h5>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">Transaction History</h5>
+                <button mat-stroked-button color="primary" (click)="exportToExcel()"
+                    [disabled]="!filteredTransactions.length">
+                    <mat-icon>download</mat-icon> Export Excel
+                </button>
+            </div>
 
             <div *ngFor="let tx of walletList" class="transaction-card p-3 mb-2 rounded"
                 [ngClass]="{'credit-row': isCredit(tx.transactionType), 'bg-light': !isCredit(tx.transactionType)}">

@@ -372,11 +372,29 @@
             </mat-form-field>
           </div>
 
+<<<<<<< HEAD
           <!-- Nutrition Section -->
           <div class="form-section">
             <div class="section-header">
               <mat-icon>local_fire_department</mat-icon>
               <span>Nutrition Information</span>
+=======
+          <div class="col-12 mt-3">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <label class="labelText form-label mb-0">
+                Nutrition Information
+              </label>
+              <mat-icon class="info-icon" [matTooltip]="energyTooltip" matTooltipPosition="right">
+                info_outline
+              </mat-icon>
+            </div>
+
+            <div class="col-12 mb-2">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Energy Value (kcal)</mat-label>
+                <input matInput type="number" placeholder="Energy Value" formControlName="energyValue" />
+              </mat-form-field>
+>>>>>>> upstream/staging
             </div>
 
             <div class="row g-3">
@@ -389,6 +407,7 @@
               </div>
             </div>
 
+<<<<<<< HEAD
             <div [formArrayName]="'nutritionList'" class="nutrition-list">
               <div class="nutrition-row"
                 *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first; let last = last"
@@ -421,6 +440,47 @@
                   <button mat-icon-button color="warn" *ngIf="!first" (click)="removenNutritionLists(i)" type="button">
                     <mat-icon>remove_circle</mat-icon>
                   </button>
+=======
+              <div class="row" *ngFor="
+                  let poc of nutrition_Lists.controls;
+                  let i = index;
+                  let first = first;
+                  let last = last
+                " [formGroupName]="i">
+                <div class="col-md-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Nutrition Name</mat-label>
+                    <mat-select formControlName="nutritionName" (selectionChange)="onNutritionSelect($event.value, i)"
+                      [compareWith]="compareNutrition">
+                      <mat-option *ngFor="let option of nutritionListOptions" [value]="option"
+                        [disabled]="isOptionSelected(option.id, i)">
+                        {{ option.title }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Nutrition Value</mat-label>
+                    <input matInput type="number" formControlName="nutritionValue" placeholder="Nutrition Value" />
+                  </mat-form-field>
+                </div>
+
+                <div class="col-md-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Nutrition Unit</mat-label>
+                    <mat-select formControlName="nutritionUnit">
+                      <mat-option value="gm">gm</mat-option>
+                      <!-- <mat-option value="ml">ml</mat-option> -->
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-sm-2 col-md-2 col-lg-2 d-flex align-items-center">
+                  <span *ngIf="last" class="addtnc" (click)="addNutritionLists()">+</span>
+                  <span *ngIf="!first" class="removetnc" (click)="removenNutritionLists(i)">-</span>
+>>>>>>> upstream/staging
                 </div>
               </div>
             </div>

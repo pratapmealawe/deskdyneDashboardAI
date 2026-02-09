@@ -12,6 +12,7 @@ import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/
 import { DatewiseOrdersDialogComponent } from './datewise-orders-dialog/datewise-orders-dialog.component';
 import { MaterialModule } from '../material.module';
 import { WalletBillingComponent } from './wallet-billing/wallet-billing.component';
+import { CompanyWalletBillingComponent } from './company-wallet-billing/company-wallet-billing.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +22,8 @@ import { WalletBillingComponent } from './wallet-billing/wallet-billing.componen
     DailyBillingComponent,
     BulkBillingComponent,
     DatewiseOrdersDialogComponent,
-    WalletBillingComponent
+    WalletBillingComponent,
+    CompanyWalletBillingComponent
   ],
   imports: [
     CommonModule,

@@ -1,8 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ToasterService } from 'src/service/toaster.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-customer-details',
@@ -14,7 +13,11 @@ export class CustomerDetailsComponent implements OnInit {
   imageUrl = '';
   pocDetails: any
 
-  constructor(private toasterService: ToasterService, private confirmationModalService: ConfirmationModalService, private apiMainService: ApiMainService) { }
+  constructor(
+    private toasterService: ToasterService,
+    private confirmationModalService: ConfirmationModalService,
+    private apiMainService: ApiMainService
+  ) { }
 
   ngOnInit(): void {
     console.log(this.userDetails);

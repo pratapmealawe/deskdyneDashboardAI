@@ -1,0 +1,84 @@
+<div class="customer-wallet pb-4">
+
+    <!-- Balance & Actions -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card p-4 shadow-sm h-100">
+                <div class="d-flex flex-column justify-content-between h-100">
+                    <div>
+                        <h5 class="card-title text-muted mb-1">Current Company Wallet Balance</h5>
+                        <h2 class="fw-bold text-success mb-0" *ngIf="walletDetails?.points !== undefined; else zeroBal">
+                            {{ walletDetails.points | currency:'INR' }}
+                        </h2>
+                        <ng-template #zeroBal>
+                            <h2 class="fw-bold text-muted mb-0">₹0.00</h2>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction List -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title mb-0">Transaction History</h5>
+                <button mat-stroked-button color="primary" (click)="exportToExcel()"
+                    [disabled]="!allTransactions.length">
+                    <mat-icon>download</mat-icon> Export Excel
+                </button>
+            </div>
+
+            <div *ngFor="let tx of walletList" class="transaction-card p-3 mb-2 rounded bg-light">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <!-- Wallet Type Chip -->
+                        <span class="status-chip" [ngClass]="getWalletTypeColorClass(tx.walletType)"
+                            *ngIf="tx.walletType">
+                            {{ tx.walletType | titlecase }}
+                        </span>
+                        <small class="text-muted">{{ tx.createdAt | date:'MMM d, y, h:mm a' }}</small>
+                    </div>
+
+                    <div [ngClass]="{'text-success': getTxnTypeColorClass(tx.transactionType) === 'green', 'text-danger': getTxnTypeColorClass(tx.transactionType) === 'red'}"
+                        class="fw-bold fs-5">
+                        {{ (tx.transactionType === 'CREDIT' ? tx.cashbackPoints : tx.usedAmount) | currency:'INR' }}
+                    </div>
+                </div>
+
+                <div class="row g-2 mt-2 border-top pt-2">
+                    <div class="col-12 col-md-6" *ngIf="tx.remark">
+                        <div class="detail-label">Remark</div>
+                        <div class="detail-value text-muted small">{{ tx.remark }}</div>
+                    </div>
+                    <div class="col-6 col-md-3" *ngIf="tx.transactionType">
+                        <div class="detail-label">Txn Type</div>
+                        <div class="detail-value">
+                            <span class="status-chip" [ngClass]="getTxnTypeChipColor(tx.transactionType)">
+                                {{ tx.transactionType }}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3" *ngIf="tx.status">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value text-muted small">{{ tx.status }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="walletList.length === 0" class="text-center py-5 text-muted">
+                <mat-icon class="mb-2"
+                    style="font-size: 48px; width: 48px; height: 48px; opacity: 0.5;">account_balance_wallet</mat-icon>
+                <p>No transactions found</p>
+            </div>
+
+            <!-- Paginator -->
+            <mat-paginator [length]="allTransactions.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+                (page)="onPageChange($event)" aria-label="Select page">
+            </mat-paginator>
+
+        </div>
+    </div>
+
+</div>

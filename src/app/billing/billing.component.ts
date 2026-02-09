@@ -14,6 +14,7 @@ export class BillingComponent implements OnInit {
     { name: "Virtual Cafeteria", type: "vcBilling" },
     { name: "Daily Order", type: "dailyOrderBilling" },
     { name: "Bulk", type: "bulkOrderBilling" },
+    { name: "Company Wallet", type: "companyWalletBilling" },
   ];
 
   selectedTab: string = '';
