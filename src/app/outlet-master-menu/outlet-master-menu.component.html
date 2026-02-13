@@ -66,24 +66,22 @@
         <span class="category-count">{{ group.items.length }} item{{ group.items.length > 1 ? 's' : '' }}</span>
       </div>
 
-      <!-- Menu Items Grid -->
-      <div class="menu-grid">
-        <div class="menu-card" *ngFor="let item of group.items; let i = index">
-          <!-- Card Image Section -->
-          <div class="card-image">
+      <!-- Menu Items List -->
+      <div class="menu-list">
+        <div class="menu-card-h" *ngFor="let item of group.items; let i = index">
+          <!-- Square Image with padding -->
+          <div class="card-image-h">
             <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}"
               onerror="this.src='assets/images/dummyUpload.png'" />
             <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
               <span class="indicator-dot"></span>
             </div>
-            <div class="status-badge" [ngClass]="item.isActive ? 'active' : 'inactive'">
-              {{ item.isActive ? 'Active' : 'Inactive' }}
-            </div>
           </div>
 
           <!-- Card Content -->
-          <div class="card-content">
-            <div class="item-header">
+          <div class="card-content-h">
+            <!-- Row 1: Name + Actions -->
+            <div class="content-top">
               <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h3>
               <div class="item-actions">
                 <button mat-icon-button class="edit-btn" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)"
@@ -97,42 +95,36 @@
               </div>
             </div>
 
+            <!-- Row 2: Description -->
             <p class="item-description" *ngIf="item.description" [matTooltip]="item.description">
               {{ item.description }}
             </p>
 
-            <!-- Price Section -->
-            <div class="price-section">
-              <div class="price-main">
-                <span class="currency">₹</span>
-                <span class="price-value">{{ item.price }}</span>
-              </div>
-              <div class="subsidy-info" *ngIf="item.subsidy">
-                <mat-icon>discount</mat-icon>
+            <!-- Row 3: Subsidy -->
+            <div class="subsidy-row" *ngIf="item.subsidy">
+              <div class="subsidy-chip">
+                <mat-icon>sell</mat-icon>
                 <span>₹{{ item.subsidy }} subsidy</span>
               </div>
             </div>
 
-            <!-- Precedence -->
-            <div class="d-flex align-items-center gap-2 mb-2">
-              <small class="text-muted" style="font-size: 11px;">Display Order:</small>
-              <span class="fw-semibold" style="font-size: 12px;">{{ item.precedence || 0 }}</span>
-            </div>
-
-
-            <!-- Meal Time Chips -->
-            <div class="meal-chips" *ngIf="item.mealTimingInfo?.length">
+            <!-- Row 4: Meal Chips -->
+            <div class="chips-row">
               <span class="meal-chip" *ngFor="let meal of normalizeMealTiming(item.mealTimingInfo)">
                 {{ meal }}
               </span>
             </div>
 
-            <!-- Toggle -->
-            <div class="toggle-section">
-              <span class="toggle-label">Available</span>
-              <mat-slide-toggle color="primary" [checked]="item.isActive" class="scale-08"
-                (change)="showPopupForItemActivation(item, $event)">
-              </mat-slide-toggle>
+            <!-- Row 5: Price + Stock Toggle -->
+            <div class="card-footer">
+              <div class="price-display">
+                <span class="currency">₹</span>{{ item.price }}
+              </div>
+              <div class="stock-toggle">
+                <mat-slide-toggle color="primary" [checked]="item.isActive" class="scale-08"
+                  (change)="showPopupForItemActivation(item, $event)">
+                </mat-slide-toggle>
+              </div>
             </div>
           </div>
         </div>
@@ -349,7 +341,6 @@
           </div>
 
           <!-- Nutrition -->
-<<<<<<< HEAD
           <div class="form-section">
             <div class="section-header">
               <mat-icon>local_fire_department</mat-icon>
@@ -394,67 +385,6 @@
                   <button mat-icon-button color="warn" *ngIf="!first" (click)="removenNutritionLists(i)" type="button">
                     <mat-icon>remove_circle</mat-icon>
                   </button>
-=======
-          <div class="col-12 mt-3">
-            <div class="d-flex align-items-center gap-2 mb-1">
-              <label class="labelText form-label mb-0">
-                Nutrition Information
-              </label>
-              <mat-icon class="info-icon" [matTooltip]="energyTooltip" matTooltipPosition="right">
-                info_outline
-              </mat-icon>
-            </div>
-
-            <div class="col-12 mb-2">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Energy Value (kcal)</mat-label>
-                <input matInput type="number" placeholder="Energy Value" formControlName="energyValue" />
-              </mat-form-field>
-            </div>
-
-            <div class="col-12" [formArrayName]="'nutritionList'">
-              <label class="labelText d-block mb-1">Nutrition List:</label>
-
-              <div class="row" *ngFor="
-                  let poc of nutrition_Lists.controls;
-                  let i = index;
-                  let first = first;
-                  let last = last
-                " [formGroupName]="i">
-                <div class="col-md-3">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Nutrition Name</mat-label>
-                    <mat-select formControlName="nutritionName" (selectionChange)="onNutritionSelect($event.value, i)"
-                      [compareWith]="compareNutrition">
-                      <mat-option *ngFor="let option of nutritionListOptions" [value]="option"
-                        [disabled]="isOptionSelected(option.id, i)">
-                        {{ option.title }}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <div class="col-md-3">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Nutrition Value</mat-label>
-                    <input matInput type="number" formControlName="nutritionValue" placeholder="Nutrition Value" />
-                  </mat-form-field>
-                </div>
-
-                <div class="col-md-3">
-                  <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Nutrition Unit</mat-label>
-                    <mat-select formControlName="nutritionUnit">
-                      <mat-option value="gm">gm</mat-option>
-                      <!-- <mat-option value="ml">ml</mat-option> -->
-                    </mat-select>
-                  </mat-form-field>
-                </div>
-
-                <div class="col-sm-2 col-md-2 col-lg-2 d-flex align-items-center">
-                  <span *ngIf="last" class="addtnc" (click)="addNutritionLists()">+</span>
-                  <span *ngIf="!first" class="removetnc" (click)="removenNutritionLists(i)">-</span>
->>>>>>> upstream/staging
                 </div>
               </div>
             </div>

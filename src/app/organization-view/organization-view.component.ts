@@ -17,7 +17,6 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
   @Output() back = new EventEmitter<boolean>();
-  @ViewChild('toggleCategory') toggleCategory: any;
   selectedMainTabIndex = 0;
   selectedSubTabIndex = 0;
   selectedChildTabIndex = 0;
@@ -86,25 +85,18 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Pantry', path: 'employeepantryMenu' },
       ],
     },
-    { name: 'Virtual Cafeteria Outlet', path: 'virtualCafeteriaOutlet' },
+    { name: 'Virtual Cafeteria', path: 'virtualCafeteriaOutlet' },
     { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
     { name: 'Consumption Menu', path: 'consumptionOrder' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Outlet Employee', path: 'outletEmployee' },
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
-    { name: 'Guest Employee', path: 'guestEmployeeList' },
+    // { name: 'Guest Employee', path: 'guestEmployeeList' },
     { name: 'Company Wallet', path: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];
-  isCategoryActive = true;
-  selectedCafeteria: any;
-  isVendorAssigned: boolean = false;
-  showBulkMenuHeader = false;
-  private modalRef!: NgbModalRef;
-  isMenuAvailable = false;
 
-  constructor(private policyService: PolicyService, private dialog: MatDialog, private apiService: ApiMainService,
-    private toaster: ToasterService, private modalService: NgbModal) { }
+  constructor(private policyService: PolicyService) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -136,7 +128,6 @@ export class OrganizationViewComponent implements OnInit {
     this.selectedChildTabIndex = 0;
 
     const main = this.orgViewList[index];
-    this.showBulkMenuHeader = main?.path === 'bulkMenuSection' || main?.path === 'employeebulkmenu';
     if (main?.subTabs?.length) {
       const firstSub = main.subTabs[0];
       if (firstSub?.childTabs?.length) {
@@ -150,16 +141,11 @@ export class OrganizationViewComponent implements OnInit {
     this.selectedChildTabIndex = 0;
 
     const main = this.orgViewList[this.selectedMainTabIndex];
-    const subTab = this.bulkMenuSection?.subTabs?.[index];
-    if (subTab?.childTabs?.length) {
+    const sub = main?.subTabs?.[index];
+
+    if (sub?.childTabs?.length) {
       this.selectedChildTabIndex = 0;
     }
-    this.checkCategoryStatus();
-  }
-
-  onChildTabChange(index: number): void {
-    this.selectedChildTabIndex = index;
-    const selectedSubTab = this.bulkMenuSection?.subTabs?.[this.selectedSubTabIndex];
   }
 
   get selectedMain(): any {
@@ -179,14 +165,15 @@ export class OrganizationViewComponent implements OnInit {
       'orgDetails': 'business',
       'organizationCompliance': 'verified_user',
       'bulkMenuSection': 'restaurant_menu',
+      'employeebulkmenu': 'restaurant_menu',
       'mealAweOutlet': 'storefront',
       'dailyOrderMenu': 'today',
       'consumptionOrder': 'receipt_long',
       'employeeList': 'people',
       'outletEmployee': 'badge',
       'vcEmployee': 'person_pin',
-      'guestEmployeeList': 'person_add',
-      'employeeWallet': 'account_balance_wallet',
+      // 'guestEmployeeList': 'person_add',
+      'companyWallet': 'account_balance_wallet',
       'qrEmployee': 'qr_code'
     };
     return icons[path] || 'article';

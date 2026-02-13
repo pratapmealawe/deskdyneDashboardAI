@@ -62,7 +62,7 @@
         </div>
 
         <mat-paginator [length]="enquirylist.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
-            [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" showFirstLastButtons
+            [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
             aria-label="Select page">
         </mat-paginator>
     </div>

@@ -183,6 +183,14 @@ export class CustomerComponent implements OnInit, OnChanges {
     this.isViewCustomer = false;
   }
 
+  // 👉 Generate initials for avatar
+  getInitials(name: string | undefined): string {
+    if (!name) return '?';
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  }
+
   // =======================
   // 👉 EXCEL EXPORT
   // =======================

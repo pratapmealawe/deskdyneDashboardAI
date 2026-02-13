@@ -6,9 +6,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OrganizationCardModule } from '../../organization-card/organization-card.module';
 import { OrganizationViewModule } from 'src/app/organization-view/organization-view.module';
 import { MaterialModule } from 'src/app/material.module';
+import { DeletedOrgsDialogComponent } from './deleted-orgs-dialog/deleted-orgs-dialog.component';
 
 @NgModule({
-  declarations: [SearchOrganizationComponent],
+  declarations: [SearchOrganizationComponent, DeletedOrgsDialogComponent],
   imports: [
     CommonModule,
     SearchOrganizationRoutingModule,
@@ -21,3 +22,4 @@ import { MaterialModule } from 'src/app/material.module';
   exports: [SearchOrganizationComponent],
 })
 export class SearchOrganizationModule { }
+

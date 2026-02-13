@@ -1,302 +1,272 @@
-<div class="page-container">
-  <mat-card class="p-3">
-    <mat-card-title>Select Cafeteria</mat-card-title>
-    <mat-radio-group color="primary" [(ngModel)]="selectedCafeteria">
-      <mat-radio-button *ngFor="let cafeteria of orgObj.cafeteriaList" [id]="cafeteria._id" name="CafeteriaName"
-        [value]="cafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
-    </mat-radio-group>
-  </mat-card>
-  <div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="24px">
-    <mat-card fxFlex class="p-3">
-      <mat-card-title>Upload Employee List</mat-card-title>
-      <div class="upload-box text-center mt-3">
-        <p>Drag and drop Employee List file here</p>
-        <p class="or-text">or</p>
-        <input #fileInput type="file" accept=".xlsx, .xls" class="hidden-file-input" (change)="onFileChange($event)" />
-        <button mat-raised-button color="primary" (click)="fileInput.click()">
-          <mat-icon>upload</mat-icon>
-          Browse File
-        </button>
-        <div class="file-name" *ngIf="fileName">
-          <mat-icon class="file-icon">description</mat-icon>
-          {{ fileName }}
-        </div>
-      </div>
-      <mat-hint class="hint mt-2">
-        Excel Format: Emp Name, Emp Id, Emp Ph No, Emp Email
-      </mat-hint>
-    </mat-card>
-    <mat-card fxFlex class="p-3">
-      <mat-card-title class="d-flex justify-content-between align-items-center mb-2">
-        <div>Manual Employee Entry</div>
-        <button mat-raised-button color="primary" (click)="addMultipleEmployee()" *ngIf="!showMultipleEmployeeForm">
-          Add Multiple Employee
-        </button>
-      </mat-card-title>
-      <ng-container *ngIf="showMultipleEmployeeForm">
-        <div class="entry-grid" *ngFor="let employee of addMultipleEmploeeList; index as i">
-          <div class="form-group">
-            <label class="form-label"> Employee Name</label>
-            <mat-form-field appearance="outline">
-              <input matInput [(ngModel)]="employee.employeeName" required maxlength="40" minlength="3"
-                #empName="ngModel" />
-              <mat-error *ngIf="empName.invalid && (empName.dirty || empName.touched)">
-                <ng-container *ngIf="empName.errors?.['required']">
-                  Employee Name is required.
-                </ng-container>
-                <ng-container *ngIf="empName.errors?.['maxlength']">
-                  Maximum 10 digits allowed.
-                </ng-container>
-              </mat-error>
-            </mat-form-field>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Employee ID</label>
-            <mat-form-field appearance="outline">
-              <input matInput [(ngModel)]="employee.employeeId" maxlength="10" minlength="1" appOnlyNumber
-                #empId="ngModel" />
-              <mat-error *ngIf="empId.invalid && (empId.dirty || empId.touched)">
-                <ng-container *ngIf="empId.errors?.['required']">
-                  Employee Id is required.
-                </ng-container>
-                <ng-container *ngIf="empId.errors?.['maxlength']">
-                  Maximum 10 digits allowed.
-                </ng-container>
-                <ng-container *ngIf="empId.errors?.['minlength']">
-                  Minimum 2 digits allowed.
-                </ng-container>
-                <ng-container *ngIf="empId.errors?.['appOnlyNumber']">
-                  Only Number are allowed.
-                </ng-container>
-              </mat-error>
-            </mat-form-field>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Employee Phone No</label>
-            <mat-form-field appearance="outline">
-              <input matInput type="number" [(ngModel)]="employee.employeePhoneNo" #empPhoneNo="ngModel" required
-                maxlength="10" appOnlyNumber />
-              <mat-error *ngIf="empPhoneNo.invalid && (empPhoneNo.dirty || empPhoneNo.touched)">
-                <ng-container *ngIf="empPhoneNo.errors?.['required']">
-                  Employee Phone No is required.
-                </ng-container>
-                <ng-container *ngIf="empPhoneNo.errors?.['maxlength']">
-                  Maximum 10 digits allowed.
-                </ng-container>
+<div class="employee-list-container">
 
-                <ng-container *ngIf="empPhoneNo.errors?.['appOnlyNumber']">
-                  Only Number are allowed.
-                </ng-container>
-              </mat-error>
-            </mat-form-field>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Employee Email</label>
-            <mat-form-field appearance="outline">
-              <input matInput type="email" [(ngModel)]="employee.employeeEmail" #empEmail="ngModel" required />
-              <mat-error *ngIf="empEmail.invalid && (empEmail.dirty || empEmail.touched)">
-                <ng-container *ngIf="empEmail.errors?.['required']">
-                  Employee Id is required.
-                </ng-container>
-              </mat-error>
-            </mat-form-field>
-          </div>
-          <div class="button-container d-flex justify-content-end align-items-center gap-2">
-            <ng-container *ngIf="i > 0 && i == addMultipleEmploeeList.length - 1">
-              <button mat-icon-button color="primary" (click)="addMoreEmployee()">
-                <mat-icon>add</mat-icon>
-              </button>
-            </ng-container>
-            <button mat-icon-button color="primary" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">
-              <mat-icon>add</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" *ngIf="showRemoveForm" (click)="removeEmployeeForm(i)">
-              <mat-icon>remove</mat-icon>
-            </button>
-          </div>
+  <!-- Cafeteria Selector -->
+  <div class="cafeteria-selector" *ngIf="orgObj?.cafeteriaList?.length > 1">
+    <div class="selector-label">
+      <mat-icon>storefront</mat-icon>
+      Select Cafeteria
+    </div>
+    <div class="cafeteria-pills">
+      <button *ngFor="let cafeteria of orgObj.cafeteriaList" class="cafe-pill"
+        [class.active]="selectedCafeteriaId === cafeteria.cafeteria_id" (click)="selectCafeteria(cafeteria)">
+        {{ cafeteria.cafeteria_name }}
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Combined Add Employees Card -->
+    <div class="info-card add-employees-card">
+      <div class="card-header">
+        <div class="header-icon upload">
+          <mat-icon>group_add</mat-icon>
         </div>
-        <div class="d-flex gap-2">
-          <button mat-raised-button color="primary" (click)="submitMultipleEmployee()">Submit</button>
-          <button mat-stroked-button color="warn" (click)="cancelMultipleEmployee()">
-            Cancel
+        <h3>Add Employees</h3>
+        <div class="header-actions">
+          <button mat-stroked-button class="template-btn" (click)="downloadTemplate()">
+            <mat-icon>download</mat-icon>
+            Download Template
+          </button>
+          <button mat-raised-button color="primary" class="add-btn" (click)="addMultipleEmployee()"
+            *ngIf="!showMultipleEmployeeForm">
+            <mat-icon>add</mat-icon>
+            Add Manual
           </button>
         </div>
-      </ng-container>
-      <ng-container *ngIf="!showMultipleEmployeeForm">
-        <div class="no-address" *ngIf="employeeList?.length == 0">
-          <p>No employee added yet.</p>
-          <small>Click on <strong>"Add Multiple Employee"</strong> to add a new
-            employee.</small>
-        </div>
-      </ng-container>
-      <ng-container *ngIf="!showMultipleEmployeeForm">
-        <div *ngFor="let employee of employeeList" class="w-100">
-          <div *ngIf="employee.cafeteria_id == selectedCafeteriaId" class="w-100">
-            <div class="d-flex w-100 gap-3 mt-2 flex-wrap">
+      </div>
+      <div class="card-body">
+        <!-- Excel Upload Section -->
+        <div class="upload-section" *ngIf="!showMultipleEmployeeForm">
+          <div class="upload-dropzone" [class.has-file]="fileName" (dragover)="$event.preventDefault()"
+            (drop)="onFileDrop($event)">
+            <input #fileInput type="file" accept=".xlsx, .xls" class="hidden-file-input"
+              (change)="onFileChange($event)" />
 
-              <div class="item">
-                <div class="labelText">Employee ID</div>
-                <div class="labelData">{{ employee.employeeId }}</div>
+            <div class="dropzone-content" *ngIf="!fileName">
+              <div class="dropzone-icon">
+                <mat-icon>upload_file</mat-icon>
               </div>
+              <p class="dropzone-text">Drag and drop your Excel file here</p>
+              <span class="or-divider">or</span>
+              <button mat-raised-button color="primary" class="browse-btn" (click)="fileInput.click()">
+                <mat-icon>folder_open</mat-icon>
+                Browse Files
+              </button>
+            </div>
 
-              <div class="item">
-                <div class="labelText">Employee Name</div>
-                <div class="labelData">{{ employee.employeeName }}</div>
+            <div class="file-preview" *ngIf="fileName">
+              <div class="file-icon">
+                <mat-icon>description</mat-icon>
               </div>
-
-
-              <div class="item">
-                <div class="labelText">Phone No</div>
-                <div class="labelData">{{ employee.employeePhoneNo }}</div>
+              <div class="file-info">
+                <span class="file-name">{{ fileName }}</span>
+                <span class="file-status">Ready to import</span>
               </div>
-
-
-              <div class="item">
-                <div class="labelText">Employee Email</div>
-                <div class="labelData">{{ employee.employeeEmail }}</div>
-              </div>
-
-
-              <div class="item">
-                <div class="labelText">Cafeteria</div>
-                <div class="labelData">{{ employee.cafeteria_name }}</div>
-              </div>
-
-              <div class="col d-flex justify-content-end align-items-center gap-2">
-                <button mat-icon-button color="primary" (click)="editEmployee(employee)">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteEmployee(employee)">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-
+              <button mat-icon-button class="remove-file" (click)="clearFile()">
+                <mat-icon>close</mat-icon>
+              </button>
             </div>
           </div>
+
+          <div class="upload-hint">
+            <mat-icon>info</mat-icon>
+            <span>Excel Format: <strong>Employee ID, Employee Name, Phone No, Email</strong></span>
+          </div>
         </div>
-      </ng-container>
-    </mat-card>
+
+        <!-- Manual Entry Form -->
+        <ng-container *ngIf="showMultipleEmployeeForm">
+          <div class="entry-form-container">
+            <div class="entry-row" *ngFor="let employee of addMultipleEmploeeList; index as i">
+              <div class="entry-fields">
+                <mat-form-field appearance="outline" class="form-field">
+                  <mat-label>Employee ID</mat-label>
+                  <mat-icon matPrefix>badge</mat-icon>
+                  <input matInput [(ngModel)]="employee.employeeId" maxlength="10" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                  <mat-label>Employee Name</mat-label>
+                  <mat-icon matPrefix>person</mat-icon>
+                  <input matInput [(ngModel)]="employee.employeeName" required maxlength="40" minlength="3" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                  <mat-label>Phone No</mat-label>
+                  <mat-icon matPrefix>phone</mat-icon>
+                  <input matInput type="number" [(ngModel)]="employee.employeePhoneNo" required maxlength="10" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="form-field">
+                  <mat-label>Email</mat-label>
+                  <mat-icon matPrefix>email</mat-icon>
+                  <input matInput type="email" [(ngModel)]="employee.employeeEmail" required />
+                </mat-form-field>
+              </div>
+
+              <div class="entry-actions">
+                <button mat-icon-button class="action-btn add" *ngIf="i === addMultipleEmploeeList.length - 1"
+                  (click)="addMoreEmployee()">
+                  <mat-icon>add_circle</mat-icon>
+                </button>
+                <button mat-icon-button class="action-btn remove" *ngIf="addMultipleEmploeeList.length > 1"
+                  (click)="removeEmployeeForm(i)">
+                  <mat-icon>remove_circle</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button mat-raised-button color="primary" (click)="submitMultipleEmployee()">
+              <mat-icon>save</mat-icon>
+              Save Employees
+            </button>
+            <button mat-stroked-button (click)="cancelMultipleEmployee()">
+              Cancel
+            </button>
+          </div>
+        </ng-container>
+
+        <!-- Empty State -->
+        <div class="empty-state" *ngIf="!showMultipleEmployeeForm && !fileName && getFilteredEmployees().length === 0">
+          <mat-icon>group_add</mat-icon>
+          <p>No employees added yet</p>
+          <span>Upload an Excel file or click "Add Manual" to add employees</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employee List Section -->
+  <div class="employee-list-section" *ngIf="getFilteredEmployees().length > 0 ">
+    <div class="section-header">
+      <div class="section-title">
+        <mat-icon>groups</mat-icon>
+        <h3>Employee List</h3>
+        <span class="count-badge">{{ getFilteredEmployees().length }}</span>
+      </div>
+      <div class="section-actions">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput placeholder="Search employees..." [(ngModel)]="searchQuery" />
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="employee-grid">
+      <div class="employee-card" *ngFor="let employee of getFilteredEmployees()">
+        <div class="employee-avatar">
+          {{ getInitials(employee.employeeName) }}
+        </div>
+        <div class="employee-info">
+          <div class="employee-name">{{ employee.employeeName }}</div>
+          <div class="employee-meta">
+            <span class="meta-item">
+              <mat-icon>badge</mat-icon>
+              {{ employee.employeeId || 'N/A' }}
+            </span>
+            <span class="meta-item">
+              <mat-icon>phone</mat-icon>
+              {{ employee.employeePhoneNo }}
+            </span>
+          </div>
+          <div class="employee-email">
+            <mat-icon>email</mat-icon>
+            {{ employee.employeeEmail }}
+          </div>
+        </div>
+        <div class="employee-cafe">
+          <span class="cafe-badge">
+            <mat-icon>storefront</mat-icon>
+            {{ employee.cafeteria_name }}
+          </span>
+        </div>
+        <div class="employee-actions">
+          <button mat-icon-button class="action-btn edit" (click)="editEmployee(employee)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button class="action-btn delete" (click)="deleteEmployee(employee)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-<ng-template #content let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Update Employee</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
+
+<!-- Edit Employee Dialog Template -->
+<ng-template #editDialog>
+  <h2 mat-dialog-title>
+    <mat-icon>edit</mat-icon>
+    Update Employee
+  </h2>
+  <mat-dialog-content>
+    <div [formGroup]="form" class="edit-form">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Employee Name</mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput formControlName="employeeName" />
+        <mat-error *ngIf="form.controls['employeeName'].errors?.['required']">
+          Employee name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Employee ID</mat-label>
+        <mat-icon matPrefix>badge</mat-icon>
+        <input matInput formControlName="employeeId" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Phone Number</mat-label>
+        <mat-icon matPrefix>phone</mat-icon>
+        <input matInput formControlName="employeePhoneNo" />
+        <mat-error *ngIf="form.controls['employeePhoneNo'].errors?.['required']">
+          Phone number is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email Address</mat-label>
+        <mat-icon matPrefix>email</mat-icon>
+        <input matInput formControlName="employeeEmail" />
+        <mat-error *ngIf="form.controls['employeeEmail'].errors?.['required']">
+          Email is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button mat-raised-button color="primary" (click)="updateEmployeeAndClose()">
+      <mat-icon>save</mat-icon>
+      Update
     </button>
-  </div>
-  <div class="modal-body">
-    <div [formGroup]="form">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12">
-          <div class="labelText">Employee Name</div>
-          <input type="text" class="form-control" placeholder="Employee Name" formControlName="employeeName">
-          <div class="error-text" *ngIf="form.controls.employeeName.errors?.required && showError">
-            *Employee name is required</div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-12">
-          <div class="labelText">Employee ID</div>
-          <input type="text" class="form-control" placeholder="Employee ID" formControlName="employeeId">
-          <div class="error-text" *ngIf="form.controls.employeeId.errors?.required && showError">
-            *Employee ID is required</div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-12">
-          <div class="labelText">Employee Phone No</div>
-          <input type="number" class="form-control" placeholder="Employee Phone No" formControlName="employeePhoneNo">
-          <div class="error-text" *ngIf="form.controls.employeePhoneNo.errors?.required && showError">
-            *Employee Phone No is required</div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-12 mt-2">
-          <div class="labelText">Employee Email</div>
-          <input type="email" class="form-control" placeholder="Employee Email" formControlName="employeeEmail">
-          <div class="error-text" *ngIf="form.controls.employeeEmail.errors?.required && showError">
-            *Employee Email is required</div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer">
-    <div class="inline bgpadding1">
-      <button type="button" class="btn btn-primary btn-sm"
-        (click)="updateEmployee(empId,form.value); modal.close('add')">Update</button>
-    </div>
-  </div>
+  </mat-dialog-actions>
 </ng-template>
-<ng-template #delete let-modal>
-  <div class="modal-header">
-    <div class="modal-title delete-modal-title" id="modal-basic-title">Delete Vendor</div>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
 
-  <div class="modal-body">
-    <div class="selectParent">
-      <p>Do You Realy Want To Delete Employee : <span class="deletedEmployee"> {{deleteEmployeeName}}</span></p>
+<!-- Delete Confirmation Dialog -->
+<ng-template #deleteDialog>
+  <div class="delete-dialog">
+    <div class="delete-icon-wrapper">
+      <mat-icon>delete_forever</mat-icon>
     </div>
-    <button class="btn btn-danger confirmDeleteStyle" (click)="deleteConfirmed(deletedEmployee)">Yes</button>
-    <button class="btn btn-primary confirmDeleteStyle" (click)="modal.dismiss('cancel')">NO</button>
-  </div>
-
-</ng-template>
-<ng-template #content let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Update Employee</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <div [formGroup]="form">
-      <div class="row">
-        <div class="col-12 col-md-6 col-lg-12">
-          <div class="labelText">Employee Name</div>
-          <input type="text" class="form-control" placeholder="Employee Name" formControlName="employeeName">
-          <div class="error-text" *ngIf="form.controls.employeeName.errors?.required && showError">
-            *Employee name is required</div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-12">
-          <div class="labelText">Employee ID</div>
-          <input type="text" class="form-control" placeholder="Employee ID" formControlName="employeeId">
-          <div class="error-text" *ngIf="form.controls.employeeId.errors?.required && showError">
-            *Employee ID is required</div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-12">
-          <div class="labelText">Employee Phone No</div>
-          <input type="number" class="form-control" placeholder="Employee Phone No" formControlName="employeePhoneNo">
-          <div class="error-text" *ngIf="form.controls.employeePhoneNo.errors?.required && showError">
-            *Employee Phone No is required</div>
-        </div>
-        <div class="col-12 col-md-6 col-lg-12 mt-2">
-          <div class="labelText">Employee Email</div>
-          <input type="email" class="form-control" placeholder="Employee Email" formControlName="employeeEmail">
-          <div class="error-text" *ngIf="form.controls.employeeEmail.errors?.required && showError">
-            *Employee Email is required</div>
-        </div>
-      </div>
+    <h2 class="delete-dialog-title">Delete Employee?</h2>
+    <p class="delete-dialog-message">
+      You are about to delete <strong>{{ deleteEmployeeName }}</strong>
+    </p>
+    <p class="delete-dialog-warning">
+      <mat-icon>info</mat-icon>
+      This action cannot be undone
+    </p>
+    <div class="delete-dialog-actions">
+      <button mat-stroked-button mat-dialog-close class="cancel-btn">Cancel</button>
+      <button mat-raised-button color="warn" (click)="confirmDeleteEmployee()" class="delete-btn">
+        Delete
+      </button>
     </div>
   </div>
-  <div class="modal-footer">
-    <div class="inline bgpadding1">
-      <button type="button" class="btn btn-primary btn-sm"
-        (click)="updateEmployee(empId,form.value); modal.close('add')">Update</button>
-    </div>
-  </div>
-</ng-template>
-<ng-template #delete let-modal>
-  <div class="modal-header">
-    <div class="modal-title delete-modal-title" id="modal-basic-title">Delete Vendor</div>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-
-  <div class="modal-body">
-    <div class="selectParent">
-      <p>Do You Realy Want To Delete Employee : <span class="deletedEmployee"> {{deleteEmployeeName}}</span></p>
-    </div>
-    <button class="btn btn-danger confirmDeleteStyle" (click)="deleteConfirmed(deletedEmployee)">Yes</button>
-    <button class="btn btn-primary confirmDeleteStyle" (click)="modal.dismiss('cancel')">NO</button>
-  </div>
-
 </ng-template>

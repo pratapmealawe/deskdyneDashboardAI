@@ -468,9 +468,11 @@ Nutrient Conversion Factors:
     this.uploadStatus = false;
     this.imageUrl = this.selectedMasterItem?.imageUrl;
 
-    console.log(this.transformedMenuItems);
-
     try {
+      this.transformedMenuItems.forEach((item: any) => {
+        delete item._id;
+      });
+      console.log("transformedMenuItems", this.transformedMenuItems);
       const res = await this.apiMainService.addOutletList(
         this.outletObj._id,
         { outletList: this.transformedMenuItems }

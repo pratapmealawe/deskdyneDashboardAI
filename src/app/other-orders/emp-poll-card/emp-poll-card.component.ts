@@ -41,6 +41,8 @@ export class EmpPollCardComponent {
           if (adminId) {
             this.orderInput.actionBy = adminId;
           }
+          console.log(this.orderInput);
+
           await this.apiMainService.createOrderFromPollObj(this.orderInput);
           this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id });
         } catch (err) {

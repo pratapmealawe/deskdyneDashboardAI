@@ -91,7 +91,7 @@
 
             <!-- Paginator -->
             <mat-paginator [length]="orderWise.length" [pageIndex]="mainPageIndex" [pageSize]="mainPageSize"
-                [pageSizeOptions]="mainPageSizeOptions" (page)="onMainPage($event)"
+                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onMainPage($event)"
                 showFirstLastButtons></mat-paginator>
         </div>
     </div>

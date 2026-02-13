@@ -264,18 +264,6 @@ Nutrient Conversion Factors:
     if (invalidKeys.includes(e.key)) e.preventDefault();
   }
 
-<<<<<<< HEAD
-=======
-  preventInvalidPaste(e: ClipboardEvent, type: "integer" | "decimal" = "integer") {
-    const text = e.clipboardData?.getData('text') ?? '';
-    if (type === "integer") {
-      if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
-    } else {
-      if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
-    }
-  }
-
->>>>>>> upstream/staging
   addNutritionLists() {
     this.nutrition_Lists.push(this.fb.group({
       nutritionId: [null],

@@ -4,7 +4,7 @@ const activeEnv: EnvironmentType = 'local';
 
 // 1. Local Configuration (Development)
 const localConfig = {
-  production: false,
+  production: true,
   withCredentials: false,
   serverUrl: 'http://localhost:7000',
   // serverUrl: 'https://api.deskdyne.com',

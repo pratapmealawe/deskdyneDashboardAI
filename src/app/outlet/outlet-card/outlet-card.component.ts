@@ -27,6 +27,8 @@ export class OutletCardComponent implements OnInit {
   }
 
   @Output() view: EventEmitter<any> = new EventEmitter<any>();
+  @Output() softDelete: EventEmitter<any> = new EventEmitter<any>();
+
   imageUrl: any = environment.imageUrl;
   btnPolicy: any;
   filteredMenuList: any;
@@ -35,16 +37,22 @@ export class OutletCardComponent implements OnInit {
   pageIndex: number = 0
   outletUpdated: any[] = []
 
-  constructor(private policyService: PolicyService, private apiMainService: ApiMainService, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService) { }
+  constructor(
+    private policyService: PolicyService,
+    private apiMainService: ApiMainService,
+    private confirmationModalService: ConfirmationModalService,
+    private toaster: ToasterService
+  ) { }
+
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.outletUpdated = this.outlet;
   }
 
-  showPopup(outlet: any) {
+  onSoftDelete(outlet: any) {
     this.outletInfo = outlet;
     this.confirmationModalService.modal({
-      msg: 'Are you sure you want to delete this Outlet?',
+      msg: `Are you sure you want to delete "${outlet.outletName}"? This can be restored later from the Deleted list.`,
       callback: this.deleteOutletFunc,
       context: this
     });
@@ -52,11 +60,13 @@ export class OutletCardComponent implements OnInit {
 
   async deleteOutletFunc() {
     try {
-      const res = await this.apiMainService.deleteOutlet(this.outletInfo?._id)
+      const res = await this.apiMainService.B2B_deleteOutlet(this.outletInfo?._id, 'soft');
       console.log(res);
-      this.toaster.success("Successfully Deleted Outlet....!")
+      this.toaster.success("Outlet deleted successfully!");
+      this.softDelete.emit(this.outletInfo);
     } catch (err: any) {
       console.log(err);
+      this.toaster.error("Failed to delete outlet");
     }
   }
 

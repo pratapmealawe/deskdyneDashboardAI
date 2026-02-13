@@ -95,6 +95,12 @@ export class ApiConfigService {
       B2B_org_updateOrglevelSubsidy: p('/api/B2B_org_updateOrglevelSubsidy', 'POST'),
       B2B_org_updateCafelevelSubsidy: p('/api/B2B_org_updateCafelevelSubsidy', 'POST'),
       B2B_fetchFilteredAllOrgs: p('/api/B2B_fetchFilteredAllOrgs', 'POST'),
+      B2B_deleteOrganization: p('/api/deleteOrganization', 'DELETE'),
+      B2B_getDeletedOrganizations: p('/api/getDeletedOrganizations', 'GET'),
+      B2B_restoreOrganization: p('/api/restoreOrganization', 'POST'),
+      B2B_deleteOutlet: p('/api/deleteOutlet', 'DELETE'),
+      B2B_getDeletedOutlets: p('/api/getDeletedOutlets', 'GET'),
+      B2B_restoreOutlet: p('/api/restoreOutlet', 'POST'),
       updateOrgComplianceByAdmin: p('/api/updateOrgComplianceByAdmin', 'POST'),
       searchVendorByOrgId: p('/api/searchVendorByOrgId', 'POST'),
       searchVendorFirmByOrgId: p('/api/searchVendorFirmByOrgId', 'POST'),
@@ -409,6 +415,9 @@ export class ApiConfigService {
       getCompanyWalletTransactionHistoryByPhoneNo: p('/api/getCompanyWalletTransactionHistoryByPhoneNo', 'GET'),
       getCompanyWalletByPhoneNo: p('/api/getCompanyWalletByPhoneNo', 'GET'),
       getCompanyOrganizationTransactionHistory: p('/api/getCompanyOrganizationTransactionHistory', 'POST'),
+      getCustomerProfileDetails: p('/api/getCustomerProfileDetails', 'GET'),
+      getEmployeelistByCafeteriaId: p('/api/getEmployeelistByCafeteriaId', 'GET'),
+      getOutletEmployeeListByCafeteriaId: p('/api/getOutletEmployeeListByCafeteriaId', 'GET'),
     }
   }
 }

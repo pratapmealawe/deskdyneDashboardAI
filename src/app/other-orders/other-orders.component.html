@@ -86,7 +86,6 @@
                     </div>
                 </div>
             </div>
-<<<<<<< HEAD
         </ng-container>
 
         <!-- Bulk Orders Tab -->
@@ -103,35 +102,15 @@
                                 <span class="chip-count">{{status.count || 0}}</span>
                             </button>
                         </div>
-=======
-        </div>
-        <div *ngIf="selectedTab === 'bulkOrders'">
-            <div class="orders-header-bar mb-4">
-                <div class="status-filters-container">
-                    <div class="status-item" *ngFor="let status of bulkOrderStatusList"
-                        (click)="getClusterb2bBulkOrderList(status.value, page)"
-                        [class.active]="bulkOrderSelectedStatus === status.value">
-                        <span class="status-label">{{status.label}}</span>
-                        <span class="status-count" *ngIf="bulkOrderSelectedStatus === status.value">{{status.count || 0}}</span>
-                        <span class="status-count-inactive" *ngIf="bulkOrderSelectedStatus !== status.value">{{status.count ||
-                            0}}</span>
->>>>>>> upstream/staging
                     </div>
                 </div>
             </div>
 
             <div class="orders-container">
                 <div *ngIf="filteredList.length > 0; else noRecord">
-<<<<<<< HEAD
                     <div class="orders-list">
                         <app-bulk-order-card *ngFor="let order of filteredList"
                             [orderInput]="order"></app-bulk-order-card>
-=======
-                    <div class="d-flex flex-column gap-3">
-                        <div *ngFor="let order of filteredList">
-                            <app-bulk-order-card [orderInput]="order" (statusChange)="onStatusChanged($event)"></app-bulk-order-card>
-                        </div>
->>>>>>> upstream/staging
                     </div>
 
                     <!-- Pagination -->

@@ -1,13 +1,14 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { DeletedOutletsDialogComponent } from './deleted-outlets-dialog/deleted-outlets-dialog.component';
 
 @Component({
   selector: 'app-outlet',
@@ -35,7 +36,8 @@ export class OutletComponent implements OnInit {
     private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
     private sendDataToComponent: SendDataToComponent,
-    private searchService: SearchFilterService
+    private searchService: SearchFilterService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -51,18 +53,14 @@ export class OutletComponent implements OnInit {
     } else {
       this.pagedOutLet = this.filteredOutletList
         .map((org: any) => {
-          // Check if organization name matches
           const orgMatches = org.organizationName?.toLowerCase().includes(v);
-          // Filter outlets that match the search term
           const matchingOutlets = org.outletList?.filter((outlet: any) =>
             outlet.outletName?.toLowerCase().includes(v)
           ) || [];
 
           if (orgMatches) {
-            // If org matches, return all outlets
             return { ...org };
           } else if (matchingOutlets.length > 0) {
-            // If outlets match, return org with only matching outlets
             return { ...org, outletList: matchingOutlets };
           }
           return null;
@@ -107,7 +105,6 @@ export class OutletComponent implements OnInit {
     }
   }
 
-
   viewOutlet(val: any) {
     this.selectedOutlet = val;
     if (this.selectedOutlet) {
@@ -130,5 +127,17 @@ export class OutletComponent implements OnInit {
     if (val.updateval) {
       this.searchOutlet();
     }
+  }
+
+  openDeletedOutletsDialog() {
+    this.dialog.open(DeletedOutletsDialogComponent, {
+      width: '850px',
+      maxHeight: '85vh',
+      panelClass: 'deleted-outlets-dialog-container'
+    });
+  }
+
+  onOutletDeleted() {
+    this.searchOutlet();
   }
 }

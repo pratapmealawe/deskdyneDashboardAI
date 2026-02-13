@@ -1,165 +1,183 @@
-<div class="page-container">
-    <mat-card class="p-3">
-        <mat-card-title>Select Cafeteria</mat-card-title>
-        <mat-radio-group color="primary" [(ngModel)]="selectedCafeteria">
-            <mat-radio-button *ngFor="let cafeteria of orgObj.cafeteriaList" [id]="cafeteria._id" name="CafeteriaName"
-                [value]="cafeteria" (change)="onCafeteriaChange($event)">{{cafeteria.cafeteria_name}}</mat-radio-button>
-        </mat-radio-group>
-    </mat-card>
-    <div fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="24px"></div>
-    <mat-card fxFlex class="p-3">
-        <mat-card-title class="d-flex justify-content-between align-items-center mb-2">
-            <div>Entry Consumption Menu</div>
-            <button mat-raised-button color="primary" (click)="addConsumptionOrder()"
-                *ngIf="!showMultipleConsumptionForm">
-                Add Consumption Menu
+<div class="consumption-order-container">
+
+    <!-- Cafeteria Selector -->
+    <div class="cafeteria-selector" *ngIf="orgObj?.cafeteriaList?.length > 1">
+        <div class="selector-label">
+            <mat-icon>storefront</mat-icon>
+            Select Cafeteria
+        </div>
+        <div class="cafeteria-pills">
+            <button *ngFor="let cafeteria of orgObj.cafeteriaList" class="cafe-pill"
+                [class.active]="selectedCafeteriaId === cafeteria.cafeteria_id" (click)="selectCafeteria(cafeteria)">
+                {{ cafeteria.cafeteria_name }}
             </button>
-        </mat-card-title>
-        <ng-container *ngIf="showMultipleConsumptionForm">
-            <form #f="ngForm">
-                <div class="consumption-card" *ngFor="let consumptionItem of addMultipleConsumptionList; index as i">
-                    <div class="row  gap-1 align-items-center">
-                        <div class="col form-field">
-                            <label for="">Item Name</label>
-                            <mat-form-field appearance="outline" class="w-100">
-                                <input matInput placeholder="Item Name" [(ngModel)]="consumptionItem.itemName"
-                                    #itemName="ngModel" name="itemName{{i}}" required maxlength="40" minlength="3"
-                                    required />
-                                <mat-error *ngIf="itemName.invalid && (itemName.dirty || itemName.touched)">
-                                    <ng-container *ngIf="itemName.errors?.['required']">
-                                        Item Name is required.
-                                    </ng-container>
-                                    <ng-container *ngIf="itemName.errors?.['maxlength']">
-                                        Maximum 40 characters allowed.
-                                    </ng-container>
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                        <div class="col form-field">
-                            <label for="">Price (Incl. GST)</label>
-                            <mat-form-field appearance="outline" class="w-100">
-                                <input matInput type="number" placeholder="Price"
-                                    [(ngModel)]="consumptionItem.mealPrice" name="itemPrice{{i}}" #itemNumber="ngModel"
-                                    required appOnlyNumber />
-                                <mat-error *ngIf="itemNumber.invalid && (itemNumber.dirty || itemNumber.touched)">
-                                    <ng-container *ngIf="itemNumber.errors?.['required']">
-                                        Price No is required.
-                                    </ng-container>
-                                    <ng-container *ngIf="itemNumber.errors?.['appOnlyNumber']">
-                                        Only Number are allowed.
-                                    </ng-container>
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                        <div class="col form-field">
-                            <label for="">MG</label>
-                            <mat-form-field appearance="outline" class="w-100">
-                                <input matInput type="number" placeholder="Min Guarantees"
-                                    [(ngModel)]="consumptionItem.minGuarantees" name="itemMg{{i}}" #itemMg="ngModel"
-                                    required appOnlyNumber>
-                                <mat-error *ngIf="itemMg.invalid && (itemMg.dirty || itemMg.touched)">
-                                    <ng-container *ngIf="itemMg.errors?.['required']">
-                                        Min Guarantees is required.
-                                    </ng-container>
-                                    <ng-container *ngIf="itemMg.errors?.['appOnlyNumber']">
-                                        Only Number are allowed.
-                                    </ng-container>
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
-                        <div class="col button-container  d-flex  justify-content-end">
-                            <ng-container *ngIf="i>0 && i == addMultipleConsumptionList.length-1">
-                                <button mat-icon-button color="primary" (click)="addMoreEmployee()">
-                                    <mat-icon>add</mat-icon>
-                                </button>
-                            </ng-container>
-                            <button mat-icon-button color="primary" (click)="addMoreEmployee()" *ngIf="showAddMoreForm">
-                                <mat-icon>add</mat-icon>
-                            </button>
-                            <button mat-icon-button color="warn" *ngIf="showRemoveForm" (click)="removeEmployeeForm(i)">
-                                <mat-icon>remove</mat-icon>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                <div class="actions">
-                    <button mat-raised-button color="primary" (click)="submitMultipleConsumption()"
-                        [disabled]="f.invalid">Submit</button>
-                    <button mat-stroked-button color="warn" class="ms-2"
-                        (click)="showMultipleConsumptionForm=false; showAddMoreForm=true; showRemoveForm=false">
-                        Cancel
-                    </button>
-                </div>
-            </form>
-        </ng-container>
-        <ng-container *ngIf="!showMultipleConsumptionForm">
-            <div class="mt-2" *ngFor="let consumptionItem of consumptionList">
-                <div class="menu-card" *ngFor="let mealTypeItem of consumptionItem.mealTypeList">
-                    <div class="d-flex flex-wrap gap-4 pt-3 pb-3"
-                        *ngIf="consumptionItem.cafeteria_id == selectedCafeteriaId">
-                        <div class="col">
-                            <div class="labelText">Item Name</div>
-                            <div class="labelData">{{ mealTypeItem.itemName }}</div>
-                        </div>
-                        <div class="col">
-                            <div class="labelText">Price (Incl. GST)</div>
-                            <div class="labelData">{{ mealTypeItem.mealPrice }}</div>
-                        </div>
-                        <!-- <div class="col">
-                            <div class="labelText">Type</div>
-                            <div class="labelData">{{ mealTypeItem.selctedmealtype }}</div>
-                        </div> -->
-                        <div class="col">
-                            <div class="labelText">Min Guarantees</div>
-                            <div class="labelData">{{ mealTypeItem.minGuarantees }}</div>
-                        </div>
-                        <div class="info col d-flex gap-2 align-items-center justify-content-end">
-                            <mat-icon class="action-icon" color="primary"
-                                (click)="editConsumption(mealTypeItem, consumptionItem.cafeteria_orignal_id)">edit</mat-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ng-container>
-    </mat-card>
-</div>
-<ng-template #content let-modal>
-    <div class="dialog-header p-4">
-        <div mat-dialog-title>Update Consumption Menu</div>
-        <button mat-icon-button aria-label="Close dialog" class="close-button" (click)="modal.close()">
-            <mat-icon>close</mat-icon>
-        </button>
+        </div>
     </div>
-    <mat-dialog-content>
-        <form [formGroup]="MealForm" class="form-grid p-3">
-            <div class="form-group">
-                <label class="form-label">Item Name </label>
-                <mat-form-field appearance="outline" class="w-100">
+
+    <!-- Add Consumption Menu Card -->
+    <div class="info-card">
+        <div class="card-header">
+            <div class="header-icon">
+                <mat-icon>restaurant_menu</mat-icon>
+            </div>
+            <h3>Consumption Menu</h3>
+            <div class="header-actions">
+                <button mat-raised-button color="primary" class="add-btn" (click)="addConsumptionOrder()"
+                    *ngIf="!showMultipleConsumptionForm">
+                    <mat-icon>add</mat-icon>
+                    Add Menu Item
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Entry Form -->
+            <ng-container *ngIf="showMultipleConsumptionForm">
+                <form #f="ngForm">
+                    <div class="entry-form-container">
+                        <div class="entry-row" *ngFor="let consumptionItem of addMultipleConsumptionList; index as i">
+                            <div class="entry-fields">
+                                <mat-form-field appearance="outline" class="form-field">
+                                    <mat-label>Item Name</mat-label>
+                                    <mat-icon matPrefix>fastfood</mat-icon>
+                                    <input matInput placeholder="Item Name" [(ngModel)]="consumptionItem.itemName"
+                                        #itemName="ngModel" name="itemName{{i}}" required maxlength="40"
+                                        minlength="3" />
+                                    <mat-error *ngIf="itemName.invalid && (itemName.dirty || itemName.touched)">
+                                        <ng-container *ngIf="itemName.errors?.['required']">Item Name is
+                                            required</ng-container>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="form-field">
+                                    <mat-label>Price (Incl. GST)</mat-label>
+                                    <mat-icon matPrefix>currency_rupee</mat-icon>
+                                    <input matInput type="number" placeholder="Price"
+                                        [(ngModel)]="consumptionItem.mealPrice" name="itemPrice{{i}}"
+                                        #itemNumber="ngModel" required appOnlyNumber />
+                                    <mat-error *ngIf="itemNumber.invalid && (itemNumber.dirty || itemNumber.touched)">
+                                        <ng-container *ngIf="itemNumber.errors?.['required']">Price is
+                                            required</ng-container>
+                                    </mat-error>
+                                </mat-form-field>
+
+                                <mat-form-field appearance="outline" class="form-field">
+                                    <mat-label>Min Guarantees</mat-label>
+                                    <mat-icon matPrefix>verified</mat-icon>
+                                    <input matInput type="number" placeholder="Min Guarantees"
+                                        [(ngModel)]="consumptionItem.minGuarantees" name="itemMg{{i}}" #itemMg="ngModel"
+                                        required appOnlyNumber />
+                                    <mat-error *ngIf="itemMg.invalid && (itemMg.dirty || itemMg.touched)">
+                                        <ng-container *ngIf="itemMg.errors?.['required']">Min Guarantees is
+                                            required</ng-container>
+                                    </mat-error>
+                                </mat-form-field>
+                            </div>
+
+                            <div class="entry-actions">
+                                <button mat-icon-button class="action-btn add"
+                                    *ngIf="i === addMultipleConsumptionList.length - 1" (click)="addMoreEmployee()">
+                                    <mat-icon>add_circle</mat-icon>
+                                </button>
+                                <button mat-icon-button class="action-btn remove"
+                                    *ngIf="addMultipleConsumptionList.length > 1" (click)="removeEmployeeForm(i)">
+                                    <mat-icon>remove_circle</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button mat-raised-button color="primary" (click)="submitMultipleConsumption()"
+                            [disabled]="f.invalid">
+                            <mat-icon>save</mat-icon>
+                            Save Menu Items
+                        </button>
+                        <button mat-stroked-button (click)="cancelMultipleConsumption()">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </ng-container>
+
+            <!-- Menu Items List -->
+            <ng-container *ngIf="!showMultipleConsumptionForm">
+                <div class="menu-items-grid" *ngIf="getFilteredItems().length > 0">
+                    <div class="menu-item-card" *ngFor="let mealTypeItem of getFilteredItems()">
+                        <div class="menu-item-icon">
+                            <mat-icon>restaurant</mat-icon>
+                        </div>
+                        <div class="menu-item-info">
+                            <div class="menu-item-name">{{ mealTypeItem.itemName }}</div>
+                            <div class="menu-item-meta">
+                                <span class="meta-item price">
+                                    <mat-icon>currency_rupee</mat-icon>
+                                    {{ mealTypeItem.mealPrice }}
+                                </span>
+                                <span class="meta-item mg">
+                                    <mat-icon>verified</mat-icon>
+                                    MG: {{ mealTypeItem.minGuarantees }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="menu-item-actions">
+                            <button mat-icon-button class="action-btn edit"
+                                (click)="editConsumption(mealTypeItem, mealTypeItem.cafeteria_orignal_id)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state" *ngIf="getFilteredItems().length === 0">
+                    <mat-icon>restaurant_menu</mat-icon>
+                    <p>No menu items added yet</p>
+                    <span>Click "Add Menu Item" to add consumption menu items</span>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Menu Item Dialog -->
+<ng-template #content let-modal>
+    <div class="edit-dialog">
+        <div class="edit-dialog-header">
+            <div class="dialog-icon">
+                <mat-icon>edit</mat-icon>
+            </div>
+            <h2>Update Menu Item</h2>
+            <button mat-icon-button class="close-btn" (click)="modal.close()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <div class="edit-dialog-content">
+            <form [formGroup]="MealForm" class="edit-form">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Item Name</mat-label>
+                    <mat-icon matPrefix>fastfood</mat-icon>
                     <input matInput formControlName="itemName" />
                 </mat-form-field>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Price</label>
-                <mat-form-field appearance="outline" class="w-100">
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Price (Incl. GST)</mat-label>
+                    <mat-icon matPrefix>currency_rupee</mat-icon>
                     <input matInput type="number" formControlName="mealPrice" />
                 </mat-form-field>
-            </div>
-            <div class="form-group">
-                <label class="form-label">Min Guarantees</label>
-                <mat-form-field appearance="outline" class="w-100">
+
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Min Guarantees</mat-label>
+                    <mat-icon matPrefix>verified</mat-icon>
                     <input matInput type="number" formControlName="minGuarantees" />
                 </mat-form-field>
-            </div>
-            <!-- <mat-label class="mt-8">Select MealType</mat-label>
-                <mat-chip-listbox multiple formControlName="selctedmealtype" class="chip-list">
-                    <mat-chip-option *ngFor="let chip of mealTimeList" [value]="chip.mealType">
-                        {{ chip.mealType }}
-                    </mat-chip-option>
-                </mat-chip-listbox> -->
-        </form>
-    </mat-dialog-content>
-    <mat-dialog-actions class="actions d-flex justify-content-end gap-2 p-3">
-        <button mat-stroked-button (click)="modal.close()">Cancel</button>
-        <button mat-flat-button color="primary" (click)="updateMealTypeList()">Update</button>
-    </mat-dialog-actions>
+            </form>
+        </div>
+        <div class="edit-dialog-actions">
+            <button mat-stroked-button (click)="modal.close()">Cancel</button>
+            <button mat-raised-button color="primary" (click)="updateMealTypeList()">
+                <mat-icon>save</mat-icon>
+                Update
+            </button>
+        </div>
+    </div>
 </ng-template>
