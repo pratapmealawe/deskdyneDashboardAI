@@ -23,10 +23,13 @@ export class ConfirmationModalComponent implements OnInit {
     });
   }
   cancel() {
+    if (this.modalObj.cancelCallback) {
+      this.modalObj.cancelCallback.apply(this.modalObj.context);
+    }
     this.showDialog = false;
   }
   confirm() {
     this.modalObj.callback.apply(this.modalObj.context);
-    this.cancel();
+    this.showDialog = false;
   }
 }

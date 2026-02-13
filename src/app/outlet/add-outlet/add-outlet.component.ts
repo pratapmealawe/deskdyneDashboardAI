@@ -375,6 +375,18 @@ export class AddOutletComponent implements OnInit {
     this.submit(type);
   }
 
+  trimStringValues(obj: any): any {
+    if (obj instanceof File || obj instanceof Blob) return obj;
+    if (typeof obj === 'string') return obj.trim();
+    if (Array.isArray(obj)) return obj.map((v: any) => this.trimStringValues(v));
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        obj[key] = this.trimStringValues(obj[key]);
+      });
+    }
+    return obj;
+  }
+
   async submit(type?: 'update'): Promise<void> {
     this.showError = true;
     this.validateMealTimings();
@@ -396,7 +408,7 @@ export class AddOutletComponent implements OnInit {
         ...formValue,
       };
 
-      let formData = this.objectToFormData(finalObj);
+      let formData = this.objectToFormData(this.trimStringValues(finalObj));
 
       if (this.uploadedImageFile) {
         formData.append('image', this.uploadedImageFile);

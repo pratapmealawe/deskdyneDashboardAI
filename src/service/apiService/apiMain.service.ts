@@ -392,6 +392,34 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}`, method: urlObj.method }, data);
   }
 
+  B2B_deleteOrganization(id: any, type: 'soft' | 'hard' = 'soft') {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_deleteOrganization;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}?type=${type}`, method: urlObj.method });
+  }
+
+  B2B_getDeletedOrganizations() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_getDeletedOrganizations);
+  }
+
+  B2B_restoreOrganization(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_restoreOrganization;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  B2B_deleteOutlet(id: any, type: 'soft' | 'hard' = 'soft') {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_deleteOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}?type=${type}`, method: urlObj.method });
+  }
+
+  B2B_getDeletedOutlets() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_getDeletedOutlets);
+  }
+
+  B2B_restoreOutlet(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_restoreOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
   updateOrgComplianceByAdmin(id: string, data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOrgComplianceByAdmin;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
@@ -456,6 +484,11 @@ export class ApiMainService {
   getEmployeeListByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeListByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  getEmployeelistByCafeteriaId(cafeteriaId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
   }
 
   getConsumptionOrderByOrgId(orgId: any) {
@@ -789,9 +822,13 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getBulkDailyOrderList(status: any, page: any, limit: number) {
+  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
+    let url = urlObj.url + `/${page}/${limit}/${status}`;
+    if (date) {
+      url += `/${date}`;
+    }
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method });
   }
 
   getClusterb2bBulkOrderList(status: any, page: any, limit: number) {
@@ -807,8 +844,12 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentB2BOrdersCount);
   }
 
-  getCurrentDailyOrdersCount() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount);
+  getCurrentDailyOrdersCount(date?: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount;
+    if (date) {
+      return this.apiHttpService.REQUEST({ url: urlObj.url + `/${date}`, method: urlObj.method });
+    }
+    return this.apiHttpService.REQUEST(urlObj);
   }
 
   getCafeteriasPollingList(deliveryDate: any) {
@@ -877,6 +918,11 @@ export class ApiMainService {
   outletEmployeeByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.outletEmployeeByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  getOutletEmployeeListByCafeteriaId(cafeteriaId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletEmployeeListByCafeteriaId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
   }
 
   deleteOutletEmployee(id: any) {
@@ -1832,5 +1878,10 @@ export class ApiMainService {
   getCompanyOrganizationTransactionHistory(paylod: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getCompanyOrganizationTransactionHistory;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, paylod);
+  }
+
+  getCustomerProfileDetails(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerProfileDetails;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
   }
 }

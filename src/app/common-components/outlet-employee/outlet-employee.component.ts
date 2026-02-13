@@ -40,6 +40,7 @@ export class OutletEmployeeComponent implements OnInit {
   isEditMode = false;
   currentEmployeeId: string | null = null;
   employeeToDelete: any = null;
+  searchTerm: string = '';
 
   constructor(
     private apiMainService: ApiMainService,
@@ -52,7 +53,6 @@ export class OutletEmployeeComponent implements OnInit {
     this.initBulkForm();
     this.initDialogForm();
     this.initCafeteriaDefaults();
-    this.getEmployeeListByOrgId();
   }
 
   // ---------- INIT ----------
@@ -91,6 +91,8 @@ export class OutletEmployeeComponent implements OnInit {
       this.selectedCafeteria = this.orgObj.cafeteriaList[0];
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+      this.getEmployeeListByCafeId();
+
     }
   }
 
@@ -100,17 +102,35 @@ export class OutletEmployeeComponent implements OnInit {
     if (!this.selectedCafeteria) return;
     this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
     this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+    this.getEmployeeListByCafeId();
+
     this.resetPagination();
+  }
+
+  // 👉 Select cafeteria (for pill buttons)
+  selectCafeteria(cafeteria: any): void {
+    this.selectedCafeteria = cafeteria;
+    this.selectedCafeteriaName = cafeteria.cafeteria_name;
+    this.selectedCafeteriaId = cafeteria.cafeteria_id;
+    this.resetPagination();
+  }
+
+  // 👉 Get initials for avatar
+  getInitials(name: string): string {
+    if (!name) return '?';
+    const parts = name.trim().split(' ');
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 
   // ---------- API ----------
 
-  async getEmployeeListByOrgId(): Promise<void> {
+  async getEmployeeListByCafeId(): Promise<void> {
     if (!this.orgObj?._id) return;
     try {
       this.loading = true;
       // Using existing API call for outlet employees
-      this.employeeList = await this.apiMainService.outletEmployeeByOrgId(this.orgObj._id) || [];
+      this.employeeList = await this.apiMainService.getOutletEmployeeListByCafeteriaId(this.selectedCafeteriaId) || [];
       this.resetPagination();
     } catch (error) {
       console.error(error);
@@ -185,7 +205,7 @@ export class OutletEmployeeComponent implements OnInit {
         }
       }
       this.currentDialogRef.close();
-      this.getEmployeeListByOrgId();
+      this.getEmployeeListByCafeId();
     } catch (error: any) {
       console.error(error);
       this.snackBar.open('Failed to save employee', 'Close', { duration: 3000 });
@@ -207,7 +227,7 @@ export class OutletEmployeeComponent implements OnInit {
     try {
       await this.apiMainService.deleteOutletEmployee(this.employeeToDelete._id);
       this.snackBar.open('Employee deleted', 'Close', { duration: 2500 });
-      this.getEmployeeListByOrgId();
+      this.getEmployeeListByCafeId();
       this.currentDialogRef.close();
     } catch (error) {
       console.error(error);
@@ -275,7 +295,7 @@ export class OutletEmployeeComponent implements OnInit {
       const res = await this.apiMainService.addOutletEmployeeList(employeesPayload);
       if (res && res.length > 0) {
         this.snackBar.open('Employees added successfully', 'Close', { duration: 2500 });
-        this.getEmployeeListByOrgId();
+        this.getEmployeeListByCafeId();
         this.hideBulkForm();
       }
     } catch (error: any) {

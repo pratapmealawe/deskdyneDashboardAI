@@ -1,29 +1,47 @@
-<div class="outlet-header" *ngIf="showSearchSection">
-  <div>
-    <h4 class="m-0 fw-semibold">Outlet</h4>
-  </div>
-  <div class="header-actions">
-    <div class="input-wrapper">
-      <mat-form-field appearance="outline" class="w-100 search-input">
-        <input matInput type="text" placeholder="Search outlet..." [formControl]="searchControl" />
-        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-          <mat-icon>search</mat-icon>
+<div class="outlet-page-container">
+  <!-- Header Section -->
+  <div class="outlet-header-card" *ngIf="showSearchSection">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Outlet Management</h1>
+        <p class="page-subtitle">Manage outlets across your organizations</p>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search outlets..." [formControl]="searchControl" />
+        </div>
+        <button mat-flat-button class="btn-add-outlet" (click)="addOutlet()">
+          <mat-icon>add_business</mat-icon>
+          <span>Add Outlet</span>
         </button>
-      </mat-form-field>
+        <button mat-icon-button class="btn-deleted" (click)="openDeletedOutletsDialog()"
+          matTooltip="View Deleted Outlets">
+          <mat-icon>delete_sweep</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Body -->
+  <div class="content-body" *ngIf="showSearchSection">
+    <div *ngIf="outletList && outletList.length === 0; else outletListTmp" class="empty-state">
+      <mat-icon class="empty-icon">storefront</mat-icon>
+      <h3>No Outlets Found</h3>
+      <p>Get started by adding your first outlet.</p>
+      <button mat-stroked-button color="primary" (click)="addOutlet()">Add Outlet</button>
     </div>
 
-    <button class="btn-add" mat-raised-button color="primary" (click)="addOutlet()">
-      <mat-icon>add</mat-icon> Add Outlet
-    </button>
+    <ng-template #outletListTmp>
+      <div class="outlet-list-wrapper">
+        <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"
+          (softDelete)="onOutletDeleted()"></app-outlet-card>
+      </div>
+    </ng-template>
   </div>
-</div>
-<div *ngIf="outletList && outletList.length === 0" class="text-center text-muted my-5">
-  No Outlet Found
-</div>
-<div *ngIf="outletList && outletList.length > 0 && showSearchSection" class="container-fluid pb-4">
-  <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
-</div>
-<div class="center mt-5" *ngIf="outletList.length === 0">No Records Found</div>
-<div class="container-fluid pb-4" *ngIf="!showSearchSection && outletList.length > 0">
-  <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
+
+  <!-- Outlet View Section -->
+  <div class="outlet-view-section" *ngIf="!showSearchSection && outletList.length > 0">
+    <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
+  </div>
 </div>

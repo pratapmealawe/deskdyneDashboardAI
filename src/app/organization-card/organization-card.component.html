@@ -1,86 +1,90 @@
-<div class="mb-2">
-  <div class="cardDesign mb-2" *ngFor="let org of pagedOrganized">
-    <div class="container-fluid py-2">
-      <div class="row align-items-center">
+<div class="org-list-container">
+  <div class="org-list">
+    <div class="org-item-card" *ngFor="let org of pagedOrganized">
+      <!-- Left: Avatar -->
+      <div class="org-avatar-section">
+        <div class="org-avatar">
+          <img *ngIf="org.organizationLogoUrl" [src]="imageUrl + org.organizationLogoUrl" alt="Logo" class="avatar-img">
+          <span *ngIf="!org.organizationLogoUrl">{{ getInitials(org?.organization_name) }}</span>
+        </div>
+      </div>
 
-        <!-- Logo -->
-        <div class="col-md-1 mb-2 mb-md-0">
-          <div class="org-image-div">
-            <img [src]="org.organizationLogoUrl ? imageUrl + org.organizationLogoUrl : 'assets/images/dummyUpload.png'"
-              class="org-image" />
+      <!-- Middle: Info -->
+      <div class="org-info-section">
+        <div class="org-header">
+          <h3 class="org-name">{{ org?.organization_name }}</h3>
+          <span class="location-badge">
+            <mat-icon>location_city</mat-icon>
+            {{ org?.city || 'N/A' }}
+          </span>
+        </div>
+
+        <div class="org-details">
+          <div class="detail-item">
+            <mat-icon>place</mat-icon>
+            <span class="text-truncate" [matTooltip]="org?.location">{{ org?.location || 'No location' }}</span>
+          </div>
+
+          <div class="chip-group">
+            <span class="chip cafeteria-chip" (click)="dataView(org?.cafeteriaList, 'cafeteria')">
+              <mat-icon>storefront</mat-icon>
+              {{ org?.cafeteriaList?.length || 0 }} Cafeterias
+            </span>
+            <span class="chip poc-chip" (click)="dataView(org.poc_details, 'poc')">
+              <mat-icon>people</mat-icon>
+              {{ org.poc_details?.length || 0 }} POCs
+            </span>
           </div>
         </div>
-
-        <!-- Name -->
-        <div class="col-md-2 mb-2 mb-md-0">
-          <div class="labelText">Organization Name</div>
-          <div class="labelData fw-bold">{{ org?.organization_name }}</div>
-        </div>
-
-        <!-- City -->
-        <div class="col-md-2 mb-2 mb-md-0">
-          <div class="labelText">City</div>
-          <div class="labelData">{{ org?.city }}</div>
-        </div>
-
-        <!-- Location -->
-        <div class="col-md-2 mb-2 mb-md-0">
-          <div class="labelText">Location</div>
-          <div class="labelData">{{ org?.location }}</div>
-        </div>
-
-        <!-- Cafeteria -->
-        <div class="col-md-2 mb-2 mb-md-0">
-          <div class="labelText">Cafeteria</div>
-          <mat-chip class="small-chip" style="cursor: pointer !important;" selected color="primary"
-            (click)="dataView(org?.cafeteriaList , 'cafeteria')">
-            Cafeterias | {{org?.cafeteriaList?.length || 0}}
-          </mat-chip>
-        </div>
-
-        <!-- POC -->
-        <div class="col-md-2 mb-2 mb-md-0">
-          <div class="labelText">POC Details</div>
-          <mat-chip class="small-chip" style="cursor: pointer !important;" selected color="accent"
-            (click)="dataView(org.poc_details,'poc')">
-            POCs | {{org.poc_details?.length || 0}}
-          </mat-chip>
-        </div>
-
-        <!-- Actions -->
-        <div class="col-md-1 d-flex align-items-center justify-content-end p-0">
-          <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View Details">
-            <mat-icon>visibility</mat-icon>
-          </button>
-        </div>
-
       </div>
+
+      <!-- Right: Actions -->
+      <div class="org-action-section">
+        <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View Details" class="view-btn">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="onSoftDelete(org)" matTooltip="Delete Organization">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state-card" *ngIf="!pagedOrganized || pagedOrganized.length === 0">
+    <div class="empty-content">
+      <mat-icon>search_off</mat-icon>
+      <h3>No Organizations Found</h3>
+      <p>Try adjusting your search criteria.</p>
     </div>
   </div>
 </div>
 
-<mat-paginator [length]="organization.length|| 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
-  [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" aria-label="Select page">
+<mat-paginator [length]="organization.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+  [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+  aria-label="Select page" class="custom-paginator">
 </mat-paginator>
 
+<!-- Modal for Cafeteria/POC Details -->
 <div class="custom-backdrop" *ngIf="showModal" (click)="closeModal()"></div>
-<div class="custom-modal " *ngIf="showModal">
-  <div class="custom-modal-header d-flex justify-content-between align-items-center">
-    <h3>{{tableDetails}}</h3>
-    <button class="close-btn" (click)="closeModal()">✖</button>
+<div class="custom-modal" *ngIf="showModal">
+  <div class="modal-header">
+    <h3>{{ tableDetails }}</h3>
+    <button mat-icon-button (click)="closeModal()">
+      <mat-icon>close</mat-icon>
+    </button>
   </div>
-
-  <div class="custom-modal-body">
-    <table mat-table [dataSource]="tableData" matSort class="mat-elevation-z8 content0 table">
+  <div class="modal-body">
+    <table mat-table [dataSource]="tableData" class="modern-table">
       <ng-container [matColumnDef]="col" *ngFor="let col of columns">
-        <th mat-header-cell *matHeaderCellDef>
-          {{ col | titlecase}}
-        </th>
-        <td mat-cell *matCellDef="let row" class="mat-table-td">
-          <div class="row-chip" *ngIf="row[col] === true"> yes <mat-icon class="icon-check"> check </mat-icon></div>
-          <div *ngIf="row[col] === false" class="row-chip">No<mat-icon class="icon">close </mat-icon></div>
-          <span *ngIf="row[col] !== true && row[col] !== false" [matTooltip]="row[col]" matTooltipPosition="left"
-            class="tooltip-text">
+        <th mat-header-cell *matHeaderCellDef>{{ col | titlecase }}</th>
+        <td mat-cell *matCellDef="let row" class="table-cell">
+          <div class="row-chip" *ngIf="row[col] === true">
+            <mat-icon class="icon-check">check_circle</mat-icon> Yes
+          </div>
+          <div class="row-chip" *ngIf="row[col] === false">
+            <mat-icon class="icon-cross">cancel</mat-icon> No
+          </div>
+          <span *ngIf="row[col] !== true && row[col] !== false" [matTooltip]="row[col]" class="text-truncate">
             {{ row[col] }}
           </span>
         </td>

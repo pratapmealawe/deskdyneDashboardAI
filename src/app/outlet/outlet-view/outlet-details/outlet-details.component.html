@@ -1,150 +1,213 @@
-<div class="pb-4 container-fluid">
-  <!-- Header / Actions -->
-  <div class="d-flex justify-content-between align-items-center mb-2 pt-3">
-    <div class="d-flex align-items-center gap-2">
-      <!-- <div class="heading">Outlet Details</div> -->
+<!-- Outlet Details Modern Design -->
+<div class="outlet-details-container">
+
+  <!-- Hero Profile Section -->
+  <div class="profile-hero">
+    <div class="hero-content">
+      <div class="avatar-section">
+        <img *ngIf="outletObj?.imageUrl" [src]="imageUrl + outletObj.imageUrl" class="avatar-img" alt="Outlet Image">
+        <div *ngIf="!outletObj?.imageUrl" class="avatar-circle">
+          {{ getInitials(outletObj?.outletName) }}
+        </div>
+        <div class="avatar-status" [class.active]="outletObj?.outletOpened"></div>
+      </div>
+      <div class="hero-info">
+        <h1 class="outlet-name">{{ outletObj?.outletName }}</h1>
+        <div class="quick-badges">
+          <span class="quick-badge" [class.success]="outletObj?.outletOpened" [class.danger]="!outletObj?.outletOpened">
+            <mat-icon>{{ outletObj?.outletOpened ? 'storefront' : 'store' }}</mat-icon>
+            {{ outletObj?.outletOpened ? 'Open' : 'Closed' }}
+          </span>
+          <span class="quick-badge" *ngIf="outletObj?.isPreOrder">
+            <mat-icon>schedule</mat-icon>
+            Pre-order
+          </span>
+          <span class="quick-badge" *ngIf="outletObj?.isSectionWiseMenu">
+            <mat-icon>view_module</mat-icon>
+            Section Menu
+          </span>
+        </div>
+      </div>
     </div>
-    <button mat-raised-button color="primary" (click)="editOrg()">
-      <mat-icon>edit</mat-icon> Edit Outlet
+    <button mat-raised-button class="edit-btn" (click)="editOrg()">
+      <mat-icon>edit</mat-icon>
+      Edit Outlet
     </button>
   </div>
 
-  <div class="row g-4">
-    <!-- Card 1: Outlet Overview -->
-    <div class="col-12 col-md-6">
-      <div class="card p-4 h-100">
-        <h5 class="mb-3 fw-bold border-bottom pb-2">Overview</h5>
-        <div class="d-flex gap-4">
-          <!-- Image -->
-          <div class="flex-shrink-0">
-            <img [src]="outletObj?.imageUrl ? imageUrl + outletObj.imageUrl : 'assets/images/dummyUpload.png'"
-              class="uploadedImage rounded" alt="Outlet Image">
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Overview Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon overview">
+          <mat-icon>info</mat-icon>
+        </div>
+        <h3>Overview</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>label</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Outlet Name</span>
+              <span class="info-value">{{ outletObj?.outletName }}</span>
+            </div>
           </div>
-          <!-- Basic Info -->
-          <div class="flex-grow-1">
-            <div class="mb-3">
-              <div class="labelText">Outlet Name</div>
-              <div class="labelData fs-6 fw-semibold">{{ outletObj.outletName }}</div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>sort</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Precedence</span>
+              <span class="info-value">{{ outletObj?.precedence || 0 }}</span>
             </div>
-            <div class="mb-3">
-              <div class="labelText mb-1">Status</div>
-              <div class="d-flex gap-2 flex-wrap">
-                <!-- Opened Status Badge -->
-                <div class="status-badge" [ngClass]="outletObj.outletOpened ? 'success' : 'danger'">
-                  <mat-icon class="icon-sm">{{ outletObj.outletOpened ? 'check_circle' : 'cancel' }}</mat-icon>
-                  <span>{{ outletObj.outletOpened ? 'Opened' : 'Closed' }}</span>
-                </div>
-                <!-- Preorder Badge -->
-                <div class="status-badge" [ngClass]="outletObj.isPreOrder ? 'info' : 'neutral'">
-                  <mat-icon class="icon-sm">schedule</mat-icon>
-                  <span>Preorder: {{ outletObj.isPreOrder ? 'Yes' : 'No' }}</span>
-                </div>
-              </div>
-            </div>
-            <div class="mb-0">
-              <div class="labelText">Description</div>
-              <div class="labelData text-break">{{ outletObj.outletDescription || '-' }}</div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>description</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Description</span>
+              <span class="info-value">{{ outletObj?.outletDescription || 'No description' }}</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 2: Commercials & Operations -->
-    <div class="col-12 col-md-6">
-      <div class="card p-4 h-100">
-        <h5 class="mb-3 fw-bold border-bottom pb-2">Commercials & Operations</h5>
-        <div class="row g-3">
-          <div class="col-6">
-            <div class="labelText">Billing Type</div>
-            <div class="labelData">{{ outletObj.billingType || '-' }}</div>
-          </div>
-          <div class="col-6">
-            <div class="labelText">Subsidy</div>
-            <div class="labelData">{{ outletObj.subsidy || 0 }} %</div>
-          </div>
-          <div class="col-6">
-            <div class="labelText">Vendor Commission</div>
-            <div class="labelData">{{ outletObj.vendorCommissionPercentage }} %</div>
-          </div>
-          <div class="col-6">
-            <div class="labelText">MRP Commission</div>
-            <div class="labelData">{{ outletObj.MRPCommissionPercentage }} %</div>
-          </div>
-          <!-- Placeholder for potentially empty fields or spacing -->
-          <div class="col-12"></div>
+    <!-- Commercials Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon commercials">
+          <mat-icon>payments</mat-icon>
         </div>
+        <h3>Commercials</h3>
       </div>
-    </div>
-
-    <!-- Card 3: Location & Organization -->
-    <div class="col-12">
-      <div class="card p-4">
-        <h5 class="mb-3 fw-bold border-bottom pb-2">Organization & Location</h5>
-        <div class="row g-4">
-          <!-- Organization Column -->
-          <div class="col-md-6 border-end-md">
-            <h6 class="text-secondary mb-3">Organization Details</h6>
-            <div class="row g-3">
-              <div class="col-6">
-                <div class="labelText">Name</div>
-                <div class="labelData">{{ outletObj.organizationDetails.organization_name }}</div>
-              </div>
-              <div class="col-6">
-                <div class="labelText">City</div>
-                <div class="labelData">{{ outletObj.organizationDetails.city }}</div>
-              </div>
-              <div class="col-12">
-                <div class="labelText">Location</div>
-                <div class="labelData">{{ outletObj.organizationDetails.location }}</div>
-              </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>receipt</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Billing Type</span>
+              <span class="info-value">{{ outletObj?.billingType || '-' }}</span>
             </div>
           </div>
-
-          <!-- Cafeteria Column -->
-          <div class="col-md-6 ps-md-4">
-            <h6 class="text-secondary mb-3">Cafeteria Details</h6>
-            <div class="row g-3">
-              <div class="col-6">
-                <div class="labelText">Name</div>
-                <div class="labelData">{{ outletObj.cafeteriaDetails.cafeteria_name }}</div>
-              </div>
-              <div class="col-6">
-                <div class="labelText">City</div>
-                <div class="labelData">{{ outletObj.cafeteriaDetails.cafeteria_city }}</div>
-              </div>
-              <div class="col-12">
-                <div class="labelText">Landmark & Address</div>
-                <div class="labelData">
-                  {{ outletObj.cafeteriaDetails.landmark }}, {{ outletObj.cafeteriaDetails.location }}
-                  <br>
-                  <small class="text-muted">{{ outletObj.cafeteriaDetails.address1 }} {{
-                    outletObj.cafeteriaDetails.address2 }}</small>
-                </div>
-              </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>savings</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Subsidy</span>
+              <span class="info-value">{{ outletObj?.subsidy || 0 }}%</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>percent</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Vendor Commission</span>
+              <span class="info-value">{{ outletObj?.vendorCommissionPercentage || 0 }}%</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>percent</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">MRP Commission</span>
+              <span class="info-value">{{ outletObj?.MRPCommissionPercentage || 0 }}%</span>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Card 4: Meal Timings -->
-    <div class="col-12">
-      <div class="card p-4">
-        <h5 class="mb-3 fw-bold border-bottom pb-2">Meal Timings</h5>
-        <div class="row g-3">
-          <div *ngFor="let meal of outletObj?.mealTiming" class="col-12 col-sm-6 col-md-4 col-lg-2">
-            <div class="timing-card p-3 rounded border bg-light text-center h-100">
-              <div class="labelText mb-1 text-primary fw-bold">{{ meal.mealType }}</div>
-              <div class="labelData">{{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}</div>
+    <!-- Organization Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon org">
+          <mat-icon>business</mat-icon>
+        </div>
+        <h3>Organization</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>corporate_fare</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ outletObj?.organizationDetails?.organization_name }}</span>
             </div>
           </div>
-          <div *ngIf="!outletObj?.mealTiming?.length" class="col-12 text-muted fst-italic">
-            No meal timings configured.
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ outletObj?.organizationDetails?.city }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>place</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ outletObj?.organizationDetails?.location }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cafeteria Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon cafe">
+          <mat-icon>restaurant</mat-icon>
+        </div>
+        <h3>Cafeteria</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>storefront</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ outletObj?.cafeteriaDetails?.cafeteria_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ outletObj?.cafeteriaDetails?.cafeteria_city }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>home</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Address</span>
+              <span class="info-value">{{ outletObj?.cafeteriaDetails?.address1 }} {{
+                outletObj?.cafeteriaDetails?.address2 }}</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
   </div>
+
+  <!-- Meal Timings Section -->
+  <div class="timing-section" *ngIf="outletObj?.mealTiming?.length > 0">
+    <div class="section-header">
+      <div class="header-icon timing">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <h2>Meal Timings</h2>
+      <span class="count-badge">{{ outletObj?.mealTiming?.length }}</span>
+    </div>
+    <div class="timing-grid">
+      <div class="timing-card" *ngFor="let meal of outletObj?.mealTiming">
+        <div class="timing-icon">
+          <mat-icon>{{ getMealIcon(meal.mealType) }}</mat-icon>
+        </div>
+        <div class="timing-content">
+          <span class="meal-type">{{ meal.mealType }}</span>
+          <span class="meal-time">{{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

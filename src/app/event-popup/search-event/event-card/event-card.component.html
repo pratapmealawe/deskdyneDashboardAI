@@ -12,7 +12,8 @@
         </div>
         <div class="col-6 col-md-2 col-lg-1">
           <div class="labelText">Opened</div>
-          <div class="labelData"> <mat-chip [ngClass]="event.eventPopupOpened ? 'green' : 'red'"> {{ (event.eventPopupOpened ?
+          <div class="labelData"> <mat-chip [ngClass]="event.eventPopupOpened ? 'green' : 'red'"> {{
+              (event.eventPopupOpened ?
               'true' : 'false') | titlecase }}</mat-chip></div>
         </div>
         <div class="col-6 col-md-2 col-lg-1">
@@ -42,5 +43,5 @@
     <h6>No data found</h6>
   </div>
   <mat-paginator [length]="event.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
-    [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)"></mat-paginator>
+    [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons></mat-paginator>
 </div>

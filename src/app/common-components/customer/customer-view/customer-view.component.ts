@@ -43,6 +43,21 @@ export class CustomerViewComponent implements OnInit, OnChanges {
     this.gotToTab(selectTab.path);
   }
 
+  onMainTabChange(index: number) {
+    this.selectedTabIndex = index;
+    this.selectedTab = this.userViewList[index].path;
+  }
+
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'userDetails': 'person',
+      'outletOrders': 'receipt_long',
+      'wallet': 'account_balance_wallet',
+      'companyWallet': 'corporate_fare'
+    };
+    return icons[path] || 'tab';
+  }
+
   backBtn() {
     this.backBtnEmitter.emit(true)
   }

@@ -77,7 +77,10 @@ export class MealaweOutletComponent implements OnInit {
 
   async getMealAweOutletByCafeteria(): Promise<void> {
     try {
+
       this.mealOutlet = await this.apiMainService.getMealAweOutletByCafeteria(this.cafeteriaId);
+      console.log("mealOutlet", this.mealOutlet);
+
       if (this.mealOutlet) {
         this.config = this.config.map(item => {
           const found = this.mealOutlet?.config?.find((value: any) => value.name === item.name);
@@ -266,7 +269,7 @@ export class MealaweOutletComponent implements OnInit {
 
   async createDefaultCategories() {
     try {
-      const { _id: cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = this.selectedCafeteria;
+      const { cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = this.selectedCafeteria;
       const payload: any = {
         org_id: this.orgObj._id,
         org_name: this.orgObj.organization_name,
