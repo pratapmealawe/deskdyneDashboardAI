@@ -200,7 +200,7 @@
             </div>
 
             <mat-paginator [length]="filteredEmployees.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
-                [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)">
+                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
             </mat-paginator>
 
         </mat-card-content>

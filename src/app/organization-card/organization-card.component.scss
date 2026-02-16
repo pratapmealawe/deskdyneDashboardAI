@@ -169,7 +169,9 @@
 
   // Action Section
   .org-action-section {
-    // flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 
     .view-btn {
       width: 40px;
@@ -191,6 +193,28 @@
         background: var.$primary-color1;
         color: white;
         box-shadow: 0 4px 12px rgba(var.$primary-color1, 0.2);
+      }
+    }
+
+    .hard-delete-btn {
+      color: #dc2626;
+
+      &:hover {
+        background-color: rgba(#dc2626, 0.1);
+      }
+    }
+
+    .restore-btn {
+      border-radius: 20px !important;
+      padding: 0 16px !important;
+      height: 36px !important;
+      font-weight: 600;
+
+      mat-icon {
+        margin-right: 4px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
     }
   }

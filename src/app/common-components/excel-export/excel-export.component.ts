@@ -3,38 +3,44 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 import { ExcelService } from 'src/service/excel.service';
 import { DatePipe } from '@angular/common';
+import { MatTabChangeEvent } from '@angular/material/tabs';
 
 @Component({
   selector: 'app-excel-export',
   templateUrl: './excel-export.component.html',
   styleUrls: ['./excel-export.component.scss']
 })
-export class ExcelExportComponent  implements OnInit {
+export class ExcelExportComponent implements OnInit {
   searchObj: any = {
     orderType: '',
     fromDate: '',
     toDate: '',
     org_id: ''
   }
-  orgChoices: any;
+  headerConfig: any = {
+    mode: 'cafeteria',
+    showDateRange: true,
+    disableOrg: false,
+    requireAll: true
+  };
   filteredList: any;
   monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
   constructor(private ddApiMainService: ApiMainService, private datePipe: DatePipe, private excelService: ExcelService, private toasterService: ToasterService) { }
 
   ngOnInit(): void {
-    this.fetchOrgChoices();
+    this.searchObj.orderType = 'allEventBulk';
   }
 
-  async fetchOrgChoices() {
-    try {
-      const orgChoices = await this.ddApiMainService.getOrgList();
-      if (orgChoices && orgChoices.length > 0) {
-        this.orgChoices = orgChoices;
-      }
-    } catch (error) {
-      console.log('cafeteria fetch error', error)
-    }
+  onTabChange(event: MatTabChangeEvent) {
+    this.searchObj.orderType = event.tab.textLabel;
+  }
+
+  filterSubmitted(event: any) {
+    this.searchObj.org_id = event.org_id;
+    this.searchObj.fromDate = event.date_from;
+    this.searchObj.toDate = event.date_to;
+    this.searchObj.cafeteriaId = event.cafeteria_id;
   }
 
   async searchOrder() {
@@ -67,12 +73,13 @@ export class ExcelExportComponent  implements OnInit {
         }
       }
       else if (this.searchObj.orderType === 'empPoll') {
-        this.searchObj.fromDate = new Date(this.searchObj.fromDate)
-        this.searchObj.toDate = new Date(this.searchObj.toDate)
-        this.searchObj.fromDate.setHours(0, 0, 0, 0)
-        this.searchObj.toDate.setHours(23, 59, 59, 999)
-        filteredList = await this.ddApiMainService.getAdminEmpPolls(this.searchObj);
-        console.log("filteredList",filteredList);
+        const payload = {
+          deliveryStartDate: this.searchObj.fromDate,
+          deliveryEndDate: this.searchObj.toDate,
+          orgId: this.searchObj.org_id,
+          cafeteriaId: this.searchObj.cafeteriaId
+        }
+        filteredList = await this.ddApiMainService.getCafeteriasPollingList(payload);
         if (filteredList && filteredList.length > 0) {
           this.filteredList = filteredList;
           this.createEmpPollExcel(filteredList);
@@ -110,7 +117,7 @@ export class ExcelExportComponent  implements OnInit {
     orderList.forEach((order: any) => {
       const currentDate = new Date(order.orderDate);
       const deliveryDate = new Date(order.deliveryDate);
-      const location = order.customerLocation.location;
+      const location = order.customerLocation?.location || order.customerLocation?.address || '';
       let pin = '';
       if (location) {
         const res = location.match(/\b\d{6}\b/);
@@ -121,34 +128,47 @@ export class ExcelExportComponent  implements OnInit {
           pin = 'N/A';
         }
       }
+
+      const item = order.itemList && order.itemList.length > 0 ? order.itemList[0] : {};
+
       const row = {
-        "POC Name": order.pocName,
-        "POC Phone No": order.pocPhoneNo,
-        "POC Email Id": order.pocEmail,
-        "POC ID": order.pocId,
-        "POC Role": order.pocRole,
+        "POC Name": order.pocDetails?.pocName || order.pocName || '',
+        "POC Phone No": order.pocDetails?.pocPhoneNo || order.pocPhoneNo || '',
+        "POC Email Id": order.pocDetails?.pocEmail || order.pocEmail || '',
+        "POC ID": order.pocDetails?.pocId || order.pocId || '',
+        "POC Role": order.pocDetails?.pocRole || order.pocRole || '',
         "POC Location / Pin Code": pin ? pin : location,
         "Org Name": order.orgName,
-        "Org Location": order.orgLocation,
+        "Org Location": order.orgLocation || '',
         "Order Date": currentDate,
         "Delivery Date": deliveryDate,
-        "Meal Name": order.itemList[0].itemName,
-        "Count": order.itemList[0].count,
-        "Cutoff Time": order.itemList[0].cutOffTime,
-        "Delivery Time From": this.datePipe.transform(order.itemList[0].deliveryTimeFrom, 'shortTime'),
-        "Delivery Time To": this.datePipe.transform(order.itemList[0].deliveryTimeTo, 'shortTime'),
-        "Delivered Item": order.itemList[0].deliveredItem ? order.itemList[0].deliveredItem : 'N/A',
-        "Amount Paid To Kitchen": order.itemAmount,
-        "Amount + Fixed Delivery": order.amount,
-        "Amount without Fixed Delivery": order.amount - order.deliveryCharge,
-        "Fixed Delivery Charges": order.deliveryCharge,
+        "Meal Name": item.itemName || item.mealConfigName || '',
+        "Count": item.count || 0,
+        "Cutoff Time": item.cutOffTime || '',
+        "Delivery Time From": item.deliveryTimeFrom ? this.datePipe.transform(this.getDateFromTime(item.deliveryTimeFrom), 'shortTime') : '',
+        "Delivery Time To": item.deliveryTimeTo ? this.datePipe.transform(this.getDateFromTime(item.deliveryTimeTo), 'shortTime') : '',
+        "Delivered Item": item.deliveredItem || 'N/A',
+        "Amount Paid To Kitchen": order.itemAmount || 0,
+        "Amount + Fixed Delivery": order.amount || 0,
+        "Amount without Fixed Delivery": (order.amount || 0) - (order.deliveryCharge || 0),
+        "Fixed Delivery Charges": order.deliveryCharge || 0,
         "Delivery paid by mealawe": order.deliveryAmtPaidByMealawe ? order.deliveryAmtPaidByMealawe : 'N/A',
-        "Pay Amt To Kitchen": order.itemAmount,
-        "Taxes": order.taxes,
+        "Pay Amt To Kitchen": item.payAmtToKitchen || 0,
+        "Taxes": order.taxes || 0,
+        "Order Status": order.orderstatus || ''
       }
       data.push(row);
     })
     this.excelService.download(data, `admin_bulk_${this.datePipe.transform(this.searchObj.fromDate, 'shortDate')}_TO_${this.datePipe.transform(this.searchObj.toDate, 'shortDate')}`)
+  }
+
+  // Helper to convert time string HH:mm to Date object for piping
+  getDateFromTime(timeStr: string): Date {
+    const d = new Date();
+    const [hours, minutes] = timeStr.split(':');
+    d.setHours(+hours);
+    d.setMinutes(+minutes);
+    return d;
   }
 
   createPackageExcel(orderList: any) {
@@ -207,7 +227,7 @@ export class ExcelExportComponent  implements OnInit {
       const subsidyType = foodPackage.mealPackage.subsidyType ? foodPackage.mealPackage.subsidyType : 0;
       let pin;
       const finalLocation = location ? location : address;
-      if(address){
+      if (address) {
         const res = address.match(/\b\d{6}\b/);
         if (res && res.length > 0) {
           pin = res[0];
@@ -284,9 +304,9 @@ export class ExcelExportComponent  implements OnInit {
   createEmpPollExcel(orderList: any) {
     let data: any = [];
     orderList.forEach((order: any) => {
-      const currentDate = new Date(order.orderDate);
       const deliveryDate = new Date(order.deliveryDate);
-      const location = order.customerLocation.location;
+      const pollDate = new Date(order.pollDate);
+      const location = order.customerLocation?.location || order.customerLocation?.address || '';
       let pin = '';
       if (location) {
         const res = location.match(/\b\d{6}\b/);
@@ -297,25 +317,29 @@ export class ExcelExportComponent  implements OnInit {
           pin = 'N/A';
         }
       }
-      order.excelReportlist.forEach((exdetails: any) => {
-        if(exdetails.employeeVote=='YES'){
+
+      const mealItems = order.mealTypeList || [];
+
+      mealItems.forEach((exdetails: any) => {
+        if (exdetails.employeeVote == 'YES') {
           const currentDate: any = new Date(deliveryDate);
-        const month = currentDate.getMonth() + 1;
-        let odate = new Date( order.orderDate);
-      const row = {
-        "Order Date": odate.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
-        "Delivery Date short":currentDate.getDate() + '-' + month + '-' + currentDate.getFullYear(),
-        "Employee Name":exdetails.employeeName,
-        "Employee Vote":exdetails.employeeVote,
-        "Item Name":order.itemList[0].itemName,
-        "Delivered Item": order.itemList[0].deliveredItem ? order.itemList[0].deliveredItem : 'N/A',
-        "Organization Name":order.orgName
-      }
-      data.push(row);
-    }
+          const month = currentDate.getMonth() + 1;
+          const row = {
+            "Order Date": this.datePipe.transform(pollDate, 'short'),
+            "Delivery Date short": this.datePipe.transform(currentDate, 'shortDate'),
+            "Employee Name": order.employeeName,
+            "Employee Vote": exdetails.employeeVote,
+            "Item Name": exdetails.itemName ? exdetails.itemName : exdetails.mealConfigName,
+            "Delivered Item": exdetails.deliveredItem ? exdetails.deliveredItem : 'N/A',
+            "Organization Name": order.orgName,
+            "POC Location": location,
+            "POC Pin": pin
+          }
+          data.push(row);
+        }
       })
     })
-    this.excelService.download(data, `admin_bulk_${this.datePipe.transform(this.searchObj.fromDate, 'shortDate')}_TO_${this.datePipe.transform(this.searchObj.toDate, 'shortDate')}`)
+    this.excelService.download(data, `emp_poll_${this.datePipe.transform(this.searchObj.fromDate, 'shortDate')}_TO_${this.datePipe.transform(this.searchObj.toDate, 'shortDate')}`)
   }
 
   createIndividualExcel(orderList: any) {

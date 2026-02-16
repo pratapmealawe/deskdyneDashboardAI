@@ -1,5 +1,13 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { PolicyService } from 'src/service/policy.service';
+import { OrganizationAddVendorComponent } from './organization-add-vendor/organization-add-vendor.component';
+import { OrganizationCopyBulkMenuComponent } from './organization-copy-bulk-menu/organization-copy-bulk-menu.component';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { ToasterService } from 'src/service/toaster.service';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-organization-view',
@@ -44,16 +52,47 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Cake', path: 'cakeMenu' },
         { name: 'Sweet', path: 'sweetMenu' },
         { name: 'Lux', path: 'luxMenu' },
+        { name: 'Pantry', path: 'pantryMenu' },
       ],
     },
-    { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
+    {
+      name: 'Employee Bulk Menu', path: 'employeebulkmenu',
+      subTabs: [
+        {
+          name: 'Meals',
+          childTabs: [
+            { name: 'Bulk Meals Menu', path: 'employeebulkMealsMenu' },
+            { name: 'Individual Meals Menu', path: 'employeeindividualMealsMenu' },
+          ],
+        },
+        {
+          name: 'Snacks',
+          childTabs: [
+            { name: 'Bulk Snacks Menu', path: 'employeebulkSnacksMenu' },
+            { name: 'Individual Snacks Menu', path: 'employeeindividualSnacksMenu' },
+          ],
+        },
+        {
+          name: 'Foodbox',
+          childTabs: [
+            { name: 'Pre-Defined Snack Box', path: 'employeepredefinedSnackBoxMenu' },
+            { name: 'Customized Snack Box', path: 'employeecustomizedSnackBoxMenu' },
+          ],
+        },
+        { name: 'Cake', path: 'employeecakeMenu' },
+        { name: 'Sweet', path: 'employeesweetMenu' },
+        { name: 'Lux', path: 'employeeluxMenu' },
+        { name: 'Pantry', path: 'employeepantryMenu' },
+      ],
+    },
+    { name: 'Virtual Cafeteria', path: 'virtualCafeteriaOutlet' },
     { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
     { name: 'Consumption Menu', path: 'consumptionOrder' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Outlet Employee', path: 'outletEmployee' },
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
-    { name: 'Guest Employee', path: 'guestEmployeeList' },
-    { name: 'Employee wallet', path: 'employeeWallet' },
+    // { name: 'Guest Employee', path: 'guestEmployeeList' },
+    { name: 'Company Wallet', path: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];
 
@@ -126,14 +165,15 @@ export class OrganizationViewComponent implements OnInit {
       'orgDetails': 'business',
       'organizationCompliance': 'verified_user',
       'bulkMenuSection': 'restaurant_menu',
+      'employeebulkmenu': 'restaurant_menu',
       'mealAweOutlet': 'storefront',
       'dailyOrderMenu': 'today',
       'consumptionOrder': 'receipt_long',
       'employeeList': 'people',
       'outletEmployee': 'badge',
       'vcEmployee': 'person_pin',
-      'guestEmployeeList': 'person_add',
-      'employeeWallet': 'account_balance_wallet',
+      // 'guestEmployeeList': 'person_add',
+      'companyWallet': 'account_balance_wallet',
       'qrEmployee': 'qr_code'
     };
     return icons[path] || 'article';

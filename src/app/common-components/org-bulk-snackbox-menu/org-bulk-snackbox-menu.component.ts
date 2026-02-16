@@ -1,7 +1,11 @@
 import {
   Component,
+  EventEmitter,
   Input,
+  OnChanges,
   OnInit,
+  Output,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -47,6 +51,7 @@ interface SnackMenuMeta {
   slab3DeliveryPrice?: number;
   slab4DeliveryPrice?: number;
   itemList?: SnackMenuItem[];
+  vendorDetails?: any;
 }
 
 @Component({
@@ -54,8 +59,11 @@ interface SnackMenuMeta {
   templateUrl: './org-bulk-snackbox-menu.component.html',
   styleUrls: ['./org-bulk-snackbox-menu.component.scss'],
 })
-export class OrgBulkSnackboxMenuComponent implements OnInit {
+export class OrgBulkSnackboxMenuComponent implements OnInit, OnChanges {
   @Input() orgObj!: Org;
+  @Input() selectedCafeteria: any;
+  @Output() isVendorAssigned = new EventEmitter<boolean>();
+  @Output() hasMenu = new EventEmitter<boolean>();
   @ViewChild('itemDialog') itemDialog!: TemplateRef<any>;
 
   bulkMenuList: SnackMenuItem[] = [];
@@ -88,16 +96,20 @@ export class OrgBulkSnackboxMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.fetchOrgChoices();
-    this.getBulkSnackMenuItems();
+    this.getBulkSnackMenuItemsByCafeteriaId();
     this.getAllB2BFoodItemList();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['selectedCafeteria']) {
+      this.getBulkSnackMenuItemsByCafeteriaId();
+    }
   }
 
   async copyOrgMenu(): Promise<void> {
     try {
       if (!this.orgSelected) return;
-      const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnacksMenu(
-        this.orgSelected
-      );
+      const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnacksMenu(this.orgSelected);
       this.bulkSnacksMenuFetched = menuItems || {};
       this.bulkMenuList = menuItems.itemList || [];
     } catch (error) {
@@ -114,15 +126,36 @@ export class OrgBulkSnackboxMenuComponent implements OnInit {
     }
   }
 
-  async getBulkSnackMenuItems(): Promise<void> {
+  // async getBulkSnackMenuItems(): Promise<void> {
+  //   try {
+  //     const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnacksMenu(
+  //       this.orgObj._id
+  //     );
+  //     this.bulkSnacksMenuFetched = menuItems || {};
+  //     this.bulkMenuList = menuItems.itemList || [];
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
+
+  async getBulkSnackMenuItemsByCafeteriaId(): Promise<void> {
     try {
-      const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnacksMenu(
-        this.orgObj._id
-      );
-      this.bulkSnacksMenuFetched = menuItems || {};
-      this.bulkMenuList = menuItems.itemList || [];
+      this.hasMenu.emit(false);
+      const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnackMenu(this.selectedCafeteria._id);
+      if (menuItems) {
+        this.isVendorAssigned.emit(!!menuItems.vendorDetails);
+        this.bulkSnacksMenuFetched = menuItems || {};
+        this.bulkMenuList = menuItems.itemList || [];
+        if (this.bulkMenuList.length > 0) this.hasMenu.emit(true);
+      } else {
+        this.bulkSnacksMenuFetched = {};
+        this.bulkMenuList = [];
+        this.isVendorAssigned.emit(false);
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.log(error);
+      this.hasMenu.emit(false);
     }
   }
 
@@ -192,8 +225,12 @@ export class OrgBulkSnackboxMenuComponent implements OnInit {
 
   async editBulkMenu(): Promise<void> {
     const bulkMenuObj = {
-      companyName: this.orgObj.organization_name,
-      companyId: this.orgObj._id,
+      organization_id: this.orgObj._id,
+      organization_name: this.orgObj.organization_name,
+      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaName: this.selectedCafeteria.cafeteria_name,
+      mainCategory: 'snacks',
+      subCategory: 'bulkSnacksMenu',
       moq: this.bulkSnacksMenuFetched.moq,
       slabLimit1: this.bulkSnacksMenuFetched.slabLimit1,
       slabLimit2: this.bulkSnacksMenuFetched.slabLimit2,
@@ -201,20 +238,20 @@ export class OrgBulkSnackboxMenuComponent implements OnInit {
       dateLimit1: this.bulkSnacksMenuFetched.dateLimit1,
       dateLimit2: this.bulkSnacksMenuFetched.dateLimit2,
       dateLimit3: this.bulkSnacksMenuFetched.dateLimit3,
-      slab1DeliveryPrice: this.bulkSnacksMenuFetched.slab1DeliveryPrice,
-      slab2DeliveryPrice: this.bulkSnacksMenuFetched.slab2DeliveryPrice,
-      slab3DeliveryPrice: this.bulkSnacksMenuFetched.slab3DeliveryPrice,
-      slab4DeliveryPrice: this.bulkSnacksMenuFetched.slab4DeliveryPrice,
+      slab1DeliveryPrice: this.bulkSnacksMenuFetched.slab1DeliveryPrice ?? 0,
+      slab2DeliveryPrice: this.bulkSnacksMenuFetched.slab2DeliveryPrice ?? 0,
+      slab3DeliveryPrice: this.bulkSnacksMenuFetched.slab3DeliveryPrice ?? 0,
+      slab4DeliveryPrice: this.bulkSnacksMenuFetched.slab4DeliveryPrice ?? 0,
       itemList: [...this.bulkMenuList],
     };
 
     try {
-      await this.api.B2B_Bulk_SnackMenuAdd(bulkMenuObj);
+      await this.api.B2B_saveBulkSnacksMenu(bulkMenuObj);
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getBulkSnackMenuItems();
-    } catch (e) {
-      console.log('error while saving kitchen');
+      await this.getBulkSnackMenuItemsByCafeteriaId();
+    } catch (error) {
+      console.error('error while saving bulk snack menu', error);
     }
   }
 

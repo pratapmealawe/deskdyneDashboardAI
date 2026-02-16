@@ -6,7 +6,7 @@ import { ConfirmationModalService } from '../../service/confirmation-modal.servi
 import { PolicyService } from 'src/service/policy.service';
 import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { categoryList } from 'src/config/food-category.config';
+import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { Router } from '@angular/router';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
@@ -75,7 +75,14 @@ export class OutletMasterMenuComponent implements OnInit {
   categoryList = categoryList;
   pageSize: number = 5;
   pageIndex: number = 0;
-
+  nutritionListOptions = nutritionListOptions;
+  energyTooltip = `
+Nutrient Conversion Factors:
+• Protein: 4 kcal/g
+• Carbohydrates: 4 kcal/g
+• Fat: 9 kcal/g
+• Fiber: 2 kcal/g
+`;
   constructor(
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
@@ -205,9 +212,18 @@ export class OutletMasterMenuComponent implements OnInit {
     }
     if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
       this.nutrition_Lists.clear();
-      item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
-        this.nutrition_Lists.push(this.fb.group(nutrition));
+      item.nutritionInfo.nutritionList.forEach((nutrition: any) => {
+        const option = this.nutritionListOptions.find(opt =>
+          opt.id === nutrition.nutritionId || opt.title === nutrition.nutritionName
+        );
+        this.nutrition_Lists.push(this.fb.group({
+          nutritionId: [nutrition.nutritionId || option?.id],
+          nutritionName: [option || nutrition.nutritionName],
+          nutritionValue: [nutrition.nutritionValue],
+          nutritionUnit: [nutrition.nutritionUnit || 'gm']
+        }));
       });
+      this.calculateEnergyValue();
     }
   }
 
@@ -226,11 +242,15 @@ export class OutletMasterMenuComponent implements OnInit {
       energyValue: [''],
       nutritionList: this.fb.array([
         this.fb.group({
-          nutritionName: [''],
+          nutritionId: [null],
+          nutritionName: [null],
           nutritionValue: [''],
-          nutritionUnit: ['']
+          nutritionUnit: ['gm']
         })
       ])
+    });
+    this.form.get('nutritionList')?.valueChanges.subscribe(() => {
+      this.calculateEnergyValue();
     });
   }
 
@@ -246,9 +266,10 @@ export class OutletMasterMenuComponent implements OnInit {
 
   addNutritionLists() {
     this.nutrition_Lists.push(this.fb.group({
-      nutritionName: [''],
+      nutritionId: [null],
+      nutritionName: [null],
       nutritionValue: [''],
-      nutritionUnit: ['']
+      nutritionUnit: ['gm']
     }));
   }
 
@@ -355,7 +376,12 @@ export class OutletMasterMenuComponent implements OnInit {
 
       const nutritionInfo = {
         energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList
+        nutritionList: (this.form.value.nutritionList || []).map((nut: any) => ({
+          nutritionId: nut.nutritionId || nut.nutritionName?.id,
+          nutritionName: typeof nut.nutritionName === 'object' ? nut.nutritionName?.title : (nut.nutritionName || ''),
+          nutritionValue: nut.nutritionValue || 0,
+          nutritionUnit: nut.nutritionUnit || 'gm'
+        }))
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
@@ -435,8 +461,13 @@ export class OutletMasterMenuComponent implements OnInit {
       formData.append('mealTimingInfo', JSON.stringify(mealTimingObjects));
 
       const nutritionInfo = {
-        energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList
+        energyValue: this.form.value.energyValue || 0,
+        nutritionList: (this.form.value.nutritionList || []).map((nut: any) => ({
+          nutritionId: nut.nutritionId || nut.nutritionName?.id,
+          nutritionName: typeof nut.nutritionName === 'object' ? nut.nutritionName?.title : (nut.nutritionName || ''),
+          nutritionValue: nut.nutritionValue || 0,
+          nutritionUnit: nut.nutritionUnit || 'gm'
+        }))
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
@@ -650,5 +681,49 @@ export class OutletMasterMenuComponent implements OnInit {
     this.pageSize = event.pageSize;
     this.pageIndex = event.pageIndex
 
+  }
+
+  onNutritionSelect(option: any, index: number) {
+    if (option) {
+      this.nutrition_Lists.at(index).patchValue({
+        nutritionId: option.id
+      });
+    }
+  }
+
+  isOptionSelected(optionId: number, currentIndex: number): boolean {
+    const selectedIds = this.nutrition_Lists.controls
+      .map((control, idx) => (idx !== currentIndex ? control.get('nutritionId')?.value : null))
+      .filter(id => id !== null && id !== undefined);
+
+    return selectedIds.includes(optionId);
+  }
+
+  compareNutrition(o1: any, o2: any): boolean {
+    if (!o1 || !o2) return o1 === o2;
+    return o1.id === o2.id;
+  }
+  calculateEnergyValue() {
+    const nutritionList = this.form.get('nutritionList')?.value as any[];
+    if (!nutritionList) return;
+
+    let totalEnergy = 0;
+    nutritionList.forEach((item) => {
+      const value = parseFloat(item.nutritionValue) || 0;
+      // Use nutritionId directly or from the nutritionName object
+      const nutritionId = item.nutritionId || item.nutritionName?.id;
+
+      if (nutritionId === 1) { // Protein
+        totalEnergy += value * 4;
+      } else if (nutritionId === 2) { // Fat
+        totalEnergy += value * 9;
+      } else if (nutritionId === 3) { // Carbohydrate
+        totalEnergy += value * 4;
+      } else if (nutritionId === 4) { // Fibre
+        totalEnergy += value * 2;
+      }
+    });
+
+    this.form.get('energyValue')?.patchValue(parseFloat(totalEnergy.toFixed(2)), { emitEvent: false });
   }
 }

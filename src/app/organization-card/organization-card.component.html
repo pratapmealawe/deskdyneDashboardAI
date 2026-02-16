@@ -43,6 +43,9 @@
         <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View Details" class="view-btn">
           <mat-icon>visibility</mat-icon>
         </button>
+        <button mat-icon-button color="warn" (click)="onSoftDelete(org)" matTooltip="Delete Organization">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
       </div>
     </div>
   </div>
@@ -57,8 +60,8 @@
 </div>
 
 <mat-paginator [length]="organization.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
-  [pageSizeOptions]="[10, 20, 50, 100, 200]" (page)="onPageChange($event)" aria-label="Select page"
-  class="custom-paginator">
+  [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+  aria-label="Select page" class="custom-paginator">
 </mat-paginator>
 
 <!-- Modal for Cafeteria/POC Details -->
