@@ -7,47 +7,12 @@
   <mat-tab *ngFor="let view of orgViewList; let mainIndex = index" [label]="view.name">
     <ng-container *ngIf="selectedMainTabIndex === mainIndex">
       <!-- Common Header for Bulk Menu Section - Placed above tabs -->
-      <div *ngIf="showBulkMenuHeader && organization?.cafeteriaList?.length > 0" class="mb-4">
-        <mat-card class="p-3">
-          <mat-card-title>Select Cafeteria</mat-card-title>
-          <mat-radio-group color="primary" [(ngModel)]="selectedCafeteria">
-            <mat-radio-button *ngFor="let cafeteria of organization.cafeteriaList" [id]="cafeteria._id"
-              name="CafeteriaName" [value]="cafeteria" (change)="onCafeteriaChange($event)">
-              {{cafeteria.cafeteria_name}}
-            </mat-radio-button>
-          </mat-radio-group>
-          <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
-            <button mat-raised-button color="primary" type="button" *ngIf="!isCategoryActive"
-              (click)="openCategoryModal(toggleCategory)" [disabled]="!isMenuAvailable">
-              <mat-icon>check</mat-icon>
-              Activate Menu
-            </button>
-            <button mat-raised-button color="warn" type="button" *ngIf="isCategoryActive"
-              (click)="openCategoryModal(toggleCategory)" [disabled]="!isMenuAvailable">
-              <mat-icon>block</mat-icon>
-              De-Activate Menu
-            </button>
-            <button mat-raised-button color="primary" *ngIf="!isVendorAssigned" (click)="assignVendor()"
-              [disabled]="!isMenuAvailable">
-              <mat-icon>add</mat-icon>
-              Assign Vendor
-            </button>
-            <button mat-raised-button color="warn" *ngIf="isVendorAssigned" (click)="changeVendor()"
-              [disabled]="!isMenuAvailable">
-              <mat-icon>edit</mat-icon>
-              Change Vendor
-            </button>
-            <button mat-raised-button color="primary" (click)="copyMenu()">
-              <mat-icon>content_copy</mat-icon>
-              Copy Menu
-            </button>
-            <button mat-raised-button color="primary" (click)="exportMenu()">
-              <mat-icon>cloud_download</mat-icon>
-              Download Menu
-            </button>
-          </div>
-        </mat-card>
-      </div>
+      <app-employee-select-cafeteria *ngIf="showBulkMenuHeader" [organization]="organization"
+        [selectedMainTabIndex]="selectedMainTabIndex" [selectedSubTabIndex]="selectedSubTabIndex"
+        [selectedChildTabIndex]="selectedChildTabIndex" [isMenuAvailable]="isMenuAvailable" (cafeteriaChanged)="onCafeteriaChanged($event)"
+        (isVendorAssigned)="checkVendorAssigned($event)"
+        (isCategoryActive)="onCategoryActiveChanged($event)">
+      </app-employee-select-cafeteria>
       <mat-tab-group *ngIf="view.subTabs?.length" [(selectedIndex)]="selectedSubTabIndex"
         (selectedIndexChange)="onSubTabChange($event)" class="custom-tabs">
         <mat-tab *ngFor="let sub of view.subTabs; let subIndex = index" [label]="sub.name">
@@ -171,7 +136,7 @@
   </mat-tab>
 </mat-tab-group>
 
-<ng-template #toggleCategory let-modal>
+<!-- <ng-template #toggleCategory let-modal>
   <div class="modal-header">
     <div class="modal-title delete-modal-title">
       {{ isCategoryActive ? 'De-Activate Category' : 'Activate Category' }}
@@ -198,4 +163,4 @@
       No
     </button>
   </div>
-</ng-template>
+</ng-template> -->

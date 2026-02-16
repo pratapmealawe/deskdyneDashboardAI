@@ -42,6 +42,7 @@ import { EmployeeLuxMenuComponent } from '../common-components/employee-lux-menu
 import { EmployeePredefinedFoodboxMenuComponent } from '../common-components/employee-predefined-foodbox-menu/employee-predefined-foodbox-menu.component';
 import { EmployeeSweetMenuComponent } from '../common-components/employee-sweet-menu/employee-sweet-menu.component';
 import { EmployeePantryMenuComponent } from '../common-components/employee-pantry-menu/employee-pantry-menu.component';
+import { EmployeeSelectCafeteriaComponent } from '../common-components/employee-select-cafeteria/employee-select-cafeteria.component';
 @NgModule({
   declarations: [
     OrganizationViewComponent,
@@ -78,7 +79,8 @@ import { EmployeePantryMenuComponent } from '../common-components/employee-pantr
     EmployeeLuxMenuComponent,
     EmployeePredefinedFoodboxMenuComponent,
     EmployeeSweetMenuComponent,
-    EmployeePantryMenuComponent
+    EmployeePantryMenuComponent,
+    EmployeeSelectCafeteriaComponent
   ],
   imports: [
     CommonModule,
@@ -91,6 +93,6 @@ import { EmployeePantryMenuComponent } from '../common-components/employee-pantr
     QRCodeModule,
     DirectivesModule
   ],
-  exports: [OrganizationViewComponent, OrgOutletOrdersComponent],
+  exports: [OrganizationViewComponent, OrgOutletOrdersComponent, EmployeeSelectCafeteriaComponent],
 })
 export class OrganizationViewModule { }
