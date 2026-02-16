@@ -36,7 +36,7 @@
         </div>
 
         <mat-paginator [length]="byItem().length" [pageIndex]="itemPageIndex()" [pageSize]="itemPageSize()"
-          [pageSizeOptions]="pageSizeOptions" (page)="onItemPage($event)" showFirstLastButtons>
+          [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onItemPage($event)" showFirstLastButtons>
         </mat-paginator>
       </mat-tab>
 
@@ -70,7 +70,7 @@
         </div>
 
         <mat-paginator [length]="byType().length" [pageIndex]="typePageIndex()" [pageSize]="typePageSize()"
-          [pageSizeOptions]="pageSizeOptions" (page)="onTypePage($event)" showFirstLastButtons>
+          [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onTypePage($event)" showFirstLastButtons>
         </mat-paginator>
       </mat-tab>
 
@@ -104,7 +104,7 @@
         </div>
 
         <mat-paginator [length]="byCategory().length" [pageIndex]="catPageIndex()" [pageSize]="catPageSize()"
-          [pageSizeOptions]="pageSizeOptions" (page)="onCatPage($event)" showFirstLastButtons>
+          [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onCatPage($event)" showFirstLastButtons>
         </mat-paginator>
       </mat-tab>
 

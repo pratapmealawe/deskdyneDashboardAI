@@ -22,7 +22,7 @@ export class SearchVendorComponent implements OnInit {
   orgName: any;
   btnPolicy: any;
   filteredVendorList: any[] = [];
-  filterVendorDuplicate:any[]=[];
+  filterVendorDuplicate: any[] = [];
   searchControl = new FormControl('');
   filteredVendor: any[] = [];
 
@@ -41,20 +41,24 @@ export class SearchVendorComponent implements OnInit {
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe(value => {
-     const config = { keys: ['vendorFirmName'] };
-  if (value) {
-    const result = this.searchService.searchData(
-      this.filteredVendorList,
-      config,
-      value ?? ''
-    );
+      // Search by vendorFirmName, vendorName, and vendorPhoneNo using SearchFilterService
+      const config = {
+        keys: ['vendorFirmName', 'vendorList.vendorName', 'vendorList.vendorPhoneNo']
+      };
 
-    // FORCE NEW ARRAY REFERENCE
-    this.filterVendorDuplicate = [...result];
-  } else {
-    this.filterVendorDuplicate = [...this.filteredVendorList];
-  }
-  console.log("Updated:", this.filterVendorDuplicate);
+      if (value) {
+        const result = this.searchService.searchData(
+          this.filteredVendorList,
+          config,
+          value ?? ''
+        );
+
+        // FORCE NEW ARRAY REFERENCE
+        this.filterVendorDuplicate = [...result];
+      } else {
+        this.filterVendorDuplicate = [...this.filteredVendorList];
+      }
+      console.log("Updated:", this.filterVendorDuplicate);
     });
   }
 

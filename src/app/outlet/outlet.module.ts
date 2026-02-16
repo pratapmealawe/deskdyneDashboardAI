@@ -10,9 +10,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MaterialModule } from '../material.module';
+import { DeletedOutletsDialogComponent } from './deleted-outlets-dialog/deleted-outlets-dialog.component';
 
 @NgModule({
-  declarations: [OutletComponent],
+  declarations: [OutletComponent, DeletedOutletsDialogComponent],
   imports: [
     CommonModule,
     OutletRoutingModule,
@@ -22,4 +23,5 @@ import { MaterialModule } from '../material.module';
     MaterialModule
   ],
 })
-export class OutletModule {}
+export class OutletModule { }
+

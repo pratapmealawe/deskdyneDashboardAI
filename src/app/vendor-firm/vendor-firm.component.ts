@@ -125,6 +125,7 @@ export class VendorFirmComponent {
     this.pageIndex = event.pageIndex;
     this.updateCard();
   }
+
   updateCard() {
     if (!this.filteredList) return;
     const start = this.pageIndex * this.pageSize;

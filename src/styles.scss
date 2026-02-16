@@ -345,25 +345,37 @@
 }
 
 .pac-container {
-  background-color: white;
-  border-radius: 2px;
-  z-index: 9999 !important;
-  // width:270px !important;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+  font-family: inherit;
+  z-index: 100001 !important; // Higher than cdk-overlay-container (9999)
+  position: fixed !important; // Ensure proper positioning
 
-  // .pac-item {
-  //     color: $primary-color3;
-  // }
+  .pac-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
 
-  // .pac-icon {
-  //     background-repeat: no-repeat;
-  //     background-size: 10px;
-  //     background-position: 1px 1px;
-  //     background-image: url('~/src/assets/icon/location_red.svg');
-  // }
+    &:hover,
+    &.pac-item-selected {
+      background-color: #f0f9ff;
+    }
 
-  // .pac-item-query {
-  //     color: $primary-color3;
-  // }
+    .pac-icon {
+      margin-right: 8px;
+    }
+
+    .pac-item-query {
+      font-weight: 500;
+      color: #1f2937;
+    }
+  }
+
+  .pac-matched {
+    font-weight: 600;
+  }
 }
 
 .tileSelected {

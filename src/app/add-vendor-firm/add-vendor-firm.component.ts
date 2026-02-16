@@ -1,16 +1,14 @@
-import { Component, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
-import { FormBuilder, FormArray, Validators, FormGroup, AbstractControl, FormControl } from '@angular/forms';
-import { MatCheckbox } from '@angular/material/checkbox';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
+import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { MatSelect, MatSelectChange } from '@angular/material/select';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { log } from 'console';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
 import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
+import { SetGeolocationComponent } from '../set-geolocation/set-geolocation.component';
 
 
 @Component({
@@ -42,17 +40,21 @@ export class AddVendorFirmComponent {
   showCafeteria = false;
   showSelectCafeteriaOption = true;
   selectedVendorFirm: any;
-  vendorLocation: any
-  dialogRef!: MatDialogRef<any>;
-  @ViewChild('outletModal') outlet: any;
-  outletMatDialogRef: any; // Ref for the outlet dialog
-  // @ViewChild('complianceModal') compliance: any; // Removed as we use MatDialog type
-  @ViewChild('geolocation') geolocation: any;
-  @ViewChild('addAddress') address: any;
-  @ViewChild('pocDetailsTemp') pocdetails: any;
-  @ViewChild('popupModal') popupModal: any;
+  vendorLocation: any;
+
+  // Dialog refs for MatDialog
+  outletDialogRef: MatDialogRef<any> | null = null;
+  addressDialogRef: MatDialogRef<any> | null = null;
+  pocDialogRef: MatDialogRef<any> | null = null;
+  popupDialogRef: MatDialogRef<any> | null = null;
+
+  @ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
+  @ViewChild('addAddress', { static: true }) addressDialog!: TemplateRef<any>;
+  @ViewChild('pocDetailsTemp', { static: true }) pocDialog!: TemplateRef<any>;
+  @ViewChild('popupModal', { static: true }) popupDialog!: TemplateRef<any>;
+
   addressList: any = [];
-  pocDetails: any = []
+  pocDetails: any = [];
 
   btnPolicy: any;
   pocBtn: string = 'Submit';
@@ -62,7 +64,6 @@ export class AddVendorFirmComponent {
     private fb: FormBuilder,
     private dialog: MatDialog,
     private apiMainService: ApiMainService,
-    public modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
     private policyService: PolicyService
@@ -152,30 +153,34 @@ export class AddVendorFirmComponent {
       this.form.get('accountEnrollment')?.setValue(file.name);
     }
   }
+
   toggleMap(index?: any) {
-    this.modalService
-      .open(this.geolocation, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'lg',
-        windowClass: 'mapModel',
-      })
-      .result.then(
-        (result) => {
-          const geoGroup = this.addressForm.get('geolocation') as FormGroup;
-          geoGroup.patchValue({
-            lat: this.vendorLocation.latlng.lat,
-            lng: this.vendorLocation.latlng.lng,
-          });
-        },
-        (reason) => {
-          console.log(`Model Dismissed`);
-        }
-      );
+    const dialogRef = this.dialog.open(SetGeolocationComponent, {
+      width: '900px',
+      disableClose: true,
+      panelClass: 'custom-dialog-container',
+      autoFocus: false,
+      data: {
+        selectedCenter: this.addressForm.get('geolocation')?.value
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.vendorLocation = result;
+        const geoGroup = this.addressForm.get('geolocation') as FormGroup;
+        geoGroup.patchValue({
+          lat: result.latlng.lat,
+          lng: result.latlng.lng,
+        });
+      }
+    });
   }
 
   updateLocation(event: any) {
     this.vendorLocation = event;
   }
+
   async patchVendorLocation() {
     const geoGroup = this.addressForm.get('geolocation') as FormGroup;
     geoGroup.patchValue({
@@ -315,14 +320,29 @@ export class AddVendorFirmComponent {
     this.form.get('accountEnrollment').setValue('');
   }
 
+  trimStringValues(obj: any): any {
+    if (obj instanceof File || obj instanceof Blob) return obj;
+    if (typeof obj === 'string') return obj.trim();
+    if (Array.isArray(obj)) return obj.map((v: any) => this.trimStringValues(v));
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        obj[key] = this.trimStringValues(obj[key]);
+      });
+    }
+    return obj;
+  }
+
   async submit(type?: any) {
     try {
-      const finalObj = {
+      let finalObj = {
         ...this.form.value,
         outletList: this.selectedOutletsList,
         popup_details: this.selectedPopupsList,
         address: this.addressList // Ensure address list is sent
       };
+
+      finalObj = this.trimStringValues(finalObj);
+
       const formData = this.objectToFormData(finalObj);
 
       if (type == 'update') {
@@ -357,7 +377,6 @@ export class AddVendorFirmComponent {
     )?.organization_name;
     console.log("Organization Name:", organizationName);
 
-    // const { cafeteriaName, cafeteriaCity, organization } = value;
     console.log(cafeteriaName, cafeteriaCity, organizationName, "cafeteriaName, cafeteriaCity, organization");
 
     this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
@@ -402,14 +421,88 @@ export class AddVendorFirmComponent {
     return this.eventsByOrganization?.some((event: any) => event.isChecked);
   }
 
-  addressTemplate() {
-    this.modalService.open(this.address, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
-  }
-  addPoc() {
-    this.modalService.open(this.pocdetails, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
+  // Address Dialog Methods
+  openAddressDialog() {
+    this.addressDialogRef = this.dialog.open(this.addressDialog, {
+      width: '800px',
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
   }
 
+  openAddressTemplate() {
+    this.isEditIndex = null;
+    this.addressForm.reset();
+    this.openAddressDialog();
+  }
 
+  editAddress(i: number) {
+    this.isEditIndex = i;
+    const value = this.addressList[i];
+    this.addressForm.patchValue(value);
+    this.openAddressDialog();
+  }
+
+  isEditIndex: number | null = null;
+  submitAddress() {
+    const addressData = this.addressForm.value;
+    if (this.isEditIndex !== null) {
+      this.addressList[this.isEditIndex] = { ...addressData };
+    } else {
+      this.addressList.push({ ...addressData });
+    }
+    this.isEditIndex = null;
+    this.addressDialogRef?.close();
+  }
+
+  // POC Dialog Methods
+  openPocDialog() {
+    this.pocDialogRef = this.dialog.open(this.pocDialog, {
+      width: '800px',
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
+  }
+
+  openPOCTemplate() {
+    this.isEditPoc = null;
+    this.pocBtn = 'Submit';
+    this.pocForm.reset();
+    this.openPocDialog();
+  }
+
+  editPOC(i: number) {
+    this.isEditPoc = i;
+    this.pocBtn = 'Update';
+    const value = this.pocDetails[i];
+    this.pocForm.patchValue(value);
+    this.openPocDialog();
+  }
+
+  isEditPoc: number | null = null;
+  submitPocDetails() {
+    const pocDetails = this.pocForm.value;
+    if (this.isEditPoc !== null) {
+      this.pocDetails[this.isEditPoc] = { ...pocDetails };
+    } else {
+      this.pocDetails.push({ ...pocDetails });
+    }
+    this.isEditPoc = null;
+    this.pocDialogRef?.close();
+  }
+
+  // Outlet Dialog Methods
+  addOutlet() {
+    if (!this.outletDialog) {
+      console.error('TemplateRef outletDialog is not available');
+      return;
+    }
+    this.outletDialogRef = this.dialog.open(this.outletDialog, {
+      width: '1000px',
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
+  }
 
   getSelectedOutlets() {
     this.outletByCafeteriaList.forEach((elm: any) => {
@@ -426,128 +519,28 @@ export class AddVendorFirmComponent {
         }
       }
     });
-    // this.modalService.dismissAll(); // Incorrect for MatDialog
-    if (this.outletMatDialogRef) {
-      this.outletMatDialogRef.close();
-    }
+    this.outletDialogRef?.close();
   }
 
   deleteOutlet(index: number) {
     this.selectedOutletsList.splice(index, 1);
   }
 
-  goBack() {
-    this.router.navigate(['/searchVendorFirm']);
-  }
-
-  hasError(form: FormGroup, controlName: string, error: string) {
-    const c = form.get(controlName);
-    return c?.hasError(error) && (c.touched || c.dirty);
-  }
-
-  hasSubError(path: string[], error: string) {
-    let c: AbstractControl | null = null;
-    if (path[0] === 'address') {
-      c = this.addressForm.get(path[1]);
-    } else if (path[0] === 'poc_details') {
-      c = this.pocForm.get(path[1]);
-    } else {
-      c = this.form.get(path);
-    }
-    return c?.hasError(error) && (c.touched || c.dirty);
-  }
-
-  isEditPoc: number | null = null;
-  submitPocDetails() {
-    const pocDetails = this.pocForm.value;
-    if (this.isEditPoc !== null) {
-      this.pocDetails[this.isEditPoc] = { ...pocDetails };
-    } else {
-      this.pocDetails.push({ ...pocDetails })
-    }
-    this.isEditPoc = null;
-    this.modalService.dismissAll();
-  }
-  openPocTemplate() {
-    this.isEditPoc = null
-    this.pocForm.reset();
-    this.addPoc();
-  }
-  editPoc(index: number) {
-    this.isEditPoc = index;
-    const value = this.pocDetails[index]
-    this.pocForm.patchValue(value);
-    this.addPoc();
-  }
-
-  isEditIndex: number | null = null
-  isEditIndexPoc: number | null = null;
-  submitAddress() {
-    const addressData = this.addressForm.value;
-    if (this.isEditIndex !== null) {
-      this.addressList[this.isEditIndex] = { ...addressData };
-    } else {
-      this.addressList.push({ ...addressData });
-    }
-    this.isEditIndex = null;
-    this.modalService.dismissAll();
-  }
-  openAddressTemplate() {
-    this.isEditIndex = null;
-    this.addressForm.reset()
-    this.addressTemplate()
-  }
-  openPOCTemplate() {
-    this.isEditIndexPoc = null;
-    this.pocForm.reset()
-    this.addPoc()
-  }
-  editPOC(i: number) {
-    this.isEditIndexPoc = i;
-    this.pocBtn = 'Update';
-    const value = this.pocDetails[i];
-    this.pocForm.patchValue(value);
-    this.addPoc();
-  }
-  editAddress(i: number) {
-    this.isEditIndex = i;
-    const value = this.addressList[i]
-    this.addressForm.patchValue(value);
-    this.addressTemplate();
-  }
-  closeDialog() {
-    this.dialogRef.close();
-  }
-
-  @ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
-
-  addOutlet() {
-    if (!this.outletDialog) {
-      console.error('TemplateRef outletDialog is not available');
-      return;
-    }
-    this.outletMatDialogRef = this.dialog.open(this.outletDialog, {
-      width: '1000px',
-      disableClose: false
-    });
-  }
-
+  // Popup Dialog Methods
   addPopup() {
-    if (!this.popupModal) {
+    if (!this.popupDialog) {
       console.error('TemplateRef popup is not available');
       return;
     }
-    const modalRef: NgbModalRef = this.modalService.open(this.popupModal, { ariaLabelledBy: 'modal-basic-title', size: 'xl' });
-    modalRef.result
-      .then((result) => {
-        // Modal closed (modalRef.close())
-        this.showModalOutletListforPopup = false;
-        this.getSelectedPopups();
-      })
-      .catch((reason) => {
-        // Modal dismissed (ESC, backdrop, modalRef.dismiss())
-        this.getSelectedPopups();
-      });
+    this.popupDialogRef = this.dialog.open(this.popupDialog, {
+      width: '1000px',
+      disableClose: false,
+      panelClass: 'custom-dialog-container'
+    });
+
+    this.popupDialogRef.afterClosed().subscribe(() => {
+      this.showModalOutletListforPopup = false;
+    });
   }
 
   deletePopup(index: number) {
@@ -578,12 +571,40 @@ export class AddVendorFirmComponent {
       }
     });
     this.showModalOutletListforPopup = false;
-    this.modalService.dismissAll();
+    this.popupDialogRef?.close();
   }
+
+  goBack() {
+    this.router.navigate(['/searchVendorFirm']);
+  }
+
+  hasError(form: FormGroup, controlName: string, error: string) {
+    const c = form.get(controlName);
+    return c?.hasError(error) && (c.touched || c.dirty);
+  }
+
+  hasSubError(path: string[], error: string) {
+    let c: AbstractControl | null = null;
+    if (path[0] === 'address') {
+      c = this.addressForm.get(path[1]);
+    } else if (path[0] === 'poc_details') {
+      c = this.pocForm.get(path[1]);
+    } else {
+      c = this.form.get(path);
+    }
+    return c?.hasError(error) && (c.touched || c.dirty);
+  }
+
   get isFormValid(): boolean {
     // Valid if form controls are valid AND at least one address AND at least one outlet
     return this.form.valid && this.addressList.length > 0;
   }
 
+  toggleCheckbox(outlet: any): void {
+    outlet.isChecked = !outlet.isChecked;
+  }
 
+  toggleCheckboxforPopup(event: any): void {
+    event.isChecked = !event.isChecked;
+  }
 }

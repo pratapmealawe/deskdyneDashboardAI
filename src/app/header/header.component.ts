@@ -60,14 +60,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       showParent: true,
       image: 'Organization_white',
       imageblue: 'Organization_Blue',
-      children: [
-        {
-          name: 'Search Organization',
-          route: 'b2bSearchOrg',
-          showChild: true,
-        },
-        { name: 'Add Organization', route: 'b2bAddorg', showChild: true, clearRunTimeStorage: ['VIEW_ORG'] },
-      ],
+      route: 'b2bSearchOrg',
     },
     {
       name: 'Outlet',
@@ -76,7 +69,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
       imageblue: 'Outlet_blue',
       children: [
         { name: 'Search Outlet', route: 'outlet', showChild: true },
-        { name: 'Outlet Add', route: 'addOutlet', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] },
         {
           name: 'Outlet Master Menu',
           route: 'outletMasterMenu',
@@ -99,28 +91,14 @@ export class HeaderComponent implements OnInit, OnDestroy {
       showParent: true,
       image: 'Vendor firm_white',
       imageblue: 'Vendor firm_blue',
-      children: [
-        {
-          name: 'Search vendor Firm',
-          route: 'searchVendorFirm',
-          showChild: true,
-        },
-        { name: 'Add Vendor Firm', route: 'addVendorFirm', showChild: true, clearRunTimeStorage: ['VENDOR_FIRM_EDIT'] },
-      ],
+      route: 'searchVendorFirm',
     },
     {
       name: 'Vendor',
       showParent: true,
       image: 'Vendor_white',
       imageblue: 'Vendor_blue',
-      children: [
-        {
-          name: 'Search vendor',
-          route: 'searchVendor',
-          showChild: true,
-        },
-        { name: 'Add Vendor', route: 'addVendor', showChild: true, clearRunTimeStorage: ['VENDOR_EDIT'] },
-      ],
+      route: 'searchVendor',
     },
     {
       name: 'Outlet Orders',

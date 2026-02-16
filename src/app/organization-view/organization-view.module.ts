@@ -6,10 +6,10 @@ import { QRCodeModule } from 'angularx-qrcode';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { CakeMenuComponent } from '../common-components/cake-menu/cake-menu.component';
+import { CompanyWalletComponent } from '../common-components/company-wallet/company-wallet.component';
 import { ConsumptionOrderComponent } from '../common-components/consumption-order/consumption-order.component';
 import { DailyOrderMenuComponent } from '../common-components/daily-order-menu/daily-order-menu.component';
 import { EmployeeListComponent } from '../common-components/employee-list/employee-list.component';
-import { EmployeeWalletComponent } from '../common-components/employee-wallet/employee-wallet.component';
 import { GuestEmployeeListComponent } from '../common-components/guest-employee-list/guest-employee-list.component';
 import { LuxMenuComponent } from '../common-components/lux-menu/lux-menu.component';
 import { MealaweOutletComponent } from '../common-components/mealawe-outlet/mealawe-outlet.component';
@@ -60,7 +60,6 @@ import { EmployeeSelectCafeteriaComponent } from '../common-components/employee-
     OrgComplianceComponent,
     OutletEmployeeComponent,
     VcEmployeeComponent,
-    EmployeeWalletComponent,
     ConsumptionOrderComponent,
     CakeMenuComponent,
     SweetMenuComponent,
@@ -80,7 +79,8 @@ import { EmployeeSelectCafeteriaComponent } from '../common-components/employee-
     EmployeePredefinedFoodboxMenuComponent,
     EmployeeSweetMenuComponent,
     EmployeePantryMenuComponent,
-    EmployeeSelectCafeteriaComponent
+    EmployeeSelectCafeteriaComponent,
+    CompanyWalletComponent
   ],
   imports: [
     CommonModule,
@@ -91,7 +91,8 @@ import { EmployeeSelectCafeteriaComponent } from '../common-components/employee-
     MaterialModule,
     DragDropModule,
     QRCodeModule,
-    DirectivesModule
+    QRCodeModule,
+    DirectivesModule,
   ],
   exports: [OrganizationViewComponent, OrgOutletOrdersComponent, EmployeeSelectCafeteriaComponent],
 })

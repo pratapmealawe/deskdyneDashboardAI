@@ -57,7 +57,7 @@
         </div>
         <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3" formArrayName="days">
             <div class="col" *ngFor="let day of days.controls; let dIndex = index" [formGroupName]="dIndex">
-                <div class="day-card h-100" [class.selected]="!day.get('notApplicable')?.value">
+                <div class="day-card h-100" [class.selected]="day.get('notApplicable')?.value">
                     <div class="card-header d-flex align-items-center gap-2">
                         <mat-checkbox color="primary" formControlName="notApplicable" [id]="'check-'+dIndex"
                             class="example-margin">
@@ -70,12 +70,12 @@
                         [class.opacity-50]="!day.get('notApplicable')?.value">
                         <mat-form-field appearance="outline" class="w-100 compact-field" subscriptSizing="dynamic">
                             <input matInput formControlName="itemName" placeholder="Item Name"
-                                [disabled]="day.get('notApplicable')?.value">
+                                [disabled]="!day.get('notApplicable')?.value">
                             <mat-error *ngIf="day.get('itemName')?.hasError('required')">Required</mat-error>
                         </mat-form-field>
                         <mat-form-field appearance="outline" class="w-100 compact-field" subscriptSizing="dynamic">
                             <input matInput formControlName="itemDescription" placeholder="Description"
-                                [disabled]="day.get('notApplicable')?.value">
+                                [disabled]="!day.get('notApplicable')?.value">
                             <mat-error *ngIf="day.get('itemDescription')?.hasError('required')">Required</mat-error>
                         </mat-form-field>
                     </div>

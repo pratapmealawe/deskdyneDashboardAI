@@ -95,6 +95,40 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
   }
 
+  // 👉 Select cafeteria (for pill buttons)
+  selectCafeteria(cafeteria: any) {
+    this.selectedCafeteria = cafeteria;
+    this.selectedCafeteriaName = cafeteria.cafeteria_name;
+    this.selectedCafeteriaId = cafeteria.cafeteria_id;
+    this.selectedOriginalCafeteriaId = cafeteria._id;
+  }
+
+  // 👉 Get filtered items by selected cafeteria
+  getFilteredItems(): any[] {
+    if (!this.consumptionList) return [];
+
+    const items: any[] = [];
+    this.consumptionList.forEach((consumptionItem: any) => {
+      if (consumptionItem.cafeteria_id === this.selectedCafeteriaId) {
+        consumptionItem.mealTypeList?.forEach((mealItem: any) => {
+          items.push({
+            ...mealItem,
+            cafeteria_orignal_id: consumptionItem.cafeteria_orignal_id
+          });
+        });
+      }
+    });
+    return items;
+  }
+
+  // 👉 Cancel multiple consumption form
+  cancelMultipleConsumption() {
+    this.showMultipleConsumptionForm = false;
+    this.showAddMoreForm = true;
+    this.showRemoveForm = false;
+    this.addMultipleConsumptionList = [];
+  }
+
   async updateMealTypeList() {
     console.log(this.MealForm.value);
     let obj = {
@@ -126,7 +160,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   }
 
   editConsumption(mealInfo: any, selectedCafeteriaId: any) {
-    this.modalRef = this.modalService.open(this.content,{ariaLabelledBy: 'modal-basic-title',size: 'xl',});
+    this.modalRef = this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl', });
     console.log(mealInfo);
     this.consumptionMenuId = mealInfo._id;
     this.cafeOriginalId = selectedCafeteriaId;
@@ -169,11 +203,11 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   }
 
   async submitMultipleConsumption() {
-    console.log(this.addMultipleConsumptionList ,"sss");
-    
+    console.log(this.addMultipleConsumptionList, "sss");
+
     const hasInvalid = this.addMultipleConsumptionList.some(
       (consumption: any) =>
-        !consumption.itemName || !consumption.mealPrice  || !consumption.minGuarantees
+        !consumption.itemName || !consumption.mealPrice || !consumption.minGuarantees
     );
     if (hasInvalid) {
       this.disableSubmit = true;
@@ -213,5 +247,5 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
 
     this.showMultipleConsumptionForm = false;
   }
-  
+
 }

@@ -468,9 +468,11 @@ Nutrient Conversion Factors:
     this.uploadStatus = false;
     this.imageUrl = this.selectedMasterItem?.imageUrl;
 
-    console.log(this.transformedMenuItems);
-
     try {
+      this.transformedMenuItems.forEach((item: any) => {
+        delete item._id;
+      });
+      console.log("transformedMenuItems", this.transformedMenuItems);
       const res = await this.apiMainService.addOutletList(
         this.outletObj._id,
         { outletList: this.transformedMenuItems }
@@ -789,8 +791,16 @@ Nutrient Conversion Factors:
       msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'
         } ${menu.itemName} Item`,
       callback: this.changeMenuActivation,
+      cancelCallback: this.revertMenuActivation,
       context: this
     });
+  }
+
+  revertMenuActivation() {
+    // Revert the toggle to its original state
+    if (this.menuInfo) {
+      this.menuInfo.isActive = !this.eventInfo.checked;
+    }
   }
 
   // MAT DIALOG OPENERS

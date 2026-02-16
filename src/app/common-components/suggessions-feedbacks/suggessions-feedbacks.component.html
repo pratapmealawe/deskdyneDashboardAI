@@ -151,7 +151,7 @@
 
     <!-- Material paginator (frontend-side pagination) -->
     <mat-paginator [length]="filteredFeedback.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
-      [pageSizeOptions]="[10, 15, 25, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+      [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
     </mat-paginator>
   </div>
 

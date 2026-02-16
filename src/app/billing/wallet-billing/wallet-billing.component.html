@@ -139,8 +139,9 @@
             </div>
 
             <!-- Pagination -->
-            <mat-paginator [length]="allTransactions.length" [pageSize]="pageSize" [pageSizeOptions]="pageSizeOptions"
-                (page)="onPageChange($event)" showFirstLastButtons class="border-top">
+            <mat-paginator [length]="allTransactions.length" [pageSize]="pageSize"
+                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+                class="border-top">
             </mat-paginator>
         </div>
     </div>

@@ -77,14 +77,14 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Pantry', path: 'employeepantryMenu' },
       ],
     },
-    { name: 'MealAwe Outlet', path: 'mealAweOutlet' },
+    { name: 'Virtual Cafeteria', path: 'virtualCafeteriaOutlet' },
     { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
     { name: 'Consumption Menu', path: 'consumptionOrder' },
     { name: 'Employee List', path: 'employeeList' },
     { name: 'Outlet Employee', path: 'outletEmployee' },
     { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
-    { name: 'Guest Employee', path: 'guestEmployeeList' },
-    { name: 'Employee wallet', path: 'employeeWallet' },
+    // { name: 'Guest Employee', path: 'guestEmployeeList' },
+    { name: 'Company Wallet', path: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];
   isCategoryActive = true;
@@ -112,7 +112,6 @@ export class OrganizationViewComponent implements OnInit {
     this.selectedChildTabIndex = 0;
 
     const main = this.orgViewList[index];
-    this.showBulkMenuHeader = main?.path === 'bulkMenuSection' || main?.path === 'employeebulkmenu';
     if (main?.subTabs?.length) {
       const firstSub = main.subTabs[0];
       if (firstSub?.childTabs?.length) {
@@ -126,8 +125,9 @@ export class OrganizationViewComponent implements OnInit {
     this.selectedChildTabIndex = 0;
 
     const main = this.orgViewList[this.selectedMainTabIndex];
-    const subTab = this.bulkMenuSection?.subTabs?.[index];
-    if (subTab?.childTabs?.length) {
+    const sub = main?.subTabs?.[index];
+
+    if (sub?.childTabs?.length) {
       this.selectedChildTabIndex = 0;
     }
   }
@@ -216,4 +216,24 @@ export class OrganizationViewComponent implements OnInit {
   onCategoryActiveChanged(event: boolean): void {
     this.isCategoryActive = event;
   }
+
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'orgDetails': 'business',
+      'organizationCompliance': 'verified_user',
+      'bulkMenuSection': 'restaurant_menu',
+      'employeebulkmenu': 'restaurant_menu',
+      'mealAweOutlet': 'storefront',
+      'dailyOrderMenu': 'today',
+      'consumptionOrder': 'receipt_long',
+      'employeeList': 'people',
+      'outletEmployee': 'badge',
+      'vcEmployee': 'person_pin',
+      // 'guestEmployeeList': 'person_add',
+      'companyWallet': 'account_balance_wallet',
+      'qrEmployee': 'qr_code'
+    };
+    return icons[path] || 'article';
+  }
+
 }

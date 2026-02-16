@@ -392,6 +392,34 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}`, method: urlObj.method }, data);
   }
 
+  B2B_deleteOrganization(id: any, type: 'soft' | 'hard' = 'soft') {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_deleteOrganization;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}?type=${type}`, method: urlObj.method });
+  }
+
+  B2B_getDeletedOrganizations() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_getDeletedOrganizations);
+  }
+
+  B2B_restoreOrganization(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_restoreOrganization;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  B2B_deleteOutlet(id: any, type: 'soft' | 'hard' = 'soft') {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_deleteOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}?type=${type}`, method: urlObj.method });
+  }
+
+  B2B_getDeletedOutlets() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_getDeletedOutlets);
+  }
+
+  B2B_restoreOutlet(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.B2B_restoreOutlet;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
   updateOrgComplianceByAdmin(id: string, data: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateOrgComplianceByAdmin;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
@@ -456,6 +484,11 @@ export class ApiMainService {
   getEmployeeListByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeListByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  getEmployeelistByCafeteriaId(cafeteriaId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
   }
 
   getConsumptionOrderByOrgId(orgId: any) {
@@ -776,10 +809,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.orgMealPackages, payload);
   }
 
-  getBulkDailyBillingDetails(payload: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getBulkDailyBillingDetails, payload);
-  }
-
   getAdminPastOrders(payload: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAdminPastOrders, payload);
   }
@@ -793,9 +822,13 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getBulkDailyOrderList(status: any, page: any, limit: number) {
+  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
+    let url = urlObj.url + `/${page}/${limit}/${status}`;
+    if (date) {
+      url += `/${date}`;
+    }
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method });
   }
 
   getClusterb2bBulkOrderList(status: any, page: any, limit: number) {
@@ -811,8 +844,12 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentB2BOrdersCount);
   }
 
-  getCurrentDailyOrdersCount() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount);
+  getCurrentDailyOrdersCount(date?: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount;
+    if (date) {
+      return this.apiHttpService.REQUEST({ url: urlObj.url + `/${date}`, method: urlObj.method });
+    }
+    return this.apiHttpService.REQUEST(urlObj);
   }
 
   getCafeteriasPollingList(deliveryDate: any) {
@@ -866,9 +903,26 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addOutletEmployeeList, body);
   }
 
+  updateCompanyWalletCafeteriaDetails(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateCompanyWalletCafeteriaDetails, payload);
+  }
+
+  getCompanyWalletCafeteriaDetails(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCompanyWalletCafeteriaDetails, payload);
+  }
+
+  bulkUpdateCompanyWalletCafeteriaDetails(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkUpdateCompanyWalletCafeteriaDetails, payload);
+  }
+
   outletEmployeeByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.outletEmployeeByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  getOutletEmployeeListByCafeteriaId(cafeteriaId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletEmployeeListByCafeteriaId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
   }
 
   deleteOutletEmployee(id: any) {
@@ -927,32 +981,13 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addVcEmployeeList, body);
   }
 
-  addEmployeeWalletList(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addEmployeeWalletList, body);
-  }
-
   vcEmployeeByOrgId(orgId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.vcEmployeeByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 
-  employeeWalletByOrgId(orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.employeeWalletByOrgId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
-  }
-
-  updateEmployeeCashback(orgId: any, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployeeCashback;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method }, body);
-  }
-
   deleteVcEmployee(id: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteVcEmployee;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  deleteEmployeeWallet(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.deleteEmployeeWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
@@ -963,11 +998,6 @@ export class ApiMainService {
 
   updateVcEmployee(id: any, body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateVcEmployee;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
-  }
-
-  updateEmployeeWallet(id: any, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateEmployeeWallet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
 
@@ -1799,5 +1829,59 @@ export class ApiMainService {
 
   saveEmployeePantryMenu(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeePantryMenu, data);
+  }
+
+  deleteCompanyWalletCafeteriaDetails(id: any): Promise<any> {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteCompanyWalletCafeteriaDetails;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  createAutoRule(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createAutoRule, data);
+  }
+
+  getAutoRules(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAutoRules;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  updateAutoRule(id: any, data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateAutoRule;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
+  }
+
+  deleteAutoRule(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteAutoRule;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  toggleAutoRule(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.toggleAutoRule;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getCompanyWalletTransactionHistoryByPhoneNo(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCompanyWalletTransactionHistoryByPhoneNo;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
+  }
+
+  getCompanyWalletByPhoneNo(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCompanyWalletByPhoneNo;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
+  }
+
+  getTransactionsByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getTransactionsByOrgId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  }
+
+  getCompanyOrganizationTransactionHistory(paylod: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCompanyOrganizationTransactionHistory;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, paylod);
+  }
+
+  getCustomerProfileDetails(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerProfileDetails;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
   }
 }

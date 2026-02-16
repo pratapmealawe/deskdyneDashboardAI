@@ -3,11 +3,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import {
-  NgbModal,
-  NgbModalRef,
-  NgbActiveModal,
-} from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { DataFormatService } from 'src/service/data-format.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -54,7 +49,6 @@ export class AddVendorCommponent {
   constructor(
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
-    public modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
     private policyService: PolicyService,
@@ -76,7 +70,7 @@ export class AddVendorCommponent {
       vendorEmail: ['', [Validators.required]],
       vendorRole: ['', [Validators.required]],
       vendorId: ['', [Validators.required]],
-      accessType: ['', [Validators.required]],
+      accessType: ['outlet', [Validators.required]],
     });
   }
 
@@ -121,20 +115,32 @@ export class AddVendorCommponent {
   }
 
   async changeVendorFirm(e: any, isInitial: boolean = false) {
-    this.vendorId = isInitial ? e : e.value
-    this.getVendorFirmById(this.vendorId);
-    if (this.vendorId) {
-      const vendorFirm = this.vendorList.find((item: any) => item?._id === this.vendorId)
-      if (vendorFirm?.outletList.length > 0) {
-        this.outletByCafeteriaList = vendorFirm?.outletList
+    try {
+      this.vendorId = isInitial ? e : e.value
+      this.getVendorFirmById(this.vendorId);
+      if (this.vendorId) {
+        const vendorFirm = this.vendorList.find((item: any) => item?._id === this.vendorId)
+        if (vendorFirm?.outletList?.length > 0) {
+          this.outletByCafeteriaList = vendorFirm?.outletList
+        } else {
+          this.outletByCafeteriaList = [];
+        }
       }
+    } catch (error) {
+      console.error('Error changing vendor firm:', error);
     }
   }
 
   async getVendorFirmById(vendorFirmId: any) {
-    const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
-    this.addressList = res.address;
-    this.popupsByVendorFirm = res.popup_details || [];
+    try {
+      const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
+      this.addressList = res?.address || [];
+      this.popupsByVendorFirm = res?.popup_details || [];
+    } catch (error) {
+      console.error('Error getting vendor firm by id:', error);
+      this.addressList = [];
+      this.popupsByVendorFirm = [];
+    }
   }
 
   updateVendor() {
@@ -173,6 +179,18 @@ export class AddVendorCommponent {
     return this.popupsByVendorFirm?.some((p: any) => p.isChecked);
   }
 
+  trimStringValues(obj: any): any {
+    if (obj instanceof File || obj instanceof Blob) return obj;
+    if (typeof obj === 'string') return obj.trim();
+    if (Array.isArray(obj)) return obj.map((v: any) => this.trimStringValues(v));
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        obj[key] = this.trimStringValues(obj[key]);
+      });
+    }
+    return obj;
+  }
+
   async submit(type?: any) {
     try {
       const vendorFirmDetails = {
@@ -190,7 +208,7 @@ export class AddVendorCommponent {
         popup_Details: this.selectedPopupsList
       };
 
-      const formData = this.objectToFormData(finalObj);
+      const formData = this.objectToFormData(this.trimStringValues(finalObj));
 
       if (type == 'update') {
         let updated = await this.apiMainService.updateVendor(
@@ -202,21 +220,30 @@ export class AddVendorCommponent {
       }
       this.router.navigate(['/searchVendor']);
     } catch (error) {
+      console.error('Error submitting vendor:', error);
     }
   }
 
   addOutlet() {
-    this.modalService.open(this.outlet, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
-    });
+    try {
+      this.dialog.open(this.outlet, {
+        width: '800px',
+      });
+    } catch (error) {
+      console.error('Error opening outlet modal:', error);
+    }
   }
 
   addAddress() {
-    this.modalService.open(this.address, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
-    });
+    try {
+      // Reset selected address when opening the modal
+      this.selectedAddress = null;
+      this.dialog.open(this.address, {
+        width: '800px',
+      });
+    } catch (error) {
+      console.error('Error opening address modal:', error);
+    }
   }
 
   getSelectedOutlets() {
@@ -241,30 +268,44 @@ export class AddVendorCommponent {
         }
       }
     });
-    this.modalService.dismissAll();
+    this.dialog.closeAll();
   }
 
   selectAddress(address: any) {
-    this.selectedAddress = address;
-
-    this.selectedAddressList = [{
-      address1: address.address1,
-      address2: address.address2,
-      landmark: address.landmark,
-      location: address.location,
-      geolocation: address.geolocation
-    }];
-
-    // } else {
-    //   // user unchecked → clear selection
-    //   this.selectedAddress = null;
-    //   this.selectedAddressList = [];
-    // }
+    try {
+      this.selectedAddress = address;
+    } catch (error) {
+      console.error('Error selecting address:', error);
+    }
   }
 
   addSelectedAddress() {
-    this.modalService.dismissAll();
+    try {
+      if (!this.selectedAddress) {
+        console.warn('No address selected');
+        return;
+      }
 
+      // Check if this address is already in the list
+      const addressExists = this.selectedAddressList.some(
+        (addr: any) => addr.address1 === this.selectedAddress.address1 &&
+          addr.location === this.selectedAddress.location
+      );
+
+      if (!addressExists) {
+        this.selectedAddressList.push({
+          address1: this.selectedAddress.address1,
+          address2: this.selectedAddress.address2,
+          landmark: this.selectedAddress.landmark,
+          location: this.selectedAddress.location,
+          geolocation: this.selectedAddress.geolocation
+        });
+      }
+
+      this.dialog.closeAll();
+    } catch (error) {
+      console.error('Error adding selected address:', error);
+    }
   }
 
   deleteOutlet(index: any) {
@@ -283,21 +324,15 @@ export class AddVendorCommponent {
   }
 
   toggleMap() {
-    this.modalService
-      .open(this.geolocation, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'lg',
-        windowClass: 'mapModel',
-      })
-      .result.then(
-        (result) => {
-          if (result === 'add') {
-            this.patchVendorLocation();
-          }
-        },
-        (reason) => {
+    this.dialog.open(this.geolocation, {
+      width: '800px',
+      panelClass: 'mapModel'
+    })
+      .afterClosed().subscribe((result) => {
+        if (result === 'add') {
+          this.patchVendorLocation();
         }
-      );
+      });
   }
 
   async patchVendorLocation() {
@@ -327,56 +362,82 @@ export class AddVendorCommponent {
     this.selectedAddress = address;
   }
   isAddVendorValid(): boolean {
-    return (
-      this.form.valid &&
-      this.selectedOutletsList.length > 0 &&
-      this.selectedAddressList.length > 0
-    );
+    const accessType = this.form.get('accessType')?.value;
+
+    // Base validation: form must be valid and address is always required
+    if (!this.form.valid || this.selectedAddressList.length === 0) {
+      return false;
+    }
+
+    // Outlets required only for outlet access
+    if (accessType === 'outlet' && this.selectedOutletsList.length === 0) {
+      return false;
+    }
+
+    // Popups required only for popup access
+    if (accessType === 'popup' && this.selectedPopupsList.length === 0) {
+      return false;
+    }
+
+    // For daily_bulk access, neither outlets nor popups are required
+    return true;
   }
   toggleCheckbox(outlet: any) {
     outlet.isChecked = !outlet.isChecked;
   }
 
-toggleCheckboxforPopup(popup: any) {
-  popup.isChecked = !popup.isChecked;
-}
+  toggleCheckboxforPopup(popup: any) {
+    popup.isChecked = !popup.isChecked;
+  }
   addPopup() {
-    if (!this.popupModal) {
-      console.error('TemplateRef popup is not available');
-      return;
+    try {
+      if (!this.popupModal) {
+        console.error('TemplateRef popup is not available');
+        return;
+      }
+      this.dialog.open(this.popupModal, {
+        width: '1000px',
+        disableClose: false
+      });
+    } catch (error) {
+      console.error('Error opening popup modal:', error);
     }
-    this.dialog.open(this.popupModal, {
-      width: '1000px',
-      disableClose: false
-    });
   }
 
-  getSelectedPopups(){
-    this.selectedPopupsList = [];
-    this.popupsByVendorFirm.forEach((elm: any) => {
-      if (elm.isChecked) {
-        let outletPresent = false;
-        this.selectedPopupsList.forEach((savedOutlet: any) => {
-          if (savedOutlet.popupId === elm.popupId) {
-            outletPresent = true;
-          }
-        });
-        if (!outletPresent) {
-          this.selectedPopupsList.push({
-            popupId: elm.popupId,
-            popupName: elm.popupName,
-            popupType: elm.popupType,
-            cafeteriaDetails: elm.cafeteriaDetails,
-            organizationDetails: elm.organizationDetails,
+  getSelectedPopups() {
+    try {
+      this.selectedPopupsList = [];
+      this.popupsByVendorFirm.forEach((elm: any) => {
+        if (elm.isChecked) {
+          let popupPresent = false;
+          this.selectedPopupsList.forEach((savedPopup: any) => {
+            if (savedPopup.popupId === elm.popupId) {
+              popupPresent = true;
+            }
           });
+          if (!popupPresent) {
+            this.selectedPopupsList.push({
+              popupId: elm.popupId,
+              popupName: elm.popupName,
+              popupType: elm.popupType,
+              cafeteriaDetails: elm.cafeteriaDetails,
+              organizationDetails: elm.organizationDetails,
+            });
+          }
         }
-      }
-    });
-    this.dialog.closeAll();
+      });
+      this.dialog.closeAll();
+    } catch (error) {
+      console.error('Error getting selected popups:', error);
+    }
   }
 
   deletePopup(index: number) {
-    this.selectedPopupsList.splice(index, 1);
+    try {
+      this.selectedPopupsList.splice(index, 1);
+    } catch (error) {
+      console.error('Error deleting popup:', error);
+    }
   }
 
 }

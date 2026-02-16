@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
 import { Router } from '@angular/router';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
@@ -44,8 +43,14 @@ export class OutletViewComponent implements OnInit {
     this.outlet = event;
   }
 
-  onTabChange(event: MatTabChangeEvent) {
-    const selectedIndex = this.outletViewList[event.index];
-    this.gotToTab(selectedIndex.path);
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'outlet-details': 'info',
+      'outlet-menu': 'restaurant_menu',
+      'qr-menu': 'qr_code_2',
+      'outlet-orders': 'receipt_long',
+      'outlet-feedback': 'rate_review'
+    };
+    return icons[path] || 'tab';
   }
 }
