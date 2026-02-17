@@ -79,14 +79,27 @@ export class OrganizationAddVendorComponent {
       subCategory: this.data.subCategory,
       vendorDetails: this.vendorForm.getRawValue(),
     }
-    this.apiMainService.B2B_assignVendorForBulkMenu(payload).then((res) => {
-      if (res) {
-        this.toaster.success('Vendor assigned successfully');
-        this.dialogRef.close({ success: true, data: res });
-      }
-    }).catch((err) => {
-      this.toaster.error('Vendor assign failed');
-    })
+    // employeeBulk
+    if (this.data.selectedBulkMenuPath === "employeebulkmenu") {
+      this.apiMainService.updateVendorForEmployeeBulkMenus(payload).then((res) => {
+        if (res) {
+          this.toaster.success('Vendor assigned successfully to ' + this.data.cafeteriaName);
+          this.dialogRef.close({ success: true, data: res });
+        }
+      }).catch((err) => {
+        this.toaster.error('Vendor assign failed');
+      });
+      // bulkMenu
+    } else {
+      this.apiMainService.B2B_assignVendorForBulkMenu(payload).then((res) => {
+        if (res) {
+          this.toaster.success('Vendor assigned successfully to ' + this.data.cafeteriaName);
+          this.dialogRef.close({ success: true, data: res });
+        }
+      }).catch((err) => {
+        this.toaster.error('Vendor assign failed');
+      });
+    }
   }
 
   onVendorFirmChange(event: any) {

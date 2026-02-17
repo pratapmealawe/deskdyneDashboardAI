@@ -1,13 +1,5 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PolicyService } from 'src/service/policy.service';
-import { OrganizationAddVendorComponent } from './organization-add-vendor/organization-add-vendor.component';
-import { OrganizationCopyBulkMenuComponent } from './organization-copy-bulk-menu/organization-copy-bulk-menu.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import * as ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
-import { ToasterService } from 'src/service/toaster.service';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-organization-view',
@@ -95,6 +87,11 @@ export class OrganizationViewComponent implements OnInit {
     { name: 'Company Wallet', path: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee' },
   ];
+  isCategoryActive = true;
+  selectedCafeteria: any;
+  isVendorAssigned: boolean = false;
+  showBulkMenuHeader = false;
+  isMenuAvailable = false;
 
   constructor(private policyService: PolicyService) { }
 
@@ -102,24 +99,11 @@ export class OrganizationViewComponent implements OnInit {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.orgViewList = this.orgViewList.filter((item) => this.btnPolicy[item.path] !== false);
     this.initializeTabs();
+    this.initializeCafeteria();
   }
 
   goBack(): void {
     this.back.emit(true);
-  }
-
-  private initializeTabs(): void {
-    const firstMain = this.orgViewList[0];
-    if (!firstMain) return;
-
-    if (firstMain.subTabs?.length) {
-      this.selectedSubTabIndex = 0;
-      const firstSub = firstMain.subTabs[0];
-
-      if (firstSub.childTabs?.length) {
-        this.selectedChildTabIndex = 0;
-      }
-    }
   }
 
   onMainTabChange(index: number): void {
@@ -148,6 +132,10 @@ export class OrganizationViewComponent implements OnInit {
     }
   }
 
+  onChildTabChange(index: number): void {
+    this.selectedChildTabIndex = index;
+  }
+
   get selectedMain(): any {
     return this.orgViewList[this.selectedMainTabIndex];
   }
@@ -158,6 +146,75 @@ export class OrganizationViewComponent implements OnInit {
 
   get selectedChild(): any {
     return this.selectedSub?.childTabs?.[this.selectedChildTabIndex];
+  }
+
+  bulkMenuSection = this.orgViewList.find(
+    view => view.path === 'bulkMenuSection'
+  );
+
+  get selectedBulkMenuPath() {
+    const mainPath = this.selectedMainPath;
+    const mainView = this.orgViewList.find(v => v.path === mainPath);
+    const sub = mainView?.subTabs?.[this.selectedSubTabIndex];
+    let child = sub?.childTabs?.[this.selectedChildTabIndex];
+
+    if (child?.path === 'predefinedSnackBoxMenu') {
+      child = { ...child, path: 'predefinedFoodBoxMenu' };
+    } else if (child?.path === 'customizedSnackBoxMenu') {
+      child = { ...child, path: 'customizedFoodBoxMenu' };
+    }
+
+    const childPath = child?.path ?? sub?.path;
+
+    return {
+      main: mainPath,
+      sub: sub?.name?.toLowerCase(),
+      subPath: sub?.path,
+      child: child?.name,
+      childPath
+    };
+  }
+
+  get selectedMainPath(): string | undefined {
+    return this.orgViewList[this.selectedMainTabIndex]?.path;
+  }
+
+  checkVendorAssigned(event: any): void {
+    this.isVendorAssigned = event;
+  }
+
+  onMenuAvailabilityChange(hasMenu: boolean): void {
+    setTimeout(() => {
+      this.isMenuAvailable = hasMenu;
+    });
+  }
+
+  private initializeTabs(): void {
+    const firstMain = this.orgViewList[0];
+    if (!firstMain) return;
+
+    if (firstMain.subTabs?.length) {
+      this.selectedSubTabIndex = 0;
+      const firstSub = firstMain.subTabs[0];
+
+      if (firstSub.childTabs?.length) {
+        this.selectedChildTabIndex = 0;
+      }
+    }
+  }
+
+  private initializeCafeteria(): void {
+    if (this.organization?.cafeteriaList?.length > 0) {
+      this.selectedCafeteria = this.organization.cafeteriaList[0];
+    }
+  }
+
+  onCafeteriaChanged(event: any): void {
+    this.selectedCafeteria = event.selectedCafeteria;
+  }
+
+  onCategoryActiveChanged(event: boolean): void {
+    this.isCategoryActive = event;
   }
 
   getTabIcon(path: string): string {
@@ -178,4 +235,5 @@ export class OrganizationViewComponent implements OnInit {
     };
     return icons[path] || 'article';
   }
+
 }
