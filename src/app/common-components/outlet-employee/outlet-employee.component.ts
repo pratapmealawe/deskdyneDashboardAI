@@ -53,6 +53,8 @@ export class OutletEmployeeComponent implements OnInit {
     this.initBulkForm();
     this.initDialogForm();
     this.initCafeteriaDefaults();
+    console.log(this.orgObj);
+
   }
 
   // ---------- INIT ----------
