@@ -59,7 +59,7 @@ const materialModules = [
   MatNativeDateModule,
   MatListModule,
   MatOptionModule,
-  MatButtonToggleModule
+  MatButtonToggleModule,
 ];
 
 @NgModule({

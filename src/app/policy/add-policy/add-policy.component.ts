@@ -99,6 +99,7 @@ export class AddPolicyComponent {
       addEventPopup: false,
       vendorWalletDashboard: false,
       allOrders: false,
+      scheduledNotifications: false,
     };
 
     const button_policies = {
