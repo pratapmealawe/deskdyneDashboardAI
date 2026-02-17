@@ -1,0 +1,71 @@
+<div class="mb-4" *ngIf="organization?.cafeteriaList?.length > 0">
+    <mat-card class="p-3">
+        <mat-card-title>Select Cafeteria</mat-card-title>
+        <mat-radio-group color="primary" [(ngModel)]="selectedCafeteria">
+            <mat-radio-button *ngFor="let cafeteria of organization.cafeteriaList" [id]="cafeteria._id"
+                name="CafeteriaName" [value]="cafeteria" (change)="onCafeteriaChange($event)">
+                {{cafeteria.cafeteria_name}}
+            </mat-radio-button>
+        </mat-radio-group>
+        <div class="d-flex justify-content-end align-items-center gap-2 mt-2">
+            <button mat-raised-button color="primary" type="button" *ngIf="!isCategoryActiveFlag"
+                (click)="openCategoryModal()" [disabled]="!isMenuAvailableFlag">
+                <mat-icon>check</mat-icon>
+                Activate Menu
+            </button>
+            <button mat-raised-button color="warn" type="button" *ngIf="isCategoryActiveFlag"
+                (click)="openCategoryModal()" [disabled]="!isMenuAvailableFlag">
+                <mat-icon>block</mat-icon>
+                De-Activate Menu
+            </button>
+            <button mat-raised-button color="primary" *ngIf="!isVendorAssignedFlag" (click)="assignVendor()"
+                [disabled]="!isMenuAvailableFlag">
+                <mat-icon>add</mat-icon>
+                Assign Vendor
+            </button>
+            <button mat-raised-button color="warn" *ngIf="isVendorAssignedFlag" (click)="changeVendor()"
+                [disabled]="!isMenuAvailableFlag">
+                <mat-icon>edit</mat-icon>
+                Change Vendor
+            </button>
+            <button mat-raised-button color="primary" (click)="copyMenu()">
+                <mat-icon>content_copy</mat-icon>
+                Copy Menu
+            </button>
+            <button mat-raised-button color="primary" (click)="exportMenu()">
+                <mat-icon>cloud_download</mat-icon>
+                Download Menu
+            </button>
+        </div>
+    </mat-card>
+</div>
+
+<ng-template #toggleCategory let-modal>
+    <div class="modal-header">
+        <div class="modal-title delete-modal-title">
+            {{ isCategoryActiveFlag ? 'De-Activate Category' : 'Activate Category' }}
+        </div>
+        <button type="button" class="close" aria-label="Close" (click)="closeModal()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="modal-body text-center">
+        <p>
+            Are you sure you want to
+            <strong>
+                {{ isCategoryActiveFlag ? 'de-activate' : 'activate' }}
+            </strong>
+            this category?
+        </p>
+
+        <button class="btn" [ngClass]="isCategoryActiveFlag ? 'btn-danger' : 'btn-success'"
+            (click)="toggleActivation()">
+            Yes
+        </button>
+
+        <button class="btn btn-secondary ml-2" (click)="closeModal()">
+            No
+        </button>
+    </div>
+</ng-template>
