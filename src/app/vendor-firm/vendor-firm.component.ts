@@ -73,7 +73,6 @@ export class VendorFirmComponent {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
       this.filteredList = [...this.vendorList];
       this.updateCard();
-      console.log(this.pagedVendorFirm, "pagee vendir ");
     } catch (error) {
       console.log('getAllVendor', error);
     }

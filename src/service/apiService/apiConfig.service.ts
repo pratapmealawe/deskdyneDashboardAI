@@ -242,6 +242,7 @@ export class ApiConfigService {
       fetchPastEventOrdersbyOutletId: p('/api/fetchPastEventOrdersbyOutletId', 'GET'),
       getPopupOutletsByOrgId: p('/api/getPopupOutletsByOrgId', 'GET'),
       fetchDailyBulkOrdersbysearchObj: p('/api/fetchDailyBulkOrdersbysearchObj', 'POST'),
+      fetchBulkOrdersbyfilter: p('/api/fetchBulkOrdersbyFilter', 'POST'),
       fetchDailyBulkOrdersbyOrgId: p('/api/fetchDailyBulkOrdersbyOrgId', 'POST'),
       getOrg: p('/api/getOrg', 'GET'),
       getStaticTotalCountsByOrg: p('/api/getStaticTotalCountsByOrg', 'GET'),
