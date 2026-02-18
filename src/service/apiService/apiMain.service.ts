@@ -1714,7 +1714,10 @@ export class ApiMainService {
   B2B_changeVendor(payload: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_changeVendor, payload);
   }
-
+  
+  B2B_fetchBulkOrdersbyFilter(payload: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_fetchBulkOrdersbyFilter, payload);
+  }
 
   getAllEmployeeBulkMenus() {
     const urlObj = this.apiConfigService.apiEndPointObj.getAllEmployeeBulkMenus;

@@ -332,11 +332,11 @@ export class OtherOrdersComponent implements OnInit {
   async getClusterb2bBulkOrderList(status: string, pageNum: number) {
     try {
       this.isLoading = true;
-      this.selectedStatus = status;
+      this.bulkOrderSelectedStatus = status;
       const res: any = await this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit);
       if (res) {
-        this.filteredList = res.orderList;
-        this.totalCount = res.totalCount;
+        this.filteredList = res;
+        this.totalCount = res.length;
         this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
         if (this.filteredList && this.filteredList.length > 0) {
           this.pageFirstEntry = ((pageNum - 1) * this.pageLimit) + 1;

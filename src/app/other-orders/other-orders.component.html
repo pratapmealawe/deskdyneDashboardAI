@@ -96,7 +96,7 @@
                         <span class="filter-label">Status</span>
                         <div class="status-chips">
                             <button *ngFor="let status of bulkOrderStatusList" class="status-chip"
-                                [class.active]="selectedStatus === status.value"
+                                [class.active]="bulkOrderSelectedStatus === status.value"
                                 (click)="getClusterb2bBulkOrderList(status.value, 1)">
                                 <span>{{status.label}}</span>
                                 <span class="chip-count">{{status.count || 0}}</span>
