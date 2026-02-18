@@ -413,7 +413,10 @@
         <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="action-buttons" *ngIf="editMode">
                 <button class="btn btn-primary btn-sm fw-medium"
-                    *ngIf="order?.orderstatus === 'placed' || order?.orderstatus === 'waitingForApproval'"
+                    *ngIf="order?.orderstatus === 'waitingForApproval'"
+                    (click)="acceptRejectOrder('placed')">Place Order</button>
+                <button class="btn btn-primary btn-sm fw-medium"
+                    *ngIf="order?.orderstatus === 'placed'"
                     (click)="acceptRejectOrder('accepted')">Accept Order</button>
                 <button class="btn btn-warning btn-sm fw-medium" *ngIf="orderStage === 2"
                     (click)="acceptRejectOrder('preparing')">Preparing</button>

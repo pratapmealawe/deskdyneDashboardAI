@@ -114,6 +114,9 @@ export class AddOutletComponent implements OnInit {
       isSatAvailable: [false],
       isSunAvailable: [false],
 
+      isPackagingRequired: [false],
+      packagingAmount: [0, [Validators.min(0)]],
+
       vendorCommissionPercentage: [
         0,
         [Validators.required, Validators.min(0), Validators.max(100)],
@@ -252,6 +255,8 @@ export class AddOutletComponent implements OnInit {
         preOrderMealType: outlet.preOrderMealType ?? 'lunch',
         isSatAvailable: outlet.isSatAvailable ?? false,
         isSunAvailable: outlet.isSunAvailable ?? false,
+        isPackagingRequired: outlet.isPackagingRequired ?? false,
+        packagingAmount: outlet.packagingAmount ?? 0,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage ?? 0,
         MRPCommissionPercentage: outlet.MRPCommissionPercentage ?? 0,
         subsidy: outlet.subsidy ?? 0,

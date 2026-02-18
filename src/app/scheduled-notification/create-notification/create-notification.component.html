@@ -1,0 +1,228 @@
+<h2 mat-dialog-title>Create Notification</h2>
+
+<mat-dialog-content>
+    <form [formGroup]="form" class="notification-form">
+
+        <div class="row">
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Title</mat-label>
+                    <input matInput formControlName="title" placeholder="e.g. Lunch Menu Update">
+                    <mat-error *ngIf="form.get('title')?.hasError('required')">Title is required</mat-error>
+                </mat-form-field>
+            </div>
+
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Body</mat-label>
+                    <textarea matInput formControlName="body" rows="3"
+                        placeholder="Notification message content..."></textarea>
+                    <mat-error *ngIf="form.get('body')?.hasError('required')">Body is required</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="row mt-2">
+            <div class="col-md-12 mb-3">
+                <label>Target Audience:</label><br>
+                <mat-radio-group formControlName="targetType" aria-label="Select an option">
+                    <mat-radio-button *ngFor="let type of targetTypes" [value]="type.value" class="mr-3">
+                        {{type.viewValue}}
+                    </mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+
+        <!-- Section: Organization Selection (Standard) -->
+        <div class="row" *ngIf="form.get('targetType')?.value === 'organization'">
+            <div class="col-md-12">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Select Organization(s)</mat-label>
+                    <mat-select formControlName="targetIds" multiple>
+                        <mat-option *ngFor="let org of orgList" [value]="org._id">{{org.organization_name}}</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.get('targetIds')?.hasError('required')">Please select at least one
+                        organization</mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Section: Cafeteria Selection (Standard) -->
+        <div *ngIf="form.get('targetType')?.value === 'cafeteria'">
+            <div class="row">
+                <div class="col-md-12">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Select Organization</mat-label>
+                        <mat-select formControlName="parentOrgId">
+                            <mat-option *ngFor="let org of orgList"
+                                [value]="org._id">{{org.organization_name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('parentOrgId')?.hasError('required')">Please select an organization
+                            first</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="form.get('parentOrgId')?.value">
+                <div class="col-md-12">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Select Cafeteria(s)</mat-label>
+                        <mat-select formControlName="targetIds" multiple>
+                            <mat-option *ngFor="let cafe of cafeteriaList"
+                                [value]="cafe.cafeteria_id">{{cafe.cafeteria_name}}</mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="form.get('targetIds')?.hasError('required')">Please select at least one
+                            cafeteria</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+            <div class="row" *ngIf="!form.get('parentOrgId')?.value">
+                <div class="col-md-12">
+                    <p class="text-muted small ml-1">Please select an organization to view available cafeterias.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Individual User Selection (New Flow) -->
+        <div *ngIf="form.get('targetType')?.value === 'individual'" class="individual-selection-section">
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Filter by Organization</mat-label>
+                        <mat-select formControlName="filterOrgId">
+                            <mat-option>-- None --</mat-option>
+                            <mat-option *ngFor="let org of orgList"
+                                [value]="org._id">{{org.organization_name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Filter by Cafeteria</mat-label>
+                        <mat-select formControlName="filterCafeId">
+                            <mat-option>-- None --</mat-option>
+                            <mat-option *ngFor="let cafe of cafeteriaList"
+                                [value]="cafe.cafeteria_id">{{cafe.cafeteria_name}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row"
+                *ngIf="usersList.length > 0 || (form.get('filterOrgId')?.value || form.get('filterCafeId')?.value)">
+                <div class="col-md-12">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Search Users</mat-label>
+                        <input matInput formControlName="userSearch" placeholder="Search by name, email or ID">
+                        <mat-icon matSuffix>search</mat-icon>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="filteredUsersList?.length">
+                <div class="col-md-12">
+                    <div class="user-grid">
+                        <div *ngFor="let user of filteredUsersList" class="user-card"
+                            (click)="toggleUserSelection(user)" [class.selected]="isUserSelected(user)">
+
+                            <!-- Avatar -->
+                            <div class="user-avatar">
+                                <span class="avatar-text">{{ getInitials(user?.emp_name) }}</span>
+                            </div>
+
+                            <!-- User Info -->
+                            <div class="user-info">
+                                <div class="user-primary">
+                                    <h3 class="user-name" matTooltip="{{user.emp_name}}">{{ user?.emp_name || 'Unknown'
+                                        }}</h3>
+                                    <span class="user-org-badge" *ngIf="user?.org_name">
+                                        {{ user?.org_name }}
+                                    </span>
+                                </div>
+                                <div class="user-details">
+                                    <div class="detail-item">
+                                        <mat-icon>badge</mat-icon>
+                                        <span matTooltip="{{user.emp_id}}">{{ user?.emp_id || '-' }}</span>
+                                    </div>
+                                    <div class="detail-item">
+                                        <mat-icon>email</mat-icon>
+                                        <span matTooltip="{{user.emp_email}}">{{ user?.emp_email || '-' }}</span>
+                                    </div>
+                                    <div class="detail-item" *ngIf="user?.phone_number">
+                                        <mat-icon>phone</mat-icon>
+                                        <span>{{ user?.phone_number }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Checkbox -->
+                            <div class="user-checkbox">
+                                <mat-checkbox [checked]="isUserSelected(user)"
+                                    (click)="$event.stopPropagation(); toggleUserSelection(user)" color="primary">
+                                </mat-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-2" *ngIf="selectedUsers.length > 0">
+                <div class="col-md-12">
+                    <label>Selected Users ({{selectedUsers.length}}):</label>
+                    <mat-chip-grid #chipGrid aria-label="Selected users" class="mt-1 selected-users-chips">
+                        <mat-chip-row *ngFor="let user of selectedUsers" (removed)="removeUser(user)">
+                            {{user.emp_name}}
+                            <button matChipRemove [attr.aria-label]="'remove ' + user.emp_name">
+                                <mat-icon>cancel</mat-icon>
+                            </button>
+                        </mat-chip-row>
+                    </mat-chip-grid>
+                </div>
+            </div>
+
+            <div class="row" *ngIf="form.get('individualIds')?.hasError('required') && (form.touched || form.dirty)">
+                <div class="col-md-12">
+                    <mat-error>Please select at least one user.</mat-error>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div class="row mt-3">
+            <div class="col-md-12 mb-2">
+                <label>Delivery Mode:</label><br>
+                <mat-radio-group formControlName="deliveryMode">
+                    <mat-radio-button value="schedule" class="mr-3">Schedule for Later</mat-radio-button>
+                    <mat-radio-button value="now">Send Immediately</mat-radio-button>
+                </mat-radio-group>
+            </div>
+        </div>
+
+        <div class="row mt-2" *ngIf="form.get('deliveryMode')?.value === 'schedule'">
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Date</mat-label>
+                    <input matInput [matDatepicker]="picker" formControlName="scheduledDate" [min]="minDate">
+                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Time</mat-label>
+                    <input matInput type="time" formControlName="scheduledTime">
+                </mat-form-field>
+            </div>
+        </div>
+
+    </form>
+</mat-dialog-content>
+
+<div mat-dialog-actions align="end">
+    <button mat-button (click)="close()">Cancel</button>
+    <button mat-raised-button color="primary" [disabled]="form.invalid || isLoading" (click)="submit()">
+        <mat-spinner *ngIf="isLoading" diameter="20" class="mr-2 d-inline-block"></mat-spinner>
+        {{ form.get('deliveryMode')?.value === 'now' ? 'Send Now' : 'Schedule' }}
+    </button>
+</div>

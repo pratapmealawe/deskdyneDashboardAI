@@ -1725,11 +1725,11 @@ export class ApiMainService {
   }
 
   updateVendorForEmployeeBulkMenus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVendorForEmployeeBulkMenus, data);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVendorForEmployeeBulkMenu, data);
   }
 
   copyEmployeeBulkMenus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyEmployeeBulkMenus, data);
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyEmployeeBulkMenu, data);
   }
 
   getEmployeeMenuByCategory(data: any) {
@@ -1886,5 +1886,36 @@ export class ApiMainService {
   getCustomerProfileDetails(phoneNo: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getCustomerProfileDetails;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
+  }
+
+  createScheduledNotification(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createScheduledNotification, data);
+  }
+
+  sendNowNotification(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.sendNowNotification, data);
+  }
+
+  getScheduledNotifications(params?: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getScheduledNotifications;
+    let queryString = '';
+    if (params) {
+      const queryParts = [];
+      if (params.status) queryParts.push(`status=${params.status}`);
+      if (params.fromDate) queryParts.push(`fromDate=${params.fromDate}`);
+      if (params.toDate) queryParts.push(`toDate=${params.toDate}`);
+      if (queryParts.length > 0) queryString = `?${queryParts.join('&')}`;
+    }
+    return this.apiHttpService.REQUEST({ url: urlObj.url + queryString, method: urlObj.method });
+  }
+
+  getScheduledNotificationById(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getScheduledNotificationById;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  cancelScheduledNotification(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.cancelScheduledNotification;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 }

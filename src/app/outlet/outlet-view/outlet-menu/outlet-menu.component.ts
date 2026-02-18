@@ -23,6 +23,7 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -103,7 +104,8 @@ Nutrient Conversion Factors:
     private confirmationModalService: ConfirmationModalService,
     private policyService: PolicyService,
     private sendDataToComponent: SendDataToComponent,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private toastr: ToasterService
   ) { }
 
   ngOnInit(): void {
@@ -473,6 +475,22 @@ Nutrient Conversion Factors:
         delete item._id;
       });
       console.log("transformedMenuItems", this.transformedMenuItems);
+
+      // Check for duplicates
+      const existingItemNames = new Set(
+        (this.outletObj.menuList || []).map((item: any) => item.itemName.toLowerCase().trim())
+      );
+
+      const duplicates = this.transformedMenuItems.filter((item: any) =>
+        existingItemNames.has(item.itemName.toLowerCase().trim())
+      );
+
+      if (duplicates.length > 0) {
+        const duplicateNames = duplicates.map((d: any) => d.itemName).join(', ');
+        this.toastr.error(`Duplicate items found: ${duplicateNames}`);
+        return; // Stop execution
+      }
+
       const res = await this.apiMainService.addOutletList(
         this.outletObj._id,
         { outletList: this.transformedMenuItems }
@@ -483,6 +501,7 @@ Nutrient Conversion Factors:
     } catch (err) {
       console.log(err);
     }
+
 
     if (this.selectedMasterItem) {
       this.form.patchValue(this.selectedMasterItem);
@@ -798,8 +817,12 @@ Nutrient Conversion Factors:
 
   revertMenuActivation() {
     // Revert the toggle to its original state
-    if (this.menuInfo) {
-      this.menuInfo.isActive = !this.eventInfo.checked;
+    if (this.menuInfo && this.eventInfo) {
+      const originalState = !this.eventInfo.checked;
+      this.menuInfo.isActive = originalState;
+      if (this.eventInfo.source) {
+        this.eventInfo.source.checked = originalState;
+      }
     }
   }
 

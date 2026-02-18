@@ -5,6 +5,8 @@ import { PolicyService } from 'src/service/policy.service';
 import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-suggessions-feedbacks',
@@ -28,6 +30,8 @@ export class SuggessionsFeedbacksComponent implements OnInit {
 
   // Single search input text
   searchText = '';
+  orgList: any[] = [];
+  selectedOrg: any = '';
 
   btnPolicy: any;
   isLoading = false;
@@ -39,13 +43,13 @@ export class SuggessionsFeedbacksComponent implements OnInit {
     private suggestionsFeedbackService: SuggestionsFeedbackService,
     private searchService: SearchFilterService,
     private localStorageService: LocalStorageService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.admin = this.localStorageService.getCacheData("ADMIN_PROFILE");
     console.log(this.admin);
-    
+
     this.getFeedbackList();
   }
 
@@ -56,8 +60,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
       // NOTE:
       // This assumes getGeneralAppFeeback(1) returns all records,
       // or at least enough for this admin view.
-      const feedbacklist: any[] =
-        await this.ddApiMainService.getGeneralAppFeeback(1);
+      const feedbacklist: any[] = await this.ddApiMainService.getGeneralAppFeeback(1);
 
       if (Array.isArray(feedbacklist) && feedbacklist.length > 0) {
         this.feedbacklist = feedbacklist.map((ele: any) => {
@@ -72,7 +75,10 @@ export class SuggessionsFeedbacksComponent implements OnInit {
           }
 
           return ele;
+          return ele;
         });
+
+        this.extractOrganizations();
 
         // reset paginator
         this.pageIndex = 0;
@@ -89,6 +95,16 @@ export class SuggessionsFeedbacksComponent implements OnInit {
     } finally {
       this.isLoading = false;
     }
+  }
+
+  extractOrganizations() {
+    const orgs = new Map();
+    this.feedbacklist.forEach(item => {
+      if (item.orgName && !orgs.has(item.orgName)) {
+        orgs.set(item.orgName, { orgName: item.orgName });
+      }
+    });
+    this.orgList = Array.from(orgs.values());
   }
 
   // =========================
@@ -110,11 +126,17 @@ export class SuggessionsFeedbacksComponent implements OnInit {
   }
 
   applyFilters() {
+    let temp = [...this.feedbacklist];
+
+    if (this.selectedOrg) {
+      temp = temp.filter(item => item.orgName === this.selectedOrg);
+    }
+
     const text = (this.searchText || '').trim();
 
     if (!text) {
       // no search → full list
-      this.filteredFeedback = [...this.feedbacklist];
+      this.filteredFeedback = temp;
     } else {
       // use your generic search service
       const config = {
@@ -122,16 +144,14 @@ export class SuggessionsFeedbacksComponent implements OnInit {
           'feedbackFrom_name',
           'feedbackFrom_phoneNo',
           'orgName',
-          'empId',
-          'orderNo',
-          'orderType',
           'feedbackType',
           'feedbackComment',
+          'orderNo'
         ],
       };
 
       this.filteredFeedback = this.searchService.searchData(
-        this.feedbacklist,
+        temp,
         config,
         text
       );
@@ -201,5 +221,50 @@ export class SuggessionsFeedbacksComponent implements OnInit {
     } catch (error) {
       console.log('error while acknowledge feedback ', error);
     }
+  }
+
+  async excelExport() {
+    if (!this.filteredFeedback || this.filteredFeedback.length === 0) {
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Feedback List');
+
+    worksheet.columns = [
+      { header: 'Name', key: 'name', width: 20 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'Organization', key: 'orgName', width: 20 },
+      { header: 'Order No', key: 'orderNo', width: 15 },
+      { header: 'Feedback Type', key: 'feedbackType', width: 15 },
+      { header: 'Comment', key: 'comment', width: 30 },
+      { header: 'Status', key: 'status', width: 15 },
+      { header: 'Submit Date', key: 'submitDate', width: 20 }
+    ];
+
+    // Header style
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+    this.filteredFeedback.forEach((item) => {
+      worksheet.addRow({
+        name: item.feedbackFrom_name || '-',
+        phone: item.feedbackFrom_phoneNo || '-',
+        orgName: item.orgName || '-',
+        orderNo: item.orderNo || '-',
+        feedbackType: item.feedbackType || '-',
+        comment: item.feedbackComment || '-',
+        status: item.acknowledgeStatus || 'New',
+        submitDate: item.submitDate ? new Date(item.submitDate).toLocaleString() : '-'
+      });
+    });
+
+    const fileName = `feedback_list_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, fileName);
   }
 }
