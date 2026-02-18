@@ -418,6 +418,11 @@ export class ApiConfigService {
       getCustomerProfileDetails: p('/api/getCustomerProfileDetails', 'GET'),
       getEmployeelistByCafeteriaId: p('/api/getEmployeelistByCafeteriaId', 'GET'),
       getOutletEmployeeListByCafeteriaId: p('/api/getOutletEmployeeListByCafeteriaId', 'GET'),
+      createScheduledNotification: p('/api/createNotification', 'POST'),
+      sendNowNotification: p('/api/sendNow', 'POST'),
+      getScheduledNotifications: p('/api/getNotifications', 'GET'),
+      getScheduledNotificationById: p('/api/getNotification', 'GET'),
+      cancelScheduledNotification: p('/api/cancelNotification', 'PUT'),
     }
   }
 }

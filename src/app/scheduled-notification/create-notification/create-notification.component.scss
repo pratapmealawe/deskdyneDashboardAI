@@ -1,0 +1,173 @@
+.w-100 {
+    width: 100%;
+}
+
+.mr-3 {
+    margin-right: 16px;
+}
+
+.mt-2 {
+    margin-top: 8px;
+}
+
+.mt-3 {
+    margin-top: 16px;
+}
+
+.mb-2 {
+    margin-bottom: 8px;
+}
+
+.mb-3 {
+    margin-bottom: 16px;
+}
+
+.d-inline-block {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.mr-2 {
+    margin-right: 8px;
+}
+
+mat-radio-button {
+    margin-right: 16px;
+}
+
+// User Grid
+.user-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    padding: 4px; // Avoid box-shadow clipping
+
+    // Custom scrollbar
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.2);
+        border-radius: 4px;
+    }
+}
+
+// User Card
+.user-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    transition: all 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &.selected {
+        background-color: #f0f9ff; // Light blue background
+        border-color: #2196f3; // Primary border
+        box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+    }
+}
+
+// Avatar
+.user-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    .avatar-text {
+        color: white;
+        font-weight: 600;
+        font-size: 1rem;
+        text-transform: uppercase;
+    }
+}
+
+// User Info
+.user-info {
+    flex: 1;
+    min-width: 0; // Text truncation fix
+
+    .user-primary {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 4px;
+        flex-wrap: wrap;
+    }
+
+    .user-name {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .user-org-badge {
+        background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+        color: #15803d;
+        padding: 2px 8px;
+        border-radius: 12px;
+        font-size: 0.7rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        color: #666;
+        font-size: 0.85rem;
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+
+            mat-icon {
+                font-size: 14px;
+                width: 14px;
+                height: 14px;
+                color: #999;
+            }
+
+            span {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
+
+// Selection Checkbox (Positioned absolute or nicely integrated)
+.user-checkbox {
+    flex-shrink: 0;
+}
+
+.selected-users-chips {
+    max-height: 100px;
+    overflow-y: auto;
+}
