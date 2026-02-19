@@ -112,7 +112,7 @@ export class EmployeeCakeMenuComponent implements OnInit, OnChanges {
   async getEmployeeCakeMenuByCafeteria(): Promise<void> {
     try {
       this.hasMenu.emit(false);
-      const menuItems: CakeMenuMeta = await this.api.getEmployeeCakeMenu(this.selectedCafeteria._id);
+      const menuItems: CakeMenuMeta = await this.api.getEmployeeCakeMenu(this.selectedCafeteria.cafeteria_id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.bulkMenuFetched = menuItems || {};
@@ -198,7 +198,7 @@ export class EmployeeCakeMenuComponent implements OnInit, OnChanges {
     const bulkMenuObj = {
       organization_id: this.orgObj._id,
       organization_name: this.orgObj.organization_name,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: 'cake',
       subCategory: 'employeecakeMenu',

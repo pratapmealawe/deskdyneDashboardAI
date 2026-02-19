@@ -137,7 +137,7 @@ export class PantryMenuComponent {
     if (!this.selectedCafeteria) return;
     try {
       this.hasMenu.emit(false);
-      const menuItems: PantryMenuMeta = await this.api.B2B_fetchPantryMenu(this.selectedCafeteria._id);
+      const menuItems: PantryMenuMeta = await this.api.B2B_fetchPantryMenu(this.selectedCafeteria.cafeteria_id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.bulkMenuFetched = menuItems || {};
@@ -225,7 +225,7 @@ export class PantryMenuComponent {
     const bulkMenuObj = {
       organization_id: this.orgObj._id,
       organization_name: this.orgObj.organization_name,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: 'pantry',
       subCategory: 'pantryMenu',
