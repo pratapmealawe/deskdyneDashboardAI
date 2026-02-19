@@ -300,8 +300,6 @@ export class OtherOrdersComponent implements OnInit {
         new Date(this.selectedAdminOrderDate) :
         new Date();
       const res: any = await this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit, dateStr);
-      console.log(res);
-
       if (res) {
         this.filteredList = res.orderList;
         this.totalCount = res.totalCount;
@@ -335,8 +333,8 @@ export class OtherOrdersComponent implements OnInit {
       this.selectedStatus = status;
       const res: any = await this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit);
       if (res) {
-        this.filteredList = res.orderList;
-        this.totalCount = res.totalCount;
+        this.filteredList = res;
+        this.totalCount = res.length;
         this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
         if (this.filteredList && this.filteredList.length > 0) {
           this.pageFirstEntry = ((pageNum - 1) * this.pageLimit) + 1;
