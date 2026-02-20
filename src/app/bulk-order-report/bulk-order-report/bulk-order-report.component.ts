@@ -2,6 +2,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 interface VendorTotals {
   count: number;
@@ -85,25 +87,23 @@ export class BulkOrderReportComponent implements OnInit {
     this.fetchBulkOrders();
   }
 
-  fetchBulkOrders() {
+  async fetchBulkOrders() {
     try {
       const body = {
-        vendorFirmId: this.vendorFirm._id,
+        vendorFirmId: this.vendorFirm?._id,
         fromDate: this.filteredData?.date_from,
         toDate: this.filteredData?.date_to,
       };
-
-      this.apiMainService.fetchBulkOrdersbyfilter(body).then((res: any) => {
-        if (res) {
-          this.orders = res.orders;
-          this.orderWise = res.orderWise;
-          this.vendorTotals = res.vendorTotals;
-        } else {
-          this.orders = [];
-          this.orderWise = [];
-          this.vendorTotals = { count: 0, orderAmount: 0, totalVendorAmt: 0 };
-        }
-      });
+      const res = await this.apiMainService.fetchBulkOrdersbyfilter(body);
+      if (res) {
+        this.orders = res.orders;
+        this.orderWise = res.orderWise;
+        this.vendorTotals = res.vendorTotals;
+      } else {
+        this.orders = [];
+        this.orderWise = [];
+        this.vendorTotals = { count: 0, orderAmount: 0, totalVendorAmt: 0 };
+      }
     } catch (e) {
       console.error("Error while fetching bulk orders", e);
     }
@@ -114,6 +114,343 @@ export class BulkOrderReportComponent implements OnInit {
     this.mainPageSize = event.pageSize;
   }
 
-  exportDatewiseSummaryExcel() { }
-  exportItemwiseSummaryExcel() { }
+  private buildRangeLabel(from?: Date | null, to?: Date | null): string {
+    if (!from && !to) return 'All Dates';
+
+    const fmt = (d: Date | null | undefined) =>
+      d
+        ? d.toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        })
+        : '';
+
+    if (from && to) return `${fmt(from)} to ${fmt(to)}`;
+    if (from) return `From ${fmt(from)}`;
+    if (to) return `Till ${fmt(to)}`;
+    return 'All Dates';
+  }
+
+  async exportDatewiseSummaryExcel() {
+    if (!this.hasData) return;
+
+    // ===== Build DATEWISE summary from orderWise =====
+    type DateGroup = {
+      dateLabel: string;
+      count: number;
+      orderAmount: number;
+      vendorAmt: number;
+    };
+
+    const byDateMap = new Map<string, DateGroup>();
+
+    for (const r of this.orderWise) {
+      const key = r.orderDateIST || 'Unknown Date';
+
+      if (!byDateMap.has(key)) {
+        byDateMap.set(key, {
+          dateLabel: key,
+          count: 0,
+          orderAmount: 0,
+          vendorAmt: 0,
+        });
+      }
+
+      const g = byDateMap.get(key)!;
+      g.count += 1;
+      g.orderAmount += Number(r.orderAmount) || 0;
+      g.vendorAmt += Number(r.vendorLedgerAmt) || 0;
+    }
+
+    // Convert to array & sort by actual date (if possible)
+    const groups: DateGroup[] = Array.from(byDateMap.values()).sort((a, b) => {
+      const da = new Date(a.dateLabel);
+      const db = new Date(b.dateLabel);
+      const na = isNaN(da.getTime()) ? 0 : da.getTime();
+      const nb = isNaN(db.getTime()) ? 0 : db.getTime();
+      return na - nb;
+    });
+
+    // ===== ExcelJS workbook =====
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Datewise Summary');
+
+    const currencyFmt = '₹#,##0.00';
+
+    // Resolve vendor name + date range
+    const vendorName =
+      this.vendorFirm?.vendorFirmName ||
+      this.vendorFirm?.name ||
+      'Vendor Firm';
+
+    const from = this.dateForm.get('dateFrom')?.value || null;
+    const to = this.dateForm.get('dateTo')?.value || null;
+    const rangeLabel = this.buildRangeLabel(from, to);
+
+    // ===== Title row (merge A1:D1) =====
+    ws.mergeCells('A1:D1');
+    const titleCell = ws.getCell('A1');
+    titleCell.value = `Vendor Datewise Summary — ${vendorName} (${rangeLabel})`;
+    titleCell.font = { bold: true, size: 13 };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    // ===== Header row (A2:D2) =====
+    const headers = [
+      'Date',                // A
+      'Orders',              // B
+      'Total Order Amount',  // C
+      'Total Vendor Amount', // D
+    ];
+
+    const headerRow = ws.addRow(headers);
+    headerRow.eachCell((c: any) => {
+      c.font = { bold: true };
+      c.alignment = { vertical: 'middle', horizontal: 'center' };
+      c.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFEFEFEF' },
+      };
+      c.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+    ws.getRow(2).height = 22;
+
+    // Column widths
+    const widths = [18, 10, 22, 22];
+    widths.forEach((w, i) => (ws.getColumn(i + 1).width = w));
+
+    // ===== Data rows (start from row 3) =====
+    let totalCount = 0;
+    let totalOrderAmount = 0;
+    let totalVendorAmt = 0;
+
+    for (const g of groups) {
+      const row = ws.addRow([
+        g.dateLabel,       // Date as string (already IST formatted)
+        g.count,           // Orders
+        g.orderAmount,     // Total Order Amount
+        g.vendorAmt,       // Total Vendor Amount
+      ]);
+
+      // Alignments
+      row.getCell(1).alignment = { horizontal: 'center' }; // Date
+      row.getCell(2).alignment = { horizontal: 'center' }; // Orders
+
+      // Currency columns: C, D
+      row.getCell(3).numFmt = currencyFmt;
+      row.getCell(4).numFmt = currencyFmt;
+      row.getCell(3).alignment = { horizontal: 'right' };
+      row.getCell(4).alignment = { horizontal: 'right' };
+
+      // Borders
+      row.eachCell((c: any) => {
+        c.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' },
+        };
+      });
+
+      // Grand totals
+      totalCount += g.count;
+      totalOrderAmount += g.orderAmount;
+      totalVendorAmt += g.vendorAmt;
+    }
+
+    // ===== GRAND TOTAL row =====
+    ws.addRow([]); // spacer
+
+    const gtRow = ws.addRow([
+      'GRAND TOTAL',         // A
+      totalCount,            // B Orders
+      totalOrderAmount,      // C Total Order Amount
+      totalVendorAmt,        // D Total Vendor Amount
+    ]);
+
+    gtRow.font = { bold: true };
+    gtRow.getCell(1).alignment = { horizontal: 'center' };
+    gtRow.getCell(2).alignment = { horizontal: 'center' };
+
+    gtRow.getCell(3).numFmt = currencyFmt;
+    gtRow.getCell(4).numFmt = currencyFmt;
+    gtRow.getCell(3).alignment = { horizontal: 'right' };
+    gtRow.getCell(4).alignment = { horizontal: 'right' };
+
+    gtRow.eachCell((c: any) => {
+      c.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+
+    // ===== Save file =====
+    const buf = await wb.xlsx.writeBuffer();
+    const safeVendor = String(vendorName || 'Vendor')
+      .replace(/[\\/:*?"<>|]/g, '–')
+      .trim();
+    const safeRange = rangeLabel.replace(/[\\/:*?"<>|]/g, '–');
+
+    const fileName = `${safeVendor}-Vendor-Datewise-Summary-${safeRange}.xlsx`;
+    const blob = new Blob([buf], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, fileName);
+  }
+
+  async exportItemwiseSummaryExcel() {
+    if (!this.orders || !this.orders.length) return;
+
+    const wb = new ExcelJS.Workbook();
+    const ws = wb.addWorksheet('Itemwise Summary');
+
+    const currencyFmt = '₹#,##0.00';
+
+    // For title + filename only
+    const vendorName =
+      this.vendorFirm?.vendorFirmName ||
+      this.vendorFirm?.name ||
+      'Vendor Firm';
+
+    const from = this.dateForm.get('dateFrom')?.value || null;
+    const to = this.dateForm.get('dateTo')?.value || null;
+    const rangeLabel = this.buildRangeLabel(from, to);
+
+    // ===== Title row (merge A1:D1) =====
+    ws.mergeCells('A1:D1');
+    const titleCell = ws.getCell('A1');
+    titleCell.value = `Vendor Itemwise Summary — ${vendorName} (${rangeLabel})`;
+    titleCell.font = { bold: true, size: 13 };
+    titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    // ===== Headers (ONLY 4 COLUMNS) =====
+    const headers = [
+      'Item Name',             // A
+      'Meal Price',            // B
+      'Count',                 // C
+      'Pay Amount To Kitchen', // D
+    ];
+
+    const headerRow = ws.addRow(headers);
+    headerRow.eachCell((c: any) => {
+      c.font = { bold: true };
+      c.alignment = { vertical: 'middle', horizontal: 'center' };
+      c.fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFEFEFEF' },
+      };
+      c.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+    ws.getRow(2).height = 22;
+
+    // Column widths
+    const widths = [30, 16, 10, 22];
+    widths.forEach((w, i) => (ws.getColumn(i + 1).width = w));
+
+    // ===== Totals =====
+    let totalQty = 0;
+    let totalPayToKitchenAmount = 0; // sum of (count * payAmtToKitchen)
+
+    // ===== Data rows =====
+    for (const o of this.orders) {
+      const items = Array.isArray(o.itemList) ? o.itemList : [];
+
+      for (const it of items) {
+        const itemName =
+          it.itemName ||
+          it.mealConfigName ||
+          it.deliveredItem ||
+          it.mealName ||
+          '';
+
+        const mealPrice = Number(it.mealPrice) || 0;
+        const qty = Number(it.count) || 0;
+        const payToKitchen = (it.payAmtToKitchen !== undefined) ? Number(it.payAmtToKitchen) : 0;
+
+        totalQty += qty;
+        totalPayToKitchenAmount += qty * payToKitchen;
+
+        const row = ws.addRow([
+          itemName,       // A
+          mealPrice,      // B
+          qty,            // C
+          payToKitchen,   // D
+        ]);
+
+        // Alignments
+        row.getCell(1).alignment = { horizontal: 'left' };    // Item Name
+        row.getCell(2).alignment = { horizontal: 'right' };   // Meal Price
+        row.getCell(3).alignment = { horizontal: 'center' };  // Count
+        row.getCell(4).alignment = { horizontal: 'right' };   // Pay to Kitchen
+
+        // Number formats
+        row.getCell(2).numFmt = currencyFmt; // Meal Price
+        row.getCell(4).numFmt = currencyFmt; // Pay Amount To Kitchen
+
+        // Borders
+        row.eachCell((c: any) => {
+          c.border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
+        });
+      }
+    }
+
+    // ===== GRAND TOTAL row (same 4 columns) =====
+    ws.addRow([]); // spacer
+
+    const gtRow = ws.addRow([
+      'GRAND TOTAL',          // A
+      '',                     // B (no total mealPrice)
+      totalQty,               // C total count
+      totalPayToKitchenAmount // D total pay amount to kitchen (qty * pay)
+    ]);
+
+    gtRow.font = { bold: true };
+    gtRow.getCell(1).alignment = { horizontal: 'center' };
+    gtRow.getCell(3).alignment = { horizontal: 'center' };
+    gtRow.getCell(4).alignment = { horizontal: 'right' };
+
+    gtRow.getCell(4).numFmt = currencyFmt;
+
+    gtRow.eachCell((c: any) => {
+      c.border = {
+        top: { style: 'thin' },
+        left: { style: 'thin' },
+        bottom: { style: 'thin' },
+        right: { style: 'thin' },
+      };
+    });
+
+    // ===== Save file =====
+    const buf = await wb.xlsx.writeBuffer();
+    const safeVendor = String(vendorName || 'Vendor')
+      .replace(/[\\/:*?"<>|]/g, '–')
+      .trim();
+    const safeRange = rangeLabel.replace(/[\\/:*?"<>|]/g, '–');
+
+    const fileName = `${safeVendor}-Itemwise-Minimal-${safeRange}.xlsx`;
+    const blob = new Blob([buf], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, fileName);
+  }
+
 }

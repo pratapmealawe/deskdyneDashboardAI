@@ -74,17 +74,17 @@
                             <th>Date</th>
                             <th>Order No</th>
                             <th>Customer</th>
-                            <th class="text-end">Item</th>
-                            <th class="text-end">Vendor Amt</th>
+                            <th class="text-center">Item</th>
+                            <th class="text-center">Vendor Amount</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr *ngFor="let r of pagedOrderWise; trackBy: trackByOrder">
-                            <td>{{ r.orderDateIST }}</td>
+                            <td>{{ r.orderDateIST | date: 'yyyy-MM-dd' }}</td>
                             <td>{{ r.orderNo }}</td>
                             <td>{{ r.customerName }}</td>
-                            <td class="text-end">₹{{ r.orderAmount | number:'1.2-2' }}</td>
-                            <td class="text-end">₹{{ r.vendorLedgerAmt | number:'1.2-2' }}</td>
+                            <td class="text-center">₹{{ r.orderAmount | number:'1.2-2' }}</td>
+                            <td class="text-center">₹{{ r.vendorLedgerAmt | number:'1.2-2' }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -100,7 +100,7 @@
     <ng-template #noDataTpl>
         <div class="card shadow-sm">
             <div class="card-body text-center text-muted py-5">
-                No data found ...
+                No data found...
             </div>
         </div>
     </ng-template>
