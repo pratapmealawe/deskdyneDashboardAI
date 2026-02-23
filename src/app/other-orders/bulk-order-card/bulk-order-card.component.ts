@@ -606,6 +606,7 @@ export class BulkOrderCardComponent implements OnInit {
         reload: true,
         _id: this.order._id
       });
+      this.statusChange.emit(true);
     } catch (error) {
       console.log('error while changing status', error);
     }
