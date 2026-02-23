@@ -312,9 +312,6 @@ export class BulkOrderReportComponent implements OnInit {
     const wb = new ExcelJS.Workbook();
     const ws = wb.addWorksheet('Itemwise Summary');
 
-    const currencyFmt = '₹#,##0.00';
-
-    // For title + filename only
     const vendorName =
       this.vendorFirm?.vendorFirmName ||
       this.vendorFirm?.name ||
@@ -324,19 +321,17 @@ export class BulkOrderReportComponent implements OnInit {
     const to = this.dateForm.get('dateTo')?.value || null;
     const rangeLabel = this.buildRangeLabel(from, to);
 
-    // ===== Title row (merge A1:D1) =====
-    ws.mergeCells('A1:D1');
+    // ===== Title row (merge A1:B1) =====
+    ws.mergeCells('A1:B1');
     const titleCell = ws.getCell('A1');
     titleCell.value = `Vendor Itemwise Summary — ${vendorName} (${rangeLabel})`;
     titleCell.font = { bold: true, size: 13 };
     titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-    // ===== Headers (ONLY 4 COLUMNS) =====
+    // ===== Headers (ONLY 2 COLUMNS) =====
     const headers = [
-      'Item Name',             // A
-      'Meal Price',            // B
-      'Count',                 // C
-      'Pay Amount To Kitchen', // D
+      'Item Name', // A
+      'Count',     // B
     ];
 
     const headerRow = ws.addRow(headers);
@@ -355,15 +350,15 @@ export class BulkOrderReportComponent implements OnInit {
         right: { style: 'thin' },
       };
     });
+
     ws.getRow(2).height = 22;
 
     // Column widths
-    const widths = [30, 16, 10, 22];
+    const widths = [35, 15];
     widths.forEach((w, i) => (ws.getColumn(i + 1).width = w));
 
     // ===== Totals =====
     let totalQty = 0;
-    let totalPayToKitchenAmount = 0; // sum of (count * payAmtToKitchen)
 
     // ===== Data rows =====
     for (const o of this.orders) {
@@ -377,31 +372,17 @@ export class BulkOrderReportComponent implements OnInit {
           it.mealName ||
           '';
 
-        const mealPrice = Number(it.mealPrice) || 0;
         const qty = Number(it.count) || 0;
-        const payToKitchen = (it.payAmtToKitchen !== undefined) ? Number(it.payAmtToKitchen) : 0;
-
         totalQty += qty;
-        totalPayToKitchenAmount += qty * payToKitchen;
 
         const row = ws.addRow([
-          itemName,       // A
-          mealPrice,      // B
-          qty,            // C
-          payToKitchen,   // D
+          itemName, // A
+          qty,      // B
         ]);
 
-        // Alignments
-        row.getCell(1).alignment = { horizontal: 'left' };    // Item Name
-        row.getCell(2).alignment = { horizontal: 'right' };   // Meal Price
-        row.getCell(3).alignment = { horizontal: 'center' };  // Count
-        row.getCell(4).alignment = { horizontal: 'right' };   // Pay to Kitchen
+        row.getCell(1).alignment = { horizontal: 'left' };
+        row.getCell(2).alignment = { horizontal: 'center' };
 
-        // Number formats
-        row.getCell(2).numFmt = currencyFmt; // Meal Price
-        row.getCell(4).numFmt = currencyFmt; // Pay Amount To Kitchen
-
-        // Borders
         row.eachCell((c: any) => {
           c.border = {
             top: { style: 'thin' },
@@ -413,22 +394,17 @@ export class BulkOrderReportComponent implements OnInit {
       }
     }
 
-    // ===== GRAND TOTAL row (same 4 columns) =====
+    // ===== GRAND TOTAL row =====
     ws.addRow([]); // spacer
 
     const gtRow = ws.addRow([
-      'GRAND TOTAL',          // A
-      '',                     // B (no total mealPrice)
-      totalQty,               // C total count
-      totalPayToKitchenAmount // D total pay amount to kitchen (qty * pay)
+      'GRAND TOTAL',
+      totalQty,
     ]);
 
     gtRow.font = { bold: true };
     gtRow.getCell(1).alignment = { horizontal: 'center' };
-    gtRow.getCell(3).alignment = { horizontal: 'center' };
-    gtRow.getCell(4).alignment = { horizontal: 'right' };
-
-    gtRow.getCell(4).numFmt = currencyFmt;
+    gtRow.getCell(2).alignment = { horizontal: 'center' };
 
     gtRow.eachCell((c: any) => {
       c.border = {
