@@ -235,7 +235,7 @@ export class BulkBillingComponent {
   }
 
   private getOrgName(): string {
-    return this.filteredData?.org_id ? `Org_${this.filteredData.org_id}` : 'Organization';
+    return this.filteredData?.org_id ? `Org_${this.filteredData.org_name}` : 'Organization';
   }
 
   exportDatewiseExcel(): void {
