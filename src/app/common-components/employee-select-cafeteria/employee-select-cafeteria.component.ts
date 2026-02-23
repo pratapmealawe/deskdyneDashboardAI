@@ -193,7 +193,7 @@ export class EmployeeSelectCafeteriaComponent implements OnInit, OnChanges {
     const payload = {
       organization_name: this.organization.organization_name,
       organizationId: this.organization._id,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: this.selectedBulkMenuPath?.sub,
       subCategory: this.selectedBulkMenuPath?.childPath,
@@ -206,7 +206,7 @@ export class EmployeeSelectCafeteriaComponent implements OnInit, OnChanges {
     const payload = {
       organization_name: this.organization.organization_name,
       organizationId: this.organization._id,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: this.selectedBulkMenuPath?.sub,
       subCategory: this.selectedBulkMenuPath?.childPath,
@@ -255,7 +255,7 @@ export class EmployeeSelectCafeteriaComponent implements OnInit, OnChanges {
   toggleActivation(): void {
     const payload = {
       organizationId: this.organization._id,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       mainCategory: this.selectedBulkMenuPath?.sub,
     };
 
@@ -291,7 +291,7 @@ export class EmployeeSelectCafeteriaComponent implements OnInit, OnChanges {
 
     const payload = {
       organizationId: this.organization._id,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       mainCategory: this.selectedBulkMenuPath?.sub,
       subCategory: this.selectedBulkMenuPath?.childPath
     };

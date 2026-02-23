@@ -1,0 +1,330 @@
+.order-card {
+  max-width: 100%;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  .bi-pencil-square,
+  .bi-x {
+    cursor: pointer;
+  }
+
+  .addon-box {
+    flex: 1 1 50%;
+    min-width: 250px;
+
+    .labelText {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #b2b2b2 !important;
+    }
+
+    .labelData {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: black;
+    }
+  }
+
+  .badge {
+    flex: 0 0 auto;
+    white-space: nowrap;
+  }
+
+  .d-flex.justify-content-between.align-items-center.flex-wrap {
+    flex-wrap: wrap !important;
+    gap: 0.5rem;
+  }
+
+  .d-flex.justify-content-end.align-items-center {
+    flex-wrap: wrap !important;
+    justify-content: flex-start !important;
+    gap: 0.5rem;
+  }
+
+  i.bi {
+    font-size: 1.1rem;
+    margin-top: 4px;
+  }
+
+  .badge-subscriptionPackage {
+    background-color: #f1df3d;
+    color: #fff;
+  }
+
+  .badge-veg {
+    background-color: #4caf50;
+    color: #fff;
+  }
+
+  .badge-jain {
+    background-color: #42a5f5;
+    color: #fff;
+  }
+
+  .badge-nonveg {
+    background-color: #5d4037;
+    color: #fff;
+  }
+
+  .badge-lunch {
+    background-color: #26aae8;
+    color: #fff;
+  }
+
+  .badge-dinner {
+    background-color: #1a237e;
+    color: #fff;
+  }
+
+  .badge-lunch-dinner {
+    background-color: #d81b60;
+    color: #fff;
+  }
+
+  .badge-breakfast {
+    background-color: #8bc5f5;
+    color: #fff;
+  }
+
+  .badge-default {
+    background-color: #bdbdbd;
+    color: #000;
+  }
+
+  .badge-payment-initiated {
+    background-color: #64B5F6;
+    color: #fff !important;
+  }
+
+  .badge-payment-inprogress {
+    background-color: #42A5F5;
+    color: #fff !important;
+  }
+
+  .badge-payment-failed {
+    background-color: #E57373;
+    color: #fff !important;
+  }
+
+  .badge-placed {
+    background-color: #5C6BC0;
+    color: #fff !important;
+  }
+
+  .badge-accepted {
+    background-color: #1E88E5;
+    color: #fff !important;
+  }
+
+  .badge-preparing {
+    background-color: #FB8C00;
+    color: #fff !important;
+  }
+
+  .badge-readyToDelivery {
+    background-color: #26A69A;
+    color: #fff !important;
+  }
+
+  .badge-deliveryBoyAssigned {
+    background-color: #81C784;
+    color: #fff !important;
+  }
+
+  .badge-handedOverToDeliveryBoy {
+    background-color: #43A047;
+    color: #fff !important;
+  }
+
+  .badge-onTheWay {
+    background-color: #8E24AA;
+    color: #fff !important;
+  }
+
+  .badge-delivered {
+    background-color: #2E7D32;
+    color: #fff !important;
+  }
+
+  .badge-cancelled {
+    background-color: #9E9E9E;
+    color: #fff !important;
+  }
+
+  .badge-rejected {
+    background-color: #C62828;
+    color: #fff !important;
+  }
+
+  .badge-autoCancelled {
+    background-color: #8D6E63;
+    color: #fff !important;
+  }
+
+  .badge-refundCompleted {
+    background-color: #00ACC1;
+    color: #fff !important;
+  }
+
+}
+
+.order-card:hover {
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.08);
+}
+
+.card-footer {
+  background-color: #f4f4f4;
+
+  .details-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    transition: transform 0.2s ease, filter 0.2s ease;
+  }
+
+  .typeIcon {
+    height: 25px !important;
+    width: 25px !important;
+  }
+
+  .meal-pckg-addons {
+    padding: 5px;
+    border: solid 0.8px lightgray;
+    border-radius: 5px;
+  }
+
+  .labelText {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #b2b2b2;
+  }
+
+  .labelData {
+    font-weight: 500;
+    color: black;
+  }
+
+  .bilingDiv {
+    background-image: url('~src/assets/images/cartReceipt.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    padding: 14px 12px 10px 12px;
+    line-height: 20px;
+
+    .receiptText {
+      font-size: 11px;
+      font-weight: 700;
+      color: #676f8199;
+      position: relative;
+      top: -10px;
+      line-height: 20px;
+    }
+
+    .receipt-parent {
+      display: flex;
+      flex-direction: row;
+
+      .left-div {
+        width: 50%;
+      }
+
+      .right-div {
+        width: 50%;
+        text-align: right;
+      }
+    }
+
+    .totalAmtdiv {
+      border-top: 1px solid;
+    }
+  }
+
+  .icon-item {
+    text-align: center;
+    cursor: pointer;
+    flex: 1 1 auto;
+    min-width: 70px;
+  }
+
+  .icon-item span {
+    font-size: 0.8rem;
+  }
+
+  .icon-item:hover .details-icon {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+  }
+
+  .icon-item.active {
+    background-color: white;
+    border-radius: 12px;
+  }
+
+  .icon-item.active .details-icon {
+    filter: brightness(1.4);
+  }
+
+  .icon-item.active span {
+    color: #000;
+    font-weight: 600;
+  }
+}
+
+.footer-expand {
+  animation: expandDown 0.25s ease;
+
+  .buttons-group {
+    width: 100%;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    background-color: #f4f4f4 !important;
+  }
+}
+
+@keyframes expandDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 576px) {
+  .details-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .icon-item span {
+    font-size: 0.7rem;
+  }
+
+  .order-card {
+    padding: 1rem;
+  }
+
+  .order-card .d-flex.justify-content-between.align-items-center.flex-wrap {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+
+  .order-card .d-flex.justify-content-end.align-items-center {
+    width: 100%;
+    justify-content: flex-start !important;
+    margin-top: 0.5rem;
+  }
+
+  .order-card .badge {
+    font-size: 0.75rem;
+    display: inline-block;
+    margin-bottom: 0.25rem;
+  }
+
+  .order-card i.bi {
+    margin-left: 0;
+  }
+}
