@@ -141,7 +141,7 @@ export class OrgBulkSnackboxMenuComponent implements OnInit, OnChanges {
   async getBulkSnackMenuItemsByCafeteriaId(): Promise<void> {
     try {
       this.hasMenu.emit(false);
-      const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnackMenu(this.selectedCafeteria._id);
+      const menuItems: SnackMenuMeta = await this.api.B2B_fetchBulkSnackMenu(this.selectedCafeteria.cafeteria_id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.bulkSnacksMenuFetched = menuItems || {};
@@ -227,7 +227,7 @@ export class OrgBulkSnackboxMenuComponent implements OnInit, OnChanges {
     const bulkMenuObj = {
       organization_id: this.orgObj._id,
       organization_name: this.orgObj.organization_name,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: 'snacks',
       subCategory: 'bulkSnacksMenu',
