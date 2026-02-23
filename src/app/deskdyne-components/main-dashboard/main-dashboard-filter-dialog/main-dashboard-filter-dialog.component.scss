@@ -1,0 +1,186 @@
+@use '/src/styles/theme/variable' as var;
+
+// ── Filter Dialog ──
+.filter-dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: 85vh; // Slightly taller
+
+    .dialog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 24px;
+        border-bottom: 1px solid #e2e8f0;
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            .header-icon {
+                font-size: 24px;
+                width: 24px;
+                height: 24px;
+                color: #4f46e5;
+            }
+
+            .dialog-title {
+                margin: 0;
+                font-size: 1.1rem;
+                font-weight: 700;
+                color: #1e293b;
+                letter-spacing: -0.3px;
+            }
+
+            .active-badge {
+                font-size: 0.72rem;
+                font-weight: 600;
+                color: #4f46e5;
+                background: #eef2ff;
+                padding: 1px 8px;
+                border-radius: 99px;
+            }
+        }
+
+        .close-btn {
+            color: #94a3b8;
+
+            &:hover {
+                color: #1e293b;
+            }
+        }
+    }
+
+    .dialog-body {
+        padding: 24px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+
+        .w-100 {
+            width: 100%;
+        }
+
+        .mb-2 {
+            margin-bottom: 0.5rem;
+        }
+
+        .mb-4 {
+            margin-bottom: 1rem;
+        }
+
+        .filter-group {
+            .filter-label {
+                display: flex;
+                align-items: center;
+                gap: 6px;
+                font-size: 0.82rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                color: #64748b;
+                margin-bottom: 12px;
+
+                mat-icon {
+                    font-size: 16px;
+                    width: 16px;
+                    height: 16px;
+                    color: #94a3b8;
+                }
+            }
+
+            .chip-selector {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .chip-option {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                padding: 6px 14px;
+                border-radius: 99px;
+                font-size: 0.82rem;
+                font-weight: 500;
+                cursor: pointer;
+                border: 1px solid #e2e8f0;
+                background: #f8fafc;
+                color: #475569;
+                transition: all 0.2s ease;
+                user-select: none;
+
+                &:hover {
+                    border-color: #c7d2fe;
+                    background: #f5f3ff;
+                }
+
+                &.active {
+                    background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+                    border-color: #818cf8;
+                    color: #3730a3;
+                    font-weight: 600;
+                }
+            }
+        }
+    }
+
+    .dialog-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 24px;
+        border-top: 1px solid #e2e8f0;
+        background: #f8fafc;
+
+        .btn-clear {
+            font-size: 0.82rem;
+            height: 36px;
+            color: #64748b;
+            border-color: #cbd5e1;
+            border-radius: 8px;
+
+            mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                margin-right: 4px;
+            }
+        }
+
+        .footer-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-cancel {
+            font-size: 0.85rem;
+            height: 36px;
+            color: #64748b;
+            border-color: #cbd5e1;
+            border-radius: 8px;
+        }
+
+        .btn-apply {
+            font-size: 0.85rem;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #4f46e5, #6366f1) !important;
+            color: white !important;
+
+            mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+                margin-right: 4px;
+            }
+
+            .apply-count {
+                margin-left: 4px;
+                opacity: 0.85;
+            }
+        }
+    }
+}

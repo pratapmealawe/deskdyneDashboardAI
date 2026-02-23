@@ -634,6 +634,18 @@ mat-tab-header {
   border-bottom: 1px solid #d0d0d0;
 }
 
+// Filter dialog panel style (used by panelClass)
+.filter-dialog-panel {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+
+  .mat-mdc-dialog-container .mdc-dialog__content {
+    padding: 0 !important;
+  }
+}
+
 // Fix for dialog appearing behind header
 .cdk-overlay-container {
   z-index: 9999 !important;

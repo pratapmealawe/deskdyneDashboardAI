@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
@@ -32,6 +33,11 @@ export class VendorFirmComponent {
   pagedVendorFirm: any[] = [];
   filteredList: any[] = [];
 
+  organizationList: string[] = [];
+  selectedOrgs: string[] = [];
+  tempSelectedOrgs: string[] = [];
+
+  @ViewChild('filterDialog') filterDialog!: TemplateRef<any>;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -40,7 +46,8 @@ export class VendorFirmComponent {
     private localStorageService: LocalStorageService,
     private confirmationModalService: ConfirmationModalService,
     private searchService: SearchFilterService,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    public dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -49,34 +56,98 @@ export class VendorFirmComponent {
     this.searchControl.valueChanges.pipe(
       debounceTime(400),
       distinctUntilChanged()
-    ).subscribe(value => {
-      const config = { keys: ['vendorFirmName'] };
-      if (value) {
-        const result = this.searchService.searchData(
-          this.vendorList,
-          config,
-          value ?? ''
-        )
-        this.filteredList = [...result]
-        this.pageIndex = 0;
-        this.updateCard();
-      } else {
-        this.filteredList = [...this.vendorList]
-        this.pageIndex = 0;
-        this.updateCard()
-      }
+    ).subscribe(() => {
+      this.applyFilter();
     })
   }
 
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
-      this.filteredList = [...this.vendorList];
-      this.updateCard();
-      console.log(this.pagedVendorFirm, "pagee vendir ");
+      this.extractOrganizations();
+      this.applyFilter();
     } catch (error) {
       console.log('getAllVendor', error);
     }
+  }
+
+  extractOrganizations() {
+    const orgs = new Set<string>();
+    if (this.vendorList) {
+      this.vendorList.forEach((vendor: any) => {
+        if (vendor.outletList) {
+          vendor.outletList.forEach((outlet: any) => {
+            if (outlet.organizationDetails?.organization_name) {
+              orgs.add(outlet.organizationDetails.organization_name);
+            }
+          });
+        }
+      });
+    }
+    this.organizationList = Array.from(orgs).sort();
+  }
+
+  openFilterDialog() {
+    this.tempSelectedOrgs = [...this.selectedOrgs];
+    this.dialog.open(this.filterDialog, {
+      width: '520px',
+      panelClass: 'filter-dialog-panel',
+      autoFocus: false,
+    });
+  }
+
+  toggleOrgSelection(org: string) {
+    const index = this.tempSelectedOrgs.indexOf(org);
+    if (index >= 0) {
+      this.tempSelectedOrgs.splice(index, 1);
+    } else {
+      this.tempSelectedOrgs.push(org);
+    }
+  }
+
+  isOrgSelected(org: string): boolean {
+    return this.tempSelectedOrgs.includes(org);
+  }
+
+  applyFilterFromDialog() {
+    this.selectedOrgs = [...this.tempSelectedOrgs];
+    this.dialog.closeAll();
+    this.applyFilter();
+  }
+
+  removeOrg(org: string) {
+    this.selectedOrgs = this.selectedOrgs.filter(o => o !== org);
+    this.applyFilter();
+  }
+
+  clearOrgFilter() {
+    this.selectedOrgs = [];
+    this.applyFilter();
+  }
+
+  applyFilter() {
+    let filtered = this.vendorList || [];
+
+    // Filter by Search Text
+    const searchText = this.searchControl.value;
+    if (searchText) {
+      const config = { keys: ['vendorFirmName'] };
+      filtered = this.searchService.searchData(filtered, config, searchText);
+    }
+
+    // Filter by Organization (Multiple)
+    if (this.selectedOrgs.length > 0) {
+      filtered = filtered.filter((vendor: any) => {
+        if (!vendor.outletList) return false;
+        return vendor.outletList.some((outlet: any) =>
+          this.selectedOrgs.includes(outlet.organizationDetails?.organization_name)
+        );
+      });
+    }
+
+    this.filteredList = [...filtered];
+    this.pageIndex = 0;
+    this.updateCard();
   }
 
   editVendor(vendor: any) {

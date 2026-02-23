@@ -19,7 +19,8 @@
 
   <!-- Main Tabs -->
   <div class="tabs-container">
-    <div class="main-tabs">
+    <div class="main-tabs" #mainTabsContainer (mousedown)="onMouseDown($event)" (mouseleave)="onMouseLeave()"
+      (mouseup)="onMouseUp()" (mousemove)="onMouseMove($event)">
       <button *ngFor="let view of orgViewList; let i = index" class="tab-btn"
         [class.active]="selectedMainTabIndex === i" (click)="onMainTabChange(i)">
         <mat-icon class="tab-icon">

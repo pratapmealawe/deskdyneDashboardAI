@@ -145,12 +145,17 @@ export class VendorReportComponent {
 
     this.outletList = this.vendorFirmInfo.outletList || []
 
+    console.log(this.outletList);
+
     this.outletList.length > 0 ? this.loadingOutlets = false : this.loadingOutlets = true
-    console.log(this.vendorFirmInfo);
   }
 
   onOutletChange(outletId: string): void {
     this.selected.outletId = outletId;
+  }
+
+  onOutletCardClick(outlet: any): void {
+    this.selected.outletId = outlet.outletId;
   }
 
   onMainPage(e: PageEvent) {
