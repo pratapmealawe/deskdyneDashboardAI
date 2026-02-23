@@ -331,6 +331,8 @@ export class OtherOrdersComponent implements OnInit {
     try {
       this.isLoading = true;
       this.selectedStatus = status;
+      this.bulkOrderSelectedStatus = status;
+      this.page = pageNum;
       const res: any = await this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit);
       if (res) {
         this.filteredList = res;
@@ -361,7 +363,6 @@ export class OtherOrdersComponent implements OnInit {
 
   onStatusChanged(status: any) {
     if (status) {
-      this.getb2bBulkOrderList();
       this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
     }
   }
