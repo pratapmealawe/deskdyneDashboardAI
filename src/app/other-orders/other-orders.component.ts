@@ -300,8 +300,6 @@ export class OtherOrdersComponent implements OnInit {
         new Date(this.selectedAdminOrderDate) :
         new Date();
       const res: any = await this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit, dateStr);
-      console.log(res);
-
       if (res) {
         this.filteredList = res.orderList;
         this.totalCount = res.totalCount;
@@ -332,7 +330,9 @@ export class OtherOrdersComponent implements OnInit {
   async getClusterb2bBulkOrderList(status: string, pageNum: number) {
     try {
       this.isLoading = true;
+      this.selectedStatus = status;
       this.bulkOrderSelectedStatus = status;
+      this.page = pageNum;
       const res: any = await this.apiMainService.getClusterb2bBulkOrderList(status, pageNum, this.pageLimit);
       if (res) {
         this.filteredList = res;
@@ -363,7 +363,6 @@ export class OtherOrdersComponent implements OnInit {
 
   onStatusChanged(status: any) {
     if (status) {
-      this.getb2bBulkOrderList();
       this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
     }
   }

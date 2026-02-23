@@ -110,7 +110,7 @@
                 <div *ngIf="filteredList.length > 0; else noRecord">
                     <div class="orders-list">
                         <app-bulk-order-card *ngFor="let order of filteredList"
-                            [orderInput]="order"></app-bulk-order-card>
+                            [orderInput]="order" (statusChange)="onStatusChanged($event)"></app-bulk-order-card>
                     </div>
 
                     <!-- Pagination -->

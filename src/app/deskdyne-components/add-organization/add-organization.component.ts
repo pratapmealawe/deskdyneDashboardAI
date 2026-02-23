@@ -77,6 +77,7 @@ export class AddOrganizationComponent implements OnInit {
     { key: 'showEventPopup', label: 'Show Event Popup' },
     { key: 'showSodexo', label: 'Show Sodexo' },
     { key: 'showEmployeeBulkMenu', label: 'Show Employee Bulk Menu' },
+    { key: 'isRatingRequired', label: 'Rating Required' },
   ];
 
   constructor(
@@ -167,6 +168,7 @@ export class AddOrganizationComponent implements OnInit {
       showEventPopup: [false],
       showEmployeeBulkMenu: [false],
       showSodexo: [false],
+      isRatingRequired: [false],
       cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
       cafeteria_id: [id, Validators.required],
       cafeteria_city: ['', Validators.required],
