@@ -225,10 +225,10 @@ export class LedgerDetailsComponent implements OnInit {
   getStatusIcon(status: string | undefined): string {
     const s = this.normalizeStatus(status);
     switch (s) {
-      case 'New': return 'bi-hourglass-split';
-      case 'InProgress': return 'bi-arrow-repeat';
-      case 'Closed': return 'bi-check-circle-fill';
-      default: return 'bi-question-circle';
+      case 'New': return 'hourglass_empty';
+      case 'InProgress': return 'cached'; // or 'sync'
+      case 'Closed': return 'check_circle';
+      default: return 'help_outline';
     }
   }
 

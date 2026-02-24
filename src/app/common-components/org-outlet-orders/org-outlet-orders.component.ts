@@ -10,4 +10,9 @@ export class OrgOutletOrdersComponent {
   @Input() order: any;
   orderStatusMapper: any = orderStatusMapper;
 
+  getGrandTotal(order: any): number {
+    return (Number(order.itemAmount) || 0)
+      + (Number(order.taxes) || 0)
+      + (Number(order.packagingAmount) || 0);
+  }
 }

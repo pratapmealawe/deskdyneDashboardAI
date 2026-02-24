@@ -1,133 +1,166 @@
-<!-- Filters -->
-<div class="card shadow-sm mb-3">
-    <div class="card-body d-flex flex-wrap gap-2 align-items-center">
+<div class="header-card">
+    <div class="header-content">
+        <div class="title-section">
+            <h1 class="page-title">Wallet Transaction History</h1>
+        </div>
+        <div class="actions-section">
 
-        <!-- Date range -->
-        <mat-form-field appearance="outline" class="w-100 w-md-auto">
-            <mat-label>Date range</mat-label>
-            <mat-date-range-input [rangePicker]="picker" (dateChange)="onDateRangeChange()">
-                <input matStartDate placeholder="From" [(ngModel)]="dateRange.start" name="fromDate">
-                <input matEndDate placeholder="To" [(ngModel)]="dateRange.end" name="toDate">
-            </mat-date-range-input>
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field>
+            <!-- Date range -->
+            <mat-form-field appearance="outline" class="w-100 w-md-auto date-range-picker">
+                <mat-label>Date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker" (dateChange)="onDateRangeChange()">
+                    <input matStartDate placeholder="From" [(ngModel)]="dateRange.start" name="fromDate">
+                    <input matEndDate placeholder="To" [(ngModel)]="dateRange.end" name="toDate">
+                </mat-date-range-input>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker></mat-date-range-picker>
+            </mat-form-field>
 
-        <button mat-button color="primary" (click)="applyFilters(true)" class="ms-auto">
-            Apply
-        </button>
-        <button mat-button (click)="clearFilters()">
-            Clear
-        </button>
+            <button mat-stroked-button color="primary" (click)="applyFilters(true)">
+                Apply
+            </button>
+            <button mat-button color="warn" (click)="clearFilters()">
+                Clear
+            </button>
 
-        <!-- Export Button -->
-        <button class="btn-export-excel" mat-stroked-button (click)="exportWalletStatement()">
-            <mat-icon>file_download</mat-icon> Export to Excel
-        </button>
+            <!-- Export Button -->
+            <button class="btn-export" mat-flat-button (click)="exportWalletStatement()">
+                <mat-icon>file_download</mat-icon> Export to Excel
+            </button>
+        </div>
     </div>
 </div>
 
-<!-- Transactions -->
-<div class="card shadow-sm">
-    <div class="card-body">
-        <h5 class="card-title mb-3">Transaction History</h5>
+<div class="content-body">
+    <ng-container *ngIf="loading; else listTpl">
+        <div class="row g-4">
+            <div class="col-12 col-md-6 col-lg-4" *ngFor="let s of [1,2,3,4,5,6]">
+                <div class="skeleton-card"></div>
+            </div>
+        </div>
+    </ng-container>
 
-        <ng-container *ngIf="loading; else listTpl">
-            <!-- Skeleton loader -->
-            <div class="skeleton" *ngFor="let s of [1,2,3,4]"></div>
-        </ng-container>
+    <ng-template #listTpl>
+        <div class="row g-4" *ngIf="transactionHistoryList.length > 0; else noRecords">
+            <div class="col-12 col-md-6 col-lg-4" *ngFor="let tx of transactionHistoryList">
+                <div class="transaction-item-card"
+                    [class.pending-neft-card]="tx.status?.toLowerCase() === 'pending' && (tx.mode?.toLowerCase() === 'neft' || tx.mode?.toLowerCase() === 'imps')">
 
-        <ng-template #listTpl>
-            <div *ngFor="let tx of transactionHistoryList" class="transaction-card p-3 mb-2 rounded bg-light"
-                [class.pending-neft-card]="tx.status?.toLowerCase() === 'pending' && (tx.mode?.toLowerCase() === 'neft' || tx.mode?.toLowerCase() === 'imps')">
-
-                <!-- Header Row: Transaction Type & Amount -->
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div class="d-flex align-items-center gap-2">
-                        <span class="status-chip" [ngClass]="getTxnTypeColorClass(tx?.transactionType)">
-                            {{ formatLabel(tx?.transactionType) }}
-                        </span>
-                        <small class="text-muted">{{ tx?.created_at | date:'MMM d, y, h:mm:ss a' }}</small>
-
+                    <!-- Card Top -->
+                    <div class="card-top">
+                        <div class="transaction-icon"
+                            [ngClass]="{'credit': tx?.transactionType === 'Credit' || (tx?.transactionType || '').includes('To_Wallet'), 'debit': tx?.transactionType === 'Debit' || (tx?.transactionType || '').includes('To_bank')}">
+                            <mat-icon>{{ (tx?.transactionType === 'Debit' || (tx?.transactionType ||
+                                '').includes('To_bank')) ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                        </div>
+                        <div class="transaction-main-info">
+                            <h3 class="transaction-amount"
+                                [ngClass]="{'text-success': tx?.transactionType === 'Credit' || (tx?.transactionType || '').includes('To_Wallet'), 'text-danger': tx?.transactionType === 'Debit' || (tx?.transactionType || '').includes('To_bank')}">
+                                {{ (tx?.transactionType === 'Debit' || (tx?.transactionType ||
+                                '').includes('To_bank')) ? '-' : '+' }}
+                                {{ tx?.transaction_amount | currency:'INR' }}
+                            </h3>
+                            <div class="status-badge" [ngClass]="getStatusColorClass(tx?.status)">
+                                <mat-icon class="status-icon" [ngClass]="getStatusIcon(tx?.status)"></mat-icon>
+                                {{ formatLabel(tx?.status) }}
+                            </div>
+                        </div>
                         <!-- Auto-refreshing indicator -->
                         <div *ngIf="tx?.status?.toLowerCase() === 'pending' && (tx?.mode?.toLowerCase() === 'neft' || tx?.mode?.toLowerCase() === 'imps')"
-                            class="refreshing-indicator ms-2">
-                            <i class="bi bi-arrow-repeat"></i> Auto-refreshing
+                            class="refreshing-indicator ms-auto" matTooltip="Auto-refreshing status">
+                            <mat-icon class="spin">sync</mat-icon>
                         </div>
                     </div>
-                    <div [ngClass]="{'text-success': tx?.transactionType === 'Credit' || (tx?.transactionType || '').includes('To_Wallet'), 'text-danger': tx?.transactionType === 'Debit' || (tx?.transactionType || '').includes('To_bank')}"
-                        class="fw-bold fs-5">
-                        {{ (tx?.transactionType === 'Debit' || (tx?.transactionType || '').includes('To_bank')) ? '-' :
-                        '+' }}
-                        {{ tx?.transaction_amount | currency:'INR' }}
-                    </div>
-                </div>
 
-                <!-- Status Row -->
-                <div class="mb-2" *ngIf="tx?.status">
-                    <span class="status-chip" [ngClass]="getStatusColorClass(tx?.status)">
-                        <i class="bi" [ngClass]="getStatusIcon(tx?.status)"></i>
-                        {{ formatLabel(tx?.status) }}
-                    </span>
-                </div>
+                    <!-- Card Body -->
+                    <div class="card-body">
+                        <div class="info-row">
+                            <mat-icon class="info-icon">calendar_today</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Date</span>
+                                <span class="info-value">{{ tx?.created_at | date:'MMM d, y, h:mm:ss a' }}</span>
+                            </div>
+                        </div>
 
-                <!-- Details Grid -->
-                <div class="row g-2 mt-2 border-top pt-2">
-                    <!-- Payout ID -->
-                    <div class="col-6 col-md-3" *ngIf="tx.payout_id">
-                        <div class="detail-label">Payout ID</div>
-                        <div class="detail-value text-truncate" [matTooltip]="tx.payout_id">{{ tx.payout_id }}</div>
-                    </div>
+                        <div class="info-row" *ngIf="tx.payout_id">
+                            <mat-icon class="info-icon">receipt</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Payout ID</span>
+                                <span class="info-value text-truncate" [matTooltip]="tx.payout_id">{{ tx.payout_id
+                                    }}</span>
+                            </div>
+                        </div>
 
-                    <!-- Fund ID -->
-                    <div class="col-6 col-md-3" *ngIf="tx.fund_id">
-                        <div class="detail-label">Fund ID</div>
-                        <div class="detail-value text-truncate" [matTooltip]="tx.fund_id">{{ tx.fund_id }}</div>
-                    </div>
+                        <div class="info-row" *ngIf="tx.fund_id">
+                            <mat-icon class="info-icon">account_balance_wallet</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Fund ID</span>
+                                <span class="info-value text-truncate" [matTooltip]="tx.fund_id">{{ tx.fund_id
+                                    }}</span>
+                            </div>
+                        </div>
 
-                    <!-- Mode -->
-                    <div class="col-6 col-md-3" *ngIf="tx.mode">
-                        <div class="detail-label">Mode</div>
-                        <div class="detail-value">{{ tx.mode }}</div>
-                    </div>
+                        <div class="info-row" *ngIf="tx.mode">
+                            <mat-icon class="info-icon">payment</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Mode</span>
+                                <span class="info-value">{{ tx.mode }}</span>
+                            </div>
+                        </div>
 
-                    <!-- Order Type -->
-                    <div class="col-6 col-md-3" *ngIf="tx.orderType">
-                        <div class="detail-label">Order Type</div>
-                        <div class="detail-value">{{ tx.orderType | titlecase }}</div>
-                    </div>
+                        <div class="info-row" *ngIf="tx.orderType">
+                            <mat-icon class="info-icon">shopping_cart</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Order Type</span>
+                                <span class="info-value">{{ tx.orderType | titlecase }}</span>
+                            </div>
+                        </div>
 
-                    <!-- Vendor details (if relevant) -->
-                    <div class="col-12 col-md-6" *ngIf="tx.vendorFirmName">
-                        <div class="detail-label">Vendor Firm</div>
-                        <div class="detail-value">{{ tx.vendorFirmName }}</div>
-                    </div>
+                        <div class="info-row" *ngIf="tx.vendorFirmName">
+                            <mat-icon class="info-icon">store</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Vendor Firm</span>
+                                <span class="info-value">{{ tx.vendorFirmName }}</span>
+                            </div>
+                        </div>
 
-                    <!-- Remark -->
-                    <div class="col-12" *ngIf="tx.remark">
-                        <div class="detail-label">Remark</div>
-                        <div class="detail-value text-muted small">{{ tx.remark }}</div>
-                    </div>
+                        <div class="info-row" *ngIf="tx.remark">
+                            <mat-icon class="info-icon">comment</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Remark</span>
+                                <span class="info-value text-wrap small">{{ tx.remark }}</span>
+                            </div>
+                        </div>
 
-                    <!-- Ledger ID -->
-                    <div class="col-12 col-md-4" *ngIf="tx.ledgerId">
-                        <div class="detail-label">Ledger ID</div>
-                        <div class="detail-value text-truncate text-muted small" [matTooltip]="tx.ledgerId">{{
-                            tx.ledgerId }}</div>
+                        <div class="info-row" *ngIf="tx.ledgerId">
+                            <mat-icon class="info-icon">book</mat-icon>
+                            <div class="info-content">
+                                <span class="info-label">Ledger ID</span>
+                                <span class="info-value text-truncate small" [matTooltip]="tx.ledgerId">{{
+                                    tx.ledgerId }}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div *ngIf="!transactionHistoryList.length && !loading" class="text-muted text-center mt-3">
-                No transactions yet.
+            <!-- Footer / Paginator -->
+            <div class="col-12">
+                <div class="pagination-container">
+                    <mat-paginator [pageSize]="pageSize" [pageIndex]="pageIndex"
+                        [pageSizeOptions]="[10, 50, 100, 200, 500]" [length]="estimatedTotal"
+                        (page)="onPageChange($event)" showFirstLastButtons>
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+        <ng-template #noRecords>
+            <div class="empty-state">
+                <mat-icon class="empty-icon">account_balance_wallet</mat-icon>
+                <h3>No Transactions Found</h3>
+                <p>There are no wallet transactions to display for the selected range.</p>
             </div>
         </ng-template>
-
-        <!-- Paginator -->
-        <div class="pagination-container mt-3">
-            <mat-paginator [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 50, 100, 200, 500]"
-                [length]="estimatedTotal" (page)="onPageChange($event)" showFirstLastButtons>
-            </mat-paginator>
-        </div>
-    </div>
+    </ng-template>
 </div>

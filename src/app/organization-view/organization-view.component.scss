@@ -74,6 +74,13 @@
   overflow-x: auto;
   scrollbar-width: none;
 
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
   &::-webkit-scrollbar {
     display: none;
   }

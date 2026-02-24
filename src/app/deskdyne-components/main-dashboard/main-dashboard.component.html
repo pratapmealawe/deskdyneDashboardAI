@@ -1,137 +1,169 @@
-<div class="container-fluid py-3 dashboardContainer">
-    <h3>Dashboard</h3>
+<div class="dashboard-container">
+    <!-- Header Card -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Real-time overview of your business</p>
+            </div>
+            <div class="actions-section">
+                <!-- Date Range -->
+                <mat-form-field class="date-range-field" appearance="outline">
+                    <mat-label>Date Range</mat-label>
+                    <mat-date-range-input [formGroup]="dateGroup" [rangePicker]="picker" [max]="maxDate">
+                        <input matStartDate placeholder="Start" formControlName="start" />
+                        <input matEndDate placeholder="End" (dateChange)="changeDate()" formControlName="end" />
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
 
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card p-3 shadow border-0 rounded-lg card-hover">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="text-secondary d-block">Total Organizations</span>
-                        <h5 class="fw-bold">{{ staticTotalCounts.orgsCount }}</h5>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center bg-warning bg-opacity-25 rounded-circle"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="bi bi-building text-warning"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-3 shadow border-0 rounded-lg card-hover">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="text-secondary d-block">Total Outlets</span>
-                        <h5 class="fw-bold">{{ staticTotalCounts.outletsCount }}</h5>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center bg-secondary bg-opacity-25 rounded-circle"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="bi bi-chat-left-text text-secondary"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card p-3 shadow border-0 rounded-lg card-hover">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="text-secondary d-block">Total Vendors</span>
-                        <h5 class="fw-bold">{{ staticTotalCounts.vendorsCount }}</h5>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center bg-info bg-opacity-25 rounded-circle"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="bi bi-people text-info"></i>
-                    </div>
-                </div>
+                <!-- Exports -->
+                <button mat-stroked-button class="action-btn" (click)="excelExport()"
+                    [disabled]="filteredOrders.length === 0">
+                    <mat-icon class="excel-icon">table_view</mat-icon> Excel
+                </button>
+                <button mat-stroked-button class="action-btn" (click)="downloadPdf()"
+                    [disabled]="filteredOrders.length === 0">
+                    <mat-icon class="pdf-icon">picture_as_pdf</mat-icon> PDF
+                </button>
+
+                <!-- Filter Button -->
+                <button mat-stroked-button class="filter-btn" (click)="openFilterDialog()"
+                    [class.active-filter]="activeFilterCount > 0">
+                    <mat-icon>filter_list</mat-icon> Filters
+                    <span class="filter-badge" *ngIf="activeFilterCount > 0">{{ activeFilterCount }}</span>
+                </button>
             </div>
         </div>
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-4 ">
-            <mat-form-field class="w-100" appearance="outline">
-                <mat-label>Enter a date range</mat-label>
-                <mat-date-range-input [formGroup]="dateGroup" [rangePicker]="picker" [max]="maxDate">
-                    <input matStartDate placeholder="Start date" formControlName="start" />
-                    <input matEndDate placeholder="End date" (dateChange)="changeDate()" formControlName="end" />
-                </mat-date-range-input>
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-date-range-picker #picker> </mat-date-range-picker>
-            </mat-form-field>
+    <!-- Active Filter Chips -->
+    <div class="active-filter-chips" *ngIf="activeFilterCount > 0">
+        <div class="chip-strip">
+            <div class="filter-chip" *ngIf="filterOrg">
+                Org: {{ filterOrg }}
+                <mat-icon (click)="removeFilter('org')">close</mat-icon>
+            </div>
+            <div class="filter-chip" *ngIf="filterCity">
+                City: {{ filterCity }}
+                <mat-icon (click)="removeFilter('city')">close</mat-icon>
+            </div>
+            <div class="filter-chip" *ngIf="filterLocation">
+                Location: {{ filterLocation }}
+                <mat-icon (click)="removeFilter('location')">close</mat-icon>
+            </div>
+            <div class="filter-chip" *ngIf="filterStatus">
+                Status: {{ orderStatusMapper[filterStatus] || filterStatus }}
+                <mat-icon (click)="removeFilter('status')">close</mat-icon>
+            </div>
+            <button mat-stroked-button class="btn-clear-all" (click)="clearFilters(); buildPieChart()">
+                <mat-icon>filter_alt_off</mat-icon> Clear All
+            </button>
         </div>
     </div>
 
+    <!-- Entity Stats Row -->
+    <div class="stats-row entity-stats">
+        <div class="stat-card stat-orgs">
+            <div class="stat-icon-wrap orgs-gradient">
+                <mat-icon>business</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Organizations</span>
+                <span class="stat-value">{{ orgList.length }}</span>
+            </div>
+        </div>
 
-    <div class="row mt-4">
+        <div class="stat-card stat-outlets">
+            <div class="stat-icon-wrap outlets-gradient">
+                <mat-icon>storefront</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Outlets</span>
+                <span class="stat-value">{{ outletList.length }}</span>
+            </div>
+        </div>
 
-        <div class="col-md-3">
-            <div class="card p-3 shadow border-0 rounded-lg card-hover">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="text-secondary d-block">Outlet Orders</span>
-                        <h5 class="fw-bold">{{ totalCounts.ordersCount }} - <span class="money">&#8377; {{ totalCounts.outletTotalAmount }}</span></h5>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-25 rounded-circle"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="bi bi-cart text-primary"></i>
-                    </div>
-                </div>
+        <div class="stat-card stat-vendors">
+            <div class="stat-icon-wrap vendors-gradient">
+                <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Vendor Firms</span>
+                <span class="stat-value">{{ vendorList.length }}</span>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card p-3 shadow border-0 rounded-lg card-hover">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="text-secondary d-block">Subscription Orders</span>
-                        <h5 class="fw-bold">{{ totalCounts.subscriptionCount }} - <span class="money">&#8377; {{ totalCounts.subscriptionTotalAmount }}</span></h5>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-25 rounded-circle"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="bi bi-cart text-primary"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-      
-        <div class="col-md-3" *ngIf="bulkOrders.length > 0">
-            <div class="card p-3 shadow border-0 rounded-lg card-hover">
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <span class="text-secondary d-block">Bulk Orders</span>
-                        <h5 class="fw-bold">{{ bulkOrders.length }}</h5>
-                    </div>
-                    <div class="d-flex align-items-center justify-content-center bg-primary bg-opacity-25 rounded-circle"
-                        style="width: 2.5rem; height: 2.5rem">
-                        <i class="bi bi-cart text-primary"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-      
     </div>
 
-    <div class="row mt-4">
-        <div class="col-md-6">
-            <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
-                <highcharts-chart *ngIf="initialStatusData.length > 0" [Highcharts]="Highcharts"
-                    [options]="chartOptionsPie" [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
-                    style="width: 100%; height: 400px; display: block">
-                </highcharts-chart>
+    <!-- Loading -->
+    <div class="loading-strip" *ngIf="isLoading">
+        <mat-icon class="spin">autorenew</mat-icon> Loading orders data...
+    </div>
 
-                <div class="h-100 d-flex justify-content-center align-items-center pt-2">
-                    <p *ngIf="initialStatusData.length <= 0">No Data Found</p>
-                </div>
+    <!-- Financial Stats Row -->
+    <div class="stats-row financial-stats" *ngIf="!isLoading">
+        <div class="fin-card">
+            <div class="fin-icon orders-icon"><mat-icon>receipt_long</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Orders</span>
+                <span class="fin-value">{{ ordersCount }}</span>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
-                <highcharts-chart *ngIf="initialStatusDataSub.length > 0" [Highcharts]="Highcharts"
-                    [options]="chartOptionsSub" [update]="updateStatusFlagSub" [oneToOne]="oneToOneStatusFlagSub"
-                    style="width: 100%; height: 400px; display: block">
-                </highcharts-chart>
+        <div class="fin-card">
+            <div class="fin-icon amount-icon"><mat-icon>payments</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Total Amount</span>
+                <span class="fin-value">&#8377; {{ totalAmount | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card">
+            <div class="fin-icon paid-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Amount Paid</span>
+                <span class="fin-value">&#8377; {{ totalAmountPaid | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card">
+            <div class="fin-icon wallet-icon"><mat-icon>savings</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Money Wallet</span>
+                <span class="fin-value">&#8377; {{ totalWalletUsed | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card">
+            <div class="fin-icon company-icon"><mat-icon>corporate_fare</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Company Wallet</span>
+                <span class="fin-value">&#8377; {{ totalCompanyWallet | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card">
+            <div class="fin-icon subsidy-icon"><mat-icon>volunteer_activism</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Subsidy</span>
+                <span class="fin-value">&#8377; {{ totalSubsidy | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card">
+            <div class="fin-icon packaging-icon"><mat-icon>inventory_2</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Packaging</span>
+                <span class="fin-value">&#8377; {{ totalPackaging | number:'1.0-0' }}</span>
+            </div>
+        </div>
+    </div>
 
-                <div class="h-100 d-flex justify-content-center align-items-center pt-2">
-                    <p *ngIf="initialStatusDataSub.length <= 0">No Data Found</p>
-                </div>
+    <!-- Pie Chart -->
+    <div class="chart-section" *ngIf="!isLoading">
+        <div class="chart-card">
+            <highcharts-chart *ngIf="initialStatusData.length > 0" [Highcharts]="Highcharts" [options]="chartOptionsPie"
+                [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
+                style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+            <div class="chart-empty" *ngIf="initialStatusData.length === 0">
+                <mat-icon>pie_chart</mat-icon>
+                <p>No order data for the selected period</p>
             </div>
         </div>
     </div>
