@@ -1915,4 +1915,9 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.cancelScheduledNotification;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
+
+  getFoodOrderPackageByOrgIdAndCafeId(body: any){
+    const urlObj = this.apiConfigService.apiEndPointObj.getFoodOrderPackageByOrgIdAndCafeId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
 }

@@ -1,1 +1,72 @@
-<p>virtual Cafeteria</p>
+<div class="container-fluid pb-4 billingContainer">
+    <div class="row pt-3 pb-2">
+        <app-common-outlet-cafe-select [config]="headerConfig"
+            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+    </div>
+
+    <div class="d-flex justify-content-end mb-2" *ngIf="dateGroups.length">
+        <button mat-stroked-button (click)="exportDatewiseExcel()" [disabled]="loadingBilling">
+            Export Datewise Excel
+        </button>
+    </div>
+
+    <!-- DATEWISE GROUPS -->
+    <div class="row mt-3" *ngIf="pagedDateGroups.length">
+        <div class="col-12">
+            <mat-accordion multi>
+                <mat-expansion-panel *ngFor="let grp of pagedDateGroups; trackBy: trackByDateKey">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title class="fw-semibold">
+                            {{ grp.dateLabel }}
+                        </mat-panel-title>
+                        <mat-panel-description class="d-flex flex-wrap gap-3">
+                            <span><strong>Orders:</strong> {{ grp.orders.length }}</span>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <!-- Panel content -->
+                    <div class="table-responsive">
+                        <table class="table table-sm align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 140px;">Order No</th>
+                                    <th>Customer</th>
+                                    <th>Package Name</th>
+                                    <th>Meal MRP</th>
+                                    <th>Subsidy Amount</th>
+                                    <th>Kitchen Amount</th>
+                                    <th>Profit & Loss (P&L)</th>
+                                    <th>Invoice Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let o of grp.orders">
+                                    <td class="fw-medium">{{ o.orderNo }}</td>
+                                    <td>
+                                        <div class="fw-bold">{{ o.pocDetails?.pocName || o.customerName || '-' }}</div>
+                                        <div class="small text-muted"
+                                            *ngIf="o.pocDetails?.pocPhoneNo || o.customerPhoneNo">
+                                            {{ o.pocDetails?.pocPhoneNo || o.customerPhoneNo }}
+                                        </div>
+                                    </td>
+                                    <td>{{o.mealPackage.packageName}}</td>
+                                    <td>{{o.mealPackage.packagePrice}}</td>
+                                    <td>{{o.mealPackage.subsidyAmount}}</td>
+                                    <td>{{o.mealPackage.payToKitchenPerMeal}}</td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+
+            <!-- Paginator for date groups -->
+            <mat-paginator [length]="dateGroups.length" [pageSize]="groupPageSize" [pageIndex]="groupPageIndex"
+                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onGroupPage($event)" showFirstLastButtons>
+            </mat-paginator>
+        </div>
+    </div>
+</div>
