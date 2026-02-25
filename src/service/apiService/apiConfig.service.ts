@@ -423,6 +423,7 @@ export class ApiConfigService {
       getScheduledNotifications: p('/api/getNotifications', 'GET'),
       getScheduledNotificationById: p('/api/getNotification', 'GET'),
       cancelScheduledNotification: p('/api/cancelNotification', 'PUT'),
+      getFoodOrderPackageByOrgIdAndCafeId: p('/api/getFoodOrderPackageByOrgIdAndCafeId', 'POST'),
     }
   }
 }
