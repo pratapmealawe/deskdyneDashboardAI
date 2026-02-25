@@ -85,6 +85,8 @@ export class VendorComplianceComponent implements OnInit {
     if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
 
+      console.log(this.compliance);
+
       this.originalCompliance = { ...this.venderDetails.compliance };
 
       this.prepareForEdit();

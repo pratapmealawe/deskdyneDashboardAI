@@ -148,7 +148,7 @@ export class OrgIndividualMenuComponent implements OnInit, OnChanges {
     if (!this.selectedCafeteria) return;
     try {
       this.hasMenu.emit(false);
-      const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMealMenu(this.selectedCafeteria._id);
+      const menuItems: IndMenuMeta = await this.api.B2B_fetchIndividualMealMenu(this.selectedCafeteria.cafeteria_id);
       if (menuItems) {
         this.isVendorAssigned.emit(!!menuItems.vendorDetails);
         this.indMenuFetched = menuItems || {};
@@ -234,7 +234,7 @@ export class OrgIndividualMenuComponent implements OnInit, OnChanges {
     const bulkMenuObj = {
       organization_id: this.orgObj._id,
       organization_name: this.orgObj.organization_name,
-      cafeteriaId: this.selectedCafeteria._id,
+      cafeteriaId: this.selectedCafeteria.cafeteria_id,
       cafeteriaName: this.selectedCafeteria.cafeteria_name,
       mainCategory: 'meals',
       subCategory: 'individualMealsMenu',

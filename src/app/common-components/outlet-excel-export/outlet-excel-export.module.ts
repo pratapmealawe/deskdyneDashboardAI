@@ -10,6 +10,7 @@ import { CommonOutletCafeSelectModule } from 'src/app/common-outlet-cafe-select/
 import { OrganizationViewModule } from "src/app/organization-view/organization-view.module";
 import { MatChipsModule } from "@angular/material/chips";
 import { MaterialModule } from "src/app/material.module";
+import { OrderFilterDialogModule } from "../order-filter-dialog/order-filter-dialog.module";
 
 
 @NgModule({
@@ -25,8 +26,9 @@ import { MaterialModule } from "src/app/material.module";
     CommonOutletCafeSelectModule,
     OrganizationViewModule,
     MatChipsModule,
-    MaterialModule
-],
+    MaterialModule,
+    OrderFilterDialogModule
+  ],
   providers: [DatePipe]
 })
 export class OutletExcelExportModule { }

@@ -40,7 +40,7 @@
 
       <!-- FSSAI -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'FSSAI No', value: compliance?.fssaiNo, fileUrl: compliance?.fssaiFileUrl, fileName: 'Fssai Cert'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label: 'FSSAI No', value: compliance?.fssaiNo, fileUrl: compliance?.fssaiFileUrl || compliance?.fssaiImageUrl, fileName: 'Fssai Cert'}"></ng-container>
 
       <!-- Site FSSAI -->
       <ng-container
@@ -52,7 +52,7 @@
 
       <!-- Aadhar -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Aadhar No', value: compliance?.adhaar, fileUrl: compliance?.aadharFileUrl, fileName: 'Aadhar Card'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label: 'Aadhar No', value: compliance?.adhaar, fileUrl: compliance?.aadharFileUrl || compliance?.adhaarFrontImageUrl, fileName: 'Aadhar Card'}"></ng-container>
 
       <!-- Udyam -->
       <ng-container
