@@ -460,26 +460,38 @@ export class OtherOrdersComponent implements OnInit {
     if (!this.filteredList || this.filteredList.length === 0) return;
 
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Admin Orders');
+    const worksheet = workbook.addWorksheet('Daily Bulk Orders');
 
     worksheet.columns = [
-      { header: 'Order No', key: 'orderNo', width: 15 },
-      { header: 'Date', key: 'orderDate', width: 20 },
-      { header: 'Delivery Date', key: 'deliveryDate', width: 20 },
-      { header: 'Status', key: 'status', width: 15 },
-      { header: 'Customer Name', key: 'customerName', width: 20 },
-      { header: 'Customer Phone', key: 'customerPhone', width: 15 },
-      { header: 'Org Name', key: 'orgName', width: 25 },
-      { header: 'Cafe Name', key: 'cafeName', width: 20 },
+      { header: 'Order No', key: 'orderNo', width: 14 },
+      { header: 'Order Date', key: 'orderDate', width: 20 },
+      { header: 'Delivery Date', key: 'deliveryDate', width: 16 },
+      { header: 'Status', key: 'status', width: 18 },
+      { header: 'POC Name', key: 'pocName', width: 20 },
+      { header: 'POC Phone', key: 'pocPhone', width: 16 },
+      { header: 'POC Email', key: 'pocEmail', width: 25 },
+      { header: 'Organization', key: 'orgName', width: 22 },
+      { header: 'Cafeteria', key: 'cafeName', width: 20 },
+      { header: 'Vendor Firm', key: 'vendorFirm', width: 20 },
+      { header: 'Vendor Name', key: 'vendorName', width: 18 },
+      { header: 'Vendor Phone', key: 'vendorPhone', width: 16 },
+      { header: 'Delivery Slot', key: 'deliverySlot', width: 20 },
+      { header: 'Delivery Mode', key: 'deliveryMode', width: 16 },
       { header: 'Items', key: 'items', width: 40 },
-      { header: 'Bill Amount', key: 'billAmount', width: 15 },
-      { header: 'Address', key: 'address', width: 30 },
+      { header: 'Item Count', key: 'itemCount', width: 12 },
+      { header: 'Subtotal (₹)', key: 'subtotal', width: 14 },
+      { header: 'Delivery Charge (₹)', key: 'deliveryCharge', width: 18 },
+      { header: 'Taxes (₹)', key: 'taxes', width: 12 },
+      { header: 'Total Amount (₹)', key: 'totalAmount', width: 16 },
+      { header: 'Paid to Kitchen (₹)', key: 'paidToKitchen', width: 18 },
+      { header: 'Special Request', key: 'specialRequest', width: 30 },
+      { header: 'Location', key: 'location', width: 30 },
     ];
 
-    // Add Header Row
+    // Style header row
     const headerRow = worksheet.getRow(1);
     headerRow.eachCell((cell) => {
-      cell.font = { bold: true };
+      cell.font = { bold: true, color: { argb: 'FF1A1A1A' } };
       cell.fill = {
         type: 'pattern',
         pattern: 'solid',
@@ -491,31 +503,60 @@ export class OtherOrdersComponent implements OnInit {
         bottom: { style: 'thin' },
         right: { style: 'thin' }
       };
+      cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     });
 
-    this.filteredList.forEach(order => {
-      const items = (order.itemList || [])
-        .map((i: any) => `${i.itemName} x${i.count}`)
+    this.filteredList.forEach((order: any) => {
+      const itemList = order.itemList || [];
+      const items = itemList
+        .map((i: any) => `${i.deliveredItem || i.itemName || 'N/A'} x${i.count || 1}`)
         .join(', ');
+      const totalItemCount = itemList.reduce((sum: number, i: any) => sum + (i.count || 0), 0);
+
+      const formatTime = (t: string) => {
+        if (!t) return '';
+        const [h, m] = t.split(':');
+        let hr = parseInt(h);
+        const min = parseInt(m);
+        const ampm = hr >= 12 ? 'PM' : 'AM';
+        hr = hr % 12 || 12;
+        return `${hr}:${min < 10 ? '0' + min : min} ${ampm}`;
+      };
+
+      const slotFrom = itemList[0]?.deliveryTimeFrom || '';
+      const slotTo = itemList[0]?.deliveryTimeTo || '';
+      const deliverySlot = slotFrom ? `${formatTime(slotFrom)} - ${formatTime(slotTo)}` : '-';
 
       worksheet.addRow({
         orderNo: order.orderNo || '-',
         orderDate: this.formatDate(order.orderDate),
         deliveryDate: order.deliveryDate ? this.formatDate(order.deliveryDate) : '-',
-        status: this.orderStatusMapper[order.orderstatus] || order.orderstatus,
-        customerName: order.customerName || '-',
-        customerPhone: order.customerPhoneNo || '-',
-        orgName: order.organizationDetails?.organization_name || '-',
-        cafeName: order.cafeteriaDetails?.cafeteria_name || '-',
-        items: items,
-        billAmount: order.amount || 0,
-        address: order.address || '-'
+        status: this.orderStatusMapper[order.orderstatus] || order.orderstatus || '-',
+        pocName: order.pocDetails?.pocName || '-',
+        pocPhone: order.pocDetails?.pocPhoneNo || '-',
+        pocEmail: order.pocDetails?.pocEmail || '-',
+        orgName: order.orgName || '-',
+        cafeName: order.cafeteriaName || '-',
+        vendorFirm: order.vendorFirmName || '-',
+        vendorName: order.vendorName || '-',
+        vendorPhone: order.vendorPhoneNo || '-',
+        deliverySlot: deliverySlot,
+        deliveryMode: order.deliveryVendor || 'Standard',
+        items: items || '-',
+        itemCount: totalItemCount,
+        subtotal: order.orderAmount || 0,
+        deliveryCharge: order.deliveryCharge || 0,
+        taxes: order.taxes || 0,
+        totalAmount: order.amount || 0,
+        paidToKitchen: order.amtAfterCommisionPaidToKitchen || order.itemAmount || 0,
+        specialRequest: order.specialRequest || '-',
+        location: order.customerLocation?.location || order.customerLocation?.address || order.orgCity || '-',
       });
     });
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `Admin_Orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    saveAs(blob, `Daily_Bulk_Orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
   }
 
   async exportEmployeePollToExcel() {

@@ -141,13 +141,13 @@ export class CreateNotificationComponent implements OnInit {
             }
         });
 
-        this.form.get('filterCafeId')?.valueChanges.subscribe(async (val) => {
-            if (val && this.form.get('targetType')?.value === 'individual') {
-                // If org is already selected, we don't clear it.
-                // We just fetch users for this cafe
-                await this.fetchUsersByCafe(val);
-            }
-        });
+        // this.form.get('filterCafeId')?.valueChanges.subscribe(async (val) => {
+        //     if (val && this.form.get('targetType')?.value === 'individual') {
+        //         // If org is already selected, we don't clear it.
+        //         // We just fetch users for this cafe
+        //         await this.fetchUsersByCafe(val);
+        //     }
+        // });
 
         this.form.get('userSearch')?.valueChanges.subscribe(val => {
             this.filterUsers(val);
@@ -240,9 +240,9 @@ export class CreateNotificationComponent implements OnInit {
         if (!orgId) return;
         this.isLoading = true;
         try {
-            const res: any = await this.apiMainService.getEmployeeListByOrgId(orgId);
-            if (res && res.status) {
-                this.usersList = res.data || [];
+            const res: any = await this.apiMainService.getCustomerListByOrgId({ orgId });
+            if (res) {
+                this.usersList = res || [];
                 this.filterUsers(this.form.get('userSearch')?.value);
             } else {
                 this.usersList = [];
@@ -259,28 +259,6 @@ export class CreateNotificationComponent implements OnInit {
         }
     }
 
-    async fetchUsersByCafe(cafeId: string) {
-        if (!cafeId) return;
-        this.isLoading = true;
-        try {
-            const res: any = await this.apiMainService.getEmployeelistByCafeteriaId(cafeId);
-            if (res && res.status) {
-                this.usersList = res.data || [];
-                this.filterUsers(this.form.get('userSearch')?.value);
-            } else {
-                this.usersList = [];
-                this.filteredUsersList = [];
-                this.toaster.info('No users found.');
-            }
-        } catch (error) {
-            console.error('Error fetching users by cafeteria', error);
-            this.toaster.error('Failed to fetch users.');
-            this.usersList = [];
-            this.filteredUsersList = [];
-        } finally {
-            this.isLoading = false;
-        }
-    }
 
     filterUsers(query: string) {
         if (!query) {
@@ -289,9 +267,9 @@ export class CreateNotificationComponent implements OnInit {
         }
         const lowerQuery = query.toLowerCase();
         this.filteredUsersList = this.usersList.filter(u =>
-            (u.emp_name?.toLowerCase().includes(lowerQuery)) ||
-            (u.emp_id?.toLowerCase().includes(lowerQuery)) ||
-            (u.emp_email?.toLowerCase().includes(lowerQuery))
+            (u.userName?.toLowerCase().includes(lowerQuery)) ||
+            (u.phoneNo?.toLowerCase().includes(lowerQuery)) ||
+            (u.email?.toLowerCase().includes(lowerQuery))
         );
     }
 

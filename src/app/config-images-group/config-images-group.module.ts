@@ -7,6 +7,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
 
 import { ConfigImagesGroupRoutingModule } from './config-images-group-routing.module';
 import { ConfigImagesGroupComponent } from './config-images-group.component';
@@ -26,7 +28,9 @@ import { AddUpdateConfigImagesGroupComponent } from './add-update-config-images-
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    MatMenuModule
   ]
 })
 export class ConfigImagesGroupModule { }
