@@ -45,6 +45,12 @@
                             </button>
                         </div>
                     </div>
+                    <div class="filter-actions">
+                        <button mat-stroked-button color="primary" (click)="exportAdminOrdersToExcel()"
+                            [disabled]="!filteredList || filteredList.length === 0">
+                            <mat-icon>download</mat-icon> Export
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -109,8 +115,8 @@
             <div class="orders-container">
                 <div *ngIf="filteredList.length > 0; else noRecord">
                     <div class="orders-list">
-                        <app-bulk-order-card *ngFor="let order of filteredList"
-                            [orderInput]="order" (statusChange)="onStatusChanged($event)"></app-bulk-order-card>
+                        <app-bulk-order-card *ngFor="let order of filteredList" [orderInput]="order"
+                            (statusChange)="onStatusChanged($event)"></app-bulk-order-card>
                     </div>
 
                     <!-- Pagination -->

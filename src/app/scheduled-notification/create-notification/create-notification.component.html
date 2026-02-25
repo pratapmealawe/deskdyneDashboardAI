@@ -83,101 +83,116 @@
             </div>
         </div>
 
-        <!-- Section: Individual User Selection (New Flow) -->
+        <!-- Section: Individual User Selection (Customer-Style Flow) -->
         <div *ngIf="form.get('targetType')?.value === 'individual'" class="individual-selection-section">
-            <div class="row">
-                <div class="col-md-6">
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-label>Filter by Organization</mat-label>
+
+            <!-- Filter Bar (like Customer component) -->
+            <div class="individual-filter-bar">
+                <div class="filter-left">
+                    <mat-form-field appearance="outline" class="org-select">
+                        <mat-label>Organization</mat-label>
                         <mat-select formControlName="filterOrgId">
-                            <mat-option>-- None --</mat-option>
+                            <mat-option [value]="''">Select Organization</mat-option>
                             <mat-option *ngFor="let org of orgList"
                                 [value]="org._id">{{org.organization_name}}</mat-option>
                         </mat-select>
                     </mat-form-field>
                 </div>
-                <div class="col-md-6">
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-label>Filter by Cafeteria</mat-label>
-                        <mat-select formControlName="filterCafeId">
-                            <mat-option>-- None --</mat-option>
-                            <mat-option *ngFor="let cafe of cafeteriaList"
-                                [value]="cafe.cafeteria_id">{{cafe.cafeteria_name}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
+
+                <div class="search-wrapper" *ngIf="usersList.length > 0 || form.get('filterOrgId')?.value">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search by name, email or ID..." formControlName="userSearch" />
                 </div>
             </div>
 
-            <div class="row"
-                *ngIf="usersList.length > 0 || (form.get('filterOrgId')?.value || form.get('filterCafeId')?.value)">
-                <div class="col-md-12">
-                    <mat-form-field appearance="outline" class="w-100">
-                        <mat-label>Search Users</mat-label>
-                        <input matInput formControlName="userSearch" placeholder="Search by name, email or ID">
-                        <mat-icon matSuffix>search</mat-icon>
-                    </mat-form-field>
-                </div>
+            <!-- Hint when no org selected -->
+            <div class="empty-state-hint" *ngIf="!form.get('filterOrgId')?.value">
+                <mat-icon>business</mat-icon>
+                <p>Please select an organization to view users.</p>
             </div>
 
-            <div class="row" *ngIf="filteredUsersList?.length">
-                <div class="col-md-12">
-                    <div class="user-grid">
-                        <div *ngFor="let user of filteredUsersList" class="user-card"
-                            (click)="toggleUserSelection(user)" [class.selected]="isUserSelected(user)">
+            <!-- Loading -->
+            <div class="loading-state" *ngIf="isLoading">
+                <mat-spinner diameter="32"></mat-spinner>
+                <p>Loading users...</p>
+            </div>
 
-                            <!-- Avatar -->
-                            <div class="user-avatar">
-                                <span class="avatar-text">{{ getInitials(user?.emp_name) }}</span>
+            <!-- User Cards Grid -->
+            <ng-container *ngIf="!isLoading && form.get('filterOrgId')?.value">
+                <div class="user-count-bar" *ngIf="filteredUsersList?.length">
+                    <span class="count-text">
+                        <strong>{{ filteredUsersList.length }}</strong> user(s) found
+                    </span>
+                    <span class="selected-count" *ngIf="selectedUsers.length > 0">
+                        <mat-icon>check_circle</mat-icon>
+                        {{ selectedUsers.length }} selected
+                    </span>
+                </div>
+
+                <div class="user-grid" *ngIf="filteredUsersList?.length">
+                    <div *ngFor="let user of filteredUsersList" class="user-card" (click)="toggleUserSelection(user)"
+                        [class.selected]="isUserSelected(user)">
+
+                        <!-- Avatar -->
+                        <div class="user-avatar">
+                            <span class="avatar-text">{{ getInitials(user?.emp_name) }}</span>
+                        </div>
+
+                        <!-- User Info -->
+                        <div class="user-info">
+                            <div class="user-primary">
+                                <h3 class="user-name" matTooltip="{{user.emp_name}}">{{ user?.emp_name || 'Unknown' }}
+                                </h3>
+                                <span class="user-org-badge" *ngIf="user?.org_name">
+                                    {{ user?.org_name }}
+                                </span>
                             </div>
-
-                            <!-- User Info -->
-                            <div class="user-info">
-                                <div class="user-primary">
-                                    <h3 class="user-name" matTooltip="{{user.emp_name}}">{{ user?.emp_name || 'Unknown'
-                                        }}</h3>
-                                    <span class="user-org-badge" *ngIf="user?.org_name">
-                                        {{ user?.org_name }}
-                                    </span>
+                            <div class="user-details">
+                                <div class="detail-item">
+                                    <mat-icon>badge</mat-icon>
+                                    <span matTooltip="{{user.emp_id}}">{{ user?.emp_id || '-' }}</span>
                                 </div>
-                                <div class="user-details">
-                                    <div class="detail-item">
-                                        <mat-icon>badge</mat-icon>
-                                        <span matTooltip="{{user.emp_id}}">{{ user?.emp_id || '-' }}</span>
-                                    </div>
-                                    <div class="detail-item">
-                                        <mat-icon>email</mat-icon>
-                                        <span matTooltip="{{user.emp_email}}">{{ user?.emp_email || '-' }}</span>
-                                    </div>
-                                    <div class="detail-item" *ngIf="user?.phone_number">
-                                        <mat-icon>phone</mat-icon>
-                                        <span>{{ user?.phone_number }}</span>
-                                    </div>
+                                <div class="detail-item">
+                                    <mat-icon>email</mat-icon>
+                                    <span matTooltip="{{user.emp_email}}">{{ user?.emp_email || '-' }}</span>
+                                </div>
+                                <div class="detail-item" *ngIf="user?.phone_number">
+                                    <mat-icon>phone</mat-icon>
+                                    <span>{{ user?.phone_number }}</span>
                                 </div>
                             </div>
+                        </div>
 
-                            <!-- Checkbox -->
-                            <div class="user-checkbox">
-                                <mat-checkbox [checked]="isUserSelected(user)"
-                                    (click)="$event.stopPropagation(); toggleUserSelection(user)" color="primary">
-                                </mat-checkbox>
-                            </div>
+                        <!-- Checkbox -->
+                        <div class="user-checkbox">
+                            <mat-checkbox [checked]="isUserSelected(user)"
+                                (click)="$event.stopPropagation(); toggleUserSelection(user)" color="primary">
+                            </mat-checkbox>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row mt-2" *ngIf="selectedUsers.length > 0">
-                <div class="col-md-12">
-                    <label>Selected Users ({{selectedUsers.length}}):</label>
-                    <mat-chip-grid #chipGrid aria-label="Selected users" class="mt-1 selected-users-chips">
-                        <mat-chip-row *ngFor="let user of selectedUsers" (removed)="removeUser(user)">
-                            {{user.emp_name}}
-                            <button matChipRemove [attr.aria-label]="'remove ' + user.emp_name">
-                                <mat-icon>cancel</mat-icon>
-                            </button>
-                        </mat-chip-row>
-                    </mat-chip-grid>
+                <!-- Empty state when org selected but no users -->
+                <div class="empty-state-hint" *ngIf="!filteredUsersList?.length && !isLoading">
+                    <mat-icon>people_outline</mat-icon>
+                    <p>No users found. Try a different organization or search term.</p>
                 </div>
+            </ng-container>
+
+            <!-- Selected Users Chips -->
+            <div class="selected-users-section" *ngIf="selectedUsers.length > 0">
+                <label class="selected-label">
+                    <mat-icon>group</mat-icon>
+                    Selected Users ({{selectedUsers.length}}):
+                </label>
+                <mat-chip-grid #chipGrid aria-label="Selected users" class="selected-users-chips">
+                    <mat-chip-row *ngFor="let user of selectedUsers" (removed)="removeUser(user)">
+                        {{user.emp_name}}
+                        <button matChipRemove [attr.aria-label]="'remove ' + user.emp_name">
+                            <mat-icon>cancel</mat-icon>
+                        </button>
+                    </mat-chip-row>
+                </mat-chip-grid>
             </div>
 
             <div class="row" *ngIf="form.get('individualIds')?.hasError('required') && (form.touched || form.dirty)">
