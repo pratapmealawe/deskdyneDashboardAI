@@ -22,7 +22,7 @@
             <div class="d-flex flex-wrap gap-2 p-3 border rounded bg-light"
                 style="max-height: 400px; overflow-y: auto;">
                 <div *ngFor="let img of allImages" class="image-option"
-                    [class.selected]="formData.imageData.includes(img.imageUrl)"
+                    [class.selected]="formData?.imageData?.includes(img.imageUrl)"
                     (click)="toggleImageSelection(img._id, img.imageUrl)">
                     <img *ngIf="img.imageUrl" [src]="serverUrl + img.imageUrl" [alt]="img.imageName"
                         (error)="img.imageUrl = null" />
@@ -38,7 +38,7 @@
                     No images available. Please add config images first.
                 </div>
             </div>
-            <div class="form-text mt-1" *ngIf="formData.imageData.length">
+            <div class="form-text mt-1" *ngIf="formData?.imageData?.length">
                 {{ formData.imageData.length }} image(s) selected
             </div>
         </div>
