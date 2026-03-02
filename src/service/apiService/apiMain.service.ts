@@ -824,11 +824,9 @@ export class ApiMainService {
 
   getBulkDailyOrderList(status: any, page: any, limit: number, date?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
-    let url = urlObj.url + `/${page}/${limit}/${status}`;
-    if (date) {
-      url += `/${date}`;
-    }
-    return this.apiHttpService.REQUEST({ url, method: urlObj.method });
+    const url = urlObj.url + `/${page}/${limit}/${status}`;
+    const payload = date ? { date } : {};
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method }, payload);
   }
 
   getClusterb2bBulkOrderList(status: any, page: any, limit: number) {
@@ -846,10 +844,8 @@ export class ApiMainService {
 
   getCurrentDailyOrdersCount(date?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount;
-    if (date) {
-      return this.apiHttpService.REQUEST({ url: urlObj.url + `/${date}`, method: urlObj.method });
-    }
-    return this.apiHttpService.REQUEST(urlObj);
+    const payload = date ? { date } : {};
+    return this.apiHttpService.REQUEST(urlObj, payload);
   }
 
   getCafeteriasPollingList(deliveryDate: any) {
@@ -1916,7 +1912,7 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  getFoodOrderPackageByOrgIdAndCafeId(body: any){
+  getFoodOrderPackageByOrgIdAndCafeId(body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getFoodOrderPackageByOrgIdAndCafeId;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }

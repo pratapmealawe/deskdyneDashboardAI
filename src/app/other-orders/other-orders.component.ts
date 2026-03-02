@@ -171,7 +171,6 @@ export class OtherOrdersComponent implements OnInit {
       this.isLoading = true;
       const res: any[] = await this.apiMainService.getAdminEmpPolls(payload);
       if (res && res.length > 0) {
-        console.log(res);
         const groupedMap = new Map<string, any>();
         res.forEach(order => {
           if (!Array.isArray(order.mealTypeList)) return;
@@ -246,8 +245,8 @@ export class OtherOrdersComponent implements OnInit {
     try {
       this.isLoading = true;
       const dateParam = this.selectedAdminOrderDate ?
-        new Date(this.selectedAdminOrderDate) :
-        new Date();
+        this.selectedAdminOrderDate.toISOString() :
+        new Date().toISOString();
       const res: any = await this.apiMainService.getCurrentDailyOrdersCount(dateParam);
       if (res) {
         this.adminOrderStatusList.forEach((status: any) => {
@@ -297,8 +296,9 @@ export class OtherOrdersComponent implements OnInit {
       this.isLoading = true;
       this.page = pageNum;
       const dateStr = this.selectedAdminOrderDate ?
-        new Date(this.selectedAdminOrderDate) :
-        new Date();
+        this.selectedAdminOrderDate.toISOString() :
+        new Date().toISOString();
+
       const res: any = await this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit, dateStr);
       if (res) {
         this.filteredList = res.orderList;
@@ -628,6 +628,18 @@ export class OtherOrdersComponent implements OnInit {
     const dd = String(date.getDate()).padStart(2, '0');
     const mm = String(date.getMonth() + 1).padStart(2, '0'); // 0-based month
     const yyyy = date.getFullYear();
+
+    return `${dd}/${mm}/${yyyy}`;
+  }
+
+  convertDate(dateInput: any): string {
+    const date = new Date(dateInput);
+    const istOffsetMs = 5.5 * 60 * 60 * 1000;
+    const istDate = new Date(date.getTime() + istOffsetMs);
+
+    const dd = String(istDate.getDate()).padStart(2, '0');
+    const mm = String(istDate.getMonth() + 1).padStart(2, '0');
+    const yyyy = istDate.getFullYear();
 
     return `${dd}/${mm}/${yyyy}`;
   }
