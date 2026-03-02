@@ -246,10 +246,15 @@ export class OrgBulkSnackboxMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.B2B_saveBulkSnacksMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getBulkSnackMenuItemsByCafeteriaId();
+      const res = await this.api.B2B_saveBulkSnacksMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getBulkSnackMenuItemsByCafeteriaId();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.error('error while saving bulk snack menu', error);
     }

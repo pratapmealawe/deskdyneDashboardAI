@@ -244,10 +244,15 @@ export class OrgPredefinedSnackboxMenuComponent implements OnInit {
     };
 
     try {
-      await this.api.B2B_savePredefinedFoodBoxMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getPredefinedSnackBoxMenuItemsByCafeteriaId();
+      const res = await this.api.B2B_savePredefinedFoodBoxMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getPredefinedSnackBoxMenuItemsByCafeteriaId();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.error('error while saving predefined snack box menu', error);
     }
