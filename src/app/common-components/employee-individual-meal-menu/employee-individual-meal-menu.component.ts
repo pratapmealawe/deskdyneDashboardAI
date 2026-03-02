@@ -222,10 +222,15 @@ export class EmployeeIndividualMealMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.saveEmployeeIndividualMealMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getEmployeeIndividualMenuByCafeteria();
+      const res = await this.api.saveEmployeeIndividualMealMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getEmployeeIndividualMenuByCafeteria();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (e) {
       console.error('error while saving employee individual menu', e);
     }
