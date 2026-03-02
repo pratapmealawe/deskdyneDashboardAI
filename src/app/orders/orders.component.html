@@ -74,6 +74,17 @@
                 </div>
             </div>
 
+            <div class="stat-card" [class.active]="selectedStatus === 'readyOrder'"
+                (click)="getLatestOrderStatusList('readyOrder')">
+                <div class="stat-icon ready">
+                    <mat-icon>room_service</mat-icon>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-value">{{orderStatusCountObj.readyOrder}}</div>
+                    <div class="stat-label">Ready Orders</div>
+                </div>
+            </div>
+
             <div class="stat-card" [class.active]="selectedStatus === 'completed'"
                 (click)="getLatestOrderStatusList('completed')">
                 <div class="stat-icon success">
@@ -174,6 +185,7 @@
                             <div class="status-badge" [ngClass]="row.orderstatus">
                                 <mat-icon>{{ row.orderstatus === 'completed' ? 'check_circle' :
                                     row.orderstatus === 'placed' ? 'restaurant' :
+                                    row.orderstatus === 'readyOrder' ? 'room_service' :
                                     row.orderstatus === 'paymentFailed' ? 'error' :
                                     row.orderstatus === 'paymentInprogress' ? 'hourglass_empty' : 'info' }}</mat-icon>
                                 {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}

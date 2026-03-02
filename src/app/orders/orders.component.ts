@@ -24,7 +24,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
     paymentInprogress: 0,
     paymentFailed: 0,
     completed: 0,
-    placed: 0
+    placed: 0,
+    readyOrder: 0
   };
 
   // Totals
@@ -302,7 +303,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
       paymentInprogress: 0,
       paymentFailed: 0,
       completed: 0,
-      placed: 0
+      placed: 0,
+      readyOrder: 0
     };
 
     this.currentOrderStatusList.forEach((order: any) => {
@@ -365,6 +367,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     } catch (err) {
       console.error('Error cancelling order:', err);
+      this.toaster.error("Failed to cancel order");
     }
   }
 
@@ -392,6 +395,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     } catch (err) {
       console.error('Error marking order ready:', err);
+      this.toaster.error("Failed to mark order as Ready");
     }
   }
 
@@ -419,6 +423,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     } catch (err) {
       console.error('Error completing order:', err);
+      this.toaster.error("Failed to complete order");
     }
   }
 

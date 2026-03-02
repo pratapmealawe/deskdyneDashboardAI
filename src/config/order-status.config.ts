@@ -1,7 +1,8 @@
 export const orderStatusMapper = {
     'waitingForApproval': 'Waiting For Approval',
-    'placed':'Placed',
-    'accepted' : 'Accepted',
+    'placed': 'Placed',
+    'readyOrder': 'Ready',
+    'accepted': 'Accepted',
     'declined': 'Declined',
     'inprogress': 'In-Progress',
     'cancelled': 'Cancelled',
@@ -17,16 +18,16 @@ export const orderStatusMapper = {
     'paymentInprogress': 'Payment Transaction In-Progress',
     'paymentFailed': 'Payment Transaction Failed',
     'cancelledByKitchen': 'Cancelled By Kitchen',
-    'rejectedByKitchen' : 'Not Accepted',
-    'cancelledByUser' : 'Cancelled',
-    'autoCancelled' : 'Auto Cancelled',
+    'rejectedByKitchen': 'Not Accepted',
+    'cancelledByUser': 'Cancelled',
+    'autoCancelled': 'Auto Cancelled',
     'advance': 'Advance',
     'daily': 'Daily',
     'allDay': 'All Day',
     'subscription': 'Subscription',
     'rescheduled': 'Rescheduled',
     'subscriptionPackage': 'Subscription',
-    
+
 }
 
 

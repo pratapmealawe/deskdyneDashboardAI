@@ -268,7 +268,7 @@ export class ApiConfigService {
       b2b_updateCustomizedSnackBox: p('/api/b2b_updateCustomizedSnackBox', 'POST'),
       getCafeteriasPollingList: p('/api/getCafeteriasPollingList', 'POST'),
       getDailyFoodOrdersCount: p('/api/getDailyFoodOrdersCount', 'GET'),
-      getCurrentDailyOrdersCount: p('/api/getCurrentDailyOrdersCount', 'GET'),
+      getCurrentDailyOrdersCount: p('/api/getCurrentDailyOrdersCount', 'POST'),
       searchVendorProfile: p('/api/searchVendorProfile', 'GET'),
       getNearestVendors: p('/api/getNearestVendors', 'GET'),
       getdeliveryAmount: p('/api/quote', 'POST'),
