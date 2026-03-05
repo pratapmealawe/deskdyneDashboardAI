@@ -44,4 +44,9 @@ export class OrgOrderComponent {
       .filter((s: any) => s.length > 0)
       .join(', ');
   }
+
+  hasKitchenRatings(): boolean {
+    if (!this.order?.itemlist || !Array.isArray(this.order.itemlist)) return false;
+    return this.order.itemlist.some((i: any) => i.starRatingKitchen != null);
+  }
 }

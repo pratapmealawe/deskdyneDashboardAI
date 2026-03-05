@@ -90,6 +90,12 @@ export class EmployeeListComponent {
         await this.getEmployeelistByCafeteriaId();
     }
 
+    // 👉 Get employees filtered by cafeteria only (no search filter)
+    getCafeteriaEmployees(): any[] {
+        if (!this.employeeList) return [];
+        return this.employeeList.filter(emp => emp.cafeteria_id === this.selectedCafeteriaId);
+    }
+
     // 👉 Get filtered employees by cafeteria and search
     getFilteredEmployees(): any[] {
         if (!this.employeeList) return [];

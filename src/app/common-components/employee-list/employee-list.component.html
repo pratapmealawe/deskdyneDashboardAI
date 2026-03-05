@@ -141,7 +141,7 @@
   </div>
 
   <!-- Employee List Section -->
-  <div class="employee-list-section" *ngIf="getFilteredEmployees().length > 0 ">
+  <div class="employee-list-section" *ngIf="getCafeteriaEmployees().length > 0">
     <div class="section-header">
       <div class="section-title">
         <mat-icon>groups</mat-icon>
@@ -156,7 +156,7 @@
       </div>
     </div>
 
-    <div class="employee-grid">
+    <div class="employee-grid" *ngIf="getFilteredEmployees().length > 0">
       <div class="employee-card" *ngFor="let employee of getFilteredEmployees()">
         <div class="employee-avatar">
           {{ getInitials(employee.employeeName) }}
@@ -193,6 +193,13 @@
           </button>
         </div>
       </div>
+    </div>
+
+    <!-- No Search Results -->
+    <div class="empty-state" *ngIf="searchQuery && getFilteredEmployees().length === 0">
+      <mat-icon>search_off</mat-icon>
+      <p>No employees found for "{{ searchQuery }}"</p>
+      <span>Try a different search term</span>
     </div>
   </div>
 </div>
