@@ -140,7 +140,7 @@ export class SubmitChecklistComponent implements OnInit {
         return {
           ...item,
           selected: !!m.selected,
-          comment: m.comment || '',
+          comment: m.comment || ''
         };
       }
       return item;
