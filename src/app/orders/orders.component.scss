@@ -323,6 +323,11 @@
         color: var.$color-info;
     }
 
+    &.ready {
+        background-color: #ede9fe;
+        color: #7c3aed;
+    }
+
     &.success {
         background-color: var.$color-success-bg;
         color: var.$color-success;
@@ -550,6 +555,11 @@
     &.placed {
         background-color: var.$color-info-bg;
         color: var.$color-info;
+    }
+
+    &.readyOrder {
+        background-color: #ede9fe;
+        color: #7c3aed;
     }
 
     &.paymentInprogress {

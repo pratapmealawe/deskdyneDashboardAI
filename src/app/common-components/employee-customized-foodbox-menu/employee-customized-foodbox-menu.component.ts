@@ -215,10 +215,17 @@ export class EmployeeCustomizedFoodboxMenuComponent implements OnInit, OnChanges
     };
 
     try {
-      await this.api.saveEmployeeCustomizedFoodBoxMenu(bulkMenuObj);
+      const res = await this.api.saveEmployeeCustomizedFoodBoxMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getEmployeeCustomizedSnackBoxMenuItems();
+      } else {
+        this.hasMenu.emit(false);
+      }
       this.changesMade = false;
       this.slabEditMode = false;
-      await this.getEmployeeCustomizedSnackBoxMenuItems();
     } catch (e) {
       console.error('error while saving employee customized foodbox menu', e);
     }

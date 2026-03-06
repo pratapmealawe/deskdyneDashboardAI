@@ -171,3 +171,173 @@ mat-radio-button {
     max-height: 100px;
     overflow-y: auto;
 }
+
+// ===========================
+// Individual Selection Section
+// ===========================
+.individual-selection-section {
+    margin-top: 8px;
+}
+
+// Filter Bar (Customer-style)
+.individual-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 12px;
+
+    .filter-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .org-select,
+    .cafe-select {
+        min-width: 200px;
+        max-width: 260px;
+
+        ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+        }
+    }
+
+    .search-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0 12px;
+        height: 40px;
+        flex: 1;
+        min-width: 180px;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+        &:focus-within {
+            border-color: #2196f3;
+            box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .search-icon {
+            color: #94a3b8;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+        }
+
+        input {
+            border: none;
+            outline: none;
+            font-size: 0.9rem;
+            color: #334155;
+            width: 100%;
+            background: transparent;
+
+            &::placeholder {
+                color: #94a3b8;
+            }
+        }
+    }
+}
+
+// Empty / Hint State
+.empty-state-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    color: #94a3b8;
+    text-align: center;
+
+    mat-icon {
+        font-size: 40px;
+        width: 40px;
+        height: 40px;
+        margin-bottom: 8px;
+        color: #cbd5e1;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+}
+
+// Loading State
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 16px;
+    gap: 12px;
+    color: #64748b;
+
+    p {
+        margin: 0;
+        font-size: 0.9rem;
+    }
+}
+
+// User Count Bar
+.user-count-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 4px;
+    margin-bottom: 8px;
+    font-size: 0.85rem;
+    color: #64748b;
+
+    .count-text strong {
+        color: #334155;
+    }
+
+    .selected-count {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        color: #16a34a;
+        font-weight: 600;
+
+        mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+        }
+    }
+}
+
+// Selected Users Section
+.selected-users-section {
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: #f0fdf4;
+    border-radius: 12px;
+    border: 1px solid #bbf7d0;
+
+    .selected-label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #15803d;
+        margin-bottom: 8px;
+
+        mat-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+        }
+    }
+}

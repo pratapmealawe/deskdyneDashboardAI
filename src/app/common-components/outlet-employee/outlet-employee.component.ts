@@ -114,6 +114,7 @@ export class OutletEmployeeComponent implements OnInit {
     this.selectedCafeteria = cafeteria;
     this.selectedCafeteriaName = cafeteria.cafeteria_name;
     this.selectedCafeteriaId = cafeteria.cafeteria_id;
+    this.getEmployeeListByCafeId()
     this.resetPagination();
   }
 

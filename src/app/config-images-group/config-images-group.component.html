@@ -1,81 +1,132 @@
-<div class="vendor-header">
-    <div>
-        <h4 class="m-0 fw-semibold">Image Group Configs</h4>
-    </div>
-    <div class="header-actions">
-        <button mat-raised-button color="primary" (click)="openAddConfigModal()">
-            <mat-icon>add_circle</mat-icon> Add Config
-        </button>
-    </div>
-</div>
+<div class="config-images-group-container">
 
-<div class="container-fluid pb-4">
-
-    <!-- No Data State -->
-    <div *ngIf="!imageGroupConfigs.length" class="center">
-        No image group configs found.
-    </div>
-
-    <!-- Card List -->
-    <div *ngIf="imageGroupConfigs.length">
-        <div *ngFor="let config of imageGroupConfigs; let i = index" class="cardDesign">
-            <div class="container-fluid">
-                <div class="row align-items-center">
-
-                    <!-- Index -->
-                    <div class="col-md-1 mb-2 mb-md-0 d-none d-md-block">
-                        <div class="labelText">#</div>
-                        <div class="labelData">{{ i + 1 + (currentPage - 1) * pageSize }}</div>
-                    </div>
-
-                    <!-- Name -->
-                    <div class="col-md-4 mb-2 mb-md-0">
-                        <div class="labelText">Name</div>
-                        <div class="labelData">{{ config.name }}</div>
-                    </div>
-
-                    <!-- Created At -->
-                    <div class="col-md-3 mb-2 mb-md-0">
-                        <div class="labelText">Created</div>
-                        <div class="labelData">{{ config.createdAt | date: 'dd-MM-yyyy' }}</div>
-                    </div>
-
-                    <!-- Updated At -->
-                    <div class="col-md-3 mb-2 mb-md-0">
-                        <div class="labelText">Updated</div>
-                        <div class="labelData">{{ config.updatedAt | date: 'dd-MM-yyyy' }}</div>
-                    </div>
-
-                    <!-- Actions -->
-                    <div class="col-md-1 d-flex align-items-center justify-content-end p-0 gap-2">
-                        <button mat-icon-button color="primary" (click)="editConfig(config)" matTooltip="Edit">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-icon-button color="warn" (click)="confirmDelete(config)" matTooltip="Delete">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </div>
-
+    <!-- PAGE HEADER -->
+    <div class="page-header-card mb-4">
+        <div class="header-content">
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-box info">
+                    <mat-icon>collections</mat-icon>
                 </div>
+                <div>
+                    <h1 class="page-title">Image Group Configs</h1>
+                    <p class="page-subtitle">Manage grouped image configurations for outlets and menus.</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="count-pill" *ngIf="!isLoading && !hasError">
+                    <mat-icon>folder</mat-icon>
+                    <span>{{ totalItems }} Group{{ totalItems !== 1 ? 's' : '' }}</span>
+                </div>
+                <button mat-flat-button color="primary" (click)="openAddConfigModal()" class="add-btn">
+                    <mat-icon>add_circle</mat-icon> New Group
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Paginator -->
-    <nav *ngIf="totalPages > 1" class="mt-4 d-flex justify-content-end">
-        <ul class="pagination">
-            <li class="page-item" [class.disabled]="currentPage === 1">
-                <a class="page-link" href="javascript:void(0)" (click)="changePage(currentPage - 1)">Previous</a>
-            </li>
-            <li class="page-item" *ngFor="let page of pageSizeOptions" [class.active]="currentPage === page"
-                [class.d-none]="page > totalPages">
-                <!-- Simple logic for demo, ideally should calculate ranges if many pages -->
-                <a class="page-link" href="javascript:void(0)" (click)="changePage(page)">{{ page }}</a>
-            </li>
-            <li class="page-item" [class.disabled]="currentPage === totalPages">
-                <a class="page-link" href="javascript:void(0)" (click)="changePage(currentPage + 1)">Next</a>
-            </li>
-        </ul>
-    </nav>
+    <!-- SEARCH BAR -->
+    <div *ngIf="!isLoading && !hasError && imageGroupConfigs.length > 0" class="search-bar mb-4">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" [(ngModel)]="searchTerm" placeholder="Search by group name..." class="search-input" />
+        <button *ngIf="searchTerm" mat-icon-button class="clear-btn" (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- LOADING STATE -->
+    <div *ngIf="isLoading" class="state-container">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p class="state-text">Loading image groups...</p>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div *ngIf="!isLoading && hasError" class="state-container error">
+        <mat-icon class="state-icon error">cloud_off</mat-icon>
+        <h4>Failed to Load</h4>
+        <p class="state-text">Something went wrong while fetching image groups.</p>
+        <button mat-stroked-button color="primary" (click)="retryLoad()">
+            <mat-icon>refresh</mat-icon> Retry
+        </button>
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div *ngIf="!isLoading && !hasError && imageGroupConfigs.length === 0" class="state-container empty">
+        <mat-icon class="state-icon">photo_library</mat-icon>
+        <h4>No Image Groups</h4>
+        <p class="state-text">Create your first image group to get started.</p>
+        <button mat-stroked-button color="primary" (click)="openAddConfigModal()">
+            <mat-icon>add</mat-icon> Create Group
+        </button>
+    </div>
+
+    <!-- NO SEARCH RESULTS -->
+    <div *ngIf="!isLoading && !hasError && imageGroupConfigs.length > 0 && filteredConfigs.length === 0"
+        class="state-container empty">
+        <mat-icon class="state-icon">search_off</mat-icon>
+        <h4>No Results</h4>
+        <p class="state-text">No groups match "{{ searchTerm }}".</p>
+        <button mat-stroked-button color="primary" (click)="clearSearch()">
+            <mat-icon>clear</mat-icon> Clear Search
+        </button>
+    </div>
+
+    <!-- CONFIG LIST -->
+    <div *ngIf="!isLoading && !hasError && filteredConfigs.length > 0" class="list-container">
+        <div *ngFor="let config of filteredConfigs; let i = index" class="list-item">
+            <div class="item-content">
+                <div class="item-main">
+                    <div class="d-flex align-items-center mb-1 gap-2">
+                        <h4 class="m-0">{{ config.name || 'Untitled Group' }}</h4>
+                        <span class="badge-count" *ngIf="config.imageData?.length">
+                            <mat-icon>image</mat-icon>
+                            {{ config.imageData.length }}
+                        </span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 text-muted small">
+                        <span class="d-flex align-items-center gap-1" *ngIf="config.createdAt">
+                            <mat-icon style="font-size: 14px; height: 14px; width: 14px;">calendar_today</mat-icon>
+                            Created {{ config.createdAt | date: 'dd MMM yyyy' }}
+                        </span>
+                        <span class="d-flex align-items-center gap-1" *ngIf="config.updatedAt">
+                            <mat-icon style="font-size: 14px; height: 14px; width: 14px;">update</mat-icon>
+                            Updated {{ config.updatedAt | date: 'dd MMM yyyy' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-1">
+                <button mat-icon-button color="primary" (click)="editConfig(config)" matTooltip="Edit">
+                    <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="confirmDelete(config)" class="delete-btn"
+                    matTooltip="Delete">
+                    <mat-icon>delete_outline</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGINATION -->
+    <div *ngIf="!isLoading && !hasError && totalPages > 1" class="pagination-bar">
+        <div class="page-info">
+            Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > totalItems ? totalItems :
+            currentPage * pageSize }} of {{ totalItems }}
+        </div>
+        <div class="page-controls">
+            <button mat-icon-button [disabled]="currentPage === 1" (click)="changePage(currentPage - 1)"
+                matTooltip="Previous">
+                <mat-icon>chevron_left</mat-icon>
+            </button>
+            <ng-container *ngFor="let page of pagesArray">
+                <button mat-button class="page-btn" [class.active]="currentPage === page" (click)="changePage(page)">
+                    {{ page }}
+                </button>
+            </ng-container>
+            <button mat-icon-button [disabled]="currentPage === totalPages" (click)="changePage(currentPage + 1)"
+                matTooltip="Next">
+                <mat-icon>chevron_right</mat-icon>
+            </button>
+        </div>
+    </div>
 
 </div>

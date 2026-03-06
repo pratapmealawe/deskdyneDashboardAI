@@ -8,6 +8,7 @@ import { DeliveryOrderService } from 'src/service/delivery-order.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalStorageService } from 'src/service/local-storage.service';
 
 @Component({
   selector: 'app-bulk-order-card',
@@ -66,7 +67,8 @@ export class BulkOrderCardComponent implements OnInit {
     private googleMapService: GoogleMapService,
     private apiMainService: ApiMainService,
     private toasterService: ToasterService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private localStorageService: LocalStorageService,
   ) { }
 
   ngOnInit(): void {
@@ -103,8 +105,20 @@ export class BulkOrderCardComponent implements OnInit {
   }
 
   async acceptRejectOrder(status: string) {
+    if (status === 'preparing') {
+      const isVendorAssigned = !!this.order?.vendorPhoneNo;
+      if (!isVendorAssigned) {
+        this.showVendorToaster();
+        return;
+      }
+    }
     try {
+
       const updatedOrder = { ...this.order };
+      const adminId = this.localStorageService.getCacheData('ADMIN_ID');
+      if (adminId) {
+        updatedOrder.actionBy = adminId;
+      }
       updatedOrder.orderstatus = status;
       await this.apiMainService.updateb2bFoodOrder(updatedOrder);
 
@@ -122,6 +136,10 @@ export class BulkOrderCardComponent implements OnInit {
     } catch (error) {
       console.log('error while changing status', error);
     }
+  }
+
+  showVendorToaster() {
+    this.toasterService.warning(301);
   }
 
   async startPorterDeliveryProcess() {
@@ -793,27 +811,24 @@ export class BulkOrderCardComponent implements OnInit {
     })
   }
 
-private checkIsVendorAssigned(): void {
-  this.isVendorAssigned = !!this.order?.vendorDetails;
-}
+  private checkIsVendorAssigned(): void {
+    this.isVendorAssigned = !!this.order?.vendorPhoneNo;
+  }
 
-get canShowChangeVendor(): boolean {
-  if (!this.editMode || !this.order) {
+  get canShowChangeVendor(): boolean {
+    if (!this.editMode || !this.order) {
+      return false;
+    }
+
+    if (this.order.orderstatus === 'placed' || this.order.orderstatus === 'waitingForApproval' || this.order.orderstatus === 'accepted') {
+      return true;
+    }
+
+    if (this.order.orderstatus === 'preparing' && !this.isVendorAssigned) {
+      return true;
+    }
+
     return false;
   }
-
-  if (this.order.orderstatus === 'placed') {
-    return true;
-  }
-
-  if (
-    this.order.orderstatus === 'waitingForApproval' &&
-    !this.isVendorAssigned
-  ) {
-    return true;
-  }
-
-  return false;
-}
 
 }

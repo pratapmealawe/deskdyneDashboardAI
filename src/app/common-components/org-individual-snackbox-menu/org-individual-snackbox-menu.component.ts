@@ -251,10 +251,15 @@ export class OrgIndividualSnackboxMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.B2B_saveIndividualSnacksMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getIndSnackMenuItemsByCafeteriaId();
+      const res = await this.api.B2B_saveIndividualSnacksMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getIndSnackMenuItemsByCafeteriaId();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.error('error while saving individual snack menu', error);
     }

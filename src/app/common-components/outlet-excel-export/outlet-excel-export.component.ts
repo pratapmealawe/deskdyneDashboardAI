@@ -98,6 +98,8 @@ export class OutletExcelExportComponent implements OnInit {
     this.isLoading = true;
     this.resetTotals();
     try {
+      console.log('body', body);
+
       const res = await this.apiMainService.fetchAllOutletOrdersbysearchObj(body);
       this.filteredOrderList = res || [];
       this.extractUniqueFilterValues();
