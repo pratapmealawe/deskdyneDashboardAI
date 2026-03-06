@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -9,6 +10,7 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { OrderFilterDialogComponent, OrderFilterDialogData } from '../order-filter-dialog/order-filter-dialog.component';
 
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
@@ -37,24 +39,50 @@ export class OutletExcelExportComponent implements OnInit {
   };
   fromDate = '';
   toDate = '';
-  filteredOrderList: any[] = []
+  filteredOrderList: any[] = [];
+  displayedList: any[] = [];
+
+  // Totals
   totalAmountPaid = 0;
   totalWalletUsed = 0;
   totalAmount = 0;
+  totalSubsidy = 0;
+  totalCompanyWallet = 0;
+  totalPackaging = 0;
+
   orderStatusMapper: any = orderStatusMapper;
+
   // Chart
   chartOptions!: Highcharts.Options;
   updateStatusFlag: boolean = false;
   oneToOneStatusFlag: boolean = true;
   isShowChart: boolean = false;
-  //pagination
+  isLoading: boolean = false;
+
+  // Pagination
   pageSize = 10;
   pageIndex = 0;
   estimatedTotal = 0;
   paginatedList: any[] = [];
+
+  // Search & Filters
+  searchText = '';
+  filterPgName = '';
+  filterAppVersion = '';
+  filterPlatform = '';
+  filterIsPosOrder = '';
+  filterOrderStatus = '';
+
+  // Unique values for filter dropdowns
+  uniquePgNames: string[] = [];
+  uniqueAppVersions: string[] = [];
+  uniquePlatforms: string[] = [];
+  uniqueOrderStatuses: string[] = [];
+
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -67,34 +95,175 @@ export class OutletExcelExportComponent implements OnInit {
 
   async getOutletByFilter(body: any) {
     this.isShowChart = false;
+    this.isLoading = true;
+    this.resetTotals();
+    try {
+      console.log('body', body);
+
+      const res = await this.apiMainService.fetchAllOutletOrdersbysearchObj(body);
+      this.filteredOrderList = res || [];
+      this.extractUniqueFilterValues();
+      this.applyFilters();
+    } catch (err: any) {
+      console.error('Error fetching outlet orders', err);
+    } finally {
+      this.isLoading = false;
+    }
+  }
+
+  resetTotals() {
     this.totalAmountPaid = 0;
     this.totalWalletUsed = 0;
     this.totalAmount = 0;
-    try {
-      const res = await this.apiMainService.fetchAllOutletOrdersbysearchObj(body);
-      // const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
-      this.filteredOrderList = res;
-      this.totalAmount = this.filteredOrderList.reduce((sum, order) => {
-        const amount = Number(order.amount) || 0;
-        const walletPoints = Number(order.moneyWalletPointsUsed) || 0;
-        this.totalWalletUsed += walletPoints;
-        this.totalAmountPaid += amount
-        return sum + amount + walletPoints;
-      }, 0);
-      this.pageIndex = 0;
-      this.updatePaginatedList();
+    this.totalSubsidy = 0;
+    this.totalCompanyWallet = 0;
+    this.totalPackaging = 0;
+  }
 
-    } catch (err: any) {
-      console.error('Error fetching outlet orders', err);
+  extractUniqueFilterValues() {
+    const pgSet = new Set<string>();
+    const versionSet = new Set<string>();
+    const platformSet = new Set<string>();
+    const statusSet = new Set<string>();
+
+    this.filteredOrderList.forEach(order => {
+      if (order.pgName) pgSet.add(order.pgName);
+      if (order.appVersion) versionSet.add(String(order.appVersion));
+      if (order.deviceInfo?.platform) platformSet.add(order.deviceInfo.platform);
+      if (order.orderstatus) statusSet.add(order.orderstatus);
+    });
+
+    this.uniquePgNames = Array.from(pgSet).sort();
+    this.uniqueAppVersions = Array.from(versionSet).sort();
+    this.uniquePlatforms = Array.from(platformSet).sort();
+    this.uniqueOrderStatuses = Array.from(statusSet).sort();
+  }
+
+  onSearch(searchValue: string) {
+    this.searchText = searchValue;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let list = this.filteredOrderList;
+
+    // Search
+    if (this.searchText) {
+      const lowerSearch = this.searchText.toLowerCase();
+      list = list.filter((order: any) =>
+        (order.orderNo && order.orderNo.toString().toLowerCase().includes(lowerSearch)) ||
+        (order.customerName && order.customerName.toLowerCase().includes(lowerSearch)) ||
+        (order.customerPhoneNo && order.customerPhoneNo.toString().includes(lowerSearch)) ||
+        (order.customerEmail && order.customerEmail.toLowerCase().includes(lowerSearch))
+      );
     }
+
+    // Filter by orderstatus
+    if (this.filterOrderStatus) {
+      list = list.filter((order: any) => order.orderstatus === this.filterOrderStatus);
+    }
+
+    // Filter by pgName
+    if (this.filterPgName) {
+      list = list.filter((order: any) => order.pgName === this.filterPgName);
+    }
+
+    // Filter by appVersion
+    if (this.filterAppVersion) {
+      list = list.filter((order: any) => String(order.appVersion) === this.filterAppVersion);
+    }
+
+    // Filter by platform
+    if (this.filterPlatform) {
+      list = list.filter((order: any) => order.deviceInfo?.platform === this.filterPlatform);
+    }
+
+    // Filter by isPosOrder
+    if (this.filterIsPosOrder) {
+      const isPOS = this.filterIsPosOrder === 'true';
+      list = list.filter((order: any) => !!order.isPosOrder === isPOS);
+    }
+
+    this.displayedList = list;
+    this.calculateTotals();
+    this.pageIndex = 0;
+    this.updatePaginatedList();
+  }
+
+  calculateTotals() {
+    this.resetTotals();
+    this.displayedList.forEach(order => {
+      this.totalAmountPaid += Number(order.amount) || 0;
+      this.totalWalletUsed += Number(order.moneyWalletPointsUsed) || 0;
+      this.totalSubsidy += Number(order.subsidyAmount) || 0;
+      this.totalCompanyWallet += Number(order.companyWalletPointUsed) || 0;
+      this.totalPackaging += Number(order.packagingAmount) || 0;
+    });
+    this.totalAmount = this.totalWalletUsed + this.totalAmountPaid;
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.filterPgName || this.filterAppVersion || this.filterPlatform || this.filterIsPosOrder || this.filterOrderStatus || this.searchText);
+  }
+
+  get activeFilterCount(): number {
+    let count = 0;
+    if (this.filterOrderStatus) count++;
+    if (this.filterPgName) count++;
+    if (this.filterAppVersion) count++;
+    if (this.filterPlatform) count++;
+    if (this.filterIsPosOrder) count++;
+    return count;
+  }
+
+  openFilterDialog() {
+    const dialogData: OrderFilterDialogData = {
+      filterOrderStatus: this.filterOrderStatus,
+      filterPgName: this.filterPgName,
+      filterAppVersion: this.filterAppVersion,
+      filterPlatform: this.filterPlatform,
+      filterIsPosOrder: this.filterIsPosOrder,
+      uniqueOrderStatuses: this.uniqueOrderStatuses,
+      uniquePgNames: this.uniquePgNames,
+      uniqueAppVersions: this.uniqueAppVersions,
+      uniquePlatforms: this.uniquePlatforms,
+      showStatusFilter: true,
+    };
+
+    const dialogRef = this.dialog.open(OrderFilterDialogComponent, {
+      data: dialogData,
+      width: '520px',
+      panelClass: 'filter-dialog-panel',
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.filterOrderStatus = result.filterOrderStatus;
+        this.filterPgName = result.filterPgName;
+        this.filterAppVersion = result.filterAppVersion;
+        this.filterPlatform = result.filterPlatform;
+        this.filterIsPosOrder = result.filterIsPosOrder;
+        this.applyFilters();
+      }
+    });
+  }
+
+  clearFilters() {
+    this.searchText = '';
+    this.filterPgName = '';
+    this.filterAppVersion = '';
+    this.filterPlatform = '';
+    this.filterIsPosOrder = '';
+    this.filterOrderStatus = '';
+    this.applyFilters();
   }
 
   updatePaginatedList() {
     const startIndex = this.pageIndex * this.pageSize;
     const endIndex = startIndex + this.pageSize;
-
-    this.paginatedList = this.filteredOrderList.slice(startIndex, endIndex);
-    this.estimatedTotal = this.filteredOrderList.length;
+    this.paginatedList = this.displayedList.slice(startIndex, endIndex);
+    this.estimatedTotal = this.displayedList.length;
   }
 
   onPageChange(event: PageEvent) {
@@ -121,18 +290,22 @@ export class OutletExcelExportComponent implements OnInit {
       { header: 'Cafe Name', key: 'cafeName', width: 18 },
       { header: 'Items', key: 'items', width: 40 },
       { header: 'Item Amount (₹)', key: 'itemAmount', width: 16 },
+      { header: 'Packaging (₹)', key: 'packaging', width: 14 },
       { header: 'Subsidy Amount (₹)', key: 'subsidyAmount', width: 18 },
       { header: 'Wallet Used (₹)', key: 'walletUsed', width: 16 },
+      { header: 'Company Wallet (₹)', key: 'companyWallet', width: 16 },
       { header: 'Amount Paid (₹)', key: 'amountPaid', width: 16 },
+      { header: 'PG Name', key: 'pgName', width: 14 },
+      { header: 'App Version', key: 'appVersion', width: 12 },
+      { header: 'Platform', key: 'platform', width: 12 },
     ];
 
     // ------------------------------------------------------------------
-    //                   HEADER ROW (NOW ROW 5 CORRECTLY)
+    //                   HEADER ROW
     // ------------------------------------------------------------------
     const headerRowIndex = 0;
     const headerRow = worksheet.getRow(headerRowIndex);
 
-    // Map headers from column definitions
     headerRow.values = [
       "",
       ...worksheet.columns.map(c => c.header || "")
@@ -141,24 +314,26 @@ export class OutletExcelExportComponent implements OnInit {
     // ------------------------------------------------------------------
     //                         DATA ROWS
     // ------------------------------------------------------------------
-    let rowIndex = headerRowIndex;
-
     let totalItemAmount = 0;
+    let totalPackaging = 0;
     let totalSubsidy = 0;
     let totalWalletUsed = 0;
+    let totalCompanyWallet = 0;
     let totalAmountPaid = 0;
 
-    this.filteredOrderList.forEach(order => {
+    this.displayedList.forEach(order => {
       const walletUsed = Number(order.moneyWalletPointsUsed) || 0;
       const amountPaid = Number(order.amount) || 0;
       const itemAmount = Number(order.itemAmount) || 0;
+      const packaging = Number(order.packagingAmount) || 0;
       const subsidyAmount = Number(order.subsidyAmount) || 0;
+      const companyWallet = Number(order.companyWalletPointUsed) || 0;
 
       const items = (order.itemList || [])
         .map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`)
         .join('; ');
 
-      const row = worksheet.addRow({
+      worksheet.addRow({
         orderNo: order.orderNo,
         tokenNo: order.tokenNo || '-',
         orderDate: new Date(order.orderDate).toLocaleString('en-IN'),
@@ -170,24 +345,23 @@ export class OutletExcelExportComponent implements OnInit {
         cafeName: order.cafeteriaDetails?.cafeteria_name,
         items,
         itemAmount,
+        packaging,
         subsidyAmount,
         walletUsed,
+        companyWallet,
         amountPaid,
+        pgName: order.pgName || '-',
+        appVersion: order.appVersion || '-',
+        platform: order.deviceInfo?.platform || '-',
+        isPosOrder: order.isPosOrder ? 'Yes' : 'No',
       });
 
-      // Numeric formatting
-      row.getCell('K').numFmt = '#,##0.00';
-      row.getCell('L').numFmt = '#,##0.00';
-      row.getCell('M').numFmt = '#,##0.00';
-      row.getCell('N').numFmt = '#,##0.00';
-
-      // Totals
       totalItemAmount += itemAmount;
+      totalPackaging += packaging;
       totalSubsidy += subsidyAmount;
       totalWalletUsed += walletUsed;
+      totalCompanyWallet += companyWallet;
       totalAmountPaid += amountPaid;
-
-      rowIndex++;
     });
 
     // ------------------------------------------------------------------
@@ -196,18 +370,15 @@ export class OutletExcelExportComponent implements OnInit {
     const totalsRow = worksheet.addRow({
       orderNo: 'Totals',
       itemAmount: totalItemAmount,
+      packaging: totalPackaging,
       subsidyAmount: totalSubsidy,
       walletUsed: totalWalletUsed,
+      companyWallet: totalCompanyWallet,
       amountPaid: totalAmountPaid,
     });
 
     totalsRow.font = { bold: true };
     totalsRow.getCell('A').alignment = { horizontal: 'right' };
-
-    totalsRow.getCell('K').numFmt = '#,##0.00';
-    totalsRow.getCell('L').numFmt = '#,##0.00';
-    totalsRow.getCell('M').numFmt = '#,##0.00';
-    totalsRow.getCell('N').numFmt = '#,##0.00';
 
     // ------------------------------------------------------------------
     //                        TABLE BORDERS
@@ -239,10 +410,10 @@ export class OutletExcelExportComponent implements OnInit {
 
   downloadPdf() {
 
-    if (!this.filteredOrderList.length) return;
+    if (!this.displayedList.length) return;
 
     // ---------------------------------------------------------
-    //           TABLE HEADERS (12 columns total)
+    //           TABLE HEADERS
     // ---------------------------------------------------------
     const tableHeaders = [
       { text: 'Order No', bold: true },
@@ -270,7 +441,7 @@ export class OutletExcelExportComponent implements OnInit {
     // ---------------------------------------------------------
     //                       DATA ROWS
     // ---------------------------------------------------------
-    this.filteredOrderList.forEach(order => {
+    this.displayedList.forEach(order => {
       const walletUsed = Number(order.moneyWalletPointsUsed) || 0;
       const amountPaid = Number(order.amount) || 0;
       const itemAmount = Number(order.itemAmount) || 0;
@@ -302,11 +473,11 @@ export class OutletExcelExportComponent implements OnInit {
     });
 
     // ---------------------------------------------------------
-    //                       TOTALS ROW (12 columns)
+    //                       TOTALS ROW
     // ---------------------------------------------------------
     body.push([
       { text: 'Totals', bold: true, colSpan: 8, alignment: 'right' },
-      {}, {}, {}, {}, {}, {}, {},      // total 8 columns merged
+      {}, {}, {}, {}, {}, {}, {},
       { text: totalItemAmount.toFixed(2), bold: true },
       { text: totalSubsidy.toFixed(2), bold: true },
       { text: totalWalletUsed.toFixed(2), bold: true },
@@ -319,11 +490,11 @@ export class OutletExcelExportComponent implements OnInit {
     const dateStr = new Date().toISOString().slice(0, 10);
 
     const orgName =
-      this.filteredOrderList[0]?.organizationDetails?.organization_name ||
+      this.displayedList[0]?.organizationDetails?.organization_name ||
       'All Organizations';
 
     const cafeteria =
-      this.filteredOrderList[0]?.cafeteriaDetails?.cafeteria_name ||
+      this.displayedList[0]?.cafeteriaDetails?.cafeteria_name ||
       'All Cafeterias';
 
     // ---------------------------------------------------------
@@ -431,7 +602,7 @@ export class OutletExcelExportComponent implements OnInit {
   }
 
   generateChartData() {
-    let data: any = this.filteredOrderList
+    let data: any = this.displayedList;
 
     const { categories, series } = this.processOrdersData(data);
 
@@ -493,10 +664,9 @@ export class OutletExcelExportComponent implements OnInit {
     const istDate = new Date(date.getTime() + istOffsetMs);
 
     const dd = String(istDate.getDate()).padStart(2, '0');
-    const mm = String(istDate.getMonth() + 1).padStart(2, '0');  // 0-based month
+    const mm = String(istDate.getMonth() + 1).padStart(2, '0');
     const yyyy = istDate.getFullYear();
 
     return `${dd}/${mm}/${yyyy}`;
-
   }
 }

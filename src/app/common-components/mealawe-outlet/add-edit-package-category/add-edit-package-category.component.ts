@@ -49,7 +49,7 @@ export class AddEditPackageCategoryComponent {
         categoryName: category.categoryName,
         categoryDisplayName: category.categoryDisplayName,
         categoryImg: category.categoryImg ? environment.imageUrl + category.categoryImg : '',
-        categoryBanners: [], 
+        categoryBanners: [],
         imageConfigNameMealawe: category.imageConfigNameMealawe,
         isActive: category.isActive ?? true
       });
@@ -111,7 +111,7 @@ export class AddEditPackageCategoryComponent {
     if (this.categoryForm.invalid) return;
     const formValue = this.categoryForm.getRawValue();
     const selectedCafeteria = this.data.selectedCafeteria;
-    const { _id: cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = selectedCafeteria;
+    const { cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = selectedCafeteria;
     const isEdit = !!this.data.category;
     const categoryId = isEdit ? this.data.category._id : undefined;
     const bannerPayloadIndices: string[] = [];

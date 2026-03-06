@@ -86,6 +86,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Add Event Popup', route: 'addEventPopup', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] },
       ],
     },
+
     {
       name: 'Vendor Firm',
       showParent: true,
@@ -128,6 +129,13 @@ export class HeaderComponent implements OnInit, OnDestroy {
         },
         { name: 'Search Order', route: 'searchOrder', showChild: true },
       ],
+    },
+    {
+      name: 'Notifications',
+      showParent: true,
+      route: 'scheduledNotifications',
+      image: 'Enquiries_white',
+      imageblue: 'Enquiries_blue',
     },
     {
       name: 'Vendor Wallet Dashboard',

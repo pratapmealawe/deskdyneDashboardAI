@@ -14,7 +14,8 @@ export class CustomerViewComponent implements OnInit, OnChanges {
     // { name: 'Past Orders', path: 'pastorders' },
     // { name: 'Past Meal Orders', path: 'pastmealorders' },
     { name: 'Outlet Orders', path: 'outletOrders' },
-    { name: 'Wallet', path: 'wallet' }
+    { name: 'Wallet', path: 'wallet' },
+    { name: 'Company Wallet', path: 'companyWallet' }
   ];
   selectedTab = 'userDetails';
   selectedTabIndex: number = 0;
@@ -40,6 +41,21 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   onTabChange(event: any) {
     const selectTab = this.userViewList[event.index];
     this.gotToTab(selectTab.path);
+  }
+
+  onMainTabChange(index: number) {
+    this.selectedTabIndex = index;
+    this.selectedTab = this.userViewList[index].path;
+  }
+
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'userDetails': 'person',
+      'outletOrders': 'receipt_long',
+      'wallet': 'account_balance_wallet',
+      'companyWallet': 'corporate_fare'
+    };
+    return icons[path] || 'tab';
   }
 
   backBtn() {

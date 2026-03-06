@@ -1,161 +1,160 @@
-<div class="vendor-header">
-  <div>
-    <h4 class="m-0 fw-semibold">Feedback List</h4>
-  </div>
-  <div class="header-actions">
-    <div class="input-wrapper">
-      <mat-form-field appearance="outline" class="w-100 search-input">
-        <input matInput type="text" [ngModel]="searchText" (input)="searchFilter($event)"
-          placeholder="Search by name, phone, org, empId, order no..." />
-        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-          <mat-icon>search</mat-icon>
+<div class="page-container">
+  <div class="header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Feedback List</h1>
+      </div>
+      <div class="actions-section">
+
+        <!-- Org Filter -->
+        <mat-form-field appearance="outline" class="org-select">
+          <mat-label>Organization</mat-label>
+          <mat-select [(ngModel)]="selectedOrg" (selectionChange)="applyFilters()">
+            <mat-option value="">All Organizations</mat-option>
+            <mat-option *ngFor="let org of orgList" [value]="org.orgName">
+              {{ org.orgName }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <!-- Search Input -->
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" [ngModel]="searchText" (input)="searchFilter($event)" placeholder="Search..." />
+        </div>
+
+        <!-- Excel Export -->
+        <button mat-flat-button color="primary" class="btn-export" (click)="excelExport()">
+          <mat-icon>download</mat-icon>
+          <span>Export Excel</span>
         </button>
-      </mat-form-field>
+
+      </div>
     </div>
-
   </div>
-</div>
 
-<div class="container-fluid">
-  <!-- Feedback list -->
-  <div *ngIf="pagedFeedback.length > 0; else noRecords">
-    <div class="feedback-list">
-      <mat-card class="feedback-card" *ngFor="let feedback of pagedFeedback; index as i">
-        <mat-card-content>
-          <div class="row g-3">
-            <!-- Left: basic info -->
-            <div class="col-12 col-md-4">
-              <div class="mb-2 d-flex align-items-center justify-content-between">
-                <div>
-                  <div class="labelText">Name</div>
-                  <div class="labelData">
-                    {{ feedback.feedbackFrom_name || '-' }}
-                  </div>
-                </div>
-                <mat-chip-set>
-                  <mat-chip [color]="feedback.acknowledgeStatus ? 'primary' : 'warn'" class="status-chip">
-                    {{ feedback.acknowledgeStatus }}
-                  </mat-chip>
-                </mat-chip-set>
-              </div>
-
-              <div class="mt-1">
-                <div class="labelText">Phone</div>
-                <div class="labelData">
-                  {{ feedback.feedbackFrom_phoneNo || '-' }}
-                </div>
-              </div>
-
-              <div class="mt-1">
-                <div class="labelText">User Type</div>
-                <div class="labelData">
-                  {{ feedback.feedbackFrom_userType || '-' }}
-                </div>
-              </div>
+  <div class="content-body">
+    <div class="row g-4" *ngIf="pagedFeedback.length > 0; else noRecords">
+      <div class="col-12 col-md-6 col-lg-4" *ngFor="let feedback of pagedFeedback; index as i">
+        <div class="feedback-item-card">
+          <!-- Card Top -->
+          <div class="card-top">
+            <div class="feedback-avatar">
+              {{ feedback.feedbackFrom_name?.charAt(0) || 'U' }}
             </div>
-
-            <!-- Middle: feedback details -->
-            <div class="col-12 col-md-5">
-              <div class="mb-2">
-                <div class="labelText">Feedback Type</div>
-                <div class="labelData">
-                  {{ feedback.feedbackType || '-' }}
-                </div>
+            <div class="feedback-identity">
+              <h3 class="feedback-name">{{ feedback.feedbackFrom_name || 'Unknown User' }}</h3>
+              <div class="status-badge" [ngClass]="{
+              'status-new': !feedback.acknowledgeStatus || feedback.acknowledgeStatus === 'New',
+              'status-inprogress': feedback.acknowledgeStatus === 'InProgress',
+              'status-resolved': feedback.acknowledgeStatus === 'Resolved'
+            }">
+                <mat-icon>
+                  {{ feedback.acknowledgeStatus === 'Resolved' ? 'check_circle' :
+                  (feedback.acknowledgeStatus === 'InProgress' ? 'hourglass_empty' : 'info') }}
+                </mat-icon>
+                {{ feedback.acknowledgeStatus || 'New' }}
               </div>
-
-              <div class="mb-2">
-                <div class="labelText">Comment</div>
-                <div class="labelData text-wrap comment-text">
-                  {{ feedback.feedbackComment || '-' }}
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-6">
-                  <div class="labelText">Organization</div>
-                  <div class="labelData">
-                    {{ feedback?.orgName || '-' }}
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="labelText">Employee Id</div>
-                  <div class="labelData">
-                    {{ feedback?.empId || '-' }}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right: order + dates + actions -->
-            <div class="col-12 col-md-3">
-              <div class="mb-2">
-                <div class="labelText">
-                  Submit date
-                </div>
-                <div class="labelData">
-                  {{ feedback.submitDate | date: 'd/M/yy, h:mm a' }}
-                </div>
-              </div>
-
-              <div class="row mb-2">
-                <div class="col-6">
-                  <div class="labelText">Order Type</div>
-                  <div class="labelData">
-                    {{ feedback.orderType || '-' }}
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="labelText">Order No</div>
-                  <div class="labelData">
-                    {{ feedback.orderNo || '-' }}
-                  </div>
-                </div>
-              </div>
-
-              <div class="d-flex flex-wrap gap-2 mt-2">
-                <button mat-stroked-button color="primary" *ngIf="!feedback.acknowledged"
-                  (click)="startAcknowledge(feedback)">
-                  <mat-icon class="me-1" fontIcon="check_circle"></mat-icon>
-                  Acknowledge
-                </button>
-
-                <button mat-flat-button color="accent" *ngIf="feedback.acknowledged" disabled>
-                  <mat-icon class="me-1" fontIcon="done_all"></mat-icon>
-                  {{ feedback.acknowledgeStatus || 'Acknowledged' }}
-                </button>
-              </div>
-
-              <!-- Inline acknowledge edit form -->
-              <div *ngIf="feedback._isEditing" class="ack-edit mt-3">
-                <mat-form-field appearance="outline" class="w-100 mb-2">
-                  <mat-label>Comment</mat-label>
-                  <textarea matInput rows="3" [(ngModel)]="feedback._commentDraft"
-                    placeholder="Add your response for the user"></textarea>
-                </mat-form-field>
-
-                <div class="d-flex justify-content-end gap-2">
-                  <button mat-button (click)="cancelAcknowledge(feedback)">
-                    Cancel
-                  </button>
-                  <button mat-flat-button color="primary" (click)="saveAcknowledge(feedback)">
-                    Save
-                  </button>
-                </div>
-              </div>
-
             </div>
           </div>
-        </mat-card-content>
-      </mat-card>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <div class="info-row">
+              <mat-icon class="info-icon">phone</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Phone</span>
+                <span class="info-value">{{ feedback.feedbackFrom_phoneNo || '-' }}</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <mat-icon class="info-icon">business</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Organization</span>
+                <span class="info-value">{{ feedback.orgName || '-' }}</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <mat-icon class="info-icon">receipt_long</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Order No</span>
+                <span class="info-value">{{ feedback.orderNo || '-' }}</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <mat-icon class="info-icon">feedback</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Type</span>
+                <span class="info-value">{{ feedback.feedbackType || '-' }}</span>
+              </div>
+            </div>
+
+            <div class="info-row" *ngIf="feedback.feedbackComment">
+              <mat-icon class="info-icon">comment</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Comment</span>
+                <span class="info-value text-wrap" [matTooltip]="feedback.feedbackComment">{{ feedback.feedbackComment
+                  }}</span>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <mat-icon class="info-icon">calendar_today</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Date</span>
+                <span class="info-value">{{ feedback.submitDate | date: 'd/M/yy, h:mm a' }}</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Card Footer (Actions) -->
+          <div class="card-footer-actions">
+            <button mat-stroked-button color="primary" *ngIf="!feedback.acknowledged"
+              (click)="startAcknowledge(feedback)" class="w-100">
+              <mat-icon class="me-1">check_circle</mat-icon>
+              Acknowledge
+            </button>
+
+            <button mat-flat-button color="accent" *ngIf="feedback.acknowledged" disabled class="w-100">
+              <mat-icon class="me-1">done_all</mat-icon>
+              Resolved
+            </button>
+
+            <!-- Inline acknowledge edit form -->
+            <div *ngIf="feedback._isEditing" class="ack-edit mt-3 w-100">
+              <mat-form-field appearance="outline" class="w-100 mb-2">
+                <mat-label>Comment</mat-label>
+                <textarea matInput rows="2" [(ngModel)]="feedback._commentDraft" placeholder="Response..."></textarea>
+              </mat-form-field>
+
+              <div class="d-flex justify-content-end gap-2">
+                <button mat-button (click)="cancelAcknowledge(feedback)">Cancel</button>
+                <button mat-flat-button color="primary" (click)="saveAcknowledge(feedback)">Save</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Material paginator (frontend-side pagination) -->
+      <div class="col-12">
+        <mat-paginator [length]="filteredFeedback.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+          [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
     </div>
 
-    <!-- Material paginator (frontend-side pagination) -->
-    <mat-paginator [length]="filteredFeedback.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
-      [pageSizeOptions]="[10, 15, 25, 50]" (page)="onPageChange($event)" showFirstLastButtons>
-    </mat-paginator>
+    <ng-template #noRecords>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">search_off</mat-icon>
+        <h3>No Feedback Found</h3>
+        <p>Try adjusting your search or filters.</p>
+      </div>
+    </ng-template>
   </div>
-
-  <ng-template #noRecords>
-    <div class="center text-muted mt-4">No Records Found</div>
-  </ng-template>
 </div>

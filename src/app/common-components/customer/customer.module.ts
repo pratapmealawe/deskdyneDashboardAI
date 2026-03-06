@@ -14,6 +14,7 @@ import { CustomerWalletComponent } from './customer-wallet/customer-wallet.compo
 import { WalletTransactionDialogComponent } from './customer-wallet/wallet-transaction-dialog/wallet-transaction-dialog.component';
 import { MaterialModule } from 'src/app/material.module';
 import { BulkWalletUploadDialogComponent } from './bulk-wallet-upload-dialog/bulk-wallet-upload-dialog.component';
+import { CustomerCompanyWalletComponent } from './customer-company-wallet/customer-company-wallet.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { BulkWalletUploadDialogComponent } from './bulk-wallet-upload-dialog/bul
     CustomerWalletComponent,
     CustomerWalletComponent,
     WalletTransactionDialogComponent,
-    BulkWalletUploadDialogComponent
+    BulkWalletUploadDialogComponent,
+    CustomerCompanyWalletComponent
   ],
   imports: [
     CommonModule,

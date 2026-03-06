@@ -1,424 +1,338 @@
-<div class="daily-card mb-2" *ngIf="showless" (click)="showless= !showless">
-  <div class="row align-items-center">
-    <div class="col-lg-2 col-md-3 d-flex flex-column border-sep">
-      <div class="labelText mb-1">ORDER NO.</div>
-      <div class="d-flex align-items-center gap-2">
-        <span class="labelData">#{{ orderInput?.orderNo }}</span>
-        <span class="status-badge" [ngClass]="getStatusClass(orderInput?.orderstatus)">
-          {{ getStatusLabel(orderInput?.orderstatus) | uppercase }}
+<!-- Daily Bulk Order Card — Orders-style layout -->
+<div class="order-card">
+
+  <!-- Card Top -->
+  <div class="card-top">
+    <div class="order-avatar">
+      {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() || 'DB' }}
+    </div>
+    <div class="order-identity">
+      <h3 class="order-title">#{{ order?.orderNo }}</h3>
+      <div class="order-sub-info">
+        <span class="type-chip">
+          <mat-icon>inventory_2</mat-icon> Daily Bulk
+        </span>
+        <span class="date-text">
+          {{ order?.orderDate | date: 'MMM d, y, h:mm a' }}
         </span>
       </div>
     </div>
-    <div class="col-lg-2 col-md-2 d-flex flex-column border-sep">
-      <div class="labelText mb-1">TYPE</div>
-      <div class="labelData d-flex align-items-center gap-1">
-        <i class="bi bi-box-seam text-secondary"></i>
-        <span> Daily Bulk</span>
+    <div class="card-top-right">
+      <div class="status-badge" [ngClass]="getStatusClass(order?.orderstatus)">
+        <mat-icon>{{ getStatusIcon(order?.orderstatus) }}</mat-icon>
+        {{ getStatusLabel(order?.orderstatus) }}
+      </div>
+      <div class="card-actions">
+        <ng-container *ngFor="let action of actionList">
+          <button mat-flat-button [color]="action.color === 'warn' ? 'warn' : 'primary'" class="action-btn"
+            (click)="handleAction(action.action)">
+            <mat-icon>{{ action.icon }}</mat-icon>
+            {{ action.label }}
+          </button>
+        </ng-container>
       </div>
     </div>
-    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
-      <div class="labelText mb-1">TIMELINE</div>
-      <div class="d-flex flex-column">
-        <div class="small-text text-secondary mb-1">
-          Ordered: <span class="text-dark fw-medium">{{ orderInput?.orderDate | date: 'MMM d, y' }}</span>
+  </div>
+
+  <!-- Card Body Grid -->
+  <div class="card-body-grid">
+
+    <!-- Left Column: Details -->
+    <div class="card-body-left">
+      <!-- Customer POC -->
+      <div class="info-row">
+        <mat-icon class="info-icon">person</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Customer POC</span>
+          <span class="info-value">{{ order?.pocDetails?.pocName }}</span>
         </div>
-        <div class="small-text text-secondary">
-          Delivery: <span class="text-dark fw-medium">{{ orderInput?.deliveryDate | date: 'MMM d' }} • {{
-            formatTime12Hour(orderInput?.itemList?.[0]?.deliveryTimeFrom) }}</span>
+      </div>
+      <div class="info-row" *ngIf="order?.pocDetails?.pocPhoneNo">
+        <mat-icon class="info-icon">phone</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Phone</span>
+          <span class="info-value">{{ order?.pocDetails?.pocPhoneNo }}</span>
+        </div>
+      </div>
+      <div class="info-row" *ngIf="order?.pocDetails?.pocEmail">
+        <mat-icon class="info-icon">email</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Email</span>
+          <span class="info-value text-truncate" [matTooltip]="order?.pocDetails?.pocEmail">{{
+            order?.pocDetails?.pocEmail }}</span>
+        </div>
+      </div>
+
+      <!-- Organization Badge -->
+      <div class="badge-row">
+        <div class="org-badge" *ngIf="order?.orgName">
+          <mat-icon>business</mat-icon>
+          {{ order?.cafeteriaName }} ({{ order?.orgName }})
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="info-row" *ngIf="order?.customerLocation?.address || order?.orgCity">
+        <mat-icon class="info-icon">location_on</mat-icon>
+        <div class="info-content">
+          <span class="info-label">City</span>
+          <span class="info-value">{{ order?.customerLocation?.address || order?.orgCity }}</span>
+        </div>
+      </div>
+      <div class="info-row" *ngIf="order?.customerLocation?.location">
+        <mat-icon class="info-icon">pin_drop</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Location</span>
+          <span class="info-value text-truncate" [matTooltip]="order?.customerLocation?.location">{{
+            order?.customerLocation?.location }}</span>
+        </div>
+      </div>
+
+      <!-- Vendor Details Section -->
+      <div class="vendor-details-card" *ngIf="order?.vendorFirmName || order?.vendorName">
+        <div class="vendor-card-header">
+          <mat-icon>store</mat-icon>
+          <span>Vendor Details</span>
+        </div>
+        <div class="vendor-card-body">
+          <div class="info-row" *ngIf="order?.vendorFirmName">
+            <mat-icon class="info-icon">storefront</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Firm</span>
+              <span class="info-value">{{ order?.vendorFirmName }}</span>
+            </div>
+          </div>
+          <div class="info-row" *ngIf="order?.vendorName">
+            <mat-icon class="info-icon">person</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ order?.vendorName }}</span>
+            </div>
+          </div>
+          <div class="info-row" *ngIf="order?.vendorPhoneNo">
+            <mat-icon class="info-icon">phone</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ order?.vendorPhoneNo }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Details -->
+      <div class="delivery-info-strip">
+        <div class="delivery-cell">
+          <mat-icon>calendar_today</mat-icon>
+          <div>
+            <span class="info-label">Delivery Date</span>
+            <span class="info-value">{{ order?.deliveryDate | date: 'MMM d, y' }}</span>
+          </div>
+        </div>
+        <div class="delivery-cell">
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <span class="info-label">Delivery Slot</span>
+            <span class="info-value">{{ formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }} - {{
+              formatTime12Hour(order?.itemList?.[0]?.deliveryTimeTo) }}</span>
+          </div>
+        </div>
+        <div class="delivery-cell">
+          <mat-icon>local_shipping</mat-icon>
+          <div>
+            <span class="info-label">Mode</span>
+            <span class="info-value">{{ order?.deliveryVendor || 'Standard' }}</span>
+          </div>
+        </div>
+        <div class="delivery-cell" *ngIf="order?.startManualDelivery">
+          <mat-icon>pan_tool</mat-icon>
+          <div>
+            <span class="info-label">Manual Delivery</span>
+            <span class="info-value">Yes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Special Request -->
+      <div class="special-note" *ngIf="order?.specialRequest">
+        <mat-icon>notes</mat-icon>
+        <span>{{ order?.specialRequest }}</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Items -->
+    <div class="card-body-right">
+      <div class="section-header">
+        <span class="section-label">Order Items</span>
+        <span class="items-count-badge">{{ order?.itemList?.length || 0 }} items</span>
+      </div>
+      <div class="items-scroll">
+        <div class="item-row" *ngFor="let item of order?.itemList">
+          <div class="item-left">
+            <span class="item-qty-chip">{{ item?.count }}x</span>
+            <span class="item-name">{{ item?.deliveredItem }}</span>
+          </div>
+          <div class="item-tags">
+            <span class="meta-tag meal-type">{{ item?.mealType }}</span>
+            <span class="meta-tag item-type" *ngIf="item?.itemName">{{ item?.itemName }}</span>
+          </div>
+          <span class="item-price">₹{{ (item?.mealPrice || 0) * (item?.count || 1) | number : '1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- Order Images (inline) -->
+      <div class="images-section" *ngIf="order?.beforePackingImageUrl || order?.afterPackingImageUrl">
+        <div class="section-label" style="margin-top: 12px;">Order Images</div>
+        <div class="images-row">
+          <div class="image-card" *ngIf="order?.beforePackingImageUrl"
+            (click)="openImagePreview(imageUrl + order?.beforePackingImageUrl)">
+            <img [src]="imageUrl + order?.beforePackingImageUrl" alt="Before Packing" />
+            <span class="image-label">Before Packing</span>
+          </div>
+          <div class="image-card" *ngIf="order?.afterPackingImageUrl"
+            (click)="openImagePreview(imageUrl + order?.afterPackingImageUrl)">
+            <img [src]="imageUrl + order?.afterPackingImageUrl" alt="After Packing" />
+            <span class="image-label">After Packing</span>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
-      <div class="labelText mb-1">CUSTOMER POC</div>
-      <div class="d-flex align-items-center gap-2">
-        <div class="avatar-circle-sm bg-primary-subtle text-primary fw-bold"
-          style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-          {{ orderInput?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() }}
+  </div>
+
+  <!-- Employee Details (collapsible) -->
+  <div class="employees-section" *ngIf="order?.employeePollDetails?.length">
+    <div class="section-toggle" (click)="showEmployees = !showEmployees">
+      <div class="toggle-left">
+        <mat-icon>groups</mat-icon>
+        <span class="section-label">Employee Details</span>
+      </div>
+      <div class="toggle-right">
+        <span class="count-chip">{{ order?.employeePollDetails?.length }} employees</span>
+        <mat-icon [class.rotated]="showEmployees">expand_more</mat-icon>
+      </div>
+    </div>
+    <div class="employee-grid" *ngIf="showEmployees">
+      <div class="employee-chip" *ngFor="let emp of order?.employeePollDetails">
+        <div class="emp-avatar">
+          {{ emp?.employeeName?.substring(0,2)?.toUpperCase() }}
         </div>
-        <div class="d-flex flex-column">
-          <span class="labelData text-truncate text-truncate-120">{{ orderInput?.pocDetails?.pocName }}</span>
-          <span class="small-text text-secondary text-truncate text-truncate-120">{{
-            orderInput?.pocDetails?.pocLocation }}</span>
+        <div class="emp-info">
+          <span class="emp-name">{{ emp?.employeeName }}</span>
+          <span class="emp-meta" *ngIf="emp?.employeePhoneNo">{{ emp?.employeePhoneNo }}</span>
+          <span class="emp-meta" *ngIf="emp?.employeeEmail">{{ emp?.employeeEmail }}</span>
+          <span class="emp-item" *ngIf="emp?.deliveredItem">{{ emp?.deliveredItem }}</span>
         </div>
       </div>
     </div>
-    <div class="col-lg-2 col-md-1 d-flex flex-column align-items-end ms-auto">
-      <div class="labelText mb-1">TOTAL</div>
-      <div class="d-flex align-items-center gap-3">
-        <span class="fw-bold fs-6">₹ {{ (orderInput?.amount || 0) | number : '1.2-2' }}</span>
-        <button class="btn btn-sm btn-light rounded-circle p-1" style="width: 28px; height: 28px;">
-          <i class="bi bi-chevron-down"></i>
-        </button>
+  </div>
+
+  <!-- Card Footer -->
+  <div class="card-footer">
+    <!-- Financial Strip -->
+    <div class="fin-strip">
+      <div class="fin-cell">
+        <span class="fin-label">Subtotal</span>
+        <span class="fin-value">₹{{ (order?.orderAmount || 0) | number : '1.2-2' }}</span>
       </div>
+      <div class="fin-cell" *ngIf="order?.deliveryCharge">
+        <span class="fin-label">Delivery</span>
+        <span class="fin-value">₹{{ order?.deliveryCharge | number : '1.2-2' }}</span>
+      </div>
+      <div class="fin-cell" *ngIf="order?.taxes">
+        <span class="fin-label">Taxes</span>
+        <span class="fin-value">₹{{ order?.taxes | number : '1.2-2' }}</span>
+      </div>
+      <div class="fin-cell grand">
+        <span class="fin-label">Total</span>
+        <span class="fin-value">₹{{ (order?.amount || 0) | number : '1.2-2' }}</span>
+      </div>
+      <div class="fin-cell paid">
+        <span class="fin-label">Paid to Kitchen</span>
+        <span class="fin-value">₹{{ (order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0) | number : '1.2-2'
+          }}</span>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+      <button mat-stroked-button class="history-btn" (click)="openOrderHistory()" *ngIf="order?.statusHistory?.length">
+        <mat-icon>history</mat-icon>
+        Order History ({{ order?.statusHistory?.length }})
+      </button>
     </div>
   </div>
 </div>
-<div class="daily-card daily-card--expanded mb-2" *ngIf="!showless">
-  <div class="row align-items-center mb-4 pb-3 border-bottom expanded-header">
-    <div class="col-lg-2 col-md-3 d-flex flex-column border-sep">
-      <div class="labelText mb-1">ORDER NO.</div>
-      <div class="d-flex align-items-center gap-2">
-        <span class="labelData">#{{ order?.orderNo }}</span>
-        <span class="status-badge" [ngClass]="getStatusClass(order?.orderstatus)">
-          {{ getStatusLabel(order?.orderstatus) }}
-        </span>
-      </div>
-    </div>
-    <div class="col-lg-2 col-md-2 d-flex flex-column border-sep">
-      <div class="labelText mb-1">TYPE</div>
-      <div class="labelData d-flex align-items-center gap-1">
-        <i class="bi bi-box-seam text-secondary"></i>
-        <span>Daily Bulk</span>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
-      <div class="labelText mb-1">TIMELINE</div>
-      <div class="d-flex flex-column">
-        <div class="small-text text-secondary mb-1">
-          Ordered: <span class="text-dark fw-medium">{{ order?.orderDate | date: 'MMM d, y' }}</span>
-        </div>
-        <div class="small-text text-secondary">
-          Delivery: <span class="text-dark fw-medium">{{ order?.deliveryDate | date: 'MMM d' }} • {{
-            formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
-      <div class="labelText mb-1">CUSTOMER POC</div>
-      <div class="d-flex align-items-center gap-2">
-        <div class="avatar-circle-sm bg-primary-subtle text-primary fw-bold"
-          style="width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">
-          {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() }}
-        </div>
-        <div class="d-flex flex-column">
-          <span class="labelData text-truncate text-truncate-120">{{ order?.pocDetails?.pocName }}</span>
-          <span class="small-text text-secondary text-truncate text-truncate-120">{{
-            order?.pocDetails?.pocLocation }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-2 col-md-1 d-flex flex-column align-items-end ms-auto">
-      <div class="labelText mb-1">TOTAL</div>
-      <div class="d-flex align-items-center gap-2">
-        <span class="fw-bold fs-6">₹ {{ (order?.amount || 0) | number : '1.2-2' }}</span>
-        <button class="btn btn-sm btn-light rounded-circle p-1" style="width: 28px; height: 28px;"
-          (click)="showless= !showless" title="Collapse">
-          <i class="bi bi-chevron-up"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="row g-3 mb-4">
-    <div class="col-lg-4 col-md-12">
-      <div class="h-100 p-3 border rounded bg-white info-block d-flex flex-column">
-        <div class="d-flex align-items-center justify-content-between mb-3">
-          <div class="d-flex align-items-center gap-2">
-            <div class="icon-circle bg-primary-subtle text-primary">
-              <i class="bi bi-basket3-fill"></i>
-            </div>
-            <span class="fw-bold text-uppercase section-title">Order Items</span>
-          </div>
-          <span class="item-count-badge">{{order?.itemList?.length || 0}} items</span>
-        </div>
 
-        <div class="order-items-list">
-          <div class="order-item-card" *ngFor="let item of order?.itemList">
-            <div class="item-left">
-              <div class="item-name">{{ item?.deliveredItem }}</div>
-              <div class="item-meta">
-                <span class="meta-tag meal-type">{{item?.mealType}}</span>
-                <span class="meta-tag item-type">{{item?.itemName}}</span>
-              </div>
-            </div>
-            <div class="item-right">
-              <div class="item-qty">×{{item?.count}}</div>
-              <div class="item-price">₹{{ (item?.mealPrice || 0) | number : '1.0-0' }}</div>
-              <div class="item-price-label">per unit</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="note-container mt-auto" *ngIf="order?.specialRequest">
-          <i class="bi bi-chat-quote-fill note-icon"></i>
-          <span class="note-text">{{ order?.specialRequest }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-4 col-md-12">
-      <div class="h-100 p-3 border rounded bg-white info-block">
-        <div class="d-flex align-items-center gap-2 mb-3">
-          <i class="bi bi-folder2-open text-secondary"></i>
-          <span class="small fw-bold text-secondary text-uppercase section-uppercase">PAYMENT DETAILS</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span class="small text-muted">Subtotal</span>
-          <!-- {{order | json}} -->
-          <span class="fw-bold">₹ {{ (order?.orderAmount || 0) | number : '1.2-2' }}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span class="small text-muted">Delivery Cost</span>
-          <span class="fw-bold">₹ {{ (order?.deliveryCharge || 0) | number : '1.2-2' }}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-3">
-          <span class="small text-muted">Tax</span>
-          <span class="fw-bold">₹ {{ (order?.taxes || 0 )| number : '1.2-2' }}</span>
-        </div>
-        <div class="d-flex justify-content-between pt-2 border-top mb-3">
-          <span class="fw-bold">Total Amount</span>
-          <span class="fw-bold text-primary fs-5">₹ {{ order?.amount | number : '1.2-2' }}</span>
-        </div>
-        <div
-          class="bg-success-subtle text-success p-2 rounded d-flex justify-content-between align-items-center small fw-bold">
-          <span>Paid to Kitchen</span>
-          <span>₹ {{ (order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0) | number : '1.2-2' }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-4 col-md-12">
-      <div class="row gap-2">
-        <div class="col-lg-12">
-          <div class="h-100 p-3 border rounded bg-white info-block">
-            <div class="d-flex align-items-center gap-2 mb-3">
-              <i class="bi bi-building text-secondary"></i>
-              <span class="small fw-bold text-secondary text-uppercase section-uppercase">ORGANIZATION</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span class="small text-muted">Name</span>
-              <span class="small fw-bold text-dark text-truncate" title="{{ order?.orgName }}">
-                {{order.cafeteriaName}} ({{ order?.orgName}})
-              </span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span class="small text-muted">City</span>
-              <span class="small fw-bold text-dark">{{ order?.customerLocation?.address || order?.orgCity }}</span>
-            </div>
-            <div class="d-flex justify-content-between">
-              <span class="small text-muted">Location</span>
-              <span class="small fw-bold text-dark text-end text-truncate text-truncate-60p"
-                title="{{ order?.customerLocation?.location }}">{{ order?.customerLocation?.location }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-12">
-          <div class="h-100 p-3 border rounded bg-white info-block">
-            <div class="d-flex align-items-center gap-2 mb-3">
-              <i class="bi bi-shop text-secondary"></i>
-              <span class="small fw-bold text-secondary text-uppercase section-uppercase">VENDOR</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span class="small text-muted">Firm</span>
-              <span class="small fw-bold text-dark text-truncate" title="{{ order?.vendorFirmName }}">{{
-                order?.vendorFirmName
-                }}</span>
-            </div>
-            <div class="d-flex justify-content-between mb-2">
-              <span class="small text-muted">Name</span>
-              <span class="small fw-bold text-dark text-truncate" title="{{ order?.vendorName }}">{{ order?.vendorName
-                }}</span>
-            </div>
-            <div class="d-flex justify-content-between">
-              <span class="small text-muted">Phone</span>
-              <span class="small fw-bold text-dark">{{ order?.vendorPhoneNo }}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="row g-3 mb-4">
-    <div class="col-lg-3 col-md-6">
-      <div class="h-100 p-3 border rounded bg-white info-block">
-        <div class="d-flex align-items-center gap-2 mb-3">
-          <i class="bi bi-person text-secondary"></i>
-          <span class="small fw-bold text-secondary text-uppercase section-uppercase">CUSTOMER</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span class="small text-muted">POC</span>
-          <span class="small fw-bold text-dark text-truncate" title="{{ order?.pocDetails?.pocName }}">{{
-            order?.pocDetails?.pocName }}</span>
-        </div>
-        <div class="d-flex justify-content-between mb-2">
-          <span class="small text-muted">Phone</span>
-          <span class="small fw-bold text-dark">{{ order?.pocDetails?.pocPhoneNo }}</span>
-        </div>
-        <div class="d-flex justify-content-between">
-          <span class="small text-muted">Email</span>
-          <span class="small fw-bold text-dark text-truncate text-truncate-60p" title="{{
-            order?.pocDetails?.pocEmail }}">{{ order?.pocDetails?.pocEmail }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6">
-      <div class="h-100 p-3 border rounded bg-white info-block">
-        <div class="d-flex align-items-center gap-2 mb-3">
-          <i class="bi bi-truck text-secondary"></i>
-          <span class="small fw-bold text-secondary text-uppercase section-uppercase">DELIVERY</span>
-        </div>
-
-        <div class="d-flex justify-content-between mb-2">
-          <span class="small text-muted">Manual</span>
-          <span class="fw-bold text-dark small">{{ order?.startManualDelivery ? 'Yes' : 'No' }}</span>
-        </div>
-
-        <div class="d-flex justify-content-between mb-2">
-          <span class="small text-muted">Slot</span>
-          <span class="fw-bold text-dark small">{{ formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }} - {{
-            formatTime12Hour(order?.itemList?.[0]?.deliveryTimeTo) }}</span>
-        </div>
-
-        <div class="d-flex justify-content-between">
-          <span class="small text-muted">Mode</span>
-          <span class="fw-bold text-dark small">{{ order?.deliveryVendor || 'Standard' }}</span>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-6 col-md-6" *ngIf="order?.beforePackingImageUrl || order?.afterPackingImageUrl">
-      <div class="h-100 p-3 border rounded bg-white info-block">
-        <div class="d-flex align-items-center gap-2 mb-3">
-          <i class="bi bi-images text-secondary"></i>
-          <span class="small fw-bold text-secondary text-uppercase section-uppercase">
-            ORDER IMAGES
-          </span>
-        </div>
-        <div class="d-flex gap-4">
-          <div class="mb-3" *ngIf="order?.beforePackingImageUrl">
-            <span class="small text-muted d-block mb-1">Before Packing</span>
-            <div class="image-box" (click)="openImagePreview(packaeImageModel,imageUrl + order?.beforePackingImageUrl)">
-              <img [src]="imageUrl + order?.beforePackingImageUrl" class="img-fluid rounded" alt="Before Packing" />
-            </div>
-          </div>
-          <div class="mb-3" *ngIf="order?.afterPackingImageUrl">
-            <span class="small text-muted d-block mb-1">After Packing</span>
-            <div class="image-box" (click)="openImagePreview(packaeImageModel,imageUrl + order?.afterPackingImageUrl)">
-              <img [src]="imageUrl + order?.afterPackingImageUrl" class="img-fluid rounded" alt="After Packing" />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="order-history-section mb-4 border rounded p-3 bg-white" *ngIf="order?.employeePollDetails?.length">
-    <div class="d-flex align-items-center justify-content-between cursor-pointer"
-      (click)="showEmployees = !showEmployees">
-      <div class="d-flex align-items-center gap-2">
-        <span class="small fw-bold text-secondary text-uppercase section-uppercase">EMPLOYEE DETAILS</span>
-      </div>
-      <div class="d-flex align-items-center gap-2">
-        <span class="small text-muted">{{ order?.employeePollDetails?.length || 0 }} employees</span>
-        <i class="bi bi-chevron-down text-secondary" [class.rotate-180]="showEmployees"></i>
-      </div>
-    </div>
-    <div class="mt-3" *ngIf="showEmployees">
-      <div class="d-flex flex-wrap gap-3">
-        <div class="d-flex align-items-center gap-3 p-2 border rounded bg-white shadow-sm" style="min-width: 200px;"
-          *ngFor="let emp of order?.employeePollDetails">
-          <div
-            class="avatar-circle-sm bg-primary-subtle text-primary fw-bold rounded-circle d-flex align-items-center justify-content-center flex-shrink-0"
-            style="width: 40px; height: 40px; font-size: 14px;">
-            {{ emp?.employeeName?.substring(0,2)?.toUpperCase() }}
-          </div>
-          <div class="d-flex flex-column text-start" style="line-height: 1.3;">
-            <span class="text-dark fw-bold" style="font-size: 13px;">{{ emp?.employeeName }}</span>
-            <span class="text-muted" style="font-size: 11px;" *ngIf="emp?.employeePhoneNo">
-              {{ emp?.employeePhoneNo}}
-            </span>
-            <span class="text-muted" style="font-size: 11px;" *ngIf="emp?.employeeEmail">
-              {{ emp?.employeeEmail }}
-            </span>
-            <span class="text-dark fw-medium" style="font-size: 11px;" *ngIf="emp?.deliveredItem">
-              {{ emp?.deliveredItem }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="order-history-section mb-4 border rounded p-3 bg-white">
-    <div class="d-flex align-items-center justify-content-between cursor-pointer"
-      (click)="showStatusHistory = !showStatusHistory">
-      <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-clock-history text-secondary"></i>
-        <span class="small fw-bold text-secondary text-uppercase section-uppercase">ORDER HISTORY</span>
-      </div>
-      <div class="d-flex align-items-center gap-2">
-        <span class="small text-muted">{{ order?.statusHistory?.length || 0 }} updates</span>
-        <i class="bi bi-chevron-down text-secondary" [class.rotate-180]="showStatusHistory"></i>
-      </div>
-    </div>
-    <div class="mt-3 d-flex gap-3 flex-wrap" *ngIf="showStatusHistory">
-      <div class="d-flex align-items-center gap-3 p-2 rounded px-3" *ngFor="let log of order?.statusHistory"
-        style="background-color: #eff6ff; border: 1px solid #dbeafe;width: fit-content;">
-        <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm"
-          style="width: 36px; height: 36px; min-width: 36px;">
-          <i class="bi bi-clock-fill" style="font-size: 16px;"></i>
-        </div>
-        <div class="d-flex flex-column" style="line-height: 1.2;">
-          <span class="text-secondary fw-bold text-uppercase mb-1" style="font-size: 10px; letter-spacing: 0.5px;">
-            {{ getStatusLabel(log?.orderstatus) }}
-          </span>
-          <span class="text-dark fw-bold" style="font-size: 12px;">
-            {{ log?.updatedOn | date: 'd MMM y, h:mm a' }}
-          </span>
-          <span class="text-muted fw-normal" style="font-size: 11px;">
-            • by {{ log?.actionBy || 'System Admin' }}
-          </span>
-          <span class="text-secondary fst-italic mt-1" style="font-size: 11px;" *ngIf="log?.comment">
-            "{{ log?.comment }}"
-          </span>
-        </div>
-      </div>
-      <div class="text-muted small fst-italic" *ngIf="!order?.statusHistory?.length">No history available</div>
-    </div>
-  </div>
-  <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-3">
-    <div class="d-flex align-items-center gap-2">
-      <ng-container *ngFor="let action of actionList">
-        <button class="btn btn-sm fw-medium px-3"
-          [ngClass]="action.color === 'warn' ? 'btn-outline-danger' : 'btn-primary'"
-          (click)="handleAction(action.action)">{{ action.label }}</button>
-      </ng-container>
-    </div>
-  </div>
-</div>
-<ng-template #actionModal let-modal>
-  <div class="modal-header border-0 pb-0">
-    <h5 class="modal-title fw-bold text-dark">{{activeModalAction}}</h5>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    <p class="text-secondary small mb-3" *ngIf="modalMessage">{{ modalMessage }}</p>
-    <div class="mb-3" *ngIf="showDeliveryInput">
-      <label class="form-label small fw-bold text-secondary">Delivery Charge</label>
-      <div class="input-group">
-        <span class="input-group-text bg-light border-end-0">₹</span>
-        <input type="number" class="form-control border-start-0 ps-0" [(ngModel)]="deliveryChargesFromModal"
-          placeholder="0">
-      </div>
-    </div>
-    <div class="mb-3" *ngIf="commentRequired">
-      <label class="form-label small fw-bold text-secondary">Comment <span class="text-danger"
-          *ngIf="commentRequired">*</span></label>
-      <textarea class="form-control" rows="3" [(ngModel)]="statusComment" placeholder="Enter comment..."
-        [required]="commentRequired"></textarea>
-      <div class="text-danger small mt-1" *ngIf="commentRequired && !statusComment">
-        Comment is required to proceed.
-      </div>
-    </div>
-  </div>
-  <div class="modal-footer border-0 pt-0">
-    <button type="button" class="btn btn-light btn-sm fw-medium px-3" (click)="modal.dismiss('cancel')">Cancel</button>
-    <button type="button" class="btn btn-primary btn-sm fw-medium px-4" (click)="confirmAction()"
-      [disabled]="commentRequired && !statusComment">Confirm</button>
-  </div>
+<!-- Action Confirm Dialog Template -->
+<ng-template #actionDialogTpl>
+  <h2 mat-dialog-title class="dialog-title-row">
+    <mat-icon>{{ tempStatus === 'cancelled' ? 'warning' : 'check_circle' }}</mat-icon>
+    {{ activeModalAction }}
+  </h2>
+  <mat-dialog-content>
+    <p class="dialog-message" *ngIf="modalMessage">{{ modalMessage }}</p>
+    <mat-form-field appearance="outline" class="full-width" *ngIf="showDeliveryInput">
+      <mat-label>Delivery Charge</mat-label>
+      <span matPrefix>₹&nbsp;</span>
+      <input matInput type="number" [(ngModel)]="deliveryChargesFromModal" placeholder="0">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width" *ngIf="commentRequired">
+      <mat-label>Comment <span class="required-star" *ngIf="commentRequired">*</span></mat-label>
+      <textarea matInput rows="3" [(ngModel)]="statusComment" placeholder="Enter comment..."></textarea>
+      <mat-error *ngIf="commentRequired && !statusComment">Comment is required to proceed.</mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button [color]="tempStatus === 'cancelled' ? 'warn' : 'primary'" (click)="confirmAction()"
+      [disabled]="commentRequired && !statusComment">
+      Confirm
+    </button>
+  </mat-dialog-actions>
 </ng-template>
-<ng-template #packaeImageModel let-modal>
-  <div class="modal-header">
-    <h6 class="modal-title">Package Image</h6>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss()"></button>
-  </div>
 
-  <div class="modal-body text-center">
-    <img [src]="previewImageSrc" alt="Package Image" class="img-fluid rounded"
-      style="max-height: 70vh; object-fit: contain" />
-  </div>
+<!-- Order History Dialog Template -->
+<ng-template #historyDialogTpl>
+  <h2 mat-dialog-title class="dialog-title-row">
+    <mat-icon>history</mat-icon>
+    Order History
+  </h2>
+  <mat-dialog-content>
+    <div class="history-timeline" *ngIf="order?.statusHistory?.length; else noHistory">
+      <div class="history-item" *ngFor="let log of order?.statusHistory; let i = index; let last = last">
+        <div class="history-dot" [class.active]="i === 0"></div>
+        <div class="history-connector" *ngIf="!last"></div>
+        <div class="history-content">
+          <div class="history-status">{{ getStatusLabel(log?.orderstatus) }}</div>
+          <div class="history-date">{{ log?.updatedOn | date: 'd MMM y, h:mm a' }}</div>
+          <div class="history-actor">by {{ log?.actionBy || 'System Admin' }}</div>
+          <div class="history-comment" *ngIf="log?.comment">"{{ log?.comment }}"</div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noHistory>
+      <div class="empty-history">
+        <mat-icon>info_outline</mat-icon>
+        <span>No history available</span>
+      </div>
+    </ng-template>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Image Preview Dialog Template -->
+<ng-template #imagePreviewTpl>
+  <h2 mat-dialog-title class="dialog-title-row">
+    <mat-icon>image</mat-icon>
+    Package Image
+  </h2>
+  <mat-dialog-content>
+    <div class="image-preview-wrapper">
+      <img [src]="previewImageSrc" alt="Package Image" />
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" mat-dialog-close>Close</button>
+  </mat-dialog-actions>
 </ng-template>

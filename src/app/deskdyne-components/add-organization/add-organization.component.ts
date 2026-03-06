@@ -68,7 +68,6 @@ export class AddOrganizationComponent implements OnInit {
     { key: 'showVirtualCafe', label: 'Show Virtual Cafeteria' },
     { key: 'showSaas', label: 'Show Outlet' },
     { key: 'showQrCode', label: 'Show Qr Code' },
-    { key: 'showCompanyWallet', label: 'Show Company Wallet' },
     { key: 'showComplienceTracker', label: 'Show Compliance Tracker' },
     { key: 'showConsumptionOrder', label: 'Show Consumption Order' },
     { key: 'isEmployeeEmailLogin', label: 'Is Employee Email Login' },
@@ -76,6 +75,8 @@ export class AddOrganizationComponent implements OnInit {
     { key: 'showchecklist', label: 'Show Checklist' },
     { key: 'showEventPopup', label: 'Show Event Popup' },
     { key: 'showSodexo', label: 'Show Sodexo' },
+    { key: 'showEmployeeBulkMenu', label: 'Show Employee Bulk Menu' },
+    { key: 'isRatingRequired', label: 'Rating Required' },
   ];
 
   constructor(
@@ -158,13 +159,14 @@ export class AddOrganizationComponent implements OnInit {
       showSaas: [false],
       showQrCode: [false],
       showSiteExecutive: [false],
-      showCompanyWallet: [false],
       showchecklist: [false],
       isEmployeeEmailLogin: [false],
       showComplienceTracker: [false],
       showConsumptionOrder: [false],
       showEventPopup: [false],
+      showEmployeeBulkMenu: [false],
       showSodexo: [false],
+      isRatingRequired: [false],
       cafeteria_name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(250)]],
       cafeteria_id: [id, Validators.required],
       cafeteria_city: ['', Validators.required],

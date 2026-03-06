@@ -1,10 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { EmployeeListDialogComponent } from './employee-list-dialog.component';
 
 @Component({
   selector: 'app-emp-poll-card',
@@ -17,11 +15,11 @@ export class EmpPollCardComponent {
   showCreateBtn: boolean = true;
   isCreating: boolean = false;
   totalDeliveryCharge: number = 0;
+  showEmployees: boolean = false;
 
   constructor(
     private apiMainService: ApiMainService,
     private sendDataToComponent: SendDataToComponent,
-    private dialog: MatDialog,
     private confirmationModalService: ConfirmationModalService,
     private localStorageService: LocalStorageService
   ) { }
@@ -41,6 +39,8 @@ export class EmpPollCardComponent {
           if (adminId) {
             this.orderInput.actionBy = adminId;
           }
+          console.log(this.orderInput);
+
           await this.apiMainService.createOrderFromPollObj(this.orderInput);
           this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id });
         } catch (err) {
@@ -85,12 +85,9 @@ export class EmpPollCardComponent {
     }
   }
 
-  openEmployeeDialog(): void {
-    this.dialog.open(EmployeeListDialogComponent, {
-      width: '500px',
-      maxHeight: '80vh',
-      data: { employeeList: this.orderInput?.employeeList }
-    });
+  getTotalItemCount(): number {
+    if (!this.order?.mealTypeList) return 0;
+    return this.order.mealTypeList.reduce((sum: number, item: any) => sum + (item.count || 0), 0);
   }
 
   formatTime12Hour(time: string): string {

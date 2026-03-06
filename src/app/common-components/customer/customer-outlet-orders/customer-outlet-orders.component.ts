@@ -1,9 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
+import { MatDialog } from '@angular/material/dialog';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ExcelService } from 'src/service/excel.service';
+import { OrderFilterDialogComponent, OrderFilterDialogData } from '../../order-filter-dialog/order-filter-dialog.component';
 
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -30,6 +32,17 @@ export class CustomerOutletOrdersComponent implements OnInit {
   // Filters
   orderNoSearch: string | number | null = null;
   selectedStatus: string = 'all';
+
+  // New Detailed Filters
+  filterPgName = '';
+  filterAppVersion = '';
+  filterPlatform = '';
+  filterIsPosOrder = '';
+
+  uniquePgNames: string[] = [];
+  uniqueAppVersions: string[] = [];
+  uniquePlatforms: string[] = [];
+
   statusList: string[] = [
     'paymentInprogress',
     'paymentFailed',
@@ -52,7 +65,8 @@ export class CustomerOutletOrdersComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private excelService: ExcelService, // keep if used elsewhere
-    fb: FormBuilder
+    fb: FormBuilder,
+    private dialog: MatDialog
   ) {
     this.dateForm = fb.group({
       dateFrom: new FormControl<Date | null>(null),
@@ -93,10 +107,80 @@ export class CustomerOutletOrdersComponent implements OnInit {
       );
 
       this.outletOrderList = Array.isArray(orderList) ? orderList : [];
+      this.extractUniqueFilterValues();
       this.applyFilters();
     } catch (err: any) {
       console.error(err);
     }
+  }
+
+  extractUniqueFilterValues() {
+    const pgSet = new Set<string>();
+    const versionSet = new Set<string>();
+    const platformSet = new Set<string>();
+
+    this.outletOrderList.forEach((order: any) => {
+      if (order.pgName) pgSet.add(order.pgName);
+      if (order.appVersion) versionSet.add(String(order.appVersion));
+      if (order.deviceInfo?.platform) platformSet.add(order.deviceInfo.platform);
+    });
+
+    this.uniquePgNames = Array.from(pgSet).sort();
+    this.uniqueAppVersions = Array.from(versionSet).sort();
+    this.uniquePlatforms = Array.from(platformSet).sort();
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.filterPgName || this.filterAppVersion || this.filterPlatform || this.filterIsPosOrder);
+  }
+
+  get activeFilterCount(): number {
+    let count = 0;
+    if (this.filterPgName) count++;
+    if (this.filterAppVersion) count++;
+    if (this.filterPlatform) count++;
+    if (this.filterIsPosOrder) count++;
+    return count;
+  }
+
+  openFilterDialog() {
+    const dialogData: OrderFilterDialogData = {
+      filterOrderStatus: '',
+      filterPgName: this.filterPgName,
+      filterAppVersion: this.filterAppVersion,
+      filterPlatform: this.filterPlatform,
+      filterIsPosOrder: this.filterIsPosOrder,
+      uniqueOrderStatuses: [],
+      uniquePgNames: this.uniquePgNames,
+      uniqueAppVersions: this.uniqueAppVersions,
+      uniquePlatforms: this.uniquePlatforms,
+      showStatusFilter: false,
+    };
+
+    const dialogRef = this.dialog.open(OrderFilterDialogComponent, {
+      data: dialogData,
+      width: '520px',
+      panelClass: 'filter-dialog-panel',
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.filterPgName = result.filterPgName;
+        this.filterAppVersion = result.filterAppVersion;
+        this.filterPlatform = result.filterPlatform;
+        this.filterIsPosOrder = result.filterIsPosOrder;
+        this.applyFilters();
+      }
+    });
+  }
+
+  clearFilters() {
+    this.filterPgName = '';
+    this.filterAppVersion = '';
+    this.filterPlatform = '';
+    this.filterIsPosOrder = '';
+    this.applyFilters();
   }
 
   applyFilters() {
@@ -111,6 +195,27 @@ export class CustomerOutletOrdersComponent implements OnInit {
     if (this.orderNoSearch !== null && this.orderNoSearch !== undefined && this.orderNoSearch !== '') {
       const searchStr = String(this.orderNoSearch).trim();
       list = list.filter(o => String(o.orderNo).includes(searchStr));
+    }
+
+    // 3) Filter by pgName
+    if (this.filterPgName) {
+      list = list.filter(o => o.pgName === this.filterPgName);
+    }
+
+    // 4) Filter by appVersion
+    if (this.filterAppVersion) {
+      list = list.filter(o => String(o.appVersion) === this.filterAppVersion);
+    }
+
+    // 5) Filter by platform
+    if (this.filterPlatform) {
+      list = list.filter(o => o.deviceInfo?.platform === this.filterPlatform);
+    }
+
+    // 6) Filter by isPosOrder
+    if (this.filterIsPosOrder) {
+      const isPOS = this.filterIsPosOrder === 'true';
+      list = list.filter(o => !!o.isPosOrder === isPOS);
     }
 
     this.filteredList = list;
@@ -141,6 +246,12 @@ export class CustomerOutletOrdersComponent implements OnInit {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
     this.updatePagedList();
+  }
+
+  getGrandTotal(order: any): number {
+    return (Number(order.itemAmount) || 0)
+      + (Number(order.taxes) || 0)
+      + (Number(order.packagingAmount) || 0);
   }
 
   private getDateRangeLabel(): string {

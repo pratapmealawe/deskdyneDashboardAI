@@ -15,13 +15,17 @@
               <mat-icon>add_business</mat-icon>
               <span>Add Organization</span>
             </button>
+            <button mat-icon-button class="btn-deleted" (click)="openDeletedOrgsDialog()"
+              matTooltip="View Deleted Organizations">
+              <mat-icon>delete_sweep</mat-icon>
+            </button>
           </div>
         </div>
       </div>
 
       <div *ngIf="orgList?.length > 0; else noRecords">
-        <app-organization-card [organization]="orgList" (view)="viewOrg($event)"
-          (paginationConfig)="paginationConfig($event)">
+        <app-organization-card [organization]="orgList" [showDeletedMode]="false" (view)="viewOrg($event)"
+          (paginationConfig)="paginationConfig($event)" (softDelete)="onSoftDelete($event)">
         </app-organization-card>
       </div>
     </ng-container>

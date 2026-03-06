@@ -15,6 +15,10 @@
           <mat-icon>add_business</mat-icon>
           <span>Add Outlet</span>
         </button>
+        <button mat-icon-button class="btn-deleted" (click)="openDeletedOutletsDialog()"
+          matTooltip="View Deleted Outlets">
+          <mat-icon>delete_sweep</mat-icon>
+        </button>
       </div>
     </div>
   </div>
@@ -30,7 +34,8 @@
 
     <ng-template #outletListTmp>
       <div class="outlet-list-wrapper">
-        <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"></app-outlet-card>
+        <app-outlet-card [outlet]="pagedOutLet" (view)="viewOutlet($event)"
+          (softDelete)="onOutletDeleted()"></app-outlet-card>
       </div>
     </ng-template>
   </div>

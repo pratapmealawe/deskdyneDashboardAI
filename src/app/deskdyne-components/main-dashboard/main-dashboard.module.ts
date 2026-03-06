@@ -8,11 +8,14 @@ import { MAT_DATE_LOCALE, MatNativeDateModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { HighchartsChartModule } from 'highcharts-angular';
+import { MaterialModule } from 'src/app/material.module';
+import { MainDashboardFilterDialogComponent } from './main-dashboard-filter-dialog/main-dashboard-filter-dialog.component';
 
 
 @NgModule({
   declarations: [
-    MainDashboardComponent
+    MainDashboardComponent,
+    MainDashboardFilterDialogComponent
   ],
   imports: [
     CommonModule,
@@ -23,6 +26,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
     MatFormFieldModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MaterialModule,
   ],
   providers: [
     { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }

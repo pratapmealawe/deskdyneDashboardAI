@@ -1,0 +1,95 @@
+<div class="row">
+    <div class="col-sm-12 col-md-4 col-lg-2">
+        <span class="labelText">Order No. : </span>{{order.orderNo}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-2">
+        <span class="labelText">Customer Name : </span>{{order.customerName}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3">
+        <span class="labelText">Customer Ph : </span>{{order.customerPhoneNo}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-2">
+        <span class="labelText">Type : </span>{{order.orderType}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-2">
+        <span class="labelText">Status : </span>{{order.orderstatus}}
+    </div>    
+    <div class="col-sm-12 col-md-4 col-lg-1" *ngIf="order._id">
+        <div class="inline right view" (click)="viewOrder(order)">+</div>
+    </div>
+</div>
+
+<!--subscriptionParent-->
+<!--subscriptionPackage-->
+<!--vieworder-->
+
+<!-- <div class="row">
+    <div class="col-sm-12 col-md-4 col-lg-3">
+        <span class="labelText">Kitchen Name : </span>{{order.kitchenName}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3">
+        <span class="labelText">Kitchen Ph : </span>{{order.kitchenPhoneNo}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-2">
+        <span class="labelText">Date : </span>{{order.orderDate| date: 'MMM d, y'}}
+    </div> 
+    <div class="col-sm-12 col-md-4 col-lg-2" *ngIf="order.orderType === 'advance'">
+        <span class="labelText">Time : </span>{{order.orderComplitionTime | date: 'shortTime'}}
+    </div>   
+    <div class="col-sm-12 col-md-4 col-lg-2" *ngIf="order.orderType === 'allDay'">
+        <span class="labelText">Slot : </span>{{order.slotStartTime | date : 'shortTime' }}-{{order.slotEndTime | date : 'shortTime' }}
+    </div> 
+    <div class="col-12" *ngIf="order.kitchenAddress">
+        <span class="labelText">Kitchen Address : </span>
+        {{order.kitchenAddress.address1}}, {{order.kitchenAddress.address2}} Landmark : {{order.kitchenAddress.landmark}}
+    </div>
+    <div class="col-12" *ngIf="order.kitchenGeolocation">
+        <span class="labelText">Kitchen Geolocation : </span>latitude- {{order.kitchenGeolocation.lat}}, longitude- {{order.kitchenGeolocation.lng}}
+    </div>
+</div> -->
+<!-- <div class="row">
+    <div class="col-12">
+        <span class="labelText">Customer Address : </span>
+        {{order.customerLocation.address}}, {{order.customerLocation.location}} Landmark : {{order.customerLocation.landmark}}     
+    </div>
+    <div class="col-12">
+        <span class="labelText">Customer Geolocation : </span>latitude- {{order.customerLocation.geolocation.lat}}, longitude- {{order.customerLocation.geolocation.lng}}
+    </div> 
+</div> -->
+<div class="row">
+    <div class="col-sm-12 col-md-4 col-lg-3">
+        <span class="labelText">MealType : </span>{{order.mealType}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3">
+        <span class="labelText" [ngClass]="{orange:order.orderCreatedBy === 'DDUser'}">Order CreatedBy : </span>{{order.orderCreatedBy}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.deliveryTaskId">
+        <span class="labelText">DeliveryTaskId : </span>{{order.deliveryTaskId}}
+    </div> 
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.sfx_order_id">
+        <span class="labelText">ShadowFaxId : </span>{{order.sfx_order_id}}
+    </div> 
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.deliveryVendor">
+        <span class="labelText">Partner : </span>{{order.deliveryVendor}}
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.deliveryTaskState">
+        <span class="bold orderLabel">Delivery Task State:</span>
+        <span class="orderValue">{{order.deliveryTaskState}}</span>
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.pickupEta">
+        <span class="bold orderLabel">Pickup-Eta:</span>
+        <span class="orderValue">{{order.pickupEta}} mins</span>
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.dropoffEta">
+        <span class="bold orderLabel">Dropoff-Eta:</span>
+        <span class="orderValue">{{order.dropoffEta}} mins</span>
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.runnerName">
+        <span class="bold orderLabel">Runner Name:</span>
+        <span class="orderValue">{{order.runnerName}}</span>
+    </div>
+    <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.runnerPhone">
+        <span class="bold orderLabel">Runner Phone:</span>
+        <span class="orderValue">{{order.runnerPhone}}</span>
+    </div> 
+</div>

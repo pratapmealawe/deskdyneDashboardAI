@@ -122,18 +122,14 @@ export class WalletBillingComponent {
 
   submitFilter() {
     if (!this.filterObj.orgId) return;
-
     this.filterObj.fromDate = this.dateForm.get('dateFrom')?.value;
     this.filterObj.toDate = this.dateForm.get('dateTo')?.value;
-
     this.getCustomerProfileList();
   }
 
   async getCustomerProfileList() {
     try {
-      const res = await this.apiMainService.getCustomerWalletListByOrgId(
-        this.filterObj
-      );
+      const res = await this.apiMainService.getCustomerWalletListByOrgId(this.filterObj);
       this.parseResponse(res);
     } catch (err: any) {
       console.log(err);

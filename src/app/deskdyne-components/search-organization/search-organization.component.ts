@@ -1,9 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import { Subject, debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { DeletedOrgsDialogComponent } from './deleted-orgs-dialog/deleted-orgs-dialog.component';
 
 @Component({
   selector: 'app-search-organization',
@@ -19,12 +22,14 @@ export class SearchOrganizationComponent implements OnInit {
   selectedOrg: any = {};
   btnPolicy: any;
   searchControl = new FormControl('');
-  originalOrgList: any // ma 
+  originalOrgList: any = [];
 
   constructor(
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
-    private router: Router
+    private router: Router,
+    private confirmationModalService: ConfirmationModalService,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit() {
@@ -40,17 +45,14 @@ export class SearchOrganizationComponent implements OnInit {
 
   applyLocalFilter(value: any) {
     if (!value) {
-      // restore full list
       this.orgList = [...this.originalOrgList];
       return;
     }
     const lower = value.toLowerCase();
-    // filter from ORIGINAL data
     this.orgList = this.originalOrgList.filter((d: any) =>
       d.organization_name?.toLowerCase().includes(lower)
     );
   }
-
 
   async searchOrg(searchValue?: any) {
     try {
@@ -70,6 +72,9 @@ export class SearchOrganizationComponent implements OnInit {
       if (orgList && orgList.length > 0) {
         this.orgList = orgList;
         this.originalOrgList = orgList;
+      } else {
+        this.orgList = [];
+        this.originalOrgList = [];
       }
     } catch (error) {
       console.log(error);
@@ -93,5 +98,28 @@ export class SearchOrganizationComponent implements OnInit {
 
   addOrg() {
     this.router.navigate(['/b2bAddorg'])
+  }
+
+  openDeletedOrgsDialog() {
+    this.dialog.open(DeletedOrgsDialogComponent, {
+      width: '850px',
+      maxHeight: '85vh',
+      panelClass: 'deleted-orgs-dialog-container'
+    });
+  }
+
+  onSoftDelete(org: any) {
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete "${org.organization_name}"? This can be restored later from the Deleted list.`,
+      callback: async () => {
+        try {
+          await this.apiMainService.B2B_deleteOrganization(org._id, 'soft');
+          this.searchOrg();
+        } catch (error) {
+          console.error('Error deleting organization:', error);
+        }
+      },
+      context: this
+    });
   }
 }

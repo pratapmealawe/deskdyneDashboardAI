@@ -110,12 +110,12 @@ export class AddVendorDailyOrderMenuComponent implements OnInit {
     this.vendorForm.get('vendorName')?.setValue(vendor.vendorName);
     this.vendorForm.get('vendorEmail')?.setValue(vendor.vendorEmail);
     this.vendorForm.get('vendorPhone')?.setValue(vendor.vendorPhoneNo);
-    this.vendorForm.get('vendorAddress.address1')?.setValue(vendor.address.address1);
-    this.vendorForm.get('vendorAddress.address2')?.setValue(vendor.address.address2);
-    this.vendorForm.get('vendorAddress.landmark')?.setValue(vendor.address.landmark);
-    this.vendorForm.get('vendorAddress.location')?.setValue(vendor.address.location);
-    this.vendorForm.get('vendorAddress.geolocation.lat')?.setValue(vendor.geolocation.lat);
-    this.vendorForm.get('vendorAddress.geolocation.lng')?.setValue(vendor.geolocation.lng);
+    this.vendorForm.get('vendorAddress.address1')?.setValue(vendor.addressList[0].address1);
+    this.vendorForm.get('vendorAddress.address2')?.setValue(vendor.addressList[0].address2);
+    this.vendorForm.get('vendorAddress.landmark')?.setValue(vendor.addressList[0].landmark);
+    this.vendorForm.get('vendorAddress.location')?.setValue(vendor.addressList[0].location);
+    this.vendorForm.get('vendorAddress.geolocation.lat')?.setValue(vendor.addressList[0].geolocation.lat);
+    this.vendorForm.get('vendorAddress.geolocation.lng')?.setValue(vendor.addressList[0].geolocation.lng);
   }
 
   closeModal() {

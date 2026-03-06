@@ -1,0 +1,154 @@
+<div class="container-fluid pb-4 billingContainer">
+    <div class="row pt-3 pb-2">
+        <app-common-outlet-cafe-select [config]="headerConfig"
+            (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+    </div>
+
+    <ng-container *ngIf="filteredData?.org_id; else noOrgTpl">
+        <ng-container *ngIf="grandTotals.count > 0; else noDataTpl">
+            <!-- All Totals -->
+            <div class="row mb-4">
+                <div class="col-12">
+                    <mat-card class="shadow-sm">
+                        <mat-card-header>
+                            <mat-card-title class="fs-6 text-uppercase text-muted ls-1">Grand Totals</mat-card-title>
+                        </mat-card-header>
+                        <mat-card-content class="pt-3">
+                            <div class="d-flex flex-wrap gap-4 align-items-center justify-content-between">
+                                <div class="metric-box">
+                                    <div class="label text-muted small">Transactions</div>
+                                    <div class="value fs-4 fw-bold text-primary">{{ grandTotals.count }}</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="label text-muted small">Total Credits</div>
+                                    <div class="value fs-4 fw-bold text-success">₹{{ grandTotals.credits |
+                                        number:'1.2-2' }}</div>
+                                </div>
+                                <div class="metric-box">
+                                    <div class="label text-muted small">Total Debits</div>
+                                    <div class="value fs-4 fw-bold text-danger">₹{{ grandTotals.debits | number:'1.2-2'
+                                        }}</div>
+                                </div>
+                            </div>
+                        </mat-card-content>
+                    </mat-card>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="d-flex justify-content-end mb-3 gap-2">
+                <button mat-stroked-button color="primary" (click)="exportDatewiseSummary()">
+                    <i class="bi bi-file-earmark-excel me-2"></i>Summary Excel
+                </button>
+                <button mat-stroked-button color="primary" (click)="exportDatewiseDetailed()">
+                    <i class="bi bi-table me-2"></i>Detailed Excel
+                </button>
+                <button mat-flat-button color="warn" (click)="exportPdf()">
+                    <i class="bi bi-file-earmark-pdf me-2"></i>Export PDF Report
+                </button>
+            </div>
+
+            <!-- Datewise groups (paged) -->
+            <mat-accordion multi class="custom-accordion">
+                <mat-expansion-panel *ngFor="let grp of pagedDateGroups; trackBy: trackByDateKey"
+                    class="mb-2 shadow-sm border">
+                    <mat-expansion-panel-header class="py-2">
+                        <mat-panel-title class="fw-bold text-secondary align-items-center">
+                            <i class="bi bi-calendar-event me-2"></i> {{ grp.dateLabel }}
+                        </mat-panel-title>
+                        <mat-panel-description class="d-flex gap-4 justify-content-end align-items-center text-dark">
+                            <span class="d-none d-md-inline"><small class="text-muted">Count:</small> {{
+                                grp.totals.count }}</span>
+                            <span class="d-none d-md-inline text-success"><small class="text-muted">Credits:</small>
+                                <strong>₹{{ grp.totals.credits | number:'1.2-2' }}</strong></span>
+                            <span class="d-none d-md-inline text-danger"><small class="text-muted">Debits:</small>
+                                <strong>₹{{ grp.totals.debits | number:'1.2-2' }}</strong></span>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <!-- Panel content -->
+                    <div class="table-responsive mt-2">
+                        <table class="table table-hover table-bordered align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-secondary small text-uppercase" style="width: 100px;">Time</th>
+                                    <th class="text-secondary small text-uppercase" style="width: 140px;">Emp ID</th>
+                                    <th class="text-secondary small text-uppercase">Type</th>
+                                    <th class="text-secondary small text-uppercase">Wallet</th>
+                                    <th class="text-secondary small text-uppercase text-end">Amount</th>
+                                    <th class="text-secondary small text-uppercase text-center">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let o of grp.orders">
+                                    <td class="text-muted small">{{ o.createdAt | date:'shortTime' }}</td>
+                                    <td class="fw-medium text-primary">{{ o.employeeId || '-' }}</td>
+                                    <td>
+                                        <span class="badge rounded-pill border" [ngClass]="{
+                                                'bg-success-subtle text-success border-success': o.transactionType === 'CREDIT',
+                                                'bg-danger-subtle text-danger border-danger': o.transactionType === 'DEBIT',
+                                                'bg-light text-dark': o.transactionType !== 'CREDIT' && o.transactionType !== 'DEBIT'
+                                            }">
+                                            {{ o.transactionType }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge border bg-light text-secondary">{{ o.walletType | titlecase
+                                            }}</span>
+                                    </td>
+                                    <td class="text-end fw-bold"
+                                        [ngClass]="{'text-success': o.transactionType === 'CREDIT', 'text-danger': o.transactionType !== 'CREDIT'}">
+                                        {{ (o.transactionType === 'CREDIT' ? '+' : '-') }} ₹{{ getTxnAmount(o) |
+                                        number:'1.2-2' }}
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge rounded-pill bg-light text-dark border">{{ o.status }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot class="table-light fw-bold">
+                                <tr>
+                                    <td colspan="4" class="text-end text-muted">Daily Total:</td>
+                                    <td class="text-end text-dark">
+                                        <div class="d-flex flex-column align-items-end lh-1">
+                                            <span class="text-success small">+ ₹{{ grp.totals.credits | number:'1.2-2'
+                                                }}</span>
+                                            <span class="text-danger small">- ₹{{ grp.totals.debits | number:'1.2-2'
+                                                }}</span>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+
+            <!-- Paginator for date groups -->
+            <mat-paginator [length]="dateGroups.length" [pageSize]="groupPageSize" [pageIndex]="groupPageIndex"
+                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onGroupPage($event)" class="shadow-sm rounded mt-2"
+                showFirstLastButtons>
+            </mat-paginator>
+        </ng-container>
+
+        <ng-template #noDataTpl>
+            <div class="d-flex flex-column align-items-center justify-content-center py-5 text-muted">
+                <mat-icon class="display-3 mb-3 text-secondary" style="font-size: 48px; width: 48px; height: 48px;">
+                    receipt_long
+                </mat-icon>
+                <h5 class="fw-normal">No wallet transactions found for the selected period.</h5>
+            </div>
+        </ng-template>
+    </ng-container>
+
+    <ng-template #noOrgTpl>
+        <div class="d-flex flex-column align-items-center justify-content-center py-5 text-muted">
+            <mat-icon class="display-3 mb-3 text-secondary" style="font-size: 48px; width: 48px; height: 48px;">
+                domain
+            </mat-icon>
+            <h5 class="fw-normal">Please select an organization to view wallet logs.</h5>
+        </div>
+    </ng-template>
+
+</div>

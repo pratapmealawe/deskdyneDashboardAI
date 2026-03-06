@@ -26,6 +26,9 @@ export class OrganizationCardComponent {
   readonly dialog = inject(MatDialog);
   private _organization: any[] = [];
   pagedOrganized: any[] = [];
+
+  @Input() showDeletedMode: boolean = false;
+
   @Input()
   get organization(): any[] {
     return this._organization;
@@ -36,6 +39,9 @@ export class OrganizationCardComponent {
   }
   @Output() view: EventEmitter<any> = new EventEmitter<any>();
   @Output() paginationConfig: EventEmitter<any> = new EventEmitter<any>();
+  @Output() softDelete: EventEmitter<any> = new EventEmitter<any>();
+  @Output() hardDelete: EventEmitter<any> = new EventEmitter<any>();
+  @Output() restore: EventEmitter<any> = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -70,7 +76,7 @@ export class OrganizationCardComponent {
     let cafeteriaOrder: string[] = [];
     if (type === 'cafeteria') {
       keysToRemove = ["cafeteria_location", "poc_details", "_id", "accessCode", "subsidy"];
-      cafeteriaOrder = ["cafeteria_name", "cafeteria_id", "cafeteria_city", "cafeteria_gstin", "address1", "address2", "appMenu_type", "landmark", "location", "showAdminDaily", "showEmpPolls", "showVirtualCafe", "showSaas", "showSiteExecutive", "showCompanyWallet", "showchecklist", "isEmployeeEmailLogin", "showComplienceTracker", "showConsumptionOrder"];
+      cafeteriaOrder = ["cafeteria_name", "cafeteria_id", "cafeteria_city", "cafeteria_gstin", "address1", "address2", "appMenu_type", "landmark", "location", "showAdminDaily", "showEmpPolls", "showVirtualCafe", "showSaas", "showSiteExecutive", "showchecklist", "isEmployeeEmailLogin", "showComplienceTracker", "showConsumptionOrder"];
     }
     const filteredData = this.removeKeysFromObjects(org, keysToRemove);
     if (type === 'cafeteria') {
@@ -108,5 +114,17 @@ export class OrganizationCardComponent {
       return words[0].charAt(0).toUpperCase();
     }
     return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
+  }
+
+  onSoftDelete(org: any) {
+    this.softDelete.emit(org);
+  }
+
+  onHardDelete(org: any) {
+    this.hardDelete.emit(org);
+  }
+
+  onRestore(org: any) {
+    this.restore.emit(org);
   }
 }

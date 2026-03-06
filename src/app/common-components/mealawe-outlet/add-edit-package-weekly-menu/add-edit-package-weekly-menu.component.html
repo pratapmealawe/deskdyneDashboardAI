@@ -93,14 +93,25 @@
                                             <input matInput [value]="item.day" disabled />
                                         </mat-form-field>
                                     </div>
-                                    <div class="col-12 col-md-9">
+                                    <div class="col" *ngIf="item.breakfast && categoryKey === 'breakfast'">
                                         <mat-form-field appearance="outline" class="w-100">
-                                            <mat-label>Description</mat-label>
-                                            <input matInput [(ngModel)]="item[categoryKey || 'breakfast'].description"
-                                                #desc="ngModel" required placeholder="Enter menu description" />
-                                            <mat-error *ngIf="desc.invalid && (desc.touched || desc.dirty)">
-                                                Description is required
-                                            </mat-error>
+                                            <mat-label>Breakfast</mat-label>
+                                            <input matInput [(ngModel)]="item.breakfast.description"
+                                                placeholder="Breakfast description" />
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col" *ngIf="item.lunch && categoryKey !== 'breakfast'">
+                                        <mat-form-field appearance="outline" class="w-100">
+                                            <mat-label>Lunch</mat-label>
+                                            <input matInput [(ngModel)]="item.lunch.description"
+                                                placeholder="Lunch description" />
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="col" *ngIf="item.dinner && categoryKey !== 'breakfast'">
+                                        <mat-form-field appearance="outline" class="w-100">
+                                            <mat-label>Dinner</mat-label>
+                                            <input matInput [(ngModel)]="item.dinner.description"
+                                                placeholder="Dinner description" />
                                         </mat-form-field>
                                     </div>
                                 </div>

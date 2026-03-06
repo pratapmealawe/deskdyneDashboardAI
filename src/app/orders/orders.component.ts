@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -8,6 +9,7 @@ import { interval, Subscription } from 'rxjs';
 import { CommonSelectConfig } from '../common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { OrderFilterDialogComponent, OrderFilterDialogData } from '../common-components/order-filter-dialog/order-filter-dialog.component';
 import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
@@ -22,13 +24,18 @@ export class OrdersComponent implements OnInit, OnDestroy {
     paymentInprogress: 0,
     paymentFailed: 0,
     completed: 0,
-    placed: 0
+    placed: 0,
+    readyOrder: 0
   };
 
   // Totals
   totalAmount = 0;
   totalWalletUsed = 0;
   totalAmountPaid = 0;
+  totalSubsidy = 0;
+  totalCompanyWallet = 0;
+  totalPackaging = 0;
+  totalTaxes = 0;
   orderStatusMapper: any = orderStatusMapper;
 
   headerConfigAdmin: CommonSelectConfig = {
@@ -50,7 +57,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
   };
 
 
-  constructor(public router: Router, private apiMainService: ApiMainService, private modalService: NgbModal, private utilityService: UtilityService, private sendDataToComponent: SendDataToComponent, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService) {
+  constructor(public router: Router, private apiMainService: ApiMainService, private modalService: NgbModal, private utilityService: UtilityService, private sendDataToComponent: SendDataToComponent, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -106,6 +113,7 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
       if (Array.isArray(newOrders)) {
         this.currentOrderStatusList = newOrders;
+        this.extractUniqueFilterValues();
         this.applyFilter();
         this.updateStatusCounts();
       } else {
@@ -131,10 +139,43 @@ export class OrdersComponent implements OnInit, OnDestroy {
       sum + (Number(order.amount) || 0), 0
     );
 
+    this.totalSubsidy = this.filteredList.reduce((sum, order) =>
+      sum + (Number(order.subsidyAmount) || 0), 0
+    );
+
+    this.totalCompanyWallet = this.filteredList.reduce((sum, order) =>
+      sum + (Number(order.companyWalletPointUsed) || 0), 0
+    );
+
+    this.totalPackaging = this.filteredList.reduce((sum, order) =>
+      sum + (Number(order.packagingAmount) || 0), 0
+    );
+
+    this.totalTaxes = this.filteredList.reduce((sum, order) =>
+      sum + (Number(order.taxes) || 0), 0
+    );
+
     this.totalAmount = this.totalWalletUsed + this.totalAmountPaid;
   }
 
+  getGrandTotal(order: any): number {
+    return (Number(order.itemAmount) || 0)
+      + (Number(order.taxes) || 0)
+      + (Number(order.packagingAmount) || 0);
+  }
+
   searchText = '';
+
+  // Filters
+  filterPgName = '';
+  filterAppVersion = '';
+  filterPlatform = '';
+  filterIsPosOrder = '';
+
+  // Unique values for filter dropdowns
+  uniquePgNames: string[] = [];
+  uniqueAppVersions: string[] = [];
+  uniquePlatforms: string[] = [];
 
   // ... (keep existing calculateTotals)
 
@@ -162,8 +203,98 @@ export class OrdersComponent implements OnInit, OnDestroy {
       );
     }
 
+    // 3. Filter by pgName
+    if (this.filterPgName) {
+      list = list.filter((order: any) => order.pgName === this.filterPgName);
+    }
+
+    // 4. Filter by appVersion
+    if (this.filterAppVersion) {
+      list = list.filter((order: any) => String(order.appVersion) === this.filterAppVersion);
+    }
+
+    // 5. Filter by platform
+    if (this.filterPlatform) {
+      list = list.filter((order: any) => order.deviceInfo?.platform === this.filterPlatform);
+    }
+
+    // 6. Filter by isPosOrder
+    if (this.filterIsPosOrder) {
+      const isPOS = this.filterIsPosOrder === 'true';
+      list = list.filter((order: any) => !!order.isPosOrder === isPOS);
+    }
+
     this.filteredList = list;
     this.calculateTotals();
+  }
+
+  extractUniqueFilterValues() {
+    const pgSet = new Set<string>();
+    const versionSet = new Set<string>();
+    const platformSet = new Set<string>();
+
+    this.currentOrderStatusList.forEach((order: any) => {
+      if (order.pgName) pgSet.add(order.pgName);
+      if (order.appVersion) versionSet.add(String(order.appVersion));
+      if (order.deviceInfo?.platform) platformSet.add(order.deviceInfo.platform);
+    });
+
+    this.uniquePgNames = Array.from(pgSet).sort();
+    this.uniqueAppVersions = Array.from(versionSet).sort();
+    this.uniquePlatforms = Array.from(platformSet).sort();
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.filterPgName || this.filterAppVersion || this.filterPlatform || this.filterIsPosOrder);
+  }
+
+  get activeFilterCount(): number {
+    let count = 0;
+    if (this.filterPgName) count++;
+    if (this.filterAppVersion) count++;
+    if (this.filterPlatform) count++;
+    if (this.filterIsPosOrder) count++;
+    return count;
+  }
+
+  openFilterDialog() {
+    const dialogData: OrderFilterDialogData = {
+      filterOrderStatus: '',
+      filterPgName: this.filterPgName,
+      filterAppVersion: this.filterAppVersion,
+      filterPlatform: this.filterPlatform,
+      filterIsPosOrder: this.filterIsPosOrder,
+      uniqueOrderStatuses: [],
+      uniquePgNames: this.uniquePgNames,
+      uniqueAppVersions: this.uniqueAppVersions,
+      uniquePlatforms: this.uniquePlatforms,
+      showStatusFilter: false,
+    };
+
+    const dialogRef = this.dialog.open(OrderFilterDialogComponent, {
+      data: dialogData,
+      width: '520px',
+      panelClass: 'filter-dialog-panel',
+      autoFocus: false,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.filterPgName = result.filterPgName;
+        this.filterAppVersion = result.filterAppVersion;
+        this.filterPlatform = result.filterPlatform;
+        this.filterIsPosOrder = result.filterIsPosOrder;
+        this.applyFilter();
+      }
+    });
+  }
+
+  clearFilters() {
+    this.filterPgName = '';
+    this.filterAppVersion = '';
+    this.filterPlatform = '';
+    this.filterIsPosOrder = '';
+    this.applyFilter();
   }
 
 
@@ -172,7 +303,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
       paymentInprogress: 0,
       paymentFailed: 0,
       completed: 0,
-      placed: 0
+      placed: 0,
+      readyOrder: 0
     };
 
     this.currentOrderStatusList.forEach((order: any) => {
@@ -235,6 +367,63 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
     } catch (err) {
       console.error('Error cancelling order:', err);
+      this.toaster.error("Failed to cancel order");
+    }
+  }
+
+  readyOrder(order: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to mark this order as ready?',
+      callback: this.submitReadyOrder,
+      context: this,
+      data: order
+    });
+  }
+
+  async submitReadyOrder() {
+    try {
+      const body = {
+        fromOrderNo: true,
+        orderNo: this.confirmationModalService.data.orderNo,
+        outletId: this.confirmationModalService.data.outletId,
+        updatestatus: 'readyOrder',
+      };
+
+      await this.apiMainService.updatescanOrder(body);
+      this.toaster.success("Order marked as Ready");
+      this.getLatestOrderStatusList(this.selectedStatus);
+
+    } catch (err) {
+      console.error('Error marking order ready:', err);
+      this.toaster.error("Failed to mark order as Ready");
+    }
+  }
+
+  completeOrder(order: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to complete this order?',
+      callback: this.submitCompletion,
+      context: this,
+      data: order
+    });
+  }
+
+  async submitCompletion() {
+    try {
+      const body = {
+        fromOrderNo: true,
+        orderNo: this.confirmationModalService.data.orderNo,
+        outletId: this.confirmationModalService.data.outletId,
+        updatestatus: 'completed',
+      };
+
+      await this.apiMainService.updatescanOrder(body);
+      this.toaster.success("Order Completed SuccessFully");
+      this.getLatestOrderStatusList(this.selectedStatus);
+
+    } catch (err) {
+      console.error('Error completing order:', err);
+      this.toaster.error("Failed to complete order");
     }
   }
 
