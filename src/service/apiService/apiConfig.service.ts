@@ -163,6 +163,7 @@ export class ApiConfigService {
       performBulkDailyOrderTransfer: p('/api/performBulkDailyOrderTransfer', 'POST'),
       addEmployeeList: p('/api/addEmployeeList', 'POST'),
       deleteEmployee: p('/api/deleteEmployee', 'DELETE'),
+      deleteMultipleEmployee: p('/api/deleteMultipleEmployee', 'DELETE'),
       updateEmployee: p('/api/updateEmployee', 'POST'),
       setOutletOpenedStatus: p('/api/outletOpenedStatus', 'PUT'),
       generateInvoice: p('/api/generateInvoice', 'GET'),
@@ -212,6 +213,7 @@ export class ApiConfigService {
 
       getVcEmployeeByPhoneNo: p('/api/getVcEmployeeByPhoneNo', 'GET'),
       verifyVcEmployeeByPhoneNo: p('/api/verifyVcEmployeeByPhoneNo', 'GET'),
+      fetchOutletOrdersByOrgAndDateRange: p('/api/fetchOutletOrdersByOrgAndDateRange', 'POST'),
       fetchOutletOrdersbysearchObj: p('/api/fetchOutletOrdersbysearchObj', 'POST'),
       fetchAllOutletOrdersbysearchObj: p('/api/fetchAllOutletOrdersbysearchObj', 'POST'),
       fetchConsumptionOrdersbysearchObj: p('/api/fetchConsumptionOrdersbysearchObj', 'POST'),

@@ -735,6 +735,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
+  deleteMultipleEmployee(ids: string[]) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMultipleEmployee, { ids });
+  }
+
   updateEmployee(id: any, employeeObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, employeeObj);
@@ -995,6 +999,10 @@ export class ApiMainService {
   updateVcEmployee(id: any, body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateVcEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+  fetchOutletOrdersByOrgAndDateRange(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchOutletOrdersByOrgAndDateRange, payload);
   }
 
   fetchOutletOrdersbysearchObj(body: any) {

@@ -58,12 +58,24 @@ export class MainDashboardComponent implements OnInit {
   chartOptionsPie: Highcharts.Options = {
     chart: { type: 'pie' },
     title: { text: 'Outlet Orders by Status' },
-    tooltip: { pointFormat: '<small>Count</small>: <b>{point.count}</b>' },
+    credits: { enabled: false },
+    legend: { enabled: true },
+    tooltip: {
+      useHTML: true,
+      pointFormatter: function () {
+        return `<div style="padding:6px 8px">
+          <div><b>${this.name}</b></div>
+          <div>Orders: <b>${Number(this.y || 0).toLocaleString('en-IN')}</b></div>
+          <div>Share: <b>${(this.percentage || 0).toFixed(1)}%</b></div>
+        </div>`;
+      }
+    } as Highcharts.TooltipOptions,
     plotOptions: {
       pie: {
+        showInLegend: true,
         allowPointSelect: true,
         cursor: 'pointer',
-        dataLabels: { enabled: true, format: '{point.name}: {point.percentage:.1f}%' },
+        dataLabels: { enabled: true, format: '{point.name}: {point.y}' },
       },
     },
     series: [{ type: 'pie', name: 'Percentage', data: [] }],
@@ -203,6 +215,8 @@ export class MainDashboardComponent implements OnInit {
     this.calculateTotals();
   }
 
+  private readonly excludedStatuses = new Set(['cancelled', 'paymentfailed', 'paymentinprogress']);
+
   calculateTotals() {
     this.totalAmountPaid = 0;
     this.totalWalletUsed = 0;
@@ -211,6 +225,7 @@ export class MainDashboardComponent implements OnInit {
     this.totalPackaging = 0;
 
     this.filteredOrders.forEach(order => {
+      if (this.excludedStatuses.has((order.orderstatus || '').toLowerCase())) return;
       this.totalAmountPaid += Number(order.amount) || 0;
       this.totalWalletUsed += Number(order.moneyWalletPointsUsed) || 0;
       this.totalCompanyWallet += Number(order.companyWalletPointUsed) || 0;
@@ -252,31 +267,33 @@ export class MainDashboardComponent implements OnInit {
   // ── Pie Chart ──
   buildPieChart() {
     const statusMap: Record<string, number> = {};
-    const total = this.filteredOrders.length || 1;
 
     this.filteredOrders.forEach(o => {
       const s = o.orderstatus || 'unknown';
       statusMap[s] = (statusMap[s] || 0) + 1;
     });
 
-    const formattedData = Object.entries(statusMap).map(([status, count]) => ({
-      name: this.orderStatusMapper[status] || status,
-      y: (count / total) * 100,
-      count,
-    }));
+    const formattedData = Object.entries(statusMap)
+      .sort((a, b) => b[1] - a[1])
+      .map(([status, count]) => ({
+        name: this.orderStatusMapper[status] || status,
+        y: count,
+      }));
 
     this.initialStatusData = formattedData;
 
     this.chartOptionsPie = {
       ...this.chartOptionsPie,
-      series: [{ type: 'pie', name: 'Percentage', data: formattedData }],
+      series: [{ type: 'pie', name: 'Orders', data: formattedData }],
     };
     this.updateStatusFlag = true;
   }
 
   // ── Date Change ──
   changeDate() {
-    this.loadOrders();
+    if (this.dateGroup.value.start && this.dateGroup.value.end) {
+      this.loadOrders();
+    }
   }
 
 

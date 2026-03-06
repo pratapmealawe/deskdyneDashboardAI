@@ -16,6 +16,7 @@ export class EmployeeListComponent {
     employeeList: any[] = [];
     @ViewChild("editDialog") editDialog!: TemplateRef<any>;
     @ViewChild("deleteDialog") deleteDialog!: TemplateRef<any>;
+    @ViewChild("deleteAllDialog") deleteAllDialog!: TemplateRef<any>;
     @Input() orgObj: any;
     empId: any;
     form!: FormGroup;
@@ -320,6 +321,23 @@ export class EmployeeListComponent {
         } catch (error) {
             console.error(error);
             this.toasterService.error('Failed to delete employee');
+        }
+        this.dialog.closeAll();
+    }
+
+    deleteAllEmployees() {
+        this.dialog.open(this.deleteAllDialog);
+    }
+
+    async confirmDeleteAllEmployees() {
+        const ids = this.getCafeteriaEmployees().map((emp: any) => emp._id);
+        try {
+            await this.ddApiMainService.deleteMultipleEmployee(ids);
+            this.toasterService.success('All employees deleted successfully');
+            this.getEmployeelistByCafeteriaId();
+        } catch (error) {
+            console.error(error);
+            this.toasterService.error('Failed to delete employees');
         }
         this.dialog.closeAll();
     }

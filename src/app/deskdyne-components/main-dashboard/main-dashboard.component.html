@@ -103,49 +103,49 @@
 
     <!-- Financial Stats Row -->
     <div class="stats-row financial-stats" *ngIf="!isLoading">
-        <div class="fin-card">
+        <div class="fin-card" *ngIf="ordersCount > 0">
             <div class="fin-icon orders-icon"><mat-icon>receipt_long</mat-icon></div>
             <div class="fin-info">
                 <span class="fin-label">Orders</span>
                 <span class="fin-value">{{ ordersCount }}</span>
             </div>
         </div>
-        <div class="fin-card">
+        <div class="fin-card" *ngIf="totalAmount > 0">
             <div class="fin-icon amount-icon"><mat-icon>payments</mat-icon></div>
             <div class="fin-info">
                 <span class="fin-label">Total Amount</span>
                 <span class="fin-value">&#8377; {{ totalAmount | number:'1.0-0' }}</span>
             </div>
         </div>
-        <div class="fin-card">
+        <div class="fin-card" *ngIf="totalAmountPaid > 0">
             <div class="fin-icon paid-icon"><mat-icon>account_balance_wallet</mat-icon></div>
             <div class="fin-info">
                 <span class="fin-label">Amount Paid</span>
                 <span class="fin-value">&#8377; {{ totalAmountPaid | number:'1.0-0' }}</span>
             </div>
         </div>
-        <div class="fin-card">
+        <div class="fin-card" *ngIf="totalWalletUsed > 0">
             <div class="fin-icon wallet-icon"><mat-icon>savings</mat-icon></div>
             <div class="fin-info">
                 <span class="fin-label">Money Wallet</span>
                 <span class="fin-value">&#8377; {{ totalWalletUsed | number:'1.0-0' }}</span>
             </div>
         </div>
-        <div class="fin-card">
+        <div class="fin-card" *ngIf="totalCompanyWallet > 0">
             <div class="fin-icon company-icon"><mat-icon>corporate_fare</mat-icon></div>
             <div class="fin-info">
                 <span class="fin-label">Company Wallet</span>
                 <span class="fin-value">&#8377; {{ totalCompanyWallet | number:'1.0-0' }}</span>
             </div>
         </div>
-        <div class="fin-card">
+        <div class="fin-card" *ngIf="totalSubsidy > 0">
             <div class="fin-icon subsidy-icon"><mat-icon>volunteer_activism</mat-icon></div>
             <div class="fin-info">
                 <span class="fin-label">Subsidy</span>
                 <span class="fin-value">&#8377; {{ totalSubsidy | number:'1.0-0' }}</span>
             </div>
         </div>
-        <div class="fin-card">
+        <div class="fin-card" *ngIf="totalPackaging > 0">
             <div class="fin-icon packaging-icon"><mat-icon>inventory_2</mat-icon></div>
             <div class="fin-info">
                 <span class="fin-label">Packaging</span>

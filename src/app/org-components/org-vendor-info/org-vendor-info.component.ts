@@ -1,9 +1,9 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
+import { VendorComplianceComponent } from 'src/app/add-vendor-firm/vendor-compliance/vendor-compliance.component';
 
 interface data {
   orgId: string;
@@ -15,8 +15,7 @@ interface data {
   styleUrls: ['./org-vendor-info.component.scss'],
 })
 export class OrgVendorInfoComponent implements OnInit, OnChanges {
-  @Input() adminOrg: any
-  @ViewChild('complianceModal') compliance: any;
+  @Input() adminOrg: any;
   orgDetails: any;
   vendorList: any[] = [];
   page: number = 1;
@@ -24,7 +23,6 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     orgId: '',
     countOnly: 0,
   };
-  selectedVendor: any;
   // pagination
   pageSize = 10;
   pageIndex = 0;
@@ -34,7 +32,6 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService,
-    public modalService: NgbModal,
     private matDialog: MatDialog
   ) { }
 
@@ -56,7 +53,7 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
   async getVendorByOrgId() {
     this.vendorData.orgId = this.orgDetails?._id;
     try {
-      const data = await this.apiMainService.searchVendorByOrgId(this.vendorData);
+      const data = await this.apiMainService.searchVendorFirmByOrgId(this.vendorData);
       if (!data) return;
       this.vendorList = data;
       const startIndex = this.pageIndex * this.pageSize;
@@ -66,27 +63,26 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     }
   }
 
-  addComplience(event: any, vendorData: any) {
+  openCompliance(event: any, vendor: any) {
     event.stopPropagation();
-    this.localStorageService.setCacheData('ORG_VENDOR_INFO', vendorData);
-    this.selectedVendor = vendorData;
+    this.localStorageService.setCacheData('ORG_VENDOR_INFO', vendor);
 
-    const dialogRef = this.matDialog.open(this.compliance, {
+    this.matDialog.open(VendorComplianceComponent, {
       width: '900px',
       maxWidth: '95vw',
       maxHeight: '80vh',
       autoFocus: false,
+      data: vendor,
     });
-    dialogRef.afterClosed().subscribe(() => { });
   }
 
   onKeyEvent(event: any) {
-    if (event.key === "Escape") {
+    if (event.key === 'Escape') {
       (event.target as HTMLInputElement).value = '';
       this.paginatedVendorList = [...this.vendorList];
     }
 
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       this.searchFilter(event);
     }
   }
@@ -96,9 +92,12 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
 
     const config = {
       keys: [
-        'vendorName',
+        'vendorFirmName',
+        'vendorFirmEmail',
+        'vendorFirmPhoneNo',
         'outletList.outletName',
         'outletList.cafeteriaDetails.cafeteria_name',
+        'poc_details.poc_name',
       ],
     };
 
