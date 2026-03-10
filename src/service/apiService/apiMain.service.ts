@@ -739,6 +739,16 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMultipleEmployee, { ids });
   }
 
+  createLoginCode(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.createLoginCode;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  refreshLoginCode(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.refreshLoginCode;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
   updateEmployee(id: any, employeeObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, employeeObj);

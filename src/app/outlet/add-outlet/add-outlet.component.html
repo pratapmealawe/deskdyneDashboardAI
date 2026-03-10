@@ -103,6 +103,10 @@
                 Pre-Order Enabled
               </mat-slide-toggle>
 
+              <mat-slide-toggle formControlName="isPriceHide" color="primary">
+                Hide Price
+              </mat-slide-toggle>
+
               <mat-slide-toggle formControlName="isCabinOrder" color="primary">
                 Cabin Order Enabled
               </mat-slide-toggle>
@@ -124,6 +128,9 @@
             <div class="mt-4" *ngIf="form.get('isPreOrder')?.value">
               <h4 class="text-secondary mb-2" style="font-size: 0.9rem;">Pre-Order Settings</h4>
               <div class="d-flex flex-column gap-2 p-3 bg-light rounded">
+                <mat-slide-toggle formControlName="isSameDay" color="primary">
+                  Same Day Order
+                </mat-slide-toggle>
                 <mat-radio-group formControlName="preOrderMealType" class="d-flex gap-3 mb-2">
                   <mat-radio-button value="lunch">Lunch</mat-radio-button>
                   <mat-radio-button value="dinner">Dinner</mat-radio-button>
@@ -297,16 +304,26 @@
               <h3>Meal Timings</h3>
             </div>
             <div class="d-flex gap-2">
-              <button mat-stroked-button color="primary" type="button" (click)="setStandardEndTime()"
-                class="action-btn">
+              <button mat-stroked-button color="primary" type="button" (click)="setStandardEndTime()" class="action-btn"
+                [disabled]="form.get('isPreOrder')?.value">
                 Set Standards
               </button>
-              <button mat-flat-button color="primary" type="button" (click)="addMealTiming()" class="action-btn">
+              <button mat-flat-button color="primary" type="button" (click)="addMealTiming()" class="action-btn"
+                [disabled]="form.get('isPreOrder')?.value"
+                [matTooltip]="form.get('isPreOrder')?.value ? 'Pre-Order allows only one Fullday timing' : ''">
                 <mat-icon>add</mat-icon> Add
               </button>
             </div>
           </div>
           <div class="card-body">
+
+            <!-- Pre-Order warning -->
+            <div *ngIf="form.get('isPreOrder')?.value" class="preorder-warning mb-3">
+              <mat-icon>info</mat-icon>
+              <span>Pre-Order mode is active — only <strong>one Fullday</strong> meal timing is allowed. The meal type
+                is locked to <strong>Fullday</strong> and cannot be removed.</span>
+            </div>
+
             <div formArrayName="mealTimings">
               <div class="container-fluid p-0">
                 <div class="row g-3">
@@ -316,7 +333,7 @@
                       <div class="timing-header">
                         <h4>Meal {{ i + 1 }}</h4>
                         <button mat-icon-button color="warn" (click)="removeMealTiming(i)"
-                          *ngIf="mealTimings.length > 1" type="button">
+                          *ngIf="mealTimings.length > 1 && !form.get('isPreOrder')?.value" type="button">
                           <mat-icon>close</mat-icon>
                         </button>
                       </div>
@@ -325,7 +342,8 @@
                         <div class="col-12 col-md-4 mb-2 mb-md-0">
                           <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
                             <mat-label>Meal Type</mat-label>
-                            <input matInput formControlName="mealType" placeholder="Breakfast" />
+                            <input matInput formControlName="mealType" placeholder="Breakfast"
+                              [readonly]="form.get('isPreOrder')?.value" />
                           </mat-form-field>
                         </div>
                         <div class="col-6 col-md-4">

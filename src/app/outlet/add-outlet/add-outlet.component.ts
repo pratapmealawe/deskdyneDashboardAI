@@ -114,6 +114,8 @@ export class AddOutletComponent implements OnInit {
       isSatAvailable: [false],
       isSunAvailable: [false],
 
+      isPriceHide: [false],
+      isSameDay: [false],
       isPackagingRequired: [false],
       packagingAmount: [0, [Validators.min(0)]],
 
@@ -137,7 +139,7 @@ export class AddOutletComponent implements OnInit {
     // default one timing per standard meal type
     this.addDefaultMealTimings();
 
-    // When isPreOrder is false, clear related fields
+    // When isPreOrder changes, manage related fields and meal timings
     this.form.get('isPreOrder')?.valueChanges.subscribe((isPreOrder: boolean) => {
       if (!isPreOrder) {
         this.form.patchValue(
@@ -145,9 +147,16 @@ export class AddOutletComponent implements OnInit {
             preOrderMealType: 'lunch',
             isSatAvailable: false,
             isSunAvailable: false,
+            isPriceHide: false,
+            isSameDay: false,
           },
           { emitEvent: false }
         );
+      } else {
+        // Pre-order: restrict to a single Fullday timing
+        this.mealTimings.clear();
+        this.mealTimings.push(this.createMealTimingGroup('Fullday'));
+        this.validateMealTimings();
       }
     });
   }
@@ -209,6 +218,7 @@ export class AddOutletComponent implements OnInit {
   }
 
   addMealTiming(): void {
+    if (this.form.get('isPreOrder')?.value) return;
     this.mealTimings.push(this.createMealTimingGroup());
     this.mealTimings.markAsDirty();
   }
@@ -243,10 +253,11 @@ export class AddOutletComponent implements OnInit {
         this.addDefaultMealTimings();
       }
 
+      // emitEvent: false prevents the isPreOrder valueChanges subscription from
+      // firing and overwriting the meal timings we just loaded above.
       this.form.patchValue({
         outletName: outlet.outletName ?? '',
         outletDescription: outlet.outletDescription ?? '',
-        // outletType REMOVED
 
         outletOpened: outlet.outletOpened ?? false,
         isSectionWiseMenu: outlet.isSectionWiseMenu ?? false,
@@ -255,6 +266,8 @@ export class AddOutletComponent implements OnInit {
         preOrderMealType: outlet.preOrderMealType ?? 'lunch',
         isSatAvailable: outlet.isSatAvailable ?? false,
         isSunAvailable: outlet.isSunAvailable ?? false,
+        isPriceHide: outlet.isPriceHide ?? false,
+        isSameDay: outlet.isSameDay ?? false,
         isPackagingRequired: outlet.isPackagingRequired ?? false,
         packagingAmount: outlet.packagingAmount ?? 0,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage ?? 0,
@@ -262,7 +275,7 @@ export class AddOutletComponent implements OnInit {
         subsidy: outlet.subsidy ?? 0,
         precedence: outlet.precedence ?? 0,
         billingType: outlet.billingType ?? 'revenueSharing',
-      });
+      }, { emitEvent: false });
 
       this.sectionConfig.clear();
       if (outlet.sectionConfig && Array.isArray(outlet.sectionConfig)) {
@@ -494,6 +507,18 @@ export class AddOutletComponent implements OnInit {
     if (!timings || timings.length === 0) {
       this.mealTimingError = 'Please add at least one meal timing.';
       return;
+    }
+
+    // Pre-order: exactly one Fullday timing
+    if (this.form.get('isPreOrder')?.value) {
+      if (timings.length > 1) {
+        this.mealTimingError = 'Pre-Order mode allows only one meal timing (Fullday).';
+        return;
+      }
+      if (timings[0].mealType !== 'Fullday') {
+        this.mealTimingError = 'Pre-Order mode requires the meal type to be "Fullday".';
+        return;
+      }
     }
 
     // Helper to convert HH:mm -> minutes

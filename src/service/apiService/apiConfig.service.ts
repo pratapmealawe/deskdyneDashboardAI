@@ -164,6 +164,8 @@ export class ApiConfigService {
       addEmployeeList: p('/api/addEmployeeList', 'POST'),
       deleteEmployee: p('/api/deleteEmployee', 'DELETE'),
       deleteMultipleEmployee: p('/api/deleteMultipleEmployee', 'DELETE'),
+      createLoginCode: p('/api/createLoginCode', 'POST'),
+      refreshLoginCode: p('/api/refreshLoginCode', 'POST'),
       updateEmployee: p('/api/updateEmployee', 'POST'),
       setOutletOpenedStatus: p('/api/outletOpenedStatus', 'PUT'),
       generateInvoice: p('/api/generateInvoice', 'GET'),

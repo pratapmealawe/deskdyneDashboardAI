@@ -41,6 +41,7 @@ export class AddVendorCommponent {
   selectedAddressList: any = [];
   selectedAddress: any = null;  // holds the selected address object
 
+  loginCode: string | null = null;
   btnPolicy: any;
   vendorList: any;
   vendorLocation: any
@@ -71,6 +72,18 @@ export class AddVendorCommponent {
       vendorRole: ['', [Validators.required]],
       vendorId: ['', [Validators.required]],
       accessType: ['outlet', [Validators.required]],
+      isPos: [false],
+      isDashboard: [false],
+      posEntry: [''],
+      posConfiguration: this.fb.group({
+        enablePrinter: [false],
+        enableScanner: [false],
+        enableSecondDisplay: [false],
+        enableManualPrint: [false],
+        kitchenKot: [false],
+        userKot: [false],
+        userKotOnlyForManual: [false],
+      }),
     });
   }
 
@@ -160,6 +173,7 @@ export class AddVendorCommponent {
       this.selectedOutletsList = vendor.outletList;
       this.selectedAddressList = vendor.addressList;
       this.selectedPopupsList = vendor.popup_Details || [];
+      this.loginCode = vendor.loginCode || null;
       this.form.patchValue({
         vendorName: vendor.vendorName,
         vendorPhoneNo: vendor.vendorPhoneNo,
@@ -169,6 +183,18 @@ export class AddVendorCommponent {
         geolocation: vendor.geolocation,
         accessType: accessType,
         vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
+        isPos: vendor.isPos || false,
+        isDashboard: vendor.isDashboard || false,
+        posEntry: vendor.posEntry || '',
+        posConfiguration: {
+          enablePrinter: vendor.posConfiguration?.enablePrinter || false,
+          enableScanner: vendor.posConfiguration?.enableScanner || false,
+          enableSecondDisplay: vendor.posConfiguration?.enableSecondDisplay || false,
+          enableManualPrint: vendor.posConfiguration?.enableManualPrint || false,
+          kitchenKot: vendor.posConfiguration?.kitchenKot || false,
+          userKot: vendor.posConfiguration?.userKot || false,
+          userKotOnlyForManual: vendor.posConfiguration?.userKotOnlyForManual || false,
+        },
       });
       this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "";
       this.getAllVendors(); // to bind values of outletByCafeteriaList and popupsByVendorFirm after edit
@@ -429,6 +455,24 @@ export class AddVendorCommponent {
       this.dialog.closeAll();
     } catch (error) {
       console.error('Error getting selected popups:', error);
+    }
+  }
+
+  async createLoginCode() {
+    try {
+      const res: any = await this.apiMainService.createLoginCode(this.selectedVendor._id);
+      this.loginCode = res?.loginCode || null;
+    } catch (error) {
+      console.error('Error creating login code:', error);
+    }
+  }
+
+  async refreshLoginCode() {
+    try {
+      const res: any = await this.apiMainService.refreshLoginCode(this.selectedVendor._id);
+      this.loginCode = res?.loginCode || null;
+    } catch (error) {
+      console.error('Error refreshing login code:', error);
     }
   }
 
