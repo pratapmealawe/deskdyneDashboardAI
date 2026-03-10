@@ -26,7 +26,7 @@ export class ExcelExportComponent implements OnInit {
   filteredList: any;
   monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
-  constructor(private ddApiMainService: ApiMainService, private datePipe: DatePipe, private excelService: ExcelService, private toasterService: ToasterService) { }
+  constructor(private apiMainService: ApiMainService, private datePipe: DatePipe, private excelService: ExcelService, private toasterService: ToasterService) { }
 
   ngOnInit(): void {
     this.searchObj.orderType = 'allEventBulk';
@@ -52,7 +52,7 @@ export class ExcelExportComponent implements OnInit {
         return;
       }
       if (this.searchObj.orderType === 'dailyBulk') {
-        filteredList = await this.ddApiMainService.getAdminDailyBulkOrders(this.searchObj);
+        filteredList = await this.apiMainService.getAdminDailyBulkOrders(this.searchObj);
         if (filteredList && filteredList.length > 0) {
           this.filteredList = filteredList;
           this.createDailyBulkExcel(filteredList);
@@ -66,7 +66,7 @@ export class ExcelExportComponent implements OnInit {
         }
         obj.fromDate.setHours(0, 0, 0, 0)
         obj.toDate.setHours(23, 59, 59, 999)
-        filteredList = await this.ddApiMainService.orgMealPackages(obj);
+        filteredList = await this.apiMainService.orgMealPackages(obj);
         if (filteredList && filteredList.length > 0) {
           this.filteredList = filteredList;
           this.createPackageExcel(filteredList);
@@ -79,7 +79,7 @@ export class ExcelExportComponent implements OnInit {
           orgId: this.searchObj.org_id,
           cafeteriaId: this.searchObj.cafeteriaId
         }
-        filteredList = await this.ddApiMainService.getCafeteriasPollingList(payload);
+        filteredList = await this.apiMainService.getCafeteriasPollingList(payload);
         if (filteredList && filteredList.length > 0) {
           this.filteredList = filteredList;
           this.createEmpPollExcel(filteredList);
@@ -93,14 +93,14 @@ export class ExcelExportComponent implements OnInit {
         }
         obj.fromDate.setHours(0, 0, 0, 0)
         obj.toDate.setHours(23, 59, 59, 999)
-        filteredList = await this.ddApiMainService.getOrgEmployeePollingList(obj);
+        filteredList = await this.apiMainService.getOrgEmployeePollingList(obj);
         if (filteredList && filteredList.length > 0) {
           this.filteredList = filteredList;
           this.createIndividualExcel(filteredList);
         }
       }
       else {
-        filteredList = await this.ddApiMainService.getAdminPastOrders(this.searchObj);
+        filteredList = await this.apiMainService.getAdminPastOrders(this.searchObj);
         if (filteredList && filteredList.length > 0) {
           this.filteredList = filteredList;
           this.createBulkEventExcel(filteredList);

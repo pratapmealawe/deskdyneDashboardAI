@@ -9,7 +9,7 @@ export class SuggestionsFeedbackService {
 
   private isInitialized = false;
 
-  constructor(private ddApiMainService: ApiMainService) { }
+  constructor(private apiMainService: ApiMainService) { }
 
   private feedbackCountSubject = new BehaviorSubject<number>(0);
   GeneralAppFeedbackCount$ = this.feedbackCountSubject.asObservable();
@@ -34,7 +34,7 @@ export class SuggestionsFeedbackService {
 
   async getGeneralAppFeebackCount(acknowledged?: boolean) {
     try {
-      const data = await this.ddApiMainService.getGeneralAppFeebackCount(acknowledged);
+      const data = await this.apiMainService.getGeneralAppFeebackCount(acknowledged);
       this.feedbackCountSubject.next(data.count);
     } catch (error) {
       console.error("Error while loading feedback count:", error);
@@ -43,7 +43,7 @@ export class SuggestionsFeedbackService {
 
   async fetchAllEnquiries() {
     try {
-      const res = await this.ddApiMainService.fetchAllEnquiries();
+      const res = await this.apiMainService.fetchAllEnquiries();
       if (res) {
         const temp = res.filter((data: any) => data.status == 'review');
         this.enquiryCountSubject.next(temp.length);
@@ -55,7 +55,7 @@ export class SuggestionsFeedbackService {
 
   async fetchIncidentCount() {
     try {
-      const data = await this.ddApiMainService.getAllIncidents();
+      const data = await this.apiMainService.getAllIncidents();
       if (data && data.length > 0) {
         const inReviewCount = data.filter((incident: any) => incident.status === "created").length;
         this.incidentCountSubject.next(inReviewCount);

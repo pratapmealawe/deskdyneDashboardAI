@@ -34,7 +34,7 @@ export class GuestEmployeeListComponent {
     selectedCafeteria: any;
     selectedCafeteriaName: any;
     disableSubmit: any = false;
-    constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal, private fb: FormBuilder) {
+    constructor(private apiMainService: ApiMainService, private modalService: NgbModal, private fb: FormBuilder) {
     }
     ngOnInit() {
         this.getGuestEmployeelistByOrgId();
@@ -95,7 +95,7 @@ export class GuestEmployeeListComponent {
     }
     async getGuestEmployeelistByOrgId() {
         try {
-            this.guestEmployeeList = await this.ddApiMainService.getGuestEmployeelistByOrgId(this.orgObj._id);
+            this.guestEmployeeList = await this.apiMainService.getGuestEmployeelistByOrgId(this.orgObj._id);
         } catch (error) {
             console.log(error)
         }
@@ -128,7 +128,7 @@ export class GuestEmployeeListComponent {
         const guestEmployeeList = [...this.addMultipleEmploeeList];
         console.log(guestEmployeeList)
         try {
-            await this.ddApiMainService.addGuestEmployeeList(guestEmployeeList);
+            await this.apiMainService.addGuestEmployeeList(guestEmployeeList);
         }
         catch (error) {
             console.log(error);
@@ -163,7 +163,7 @@ export class GuestEmployeeListComponent {
         try {
             const formdata = { ...employeeObj }
             console.log('expiry date update', employeeObj.expiry, typeof employeeObj.expiry);
-            const res = await this.ddApiMainService.updateGuestEmployee(id, formdata);
+            const res = await this.apiMainService.updateGuestEmployee(id, formdata);
             console.log('response', res);
         } catch (error) {
             console.log(error);
@@ -203,7 +203,7 @@ export class GuestEmployeeListComponent {
 
         try {
             if (this.confirmDelete) {
-                const deletedEmployee = await this.ddApiMainService.deleteGuestEmployee(employee._id);
+                const deletedEmployee = await this.apiMainService.deleteGuestEmployee(employee._id);
                 this.getGuestEmployeelistByOrgId();
                 console.log(deletedEmployee)
                 this.getGuestEmployeelistByOrgId();
@@ -215,63 +215,63 @@ export class GuestEmployeeListComponent {
         }
 
     }
-//     async onFileChange(evt: any) {
-//         console.log('file change');
-//         // this.showMultipleEmployeeForm = false;
-//         this.isuploadEmployeeData = true;
-//         try {
-//             const target: DataTransfer = <DataTransfer>(evt.target);
-//             if (target.files.length !== 1) throw new Error('Cannot use multiple files');
-//             const data = await this.excelService.upload(target.files[0])
-//             console.log('target.files[0]',data);
-//             console.log(target.files[0].name)
-//             if(target.files[0] && target.files[0].name)
-//             this.fileName = target.files[0].name;
+    //     async onFileChange(evt: any) {
+    //         console.log('file change');
+    //         // this.showMultipleEmployeeForm = false;
+    //         this.isuploadEmployeeData = true;
+    //         try {
+    //             const target: DataTransfer = <DataTransfer>(evt.target);
+    //             if (target.files.length !== 1) throw new Error('Cannot use multiple files');
+    //             const data = await this.excelService.upload(target.files[0])
+    //             console.log('target.files[0]',data);
+    //             console.log(target.files[0].name)
+    //             if(target.files[0] && target.files[0].name)
+    //             this.fileName = target.files[0].name;
 
-//             this.uploadEmployeeData = data.slice(1);
-//             console.log('uploaded excel data',this.uploadEmployeeData);
-//             if(this.uploadEmployeeData && this.uploadEmployeeData.length>0){
-//                 this.addMultipleEmploeeList.length=0;
-//                this.uploadEmployeeData.forEach((elm:any)=>{
-//               this.employeeObj.guestEmployeeName = elm[0];
-//               this.employeeObj.guestEmployeeId = elm[1];
-//               this.employeeObj.guestEmployeePhoneNo = elm[2];
-//               this.employeeObj.guestEmployeeEmail = elm[3];
-//               console.log('date in the excel',elm[4])
-//               const date = this.formatDate(elm[4]);
-//               this.employeeObj.expiry = date;
-//               console.log('uploaded employee object',this.employeeObj)
-//               const employee = {
-//                 cafeteria_name:this.selectedCafeteriaName,
-//                 cafeteria_id:this.selectedCafeteriaId,
-//                 ...this.employeeObj
-//             }
-//             this.addMultipleEmploeeList.push({...employee});
-//             if(this.addMultipleEmploeeList.length == this.uploadEmployeeData.length){
-//                 this.employeeObj={
-//                     organization_name : this.orgObj.organization_name,
-//                     organization_id : this.orgObj._id,
-//                     guestEmployeeName : '',
-//                     guestEmployeeId :  '',
-//                     guestEmployeePhoneNo :  '',
-//                     guestEmployeeEmail : '',
-//                     expiry : ''
-//                 }
-//             }
-//                })
-              
-//             }
-//             console.log('multiple employee List',this.addMultipleEmploeeList )
-//             this.showRemoveForm = true;
-//             this.showAddMoreForm = false;
-//         } catch (error) {
-//             console.log(error)
-//         }
-// }
+    //             this.uploadEmployeeData = data.slice(1);
+    //             console.log('uploaded excel data',this.uploadEmployeeData);
+    //             if(this.uploadEmployeeData && this.uploadEmployeeData.length>0){
+    //                 this.addMultipleEmploeeList.length=0;
+    //                this.uploadEmployeeData.forEach((elm:any)=>{
+    //               this.employeeObj.guestEmployeeName = elm[0];
+    //               this.employeeObj.guestEmployeeId = elm[1];
+    //               this.employeeObj.guestEmployeePhoneNo = elm[2];
+    //               this.employeeObj.guestEmployeeEmail = elm[3];
+    //               console.log('date in the excel',elm[4])
+    //               const date = this.formatDate(elm[4]);
+    //               this.employeeObj.expiry = date;
+    //               console.log('uploaded employee object',this.employeeObj)
+    //               const employee = {
+    //                 cafeteria_name:this.selectedCafeteriaName,
+    //                 cafeteria_id:this.selectedCafeteriaId,
+    //                 ...this.employeeObj
+    //             }
+    //             this.addMultipleEmploeeList.push({...employee});
+    //             if(this.addMultipleEmploeeList.length == this.uploadEmployeeData.length){
+    //                 this.employeeObj={
+    //                     organization_name : this.orgObj.organization_name,
+    //                     organization_id : this.orgObj._id,
+    //                     guestEmployeeName : '',
+    //                     guestEmployeeId :  '',
+    //                     guestEmployeePhoneNo :  '',
+    //                     guestEmployeeEmail : '',
+    //                     expiry : ''
+    //                 }
+    //             }
+    //                })
 
-cancelMultipleEmployee(){
-    this.showMultipleEmployeeForm=false; 
-    this.showAddMoreForm=true; 
-    this.showRemoveForm=false;
-}
+    //             }
+    //             console.log('multiple employee List',this.addMultipleEmploeeList )
+    //             this.showRemoveForm = true;
+    //             this.showAddMoreForm = false;
+    //         } catch (error) {
+    //             console.log(error)
+    //         }
+    // }
+
+    cancelMultipleEmployee() {
+        this.showMultipleEmployeeForm = false;
+        this.showAddMoreForm = true;
+        this.showRemoveForm = false;
+    }
 }

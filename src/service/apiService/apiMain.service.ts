@@ -1599,6 +1599,36 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkOrdersListPaymentFailed, data);
   }
 
+  getClusterCurrentOrdersList(status: string, page: number, limit: number, clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentOrdersList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method }, { clusterList });
+  }
+
+  getClusterCurrentPackageOrdersList(status: string, page: number, limit: number, clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentPackageOrdersList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method }, { clusterList });
+  }
+
+  getCurrentOrdersCount(clientDate?: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentOrdersCount;
+    const url = clientDate ? `${urlObj.url}/${clientDate}` : urlObj.url;
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method }, null, null, true);
+  }
+
+  getClusterCurrentOrdersCount(clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentOrdersCount;
+    return this.apiHttpService.REQUEST(urlObj, { clusterList }, null, true);
+  }
+
+  getClusterCurrentPackageCount(clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentPackageCount;
+    return this.apiHttpService.REQUEST(urlObj, { clusterList }, null, true);
+  }
+
+  getCurrentPackageCount() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentPackageCount, null, null, true);
+  }
+
   checkSession() {
     const urlObj = this.apiConfigService.apiEndPointObj.checkSession;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
@@ -1924,4 +1954,17 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.getFoodOrderPackageByOrgIdAndCafeId;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
   }
+
+  performPackageOrderTransfer(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.performPackageOrderTransfer, payload);
+  }
+
+  validatePaytmPaymentTransaction(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.validatePaytmPaymentTransaction, payload);
+  }
+
+  updateddPackageFoodOrder(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateddPackageFoodOrder, payload);
+  }
 }
+
