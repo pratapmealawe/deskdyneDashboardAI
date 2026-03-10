@@ -5,6 +5,12 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import * as Highcharts from 'highcharts';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+
+(pdfMake as any).vfs =
+  (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 
 @Component({
   selector: 'app-daily-admin-excel-export',
@@ -12,6 +18,7 @@ import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-out
   styleUrls: ['./daily-admin-excel-export.component.scss']
 })
 export class DailyAdminExcelExportComponent implements OnInit {
+  Highcharts: typeof Highcharts = Highcharts;
   orderStatusMapper: any = orderStatusMapper;
   adminOrderStatusList = [
     { label: 'Placed', value: 'placed', count: 0 },
@@ -25,31 +32,34 @@ export class DailyAdminExcelExportComponent implements OnInit {
     { label: 'Completed', value: 'completed', count: 0 },
   ];
 
-  filteredList: any[] = [];
+  allOrdersList: any[] = [];
+  filteredOrderList: any[] = [];
+  paginatedList: any[] = [];
   selectedStatus: string = 'placed';
   selectedAdminOrderDate: Date = new Date();
   isLoading: boolean = false;
-  page: number = 1;
-  pageLimit: number = 10;
-  totalCount: number = 0;
-  totalPages: number = 0;
-  pageSizeOptions: number[] = [10, 20, 50, 100];
-  paginationOver = false;
-  lastPage: number = 1;
-  pageFirstEntry: number = 1;
-  pageLastEntry: number = 1;
+  pageIndex: number = 0;
+  pageSize: number = 10;
+  estimatedTotal: number = 0;
 
-  // UI State matching outlet-excel-export
+  // Search & Chart
+  searchText = '';
+  isShowChart: boolean = false;
+  chartOptions!: Highcharts.Options;
+  updateStatusFlag: boolean = false;
+  oneToOneStatusFlag: boolean = true;
+
+  // UI State
   isAdmin: boolean = false;
   orgAdmin: any;
   headerConfig: CommonSelectConfig = {
-    mode: 'outlet',
-    showDateRange: false, // Daily logic uses single date
+    mode: 'cafeteria',
+    showDateRange: false,
     disableOrg: true,
     requireAll: true
   };
   headerConfigAdmin: CommonSelectConfig = {
-    mode: 'outlet',
+    mode: 'cafeteria',
     showDateRange: false,
     disableOrg: false,
     requireAll: true
@@ -58,6 +68,10 @@ export class DailyAdminExcelExportComponent implements OnInit {
   // Totals
   totalRevenue = 0;
   totalOrdersCount = 0;
+  totalItemAmount = 0;
+  totalDeliveryCharge = 0;
+  totalTaxes = 0;
+  totalPaidToKitchen = 0;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -102,102 +116,122 @@ export class DailyAdminExcelExportComponent implements OnInit {
 
   async getLatestBulkDailyOrderStatusList(status: any) {
     this.selectedStatus = status;
-    this.filteredList = [];
-    this.page = 1;
-    this.lastPage = 1;
-    this.paginationOver = false;
+    this.allOrdersList = [];
+    this.filteredOrderList = [];
+    this.pageIndex = 0;
     this.getOrderStatusList(status, 1);
   }
 
   async getOrderStatusList(status: string, pageNum: number) {
     try {
       this.isLoading = true;
-      this.page = pageNum;
+      this.pageIndex = pageNum - 1;
       const dateStr = this.selectedAdminOrderDate ?
         this.selectedAdminOrderDate.toISOString() :
         new Date().toISOString();
 
-      const res: any = await this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit, dateStr);
+      const res: any = await this.apiMainService.getBulkDailyOrderList(status, pageNum, this.pageSize, dateStr);
       if (res) {
-        this.filteredList = res.orderList || [];
-        this.totalCount = res.totalCount || 0;
-        this.totalPages = Math.ceil(this.totalCount / this.pageLimit);
-
-        this.calculateTotals();
-
-        if (this.filteredList.length > 0) {
-          this.pageFirstEntry = ((pageNum - 1) * this.pageLimit) + 1;
-          this.pageLastEntry = this.pageFirstEntry + this.filteredList.length - 1;
-          this.paginationOver = this.filteredList.length < this.pageLimit;
-        } else {
-          this.pageFirstEntry = 0;
-          this.pageLastEntry = 0;
-          this.paginationOver = true;
-        }
+        this.allOrdersList = res.orderList || [];
+        this.estimatedTotal = res.totalCount || 0;
+        this.applyFilters();
       }
     } catch (error) {
       console.error('Error fetching order status list:', error);
-      this.filteredList = [];
+      this.allOrdersList = [];
+      this.filteredOrderList = [];
+      this.paginatedList = [];
     } finally {
       this.isLoading = false;
     }
   }
 
+  onSearch(searchValue: string) {
+    this.searchText = searchValue;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    let list = this.allOrdersList;
+
+    if (this.searchText) {
+      const lowerSearch = this.searchText.toLowerCase();
+      list = list.filter((order: any) =>
+        (order.orderNo && order.orderNo.toString().toLowerCase().includes(lowerSearch)) ||
+        (order.customerName && order.customerName.toLowerCase().includes(lowerSearch)) ||
+        (order.customerPhoneNo && order.customerPhoneNo.toString().includes(lowerSearch)) ||
+        (order.customerEmail && order.customerEmail.toLowerCase().includes(lowerSearch)) ||
+        (order.pocDetails?.pocName && order.pocDetails.pocName.toLowerCase().includes(lowerSearch))
+      );
+    }
+
+    this.filteredOrderList = list;
+    this.paginatedList = this.filteredOrderList; // Since API is already paginated, we just show what we got
+    this.calculateTotals();
+  }
+
   calculateTotals() {
-    this.totalRevenue = this.filteredList.reduce((sum, order) => sum + (Number(order.amount) || 0), 0);
-    this.totalOrdersCount = this.totalCount;
+    this.totalItemAmount = 0;
+    this.totalDeliveryCharge = 0;
+    this.totalTaxes = 0;
+    this.totalPaidToKitchen = 0;
+    this.totalRevenue = 0;
+
+    this.filteredOrderList.forEach(order => {
+      this.totalItemAmount += Number(order.itemAmount) || 0;
+      this.totalDeliveryCharge += Number(order.deliveryCharge) || 0;
+      this.totalTaxes += Number(order.taxes) || 0;
+      this.totalPaidToKitchen += Number(order.amtAfterCommisionPaidToKitchen) || Number(order.itemAmount) || 0;
+      this.totalRevenue += Number(order.amount) || 0;
+    });
+    this.totalOrdersCount = this.estimatedTotal;
   }
 
-  onPageSizeChange(newSize: number) {
-    this.pageLimit = newSize;
-    this.page = 1;
-    this.getOrderStatusList(this.selectedStatus, this.page);
+  // Unified with mat-paginator event
+  onPageChange(event: any) {
+    this.pageSize = event.pageSize;
+    this.pageIndex = event.pageIndex;
+    this.getOrderStatusList(this.selectedStatus, this.pageIndex + 1);
   }
 
-  get visiblePages(): (number | string)[] {
-    const total = this.totalPages;
-    const current = this.page;
-    const delta = 2;
-    const range: number[] = [];
-    const rangeWithDots: (number | string)[] = [];
-    let l: number | undefined;
-    for (let i = 1; i <= total; i++) {
-      if (i === 1 || i === total || (i >= current - delta && i <= current + delta)) {
-        range.push(i);
-      }
+  changeDataView() {
+    if (!this.isShowChart) {
+      this.generateChartData();
+    } else {
+      this.isShowChart = false;
     }
-    for (const i of range) {
-      if (l) {
-        if (i - l === 2) {
-          rangeWithDots.push(l + 1);
-        } else if (i - l !== 1) {
-          rangeWithDots.push('...');
-        }
-      }
-      rangeWithDots.push(i);
-      l = i;
-    }
-    return rangeWithDots;
   }
 
-  goToPage(pageNum: number | string) {
-    if (typeof pageNum !== 'number' || pageNum === this.page) return;
-    this.page = pageNum;
-    this.getOrderStatusList(this.selectedStatus, pageNum);
+  generateChartData() {
+    const categories = this.adminOrderStatusList.map(s => s.label);
+    const data = this.adminOrderStatusList.map(s => s.count);
+
+    this.chartOptions = {
+      chart: { type: 'column' },
+      title: { text: 'Orders by Status', align: 'left' },
+      xAxis: { categories: categories },
+      yAxis: {
+        allowDecimals: false,
+        min: 0,
+        title: { text: 'Number of Orders' }
+      },
+      series: [{
+        name: 'Orders',
+        data: data,
+        type: 'column'
+      }]
+    };
+
+    this.isShowChart = true;
+    this.updateStatusFlag = true;
   }
 
-  previous(page: number) {
-    if (page <= 1) return;
-    this.getOrderStatusList(this.selectedStatus, page - 1);
-  }
-
-  next(page: number) {
-    if (page >= this.totalPages) return;
-    this.getOrderStatusList(this.selectedStatus, page + 1);
+  excelExport() {
+    this.exportAdminOrdersToExcel();
   }
 
   async exportAdminOrdersToExcel() {
-    if (!this.filteredList || this.filteredList.length === 0) return;
+    if (!this.filteredOrderList || this.filteredOrderList.length === 0) return;
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Daily Bulk Orders');
@@ -245,7 +279,7 @@ export class DailyAdminExcelExportComponent implements OnInit {
       cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
     });
 
-    this.filteredList.forEach((order: any) => {
+    this.filteredOrderList.forEach((order: any) => {
       const itemList = order.itemList || [];
       const items = itemList
         .map((i: any) => `${i.deliveredItem || i.itemName || 'N/A'} x${i.count || 1}`)
@@ -296,6 +330,65 @@ export class DailyAdminExcelExportComponent implements OnInit {
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
     saveAs(blob, `Daily_Bulk_Orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  }
+
+  downloadPdf() {
+    if (!this.filteredOrderList.length) return;
+
+    const tableHeaders = [
+      { text: 'Order No', bold: true },
+      { text: 'Date', bold: true },
+      { text: 'Status', bold: true },
+      { text: 'POC/Customer', bold: true },
+      { text: 'Organization', bold: true },
+      { text: 'Cafeteria', bold: true },
+      { text: 'Items', bold: true },
+      { text: 'Subtotal (₹)', bold: true },
+      { text: 'Total (₹)', bold: true }
+    ];
+
+    const body: any[] = [tableHeaders];
+
+    this.filteredOrderList.forEach(order => {
+      const items = (order.itemList || [])
+        .map((i: any) => `${i.itemName} x${i.count}`)
+        .join(', ');
+
+      body.push([
+        order.orderNo || '',
+        this.formatDate(order.orderDate),
+        this.orderStatusMapper[order.orderstatus] || order.orderstatus || '',
+        order.customerName || order.pocDetails?.pocName || '',
+        order.organizationDetails?.organization_name || '',
+        order.cafeteriaDetails?.cafeteria_name || '',
+        items || '',
+        (order.itemAmount || 0).toFixed(2),
+        (order.amount || 0).toFixed(2)
+      ]);
+    });
+
+    const docDefinition: any = {
+      pageOrientation: 'landscape',
+      pageMargins: [20, 20, 20, 20],
+      content: [
+        { text: 'Daily Bulk Orders Report', style: 'header' },
+        { text: `Date: ${this.formatDate(this.selectedAdminOrderDate)}`, margin: [0, 0, 0, 10] },
+        {
+          table: {
+            headerRows: 1,
+            widths: [50, 60, 60, 100, 100, 80, '*', 60, 60],
+            body
+          },
+          layout: 'lightHorizontalLines'
+        }
+      ],
+      styles: {
+        header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10] }
+      },
+      defaultStyle: { fontSize: 9 }
+    };
+
+    pdfMake.createPdf(docDefinition).download(`DailyBulkOrders_${new Date().toISOString().slice(0, 10)}.pdf`);
   }
 
   formatDate(dateInput: any): string {

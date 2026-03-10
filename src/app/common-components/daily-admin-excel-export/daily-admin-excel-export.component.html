@@ -7,19 +7,22 @@
                 <p class="page-subtitle">View, search, and export daily bulk orders</p>
             </div>
             <div class="actions-section">
-                <!-- Search (Optional for Daily Admin as it usually filters by date/status, but keeping for design consistency if needed) -->
-                <!-- <div class="search-wrapper" *ngIf="filteredList.length > 0">
+                <div class="search-wrapper" *ngIf="filteredOrderList.length > 0 || searchText">
                     <mat-icon class="search-icon">search</mat-icon>
-                    <input type="text" placeholder="Search orders..." (keyup)="onSearch($any($event.target).value)" />
-                </div> -->
-                <div class="export-btns" *ngIf="filteredList.length > 0">
-                    <button mat-flat-button class="btn-export excel" matTooltip="Excel Export"
-                        (click)="exportAdminOrdersToExcel()">
+                    <input type="text" placeholder="Search by Order #, Name, Phone..."
+                        (keyup)="onSearch($any($event.target).value)" [value]="searchText" />
+                </div>
+                <div class="export-btns" *ngIf="filteredOrderList.length > 0">
+                    <button mat-flat-button class="btn-export excel" matTooltip="Excel Export" (click)="excelExport()">
                         <mat-icon>table_chart</mat-icon> Excel
                     </button>
-                    <!-- <button mat-flat-button class="btn-export pdf" matTooltip="Download PDF" (click)="downloadPdf()">
+                    <button mat-flat-button class="btn-export pdf" matTooltip="Download PDF" (click)="downloadPdf()">
                         <mat-icon>picture_as_pdf</mat-icon> PDF
-                    </button> -->
+                    </button>
+                    <button mat-icon-button class="btn-view-toggle" (click)="changeDataView()"
+                        [matTooltip]="isShowChart ? 'Show List' : 'Show Chart'">
+                        <mat-icon>{{ isShowChart ? 'view_list' : 'bar_chart' }}</mat-icon>
+                    </button>
                 </div>
             </div>
         </div>
@@ -38,8 +41,8 @@
                     (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
             </div>
 
-            <!-- Status Chips Row (Integrated into filter wrapper area or right below) -->
-            <div class="status-chips mt-3" *ngIf="filteredList.length >= 0">
+            <!-- Status Chips -->
+            <div class="status-chips mt-3" *ngIf="adminOrderStatusList">
                 <button *ngFor="let status of adminOrderStatusList" class="status-chip"
                     [class.active]="selectedStatus === status.value"
                     (click)="getLatestBulkDailyOrderStatusList(status.value)">
@@ -50,13 +53,29 @@
         </div>
 
         <!-- Totals Strip -->
-        <div class="totals-strip" *ngIf="filteredList.length > 0">
+        <div class="totals-strip" *ngIf="filteredOrderList.length > 0">
             <div class="total-chip">
-                <span class="chip-label">Total Orders</span>
+                <span class="chip-label">Orders</span>
                 <span class="chip-value">{{ totalOrdersCount }}</span>
             </div>
+            <div class="total-chip">
+                <span class="chip-label">Subtotal</span>
+                <span class="chip-value">₹{{ totalItemAmount | number : '1.2-2' }}</span>
+            </div>
+            <div class="total-chip" *ngIf="totalDeliveryCharge > 0">
+                <span class="chip-label">Delivery</span>
+                <span class="chip-value">₹{{ totalDeliveryCharge | number : '1.2-2' }}</span>
+            </div>
+            <div class="total-chip" *ngIf="totalTaxes > 0">
+                <span class="chip-label">Taxes</span>
+                <span class="chip-value">₹{{ totalTaxes | number : '1.2-2' }}</span>
+            </div>
+            <div class="total-chip" *ngIf="totalPaidToKitchen > 0">
+                <span class="chip-label">To Kitchen</span>
+                <span class="chip-value">₹{{ totalPaidToKitchen | number : '1.2-2' }}</span>
+            </div>
             <div class="total-chip highlight">
-                <span class="chip-label">Total Revenue</span>
+                <span class="chip-label">Revenue</span>
                 <span class="chip-value">₹{{ totalRevenue | number : '1.2-2' }}</span>
             </div>
         </div>
@@ -68,42 +87,32 @@
         </div>
 
         <!-- Orders List -->
-        <ng-container *ngIf="!isLoading">
-            <ng-container *ngIf="filteredList.length > 0; else noRecords">
-                <div *ngFor="let order of filteredList" class="mb-3">
-                    <app-daily-bulk-card [orderInput]="order"
+        <ng-container *ngIf="!isLoading && !isShowChart">
+            <ng-container *ngIf="filteredOrderList.length > 0; else noRecords">
+                <div *ngFor="let order of paginatedList" class="mb-3">
+                    <app-daily-bulk-card [orderInput]="order" [showActions]="false"
                         (updateOrder)="getBulkDailyOrderList()"></app-daily-bulk-card>
                 </div>
-
-                <div class="pagination-card">
-                    <div class="pagination-info">
-                        <span>Showing <strong>{{pageFirstEntry}}</strong> to <strong>{{pageLastEntry}}</strong> of
-                            <strong>{{totalCount}}</strong></span>
-                    </div>
-                    <div class="pagination-controls">
-                        <button class="page-btn" (click)="previous(page)" [disabled]="page === 1">
-                            <mat-icon>chevron_left</mat-icon>
-                        </button>
-                        <ng-container *ngFor="let p of visiblePages">
-                            <button *ngIf="p !== '...'" class="page-btn" [class.active]="p === page"
-                                (click)="goToPage(p)">{{p}}</button>
-                            <span *ngIf="p === '...'" class="page-dots">...</span>
-                        </ng-container>
-                        <button class="page-btn" (click)="next(page)"
-                            [disabled]="page === totalPages || totalPages === 0">
-                            <mat-icon>chevron_right</mat-icon>
-                        </button>
-                    </div>
-                </div>
+                <mat-paginator [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 50, 100, 200, 500]"
+                    [length]="estimatedTotal" (page)="onPageChange($event)" showFirstLastButtons>
+                </mat-paginator>
             </ng-container>
         </ng-container>
+
+        <!-- Chart View -->
+        <div class="chart-card" *ngIf="isShowChart && !isLoading">
+            <highcharts-chart *ngIf="adminOrderStatusList.length > 0" [Highcharts]="Highcharts" [options]="chartOptions"
+                [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
+                style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+        </div>
 
         <!-- Empty State -->
         <ng-template #noRecords>
             <div class="empty-state">
                 <mat-icon class="empty-icon">receipt_long</mat-icon>
                 <h3>No Orders Found</h3>
-                <p>Try adjusting your category, status or date selection.</p>
+                <p>Try adjusting your filters or date range.</p>
             </div>
         </ng-template>
     </div>

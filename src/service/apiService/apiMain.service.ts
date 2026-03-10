@@ -798,6 +798,7 @@ export class ApiMainService {
   }
 
   getAdminDailyBulkOrders(payload: any) {
+    console.log(payload, "payload");
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAdminDailyBulkOrders, payload);
   }
 
@@ -826,10 +827,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any) {
+  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any, orgId?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
     const url = urlObj.url + `/${page}/${limit}/${status}`;
-    const payload = date ? { date } : {};
+    const payload: any = date ? { date } : {};
+    if (orgId) payload.orgId = orgId;
     return this.apiHttpService.REQUEST({ url, method: urlObj.method }, payload);
   }
 

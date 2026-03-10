@@ -55,7 +55,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
     {
       name: 'Other Orders', showParent: true, image: 'Other orders_white', imageblue: 'Other orders_blue', children: [
         { name: 'Current Order', route: 'otherOrder', showChild: true },
-        { name: 'Search Order', route: 'searchOrder', showChild: true }
+        { name: 'Search Order', route: 'searchOrder', showChild: true },
+        { name: 'Daily Admin Export Orders', route: 'dailyAdminExcelExport', showChild: true  },
       ]
     },
     { name: 'Notifications', showParent: true, route: 'scheduledNotifications', image: 'Enquiries_white', imageblue: 'Enquiries_blue' },
