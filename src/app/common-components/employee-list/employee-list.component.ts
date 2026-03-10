@@ -37,7 +37,7 @@ export class EmployeeListComponent {
     searchQuery: string = '';
 
     constructor(
-        private ddApiMainService: ApiMainService,
+        private apiMainService: ApiMainService,
         private excelService: ExcelService,
         private fb: FormBuilder,
         private toasterService: ToasterService,
@@ -212,7 +212,7 @@ export class EmployeeListComponent {
 
     async getEmployeelistByCafeteriaId() {
         try {
-            this.employeeList = await this.ddApiMainService.getEmployeelistByCafeteriaId(this.selectedCafeteriaId) || [];
+            this.employeeList = await this.apiMainService.getEmployeelistByCafeteriaId(this.selectedCafeteriaId) || [];
         } catch (error) {
             console.error(error);
         }
@@ -265,7 +265,7 @@ export class EmployeeListComponent {
                 el.cafeteria_id = this.selectedCafeteriaId;
             });
 
-            const res = await this.ddApiMainService.addEmployeeList([...this.addMultipleEmploeeList]);
+            const res = await this.apiMainService.addEmployeeList([...this.addMultipleEmploeeList]);
             if (res?.length > 0) {
                 this.toasterService.success('Employees added successfully');
             }
@@ -295,7 +295,7 @@ export class EmployeeListComponent {
 
     async updateEmployeeAndClose() {
         try {
-            const res = await this.ddApiMainService.updateEmployee(this.empId, this.form.value);
+            const res = await this.apiMainService.updateEmployee(this.empId, this.form.value);
             if (res?._id) {
                 this.toasterService.success('Employee updated successfully');
                 this.getEmployeelistByCafeteriaId();
@@ -315,7 +315,7 @@ export class EmployeeListComponent {
 
     async confirmDeleteEmployee() {
         try {
-            await this.ddApiMainService.deleteEmployee(this.deletedEmployee._id);
+            await this.apiMainService.deleteEmployee(this.deletedEmployee._id);
             this.toasterService.success('Employee deleted successfully');
             this.getEmployeelistByCafeteriaId();
         } catch (error) {
@@ -332,7 +332,7 @@ export class EmployeeListComponent {
     async confirmDeleteAllEmployees() {
         const ids = this.getCafeteriaEmployees().map((emp: any) => emp._id);
         try {
-            await this.ddApiMainService.deleteMultipleEmployee(ids);
+            await this.apiMainService.deleteMultipleEmployee(ids);
             this.toasterService.success('All employees deleted successfully');
             this.getEmployeelistByCafeteriaId();
         } catch (error) {

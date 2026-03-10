@@ -1,4 +1,4 @@
-import { Component, Input, OnInit,ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
@@ -21,26 +21,26 @@ export class EmpPollCardComponent implements OnInit {
   showPaymentDetails: boolean = false;
   showStatusHistory: boolean = false;
   showOrgDetails: boolean = false;
-  showCreateBtn:any = false;
+  showCreateBtn: any = false;
 
-  constructor(private ddApiMainService:ApiMainService, private sendDataToComponent:SendDataToComponent, private modalService: NgbModal,){}
+  constructor(private apiMainService: ApiMainService, private sendDataToComponent: SendDataToComponent, private modalService: NgbModal,) { }
 
-  ngOnInit(){
+  ngOnInit() {
     this.checkCutoff(this.orderInput, this.day);
   }
 
-  async createOrder(){
+  async createOrder() {
     try {
-      await this.ddApiMainService.createOrderFromPollObj(this.order);
+      await this.apiMainService.createOrderFromPollObj(this.order);
       this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id })
     } catch (error) {
       console.log(error)
     }
   }
 
-  checkCutoff(order:any, day:any){
+  checkCutoff(order: any, day: any) {
     const item = order.itemList[0];
-    if(day === 'today' && item.isSameDay){
+    if (day === 'today' && item.isSameDay) {
       const cutoffDate = new Date();
       const currDate = new Date();
       const endTime = item.cutOffTime.split(":")[0];

@@ -1,14 +1,13 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { PageEvent } from '@angular/material/paginator';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import * as Highcharts from 'highcharts';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PageEvent } from '@angular/material/paginator';
-import * as Highcharts from 'highcharts';
-import * as ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
@@ -57,7 +56,7 @@ export class OrgOrdersComponent implements OnInit, OnChanges {
     if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
       const previous = changes['adminOrg'].previousValue;
       const current = changes['adminOrg'].currentValue;
-      if(previous && previous._id === current._id) return;
+      if (previous && previous._id === current._id) return;
       this.setInitials();
     }
   }

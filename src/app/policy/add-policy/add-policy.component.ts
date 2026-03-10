@@ -84,6 +84,7 @@ export class AddPolicyComponent {
       pastOrder: false,
       viewEnquiries: false,
       outletExcelExport: false,
+      dailyAdminExcelExport: false,
       mainDashboard: false,
       customer: false,
       outletMasterMenu: false,

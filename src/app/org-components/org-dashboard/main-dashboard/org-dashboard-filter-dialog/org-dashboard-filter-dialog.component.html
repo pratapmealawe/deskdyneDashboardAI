@@ -25,8 +25,8 @@
         <mat-label>Select Cafeteria</mat-label>
         <mat-select [(value)]="selectedCafeteriaId">
           <mat-option value="">All Cafeterias</mat-option>
-          <mat-option *ngFor="let c of filteredCafes" [value]="c.cafeteria_id">
-            {{ c.cafeteria_name }}<span *ngIf="c.cafeteria_city"> — {{ c.cafeteria_city }}</span>
+          <mat-option *ngFor="let c of data.cafeList" [value]="c.cafeteria_id">
+            {{ c.cafeteria_name }}
           </mat-option>
         </mat-select>
       </mat-form-field>

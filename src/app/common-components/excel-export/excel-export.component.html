@@ -11,6 +11,9 @@
         </mat-tab>
         <mat-tab label="dailyBulk">
             <ng-template mat-tab-label>Admin Daily</ng-template>
+            <div class="pt-3">
+                <app-daily-admin-excel-export></app-daily-admin-excel-export>
+            </div>
         </mat-tab>
         <mat-tab label="subscriptionPackage">
             <ng-template mat-tab-label>Mealawe Virtual Cafe</ng-template>
@@ -20,7 +23,7 @@
         </mat-tab>
     </mat-tab-group>
 
-    <div class="row pt-3 pb-2 g-3 align-items-end">
+    <div class="row pt-3 pb-2 g-3 align-items-end" *ngIf="searchObj.orderType !== 'dailyBulk'">
         <div class="col-12 col-md-9">
             <app-common-outlet-cafe-select [config]="headerConfig"
                 (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>

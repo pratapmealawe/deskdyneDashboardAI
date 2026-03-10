@@ -426,6 +426,19 @@ export class ApiConfigService {
       getScheduledNotificationById: p('/api/getNotification', 'GET'),
       cancelScheduledNotification: p('/api/cancelNotification', 'PUT'),
       getFoodOrderPackageByOrgIdAndCafeId: p('/api/getFoodOrderPackageByOrgIdAndCafeId', 'POST'),
+
+      getCurrentPackageOrdersList: p('/api/package/getCurrentPackageOrdersList', 'GET'),
+      getClusterCurrentPackageOrdersList: p('/api/package/getClusterCurrentPackageOrdersList', 'POST'),
+      getCurrentPackageCount: p('/api/package/getCurrentPackageCount', 'GET'),
+      getClusterCurrentPackageCount: p('/api/package/getClusterCurrentPackageCount', 'POST'),
+
+      getCurrentOrdersList: p('/api/foodorder/getCurrentOrdersList', 'GET'),
+      getClusterCurrentOrdersList: p('/api/foodorder/getClusterCurrentOrdersList', 'POST'),
+      getCurrentOrdersCount: p('/api/foodorder/getCurrentOrdersCount', 'GET'),
+      getClusterCurrentOrdersCount: p('/api/foodorder/getCurrentOrdersCount', 'POST'),
+      performPackageOrderTransfer: p('/api/performPackageOrderTransfer', 'POST'),
+      validatePaytmPaymentTransaction: p('/transaction/validatePaytmPaymentTransaction', 'POST'),
+      updateddPackageFoodOrder: p('/api/updatePackageFoodOrder', 'POST'),
     }
   }
 }

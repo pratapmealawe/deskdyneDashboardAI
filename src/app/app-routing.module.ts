@@ -25,7 +25,7 @@ const routes: Routes = [
   { path: 'appVersionControl', canActivate: [accessGuard], loadChildren: () => import('./miscelleneous/app-version-control/app-version-control.module').then(m => m.AppVersionControlModule) },
   { path: 'policy', canActivate: [accessGuard], loadChildren: () => import('./policy/policy/policy.module').then(m => m.PolicyModule) },
   { path: 'addPolicy', canActivate: [accessGuard], loadChildren: () => import('./policy/add-policy/add-policy.module').then(m => m.AddPolicyModule) },
-  { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./orders/orders.module').then(m => m.OrdersModule) },
+  { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./outlet-orders/outlet-orders.module').then(m => m.OutletOrdersModule) },
   { path: 'allOrders', canActivate: [accessGuard], loadChildren: () => import('./all-orders/all-orders.module').then(m => m.AllOrdersModule) },
   { path: 'outletMasterMenu', canActivate: [accessGuard], loadChildren: () => import('./outlet-master-menu/outlet-master-menu.module').then(m => m.OutletMasterMenuModule) },
   { path: 'searchOrder', canActivate: [accessGuard], loadChildren: () => import('./search-order/search-order.module').then(m => m.SearchOrderModule) },
@@ -60,13 +60,13 @@ const routes: Routes = [
   { path: 'checklistHistory', canActivate: [accessGuard], loadChildren: () => import('./checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
   { path: 'foodItem', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
   { path: 'scheduledNotifications', canActivate: [accessGuard], loadChildren: () => import('./scheduled-notification/scheduled-notification.module').then(m => m.ScheduledNotificationModule) },
-  // { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-current-orders/b2b-current-orders.module').then(m => m.B2bCurrentOrdersModule) },
   { path: 'otherOrder', canActivate: [accessGuard], loadChildren: () => import('./other-orders/other-orders.module').then(m => m.OtherOrdersModule) },
   { path: 'pastOrder', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/b2b-food-item/b2b-food-item.module').then(m => m.B2bFoodItemModule) },
   { path: 'viewEnquiries', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/org-registry/org-registry.module').then(m => m.OrgRegistryModule) },
   { path: 'consumptionOrders', loadChildren: () => import('./consumption-order-details/consumption-order-details.module').then(m => m.ConsumptionOrderDetailsModule) },
   { path: 'vendorPayout', canActivate: [accessGuard], loadChildren: () => import('./vendor-payout/vendor-payout.module').then(m => m.VendorPayoutModule) },
   { path: 'vendorWalletDashboard', canActivate: [accessGuard], loadChildren: () => import('./vendor-wallet-dashboard/vendor-wallet-dashboard.module').then(m => m.VendorWalletDashboardModule) },
+  { path: 'dailyAdminExcelExport', canActivate: [accessGuard], loadChildren: () => import('./common-components/daily-admin-excel-export/daily-admin-excel-export.module').then(m => m.DailyAdminExcelExportModule) },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: '**', redirectTo: 'login' }
 ];

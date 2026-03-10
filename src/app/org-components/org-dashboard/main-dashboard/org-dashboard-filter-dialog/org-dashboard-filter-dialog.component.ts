@@ -3,10 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 export interface OrgDashboardFilterData {
   cafeList: any[];
-  currentFilters: {
-    cafeteria_id: string;
-    city: string;
-  };
+  selectedCafeteriaId: string;
 }
 
 @Component({
@@ -16,57 +13,25 @@ export interface OrgDashboardFilterData {
 })
 export class OrgDashboardFilterDialogComponent {
   selectedCafeteriaId = '';
-  selectedCity = '';
-
-  uniqueCities: string[] = [];
-  filteredCafes: any[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<OrgDashboardFilterDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: OrgDashboardFilterData
   ) {
-    this.selectedCafeteriaId = data.currentFilters.cafeteria_id || '';
-    this.selectedCity = data.currentFilters.city || '';
-    this.buildOptions();
-  }
-
-  buildOptions() {
-    const cities = new Set<string>();
-    this.data.cafeList.forEach(c => {
-      if (c.cafeteria_city) cities.add(c.cafeteria_city);
-    });
-    this.uniqueCities = Array.from(cities).sort();
-    this.updateFilteredCafes();
-  }
-
-  onCityChange() {
-    this.selectedCafeteriaId = '';
-    this.updateFilteredCafes();
-  }
-
-  updateFilteredCafes() {
-    this.filteredCafes = this.selectedCity
-      ? this.data.cafeList.filter(c => c.cafeteria_city === this.selectedCity)
-      : [...this.data.cafeList];
+    this.selectedCafeteriaId = data.selectedCafeteriaId || '';
   }
 
   get activeCount(): number {
-    let count = 0;
-    if (this.selectedCity) count++;
-    if (this.selectedCafeteriaId) count++;
-    return count;
+    return this.selectedCafeteriaId ? 1 : 0;
   }
 
   clearAll() {
     this.selectedCafeteriaId = '';
-    this.selectedCity = '';
-    this.updateFilteredCafes();
   }
 
   apply() {
     this.dialogRef.close({
-      cafeteria_id: this.selectedCafeteriaId,
-      city: this.selectedCity
+      cafeteriaId: this.selectedCafeteriaId
     });
   }
 

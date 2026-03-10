@@ -1,18 +1,16 @@
 import { Injectable } from '@angular/core';
 import { ApiMainService } from './apiService/apiMain.service';
-import { LocalStorageService } from './local-storage.service';
-
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeliveryOrderService {
-  constructor(private apiMainService: ApiMainService, private localStorageService: LocalStorageService) {
+  constructor(private apiMainService: ApiMainService) {
   }
 
   async createTask(order: any, type: string, serv: any) {
     const vendorProfile = await this.apiMainService.getVendorById(order.vendorId)
-    
+
     const orderNoList: any = [];
     const taskObj: any = { optimised_route: true, payment_method: 'DUNZO_CREDIT' };
     taskObj.drop_details = [];
@@ -49,14 +47,7 @@ export class DeliveryOrderService {
     });
     taskObj.reference_id += `_${order.orderNo}`;
     orderNoList.push(order.orderNo);
-    let server = serv;
-    if (serv === 'ML') {
-      server = order.orderCreatedBy === 'DDUser' ? 'DD' : 'ML';
-    }
-    console.log(type, server)
-    if (type === 'DUNZO') {
-      return this.apiMainService.createOnlyDunzoTask({ taskObj, orderNoList, server });
-    }
+    let server = 'DD';
     if (type === 'PORTER') {
       return this.apiMainService.createPorterTask({ taskObj, orderNoList, server });
     }
@@ -75,5 +66,42 @@ export class DeliveryOrderService {
     return this.apiMainService.trackDeliveryTask(taskId, partner);
   }
 
+  async trackDeliveryTask(order: any, partner: any, server?: any) {
+    if (!order || !order.deliveryTaskId) {
+      return;
+    }
+    try {
+      const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(order.deliveryTaskId, partner);
+      order.deliveryTaskState = deliveryOrderStatus.state;
 
+      if (deliveryOrderStatus && deliveryOrderStatus.eta) {
+        order.pickupEta = deliveryOrderStatus.eta.pickup;
+        order.dropoffEta = deliveryOrderStatus.eta.dropoff;
+      }
+
+      if (deliveryOrderStatus && deliveryOrderStatus.sfx_order_id) {
+        order.sfx_order_id = deliveryOrderStatus.sfx_order_id;
+      }
+
+      if (deliveryOrderStatus && deliveryOrderStatus.runner) {
+        order.runnerName = deliveryOrderStatus.runner.name;
+        order.runnerPhone = deliveryOrderStatus.runner.phone_number;
+        order.runnerLocation = deliveryOrderStatus.runner.location;
+      }
+
+      if (deliveryOrderStatus.state === 'runner_cancelled' || deliveryOrderStatus.state === 'cancelled') {
+        order.runnerName = undefined;
+        order.runnerPhone = undefined;
+        order.runnerLocation = undefined;
+      }
+
+      if (deliveryOrderStatus.state === 'CANCELLED') {
+        order.deliveryTaskState = 'cancelled';
+      }
+      return deliveryOrderStatus;
+    } catch (error) {
+      console.log('error while tracking delivery task', error);
+      throw error;
+    }
+  }
 }
