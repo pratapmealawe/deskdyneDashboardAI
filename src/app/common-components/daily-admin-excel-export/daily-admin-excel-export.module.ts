@@ -17,6 +17,9 @@ import { DailyAdminExcelExportRoutingModule } from './daily-admin-excel-export-r
   declarations: [
     DailyAdminExcelExportComponent
   ],
+  exports: [
+    DailyAdminExcelExportComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,

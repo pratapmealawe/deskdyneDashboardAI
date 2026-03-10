@@ -33,7 +33,14 @@ export class ExcelExportComponent implements OnInit {
   }
 
   onTabChange(event: MatTabChangeEvent) {
-    this.searchObj.orderType = event.tab.textLabel;
+    // Map tab labels to orderType values
+    const labelMap: any = {
+      'Bulk Event': 'allEventBulk',
+      'Admin Daily': 'dailyBulk',
+      'Mealawe Virtual Cafe': 'subscriptionPackage',
+      'Emp Poll': 'empPoll'
+    };
+    this.searchObj.orderType = labelMap[event.tab.textLabel] || 'allEventBulk';
   }
 
   filterSubmitted(event: any) {
@@ -51,14 +58,7 @@ export class ExcelExportComponent implements OnInit {
         this.toasterService.error(126);
         return;
       }
-      if (this.searchObj.orderType === 'dailyBulk') {
-        filteredList = await this.apiMainService.getAdminDailyBulkOrders(this.searchObj);
-        if (filteredList && filteredList.length > 0) {
-          this.filteredList = filteredList;
-          this.createDailyBulkExcel(filteredList);
-        }
-      }
-      else if (this.searchObj.orderType === 'subscriptionPackage') {
+      if (this.searchObj.orderType === 'subscriptionPackage') {
         const obj = {
           id: this.searchObj.org_id,
           fromDate: new Date(this.searchObj.fromDate),
@@ -112,64 +112,6 @@ export class ExcelExportComponent implements OnInit {
     console.log(this.searchObj)
   }
 
-  createDailyBulkExcel(orderList: any) {
-    let data: any = [];
-    orderList.forEach((order: any) => {
-      const currentDate = new Date(order.orderDate);
-      const deliveryDate = new Date(order.deliveryDate);
-      const location = order.customerLocation?.location || order.customerLocation?.address || '';
-      let pin = '';
-      if (location) {
-        const res = location.match(/\b\d{6}\b/);
-        if (res && res.length > 0) {
-          pin = res[0];
-        }
-        else {
-          pin = 'N/A';
-        }
-      }
-
-      const item = order.itemList && order.itemList.length > 0 ? order.itemList[0] : {};
-
-      const row = {
-        "POC Name": order.pocDetails?.pocName || order.pocName || '',
-        "POC Phone No": order.pocDetails?.pocPhoneNo || order.pocPhoneNo || '',
-        "POC Email Id": order.pocDetails?.pocEmail || order.pocEmail || '',
-        "POC ID": order.pocDetails?.pocId || order.pocId || '',
-        "POC Role": order.pocDetails?.pocRole || order.pocRole || '',
-        "POC Location / Pin Code": pin ? pin : location,
-        "Org Name": order.orgName,
-        "Org Location": order.orgLocation || '',
-        "Order Date": currentDate,
-        "Delivery Date": deliveryDate,
-        "Meal Name": item.itemName || item.mealConfigName || '',
-        "Count": item.count || 0,
-        "Cutoff Time": item.cutOffTime || '',
-        "Delivery Time From": item.deliveryTimeFrom ? this.datePipe.transform(this.getDateFromTime(item.deliveryTimeFrom), 'shortTime') : '',
-        "Delivery Time To": item.deliveryTimeTo ? this.datePipe.transform(this.getDateFromTime(item.deliveryTimeTo), 'shortTime') : '',
-        "Delivered Item": item.deliveredItem || 'N/A',
-        "Amount Paid To Kitchen": order.itemAmount || 0,
-        "Amount + Fixed Delivery": order.amount || 0,
-        "Amount without Fixed Delivery": (order.amount || 0) - (order.deliveryCharge || 0),
-        "Fixed Delivery Charges": order.deliveryCharge || 0,
-        "Delivery paid by mealawe": order.deliveryAmtPaidByMealawe ? order.deliveryAmtPaidByMealawe : 'N/A',
-        "Pay Amt To Kitchen": item.payAmtToKitchen || 0,
-        "Taxes": order.taxes || 0,
-        "Order Status": order.orderstatus || ''
-      }
-      data.push(row);
-    })
-    this.excelService.download(data, `admin_bulk_${this.datePipe.transform(this.searchObj.fromDate, 'shortDate')}_TO_${this.datePipe.transform(this.searchObj.toDate, 'shortDate')}`)
-  }
-
-  // Helper to convert time string HH:mm to Date object for piping
-  getDateFromTime(timeStr: string): Date {
-    const d = new Date();
-    const [hours, minutes] = timeStr.split(':');
-    d.setHours(+hours);
-    d.setMinutes(+minutes);
-    return d;
-  }
 
   createPackageExcel(orderList: any) {
     console.log('getOrderPackageList....')
