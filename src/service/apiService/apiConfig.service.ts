@@ -254,7 +254,6 @@ export class ApiConfigService {
       getVendorFirmById: p('/api/getVendorFirmById', 'GET'),
       updateVendorFirm: p('/api/updateVendorFirm', 'PUT'),
       updateVendorFirmCompliance: p('/api/updateVendorFirmCompliance', 'PUT'),
-      getAllVendorFirms: p('/api/getAllVendorFirms', 'GET'),
       deleteUserFromAllList: p('/api/deleteUserFromAllList', 'DELETE'),
       fetchtOrgInfo: p('/api/b2b_org_info', 'POST'),
       b2b_fetchBulkCakeMenu: p('/api/b2b_fetchBulkCakeMenu', 'GET'),
@@ -439,6 +438,9 @@ export class ApiConfigService {
       performPackageOrderTransfer: p('/api/performPackageOrderTransfer', 'POST'),
       validatePaytmPaymentTransaction: p('/transaction/validatePaytmPaymentTransaction', 'POST'),
       updateddPackageFoodOrder: p('/api/updatePackageFoodOrder', 'POST'),
+      forceLogout: p('/api/forceLogout', 'POST'),
+      getActiveSessions: p('/api/activeSessions', 'POST'),
+      getAllVendorFirms: p('/api/getAllVendorFirms', 'GET'),
     }
   }
 }
