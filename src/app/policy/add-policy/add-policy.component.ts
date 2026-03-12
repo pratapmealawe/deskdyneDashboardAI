@@ -101,6 +101,7 @@ export class AddPolicyComponent {
       vendorWalletDashboard: false,
       allOrders: false,
       scheduledNotifications: false,
+      sessionManagement: false,
     };
 
     const button_policies = {

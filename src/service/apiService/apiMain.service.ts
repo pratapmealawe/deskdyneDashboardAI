@@ -1177,10 +1177,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
 
-  getAllVendorFirms() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllVendorFirms);
-  }
-
   deleteUserFromAllList(phoneNo: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.deleteUserFromAllList;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
@@ -1967,6 +1963,27 @@ export class ApiMainService {
 
   updateddPackageFoodOrder(payload: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateddPackageFoodOrder, payload);
+  }
+
+  forceLogout(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.forceLogout, payload);
+  }
+
+  getActiveSessions(appType: string = 'USER', options: any = {}) {
+    this.runtimeStorageService.resetCacheData('SESSIONS');
+    const urlObj = this.apiConfigService.apiEndPointObj.getActiveSessions;
+    const body: any = {
+        appType,
+        pageIndex: options.pageIndex,
+        pageSize: options.pageSize,
+        searchTerm: options.searchTerm
+    };
+    return this.apiHttpService.REQUEST(urlObj, body);
+  }
+
+  getAllVendorFirms() {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllVendorFirms;
+    return this.apiHttpService.REQUEST(urlObj);
   }
 }
 

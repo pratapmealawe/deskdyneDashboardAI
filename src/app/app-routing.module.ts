@@ -18,11 +18,18 @@ const routes: Routes = [
   { path: 'addVendor', canActivate: [accessGuard], loadChildren: () => import('./vendor/add-vendor/add-vendor.module').then(m => m.AddVendorModule) },
   { path: 'addAdmin', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/add-admin/add-admin.module').then(m => m.AddAdminModule) },
   { path: 'admin', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/admin/admin.module').then(m => m.AdminModule) },
-  { path: 'faq', canActivate: [accessGuard], loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => FaqModule) },
-  { path: 'configVariable', canActivate: [accessGuard], loadChildren: () => import('./miscelleneous/config-variable/config-variable.module').then(m => m.ConfigVariableModule) },
+  {
+    path: 'miscelleneous',
+    canActivate: [accessGuard],
+    children: [
+      { path: 'faq', loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => FaqModule) },
+      { path: 'configVariable', loadChildren: () => import('./miscelleneous/config-variable/config-variable.module').then(m => m.ConfigVariableModule) },
+      { path: 'appVersionControl', loadChildren: () => import('./miscelleneous/app-version-control/app-version-control.module').then(m => m.AppVersionControlModule) },
+    ]
+  },
+  { path: 'sessionManagement', canActivate: [accessGuard], loadChildren: () => import('./session-management/session-management.module').then(m => m.SessionManagementModule) },
   { path: 'configImages', canActivate: [accessGuard], loadChildren: () => import('./config-images/config-images.module').then(m => m.ConfigImagesModule) },
   { path: 'configImagesGroup', canActivate: [accessGuard], loadChildren: () => import('./config-images-group/config-images-group.module').then(m => m.ConfigImagesGroupModule) },
-  { path: 'appVersionControl', canActivate: [accessGuard], loadChildren: () => import('./miscelleneous/app-version-control/app-version-control.module').then(m => m.AppVersionControlModule) },
   { path: 'policy', canActivate: [accessGuard], loadChildren: () => import('./policy/policy/policy.module').then(m => m.PolicyModule) },
   { path: 'addPolicy', canActivate: [accessGuard], loadChildren: () => import('./policy/add-policy/add-policy.module').then(m => m.AddPolicyModule) },
   { path: 'currentOrder', canActivate: [accessGuard], loadChildren: () => import('./outlet-orders/outlet-orders.module').then(m => m.OutletOrdersModule) },

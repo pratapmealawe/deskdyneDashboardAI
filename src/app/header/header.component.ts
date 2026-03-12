@@ -59,6 +59,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
         { name: 'Daily Admin Export Orders', route: 'dailyAdminExcelExport', showChild: true  },
       ]
     },
+    { name: 'Session Management', showParent: true, route: 'sessionManagement', image: 'Enquiries_white', imageblue: 'Enquiries_blue' },
     { name: 'Notifications', showParent: true, route: 'scheduledNotifications', image: 'Enquiries_white', imageblue: 'Enquiries_blue' },
     { name: 'Vendor Wallet Dashboard', showParent: true, route: 'vendorWalletDashboard', image: 'Users_white', imageblue: 'Users_blue' },
     { name: 'Vendor Payout', showParent: true, route: 'vendorPayout', image: 'Users_white', imageblue: 'Users_blue' },
