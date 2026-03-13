@@ -72,6 +72,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
   }
 
+  bulkUploadOutletMenu(data: any, outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.bulkUploadOutletMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, data);
+  }
+
   addQrOutletMenu(outlet: any, outletId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.addQrOutletMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);

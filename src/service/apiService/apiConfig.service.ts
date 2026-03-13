@@ -17,6 +17,7 @@ export class ApiConfigService {
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
+      bulkUploadOutletMenu: p('/api/bulkUploadOutletMenu', 'POST'),
       addQrOutletMenu: p('/api/addQrOutletMenu', 'POST'),
       createQrMenu: p('/api/createQrMenu', 'POST'),
       addOutletMasterMenu: p('/api/addOutletMasterMenu', 'POST'),
