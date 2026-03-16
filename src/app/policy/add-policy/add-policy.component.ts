@@ -15,6 +15,7 @@ export class AddPolicyComponent {
     policy_description: '',
     route_policies: {},
     button_policies: {},
+    tab_policies: {},
   };
 
   routeKeys: string[] = [];
@@ -153,11 +154,53 @@ export class AddPolicyComponent {
       deleteIncident: false,
     }
 
+    const tab_policies = {
+      Dashboard: false,
+      menuItems: false,
+      Orders: false,
+      Reviews: false,
+      User: false,
+      vendorInfo: false,
+      menuCounters: false,
+      auditReports: false,
+      outletBasicDetails: false,
+      outletMenu: false,
+      outletQrMenu: false,
+      outletOrders: false,
+      outletReviews: false,
+      eventBasicDetails: false,
+      eventMenu: false,
+      eventOrders: false,
+      eventReviews: false,
+      vendorFirmDetails: false,
+      wallets: false,
+      orderReport: false,
+      userDetails: false,
+      customerOutletOrder: false,
+      customerWallet: false,
+      companyWallet: false,
+      wellnessReport: false,
+      orgDetails: false,
+      compliance: false,
+      bulkMenuSection: false,
+      employeeBulkMenu: false,
+      virtualCafeteria: false,
+      dailyOrderMenu: false,
+      consumptionMenu: false,
+      employeeList: false,
+      outletEmployee: false,
+      virtualCafeteriaEmployee: false,
+      qrEmployee: false,
+      emailConfig: false,
+    }
+
     this.policyObj.route_policies = { ...defaultPolicy };
     this.policyObj.button_policies = { ...button_policies };
+    this.policyObj.tab_policies = { ...tab_policies };
 
     this.routeKeys = Object.keys(this.policyObj.route_policies);
     this.buttonKeys = Object.keys(this.policyObj.button_policies);
+    this.tabKeys = Object.keys(this.policyObj.tab_policies);
   }
 
   async loadPolicies() {
@@ -181,6 +224,7 @@ export class AddPolicyComponent {
       // Ensure backward compatibility (missing keys get added)
       Object.assign(this.policyObj.route_policies, policy.route_policies);
       Object.assign(this.policyObj.button_policies, policy.button_policies);
+      Object.assign(this.policyObj.tab_policies, policy.tab_policies || {});
 
       this.policyObj.policy_name = policy.policy_name;
       this.policyObj.policy_description = policy.policy_description;
@@ -219,6 +263,7 @@ export class AddPolicyComponent {
     if (policy) {
       this.policyObj.route_policies = { ...policy.route_policies };
       this.policyObj.button_policies = { ...policy.button_policies };
+      this.policyObj.tab_policies = { ...policy.tab_policies || {} };
     }
   }
 
@@ -237,4 +282,13 @@ export class AddPolicyComponent {
   cancelPolicy() {
     this.router.navigate(['policy']);
   }
+
+  // tab policy  features adding 
+  tabKeys: string[] = [];
+  selectAllTabs() {
+    Object.keys(this.policyObj.tab_policies).forEach(
+      (key) => (this.policyObj.tab_policies[key] = true)
+    );
+  }
+
 }

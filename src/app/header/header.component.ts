@@ -296,19 +296,45 @@ export class HeaderComponent implements OnInit, OnDestroy {
         if (adminPolicy && adminPolicy.length > 0) {
           this.adminProfile.policy = adminPolicy;
           const routePolicies = this.adminProfile.policy[0].route_policies;
+          const tabPolicies = this.adminProfile.policy[0].tab_policies || {};
+
+          // Mapping for Dashboard Module (sidebar items for ORGADMIN)
+          const dashboardTabMap: { [key: string]: string } = {
+            'orgDashboard': 'Dashboard',
+            'orgMenuItems': 'menuItems',
+            'outletExcelExport': 'Orders',
+            'orgReviews': 'Reviews',
+            'customer': 'User',
+            'orgVendorInfo': 'vendorInfo',
+            'orgMenuCounters': 'menuCounters',
+            'auditReport': 'auditReports'
+          };
 
           this.finalNavOption.forEach((el: any) => {
-            el.showParent = routePolicies[el.route] ? true : false;
-
-            if (el.children) {
-              el.children?.forEach((childEl: any) => {
-                if (routePolicies && routePolicies[childEl.route]) {
+            // Check if it's a Dashboard Module item for Org Admin
+            const dashboardPolicyKey = dashboardTabMap[el.route];
+            if (this.isOrgAdmin && dashboardPolicyKey && tabPolicies[dashboardPolicyKey] === false) {
+              el.showParent = false;
+            } else if (el.name?.trim().toLowerCase() === 'policy') {
+              el.showParent = true;
+              if (el.children) {
+                el.children.forEach((childEl: any) => {
                   childEl.showChild = true;
-                  el.showParent = true;
-                } else {
-                  childEl.showChild = false;
-                }
-              });
+                });
+              }
+            } else {
+              el.showParent = routePolicies[el.route] ? true : false;
+
+              if (el.children) {
+                el.children?.forEach((childEl: any) => {
+                  if (routePolicies && routePolicies[childEl.route]) {
+                    childEl.showChild = true;
+                    el.showParent = true;
+                  } else {
+                    childEl.showChild = false;
+                  }
+                });
+              }
             }
           });
         }

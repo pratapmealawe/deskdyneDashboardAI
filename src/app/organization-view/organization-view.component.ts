@@ -98,11 +98,39 @@ export class OrganizationViewComponent implements OnInit {
   showBulkMenuHeader = false;
   isMenuAvailable = false;
 
+  tabPolicy: any;
+
   constructor(private policyService: PolicyService) { }
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.orgViewList = this.orgViewList.filter((item) => this.btnPolicy[item.path] !== false);
+    this.tabPolicy = this.policyService.getCurrentTabPolicy();
+
+    // Mapping of tab paths to policy keys for Organization module
+    const orgTabMap: { [key: string]: string } = {
+      'orgDetails': 'orgDetails',
+      'organizationCompliance': 'compliance',
+      'bulkMenuSection': 'bulkMenuSection',
+      'employeebulkmenu': 'employeeBulkMenu',
+      'virtualCafeteriaOutlet': 'virtualCafeteria',
+      'dailyOrderMenu': 'dailyOrderMenu',
+      'consumptionOrder': 'consumptionMenu',
+      'employeeList': 'employeeList',
+      'outletEmployee': 'outletEmployee',
+      'vcEmployee': 'virtualCafeteriaEmployee',
+      'companyWallet': 'companyWallet',
+      'qrEmployee': 'qrEmployee',
+      'emailConfig': 'emailConfig'
+    };
+
+    this.orgViewList = this.orgViewList.filter((item: any) => {
+      const policyKey = orgTabMap[item.path];
+      if (policyKey && this.tabPolicy[policyKey] === false) {
+        return false;
+      }
+      return true;
+    });
+
     this.initializeTabs();
     this.initializeCafeteria();
   }

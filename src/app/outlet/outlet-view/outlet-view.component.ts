@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-outlet-view',
@@ -20,11 +21,43 @@ export class OutletViewComponent implements OnInit {
   ];
   selectedTab = 'outlet-details';
   updateval: any = false;
+  tabPolicy: any;
 
-  constructor(private router: Router, private sendDataToComponent: SendDataToComponent) { }
+  constructor(
+    private router: Router,
+    private sendDataToComponent: SendDataToComponent,
+    private policyService: PolicyService
+  ) { }
 
   ngOnInit(): void {
-    window.scrollTo(0, 0)
+    window.scrollTo(0, 0);
+    this.tabPolicy = this.policyService.getCurrentTabPolicy();
+
+    const outletTabMap: { [key: string]: string } = {
+      'outlet-details': 'outletBasicDetails',
+      'outlet-menu': 'outletMenu',
+      'qr-menu': 'outletQrMenu',
+      'outlet-orders': 'outletOrders',
+      'outlet-feedback': 'outletReviews'
+    };
+
+    this.outletViewList = this.outletViewList.filter((item: any) => {
+      const policyKey = outletTabMap[item.path];
+      if (policyKey && this.tabPolicy[policyKey] === false) {
+        return false;
+      }
+      return true;
+    });
+
+    if (this.selectedTab) {
+      const foundIndex = this.outletViewList.findIndex(x => x.path === this.selectedTab);
+      if (foundIndex === -1 && this.outletViewList.length > 0) {
+        this.selectedTab = this.outletViewList[0].path;
+        this.selectedtab = 0;
+      } else {
+        this.selectedtab = foundIndex >= 0 ? foundIndex : 0;
+      }
+    }
   }
 
   gotToTab(tab: string) {

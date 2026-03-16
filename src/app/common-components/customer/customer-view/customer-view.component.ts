@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-customer-view',
@@ -20,17 +21,39 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   selectedTab = 'userDetails';
   selectedTabIndex: number = 0;
 
-  constructor() { }
+  tabPolicy: any;
+
+  constructor(private policyService: PolicyService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     // console.log(this.userDetails)
   }
 
   ngOnInit(): void {
-    // console.log(this.userDetails)
+    this.tabPolicy = this.policyService.getCurrentTabPolicy();
+
+    const customerTabMap: { [key: string]: string } = {
+      'userDetails': 'userDetails',
+      'outletOrders': 'customerOutletOrder',
+      'wallet': 'customerWallet',
+      'companyWallet': 'companyWallet',
+      'wellnessReport': 'wellnessReport'
+    };
+
+    this.userViewList = this.userViewList.filter((item: any) => {
+      const policyKey = customerTabMap[item.path];
+      if (policyKey && this.tabPolicy[policyKey] === false) {
+        return false;
+      }
+      return true;
+    });
+
     if (this.selectedTab) {
       const foundIndex = this.userViewList.findIndex(x => x.path === this.selectedTab);
       this.selectedTabIndex = foundIndex >= 0 ? foundIndex : 0;
+      if (this.selectedTabIndex === 0 && this.userViewList.length > 0) {
+        this.selectedTab = this.userViewList[0].path;
+      }
     }
   }
 

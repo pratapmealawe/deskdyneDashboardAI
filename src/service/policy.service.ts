@@ -5,11 +5,15 @@ import { LocalStorageService } from './local-storage.service';
   providedIn: 'root',
 })
 export class PolicyService {
-  constructor(private localStorageService: LocalStorageService) {}
+  constructor(private localStorageService: LocalStorageService) { }
 
   getCurrentButtonPolicy() {
-    // const policy = this.localStorageService.getCacheData('ADMIN_PROFILE');
-    // return policy?.policy[0]?.button_policies;
-    return {};
+    const policy = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    return policy?.policy[0]?.button_policies || {};
+  }
+
+  getCurrentTabPolicy() {
+    const policy = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    return policy?.policy[0]?.tab_policies || {};
   }
 }

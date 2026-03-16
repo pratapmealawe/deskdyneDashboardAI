@@ -83,6 +83,24 @@
     </mat-chip-listbox>
   </mat-card>
 
+  <!-- tab acsees -->
+  <mat-card class="mb-3">
+    <div class="section-header">
+      <h5 class="section-title">Tab Access</h5>
+
+      <button mat-button color="primary" class="select-btn" (click)="selectAllTabs()">
+        Select All
+      </button>
+    </div>
+
+    <mat-chip-listbox class="chip-list" multiple>
+      <mat-chip-option *ngFor="let item of tabKeys" [selected]="policyObj.tab_policies[item]"
+        (click)="policyObj.tab_policies[item] = !policyObj.tab_policies[item]">
+        {{ item }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </mat-card>
+
   <!-- ACTION BUTTONS -->
   <div class="action-buttons">
     <button class="btn-add" mat-raised-button *ngIf="!editMode" (click)="addPolicy()">
