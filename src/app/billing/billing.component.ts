@@ -23,7 +23,6 @@ export class BillingComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.adminOrg);
     if (this.billingTypes.length) {
       this.selectedTab = this.billingTypes[0].type;
       this.selectedTabIndex = 0;

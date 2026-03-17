@@ -22,7 +22,7 @@
         <mat-icon>{{ getStatusIcon(order?.orderstatus) }}</mat-icon>
         {{ getStatusLabel(order?.orderstatus) }}
       </div>
-      <div class="card-actions">
+      <div class="card-actions" *ngIf="showActions">
         <ng-container *ngFor="let action of actionList">
           <button mat-flat-button [color]="action.color === 'warn' ? 'warn' : 'primary'" class="action-btn"
             (click)="handleAction(action.action)">

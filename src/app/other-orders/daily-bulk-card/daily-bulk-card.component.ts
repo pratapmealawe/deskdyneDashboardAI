@@ -16,6 +16,7 @@ export class DailyBulkCardComponent implements OnInit {
   @ViewChild('historyDialogTpl') historyDialogTpl!: TemplateRef<any>;
   @ViewChild('imagePreviewTpl') imagePreviewTpl!: TemplateRef<any>;
   @Input() orderInput: any;
+  @Input() showActions: boolean = true;
   @Output() updateOrder = new EventEmitter<any>();
   imageUrl = environment.imageUrl;
   showEmployees: boolean = true;

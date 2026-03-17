@@ -281,40 +281,10 @@ export class BulkOrderCardComponent implements OnInit {
     // Detailed view (this.order) has priority
     if (this.order && this.order.deliveryTaskId) {
       try {
-        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(
-          this.order.deliveryTaskId,
+        await this.deliveryOrderService.trackDeliveryTask(
+          this.order,
           this.order.deliveryVendor
         );
-        this.order.deliveryTaskState = deliveryOrderStatus.state;
-        console.log(deliveryOrderStatus.state);
-
-        if (deliveryOrderStatus && deliveryOrderStatus.eta) {
-          this.order.pickupEta = deliveryOrderStatus.eta.pickup;
-          this.order.dropoffEta = deliveryOrderStatus.eta.dropoff;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.sfx_order_id) {
-          this.order.sfx_order_id = deliveryOrderStatus.sfx_order_id;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.runner) {
-          this.order.runnerName = deliveryOrderStatus.runner.name;
-          this.order.runnerPhone = deliveryOrderStatus.runner.phone_number;
-          this.order.runnerLocation = deliveryOrderStatus.runner.location;
-        }
-
-        if (
-          deliveryOrderStatus.state === 'runner_cancelled' ||
-          deliveryOrderStatus.state === 'cancelled'
-        ) {
-          this.order.runnerName = undefined;
-          this.order.runnerPhone = undefined;
-          this.order.runnerLocation = undefined;
-        }
-
-        if (deliveryOrderStatus.state === 'CANCELLED') {
-          this.order.deliveryTaskState = 'cancelled';
-        }
       } catch (error) {
         console.log('error while tracking delivery task', error);
       }
@@ -322,35 +292,10 @@ export class BulkOrderCardComponent implements OnInit {
     // Summary view, we still want live status
     else if (this.orderInput && this.orderInput.deliveryTaskId) {
       try {
-        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(
-          this.orderInput.deliveryTaskId,
+        await this.deliveryOrderService.trackDeliveryTask(
+          this.orderInput,
           this.orderInput.deliveryVendor
         );
-        this.orderInput.deliveryTaskState = deliveryOrderStatus.state;
-
-        if (deliveryOrderStatus && deliveryOrderStatus.eta) {
-          this.orderInput.pickupEta = deliveryOrderStatus.eta.pickup;
-          this.orderInput.dropoffEta = deliveryOrderStatus.eta.dropoff;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.sfx_order_id) {
-          this.orderInput.sfx_order_id = deliveryOrderStatus.sfx_order_id;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.runner) {
-          this.orderInput.runnerName = deliveryOrderStatus.runner.name;
-          this.orderInput.runnerPhone = deliveryOrderStatus.runner.phone_number;
-          this.orderInput.runnerLocation = deliveryOrderStatus.runner.location;
-        }
-
-        if (
-          deliveryOrderStatus.state === 'runner_cancelled' ||
-          deliveryOrderStatus.state === 'cancelled'
-        ) {
-          this.orderInput.runnerName = undefined;
-          this.orderInput.runnerPhone = undefined;
-          this.orderInput.runnerLocation = undefined;
-        }
       } catch (error) {
         console.log('error while tracking delivery task', error);
       }

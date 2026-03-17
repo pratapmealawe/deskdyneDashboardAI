@@ -57,7 +57,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   modalRef: any;
 
 
-  constructor(private ddApiMainService: ApiMainService, private modalService: NgbModal, private fb: FormBuilder) { }
+  constructor(private apiMainService: ApiMainService, private modalService: NgbModal, private fb: FormBuilder) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     console.log(this.orgObj);
@@ -138,7 +138,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
 
     this.modalRef.dismiss();
 
-    const res = await this.ddApiMainService.updateConsumptionMenu(this.orgObj._id, this.cafeOriginalId, obj);
+    const res = await this.apiMainService.updateConsumptionMenu(this.orgObj._id, this.cafeOriginalId, obj);
     console.log(res);
     this.fetchOrgMeals();
 
@@ -194,7 +194,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
 
   async fetchOrgMeals() {
     try {
-      const result = await this.ddApiMainService.getConsumptionOrderByOrgId(this.orgObj._id)
+      const result = await this.apiMainService.getConsumptionOrderByOrgId(this.orgObj._id)
       this.consumptionList = result;
     }
     catch (error) {
@@ -231,7 +231,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
         }))
       }
 
-      const res = await this.ddApiMainService.addConsumptionOrderList(transformedConsumptionList);
+      const res = await this.apiMainService.addConsumptionOrderList(transformedConsumptionList);
       if (res) {
         this.addMultipleConsumptionList = [];
         this.fetchOrgMeals();

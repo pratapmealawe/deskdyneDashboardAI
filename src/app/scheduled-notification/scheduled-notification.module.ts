@@ -18,6 +18,9 @@ import { MaterialModule } from '../material.module';
         FormsModule,
         ReactiveFormsModule,
         MaterialModule
+    ],
+    exports: [
+        CreateNotificationComponent
     ]
 })
 export class ScheduledNotificationModule { }

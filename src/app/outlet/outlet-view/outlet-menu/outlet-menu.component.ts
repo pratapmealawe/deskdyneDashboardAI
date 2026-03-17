@@ -24,6 +24,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { ToasterService } from 'src/service/toaster.service';
+import { BulkMenuUploadDialogComponent } from '../bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -946,6 +947,26 @@ Nutrient Conversion Factors:
   compareNutrition(o1: any, o2: any): boolean {
     if (!o1 || !o2) return o1 === o2;
     return o1.id === o2.id;
+  }
+
+  openUploadExcelPopup() {
+    const dialogRef = this.dialog.open(BulkMenuUploadDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        outletId: this.outletObj._id,
+        outletObj: this.outletObj
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        if (result.menuList) {
+          this.outletObj.menuList = result.menuList;
+          this.init();
+        }
+      }
+    });
   }
 
 }

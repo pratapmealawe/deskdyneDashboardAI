@@ -47,7 +47,7 @@ export class B2bCurrentOrdersComponent implements OnInit {
     waitingForApproval: 0
   };
 
-  constructor(private ddApiMainService: ApiMainService, private sendDataToComponent: SendDataToComponent, private utilityService: UtilityService) { }
+  constructor(private apiMainService: ApiMainService, private sendDataToComponent: SendDataToComponent, private utilityService: UtilityService) { }
 
   ngOnInit(): void {
     this.getCurrentOrders(false);
@@ -106,10 +106,10 @@ export class B2bCurrentOrdersComponent implements OnInit {
       let orderList: any = [];
       let bulkOrderList: any = [];
       if (showB2B) {
-        orderList = await this.ddApiMainService.getb2bBulkOrderList(status, this.page, this.pageLimit)
+        orderList = await this.apiMainService.getb2bBulkOrderList(status, this.page, this.pageLimit)
       }
       else if (showDailyBulk) {
-        orderList = await this.ddApiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit)
+        orderList = await this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit)
       }
       if (orderList && orderList.length > 0) {
         this.pageFirstEntry = ((page - 1) * this.pageLimit) + 1;
@@ -136,7 +136,7 @@ export class B2bCurrentOrdersComponent implements OnInit {
       this.page = 1;
       this.lastPage = 1;
       this.paginationOver = false;
-      const orderList = await this.ddApiMainService.getCurrentB2BOrdersCount();
+      const orderList = await this.apiMainService.getCurrentB2BOrdersCount();
       this.orderStatusCountObj = orderList;
     } catch (error) {
       console.log('error while searching orders ', error);
@@ -154,20 +154,20 @@ export class B2bCurrentOrdersComponent implements OnInit {
     const after1Day = new Date((new Date()).setDate(currentDate.getDate() + 1)).setHours(0, 0, 0, 0);
     const after2Day = new Date((new Date()).setDate(currentDate.getDate() + 2)).setHours(0, 0, 0, 0);
     if (day === 'today') {
-      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({ deliveryStartDate: currentDate, deliveryEndDate: currentDate });
+      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: currentDate, deliveryEndDate: currentDate });
       if (filteredList && filteredList.length > 0) {
         console.log(filteredList)
         this.filteredList = filteredList;
       }
     }
     else if (day === 'tomorrow') {
-      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({ deliveryStartDate: after1Day, deliveryEndDate: after1Day });
+      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: after1Day, deliveryEndDate: after1Day });
       if (filteredList && filteredList.length > 0) {
         this.filteredList = filteredList;
       }
     }
     else {
-      const filteredList = await this.ddApiMainService.getCafeteriasPollingList({ deliveryStartDate: after2Day, deliveryEndDate: after2Day });
+      const filteredList = await this.apiMainService.getCafeteriasPollingList({ deliveryStartDate: after2Day, deliveryEndDate: after2Day });
       if (filteredList && filteredList.length > 0) {
         this.filteredList = filteredList;
       }

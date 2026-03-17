@@ -1,10 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/app/material.module';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { MlApiMainService } from 'src/service/apiService/mlApiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
@@ -27,7 +26,7 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   activeWeekIndex: number = 0;
   showRequiredError: boolean = false;
   categoryKey: string = 'breakfast'; // Default or determined dynamically
-  
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddEditPackageWeeklyMenuComponent>,

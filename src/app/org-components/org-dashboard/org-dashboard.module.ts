@@ -10,6 +10,7 @@ import { HyperpureDashboardComponent } from './hyperpure-dashboard/hyperpure-das
 import { OrgDashboardFilterDialogComponent } from './main-dashboard/org-dashboard-filter-dialog/org-dashboard-filter-dialog.component';
 import { MaterialModule } from 'src/app/material.module';
 import { MAT_DATE_LOCALE } from '@angular/material/core';
+import { OtherOrdersModule } from 'src/app/other-orders/other-orders.module';
 
 @NgModule({
   declarations: [OrgDashboardComponent, MainDashboardComponent, HyperpureDashboardComponent, OrgDashboardFilterDialogComponent],
@@ -19,9 +20,10 @@ import { MAT_DATE_LOCALE } from '@angular/material/core';
     FormsModule,
     ReactiveFormsModule,
     HighchartsChartModule,
-    MaterialModule
+    MaterialModule,
+    OtherOrdersModule
   ],
-  providers: [    { provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }
   ],
   exports: [OrgDashboardComponent]
 })

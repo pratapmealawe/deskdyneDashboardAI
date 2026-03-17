@@ -1,0 +1,877 @@
+<div class="container-fluid">
+    <div class="card order-card border-0 shadow-sm rounded-4 w-100 mx-auto p-0">
+
+        <div class="p-2">
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2 p-2">
+                <div class="d-flex flex-wrap gap-2">
+                    <span *ngIf="orderInput.orderType" class="badge fw-semibold px-3 py-2 rounded-pill"
+                        [ngClass]="getBadgeClass(orderInput.orderType)">
+                        {{ orderInput.orderType | uppercase }}<span *ngIf="order.isTrial">-TRIAL</span>
+                    </span>
+                    <span *ngIf="orderInput.mealPackage" class="badge fw-semibold px-3 py-2 rounded-pill"
+                        [ngClass]="getBadgeClassForMealPackage(orderInput?.mealPackage.packageType)">{{orderInput?.mealPackage.packageType
+                        |
+                        uppercase}}</span>
+                    <span *ngIf="orderInput?.mealTimeLunch && !orderInput?.mealTimeDinner"
+                        class="badge badge-lunch border fw-semibold text-white px-3 py-2 rounded-pill">LUNCH
+                    </span>
+                    <span *ngIf="orderInput?.mealTimeDinner && !orderInput?.mealTimeLunch"
+                        class="badge badge-dinner border fw-semibold text-white px-3 py-2 rounded-pill">DINNER
+                    </span>
+                    <span *ngIf="orderInput?.mealTimeLunch && orderInput?.mealTimeDinner"
+                        class="badge badge-lunch-dinner border fw-semibold text-white px-3 py-2 rounded-pill">
+                        LUNCH + DINNER
+                    </span>
+                    <span *ngIf="orderInput?.mealTimeBreakfast"
+                        class="badge badge-breakfast border fw-semibold text-white px-3 py-2 rounded-pill">
+                        BREAKFAST
+                    </span>
+                </div>
+                <div class="d-flex justify-content-end align-items-center">
+                    <span class="badge border fw-semibold px-3 py-2 rounded-pill me-2"
+                        [ngClass]="getBadgeClassForOrderStatus(orderInput.orderstatus)">{{orderInput.orderstatus}}</span>
+                    <span
+                        class="badge bg-light border fw-semibold text-dark px-3 py-2 rounded-pill me-2">{{orderInput.orderDate
+                        | date:'MMM d, y'}}</span>
+                    <span
+                        class="badge bg-light border fw-semibold text-dark px-3 py-2 rounded-pill me-2">{{orderInput.orderNo}}</span>
+                    <i class=" bi bi-pencil-square" *ngIf="!editMode" (click)="onEditOrder(orderInput)"></i>
+                    <i class="bi bi bi-x" *ngIf="editMode" (click)="toggleEditMode()"></i>
+                </div>
+            </div>
+
+            <!-- Customer Summary -->
+            <div class="row">
+                <div class="col-12 col-md-6 ps-3">
+                    <span class="text-muted">Customer Details :</span>
+                    <div class="row g-0 border rounded-3 mb-2 p-2 small align-items-center text-center">
+                        <div class="col-12 col-md-3" *ngIf="orderInput?.customerName">
+                            <div class="text-muted"><i class="bi bi-person me-1"></i> {{orderInput.customerName}}</div>
+                        </div>
+                        <div class="col-12 col-md-3" *ngIf="orderInput.clusterName">
+                            <div class="text-muted"><i class="bi bi-geo-alt me-1"></i>{{orderInput.clusterName}}</div>
+                        </div>
+                        <div class="col-12 col-md-3" *ngIf="orderInput?.customerPhoneNo">
+                            <div><i class="bi bi-telephone me-1"></i>{{orderInput.customerPhoneNo}}</div>
+                        </div>
+                        <div class="col-12 col-md-3"
+                            *ngIf="order.mealType === 'Breakfast' && orderInput.orderType != 'apartment'">
+                            <div class="labelData"><i class="bi bi-clock me-1"></i>{{order?.subscriptionBreakfastSlot}}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3"
+                            *ngIf="order.mealType === 'Lunch' && orderInput.orderType != 'apartment'">
+                            <div class="labelData"><i class="bi bi-clock me-1"></i>{{order?.subscriptionLunchSlot}}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3"
+                            *ngIf="order.mealType === 'Dinner' && orderInput.orderType != 'apartment'">
+                            <div class="labelData"><i class="bi bi-clock me-1"></i>{{order?.subscriptionDinnerSlot}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kitchen Summary -->
+                <div class="col-12 col-md-6 ps-3">
+                    <span class="text-muted">Kitchen Details :</span>
+                    <div class="row g-0 border rounded-3 mb-2 p-2 small align-items-center text-center">
+                        <div class="col-12 col-md-3" *ngIf="orderInput.kitchenName">
+                            <div class="text-muted"><i class="bi bi-fork-knife me-1"></i>{{orderInput.kitchenName}}
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-3" *ngIf="orderInput.kitchenPhoneNo">
+                            <div><i class="bi bi-telephone me-1"></i>{{orderInput.kitchenPhoneNo}}</div>
+                        </div>
+                        <div class="col-12 col-md-3" *ngIf="orderInput.deliveryVendor">
+                            <div><i class="bi bi-people-fill me-1"></i>{{orderInput.deliveryVendor}}</div>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <div class="labelData" [ngClass]="{orange:orderInput.orderCreatedBy === 'DDUser'}">
+                                <i class="bi bi-person-add me-1"></i>{{orderInput.orderCreatedBy}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Item Summary -->
+            <div class="row mt-2 px-3">
+                <div class="col-12 col-md-6 ps-0">
+                    <table class="table table-bordered text-center">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Package</th>
+                            </tr>
+                        </thead>
+
+                        <tbody *ngIf="orderInput?.mealPackage.packageName; else noMenu">
+                            <tr>
+                                <td class="text-muted">{{orderInput?.mealPackage.packageName}}</td>
+                            </tr>
+                        </tbody>
+                        <!-- <thead class="table-light">
+                            <tr>
+                                <th scope="col">Day</th>
+                                <th scope="col">Menu Description</th>
+                                <th scope="col">Type</th>
+                            </tr>
+                        </thead>
+
+                        <tbody *ngIf="orderInput?.mealPackage.menuList?.length; else noMenu">
+                            <tr *ngFor="let menu of orderInput?.mealPackage?.menuList">
+                                <td class="fw-semibold">{{ menu.dayText }}</td>
+                                <td class="text-start">{{ menu.description }}</td>
+                                <td>
+                                    <span class="badge"
+                                        [ngClass]="menu.menuType === 'Veg' ? 'bg-success' : 'bg-danger'">
+                                        {{ menu.menuType }}
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody> -->
+                    </table>
+                    <ng-template #noMenu>
+                        <div class="text-center text-muted py-3 w-100">
+                            No items found.
+                        </div>
+                    </ng-template>
+                </div>
+                <div class="col-12 col-md-6 border rounded-3 mb-2 p-2 small align-items-center text-center">
+                    <div class="row mt-2" *ngIf="hasSelectedAddons; else noAddons">
+                        <h6 class="text-start">Meal Package Addons :</h6>
+                        <div class="d-flex flex-wrap">
+                            <div class="addon-box p-2" *ngFor="let addon of packageAddonsList">
+
+                                <p class="labelText text-start mb-0">
+                                    {{ addon.addonName }}:
+                                    <span class="labelData">
+                                        {{ addon.selected ? addon.selected : 'N/A' }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <ng-template #noAddons>
+                        <div class="text-center">No addons found</div>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="card-footer border-0 d-flex flex-column align-items-center py-2 rounded-bottom-4">
+            <div class="d-flex justify-content-around align-items-center flex-wrap gap-3 w-100">
+
+
+            </div>
+            <!-- Order Details -->
+            <div class="footer-expand p-3 bg-white border-top mt-3 w-100" *ngIf="selectedTab">
+                <div *ngIf="selectedTab ==='Order Details'">
+                    <div class="row">
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Order No: <span class="labelData">{{order?.orderNo}}</span>
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Order Status: <span
+                                    [ngClass]="order.orderstatus === 'placed' || order.orderstatus === 'accepted' || order.orderstatus === 'readyToDelivery' || order.orderstatus === 'deliveryBoyAssigned' || order.orderstatus === 'handedOverToDeliveryBoy' || order.orderstatus === 'placed' || order.orderstatus === 'delivered' || order.orderstatus === 'onTheWay' ? 'green' : order.orderstatus === 'paymentFailed' || order.orderstatus === 'cancelledByKitchen' || order.orderstatus === 'rejectedByKitchen' || order.orderstatus === 'cancelledByUser' ? 'red' : 'yellow'"
+                                    class="labelData">{{order.orderstatus}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Order Type: <span
+                                    [ngClass]="(order.orderType === 'subscription' ||  order.orderType === 'subscriptionPackage') ? 'blue' : 'orange'"
+                                    class="labelData">{{order.orderType}}</span> <span
+                                    *ngIf="order.isTrial">-Trial</span></p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Receipt No: <span class="labelData">{{order?.receipt}}</span>
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Special Request: <span
+                                    class="labelData">{{order?.specialRequest}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Distance: <span class="labelData">{{order?.distance}}</span>
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-3" *ngIf="order.mealType === 'Breakfast'">
+                            <p class="labelText mb-0">Breakfast Slot: <span
+                                    class="labelData">{{order?.subscriptionBreakfastSlot}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-3" *ngIf="order.mealType === 'Lunch'">
+                            <p class="labelText mb-0">Lunch Slot: <span
+                                    class="labelData">{{order?.subscriptionLunchSlot}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-3" *ngIf="order.mealType === 'Dinner'">
+                            <p class="labelText mb-0">Dinner Slot: <span
+                                    class="labelData">{{order?.subscriptionDinnerSlot}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Clustor: <span class="labelData">{{order?.clusterName}}</span></p>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="order?.orderCreatedBy === 'DDUser' && order?.organization_name">
+                        <div class="col-6 col-md-4 col-lg-2">
+                            <div class="labelText">Organization Name</div>
+                            <div class="labelData" [ngClass]="{orange:order.orderCreatedBy === 'DDUser'}">
+                                {{order.organization_name}}</div>
+                        </div>
+                    </ng-container>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-3 d-flex">
+                            <div class="labelText me-2 mb-0">Package Name:</div>
+
+                            <div *ngIf="order?.mealPackage.packageType === 'Veg'" class="vegIcon typeIcon me-2">
+                            </div>
+
+                            <div *ngIf="order?.mealPackage.packageType === 'NonVeg'" class="nonvegIcon typeIcon me-2">
+                            </div>
+
+                            <div *ngIf="order?.mealPackage.packageType === 'Jain'" class="jainIcon typeIcon me-2">
+                            </div>
+
+                            <div class="labelData">{{ order?.mealPackage.packageName }}</div>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Package Price:
+                                <span class="labelData">{{order?.mealPackage.packagePrice}} x
+                                    {{order?.mealPackage.count}}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Package Days:
+                                <span class="labelData">{{order?.mealPackage.days}}</span>
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Description:
+                                <span class="labelData">{{order?.mealPackage.vegMealDescription}}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-3" *ngIf="!order?.multiDateAllowed">
+                            <p class="labelText mb-0">Subscription StartDate:
+                                <span class="labelData text-danger"
+                                    *ngIf="!editOrderDate">{{order?.subscriptionStartDate|
+                                    date:
+                                    'MMM d, y'}}</span>
+                            </p>
+                            <input type="date" class="form-control" id="startDate" [min]="today" *ngIf="editOrderDate"
+                                [(ngModel)]="newSubscriptionDate" placeholder="startDate">
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Subscription Days:
+                                <span class="labelData">{{order?.subscriptionDays}} Days</span>
+                            </p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Subscription For:
+                                <span class="labelData" *ngIf="order?.mealTimeLunch">Lunch</span>
+                                <span class="labelData" *ngIf="order?.mealTimeLunch && order?.mealTimeDinner">
+                                    & </span>
+                                <span class="labelData" *ngIf="order?.mealTimeDinner">Dinner</span>
+                                <span class="labelData" *ngIf="order?.mealTimeBreakfast">Breakfast</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-12 col-lg-12" *ngIf="order?.multiDateAllowed">
+                            <p class="labelText mb-0">User Selected Dates:
+                                <span class="labelData userDates text-danger"
+                                    *ngFor="let userDate of order?.userSelectedDates; let last = last">{{userDate |
+                                    date:
+                                    'MMM d, y'}}
+                                    <span class="bold" *ngIf="!last">| </span></span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Slab1 Price: <span class="labelData">
+                                    {{order?.mealPackage.payToKitchenPerMeal}}
+                                    <input *ngIf="isEditPrice" class="form-control" type="number" name="slab1"
+                                        id="slab1" [(ngModel)]="order.mealPackage.payToKitchenPerMeal">
+                                </span></p>
+                        </div>
+                        <div class="col-12 col-md-3">
+                            <p class="labelText mb-0">Slab2 Price: <span class="labelData">
+                                    {{order?.mealPackage.payToKitchenPerMeal2}}
+                                    <input *ngIf="isEditPrice" class="form-control" type="number" name="slab2"
+                                        id="slab2" [(ngModel)]="order.mealPackage.payToKitchenPerMeal2">
+                                </span></p>
+                        </div>
+
+                    </div>
+                    <div class="row mt-2 meal-pckg-addons" *ngIf="packageAddonsList.length > 0 && hasSelectedAddons">
+                        <h6>Meal Package Addons :</h6>
+                        <div class="d-flex flex-wrap">
+                            <div class="addon-box p-2" *ngFor="let addon of packageAddonsList">
+
+                                <p class="labelText text-start mb-0">
+                                    {{ addon.addonName }}:
+                                    <span class="labelData">
+                                        {{ addon.selected ? addon.selected : 'N/A' }}
+                                    </span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="labelText mt-2">Don't Send Cutlery: <span class="red">{{order?.dontSendCutlery}}</span>
+                    </div>
+                    <div class="row mt-2 align-items-start">
+                        <div class="col-auto">
+                            <h6 class="mb-0">Delivery Partner Instruction :</h6>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-12 col-md-4">
+                                    <p class="labelText mb-0">
+                                        Keep at doorstep:
+                                        <span class="labelData">
+                                            {{ getInstructionStatus('Keep at doorstep') ? 'True' : 'False' }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <p class="labelText mb-0">
+                                        Leave at reception or with guard:
+                                        <span class="labelData">
+                                            {{ getInstructionStatus('Leave at reception or with guard') ? 'True' :
+                                            'False' }}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="col-12 col-md-4">
+                                    <p class="labelText mb-0">
+                                        Beware of pets:
+                                        <span class="labelData">
+                                            {{ getInstructionStatus('Beware of pets') ? 'True' : 'False' }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2 align-items-start">
+                        <div class="col-auto">
+                            <h6 class="mb-0">Special Instruction :</h6>
+                        </div>
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-12 col-md-4" *ngFor="let instr of order?.specialInstruction">
+                                    <p class="labelText mb-0">
+                                        {{ instr.instruction }}:
+                                        <span class="labelData">
+                                            {{ instr.selected ? 'True' : 'False' }}
+                                        </span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="selectedTab ==='Kitchen Details'">
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <p class="labelText mb-0">Kitchen Name: <span
+                                    class="labelData">{{order?.kitchenName}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <p class="labelText mb-0">Kitchen PhoneNo: <span
+                                    class="labelData">{{order?.kitchenPhoneNo}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <p class="labelText mb-0">deliveryByMealaweBoy: <span
+                                    class="labelData">{{order?.deliveryByMealaweBoy}}</span></p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-4">
+                            <p class="labelText mb-0">Skip Wallet Payment: <span
+                                    class="labelData">{{order?.skipWalletPayment}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-4" *ngIf="order.amtAfterCommisionPaidToKitchen">
+                            <p class="labelText mb-0">Amount Paid to Kitchen: <span
+                                    class="labelData">{{order?.amtAfterCommisionPaidToKitchen}}</span></p>
+                        </div>
+                        <div class="col-6 col-md-4">
+                            <p class="labelText">Kitchen Discount:
+                                <span class="labelData">&#8377; {{order.kitchenDiscount}}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="selectedTab ==='Customer Details'">
+                    <div class="row">
+                        <div class="col-12 col-md-4">
+                            <p class="labelText mb-0">Customer Name: <span
+                                    class="labelData">{{order.customerName}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <p class="labelText mb-0">Customer Phone: <span
+                                    class="labelData">{{order.customerPhoneNo}}</span></p>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <p class="labelText mb-0">Email: <span class="labelData">{{order.customerEmail}}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-12 col-lg-12 col-sm-12" *ngIf="!addressEdit">
+                            <p class="labelText mb-0">Customer Address:
+                                <span class="labelData">{{order.customerLocation.address}},
+                                    {{order.customerLocation.location}} Landmark :
+                                    {{order.customerLocation.landmark}}</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-12 col-md-12 col-lg-12 col-sm-12">
+                            <div class="labelData">
+                                <p class="labelText mb-0">Customer Geolocation:
+                                    <span class="labelData">latitude- {{order.customerLocation.geolocation.lat}},
+                                    </span>
+                                    <span class="labelData">longitude-
+                                        {{order.customerLocation.geolocation.lng}}</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 mt-2" *ngIf="addressEdit">
+                        <label class="form-label">Customer Address</label>
+                        <div *ngIf="addressEdit && !childOrdersEditMode">
+                            <select [(ngModel)]="addressIndex" class="form-select me-2">
+                                <option [value]="i" *ngFor="let address of customerAddressList;index as i">
+                                    {{address.address}}, {{address.location}} Landmark : {{address.landmark}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row" *ngIf="selectedTab ==='Payment Details'">
+                    <div class="col-12 col-md-6 col-lg-6 col-sm-12">
+                        <div class="bilingDiv">
+                            <div class="receiptText">
+                                <div size="12">Receipt</div>
+                            </div>
+                            <div class="header5 receipt3 receipt-parent">
+                                <div class="left-div">Item Amount</div>
+                                <div class="right-div dark">&#8377;
+                                    <span>{{order?.mealPackage.packagePrice * order?.mealPackage.count *
+                                        mealPerdayCount}}</span>
+                                </div>
+                            </div>
+                            <div class="header5 receipt3 receipt-parent" *ngFor="let addon of packageAddonsList">
+                                <ng-container *ngIf="addon.selected">
+                                    <div class="left-div">{{addon.addonName}}:</div>
+                                    <div class="right-div">&#8377; {{addon.userAmount}}</div>
+                                </ng-container>
+                            </div>
+                            <div class="header5 receipt-parent discount" *ngIf="order?.discount">
+                                <div class="left-div">Item Discount</div>
+                                <div class="right-div">(-)&#8377; {{order?.discount}}</div>
+                            </div>
+                            <div class="header5 receipt-parent discount" *ngIf="order?.mealPackage?.ddDiscount">
+                                <div class="left-div">Deskdyne Discount</div>
+                                <div class="right-div">(-)&#8377; {{order?.mealPackage?.ddDiscount}}</div>
+                            </div>
+                            <div class="header5 receipt-parent discount" *ngIf="order?.mealPackage?.subsidyValue">
+                                <div class="left-div">Deskdyne Subsidy</div>
+                                <div class="right-div">(-)&#8377; {{order?.mealPackage?.subsidyValue}}</div>
+                            </div>
+                            <div class="header5 receipt3 receipt-parent" *ngIf="order?.treePlantationAmount">
+                                <div class="left-div">Tree plantation amount</div>
+                                <div class="right-div dark">&#8377;
+                                    <span>{{order?.treePlantationAmount}}</span>
+                                </div>
+                            </div>
+                            <div class="header5 receipt3 receipt-parent" *ngIf="order?.treePlantationDiscount">
+                                <div class="left-div">Tree plantation discount</div>
+                                <div class="right-div dark">(-)&#8377;
+                                    <span>{{order?.treePlantationDiscount}}</span>
+                                </div>
+                            </div>
+
+                            <div class="header5 receipt-parent" *ngIf="order?.taxes">
+                                <div class="left-div">Taxes</div>
+                                <div class="right-div">&#8377; {{(order?.taxes).toFixed(2)}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.subscriptionDeliveryCharges">
+                                <div class="left-div">Delivery Charges</div>
+                                <div class="right-div">&#8377; {{order?.subscriptionDeliveryCharges}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.ecoFriendlyPackagingCharges">
+                                <div class="left-div">Eco Friendly Packaging Charges</div>
+                                <div class="right-div">&#8377; {{order?.ecoFriendlyPackagingCharges}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.platformCharges">
+                                <div class="left-div">Platform Charges</div>
+                                <div class="right-div">&#8377; {{order?.platformCharges}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.platformChargesDiscount">
+                                <div class="left-div">Platform Charges Discount</div>
+                                <div class="right-div">(-)&#8377; {{order?.platformChargesDiscount ?? 0}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent"
+                                *ngIf="order?.subscriptionDeliveryChargesDiscount">
+                                <div class="left-div">Delivery Charges Discount</div>
+                                <div class="right-div">(-)&#8377; {{order?.subscriptionDeliveryChargesDiscount ??
+                                    0}}
+                                </div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.voucherDiscount">
+                                <div class="left-div">Voucher Discount</div>
+                                <div class="right-div">(-)&#8377; {{order?.voucherDiscount}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.couponDiscount">
+                                <div class="left-div">Coupon Discount</div>
+                                <div class="right-div">(-)&#8377; {{order?.couponDiscount}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.cutleryDiscount">
+                                <div class="left-div">No Cutlery Discount</div>
+                                <div class="right-div">(-)&#8377; {{order?.cutleryDiscount}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.moneyWalletPointsUsed">
+                                <div class="left-div">Money Wallet Points Used</div>
+                                <div class="right-div">(-)&#8377; {{order?.moneyWalletPointsUsed}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent" *ngIf="order?.mealaweWalletPointsUsed">
+                                <div class="left-div">Mealawe Wallet Points Used</div>
+                                <div class="right-div">(-)&#8377; {{order?.mealaweWalletPointsUsed}}</div>
+                            </div>
+                            <div class="header5 discount receipt-parent totalAmtdiv">
+                                <div class="left-div bold">Total Amount</div>
+                                <div class="right-div bold">&#8377; {{order?.amount}}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-6 col-sm-12">
+                        <div>
+                            <p class="labelText">Amount Paid By User:
+                                <span class="labelData">&#8377; {{order?.amount}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="labelText">Money Wallet Points Used:
+                                <span class="labelData">&#8377; {{order?.moneyWalletPointsUsed}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="labelText">Voucher Code:
+                                <span class="labelData">{{order?.voucherCode}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="labelText">Coupon Code:
+                                <span class="labelData">{{order?.couponCode}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="labelText">Payment Id:
+                                <span class="labelData">{{order?.payment_id}}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <p class="labelText">Trasaction Id:
+                                <span class="labelData">{{order?.order_id}}</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="selectedTab ==='Refund Details'">
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <p class="labelText">Refund Status:
+                            <span class="labelData">{{order.refund_status}}</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <p class="labelText">Refund Amount:
+                            <span class="labelData">{{order.refund_amount}}</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <p class="labelText">Refund Id:
+                            <span class="labelData">{{order.refund_id}}</span>
+                        </p>
+                    </div>
+                    <div class="col-sm-12 col-md-4 col-lg-3">
+                        <p class="labelText">Reason to cancel:
+                            <span class="labelData">{{order.cancel_comment}}</span>
+                        </p>
+                    </div>
+                </div>
+                <div *ngIf="selectedTab ==='Status History'">
+                    <div class="row g-3">
+                        <div class="col-sm-12 col-md-6 col-lg-3"
+                            *ngFor="let history of order?.statusHistory; index as i">
+                            <div class="p-2 h-100">
+                                <div class="labelText">{{ history.orderstatus }}: </div>
+                                <div class="labelData">{{ history.updatedOn | date: 'd-MMM-yyyy h:mm a' }}</div>
+                                <div class="labelData">{{ history.updatedBy }}</div>
+                                <div class="labelData">{{ history.updateByType }}</div>
+                            </div>
+                        </div>
+
+                        <div class="col-12" *ngIf="order.statusHistory.length === 0">
+                            <p class="text-center mb-0 text-muted">No status history found</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" *ngIf="selectedTab ==='Route Info'">
+                    <div class="col-12 col-md-3" *ngIf="!isEditRouteInfo">
+                        <p class="labelText mb-0">Route No: <span class="labelData">{{order?.routeNo}}</span>
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-4" *ngIf="isEditRouteInfo">
+                        <label class="form-label">Route No</label>
+                        <input class="form-control" type="text" [(ngModel)]="order.routeNo">
+                    </div>
+                    <div class="col-12 col-md-3" *ngIf="!isEditRouteInfo">
+                        <p class="labelText mb-0">Route Rank: <span class="labelData">{{order?.routeRank}}</span>
+                        </p>
+                    </div>
+                    <div class="col-12 col-md-4" *ngIf="isEditRouteInfo">
+                        <label class="form-label">Route Rank</label>
+                        <input class="form-control" type="text" [(ngModel)]="order.routeRank">
+                    </div>
+
+
+                </div>
+                <div class="row" *ngIf="selectedTab ==='RM Info'">
+                    <div class="col-12 col-md-4">
+                        <p class="labelText mb-0">RM ID: <span class="labelData"
+                                *ngIf="order?.rmInfo">{{order?.rmInfo?.rmId}}</span></p>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <p class="labelText mb-0">RM Name: <span class="labelData"
+                                *ngIf="order?.rmInfo">{{order?.rmInfo?.rmName}}</span></p>
+                    </div>
+                </div>
+                <!-- child view/hide order button -->
+                <div class="d-flex justify-content-end mt-2 w-100" *ngIf="order?.dailyOrderList.length > 0">
+                    <button class="btn btn-sm btn-outline-primary" type="button" [disabled]="childOrdersEditMode"
+                        (click)="(childOrdersShow = !childOrdersShow)">{{ childOrdersShow ? 'Hide Child Orders' : 'View
+                        Child Orders' }}</button>
+                </div>
+                <!-- child orders -->
+                <div *ngIf="childOrdersShow">
+                    <div class="row cardDesign mt-3"
+                        *ngFor="let dailyOrder of order?.dailyOrderList | sort: 'orderDate' : -1 ">
+                        <div class="col-12 col-md-4 col-lg-3">
+                            <div class="row align-items-center">
+                                <div *ngIf="childOrdersEditMode && dailyOrder.orderstatus == 'accepted'"
+                                    class="form-check col-1">
+                                    <input class="form-check-input pointer" type="checkbox" id="childOrder"
+                                        (click)="childOrderSelected(dailyOrder)" name="childOrder">
+                                </div>
+                                <div class="col-5 col-md-4 col-lg-5">
+                                    <div class="labelText">Order No.</div>
+                                    <div class="labelData">{{dailyOrder.orderNo}}</div>
+                                </div>
+                                <div class="col-5 col-md-6 col-lg-5">
+                                    <div class="labelText">Order Date</div>
+                                    <div class="labelData">{{dailyOrder.orderDate| date: 'MMM d, y'}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-7" *ngIf="dailyOrder.itemList">
+                            <div class="row" *ngFor="let item of dailyOrder.itemList">
+                                <div class="col-6 col-md-5 col-lg-4">
+                                    <div class="labelText">itemName</div>
+                                    <div class="labelData">{{item.itemName}} x {{item.count}}</div>
+                                </div>
+                                <div class="col-6 col-md-7 col-lg-2">
+                                    <div class="labelText">ItemType</div>
+                                    <div class="labelData">{{item.itemType}}</div>
+                                </div>
+                                <div class="col-6 col-md-7 col-lg-6">
+                                    <div class="labelText">itemDescription</div>
+                                    <div class="labelData">{{item.itemDescription}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4 col-lg-2">
+                            <div class="row">
+                                <div class="col-6 col-md-5 col-lg-10">
+                                    <div class="labelText">MealTime</div>
+                                    <div class="labelData">{{dailyOrder.mealType}}</div>
+                                </div>
+                                <div class="col-6 col-md-7 col-lg-2">
+                                    <div class="inline right pointer header3" (click)="viewChildOrder(dailyOrder)"><i
+                                            class="bi bi-eye"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Transfer -->
+            <div class="header3 bgTopDownpadding1" *ngIf="order.orderTransferred && order.orderTransferred.length>0">
+                Order
+                Transfer History</div>
+            <div class="row" *ngIf="order?.orderTransferred && order?.orderTransferred.length>0">
+                <div class="col-6 col-md-4 col-lg-3" *ngFor="let history of order?.transferHistory; index as i">
+                    <span class="labelText">{{i+1}}. {{history.kitchenName}}</span>
+                </div>
+            </div>
+
+            <div class="header3 bgTopDownpadding1" *ngIf="order?.orderTransferred && order?.orderTransferred.length>0">
+                Order
+                Transfer Charges</div>
+
+            <!-- Kitchen Transfer -->
+            <div *ngIf="orderTransferStart" class="bgTopDownpadding1">
+                <div class="header3 labelText">Search New Kitchen</div>
+
+                <div class="row">
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <label class="labelText" for="kitchenId">Kitchen Id<span class="mandatory">*</span></label>
+                        <input class="labelData" type="text" class="form-control" id="kitchenId"
+                            [(ngModel)]="searchKitenLogingId" placeholder="Search with Kitchen Id">
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <label class="labelText" for="transferExtraAmt">Pay Extra Amount PerOrder</label>
+                        <input class="labelData" type="text" class="form-control" id="transferExtraAmt"
+                            [(ngModel)]="transferExtraAmt" placeholder="transfer Extra Amount">
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <label class="labelText" for="reduceExtraAmt">Reduce Extra Amt PerOrder</label>
+                        <input class="labelData" type="text" class="form-control" id="reduceExtraAmt"
+                            [(ngModel)]="reduceExtraAmt" placeholder="Reduce Extra Amount">
+                    </div>
+                </div>
+                <div class="row" *ngIf="searchedKitchen._id">
+                    <div class="col-6 col-md-4 col-lg-1">
+                        <div class="labelText">Kitchen Id</div>
+                        <div class="labelData">{{searchedKitchen.loginId}}</div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Kitchen Name</div>
+                        <div class="labelData">{{searchedKitchen.kitchenName}}</div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">kitchen PhoneNo</div>
+                        <div class="labelData">{{searchedKitchen.phoneNo}}</div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-3">
+                        <div class="labelText">kitchen Partner Name</div>
+                        <div class="labelData">{{searchedKitchen.kitchenPartnerName}}</div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Delivery By MealaweBoy</div>
+                        <div class="labelData">{{searchedKitchen.deliveryByMealaweBoy}}</div>
+                    </div>
+                    <div class="col-6 col-md-4 col-lg-2">
+                        <div class="labelText">Profile Approval</div>
+                        <div class="labelData">{{searchedKitchen.profileApproval}}</div>
+                    </div>
+                    <div class="col-6 col-md-12 col-lg-12">
+                        <div class="labelText">Address</div>
+                        <div class="labelData">{{searchedKitchen.address.address1}},
+                            {{searchedKitchen.address.address2}},
+                            Landmark: {{searchedKitchen.address.landmark}}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Reschedule -->
+            <div *ngIf="editOrderDate && childOrdersEditMode">
+                <div class="labelText my-2">Reschedule Order Date</div>
+                <div>
+                    <span>Reschedule by
+                        <input type="number" min="0" [(ngModel)]="increaseOrderDateBy"
+                            class="form-control d-inline mx-2 w-auto" id="order date" aria-describedby="order date"
+                            placeholder="">
+                        <span class="ms-1">Days</span>
+                    </span>
+                </div>
+
+            </div>
+
+            <!-- Stop Refund -->
+            <div class="bgTopDownpadding1" *ngIf="showStopRefund">
+                <div class="labelText">GateWay Payment History</div>
+                <div *ngIf="gatwayPaymentHistory && gatwayPaymentHistory.status">
+                    <div class="row gatewayhistory">
+                        <div class="col-6 col-md-6 col-lg-6">
+                            <div class="labelText">txnId</div>
+                            <div class="labelData">{{gatwayPaymentHistory.txnId}}</div>
+                        </div>
+
+                        <div class="col-sm-6 col-md-3 col-lg-3">
+                            <!-- <button class="btn btn-primary btn-sm refundBtn" (click)="refundToUser(history)">Refund</button> -->
+                            <button class="btn btn-primary btn-sm refundBtn" (click)="placePaymentFailedOrder()"
+                                *ngIf="access?.validateOrder">Validate Order</button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="gatwayPaymentHistory && !gatwayPaymentHistory.status">
+                    <div class="row gatewayhistory">
+                        <div class="col-12 center">No Record Found</div>
+                    </div>
+                </div>
+            </div>
+
+
+
+            <span class="me-2"
+                *ngIf="(orderStage === 1 || orderStage === 8)&& showStopRefund && !order.stopRefundProcess">
+                <button class="btn btn-danger btn-sm" (click)="stopRefundProcess()"
+                    *ngIf="access?.stopRefundProcess">Stop
+                    Refund Process</button>
+            </span>
+            <span class="me-2" *ngIf="orderStage === 2">
+                <button class="btn btn-primary btn-sm" (click)="acceptRejectOrder('accepted')"
+                    *ngIf="access?.acceptBtn">Accept Order</button>
+            </span>
+
+            <!-- <span class="me-2" *ngIf="orderStage === 3">
+            <button class="btn btn-danger btn-sm" (click)="acceptRejectOrder('rejectedByKitchen')">CANCEL ORDER AND PAY USER</button>
+        </span> -->
+            <ng-container *ngIf="!order.kitchenName && order.orderstatus !== 'placed'">
+                <span class="me-2" *ngIf="orderStage === 2 || orderStage === 3">
+                    <button class="btn-danger btn-sm btn" (click)="tranferToAnotherKitchen()"
+                        *ngIf="access?.changeKitchenBtn">Assign Kitchen</button>
+                </span>
+            </ng-container>
+            <ng-container *ngIf="order.kitchenName && order.orderstatus !== 'placed'">
+                <span class="me-2" *ngIf="orderStage === 2 || orderStage === 3">
+                    <button class="btn-danger btn-sm btn" (click)="tranferToAnotherKitchen()"
+                        *ngIf="access?.changeKitchenBtn">Change Kitchen</button>
+                </span>
+            </ng-container>
+            <span class="me-2"
+                *ngIf="!editOrderDate && !childOrdersEditMode && !order.multiDateAllowed  && order.orderstatus !== 'placed' && selectedTab ==='Order Details'">
+                <button class="btn-danger btn-sm btn" (click)="editSubscriptionDate()"
+                    *ngIf="access?.editOrderDate">Edit
+                    Order Date</button>
+            </span>
+            <span class="me-2" *ngIf="editOrderDate && !childOrdersEditMode">
+                <button [disabled]="!newSubscriptionDate" class="btn-danger btn-sm btn"
+                    (click)="confirmSubscriptionDate()" *ngIf="access?.confirmOrderDate">Confirm Order Date</button>
+            </span>
+            <span class="me-2" *ngIf="editOrderDate && !childOrdersEditMode">
+                <button class="btn-primary btn-sm btn" (click)="cancelOrderDateEdit()"
+                    *ngIf="access?.cancelOrderDateEdit">Cancel Edit</button>
+            </span>
+            <span class="me-2" *ngIf="order.kitchenId && order.dailyOrderList && order.dailyOrderList.length === 0">
+                <button class="btn-primary btn-sm btn" (click)="createDailyPackageOrder()"
+                    *ngIf="access?.createDailyOrder">Create Daily Order</button>
+            </span>
+            <span class="me-2" *ngIf="order?.dailyOrderList.length > 0 && !childOrdersEditMode && childOrdersShow">
+                <button class="btn-primary btn-sm btn" (click)="childOrdersEditMode = true">Edit Child
+                    Orders</button>
+            </span>
+        </div>
+
+
+    </div>
+</div>
