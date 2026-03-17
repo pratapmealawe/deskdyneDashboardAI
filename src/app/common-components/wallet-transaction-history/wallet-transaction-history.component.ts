@@ -340,14 +340,15 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
     }
 
     getStatusIcon(status: string | undefined): string {
+        if (!status) return 'info';
         switch (status) {
-            case 'Success': return 'bi-check-circle-fill';
+            case 'Success': return 'check_circle';
             case 'Pending':
             case 'Initiated':
-            case 'Review_With_Bank': return 'bi-hourglass-split';
-            case 'Failed': return 'bi-x-circle-fill';
-            case 'Refund': return 'bi-arrow-counterclockwise';
-            default: return 'bi-circle';
+            case 'Review_With_Bank': return 'hourglass_empty';
+            case 'Failed': return 'error';
+            case 'Refund': return 'replay';
+            default: return 'info';
         }
     }
 

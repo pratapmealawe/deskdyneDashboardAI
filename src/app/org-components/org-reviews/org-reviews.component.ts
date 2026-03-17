@@ -25,8 +25,14 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   isAdmin: boolean = false;
   orgDetails: any;
   reviewList: any[] = [];
+  displayedList: any[] = [];
   paginatedReviewList: any[] = [];
   expandedItems: boolean[] = [];
+  isLoading: boolean = false;
+  searchText: string = '';
+  filterRating: string = '';
+  averageRating: number = 0;
+  ratingCounts: { stars: number; count: number }[] = [];
   headerConfig: CommonSelectConfig = {
     mode: 'outlet',
     showDateRange: true,
@@ -138,14 +144,82 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   }
 
   async getfeedbacklistByfilter(payload: any) {
+    this.isLoading = true;
+    this.isChartShow = false;
     try {
-      this.isChartShow = false
+      console.log('payload', payload);
       const reviewList = await this.apiMainService.getfeedbacklistByfilter(payload);
       this.reviewList = [...reviewList];
-      this.addPagination();
+      this.applySearch();
     } catch (e) {
       console.log('Error while fetching config variables ', e);
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  onSearch(value: string) {
+    this.searchText = value;
+    this.applySearch();
+  }
+
+  applySearch() {
+    let list = this.reviewList;
+    if (this.searchText) {
+      const lower = this.searchText.toLowerCase();
+      list = list.filter((r: any) =>
+        (r.feedbackFrom_name && r.feedbackFrom_name.toLowerCase().includes(lower)) ||
+        (r.feedbackOrderNo && r.feedbackOrderNo.toString().toLowerCase().includes(lower))
+      );
+    }
+    // Filter by rating
+    if (this.filterRating) {
+      if (this.filterRating === 'skipped') {
+        list = list.filter((r: any) => !r.rating || r.rating === 0);
+      } else {
+        const ratingVal = Number(this.filterRating);
+        list = list.filter((r: any) => r.rating === ratingVal);
+      }
+    }
+    this.displayedList = list;
+    this.computeTotals();
+    this.pageIndex = 0;
+    this.addPagination();
+  }
+
+  onFilterRating(rating: string) {
+    this.filterRating = this.filterRating === rating ? '' : rating;
+    this.applySearch();
+  }
+
+  clearFilters() {
+    this.searchText = '';
+    this.filterRating = '';
+    this.applySearch();
+  }
+
+  computeTotals() {
+    const list = this.reviewList;
+    if (list.length === 0) {
+      this.averageRating = 0;
+      this.ratingCounts = [];
+      return;
+    }
+    const ratingMap: Record<number, number> = {};
+    let totalRating = 0;
+    let ratedCount = 0;
+    list.forEach((r: any) => {
+      const rating = r.rating ?? 0;
+      if (rating > 0) {
+        totalRating += rating;
+        ratedCount++;
+      }
+      ratingMap[rating] = (ratingMap[rating] || 0) + 1;
+    });
+    this.averageRating = ratedCount > 0 ? totalRating / ratedCount : 0;
+    this.ratingCounts = Object.keys(ratingMap)
+      .map(k => ({ stars: Number(k), count: ratingMap[Number(k)] }))
+      .sort((a, b) => b.stars - a.stars);
   }
 
   toggleFeedback(index: number) {
@@ -486,7 +560,7 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   addPagination() {
     const start = this.pageIndex * this.pageSize;
     const end = start + this.pageSize;
-    this.paginatedReviewList = this.reviewList.slice(start, end);
+    this.paginatedReviewList = this.displayedList.slice(start, end);
   }
 
   onPageChange(event: any) {

@@ -132,7 +132,7 @@
                                     <span class="fw-bold text-dark fs-14">
                                         {{ item?.itemName }}
                                     </span>
-                                    <span class="small text-muted fs-11">&#64; ₹ {{ item?.itemPrice || 0 }}/unit
+                                    <span class="fw-semibold text-muted fs-12">&#64; ₹ {{ item?.itemPrice || 0 }}/unit
                                         *{{item?.count}}</span>
                                 </div>
                             </div>
@@ -157,22 +157,31 @@
                         <span class="small fw-bold text-secondary text-uppercase section-uppercase">PAYMENT
                             DETAILS</span>
                     </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="small text-muted">Order Amount</span>
-                        <span class="fw-bold">₹ {{ order?.orderAmount }}</span>
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="small text-muted">
+                            Order Amount
+                            <span class="sub-text">(Includes item amount + packaging cost + delivery charge)</span>
+                        </span>
+                        <span class="fw-bold">
+                            ₹ {{ order?.orderAmount }}
+                        </span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="small text-muted">Taxes</span>
                         <span class="fw-bold">₹ {{ order?.taxes || 0 }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="small text-muted">Delivery Charge</span>
-                        <span class="fw-bold">₹ {{ order?.deliveryCharge || 0 }}</span>
+                        <span class="small text-muted">
+                            Delivery Charge
+                            <span class="sub-text">(Included in order amount)</span>
+                        </span>
+                        <span class="fw-bold">
+                            ₹ {{ order?.deliveryCharge || 0 }}
+                        </span>
                     </div>
                     <div class="d-flex justify-content-between pt-2 border-top mb-3">
                         <span class="fw-bold">Total Amount</span>
-                        <span class="fw-bold text-primary fs-5">₹ {{ order?.orderAmount + (order?.taxes || 0) +
-                            (order?.deliveryCharge || 0) }}</span>
+                        <span class="fw-bold text-primary fs-5">₹ {{ order?.orderAmount + (order?.taxes || 0)}}</span>
                     </div>
                     <div
                         class="bg-success-subtle text-success p-2 rounded d-flex justify-content-between align-items-center small fw-bold">
@@ -181,7 +190,8 @@
                     </div>
 
                     <!-- Edit Price Controls -->
-                    <div class="mt-3" *ngIf="editMode">
+                    <div class="mt-3"
+                        *ngIf="editMode && (order.orderstatus === 'placed' || order.orderstatus === 'accepted' || order.orderstatus === 'waitingForApproval')">
                         <div class="d-flex flex-column gap-2">
                             <div *ngIf="itemPriceEdit" class="d-flex gap-2 align-items-center">
                                 <input type="number" class="form-control form-control-sm" [(ngModel)]="order.itemAmount"
@@ -399,8 +409,13 @@
                         <span class="text-dark fw-bold" style="font-size: 12px;">
                             {{ log?.updatedOn | date: 'd MMM y, h:mm a' }}
                         </span>
-                        <span class="text-muted fw-normal" style="font-size: 11px;">
-                            • by {{ log?.updatedBy || log?.updateByType || 'System' }}
+                        <span *ngIf="order.orderstatus !== 'placed'" class="text-muted fw-normal"
+                            style="font-size: 11px;">
+                            • by {{ log?.actionBy || 'System Admin' }}
+                        </span>
+                        <span *ngIf="order.orderstatus === 'placed'" class="text-muted fw-normal"
+                            style="font-size: 11px;">
+                            • by {{ 'User' }}
                         </span>
                     </div>
                 </div>
@@ -412,11 +427,9 @@
         <!-- Action Buttons -->
         <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="action-buttons" *ngIf="editMode">
-                <button class="btn btn-primary btn-sm fw-medium"
-                    *ngIf="order?.orderstatus === 'waitingForApproval'"
+                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus === 'waitingForApproval'"
                     (click)="acceptRejectOrder('placed')">Place Order</button>
-                <button class="btn btn-primary btn-sm fw-medium"
-                    *ngIf="order?.orderstatus === 'placed'"
+                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus === 'placed'"
                     (click)="acceptRejectOrder('accepted')">Accept Order</button>
                 <button class="btn btn-warning btn-sm fw-medium" *ngIf="orderStage === 2"
                     (click)="acceptRejectOrder('preparing')">Preparing</button>
@@ -425,8 +438,8 @@
                 <button class="btn btn-outline-primary btn-sm fw-medium"
                     *ngIf="orderStage === 4 && !order?.startManualDelivery" (click)="setManualDelivery()">Set Manual
                     Delivery</button>
-                <button class="btn btn-outline-warning btn-sm fw-medium" *ngIf="orderStage === 2"
-                    (click)="tranferToAnotherKitchen()">Change Vendor</button>
+                <!-- <button class="btn btn-outline-warning btn-sm fw-medium" *ngIf="orderStage === 2"
+                    (click)="tranferToAnotherKitchen()">Change Vendor</button> -->
                 <button class="btn btn-success btn-sm fw-medium" *ngIf="orderStage === 4 || orderStage === 5"
                     (click)="acceptRejectOrder('delivered')">Delivered</button>
                 <button class="btn btn-outline-danger btn-sm fw-medium"
@@ -516,6 +529,7 @@
     </div>
     <div class="modal-footer justify-content-center">
         <button class="btn btn-light" (click)="cancelChangeVendor()">Cancel</button>
-        <button class="btn btn-warning" [disabled]="vendorForm.invalid" (click)="confirmChangeVendor()">Change Vendor</button>
+        <button class="btn btn-warning" [disabled]="vendorForm.invalid" (click)="confirmChangeVendor()">Change
+            Vendor</button>
     </div>
 </ng-template>

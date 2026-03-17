@@ -1,0 +1,340 @@
+@use '/src/styles/theme/mixins' as mixin;
+@use '/src/styles/theme/variable' as var;
+
+// Loading Container
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5rem 0;
+    background: white;
+    border-radius: var.$border-radius-xl;
+    box-shadow: var.$box-shadow-card;
+}
+
+// Filter Card
+.filter-card {
+    background: white;
+    border-radius: var.$border-radius-xl;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var.$box-shadow-card;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-end;
+}
+
+.filter-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .filter-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+}
+
+.filter-field {
+    width: 200px;
+
+    ::ng-deep {
+        .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+        }
+
+        .mat-mdc-text-field-wrapper {
+            background: #f8f9fa;
+            border-radius: var.$border-radius-md;
+        }
+
+        .mat-mdc-form-field-icon-prefix>mat-icon {
+            padding: 0 8px;
+            color: #adb5bd;
+        }
+    }
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-left: auto;
+    padding-bottom: 2px;
+
+    button {
+        height: 48px;
+        padding: 0 1.5rem;
+        border-radius: var.$border-radius-md;
+        font-weight: 500;
+
+        mat-icon {
+            margin-right: 6px;
+        }
+    }
+}
+
+// Status Chips
+.status-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.status-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border: 1px solid #e9ecef;
+    background: #f8f9fa;
+    border-radius: var.$border-radius-pill;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #495057;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    .chip-count {
+        background: #e9ecef;
+        padding: 0.15rem 0.5rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    &:hover {
+        background: #e9ecef;
+        border-color: #dee2e6;
+    }
+
+    &.active {
+        background: var.$primary-color1;
+        border-color: var.$primary-color1;
+        color: white;
+
+        .chip-count {
+            background: rgba(255, 255, 255, 0.25);
+            color: white;
+        }
+    }
+}
+
+// Orders Container
+.orders-container {
+    margin-bottom: 1.5rem;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+// Pagination Card
+.pagination-card {
+    background: white;
+    border-radius: var.$border-radius-xl;
+    padding: 1rem 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: var.$box-shadow-card;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.pagination-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+.page-size-field {
+    width: 80px;
+    margin-left: 1rem;
+
+    ::ng-deep {
+        .mat-mdc-form-field-subscript-wrapper {
+            display: none;
+        }
+
+        .mat-mdc-text-field-wrapper {
+            padding: 0 8px;
+            background: #f8f9fa;
+        }
+    }
+}
+
+.pagination-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.page-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: #f8f9fa;
+    border-radius: var.$border-radius-md;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #6c757d;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+        background: #e9ecef;
+        color: var.$primary-color2;
+    }
+
+    &.active {
+        background: var.$primary-color1;
+        color: white;
+    }
+
+    &:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+    }
+}
+
+.page-dots {
+    padding: 0 0.5rem;
+    color: #adb5bd;
+}
+
+// Empty State
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    color: #94a3b8;
+    background: white;
+    border-radius: var.$border-radius-xl;
+    box-shadow: var.$box-shadow-card;
+    text-align: center;
+
+    mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        margin-bottom: 1rem;
+        opacity: 0.5;
+    }
+
+    h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    p {
+        margin: 0;
+        font-size: 0.9rem;
+        max-width: 300px;
+    }
+}
+
+// Responsive
+@media (max-width: 992px) {
+    .filter-field {
+        width: 180px;
+    }
+
+    .filter-actions {
+        width: 100%;
+        margin-left: 0;
+        margin-top: 0.5rem;
+    }
+
+    .filter-row {
+        flex-wrap: wrap;
+    }
+}
+
+@media (max-width: 768px) {
+    .filter-card {
+        padding: 1rem;
+    }
+
+    .filter-field {
+        width: 100%;
+    }
+
+    .filter-item {
+        width: 100%;
+    }
+
+    .status-chips {
+        width: 100%;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 0.5rem;
+
+        &::-webkit-scrollbar {
+            height: 4px;
+        }
+    }
+
+    .pagination-card {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+
+    .pagination-info {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .pagination-controls {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .filter-card {
+        padding: 0.75rem;
+        border-radius: var.$border-radius-md;
+    }
+
+    .status-chip {
+        padding: 0.4rem 0.75rem;
+        font-size: 0.8rem;
+    }
+
+    .pagination-card {
+        padding: 0.75rem;
+        border-radius: var.$border-radius-md;
+    }
+
+    .empty-state {
+        padding: 2rem 1rem;
+        border-radius: var.$border-radius-md;
+
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+        }
+    }
+}

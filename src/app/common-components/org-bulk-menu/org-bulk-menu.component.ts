@@ -256,10 +256,15 @@ export class OrgBulkMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.B2B_saveBulkMealMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getBulkMenuItemsByCafeteriaId();
+      const res = await this.api.B2B_saveBulkMealMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getBulkMenuItemsByCafeteriaId();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.error('error while saving bulk menu', error);
     }

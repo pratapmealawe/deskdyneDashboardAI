@@ -1,5 +1,5 @@
-import { Component, Input, OnInit, ViewChild, Output, EventEmitter } from '@angular/core';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { Component, Input, OnInit, ViewChild, TemplateRef, Output, EventEmitter } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
@@ -12,12 +12,13 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
   styleUrls: ['./daily-bulk-card.component.scss']
 })
 export class DailyBulkCardComponent implements OnInit {
-  @ViewChild('actionModal') actionModal: any;
+  @ViewChild('actionDialogTpl') actionDialogTpl!: TemplateRef<any>;
+  @ViewChild('historyDialogTpl') historyDialogTpl!: TemplateRef<any>;
+  @ViewChild('imagePreviewTpl') imagePreviewTpl!: TemplateRef<any>;
   @Input() orderInput: any;
+  @Input() showActions: boolean = true;
   @Output() updateOrder = new EventEmitter<any>();
   imageUrl = environment.imageUrl;
-  showStatusHistory: boolean = true;
-  showless: boolean = true;
   showEmployees: boolean = true;
   order: any;
   addDeliveryCost = 0;
@@ -27,7 +28,7 @@ export class DailyBulkCardComponent implements OnInit {
   previewImageSrc: string = '';
   orderStage: number = 1;
   actionList: any[] = [];
-  modalRef?: NgbModalRef;
+  dialogRef?: MatDialogRef<any>;
   commentRequired: boolean = false;
   showDeliveryInput: boolean = false;
   deliveryChargesFromModal: number = 0;
@@ -37,7 +38,7 @@ export class DailyBulkCardComponent implements OnInit {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private sendDataToComponent: SendDataToComponent,
-    private modalService: NgbModal,
+    private dialog: MatDialog,
     private toasterService: ToasterService
   ) { }
 
@@ -49,11 +50,26 @@ export class DailyBulkCardComponent implements OnInit {
   }
 
   getStatusClass(status?: string): string {
-    if (!status) {
-      return '';
-    }
+    if (!status) return '';
     const normalized = status.replace(/\s+/g, '');
     return `status-${normalized}`;
+  }
+
+  getStatusIcon(status?: string): string {
+    if (!status) return 'info';
+    const icons: { [key: string]: string } = {
+      'placed': 'restaurant',
+      'accepted': 'check_circle',
+      'preparing': 'soup_kitchen',
+      'readyForDelivery': 'inventory',
+      'deliveryBoyAssigned': 'person_pin',
+      'handedOverToDeliveryBoy': 'handshake',
+      'onTheWay': 'local_shipping',
+      'delivered': 'done_all',
+      'completed': 'check_circle',
+      'cancelled': 'cancel'
+    };
+    return icons[status] || 'info';
   }
 
   getStatusLabel(status: string): string {
@@ -90,7 +106,6 @@ export class DailyBulkCardComponent implements OnInit {
 
   async acceptRejectOrder(status: string, comment?: string, deliveryCharge?: number): Promise<void> {
     try {
-      console.log('status', status);
       let order: any = { ...this.order, orderstatus: status };
       if (comment) {
         order.comment = comment;
@@ -129,7 +144,7 @@ export class DailyBulkCardComponent implements OnInit {
     }
   }
 
-  openActionModal(content: any, action: string, status: string, commentRequired: boolean = false, message: string = '', showDeliveryInput: boolean = false) {
+  openActionModal(action: string, status: string, commentRequired: boolean = false, message: string = '', showDeliveryInput: boolean = false) {
     this.activeModalAction = action;
     this.tempStatus = status;
     this.statusComment = '';
@@ -137,7 +152,10 @@ export class DailyBulkCardComponent implements OnInit {
     this.modalMessage = message;
     this.showDeliveryInput = showDeliveryInput;
     this.deliveryChargesFromModal = this.order.deliveryCharge || 0;
-    this.modalRef = this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' });
+    this.dialogRef = this.dialog.open(this.actionDialogTpl, {
+      width: '460px',
+      panelClass: 'action-dialog'
+    });
   }
 
   confirmAction() {
@@ -147,9 +165,26 @@ export class DailyBulkCardComponent implements OnInit {
     }
     const deliveryCharge = this.showDeliveryInput ? this.deliveryChargesFromModal : undefined;
     this.acceptRejectOrder(this.tempStatus, this.statusComment, deliveryCharge);
-    if (this.modalRef) {
-      this.modalRef.close();
+    if (this.dialogRef) {
+      this.dialogRef.close();
     }
+  }
+
+  openOrderHistory() {
+    this.dialog.open(this.historyDialogTpl, {
+      width: '520px',
+      maxHeight: '80vh',
+      panelClass: 'history-dialog'
+    });
+  }
+
+  openImagePreview(imageSrc: string) {
+    this.previewImageSrc = imageSrc;
+    this.dialog.open(this.imagePreviewTpl, {
+      width: '700px',
+      maxHeight: '85vh',
+      panelClass: 'image-preview-dialog'
+    });
   }
 
   updateOrderStage() {
@@ -161,58 +196,58 @@ export class DailyBulkCardComponent implements OnInit {
         this.actionList = [
           { label: 'Accept', action: 'accept', color: 'primary', icon: 'check', commentRequired: false, message: 'Are you sure you want to accept this order?' },
           { label: 'Cancel', action: 'cancel', color: 'warn', icon: 'close', commentRequired: true, message: 'Are you sure you want to cancel this order?' }
-        ]
+        ];
         break;
       case 'accepted':
         this.orderStage = 2;
         this.actionList = [
-          { label: 'Prepairing', action: 'preparing', color: 'primary', icon: 'check', commentRequired: false, message: 'Is the order preparation started?' },
-        ]
+          { label: 'Preparing', action: 'preparing', color: 'primary', icon: 'check', commentRequired: false, message: 'Is the order preparation started?' },
+        ];
         break;
       case 'preparing':
         this.orderStage = 3;
         this.actionList = [
           { label: 'Ready For Delivery', action: 'readyForDelivery', color: 'primary', icon: 'check', commentRequired: false, message: 'Is the order ready for delivery?' },
-        ]
+        ];
         break;
       case 'readyForDelivery':
         this.orderStage = 4;
         this.actionList = [
           { label: 'Assign Agent', action: 'assignAgent', color: 'primary', icon: 'check', commentRequired: true, message: 'Assign a delivery agent to this order.' },
           { label: 'Delivery Cost Change', action: 'deliveryCostChange', color: 'warn', icon: 'close', commentRequired: true, message: 'Update delivery cost for this order.' }
-        ]
+        ];
         break;
       case 'deliveryBoyAssigned':
         this.orderStage = 5;
         this.actionList = [
           { label: 'Handover To Agent', action: 'handoverToAgent', color: 'primary', icon: 'check', commentRequired: false, message: 'Confirm handover to delivery agent.' },
-        ]
+        ];
         break;
       case 'handedOverToDeliveryBoy':
         this.orderStage = 6;
         this.actionList = [
           { label: 'On The Way', action: 'onTheWay', color: 'primary', icon: 'check', commentRequired: false, message: 'Confirm handover to delivery agent.' },
-        ]
+        ];
         break;
       case 'onTheWay':
         this.orderStage = 7;
         this.actionList = [
           { label: 'Delivered', action: 'delivered', color: 'primary', icon: 'check', commentRequired: false, message: 'Confirm order delivery.' },
-        ]
+        ];
         break;
       case 'delivered':
         this.orderStage = 8;
         this.actionList = [
           { label: 'Complete', action: 'complete', color: 'primary', icon: 'check', commentRequired: false, message: 'Mark order as completed?' },
-        ]
+        ];
         break;
       case 'completed':
         this.orderStage = 9;
-        this.actionList = []
+        this.actionList = [];
         break;
       case 'cancelled':
         this.orderStage = 10;
-        this.actionList = []
+        this.actionList = [];
         break;
       default:
         this.orderStage = 1;
@@ -228,44 +263,39 @@ export class DailyBulkCardComponent implements OnInit {
 
     switch (action) {
       case 'cancel':
-        this.openActionModal(this.actionModal, label, 'cancelled', commentRequired, message);
+        this.openActionModal(label, 'cancelled', commentRequired, message);
         break;
       case 'accept':
-        this.openActionModal(this.actionModal, label, 'accepted', commentRequired, message);
+        this.openActionModal(label, 'accepted', commentRequired, message);
         break;
       case 'preparing':
-        this.openActionModal(this.actionModal, label, 'preparing', commentRequired, message);
+        this.openActionModal(label, 'preparing', commentRequired, message);
         break;
       case 'readyForDelivery':
-        this.openActionModal(this.actionModal, label, 'readyForDelivery', commentRequired, message);
+        this.openActionModal(label, 'readyForDelivery', commentRequired, message);
         break;
       case 'assignAgent':
-        this.openActionModal(this.actionModal, label, 'deliveryBoyAssigned', commentRequired, message);
+        this.openActionModal(label, 'deliveryBoyAssigned', commentRequired, message);
         break;
       case 'handoverToAgent':
-        this.openActionModal(this.actionModal, label, 'handedOverToDeliveryBoy', commentRequired, message);
+        this.openActionModal(label, 'handedOverToDeliveryBoy', commentRequired, message);
         break;
       case 'delivered':
-        this.openActionModal(this.actionModal, label, 'delivered', commentRequired, message);
+        this.openActionModal(label, 'delivered', commentRequired, message);
         break;
       case 'complete':
-        this.openActionModal(this.actionModal, label, 'completed', commentRequired, message);
+        this.openActionModal(label, 'completed', commentRequired, message);
         break;
       case 'placeOrder':
-        this.openActionModal(this.actionModal, label, 'placed', commentRequired, message);
+        this.openActionModal(label, 'placed', commentRequired, message);
         break;
       case 'deliveryCostChange':
-        this.openActionModal(this.actionModal, label, this.order.orderstatus, commentRequired, message, true);
+        this.openActionModal(label, this.order.orderstatus, commentRequired, message, true);
         break;
       case 'onTheWay':
-        this.openActionModal(this.actionModal, label, 'onTheWay', commentRequired, message);
+        this.openActionModal(label, 'onTheWay', commentRequired, message);
         break;
     }
-  }
-
-  openImagePreview(content: any, imageSrc: string) {
-    this.previewImageSrc = imageSrc;
-    this.modalService.open(content, { size: 'lg', centered: true, ariaLabelledBy: 'modal-basic-title' });
   }
 
   formatTime12Hour(time: string): string {

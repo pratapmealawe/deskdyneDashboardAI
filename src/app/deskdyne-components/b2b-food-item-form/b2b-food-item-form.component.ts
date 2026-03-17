@@ -33,7 +33,7 @@ export class B2bFoodItemFormComponent implements OnInit {
   btnPolicy: any;
 
   constructor(
-    private ddApiMainService: ApiMainService,
+    private apiMainService: ApiMainService,
     private dialog: MatDialog,
     private policyService: PolicyService,
     private fb: FormBuilder
@@ -153,7 +153,7 @@ export class B2bFoodItemFormComponent implements OnInit {
   private async addNewItem(item: any): Promise<void> {
     const formData = this.buildFormData(item);
     try {
-      await this.ddApiMainService.B2B_fooditemAdd(formData);
+      await this.apiMainService.B2B_fooditemAdd(formData);
       this.goToPreviousPage('new');
     } catch (error) {
       console.log(error);
@@ -163,7 +163,7 @@ export class B2bFoodItemFormComponent implements OnInit {
   private async updateFoodItem(item: any): Promise<void> {
     const formData = this.buildFormData(item);
     try {
-      await this.ddApiMainService.updateB2BfoodItem(
+      await this.apiMainService.updateB2BfoodItem(
         formData,
         this.editfoodItemObj._id
       );

@@ -8,6 +8,7 @@ import { DeliveryOrderService } from 'src/service/delivery-order.service';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { LocalStorageService } from 'src/service/local-storage.service';
 
 @Component({
   selector: 'app-bulk-order-card',
@@ -66,7 +67,8 @@ export class BulkOrderCardComponent implements OnInit {
     private googleMapService: GoogleMapService,
     private apiMainService: ApiMainService,
     private toasterService: ToasterService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private localStorageService: LocalStorageService,
   ) { }
 
   ngOnInit(): void {
@@ -103,8 +105,20 @@ export class BulkOrderCardComponent implements OnInit {
   }
 
   async acceptRejectOrder(status: string) {
+    if (status === 'preparing') {
+      const isVendorAssigned = !!this.order?.vendorPhoneNo;
+      if (!isVendorAssigned) {
+        this.showVendorToaster();
+        return;
+      }
+    }
     try {
+
       const updatedOrder = { ...this.order };
+      const adminId = this.localStorageService.getCacheData('ADMIN_ID');
+      if (adminId) {
+        updatedOrder.actionBy = adminId;
+      }
       updatedOrder.orderstatus = status;
       await this.apiMainService.updateb2bFoodOrder(updatedOrder);
 
@@ -122,6 +136,10 @@ export class BulkOrderCardComponent implements OnInit {
     } catch (error) {
       console.log('error while changing status', error);
     }
+  }
+
+  showVendorToaster() {
+    this.toasterService.warning(301);
   }
 
   async startPorterDeliveryProcess() {
@@ -263,40 +281,10 @@ export class BulkOrderCardComponent implements OnInit {
     // Detailed view (this.order) has priority
     if (this.order && this.order.deliveryTaskId) {
       try {
-        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(
-          this.order.deliveryTaskId,
+        await this.deliveryOrderService.trackDeliveryTask(
+          this.order,
           this.order.deliveryVendor
         );
-        this.order.deliveryTaskState = deliveryOrderStatus.state;
-        console.log(deliveryOrderStatus.state);
-
-        if (deliveryOrderStatus && deliveryOrderStatus.eta) {
-          this.order.pickupEta = deliveryOrderStatus.eta.pickup;
-          this.order.dropoffEta = deliveryOrderStatus.eta.dropoff;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.sfx_order_id) {
-          this.order.sfx_order_id = deliveryOrderStatus.sfx_order_id;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.runner) {
-          this.order.runnerName = deliveryOrderStatus.runner.name;
-          this.order.runnerPhone = deliveryOrderStatus.runner.phone_number;
-          this.order.runnerLocation = deliveryOrderStatus.runner.location;
-        }
-
-        if (
-          deliveryOrderStatus.state === 'runner_cancelled' ||
-          deliveryOrderStatus.state === 'cancelled'
-        ) {
-          this.order.runnerName = undefined;
-          this.order.runnerPhone = undefined;
-          this.order.runnerLocation = undefined;
-        }
-
-        if (deliveryOrderStatus.state === 'CANCELLED') {
-          this.order.deliveryTaskState = 'cancelled';
-        }
       } catch (error) {
         console.log('error while tracking delivery task', error);
       }
@@ -304,35 +292,10 @@ export class BulkOrderCardComponent implements OnInit {
     // Summary view, we still want live status
     else if (this.orderInput && this.orderInput.deliveryTaskId) {
       try {
-        const deliveryOrderStatus = await this.apiMainService.trackDeliveryTask(
-          this.orderInput.deliveryTaskId,
+        await this.deliveryOrderService.trackDeliveryTask(
+          this.orderInput,
           this.orderInput.deliveryVendor
         );
-        this.orderInput.deliveryTaskState = deliveryOrderStatus.state;
-
-        if (deliveryOrderStatus && deliveryOrderStatus.eta) {
-          this.orderInput.pickupEta = deliveryOrderStatus.eta.pickup;
-          this.orderInput.dropoffEta = deliveryOrderStatus.eta.dropoff;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.sfx_order_id) {
-          this.orderInput.sfx_order_id = deliveryOrderStatus.sfx_order_id;
-        }
-
-        if (deliveryOrderStatus && deliveryOrderStatus.runner) {
-          this.orderInput.runnerName = deliveryOrderStatus.runner.name;
-          this.orderInput.runnerPhone = deliveryOrderStatus.runner.phone_number;
-          this.orderInput.runnerLocation = deliveryOrderStatus.runner.location;
-        }
-
-        if (
-          deliveryOrderStatus.state === 'runner_cancelled' ||
-          deliveryOrderStatus.state === 'cancelled'
-        ) {
-          this.orderInput.runnerName = undefined;
-          this.orderInput.runnerPhone = undefined;
-          this.orderInput.runnerLocation = undefined;
-        }
       } catch (error) {
         console.log('error while tracking delivery task', error);
       }
@@ -793,27 +756,24 @@ export class BulkOrderCardComponent implements OnInit {
     })
   }
 
-private checkIsVendorAssigned(): void {
-  this.isVendorAssigned = !!this.order?.vendorDetails;
-}
+  private checkIsVendorAssigned(): void {
+    this.isVendorAssigned = !!this.order?.vendorPhoneNo;
+  }
 
-get canShowChangeVendor(): boolean {
-  if (!this.editMode || !this.order) {
+  get canShowChangeVendor(): boolean {
+    if (!this.editMode || !this.order) {
+      return false;
+    }
+
+    if (this.order.orderstatus === 'placed' || this.order.orderstatus === 'waitingForApproval' || this.order.orderstatus === 'accepted') {
+      return true;
+    }
+
+    if (this.order.orderstatus === 'preparing' && !this.isVendorAssigned) {
+      return true;
+    }
+
     return false;
   }
-
-  if (this.order.orderstatus === 'placed') {
-    return true;
-  }
-
-  if (
-    this.order.orderstatus === 'waitingForApproval' &&
-    !this.isVendorAssigned
-  ) {
-    return true;
-  }
-
-  return false;
-}
 
 }

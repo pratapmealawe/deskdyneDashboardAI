@@ -1,61 +1,116 @@
-<div class="container-fluid">
-  <h3 class="mb-0 pb-4">Reviews</h3>
-  <div *ngIf="isAdmin">
-    <app-common-outlet-cafe-select [config]="headerConfigAdmin"
-      (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
-  </div>
-  <div *ngIf="!isAdmin">
-    <app-common-outlet-cafe-select [config]="headerConfig"
-      (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
-  </div>
-  <div *ngIf="reviewList.length > 0" class="pb-4">
-    <div class="row my-2 align-items-center">
-      <div class="col-12 col-md-8">
-        <div class="d-flex flex-wrap gap-2">
+<div class="reviews-page-container">
+  <!-- Header Card -->
+  <div class="reviews-header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Reviews</h1>
+        <p class="page-subtitle">View, search and export customer reviews</p>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper" *ngIf="reviewList.length > 0">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search by Name, Order #..." (keyup)="onSearch($any($event.target).value)" />
+        </div>
+        <div class="export-btns" *ngIf="displayedList.length > 0">
+          <button mat-flat-button class="btn-export excel" matTooltip="Excel Export" (click)="excelExport()">
+            <mat-icon>table_chart</mat-icon> Excel
+          </button>
+          <button mat-flat-button class="btn-export pdf" matTooltip="Download PDF" (click)="downloadPdf()">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
+          </button>
+          <button mat-icon-button class="btn-view-toggle" (click)="changeDataView()"
+            [matTooltip]="isChartShow ? 'Show List' : 'Show Chart'">
+            <mat-icon>{{ isChartShow ? 'view_list' : 'bar_chart' }}</mat-icon>
+          </button>
         </div>
       </div>
-      <div class="col-12 col-md-4 d-flex justify-content-end gap-2 mt-2 mt-md-0">
+    </div>
+  </div>
 
-        <button mat-mini-fab class="excel-btn" matTooltip="Excel Export" (click)="excelExport()">
-          <mat-icon>table_chart</mat-icon>
-        </button>
-        <button mat-mini-fab color="primary" (click)="downloadPdf()" matTooltip="Download PDF">
-          <mat-icon>picture_as_pdf</mat-icon>
-        </button>
+  <!-- Content Body -->
+  <div class="content-body">
+    <!-- Filter Section -->
+    <div class="filter-wrapper mb-4">
+      <div *ngIf="isAdmin">
+        <app-common-outlet-cafe-select [config]="headerConfigAdmin"
+          (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+      </div>
+      <div *ngIf="!isAdmin">
+        <app-common-outlet-cafe-select [config]="headerConfig"
+          (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+      </div>
+    </div>
 
-        <button mat-mini-fab color="primary" (click)="changeDataView()" matTooltip="Change View" class="btn iconBtn">
-          <i class="bi" [ngClass]="isChartShow ? 'bi-table' : 'bi-graph-down'"></i>
+    <!-- Totals Strip (clickable as filters) -->
+    <div class="totals-strip" *ngIf="reviewList.length > 0">
+      <div class="total-chip highlight">
+        <span class="chip-label">Total Reviews</span>
+        <span class="chip-value">{{ reviewList.length }}</span>
+      </div>
+      <div class="total-chip" *ngIf="averageRating > 0">
+        <span class="chip-label">Avg Rating</span>
+        <span class="chip-value">⭐ {{ averageRating | number : '1.1-1' }}</span>
+      </div>
+      <div class="total-chip clickable" *ngFor="let rc of ratingCounts"
+        [class.active]="filterRating === (rc.stars === 0 ? 'skipped' : rc.stars.toString())"
+        (click)="onFilterRating(rc.stars === 0 ? 'skipped' : rc.stars.toString())">
+        <span class="chip-label">{{ rc.stars === 0 ? 'Skipped' : rc.stars + ' Star' + (rc.stars !== 1 ? 's' : '')
+          }}</span>
+        <span class="chip-value">{{ rc.count }}</span>
+      </div>
+    </div>
+
+    <!-- Active Filter Chip -->
+    <div class="active-filter-chips mb-3" *ngIf="filterRating">
+      <div class="chip-strip">
+        <div class="filter-chip">
+          <mat-icon>star</mat-icon>
+          {{ filterRating === 'skipped' ? 'Skipped' : filterRating + ' Star' + (filterRating !== '1' ? 's' : '') }}
+          <mat-icon class="close-icon" (click)="filterRating = ''; applySearch()">close</mat-icon>
+        </div>
+        <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
+          <mat-icon>filter_alt_off</mat-icon> Clear
         </button>
       </div>
     </div>
-    <div class="mt-2" *ngIf="paginatedReviewList.length > 0">
-      <ng-container *ngIf="!isChartShow">
 
-        <div class="feedback-container" *ngFor="let feedback of paginatedReviewList; let i = index">
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p>Loading reviews...</p>
+    </div>
+
+    <!-- Reviews List -->
+    <ng-container *ngIf="!isLoading && !isChartShow">
+      <ng-container *ngIf="displayedList.length > 0; else noRecords">
+        <div *ngFor="let feedback of paginatedReviewList">
           <app-org-order [order]="feedback"></app-org-order>
         </div>
-        <!-- Paginator -->
-        <mat-paginator [length]="reviewList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        <mat-paginator [length]="displayedList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
           [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
         </mat-paginator>
-
       </ng-container>
-      <div class="row" *ngIf="isChartShow">
-        <div class="col-12">
-          <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
-            <highcharts-chart *ngIf="reviewList.length > 0" [Highcharts]="Highcharts" [options]="chartOptionsPie"
-              [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
-              style="width: 100%; height: 400px; display: block">
-            </highcharts-chart>
+    </ng-container>
 
-            <div class="h-100 d-flex justify-content-center align-items-center pt-2">
-              <p *ngIf="reviewList.length <= 0">No Data Found</p>
-            </div>
-          </div>
-        </div>
+    <!-- Chart View -->
+    <div class="chart-card" *ngIf="isChartShow && !isLoading">
+      <highcharts-chart *ngIf="displayedList.length > 0" [Highcharts]="Highcharts" [options]="chartOptionsPie"
+        [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag" style="width: 100%; height: 400px; display: block">
+      </highcharts-chart>
+      <div class="empty-state" *ngIf="displayedList.length <= 0">
+        <mat-icon class="empty-icon">bar_chart</mat-icon>
+        <h3>No Chart Data</h3>
+        <p>No data available to display chart.</p>
       </div>
     </div>
+
+    <!-- Empty State -->
+    <ng-template #noRecords>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">rate_review</mat-icon>
+        <h3>No Reviews Found</h3>
+        <p>Try adjusting your filters or date range.</p>
+      </div>
+    </ng-template>
   </div>
-  <mat-card class="center labelText mt-2 py-2 rounded-4" *ngIf="reviewList.length == 0">
-    No Reviews found
-  </mat-card>
+</div>

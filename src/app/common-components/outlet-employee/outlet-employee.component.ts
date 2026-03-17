@@ -114,6 +114,7 @@ export class OutletEmployeeComponent implements OnInit {
     this.selectedCafeteria = cafeteria;
     this.selectedCafeteriaName = cafeteria.cafeteria_name;
     this.selectedCafeteriaId = cafeteria.cafeteria_id;
+    this.getEmployeeListByCafeId()
     this.resetPagination();
   }
 
@@ -316,10 +317,20 @@ export class OutletEmployeeComponent implements OnInit {
   // ---------- FILTERED EMPLOYEES FOR SELECTED CAFETERIA ----------
 
   get filteredEmployees(): any[] {
-    if (!this.selectedCafeteriaId) return this.employeeList || [];
-    return (this.employeeList || []).filter(
-      (emp) => emp.cafeteria_id === this.selectedCafeteriaId
-    );
+    let list = this.employeeList || [];
+    if (this.selectedCafeteriaId) {
+      list = list.filter((emp) => emp.cafeteria_id === this.selectedCafeteriaId);
+    }
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      list = list.filter((emp) =>
+        emp.employeeName?.toLowerCase().includes(term) ||
+        emp.employeeId?.toLowerCase().includes(term) ||
+        emp.employeePhoneNo?.toString().includes(this.searchTerm) ||
+        emp.employeeEmail?.toLowerCase().includes(term)
+      );
+    }
+    return list;
   }
 
   private resetPagination(): void {

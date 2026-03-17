@@ -17,6 +17,7 @@ export class ApiConfigService {
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
+      bulkUploadOutletMenu: p('/api/bulkUploadOutletMenu', 'POST'),
       addQrOutletMenu: p('/api/addQrOutletMenu', 'POST'),
       createQrMenu: p('/api/createQrMenu', 'POST'),
       addOutletMasterMenu: p('/api/addOutletMasterMenu', 'POST'),
@@ -163,6 +164,7 @@ export class ApiConfigService {
       performBulkDailyOrderTransfer: p('/api/performBulkDailyOrderTransfer', 'POST'),
       addEmployeeList: p('/api/addEmployeeList', 'POST'),
       deleteEmployee: p('/api/deleteEmployee', 'DELETE'),
+      deleteMultipleEmployee: p('/api/deleteMultipleEmployee', 'DELETE'),
       updateEmployee: p('/api/updateEmployee', 'POST'),
       setOutletOpenedStatus: p('/api/outletOpenedStatus', 'PUT'),
       generateInvoice: p('/api/generateInvoice', 'GET'),
@@ -212,6 +214,7 @@ export class ApiConfigService {
 
       getVcEmployeeByPhoneNo: p('/api/getVcEmployeeByPhoneNo', 'GET'),
       verifyVcEmployeeByPhoneNo: p('/api/verifyVcEmployeeByPhoneNo', 'GET'),
+      fetchOutletOrdersByOrgAndDateRange: p('/api/fetchOutletOrdersByOrgAndDateRange', 'POST'),
       fetchOutletOrdersbysearchObj: p('/api/fetchOutletOrdersbysearchObj', 'POST'),
       fetchAllOutletOrdersbysearchObj: p('/api/fetchAllOutletOrdersbysearchObj', 'POST'),
       fetchConsumptionOrdersbysearchObj: p('/api/fetchConsumptionOrdersbysearchObj', 'POST'),
@@ -253,7 +256,6 @@ export class ApiConfigService {
       getVendorFirmById: p('/api/getVendorFirmById', 'GET'),
       updateVendorFirm: p('/api/updateVendorFirm', 'PUT'),
       updateVendorFirmCompliance: p('/api/updateVendorFirmCompliance', 'PUT'),
-      getAllVendorFirms: p('/api/getAllVendorFirms', 'GET'),
       deleteUserFromAllList: p('/api/deleteUserFromAllList', 'DELETE'),
       fetchtOrgInfo: p('/api/b2b_org_info', 'POST'),
       b2b_fetchBulkCakeMenu: p('/api/b2b_fetchBulkCakeMenu', 'GET'),
@@ -269,7 +271,7 @@ export class ApiConfigService {
       b2b_updateCustomizedSnackBox: p('/api/b2b_updateCustomizedSnackBox', 'POST'),
       getCafeteriasPollingList: p('/api/getCafeteriasPollingList', 'POST'),
       getDailyFoodOrdersCount: p('/api/getDailyFoodOrdersCount', 'GET'),
-      getCurrentDailyOrdersCount: p('/api/getCurrentDailyOrdersCount', 'GET'),
+      getCurrentDailyOrdersCount: p('/api/getCurrentDailyOrdersCount', 'POST'),
       searchVendorProfile: p('/api/searchVendorProfile', 'GET'),
       getNearestVendors: p('/api/getNearestVendors', 'GET'),
       getdeliveryAmount: p('/api/quote', 'POST'),
@@ -378,6 +380,7 @@ export class ApiConfigService {
       B2B_fetchPantryMenu: p('/api/B2B_fetchPantryMenu', 'GET'),
       B2B_savePantryMenu: p('/api/B2B_savePantryMenu', 'POST'),
       B2B_changeVendor: p('/api/changeVendor', 'PATCH'),
+      B2B_fetchBulkOrdersbyFilter: p('/api/fetchBulkOrdersbyFilter', 'POST'),
       getAllEmployeeBulkMenus: p('/api/getAllEmployeeBulkMenus', 'GET'),
       updateVendorForEmployeeBulkMenu: p('/api/updateVendorForEmployeeBulkMenu', 'PATCH'),
       copyEmployeeBulkMenu: p('/api/copyEmployeeBulkMenu', 'POST'),
@@ -424,6 +427,23 @@ export class ApiConfigService {
       getScheduledNotifications: p('/api/getNotifications', 'GET'),
       getScheduledNotificationById: p('/api/getNotification', 'GET'),
       cancelScheduledNotification: p('/api/cancelNotification', 'PUT'),
+      getFoodOrderPackageByOrgIdAndCafeId: p('/api/getFoodOrderPackageByOrgIdAndCafeId', 'POST'),
+
+      getCurrentPackageOrdersList: p('/api/package/getCurrentPackageOrdersList', 'GET'),
+      getClusterCurrentPackageOrdersList: p('/api/package/getClusterCurrentPackageOrdersList', 'POST'),
+      getCurrentPackageCount: p('/api/package/getCurrentPackageCount', 'GET'),
+      getClusterCurrentPackageCount: p('/api/package/getClusterCurrentPackageCount', 'POST'),
+
+      getCurrentOrdersList: p('/api/foodorder/getCurrentOrdersList', 'GET'),
+      getClusterCurrentOrdersList: p('/api/foodorder/getClusterCurrentOrdersList', 'POST'),
+      getCurrentOrdersCount: p('/api/foodorder/getCurrentOrdersCount', 'GET'),
+      getClusterCurrentOrdersCount: p('/api/foodorder/getCurrentOrdersCount', 'POST'),
+      performPackageOrderTransfer: p('/api/performPackageOrderTransfer', 'POST'),
+      validatePaytmPaymentTransaction: p('/transaction/validatePaytmPaymentTransaction', 'POST'),
+      updateddPackageFoodOrder: p('/api/updatePackageFoodOrder', 'POST'),
+      forceLogout: p('/api/forceLogout', 'POST'),
+      getActiveSessions: p('/api/activeSessions', 'POST'),
+      getAllVendorFirms: p('/api/getAllVendorFirms', 'GET'),
     }
   }
 }

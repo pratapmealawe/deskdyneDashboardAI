@@ -253,10 +253,15 @@ export class OrgIndividualMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.B2B_saveIndividualMealMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getIndividualMenuItemsByCafeteriaId();
+      const res = await this.api.B2B_saveIndividualMealMenu(bulkMenuObj);
+      if (res) {
+        this.hasMenu.emit(true);
+        this.changesMade = false;
+        this.slabEditMode = false;
+        await this.getIndividualMenuItemsByCafeteriaId();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.error('error while saving individual menu', error);
     }

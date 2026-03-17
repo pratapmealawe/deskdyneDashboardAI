@@ -16,11 +16,12 @@ export class AddUpdateConfigImagesGroupComponent {
   serverUrl = environment.imageUrl;
   allImages: any[] = [];
   saving: boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private apiMainService: ApiMainService,
     private toasterService: ToasterService,
-    public activeModal: NgbActiveModal // Use ActiveModal to control the modal
+    public activeModal: NgbActiveModal
   ) { }
 
   ngOnInit(): void {
@@ -28,25 +29,31 @@ export class AddUpdateConfigImagesGroupComponent {
   }
 
   async getAllConfigImages(): Promise<void> {
+    this.isLoading = true;
     try {
       const response = await this.apiMainService.getAllConfigImages();
-      // console.log('AddUpdateConfigImagesGroup: config images response', response);
-      if (Array.isArray(response) && response.length > 0) {
-        this.allImages = response;
-      } else {
-        this.allImages = [];
-      }
-      console.log('AddUpdateConfigImagesGroup: allImages set to', this.allImages);
+      this.allImages = Array.isArray(response) && response.length > 0 ? response : [];
     } catch (error) {
-      console.error('❌ Error fetching config images:', error);
+      console.error('Error fetching config images:', error);
       this.toasterService.error('Failed to load config images');
+      this.allImages = [];
+    } finally {
+      this.isLoading = false;
     }
   }
 
+  isImageSelected(imageUrl: string): boolean {
+    return this.formData?.imageData?.includes(imageUrl) ?? false;
+  }
+
+  get selectedCount(): number {
+    return this.formData?.imageData?.length || 0;
+  }
+
   toggleImageSelection(imageId: string, imageUrl: string): void {
-    if (!this.formData.imageData) {
-      this.formData.imageData = [];
-    }
+    if (!this.formData) this.formData = { name: '', imageData: [] };
+    if (!this.formData.imageData) this.formData.imageData = [];
+
     const index = this.formData.imageData.indexOf(imageUrl);
     if (index > -1) {
       this.formData.imageData.splice(index, 1);
@@ -54,30 +61,30 @@ export class AddUpdateConfigImagesGroupComponent {
       this.formData.imageData.push(imageUrl);
     }
   }
-  slectedImage(img: any) {
-    console.log(img, "img");
-  }
 
   async saveConfig(): Promise<void> {
-    if (!this.formData?.name || !this.formData?.imageData?.length) {
-      this.toasterService.error('Please provide a group name and select at least one image');
+    if (!this.formData?.name?.trim()) {
+      this.toasterService.error('Please provide a group name');
       return;
     }
+    if (!this.formData?.imageData?.length) {
+      this.toasterService.error('Please select at least one image');
+      return;
+    }
+
     this.saving = true;
     try {
       let res;
-      console.log(this.formData);
       if (this.isEdit && this.editId) {
         res = await this.apiMainService.updateImageGroupConfig(this.editId, this.formData);
-        this.toasterService.success('✅ Updated Successfully');
+        this.toasterService.success('Updated Successfully');
       } else {
         res = await this.apiMainService.createImageGroupConfig(this.formData);
-        this.toasterService.success('✅ Created Successfully');
+        this.toasterService.success('Created Successfully');
       }
-      await this.getAllConfigImages();
       this.activeModal.close(res);
     } catch (error) {
-      console.error('❌ Error saving config:', error);
+      console.error('Error saving config:', error);
       this.toasterService.error('Something went wrong while saving');
     } finally {
       this.saving = false;
@@ -85,11 +92,10 @@ export class AddUpdateConfigImagesGroupComponent {
   }
 
   closeModal(): void {
-    this.activeModal.dismiss(); // Dismiss modal without saving
+    this.activeModal.dismiss();
   }
 
   get isSaveDisabled(): boolean {
-    return !this.formData.name && this.formData?.images?.length > 0;
+    return !this.formData?.name?.trim() || !this.formData?.imageData?.length || this.saving;
   }
-
 }

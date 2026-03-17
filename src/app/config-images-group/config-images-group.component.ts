@@ -18,6 +18,10 @@ export class ConfigImagesGroupComponent {
   totalItems: number = 0;
   pageSizeOptions: number[] = [5, 10, 20, 50, 100];
 
+  isLoading: boolean = false;
+  hasError: boolean = false;
+  searchTerm: string = '';
+
   constructor(
     private modalService: NgbModal,
     private apiMainService: ApiMainService,
@@ -30,32 +34,58 @@ export class ConfigImagesGroupComponent {
   }
 
   async loadImageGroupConfigs(): Promise<void> {
+    this.isLoading = true;
+    this.hasError = false;
     try {
       const response: any = await this.apiMainService.getAllImageGroupConfigs(this.currentPage, this.pageSize);
-      this.totalItems = response.total || 0;
+      this.totalItems = response?.total || 0;
       this.totalPages = Math.ceil(this.totalItems / this.pageSize);
-      this.imageGroupConfigs = response.configs || [];
+      this.imageGroupConfigs = response?.configs || [];
     } catch (error) {
       console.error('Error fetching image group configs:', error);
+      this.hasError = true;
       this.toasterService.error('Failed to load image group configs');
+    } finally {
+      this.isLoading = false;
     }
+  }
+
+  retryLoad(): void {
+    this.loadImageGroupConfigs();
+  }
+
+  get pagesArray(): number[] {
+    return Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  }
+
+  get filteredConfigs(): any[] {
+    if (!this.searchTerm?.trim()) return this.imageGroupConfigs;
+    const term = this.searchTerm.toLowerCase().trim();
+    return this.imageGroupConfigs.filter((c: any) =>
+      c.name?.toLowerCase().includes(term)
+    );
+  }
+
+  clearSearch(): void {
+    this.searchTerm = '';
   }
 
   openAddConfigModal(): void {
     const modalRef = this.modalService.open(AddUpdateConfigImagesGroupComponent, { size: 'xl' });
     modalRef.componentInstance.isEdit = false;
-    modalRef.componentInstance.formData = { groupName: '', images: [] };
+    modalRef.componentInstance.formData = { name: '', imageData: [] };
 
     modalRef.result.then((newConfig: any) => {
       if (newConfig) {
-        this.imageGroupConfigs.unshift(newConfig); // Add to the top of the list
+        this.imageGroupConfigs.unshift(newConfig);
+        this.totalItems++;
         this.toasterService.success('Image group created successfully');
       }
     }).catch(() => { });
   }
 
   async editConfig(config: any): Promise<void> {
-    if (!config) return;
+    if (!config?._id) return;
 
     try {
       const imageGroupConfig = await this.apiMainService.getImageGroupConfigById(config._id);
@@ -74,8 +104,8 @@ export class ConfigImagesGroupComponent {
           const index = this.imageGroupConfigs.findIndex(c => c._id === updatedConfig._id);
           if (index !== -1) {
             this.imageGroupConfigs[index] = updatedConfig;
-            this.toasterService.success('Image group updated successfully');
           }
+          this.toasterService.success('Image group updated successfully');
         }
       }).catch(() => { });
 
@@ -86,11 +116,10 @@ export class ConfigImagesGroupComponent {
   }
 
   confirmDelete(config: any): void {
-    console.log(config, "config");
-    if (!config) return;
+    if (!config?._id) return;
 
     this.confirmationModalService.modal({
-      msg: `Are you sure you want to delete "${config.groupName}"?`,
+      msg: `Are you sure you want to delete "${config.name}"?`,
       callback: () => this.deleteConfig(config._id),
       context: this
     });

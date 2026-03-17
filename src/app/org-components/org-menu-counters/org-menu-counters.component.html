@@ -1,69 +1,103 @@
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-8 d-flex align-items-baseline gap-2 pb-4">
-      <button *ngIf="selectedOutlet" mat-flat-button (click)="backToMainPage()">
-        <mat-icon>arrow_back</mat-icon>
-        Back
-      </button>
-      <h3 class="m-0">
-        {{ selectedOutlet ? "Outlet Details" : "Menu Counters" }}
-      </h3>
-    </div>
-    <div class="col-md-4">
-      <div class="col d-flex justify-content-end align-items-center">
-        <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
-          <mat-form-field appearance="outline" class="search-input">
-            <input matInput type="text" placeholder="Search outlet cafe..." (input)="searchFilter($event)" />
-            <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-              <mat-icon>search</mat-icon> </button>
-          </mat-form-field>
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header-card mb-4">
+    <div class="header-content">
+      <div class="d-flex align-items-center gap-3">
+        <button *ngIf="selectedOutlet" mat-icon-button (click)="backToMainPage()" class="back-btn">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="title-section">
+          <h1 class="page-title">{{ selectedOutlet ? 'Outlet Details' : 'Menu Counters' }}</h1>
+          <p class="page-subtitle">
+            {{ selectedOutlet ? selectedOutlet?.outletName : 'Browse and explore menu counters by outlet' }}
+          </p>
+        </div>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text"
+            [placeholder]="selectedOutlet ? 'Search menu items...' : 'Search outlets...'"
+            (input)="searchFilter($event)" />
         </div>
       </div>
     </div>
   </div>
 
-  <div *ngIf="!selectedOutlet" class="row mb-2">
+  <!-- Filter Bar -->
+  <div *ngIf="!selectedOutlet" class="filter-bar mb-4">
     <app-common-outlet-cafe-select [config]="headerConfig"
       (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
   </div>
 
-  <div class="container-fluid p-4 bg-light" *ngIf="filteredOutletList.length > 0">
-    <!-- All Outlets -->
-    <div class="row" *ngIf="!selectedOutlet">
-      <div class="col-md-4" *ngFor="let outlet of filteredOutletList; let i = index">
-        <div class="card customCard backColor shadow-sm mb-3">
-          <img class="w-100 outlet-image" [src]="
-              outlet.imageUrl
-                ? imageUrl + outlet.imageUrl
-                : 'assets/images/dummyUpload.png'
-            " />
+  <!-- Outlet Cards Grid -->
+  <div *ngIf="!selectedOutlet">
+    <div class="outlets-grid" *ngIf="filteredOutletList.length > 0; else emptyOutlets">
+      <div class="outlet-card" *ngFor="let outlet of filteredOutletList; let i = index">
+        <div class="outlet-image-wrap">
+          <img class="outlet-image"
+            [src]="outlet.imageUrl ? imageUrl + outlet.imageUrl : 'assets/images/dummyUpload.png'"
+            alt="{{ outlet?.outletName }}" />
+          <div class="outlet-badge">
+            <mat-icon>storefront</mat-icon>
+          </div>
+        </div>
+        <div class="outlet-body">
+          <h5 class="outlet-name">{{ outlet?.outletName }}</h5>
+          <p class="outlet-desc">
+            {{ outlet?.showFullDescription ? outlet?.outletDescription : (outlet?.outletDescription | slice:0:100) }}
+            <span *ngIf="!outlet.showFullDescription && outlet?.outletDescription?.length > 100">...</span>
+          </p>
+          <span *ngIf="outlet?.outletDescription?.length > 100" class="read-more-link"
+            (click)="toggleReadMore(i)">
+            {{ outlet?.showFullDescription ? 'Read Less' : 'Read More' }}
+          </span>
+        </div>
+        <div class="outlet-footer">
+          <button mat-flat-button class="btn-view-menu" (click)="showOutletDetails(outlet)">
+            <mat-icon>restaurant_menu</mat-icon> View Menu
+          </button>
+        </div>
+      </div>
+    </div>
 
-          <div class="card-body">
-            <div class="d-flex align-items-center justify-content-between">
-              <h5 class="card-title text-truncate m-0">
-                {{ outlet?.outletName }}
-              </h5>
+    <ng-template #emptyOutlets>
+      <div class="empty-state">
+        <mat-icon>storefront</mat-icon>
+        <h3>No Outlets Found</h3>
+        <p>Select a cafeteria to browse its menu counters.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Outlet Detail View -->
+  <div *ngIf="selectedOutlet" class="outlet-detail">
+
+    <!-- Cafeteria Info Card -->
+    <div class="modern-card mb-4">
+      <div class="card-header">
+        <div class="icon-box info">
+          <mat-icon>local_cafe</mat-icon>
+        </div>
+        <h3>Cafeteria Details</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-row">
+            <mat-icon class="info-icon">badge</mat-icon>
+            <div>
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ selectedOutlet?.cafeteriaDetails?.cafeteria_name }}</span>
             </div>
-
-            <!-- Read More Description -->
-            <p class="card-text text-muted">
-              {{
-              outlet?.showFullDescription
-              ? outlet?.outletDescription
-              : (outlet?.outletDescription | slice : 0 : 100)
-              }}
-              <span *ngIf="
-                  !outlet.showFullDescription &&
-                  outlet?.outletDescription.length > 100
-                ">...</span>
-            </p>
-
-            <div class="d-flex justify-content-between align-items-center">
-              <button (click)="showOutletDetails(outlet)" class="btn btn-outline-primary btn-sm">
-                View Menu List
-              </button>
-              <span *ngIf="outlet?.outletDescription.length > 100" class="read-more" (click)="toggleReadMore(i)">
-                {{ outlet?.showFullDescription ? "Read Less" : "Read More" }}
+          </div>
+          <div class="info-row">
+            <mat-icon class="info-icon">location_on</mat-icon>
+            <div>
+              <span class="info-label">Address</span>
+              <span class="info-value">
+                {{ selectedOutlet?.cafeteriaDetails?.address1 }}, {{ selectedOutlet?.cafeteriaDetails?.address2 }},
+                {{ selectedOutlet?.cafeteriaDetails?.location }}, {{ selectedOutlet?.cafeteriaDetails?.cafeteria_city }}
               </span>
             </div>
           </div>
@@ -71,51 +105,54 @@
       </div>
     </div>
 
-    <!-- Selected Outlet -->
-    <div *ngIf="selectedOutlet">
-      <div class="card customCard backColor mb-5 p-4">
-        <h4 class="mb-2">Cafeteria Details</h4>
-        <p>
-          <strong>Name:</strong>
-          {{ selectedOutlet?.cafeteriaDetails?.cafeteria_name }}<br />
-          <strong>Address:</strong>
-          {{ selectedOutlet?.cafeteriaDetails?.address1 }},
-          {{ selectedOutlet?.cafeteriaDetails?.address2 }}<br />
-          {{ selectedOutlet?.cafeteriaDetails?.location }},
-          {{ selectedOutlet?.cafeteriaDetails?.cafeteria_city }}
-        </p>
+    <!-- Menu Items Grid -->
+    <div class="modern-card">
+      <div class="card-header">
+        <div class="icon-box primary">
+          <mat-icon>restaurant_menu</mat-icon>
+        </div>
+        <h3>Menu Items</h3>
+        <span class="item-count-badge">{{ filteredMenuList.length }} items</span>
       </div>
-
-      <div class="row">
-        <div class="col-lg-4 mb-3" *ngFor="let menu of filteredMenuList">
-          <div class="card customCard backColor p-4">
-            <div class="d-flex align-items-center gap-3">
-              <img class="menu-img" [src]="
-                  menu.imageUrl
-                    ? imageUrl + menu.imageUrl
-                    : 'assets/images/dummyUpload.png'
-                " alt="menu image" />
-              <div>
-                <h5 class="mb-2">
-                  {{ menu?.itemName }} ({{ menu?.category }})
-                </h5>
-                <p class="text-muted">{{ menu?.description }}</p>
-                <strong>Price:</strong> ₹{{ menu?.price }}
+      <div class="card-body">
+        <div class="menu-grid" *ngIf="filteredMenuList.length > 0; else emptyMenu">
+          <div class="menu-item-card" *ngFor="let menu of filteredMenuList">
+            <div class="menu-item-image-wrap">
+              <img class="menu-item-image"
+                [src]="menu.imageUrl ? imageUrl + menu.imageUrl : 'assets/images/dummyUpload.png'"
+                alt="{{ menu?.itemName }}" />
+            </div>
+            <div class="menu-item-body">
+              <div class="menu-item-header">
+                <h6 class="menu-item-name">{{ menu?.itemName }}</h6>
+                <span class="category-chip">{{ menu?.category }}</span>
+              </div>
+              <p class="menu-item-desc" *ngIf="menu?.description">{{ menu?.description }}</p>
+              <div class="menu-item-footer">
+                <span class="price-badge">₹{{ menu?.price }}</span>
+              </div>
+              <div *ngIf="menu?.itemContains?.length > 0" class="contains-section">
+                <span class="contains-label">Contains:</span>
+                <div class="contains-chips">
+                  <span class="contains-chip" *ngFor="let item of menu?.itemContains">
+                    {{ item?.name }} — {{ item?.quantity }}
+                  </span>
+                </div>
               </div>
             </div>
-            <hr *ngIf="menu?.itemContains?.length > 0" class="my-1" />
-            <ul>
-              <li *ngFor="let item of menu?.itemContains">
-                {{ item?.name }} - {{ item?.quantity }}
-              </li>
-            </ul>
           </div>
         </div>
+
+        <ng-template #emptyMenu>
+          <div class="empty-state">
+            <mat-icon>no_meals</mat-icon>
+            <h3>No Menu Items Found</h3>
+            <p>No items match your search criteria.</p>
+          </div>
+        </ng-template>
       </div>
     </div>
+
   </div>
 
-  <mat-card class="center labelText py-2 rounded-4 mt-4" *ngIf="filteredOutletList.length == 0">
-    No Outlets Found
-  </mat-card>
 </div>

@@ -11,6 +11,7 @@ export class PdfPreviewDialogComponent implements OnInit {
     pdfUrl: SafeResourceUrl | null = null;
     rawUrl: string = '';
     fileName: string = 'document.pdf';
+    isImage: boolean = false;
 
     constructor(
         private dialogRef: MatDialogRef<PdfPreviewDialogComponent>,
@@ -22,7 +23,15 @@ export class PdfPreviewDialogComponent implements OnInit {
             this.rawUrl = data.url;
             this.fileName = data.fileName || 'document.pdf';
 
-            this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.url);
+            // Check if it's an image based on extension or if explicitly told
+            const extension = this.rawUrl.split('.').pop()?.toLowerCase();
+            this.isImage = data.isImage || (extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'gif' || extension === 'webp');
+
+            if (this.isImage) {
+                this.pdfUrl = this.sanitizer.bypassSecurityTrustUrl(data.url);
+            } else {
+                this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(data.url);
+            }
         }
     }
 
