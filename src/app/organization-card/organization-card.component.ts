@@ -76,7 +76,7 @@ export class OrganizationCardComponent {
     let cafeteriaOrder: string[] = [];
     if (type === 'cafeteria') {
       keysToRemove = ["cafeteria_location", "poc_details", "_id", "accessCode", "subsidy"];
-      cafeteriaOrder = ["cafeteria_name", "cafeteria_id", "cafeteria_city", "cafeteria_gstin", "address1", "address2", "appMenu_type", "landmark", "location", "showAdminDaily", "showEmpPolls", "showVirtualCafe", "showSaas", "showSiteExecutive", "showCompanyWallet", "showchecklist", "isEmployeeEmailLogin", "showComplienceTracker", "showConsumptionOrder"];
+      cafeteriaOrder = ["cafeteria_name", "cafeteria_id", "cafeteria_city", "cafeteria_gstin", "address1", "address2", "appMenu_type", "landmark", "location", "showAdminDaily", "showEmpPolls", "showVirtualCafe", "showSaas", "showSiteExecutive", "showchecklist", "isEmployeeEmailLogin", "showComplienceTracker", "showConsumptionOrder"];
     }
     const filteredData = this.removeKeysFromObjects(org, keysToRemove);
     if (type === 'cafeteria') {

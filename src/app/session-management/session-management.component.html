@@ -1,0 +1,131 @@
+<div class="notification-page-container">
+  <!-- Header Section -->
+  <div class="notification-header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Session Management</h1>
+        <p class="page-subtitle">Platform-wide session monitoring and security control</p>
+      </div>
+
+      <div class="search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch($event)" placeholder="Search by name, ID, or email...">
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="card p-3 mb-4 border-0 shadow-sm" style="border-radius: 12px;">
+    <div class="filters-section align-items-center mb-0">
+      <mat-form-field appearance="outline" class="dense-field">
+        <mat-label>App Type</mat-label>
+        <mat-select [(ngModel)]="selectedAppType" (selectionChange)="refreshSessions()">
+          <mat-option *ngFor="let type of appTypes" [value]="type">{{ type }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <div class="ml-auto d-flex align-items-center">
+        <button mat-stroked-button color="warn" class="mr-2" (click)="openGroupLogoutDialog()" style="border-radius: 20px;">
+          <mat-icon>power_settings_new</mat-icon> Group Force Logout
+        </button>
+        <button mat-stroked-button color="primary" (click)="refreshSessions()" style="border-radius: 20px;">
+          <mat-icon>refresh</mat-icon> Refresh List
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Body -->
+  <div class="content-body position-relative">
+    <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && pagedSessions.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">person_off</mat-icon>
+      <h3>No Active Sessions Found</h3>
+      <p>Currently, there are no active {{ selectedAppType }} sessions to manage.</p>
+    </div>
+
+    <div class="notification-grid" *ngIf="!isLoading && pagedSessions.length > 0">
+      <div class="notification-card" *ngFor="let session of pagedSessions">
+        <!-- Card Top -->
+        <div class="card-top">
+          <div class="notification-icon session-icon">
+            <mat-icon>person</mat-icon>
+            <span class="avatar-letter">{{ (session.displayName || '?')[0] | uppercase }}</span>
+          </div>
+          <div class="notification-identity">
+            <h3 class="notification-title" [matTooltip]="session.displayName">{{ session.displayName || 'Anonymous' }}</h3>
+            <div class="status-badge sent" *ngIf="session.loginAt">
+               <mat-icon>check_circle</mat-icon>
+               ACTIVE
+            </div>
+            <div class="status-badge cancelled" *ngIf="!session.loginAt">
+               <mat-icon>schedule</mat-icon>
+               UNKNOWN
+            </div>
+          </div>
+          <div class="card-actions">
+          <button mat-icon-button color="primary" (click)="forceLogoutSelected(session)" matTooltip="Terminate Session">
+            <mat-icon>logout</mat-icon>
+          </button>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <div class="info-row" *ngIf="session.email || session.loginId">
+            <mat-icon class="info-icon">email</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Email/ID</span>
+              <span class="info-value">{{ session.email || session.loginId }}</span>
+            </div>
+          </div>
+
+          <div class="info-row" *ngIf="session.phoneNo">
+            <mat-icon class="info-icon">phone</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ session.phoneNo }}</span>
+            </div>
+          </div>
+
+          <div class="info-row" *ngIf="session.loginAt">
+            <mat-icon class="info-icon">access_time</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Last Login</span>
+              <span class="info-value">{{ session.loginAt | date:'medium' }}</span>
+            </div>
+          </div>
+          
+          <div class="info-row">
+            <mat-icon class="info-icon">fingerprint</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Session ID</span>
+              <span class="info-value small-text">{{ session._id }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer">
+          <div class="target-chip">
+            <mat-icon>devices</mat-icon>
+            {{ selectedAppType }}
+          </div>
+          <div class="recipient-count">
+            Status: Live
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginator -->
+    <mat-paginator [length]="totalSessions" [pageSize]="pageSize" [pageIndex]="pageIndex"
+      [pageSizeOptions]="[10, 25, 50, 100]" (page)="onPageChange($event)" showFirstLastButtons class="custom-paginator"
+      *ngIf="totalSessions > 0">
+    </mat-paginator>
+  </div>
+</div>

@@ -20,6 +20,7 @@ import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
 import { MaterialModule } from 'src/app/material.module';
 import { QrMenuComponent } from './qr-menu/qr-menu.component';
 import { OrgOrderModule } from 'src/app/org-components/org-reviews/org-order/org-order.module';
+import { BulkMenuUploadDialogComponent } from './bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { OrgOrderModule } from 'src/app/org-components/org-reviews/org-order/org
     ComboPopupComponent,
     OutletVendorComponent,
     QrMenuComponent,
+    BulkMenuUploadDialogComponent,
   ],
   imports: [
     CommonModule,

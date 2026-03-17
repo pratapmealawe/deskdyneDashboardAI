@@ -141,7 +141,7 @@
   </div>
 
   <!-- Employee List Section -->
-  <div class="employee-list-section" *ngIf="getFilteredEmployees().length > 0 ">
+  <div class="employee-list-section" *ngIf="getCafeteriaEmployees().length > 0">
     <div class="section-header">
       <div class="section-title">
         <mat-icon>groups</mat-icon>
@@ -153,10 +153,14 @@
           <mat-icon matPrefix>search</mat-icon>
           <input matInput placeholder="Search employees..." [(ngModel)]="searchQuery" />
         </mat-form-field>
+        <!-- <button mat-stroked-button color="warn" class="delete-all-btn" (click)="deleteAllEmployees()">
+          <mat-icon>delete_sweep</mat-icon>
+          Delete All
+        </button> -->
       </div>
     </div>
 
-    <div class="employee-grid">
+    <div class="employee-grid" *ngIf="getFilteredEmployees().length > 0">
       <div class="employee-card" *ngFor="let employee of getFilteredEmployees()">
         <div class="employee-avatar">
           {{ getInitials(employee.employeeName) }}
@@ -194,8 +198,39 @@
         </div>
       </div>
     </div>
+
+    <!-- No Search Results -->
+    <div class="empty-state" *ngIf="searchQuery && getFilteredEmployees().length === 0">
+      <mat-icon>search_off</mat-icon>
+      <p>No employees found for "{{ searchQuery }}"</p>
+      <span>Try a different search term</span>
+    </div>
   </div>
 </div>
+
+<!-- Delete All Confirmation Dialog -->
+<ng-template #deleteAllDialog>
+  <div class="delete-dialog">
+    <div class="delete-icon-wrapper">
+      <mat-icon>delete_sweep</mat-icon>
+    </div>
+    <h2 class="delete-dialog-title">Delete All Employees?</h2>
+    <p class="delete-dialog-message">
+      You are about to delete <strong>{{ getCafeteriaEmployees().length }}</strong>
+      employee(s) from <strong>{{ selectedCafeteriaName }}</strong>
+    </p>
+    <p class="delete-dialog-warning">
+      <mat-icon>info</mat-icon>
+      This action cannot be undone
+    </p>
+    <div class="delete-dialog-actions">
+      <button mat-stroked-button mat-dialog-close class="cancel-btn">Cancel</button>
+      <button mat-raised-button color="warn" (click)="confirmDeleteAllEmployees()" class="delete-btn">
+        Delete All
+      </button>
+    </div>
+  </div>
+</ng-template>
 
 <!-- Edit Employee Dialog Template -->
 <ng-template #editDialog>

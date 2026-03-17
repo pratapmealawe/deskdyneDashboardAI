@@ -22,6 +22,11 @@ export let categoryList = [
   { title: "Daily", value: "Daily" },
   { title: "Add On", value: "Add on" },
   { title: "MRP", value: "MRP" },
+  { title: "Healthy Salads", value: "Healthy Salads" },
+  { title: "High Protein Grills", value: "High Protein Grills" },
+  { title: "Rice Bowls", value: "Rice Bowls" },
+  { title: "Pizzas", value: "Pizzas" },
+  { title: "Beverages", value: "Beverages" },
 ];
 
 

@@ -217,10 +217,15 @@ export class EmployeeCakeMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.saveEmployeeCakeMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getEmployeeCakeMenuByCafeteria();
+      const res = await this.api.saveEmployeeCakeMenu(bulkMenuObj);
+      if (res) {
+        this.hasMenu.emit(true);
+        this.changesMade = false;
+        this.slabEditMode = false;
+        await this.getEmployeeCakeMenuByCafeteria();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (e) {
       console.error('error while saving employee cake menu', e);
     }

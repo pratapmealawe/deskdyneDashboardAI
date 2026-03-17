@@ -1,10 +1,9 @@
-import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/app/material.module';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { MlApiMainService } from 'src/service/apiService/mlApiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
@@ -27,16 +26,15 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   activeWeekIndex: number = 0;
   showRequiredError: boolean = false;
   categoryKey: string = 'breakfast'; // Default or determined dynamically
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<AddEditPackageWeeklyMenuComponent>,
     private apiMainService: ApiMainService,
-    private mlApiMainService: MlApiMainService,
     private toastService: ToasterService
   ) { }
 
   menuSources = [
-    { label: 'Mealawe Menu', color: 'primary', action: (data: any) => this.loadMealaweMenu(data) },
     { label: 'Organization Cafe', color: 'accent', action: (data: any) => { this.selectedSource = 'otherCafe'; this.getMealAweOutletByCafeteria() } },
     { label: 'Other Org Cafe', color: 'warn', action: (data: any) => { this.selectedSource = 'otherOrgCafe'; this.getOrgCafeteriaWeeklyMenu(); } },
     { label: 'Custom Menu', color: 'success', action: (data: any) => { this.selectedSource = 'custom'; this.weekMenuList = []; } }
@@ -55,7 +53,16 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     }
 
     if (this.data?.category?.categoryName) {
-      this.categoryKey = this.data.category.categoryName.toLowerCase();
+      const name = this.data.category.categoryName.toLowerCase();
+      if (name.includes('lunch')) {
+        this.categoryKey = 'lunch';
+      } else if (name.includes('dinner')) {
+        this.categoryKey = 'dinner';
+      } else if (name.includes('breakfast')) {
+        this.categoryKey = 'breakfast';
+      } else {
+        this.categoryKey = 'lunch'; // fallback
+      }
     }
 
     if (this.data?.category?.weeklyMenu && this.data.category.weeklyMenu.length > 0) {
@@ -64,25 +71,6 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
       this.selectedSource = 'custom';
       this.activeWeekIndex = this.weekMenuList.findIndex(w => w.isSelected);
       if (this.activeWeekIndex === -1) this.activeWeekIndex = 0;
-    }
-  }
-
-
-  async loadMealaweMenu(data: any) {
-    try {
-      const res = await this.mlApiMainService.getWeeklyMenuByCategory(data.category.categoryName);
-      this.selectedSource = 'mealawe';
-      const clusters: any = await this.mlApiMainService.getAllGeoFencingList();
-      this.availableClusters = clusters
-        .filter((c: any) => res.clusterIds.includes(c.clusterId))
-        .map((c: any) => ({
-          clusterId: c.clusterId,
-          clusterName: c.clusterName
-        }));
-      this.uniqueMenus = res.uniqueMenus || [];
-
-    } catch (err) {
-      console.error("Error loading menu", err);
     }
   }
 
@@ -154,19 +142,23 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     for (let week of this.weekMenuList) {
       const allItems = [...week.vegMenuList, ...week.nonvegMenuList];
       for (let item of allItems) {
-        // Dynamically check the description for the current category
-        const key = this.categoryKey || 'breakfast'; // Fallback
-        if (item[key] && (!item[key].description || item[key].description.trim() === '')) {
+        const key = this.categoryKey || 'breakfast';
+        // Initialize if missing
+        if (!item[key]) {
+          item[key] = { description: '' };
+        }
+        if (!item[key].description || item[key].description.trim() === '') {
           this.toastService.error(`Please fill all required descriptions for ${key}.`);
           return;
         }
       }
     }
     const body = {
-      cafeteriaId: this.data.selectedCafeteria._id,
+      cafeteriaId: this.data.selectedCafeteria.cafeteria_id,
       weeklyMenu: this.weekMenuList,
       categoryName: this.data.category.categoryName
     }
+    console.log(body)
     try {
       await this.apiMainService.updateWeeklyMenuCategory(body);
       this.dialogRef.close();

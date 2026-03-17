@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild, ElementRef } from '@angular/core';
 import { PolicyService } from 'src/service/policy.service';
 
 @Component({
@@ -9,6 +9,11 @@ import { PolicyService } from 'src/service/policy.service';
 export class OrganizationViewComponent implements OnInit {
   @Input() organization: any;
   @Output() back = new EventEmitter<boolean>();
+  @ViewChild('mainTabsContainer') mainTabsContainer!: ElementRef;
+
+  isDown = false;
+  startX = 0;
+  scrollLeft = 0;
   selectedMainTabIndex = 0;
   selectedSubTabIndex = 0;
   selectedChildTabIndex = 0;
@@ -217,7 +222,31 @@ export class OrganizationViewComponent implements OnInit {
     this.isCategoryActive = event;
   }
 
+
+  onMouseDown(e: MouseEvent): void {
+    this.isDown = true;
+    this.startX = e.pageX - this.mainTabsContainer.nativeElement.offsetLeft;
+    this.scrollLeft = this.mainTabsContainer.nativeElement.scrollLeft;
+  }
+
+  onMouseLeave(): void {
+    this.isDown = false;
+  }
+
+  onMouseUp(): void {
+    this.isDown = false;
+  }
+
+  onMouseMove(e: MouseEvent): void {
+    if (!this.isDown) return;
+    e.preventDefault();
+    const x = e.pageX - this.mainTabsContainer.nativeElement.offsetLeft;
+    const walk = (x - this.startX) * 2; // scroll-fast
+    this.mainTabsContainer.nativeElement.scrollLeft = this.scrollLeft - walk;
+  }
+
   getTabIcon(path: string): string {
+
     const icons: { [key: string]: string } = {
       'orgDetails': 'business',
       'organizationCompliance': 'verified_user',

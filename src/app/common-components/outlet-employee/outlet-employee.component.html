@@ -119,7 +119,7 @@
       <!-- Employee List -->
       <ng-container *ngIf="!showMultipleEmployeeForm">
         <!-- Section Header -->
-        <div class="section-header" *ngIf="filteredEmployees.length > 0">
+        <div class="section-header" *ngIf="employeeList.length > 0">
           <div class="section-title">
             <mat-icon>groups</mat-icon>
             <span>{{ filteredEmployees.length }} Employee(s)</span>
@@ -171,8 +171,15 @@
           showFirstLastButtons>
         </mat-paginator>
 
+        <!-- No Search Results -->
+        <div class="empty-state" *ngIf="searchTerm && filteredEmployees.length === 0 && !loading">
+          <mat-icon>search_off</mat-icon>
+          <p>No employees found for "{{ searchTerm }}"</p>
+          <span>Try a different search term</span>
+        </div>
+
         <!-- Empty State -->
-        <div class="empty-state" *ngIf="filteredEmployees.length === 0 && !loading">
+        <div class="empty-state" *ngIf="!searchTerm && filteredEmployees.length === 0 && !loading">
           <mat-icon>groups</mat-icon>
           <p>No employees found</p>
           <span>Click "Add Employee" or "Add Multiple" to add outlet employees</span>

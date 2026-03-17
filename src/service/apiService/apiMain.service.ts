@@ -72,6 +72,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
   }
 
+  bulkUploadOutletMenu(data: any, outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.bulkUploadOutletMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, data);
+  }
+
   addQrOutletMenu(outlet: any, outletId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.addQrOutletMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
@@ -735,6 +740,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
+  deleteMultipleEmployee(ids: string[]) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMultipleEmployee, { ids });
+  }
+
   updateEmployee(id: any, employeeObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, employeeObj);
@@ -794,6 +803,7 @@ export class ApiMainService {
   }
 
   getAdminDailyBulkOrders(payload: any) {
+    console.log(payload, "payload");
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAdminDailyBulkOrders, payload);
   }
 
@@ -822,13 +832,12 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any) {
+  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any, orgId?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
-    let url = urlObj.url + `/${page}/${limit}/${status}`;
-    if (date) {
-      url += `/${date}`;
-    }
-    return this.apiHttpService.REQUEST({ url, method: urlObj.method });
+    const url = urlObj.url + `/${page}/${limit}/${status}`;
+    const payload: any = date ? { date } : {};
+    if (orgId) payload.orgId = orgId;
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method }, payload);
   }
 
   getClusterb2bBulkOrderList(status: any, page: any, limit: number) {
@@ -846,10 +855,8 @@ export class ApiMainService {
 
   getCurrentDailyOrdersCount(date?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount;
-    if (date) {
-      return this.apiHttpService.REQUEST({ url: urlObj.url + `/${date}`, method: urlObj.method });
-    }
-    return this.apiHttpService.REQUEST(urlObj);
+    const payload = date ? { date } : {};
+    return this.apiHttpService.REQUEST(urlObj, payload);
   }
 
   getCafeteriasPollingList(deliveryDate: any) {
@@ -999,6 +1006,10 @@ export class ApiMainService {
   updateVcEmployee(id: any, body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateVcEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+  fetchOutletOrdersByOrgAndDateRange(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchOutletOrdersByOrgAndDateRange, payload);
   }
 
   fetchOutletOrdersbysearchObj(body: any) {
@@ -1169,10 +1180,6 @@ export class ApiMainService {
   updateVendorFirmCompliance(id: any, body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateVendorFirmCompliance;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
-  }
-
-  getAllVendorFirms() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllVendorFirms);
   }
 
   deleteUserFromAllList(phoneNo: any) {
@@ -1595,6 +1602,36 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateBulkOrdersListPaymentFailed, data);
   }
 
+  getClusterCurrentOrdersList(status: string, page: number, limit: number, clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentOrdersList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method }, { clusterList });
+  }
+
+  getClusterCurrentPackageOrdersList(status: string, page: number, limit: number, clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentPackageOrdersList;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method }, { clusterList });
+  }
+
+  getCurrentOrdersCount(clientDate?: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCurrentOrdersCount;
+    const url = clientDate ? `${urlObj.url}/${clientDate}` : urlObj.url;
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method }, null, null, true);
+  }
+
+  getClusterCurrentOrdersCount(clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentOrdersCount;
+    return this.apiHttpService.REQUEST(urlObj, { clusterList }, null, true);
+  }
+
+  getClusterCurrentPackageCount(clusterList: any = []) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getClusterCurrentPackageCount;
+    return this.apiHttpService.REQUEST(urlObj, { clusterList }, null, true);
+  }
+
+  getCurrentPackageCount() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getCurrentPackageCount, null, null, true);
+  }
+
   checkSession() {
     const urlObj = this.apiConfigService.apiEndPointObj.checkSession;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
@@ -1918,4 +1955,43 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.cancelScheduledNotification;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
+
+  getFoodOrderPackageByOrgIdAndCafeId(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getFoodOrderPackageByOrgIdAndCafeId;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, body);
+  }
+
+  performPackageOrderTransfer(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.performPackageOrderTransfer, payload);
+  }
+
+  validatePaytmPaymentTransaction(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.validatePaytmPaymentTransaction, payload);
+  }
+
+  updateddPackageFoodOrder(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateddPackageFoodOrder, payload);
+  }
+
+  forceLogout(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.forceLogout, payload);
+  }
+
+  getActiveSessions(appType: string = 'USER', options: any = {}) {
+    this.runtimeStorageService.resetCacheData('SESSIONS');
+    const urlObj = this.apiConfigService.apiEndPointObj.getActiveSessions;
+    const body: any = {
+        appType,
+        pageIndex: options.pageIndex,
+        pageSize: options.pageSize,
+        searchTerm: options.searchTerm
+    };
+    return this.apiHttpService.REQUEST(urlObj, body);
+  }
+
+  getAllVendorFirms() {
+    const urlObj = this.apiConfigService.apiEndPointObj.getAllVendorFirms;
+    return this.apiHttpService.REQUEST(urlObj);
+  }
 }
+

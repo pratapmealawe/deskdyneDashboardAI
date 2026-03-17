@@ -105,7 +105,7 @@ export class PolicyComponent implements OnInit {
     try {
       this.confirmationModalService.modal({
         msg: 'Are you sure you want to delete this Policy?',
-        callback: () => this.deletePolicy(id), // Modified to pass 'id' correctly
+        callback: () => this.deletePolicy(id), 
         context: this
       });
     } catch (e) {

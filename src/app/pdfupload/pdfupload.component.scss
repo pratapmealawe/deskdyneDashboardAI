@@ -6,16 +6,16 @@
 
 /* Upload Zone */
 .upload-zone {
-  border: 2px dashed #cbd5e1;
+  border: 1.5px dashed #cbd5e1;
   border-radius: 8px;
   background: #f8fafc;
-  padding: 20px;
+  padding: 12px;
   text-align: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   position: relative;
 
   &:hover {
-    border-color: #94a3b8;
+    border-color: #3b82f6;
     background: #f1f5f9;
   }
 
@@ -30,50 +30,65 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .icon-circle {
-  width: 40px;
-  height: 40px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   background: #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #64748b;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
+  transition: transform 0.3s ease;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.upload-zone:hover .icon-circle {
+  transform: translateY(-4px);
+  background: #dbeafe;
+  color: #3b82f6;
 }
 
 .upload-text {
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: #334155;
+  color: #1e293b;
 }
 
 .upload-subtext {
   margin: 0;
-  font-size: 12px;
-  color: #94a3b8;
+  font-size: 11px;
+  color: #64748b;
 }
 
 .browse-btn {
-  margin-top: 8px;
+  margin-top: 4px;
   display: inline-block;
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 500;
+  padding: 4px 12px;
+  font-size: 11px;
+  font-weight: 600;
   color: #3b82f6;
-  background: #eff6ff;
+  background: white;
   border: 1px solid #dbeafe;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 
   &:hover {
     background: #3b82f6;
     color: white;
+    border-color: #3b82f6;
   }
 }
 
@@ -85,22 +100,33 @@
 .file-info {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .file-details {
   display: flex;
   align-items: center;
-  gap: 12px;
-  background: white;
-  padding: 8px 12px;
-  border-radius: 6px;
+  gap: 8px;
+  background: #f8fafc;
+  padding: 6px 10px;
+  border-radius: 7px;
   border: 1px solid #e2e8f0;
 }
 
+.file-icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .file-icon {
-  color: #ef4444;
-  /* PDF red color */
+  &.pdf {
+    color: #ef4444;
+  }
+
+  &.image {
+    color: #10b981;
+  }
 }
 
 .file-meta {
@@ -108,21 +134,21 @@
   text-align: left;
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .file-name {
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   color: #1e293b;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
 }
 
 .file-size {
-  font-size: 11px;
-  color: #94a3b8;
+  font-size: 10px;
+  color: #64748b;
 }
 
 .remove-btn {
@@ -130,10 +156,11 @@
   border: none;
   color: #94a3b8;
   cursor: pointer;
-  padding: 4px;
+  padding: 2px;
   display: flex;
   align-items: center;
   border-radius: 4px;
+  transition: all 0.2s;
 
   &:hover {
     background: #fee2e2;
@@ -150,39 +177,71 @@
   background: #3b82f6;
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 5px 14px;
   border-radius: 6px;
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s;
+  transition: all 0.2s;
+  width: 100%;
 
   &:hover {
     background: #2563eb;
+  }
+
+  &:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
   }
 }
 
 /* Preview Zone */
 .preview-zone {
-  margin-top: 12px;
+  margin-top: 10px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   overflow: hidden;
   background: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 
   .preview-header {
     background: #f8fafc;
     padding: 6px 12px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
-    color: #64748b;
+    color: #475569;
     border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+
+    &::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #3b82f6;
+      border-radius: 50%;
+    }
+  }
+
+  .preview-content {
+    display: flex;
+    justify-content: center;
+    background: #f1f5f9;
   }
 
   iframe {
     width: 100%;
-    height: 200px;
+    height: 250px;
     border: none;
     display: block;
+  }
+
+  .img-preview {
+    max-width: 100%;
+    max-height: 250px;
+    object-fit: contain;
+    display: block;
+    padding: 8px;
   }
 }

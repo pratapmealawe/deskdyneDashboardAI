@@ -101,7 +101,8 @@ export class AddVendorFirmComponent {
         accountName: ['', [Validators.required]],
         bank_name: ['', [Validators.required]]
       }),
-      accountEnrollment: ['']
+      accountEnrollment: [''],
+      MMID: ['']
     });
     this.pocForm = this.fb.group({
       poc_id: [''],
@@ -300,7 +301,8 @@ export class AddVendorFirmComponent {
       vendorFirmName: data.vendorFirmName,
       vendorFirmEmail: data.vendorFirmEmail,
       vendorFirmPhoneNo: data.vendorFirmPhoneNo,
-      bank_details: data.bank_details
+      bank_details: data.bank_details,
+      MMID: data.MMID || ''
     });
   }
 

@@ -1,23 +1,47 @@
-<div class="container-fluid">
-  <h3 class="pb-4">Menu Items</h3>
-  <app-common-outlet-cafe-select [config]="headerConfig"
-    (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
-  <div class="d-flex justify-content-end align-items-center w-100 mt-2">
-    <button class="btn-view" type="button" *ngIf="outletOrderData.length > 0" mat-stroked-button color="primary"
-      (click)="openItemBreakdownModal()">
-      <mat-icon>list_alt</mat-icon> Details breakdown
-    </button>
-  </div>
-  <div class="card-hover mt-2">
-    <!-- Chart -->
-    <highcharts-chart *ngIf="outletOrderData.length > 0" [Highcharts]="Highcharts" [options]="chartOptions"
-      [update]="updateFlag" [oneToOne]="oneToOneFlag" style="width: 100%; height: 400px; display: block">
-    </highcharts-chart>
+<div class="page-container">
 
-    <!-- No Data -->
-    <mat-card class="center labelText py-2 rounded-4" *ngIf="outletOrderData.length<=0">
-      No Menu Items Found
-    </mat-card>
+  <!-- ── Header Card ──────────────────────────────────────────── -->
+  <div class="header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Menu Items</h1>
+        <p class="page-subtitle">Item-wise distribution from completed orders</p>
+      </div>
+      <div class="actions-section" *ngIf="outletOrderData.length > 0">
+        <button mat-flat-button class="btn-breakdown" (click)="openItemBreakdownModal()">
+          <mat-icon>list_alt</mat-icon> Details Breakdown
+        </button>
+      </div>
+    </div>
   </div>
 
+  <!-- ── Content Body ─────────────────────────────────────────── -->
+  <div class="content-body">
+
+    <!-- Filter Section -->
+    <div class="filter-wrapper">
+      <app-common-outlet-cafe-select [config]="headerConfig"
+        (submitted)="filterSubmitted($event)">
+      </app-common-outlet-cafe-select>
+    </div>
+
+    <!-- Chart Card -->
+    <div class="chart-card" *ngIf="outletOrderData.length > 0">
+      <highcharts-chart
+        [Highcharts]="Highcharts"
+        [options]="chartOptions"
+        [update]="updateFlag"
+        [oneToOne]="oneToOneFlag"
+        style="width:100%; height:420px; display:block;">
+      </highcharts-chart>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="outletOrderData.length === 0">
+      <mat-icon class="empty-icon">restaurant_menu</mat-icon>
+      <h3>No Menu Items Found</h3>
+      <p>Select an outlet and date range to view item distribution.</p>
+    </div>
+
+  </div>
 </div>

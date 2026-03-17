@@ -244,10 +244,15 @@ export class PantryMenuComponent {
     };
 
     try {
-      await this.api.B2B_savePantryMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getBulkMenuItemsByCafeteriaId();
+      const res = await this.api.B2B_savePantryMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getBulkMenuItemsByCafeteriaId();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (error) {
       console.error('error while saving sweet menu', error);
     }

@@ -118,6 +118,11 @@ export class EmployeeSelectCafeteriaComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isMenuAvailable']) {
+      this.isMenuAvailableFlag = changes['isMenuAvailable'].currentValue;
+      this.checkCategoryStatus();
+    }
+
     const relevantInputs = [
       'selectedMainTabIndex',
       'selectedSubTabIndex',
@@ -306,7 +311,7 @@ export class EmployeeSelectCafeteriaComponent implements OnInit, OnChanges {
         if (res) {
           setTimeout(() => {
             this.isCategoryActiveFlag = res?.isCategoryActive;
-            this.isMenuAvailableFlag = res?.itemList?.length > 0;
+            this.isMenuAvailableFlag = this.isMenuAvailable || (res?.itemList?.length > 0);
             this.isCategoryActive.emit(this.isCategoryActiveFlag);
 
           });

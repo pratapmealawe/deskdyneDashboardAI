@@ -219,10 +219,15 @@ export class EmployeeIndividualSnackMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.saveEmployeeIndividualSnackMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getEmployeeIndividualSnackMenuByCafeteria();
+      const res = await this.api.saveEmployeeIndividualSnackMenu(bulkMenuObj);
+      if (res) {
+        this.changesMade = false;
+        this.slabEditMode = false;
+        this.hasMenu.emit(true);
+        await this.getEmployeeIndividualSnackMenuByCafeteria();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (e) {
       console.error('error while saving employee individual snack menu', e);
     }

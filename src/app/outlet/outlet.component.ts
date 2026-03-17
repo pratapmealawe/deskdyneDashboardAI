@@ -18,11 +18,6 @@ import { DeletedOutletsDialogComponent } from './deleted-outlets-dialog/deleted-
 export class OutletComponent implements OnInit {
   showSearchSection: boolean = true;
   filteredOutletList: any;
-  searchObj: any = {
-    outletName: '',
-    emailID: '',
-    phoneNo: '',
-  };
   page: any = 0;
   outletList: any = [];
   selectedOutlet: any;
@@ -72,7 +67,7 @@ export class OutletComponent implements OnInit {
 
   async searchOutlet() {
     try {
-      this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
+      this.outletList = await this.apiMainService.searchOutlet({});
       console.log(this.outletList);
 
       if (this.outletList.length > 0) {

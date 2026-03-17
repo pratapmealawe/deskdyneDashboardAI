@@ -38,7 +38,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
   admin: any
 
   constructor(
-    private ddApiMainService: ApiMainService,
+    private apiMainService: ApiMainService,
     private policyService: PolicyService,
     private suggestionsFeedbackService: SuggestionsFeedbackService,
     private searchService: SearchFilterService,
@@ -60,7 +60,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
       // NOTE:
       // This assumes getGeneralAppFeeback(1) returns all records,
       // or at least enough for this admin view.
-      const feedbacklist: any[] = await this.ddApiMainService.getGeneralAppFeeback(1);
+      const feedbacklist: any[] = await this.apiMainService.getGeneralAppFeeback(1);
 
       if (Array.isArray(feedbacklist) && feedbacklist.length > 0) {
         this.feedbacklist = feedbacklist.map((ele: any) => {
@@ -209,7 +209,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
         }
       };
 
-      await this.ddApiMainService.feedbackacknowledge(feedback._id, payload);
+      await this.apiMainService.feedbackacknowledge(feedback._id, payload);
 
       feedback.acknowledged = true;
       feedback.acknowledgeComment = payload.comment;

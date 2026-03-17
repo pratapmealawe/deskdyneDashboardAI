@@ -84,6 +84,7 @@ export class AddPolicyComponent {
       pastOrder: false,
       viewEnquiries: false,
       outletExcelExport: false,
+      dailyAdminExcelExport: false,
       mainDashboard: false,
       customer: false,
       outletMasterMenu: false,
@@ -100,6 +101,7 @@ export class AddPolicyComponent {
       vendorWalletDashboard: false,
       allOrders: false,
       scheduledNotifications: false,
+      sessionManagement: false,
     };
 
     const button_policies = {

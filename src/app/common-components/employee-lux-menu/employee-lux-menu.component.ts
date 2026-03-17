@@ -221,10 +221,15 @@ export class EmployeeLuxMenuComponent implements OnInit, OnChanges {
     };
 
     try {
-      await this.api.saveEmployeeLuxMenu(bulkMenuObj);
-      this.changesMade = false;
-      this.slabEditMode = false;
-      await this.getEmployeeLuxMenuByCafeteria();
+      const res = await this.api.saveEmployeeLuxMenu(bulkMenuObj);
+      if (res) {
+        this.hasMenu.emit(true);
+        this.changesMade = false;
+        this.slabEditMode = false;
+        await this.getEmployeeLuxMenuByCafeteria();
+      } else {
+        this.hasMenu.emit(false);
+      }
     } catch (e) {
       console.error('error while saving employee lux menu', e);
     }
