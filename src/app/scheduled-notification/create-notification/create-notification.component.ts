@@ -1,8 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
+import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 
 @Component({
     selector: 'app-create-notification',
@@ -12,6 +13,9 @@ import { ToasterService } from 'src/service/toaster.service';
 export class CreateNotificationComponent implements OnInit {
     form: FormGroup;
     isLoading = false;
+    imageUrl: string | null = null;
+    uploadedImageFile: any = null;
+    imageReplaced = false;
     orgList: any[] = [];
     cafeteriaList: any[] = [];
     usersList: any[] = [];
@@ -29,6 +33,7 @@ export class CreateNotificationComponent implements OnInit {
 
     constructor(
         private fb: FormBuilder,
+        private dialog: MatDialog,
         private apiMainService: ApiMainService,
         private toaster: ToasterService,
         public dialogRef: MatDialogRef<CreateNotificationComponent>,
@@ -311,29 +316,21 @@ export class CreateNotificationComponent implements OnInit {
 
         this.isLoading = true;
         const formVal = this.form.value;
+        const payload = this.buildPayload();
 
-        const payload: any = {
-            title: formVal.title,
-            body: formVal.body,
-            targetType: formVal.targetType,
-            notificationType: 'USER'
-        };
-
-        if (formVal.targetType === 'individual') {
-            payload.targetIds = formVal.individualIds;
-        } else if (formVal.targetType !== 'all') {
-            payload.targetIds = formVal.targetIds;
-        }
-
-        // Handle Delivery (Schedule vs Send Now)
         if (formVal.deliveryMode === 'schedule') {
             const date = new Date(formVal.scheduledDate);
             if (formVal.scheduledTime) {
                 const [hours, minutes] = formVal.scheduledTime.split(':').map((val: string) => parseInt(val, 10));
                 date.setHours(hours, minutes, 0, 0);
             }
+            const scheduledAt = date.toISOString();
 
-            payload.scheduledAt = date.toISOString();
+            if (payload instanceof FormData) {
+                payload.append('scheduledAt', scheduledAt);
+            } else {
+                payload.scheduledAt = scheduledAt;
+            }
 
             try {
                 const res: any = await this.apiMainService.createScheduledNotification(payload);
@@ -341,7 +338,6 @@ export class CreateNotificationComponent implements OnInit {
             } catch (err) {
                 this.handleError(err);
             }
-
         } else {
             try {
                 const res: any = await this.apiMainService.sendNowNotification(payload);
@@ -366,6 +362,68 @@ export class CreateNotificationComponent implements OnInit {
         this.isLoading = false;
         console.error(err);
         this.toaster.error('Something went wrong');
+    }
+
+    onImageChange(event: any) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const dialogRef = this.dialog.open(ImageCropperComponent, {
+                width: '50%',
+                panelClass: 'image-cropper-dialog',
+                disableClose: true,
+                data: { imageUrl: reader.result, imageWidth: 300, imageHeight: 300, aspectRatio: 1 }
+            });
+            dialogRef.afterClosed().subscribe((result: any) => {
+                if (result?.croppedImages) {
+                    this.uploadedImageFile = result.croppedImages.file;
+                    this.imageUrl = result.croppedImages.resizeDataUrl;
+                    this.imageReplaced = true;
+                }
+            });
+        };
+        // reset input so same file can be re-selected
+        event.target.value = '';
+    }
+
+    removeImage() {
+        this.imageUrl = null;
+        this.uploadedImageFile = null;
+        this.imageReplaced = false;
+    }
+
+    private buildPayload(): any | FormData {
+        const formVal = this.form.value;
+        const payload: any = {
+            title: formVal.title,
+            body: formVal.body,
+            targetType: formVal.targetType,
+            notificationType: 'USER'
+        };
+
+        if (formVal.targetType === 'individual') {
+            payload.targetIds = formVal.individualIds;
+        } else if (formVal.targetType !== 'all') {
+            payload.targetIds = formVal.targetIds;
+        }
+
+        if (!this.imageReplaced || !this.uploadedImageFile) {
+            return payload;
+        }
+
+        const fd = new FormData();
+        Object.entries(payload).forEach(([key, val]) => {
+            if (Array.isArray(val)) {
+                fd.append(key, JSON.stringify(val));
+            } else {
+                fd.append(key, val as any);
+            }
+        });
+        fd.append('image', this.uploadedImageFile);
+        return fd;
     }
 
     close() {

@@ -128,9 +128,6 @@
             <div class="mt-4" *ngIf="form.get('isPreOrder')?.value">
               <h4 class="text-secondary mb-2" style="font-size: 0.9rem;">Pre-Order Settings</h4>
               <div class="d-flex flex-column gap-2 p-3 bg-light rounded">
-                <mat-slide-toggle formControlName="isSameDay" color="primary">
-                  Same Day Order
-                </mat-slide-toggle>
                 <mat-radio-group formControlName="preOrderMealType" class="d-flex gap-3 mb-2">
                   <mat-radio-button value="lunch">Lunch</mat-radio-button>
                   <mat-radio-button value="dinner">Dinner</mat-radio-button>

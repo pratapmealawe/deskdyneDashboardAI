@@ -474,7 +474,6 @@ Nutrient Conversion Factors:
       this.transformedMenuItems.forEach((item: any) => {
         delete item._id;
       });
-      console.log("transformedMenuItems", this.transformedMenuItems);
 
       // Check for duplicates
       const existingItemNames = new Set(
@@ -490,6 +489,9 @@ Nutrient Conversion Factors:
         this.toastr.error(`Duplicate items found: ${duplicateNames}`);
         return; // Stop execution
       }
+
+      console.log("transformedMenuItems", this.transformedMenuItems);
+
 
       const res = await this.apiMainService.addOutletList(
         this.outletObj._id,
@@ -743,11 +745,15 @@ Nutrient Conversion Factors:
     this.transformedMenuItems = this.selectedMenuItems.map((each: any) => {
       return {
         ...each,
-        mealTimingInfo: each.mealTimingInfo.map(
-          (info: any) => info.mealType
+        mealTimingInfo: (each.mealTimingInfo || []).map(
+          (info: any) => (typeof info === 'string' ? info : info.mealType)
         ),
       };
     });
+
+    console.log(this.transformedMenuItems);
+
+
   }
 
   isSelected(item: any): boolean {

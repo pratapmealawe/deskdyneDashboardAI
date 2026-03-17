@@ -317,6 +317,67 @@ mat-radio-button {
     }
 }
 
+// Notification Image Upload
+.notification-image-upload {
+    .upload-placeholder {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        width: 130px;
+        height: 130px;
+        border: 2px dashed #cbd5e1;
+        border-radius: 10px;
+        cursor: pointer;
+        color: #94a3b8;
+        font-size: 0.85rem;
+        transition: border-color 0.2s, color 0.2s;
+
+        mat-icon {
+            font-size: 28px;
+            width: 28px;
+            height: 28px;
+        }
+
+        &:hover {
+            border-color: #2196f3;
+            color: #2196f3;
+        }
+    }
+
+    .image-preview-wrapper {
+        position: relative;
+        display: inline-block;
+
+        .notif-preview-img {
+            width: 130px;
+            height: 130px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            display: block;
+        }
+
+        .remove-img-btn {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #ef4444;
+            color: #fff;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+
+            mat-icon {
+                font-size: 16px;
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+}
+
 // Selected Users Section
 .selected-users-section {
     margin-top: 12px;

@@ -115,7 +115,6 @@ export class AddOutletComponent implements OnInit {
       isSunAvailable: [false],
 
       isPriceHide: [false],
-      isSameDay: [false],
       isPackagingRequired: [false],
       packagingAmount: [0, [Validators.min(0)]],
 
@@ -148,7 +147,6 @@ export class AddOutletComponent implements OnInit {
             isSatAvailable: false,
             isSunAvailable: false,
             isPriceHide: false,
-            isSameDay: false,
           },
           { emitEvent: false }
         );
@@ -267,7 +265,6 @@ export class AddOutletComponent implements OnInit {
         isSatAvailable: outlet.isSatAvailable ?? false,
         isSunAvailable: outlet.isSunAvailable ?? false,
         isPriceHide: outlet.isPriceHide ?? false,
-        isSameDay: outlet.isSameDay ?? false,
         isPackagingRequired: outlet.isPackagingRequired ?? false,
         packagingAmount: outlet.packagingAmount ?? 0,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage ?? 0,
