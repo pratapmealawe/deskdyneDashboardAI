@@ -379,6 +379,7 @@ export class ApiConfigService {
       B2B_fetchPantryMenu: p('/api/B2B_fetchPantryMenu', 'GET'),
       B2B_savePantryMenu: p('/api/B2B_savePantryMenu', 'POST'),
       B2B_changeVendor: p('/api/changeVendor', 'PATCH'),
+      B2B_fetchBulkOrdersbyFilter: p('/api/fetchBulkOrdersbyFilter', 'POST'),
       getAllEmployeeBulkMenus: p('/api/getAllEmployeeBulkMenus', 'GET'),
       updateVendorForEmployeeBulkMenu: p('/api/updateVendorForEmployeeBulkMenu', 'PATCH'),
       copyEmployeeBulkMenu: p('/api/copyEmployeeBulkMenu', 'POST'),
