@@ -17,6 +17,7 @@ export class ApiConfigService {
     this.apiEndPointObj = {
       loginAdmin: p('/authadmin/loginAdmin', 'POST'),
       addOutletMenu: p('/api/addOutletMenu', 'POST'),
+      bulkUploadOutletMenu: p('/api/bulkUploadOutletMenu', 'POST'),
       addQrOutletMenu: p('/api/addQrOutletMenu', 'POST'),
       createQrMenu: p('/api/createQrMenu', 'POST'),
       addOutletMasterMenu: p('/api/addOutletMasterMenu', 'POST'),
@@ -244,6 +245,7 @@ export class ApiConfigService {
       fetchPastEventOrdersbyOutletId: p('/api/fetchPastEventOrdersbyOutletId', 'GET'),
       getPopupOutletsByOrgId: p('/api/getPopupOutletsByOrgId', 'GET'),
       fetchDailyBulkOrdersbysearchObj: p('/api/fetchDailyBulkOrdersbysearchObj', 'POST'),
+      fetchBulkOrdersbyfilter: p('/api/fetchBulkOrdersbyFilter', 'POST'),
       fetchDailyBulkOrdersbyOrgId: p('/api/fetchDailyBulkOrdersbyOrgId', 'POST'),
       getOrg: p('/api/getOrg', 'GET'),
       getStaticTotalCountsByOrg: p('/api/getStaticTotalCountsByOrg', 'GET'),
@@ -378,6 +380,7 @@ export class ApiConfigService {
       B2B_fetchPantryMenu: p('/api/B2B_fetchPantryMenu', 'GET'),
       B2B_savePantryMenu: p('/api/B2B_savePantryMenu', 'POST'),
       B2B_changeVendor: p('/api/changeVendor', 'PATCH'),
+      B2B_fetchBulkOrdersbyFilter: p('/api/fetchBulkOrdersbyFilter', 'POST'),
       getAllEmployeeBulkMenus: p('/api/getAllEmployeeBulkMenus', 'GET'),
       updateVendorForEmployeeBulkMenu: p('/api/updateVendorForEmployeeBulkMenu', 'PATCH'),
       copyEmployeeBulkMenu: p('/api/copyEmployeeBulkMenu', 'POST'),
