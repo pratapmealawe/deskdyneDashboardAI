@@ -10,7 +10,6 @@ import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-out
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
 export interface SubmittedByInfo {
@@ -89,7 +88,6 @@ export class OrgIncidentManagementComponent implements OnInit {
   incidentObj = {} as IncidentManagement;
   incidentForm!: FormGroup;
   isSubmitting = false;
-  btnPolicy: any;
   deleteIncidentObj: any;
   statusList: Array<
     'created' | 'acknowledged' | 'inReview' | 'blocked' | 'resolved'
@@ -116,7 +114,6 @@ export class OrgIncidentManagementComponent implements OnInit {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService,
-    private policyService: PolicyService,
     private confirmationModalService: ConfirmationModalService,
     private modalService: NgbModal,
     private router: Router,
@@ -124,7 +121,6 @@ export class OrgIncidentManagementComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
 
     if (this.orgAdmin?.orgDetails?._id) {

@@ -31,7 +31,7 @@
         </div>
         <div class="col-6 col-md-6 col-lg-1">
           <div class="d-flex align-items-center gap-2">
-            <mat-icon *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(event)" color="primary"> visibility
+            <mat-icon *appHasPermission="'OUTLET:VIEW'" (click)="vieworg(event)" color="primary"> visibility
             </mat-icon>
             <mat-icon (click)="showPopup(event)" color="warn"> delete </mat-icon>
           </div>

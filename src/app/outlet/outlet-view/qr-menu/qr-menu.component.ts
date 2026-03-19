@@ -19,7 +19,6 @@ import { ConfirmationModalService } from 'src/service/confirmation-modal.service
 import { categoryList } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
@@ -55,7 +54,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
   foodItem: any;
   groupItem: any;
   editGroupItem: any;
-  btnPolicy: any;
   menuInfo: any;
   eventInfo: any;
 
@@ -75,14 +73,12 @@ export class QrMenuComponent implements OnInit, OnChanges {
     private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService,
     private sendDataToComponent: SendDataToComponent,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.createForm();
     this.setupMealTypeAutoTime();
     this.init();

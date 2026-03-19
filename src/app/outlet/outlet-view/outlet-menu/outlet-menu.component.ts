@@ -21,7 +21,6 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { ToasterService } from 'src/service/toaster.service';
 
@@ -78,7 +77,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   uploadStatus: boolean = false;
   noImages: boolean = false;
   foodItem: any;
-  btnPolicy: any;
   outletList: any[] = [];
   menuInfo: any;
   eventInfo: any;
@@ -102,14 +100,12 @@ Nutrient Conversion Factors:
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService,
     private sendDataToComponent: SendDataToComponent,
     private dialog: MatDialog,
     private toastr: ToasterService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.fetchOutletMasterMenus();
     this.fetchAllOutlets();
     this.createForm();

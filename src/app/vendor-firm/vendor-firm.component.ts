@@ -6,7 +6,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 
@@ -23,7 +22,6 @@ export class VendorFirmComponent {
   };
   vendorList: any;
   orgName: any;
-  btnPolicy: any;
   vendorFirmInfo: any;
   showSearchSection = true;
   vendorInfo: any;
@@ -42,7 +40,6 @@ export class VendorFirmComponent {
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService,
     private localStorageService: LocalStorageService,
     private confirmationModalService: ConfirmationModalService,
     private searchService: SearchFilterService,
@@ -51,7 +48,6 @@ export class VendorFirmComponent {
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.getAllVendors()
     this.searchControl.valueChanges.pipe(
       debounceTime(400),

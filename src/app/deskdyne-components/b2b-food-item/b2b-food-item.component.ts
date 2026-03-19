@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { PageEvent } from '@angular/material/paginator';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
@@ -20,8 +19,6 @@ export class B2bFoodItemComponent implements OnInit {
   editType: 'new' | 'edit' | '' = '';
   editfoodItemObj: any;
   searchText = '';
-  btnPolicy: any;
-
   // paginator config
   pageIndex = 0;
   pageSize = 10;
@@ -33,12 +30,10 @@ export class B2bFoodItemComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
     private searchService: SearchFilterService 
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.getFooditemList();
   }
 

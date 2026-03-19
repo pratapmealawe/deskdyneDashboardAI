@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
@@ -11,19 +10,16 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 })
 export class OrgDetailsComponent implements OnInit {
   @Input() orgObj: any;
-  btnPolicy: any;
   outltList: any[] = []
   filteredOutletList: any[] = []
   vendorList: any[] = []
   constructor(
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private policyService: PolicyService,
     private apiMainService: ApiMainService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.getOutlets()
   }
 

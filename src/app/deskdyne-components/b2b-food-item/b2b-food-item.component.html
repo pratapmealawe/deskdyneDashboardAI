@@ -13,7 +13,7 @@
       </mat-form-field>
     </div>
 
-    <button class="btn-add" mat-raised-button color="primary" (click)="addFooditem()">
+    <button class="btn-add" mat-raised-button color="primary" (click)="addFooditem()" *appHasPermission="'FOOD_ITEM:ADD'">
       <mat-icon>add</mat-icon>
       <span class="d-none d-md-inline ms-2">Add Food Item</span>
     </button>

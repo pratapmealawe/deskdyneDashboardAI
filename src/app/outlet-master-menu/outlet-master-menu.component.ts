@@ -3,7 +3,6 @@ import { FormArray, FormBuilder, Validators } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
-import { PolicyService } from 'src/service/policy.service';
 import { ImageCropperComponent } from '../image-cropper/image-cropper.component';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
@@ -37,7 +36,6 @@ export class OutletMasterMenuComponent implements OnInit {
   noImages: boolean = false;
   foodItem: any;
   activeStatus = false;
-  btnPolicy: any;
   menuInfo: any;
   eventInfo: any;
   filteredMenuList: any[] = []
@@ -87,14 +85,12 @@ Nutrient Conversion Factors:
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService,
     private sendDataToComponent: SendDataToComponent,
     private router: Router,
     private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.fetchOutletMasterMenus();
     this.init();
     this.createForm();

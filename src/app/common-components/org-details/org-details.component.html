@@ -22,7 +22,7 @@
         </div>
       </div>
     </div>
-    <button mat-raised-button class="edit-btn" (click)="editOrg()">
+    <button mat-raised-button class="edit-btn" (click)="editOrg()" *appHasPermission="'ORGANIZATION:EDIT'">
       <mat-icon>edit</mat-icon>
       Edit Organization
     </button>

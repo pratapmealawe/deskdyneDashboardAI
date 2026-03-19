@@ -24,7 +24,7 @@
         <mat-icon>library_add</mat-icon>
         Master Menu
       </button>
-      <button mat-flat-button color="primary" class="action-btn primary-btn" *ngIf="true || btnPolicy?.addMenu"
+      <button mat-flat-button color="primary" class="action-btn primary-btn" *appHasPermission="'MENU:ADD'"
         (click)="open(); resetValues()">
         <mat-icon>add</mat-icon>
         Add Item
@@ -96,12 +96,12 @@
             <div class="content-top">
               <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h3>
               <div class="item-actions">
-                <button mat-icon-button class="edit-btn" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)"
+                <button mat-icon-button class="edit-btn" *appHasPermission="'MENU:EDIT'" (click)="edit(item, i)"
                   matTooltip="Edit">
                   <mat-icon>edit</mat-icon>
                 </button>
-                <button mat-icon-button class="delete-btn" *ngIf="true || btnPolicy?.deleteMenu"
-                  (click)="showPopup(item, i)" matTooltip="Delete">
+                <button mat-icon-button class="delete-btn" *appHasPermission="'MENU:DELETE'" (click)="showPopup(item, i)"
+                  matTooltip="Delete">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>

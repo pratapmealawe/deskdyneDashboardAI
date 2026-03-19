@@ -19,7 +19,8 @@
             matBadgeColor="accent">filter_list</mat-icon>
         </button>
 
-        <button mat-flat-button color="primary" class="btn-add-vendor" (click)="addVendor()">
+        <button mat-flat-button color="primary" class="btn-add-vendor" (click)="addVendor()"
+          *appHasPermission="'VENDOR_FIRM:ADD'">
           <mat-icon>add_business</mat-icon> Add Vendor Firm
         </button>
       </div>
@@ -127,11 +128,11 @@
               <!-- Actions -->
               <div class="d-flex gap-1 align-items-center card-actions">
                 <button mat-icon-button color="primary" (click)="editVendor(vendor)"
-                  *ngIf="true || btnPolicy?.editVendor" matTooltip="View Firm">
+                  *appHasPermission="'VENDOR_FIRM:EDIT'" matTooltip="View Firm">
                   <mat-icon>visibility</mat-icon>
                 </button>
-                <button mat-icon-button color="warn" (click)="showPopup(vendor)" *ngIf="true || btnPolicy?.deleteVendor"
-                  matTooltip="Delete Firm">
+                <button mat-icon-button color="warn" (click)="showPopup(vendor)"
+                  *appHasPermission="'VENDOR_FIRM:DELETE'" matTooltip="Delete Firm">
                   <mat-icon>delete</mat-icon>
                 </button>
               </div>

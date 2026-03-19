@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
@@ -20,7 +19,6 @@ export class SearchVendorComponent implements OnInit {
   };
   vendorList: any;
   orgName: any;
-  btnPolicy: any;
   filteredVendorList: any[] = [];
   filterVendorDuplicate: any[] = [];
   searchControl = new FormControl('');
@@ -29,13 +27,11 @@ export class SearchVendorComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
     private searchService: SearchFilterService,
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.searchVendor();
     this.searchControl.valueChanges.pipe(
       debounceTime(400),

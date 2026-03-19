@@ -28,7 +28,7 @@
 
     <!-- ADD BUTTON -->
     <button class="btn-add" mat-raised-button color="primary" (click)="openQuestionDialog('add')"
-      *ngIf="true || btnPolicy?.addChecklist">
+      *appHasPermission="'CHECKLIST:ADD'">
       <mat-icon>add_circle</mat-icon>
       Add Checklist Question
     </button>
@@ -62,13 +62,13 @@
           </div>
 
           <div class="col-md-1 d-flex align-items-center gap-3 justify-content-end">
-            <mat-icon *ngIf="true || btnPolicy?.editChecklist" (click)="openQuestionDialog('edit', Question)"
+            <mat-icon *appHasPermission="'CHECKLIST:EDIT'" (click)="openQuestionDialog('edit', Question)"
               class="action-icon edit" matTooltip="Edit">
               edit
             </mat-icon>
 
-            <mat-icon *ngIf="true || btnPolicy?.deleteChecklist" (click)="showPopup(Question)"
-              class="action-icon delete" matTooltip="Delete">
+            <mat-icon *appHasPermission="'CHECKLIST:DELETE'" (click)="showPopup(Question)" class="action-icon delete"
+              matTooltip="Delete">
               delete
             </mat-icon>
           </div>

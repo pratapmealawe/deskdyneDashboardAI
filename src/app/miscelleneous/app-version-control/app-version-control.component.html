@@ -3,7 +3,7 @@
     <h4 class="m-0 fw-semibold">App Version Control</h4>
   </div>
   <div class="header-actions">
-    <button mat-raised-button color="primary" *ngIf="true || btnPolicy?.addAppVersion" (click)="addVariable()">
+    <button mat-raised-button color="primary" *appHasPermission="'APP_VERSION:ADD'" (click)="addVariable()">
       <mat-icon>add</mat-icon> Add App Version
     </button>
   </div>
@@ -30,15 +30,19 @@
     </div>
 
     <div class="mt-4 d-flex gap-2">
-      <button *ngIf="addnewVariable && (true || btnPolicy?.addAppVersion)" mat-raised-button color="primary"
-        (click)="submitnewVariable(variableObj)">
-        Submit
-      </button>
+      <ng-container *appHasPermission="'APP_VERSION:ADD'">
+        <button *ngIf="addnewVariable" mat-raised-button color="primary"
+          (click)="submitnewVariable(variableObj)">
+          Submit
+        </button>
+      </ng-container>
 
-      <button *ngIf="!addnewVariable && (true || btnPolicy?.editAppVersion)" mat-raised-button color="primary"
-        (click)="updateVariable(variableObj)">
-        Update
-      </button>
+      <ng-container *appHasPermission="'APP_VERSION:EDIT'">
+        <button *ngIf="!addnewVariable" mat-raised-button color="primary"
+          (click)="updateVariable(variableObj)">
+          Update
+        </button>
+      </ng-container>
 
       <button mat-stroked-button color="warn" (click)="cancel()">
         Cancel
@@ -70,7 +74,7 @@
 
           <!-- Actions -->
           <div class="col-md-2 d-flex align-items-center justify-content-end p-0">
-            <button mat-icon-button color="primary" class="edit" *ngIf="true || btnPolicy?.editAppVersion"
+            <button mat-icon-button color="primary" class="edit" *appHasPermission="'APP_VERSION:EDIT'"
               (click)="editVariable(variable)" matTooltip="Edit">
               <mat-icon>edit</mat-icon>
             </button>

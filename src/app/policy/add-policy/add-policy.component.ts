@@ -1,7 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import {
+  DEFAULT_BUTTON_POLICIES,
+  DEFAULT_ROUTE_POLICIES,
+  DEFAULT_TAB_POLICIES,
+  GROUPED_ROUTE_POLICIES,
+  GROUPED_BUTTON_POLICIES,
+  GROUPED_TAB_POLICIES
+} from 'src/config/policy.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
 @Component({
@@ -9,17 +16,18 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
   templateUrl: './add-policy.component.html',
   styleUrls: ['./add-policy.component.scss'],
 })
-export class AddPolicyComponent {
-  policyObj: any = {
+export class AddPolicyComponent implements OnInit {
+  policyObj = {
     policy_name: '',
     policy_description: '',
-    route_policies: {},
-    button_policies: {},
-    tab_policies: {},
+    route_policies: { ...DEFAULT_ROUTE_POLICIES },
+    button_policies: { ...DEFAULT_BUTTON_POLICIES },
+    tab_policies: { ...DEFAULT_TAB_POLICIES },
   };
 
-  routeKeys: string[] = [];
-  buttonKeys: string[] = [];
+  groupedRoutePolicies = GROUPED_ROUTE_POLICIES;
+  groupedButtonPolicies = GROUPED_BUTTON_POLICIES;
+  groupedTabPolicies = GROUPED_TAB_POLICIES;
 
   policyArr: any[] = [];
   editMode = false;
@@ -28,206 +36,38 @@ export class AddPolicyComponent {
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
     private runtimeStorage: RuntimeStorageService,
     private router: Router
   ) { }
 
   ngOnInit(): void {
     this.policyId = this.runtimeStorage.getCacheData('VIEW_POLICY');
-    this.initializeDefaultPolicy();
     this.loadPolicies();
-  }
-
-  initializeDefaultPolicy() {
-    // Default structure
-    const defaultPolicy = {
-      outlet: false,
-      addOutlet: false,
-      vendor: false,
-      searchVendor: false,
-      addVendor: false,
-      admin: false,
-      addAdmin: false,
-      faq: false,
-      configVariable: false,
-      appVersionControl: false,
-      policy: false,
-      addPolicy: false,
-      currentOrder: false,
-      searchOrder: false,
-      dashboard: false,
-      serverlogs: false,
-      b2bAddorg: false,
-      b2bSearchOrg: false,
-      consumptionOrders: false,
-      orgDashboard: false,
-      orgMenuItems: false,
-      orgOrders: false,
-      orgPreOrders: false,
-      orgSubcription: false,
-      orgReviews: false,
-      appFeedbacks: false,
-      excelExport: false,
-      orgReports: false,
-      orgVendorInfo: false,
-      orgMenuCounters: false,
-      orgIncidentManagement: false,
-      orgChecklist: false,
-      orgEmployeeList: false,
-      orgBulkOrderHistory: false,
-      orgManualOrders: false,
-      orgBilling: false,
-      viewChecklistQuestion: false,
-      submitChecklist: false,
-      checklistHistory: false,
-      foodItem: false,
-      pastOrder: false,
-      viewEnquiries: false,
-      outletExcelExport: false,
-      dailyAdminExcelExport: false,
-      mainDashboard: false,
-      customer: false,
-      outletMasterMenu: false,
-      addVendorFirm: false,
-      searchVendorFirm: false,
-      billing: false,
-      otherOrder: false,
-      configImages: false,
-      configImagesGroup: false,
-      vendorPayout: false,
-      auditReport: false,
-      eventPopup: false,
-      addEventPopup: false,
-      vendorWalletDashboard: false,
-      allOrders: false,
-      scheduledNotifications: false,
-      sessionManagement: false,
-    };
-
-    const button_policies = {
-      addOutlet: false,
-      editOutlet: false,
-      deleteOutlet: false,
-      viewOutlet: false,
-      addOutletCategory: false,
-      addMenu: false,
-      editMenu: false,
-      deleteMenu: false,
-      addVendor: false,
-      editVendor: false,
-      deleteVendor: false,
-      addPolicy: false,
-      editPolicy: false,
-      deletePolicy: false,
-      addAdmin: false,
-      editAdmin: false,
-      deleteAdmin: false,
-      addOrganization: false,
-      editOrganization: false,
-      deleteOrganization: false,
-      viewOrganization: false,
-      bulkMenuSection: false,
-      mealAweOutlet: false,
-      b2bWeeklyMenu: false,
-      employeeList: false,
-      guestEmployeeList: false,
-      organizationCompliance: false,
-      addFaq: false,
-      editFaq: false,
-      deleteFaq: false,
-      addVariable: false,
-      editVariable: false,
-      deleteVariable: false,
-      addAppVersion: false,
-      editAppVersion: false,
-      deleteAppVersion: false,
-      addChecklist: false,
-      editChecklist: false,
-      deleteChecklist: false,
-      addFoodItem: false,
-      editFoodItem: false,
-      deleteFoodItem: false,
-      feedbackAcknowledge: false,
-      addIncident: false,
-      editIncident: false,
-      deleteIncident: false,
-    }
-
-    const tab_policies = {
-      Dashboard: false,
-      menuItems: false,
-      Orders: false,
-      Reviews: false,
-      User: false,
-      vendorInfo: false,
-      menuCounters: false,
-      auditReports: false,
-      outletBasicDetails: false,
-      outletMenu: false,
-      outletQrMenu: false,
-      outletOrders: false,
-      outletReviews: false,
-      eventBasicDetails: false,
-      eventMenu: false,
-      eventOrders: false,
-      eventReviews: false,
-      vendorFirmDetails: false,
-      wallets: false,
-      orderReport: false,
-      userDetails: false,
-      customerOutletOrder: false,
-      customerWallet: false,
-      companyWallet: false,
-      wellnessReport: false,
-      orgDetails: false,
-      compliance: false,
-      bulkMenuSection: false,
-      employeeBulkMenu: false,
-      virtualCafeteria: false,
-      dailyOrderMenu: false,
-      consumptionMenu: false,
-      employeeList: false,
-      outletEmployee: false,
-      virtualCafeteriaEmployee: false,
-      qrEmployee: false,
-      emailConfig: false,
-    }
-
-    this.policyObj.route_policies = { ...defaultPolicy };
-    this.policyObj.button_policies = { ...button_policies };
-    this.policyObj.tab_policies = { ...tab_policies };
-
-    this.routeKeys = Object.keys(this.policyObj.route_policies);
-    this.buttonKeys = Object.keys(this.policyObj.button_policies);
-    this.tabKeys = Object.keys(this.policyObj.tab_policies);
   }
 
   async loadPolicies() {
     try {
       const response: any = await this.apiMainService.getAllPolicy();
       this.policyArr = response || [];
-
       if (this.policyId) {
         this.editPolicy(this.policyId);
       }
     } catch (error) {
-      console.log(error);
+      console.error('Error loading policies:', error);
     }
   }
 
   editPolicy(id: string) {
     this.editMode = true;
-
     const policy = this.policyArr.find((p) => p._id === id);
     if (policy) {
-      // Ensure backward compatibility (missing keys get added)
-      Object.assign(this.policyObj.route_policies, policy.route_policies);
-      Object.assign(this.policyObj.button_policies, policy.button_policies);
-      Object.assign(this.policyObj.tab_policies, policy.tab_policies || {});
-
-      this.policyObj.policy_name = policy.policy_name;
-      this.policyObj.policy_description = policy.policy_description;
+      this.policyObj = {
+        policy_name: policy.policy_name,
+        policy_description: policy.policy_description,
+        route_policies: { ...DEFAULT_ROUTE_POLICIES, ...(policy.route_policies || {}) },
+        button_policies: { ...DEFAULT_BUTTON_POLICIES, ...(policy.button_policies || {}) },
+        tab_policies: { ...DEFAULT_TAB_POLICIES, ...(policy.tab_policies || {}) },
+      };
     }
   }
 
@@ -236,59 +76,102 @@ export class AddPolicyComponent {
       this.showErrorMsg = true;
       return;
     }
-
     this.showErrorMsg = false;
-
     try {
       await this.apiMainService.addPolicy(this.policyObj);
       this.router.navigate(['policy']);
     } catch (error) {
-      console.log(error);
+      console.error('Error adding policy:', error);
     }
   }
 
   async updatePolicy() {
     try {
+      console.log(this.policyId, this.policyObj);
       await this.apiMainService.updatePolicy(this.policyId, this.policyObj);
       this.router.navigate(['policy']);
     } catch (error) {
-      console.log(error);
+      console.error('Error updating policy:', error);
     }
   }
 
   showReferencePolicy(event: any) {
-    const policyId = event.value;
-    const policy = this.policyArr.find((p) => p._id === policyId);
-
+    const policy = this.policyArr.find((p) => p._id === event.value);
     if (policy) {
-      this.policyObj.route_policies = { ...policy.route_policies };
-      this.policyObj.button_policies = { ...policy.button_policies };
-      this.policyObj.tab_policies = { ...policy.tab_policies || {} };
+      this.policyObj = {
+        ...this.policyObj,
+        route_policies: { ...DEFAULT_ROUTE_POLICIES, ...(policy.route_policies || {}) },
+        button_policies: { ...DEFAULT_BUTTON_POLICIES, ...(policy.button_policies || {}) },
+        tab_policies: { ...DEFAULT_TAB_POLICIES, ...(policy.tab_policies || {}) },
+      };
     }
   }
 
   selectAllRoutes() {
-    Object.keys(this.policyObj.route_policies).forEach(
-      (key) => (this.policyObj.route_policies[key] = true)
-    );
+    const allKeys: string[] = [];
+    this.groupedRoutePolicies.forEach(g => allKeys.push(...g.keys));
+
+    const allSelected = allKeys.every(k => this.policyObj.route_policies[k]);
+    const updated = { ...this.policyObj.route_policies };
+
+    allKeys.forEach(k => updated[k] = !allSelected);
+
+    this.policyObj = {
+      ...this.policyObj,
+      route_policies: updated
+    };
   }
 
   selectAllButtons() {
-    Object.keys(this.policyObj.button_policies).forEach(
-      (key) => (this.policyObj.button_policies[key] = true)
-    );
+    const allKeys: string[] = [];
+    this.groupedButtonPolicies.forEach(g => allKeys.push(...g.keys));
+
+    const allSelected = allKeys.every(k => this.policyObj.button_policies[k]);
+    const updated = { ...this.policyObj.button_policies };
+
+    allKeys.forEach(k => updated[k] = !allSelected);
+
+    this.policyObj = {
+      ...this.policyObj,
+      button_policies: updated
+    };
+  }
+
+  selectAllTabs() {
+    const allKeys: string[] = [];
+    this.groupedTabPolicies.forEach(g => allKeys.push(...g.keys));
+
+    const allSelected = allKeys.every(k => this.policyObj.tab_policies[k]);
+    const updated = { ...this.policyObj.tab_policies };
+
+    allKeys.forEach(k => updated[k] = !allSelected);
+
+    this.policyObj = {
+      ...this.policyObj,
+      tab_policies: updated
+    };
+  }
+
+  togglePolicy(type: 'route' | 'button' | 'tab', key: string) {
+    console.log(type, key)
+    if (type === 'route') {
+      const updated = { ...this.policyObj.route_policies };
+      updated[key] = !updated[key];
+      this.policyObj = { ...this.policyObj, route_policies: updated };
+    } else if (type === 'button') {
+      const updated = { ...this.policyObj.button_policies };
+      updated[key] = !updated[key];
+      this.policyObj = { ...this.policyObj, button_policies: updated };
+    } else if (type === 'tab') {
+      const updated = { ...this.policyObj.tab_policies };
+      updated[key] = !updated[key];
+      this.policyObj = { ...this.policyObj, tab_policies: updated };
+    }
+
+    console.log(this.policyObj, "policyy objee u")
   }
 
   cancelPolicy() {
     this.router.navigate(['policy']);
   }
-
-  // tab policy  features adding 
-  tabKeys: string[] = [];
-  selectAllTabs() {
-    Object.keys(this.policyObj.tab_policies).forEach(
-      (key) => (this.policyObj.tab_policies[key] = true)
-    );
-  }
-
 }

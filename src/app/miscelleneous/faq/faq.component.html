@@ -3,9 +3,11 @@
     <h4 class="m-0 fw-semibold">FAQ Management</h4>
   </div>
   <div class="header-actions">
-    <button mat-raised-button color="primary" *ngIf="!addnewFAQ && (true || btnPolicy?.addFaq)" (click)="addFAQ()">
-      <mat-icon>add</mat-icon> Add FAQ
-    </button>
+    <ng-container *appHasPermission="'FAQ:ADD'">
+      <button mat-raised-button color="primary" *ngIf="!addnewFAQ" (click)="addFAQ()">
+        <mat-icon>add</mat-icon> Add FAQ
+      </button>
+    </ng-container>
   </div>
 </div>
 
@@ -43,15 +45,17 @@
     </div>
 
     <div class="mt-4 d-flex gap-2">
-      <button *ngIf="addnewFAQ && (true || btnPolicy?.addFaq)" mat-raised-button color="primary"
-        (click)="submitnewFAQ(faqObj)">
-        Submit
-      </button>
+      <ng-container *appHasPermission="'FAQ:ADD'">
+        <button *ngIf="addnewFAQ" mat-raised-button color="primary" (click)="submitnewFAQ(faqObj)">
+          Submit
+        </button>
+      </ng-container>
 
-      <button *ngIf="!addnewFAQ && (true || btnPolicy?.editFaq)" mat-raised-button color="primary"
-        (click)="updateFAQ(faqObj)">
-        Update
-      </button>
+      <ng-container *appHasPermission="'FAQ:EDIT'">
+        <button *ngIf="!addnewFAQ" mat-raised-button color="primary" (click)="updateFAQ(faqObj)">
+          Update
+        </button>
+      </ng-container>
 
       <button mat-stroked-button color="warn" (click)="cancel()">
         Cancel
@@ -86,11 +90,10 @@
 
           <!-- Actions -->
           <div class="col-md-2 d-flex align-items-center justify-content-end p-0 gap-2">
-            <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editFaq" (click)="editFAQ(faq)"
-              matTooltip="Edit">
+            <button mat-icon-button color="primary" *appHasPermission="'FAQ:EDIT'" (click)="editFAQ(faq)" matTooltip="Edit">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteFaq" (click)="showPopup(faq)"
+            <button mat-icon-button color="warn" *appHasPermission="'FAQ:DELETE'" (click)="showPopup(faq)"
               matTooltip="Delete">
               <mat-icon>delete</mat-icon>
             </button>

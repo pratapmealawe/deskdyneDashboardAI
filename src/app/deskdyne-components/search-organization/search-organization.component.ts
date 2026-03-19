@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { DeletedOrgsDialogComponent } from './deleted-orgs-dialog/deleted-orgs-dialog.component';
 
@@ -20,13 +19,11 @@ export class SearchOrganizationComponent implements OnInit {
   showSearchSection: boolean = true;
   showSearchFilter: boolean = true;
   selectedOrg: any = {};
-  btnPolicy: any;
   searchControl = new FormControl('');
   originalOrgList: any = [];
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
     private router: Router,
     private confirmationModalService: ConfirmationModalService,
     private dialog: MatDialog
@@ -34,7 +31,6 @@ export class SearchOrganizationComponent implements OnInit {
 
   ngOnInit() {
     this.searchOrg();
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.searchControl.valueChanges.pipe(
       debounceTime(400),
       distinctUntilChanged()

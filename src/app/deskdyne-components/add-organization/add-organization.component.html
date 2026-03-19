@@ -219,7 +219,8 @@
               </div>
               <h3>Point of Contact (POC) List</h3>
             </div>
-            <button mat-flat-button color="primary" type="button" class="action-btn" (click)="openPocDialog()">
+            <button mat-flat-button color="primary" type="button" class="action-btn" (click)="openPocDialog()"
+              *appHasPermission="'ORGANIZATION:ADD_POC'">
               <mat-icon>add</mat-icon> Add POC
             </button>
           </div>
@@ -283,7 +284,8 @@
               </div>
               <h3>Cafeteria List</h3>
             </div>
-            <button mat-flat-button color="primary" type="button" class="action-btn" (click)="openCafeteriaDialog()">
+            <button mat-flat-button color="primary" type="button" class="action-btn" (click)="openCafeteriaDialog()"
+              *appHasPermission="'ORGANIZATION:ADD_CAFETERIA'">
               <mat-icon>add</mat-icon> Add Cafeteria
             </button>
           </div>
@@ -361,18 +363,20 @@
           <button class="btn-cancel" mat-button type="button" (click)="back()" matTooltip="Discard Changes">
             Cancel
           </button>
-
-          <button class="btn-update" mat-flat-button color="primary" type="button" (click)="updateOrg()"
-            [disabled]="form.invalid || poc.length === 0 || cafeteria.length === 0" matTooltip="Save Changes"
-            *ngIf="showUpdate && ((btnPolicy?.editOrganization) ?? true)">
-            <mat-icon>save</mat-icon> Update Organization
-          </button>
+          <ng-container *appHasPermission="'ORGANIZATION:UPDATE'">
+            <button class="btn-update" mat-flat-button color="primary" type="button" (click)="updateOrg()"
+              [disabled]="form.invalid || poc.length === 0 || cafeteria.length === 0" matTooltip="Save Changes"
+              *ngIf="showUpdate">
+              <mat-icon>save</mat-icon> Update Organization
+            </button>
+          </ng-container>
 
           <button class="btn-add" mat-flat-button color="primary" type="button" (click)="addOrg()"
             [disabled]="form.invalid || poc.length === 0 || cafeteria.length === 0" matTooltip="Create Organization"
-            *ngIf="!showUpdate && ((btnPolicy?.addOrganization) ?? true)">
+            *ngIf="!showUpdate">
             <mat-icon>check_circle</mat-icon> Create Organization
           </button>
+
         </div>
       </div>
     </div>

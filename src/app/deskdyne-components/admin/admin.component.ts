@@ -5,7 +5,6 @@ import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
@@ -21,8 +20,6 @@ export class AdminComponent implements OnInit {
   roleList: any[] = [];          // List of unique roles
   access: any;
   imageUrl: any = environment.imageUrl;
-  btnPolicy: any;
-
   searchControl = new FormControl('');
   roleControl = new FormControl(''); // Control for Role Filter
 
@@ -33,15 +30,12 @@ export class AdminComponent implements OnInit {
     public router: Router,
     private apiMainService: ApiMainService,
     private runtimeStorageService: RuntimeStorageService,
-    private policyService: PolicyService,
     private searchService: SearchFilterService
   ) {
     this.getAllAdminList();
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-
     // Subscribe to changes
     this.searchControl.valueChanges.pipe(
       debounceTime(400),

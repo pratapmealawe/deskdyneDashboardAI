@@ -20,4 +20,4 @@ import { DirectivesModule } from 'src/shared/directives/common-directives.direct
   ],
   exports: [AddOrganizationComponent],
 })
-export class AddOrganizationModule {}
+export class AddOrganizationModule { }

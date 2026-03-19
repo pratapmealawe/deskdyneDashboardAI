@@ -98,7 +98,7 @@
               </div>
 
               <div class="col-12 col-md-1 d-flex justify-content-md-end mt-2 mt-md-0">
-                <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteIncident"
+                <button mat-icon-button color="warn" *appHasPermission="'INCIDENT:DELETE'"
                   (click)="deleteIncident(incident)" matTooltip="Delete Incident">
                   <mat-icon>delete</mat-icon>
                 </button>

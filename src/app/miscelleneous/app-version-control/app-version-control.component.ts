@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-app-version-control',
@@ -12,18 +11,13 @@ export class AppVersionControlComponent implements OnInit {
   variableObj: any = {};
   editMode = false;
   addnewVariable = false;
-  btnPolicy: any;
-
   constructor(
-    private apiMainService: ApiMainService,
-    private policyService: PolicyService
+    private apiMainService: ApiMainService
   ) {
     this.getAllAppVersions();
   }
 
-  ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-  }
+  ngOnInit(): void {}
 
   async getAllAppVersions() {
     try {

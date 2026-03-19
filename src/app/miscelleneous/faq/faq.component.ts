@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-faq',
@@ -13,19 +12,14 @@ export class FaqComponent implements OnInit {
   faqObj: any = {};
   editMode = false;
   addnewFAQ = false;
-  btnPolicy: any;
-
   constructor(
     private apiMainService: ApiMainService,
-    private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private confirmationModalService: ConfirmationModalService
   ) {
     this.getAllFAQs();
   }
 
-  ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-  }
+  ngOnInit(): void {}
 
   async getAllFAQs() {
     try {
