@@ -372,6 +372,88 @@
             </mat-form-field>
           </div>
 
+          <!-- Addons Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <mat-icon>add_shopping_cart</mat-icon>
+              <span>Add Ons</span>
+            </div>
+
+            <div [formArrayName]="'addOnsList'" class="nutrition-list">
+              <div class="addon-card"
+                *ngFor="let addon of addons_List.controls; let i = index; let first = first; let last = last"
+                [formGroupName]="i">
+
+                <div class="addon-image-upload">
+                  <input type="file" accept="image/*" class="uploadInput" #addonFileInput
+                    (change)="handleAddonFileInput($event, i)" />
+
+                  <div class="addon-image-box" [class.has-image]="addon.get('addOnImageUrl')?.value"
+                    (click)="addonFileInput.click()">
+
+                    <img *ngIf="addon.get('addOnImageUrl')?.value" [src]="getAddonImageSrc(addon, i)"
+                      class="addon-preview-image" />
+
+                    <div *ngIf="!addon.get('addOnImageUrl')?.value" class="addon-placeholder">
+                      <mat-icon>cloud_upload</mat-icon>
+                      <span>Upload Image</span>
+                    </div>
+
+                    <div class="addon-upload-overlay">
+                      <span>Change</span>
+                    </div>
+                  </div>
+
+                  <p class="addon-upload-hint">Click to upload</p>
+                </div>
+
+                <div class="addon-fields">
+
+                  <div class="addon-row-top">
+                    <mat-form-field appearance="outline" class="addon-name-field">
+                      <mat-label>Add-On Name</mat-label>
+                      <input matInput type="text" formControlName="addOnName" placeholder="e.g. Extra Cheese" />
+                    </mat-form-field>
+                  </div>
+
+                  <div class="addon-row-bottom">
+                    <mat-form-field appearance="outline" class="addon-price-field">
+                      <mat-label>Price (₹)</mat-label>
+                      <input matInput type="number" min="0" formControlName="addOnPrice"
+                        (keydown)="preventInvalidNumber($event)" />
+                      <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+                    </mat-form-field>
+
+                    <mat-form-field appearance="outline" class="addon-type-field">
+                      <mat-label>Type</mat-label>
+                      <mat-select formControlName="addOnType">
+                        <mat-option value="Veg">
+                          <span class="type-indicator veg-dot"></span> Veg
+                        </mat-option>
+                        <mat-option value="NonVeg">
+                          <span class="type-indicator nonveg-dot"></span> Non-Veg
+                        </mat-option>
+                        <mat-option value="NA">N/A</mat-option>
+                      </mat-select>
+                    </mat-form-field>
+
+                    <div class="nutrition-actions">
+                      <button mat-icon-button color="primary" *ngIf="last" (click)="addAddon()" type="button"
+                        matTooltip="Add Add-On">
+                        <mat-icon>add_circle</mat-icon>
+                      </button>
+                      <button mat-icon-button color="warn" *ngIf="!first" (click)="removeAddon(i)" type="button"
+                        matTooltip="Remove">
+                        <mat-icon>remove_circle</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- Nutrition Section -->
           <div class="form-section">
             <div class="section-header">
