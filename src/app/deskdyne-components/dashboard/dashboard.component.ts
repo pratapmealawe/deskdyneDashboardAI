@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnChanges, OnInit, SimpleChanges } from '
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import * as Highcharts from 'highcharts';
 import { Router } from "@angular/router";
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,23 +17,33 @@ export class DashboardComponent implements OnInit {
   isLoading: boolean = false;
 
   selectedIndex: number = 0;
-  tabs = [
-    { name: 'Dashboard', icon: 'dashboard' },
-    { name: 'Admin Orders', icon: 'receipt_long' },
-    { name: 'Menu Items', icon: 'menu_book' },
-    { name: 'Orders', icon: 'shopping_cart' },
-    { name: 'Reviews', icon: 'rate_review' },
-    { name: 'Users', icon: 'people' },
-    { name: 'Vendor Info', icon: 'store' },
-    { name: 'Menu Counters', icon: 'countertops' },
-    { name: 'Audit Reports', icon: 'assessment' }
+  allTabs = [
+    { index: 0, name: 'Dashboard', icon: 'dashboard', policyKey: 'Dashboard' },
+    { index: 1, name: 'Admin Orders', icon: 'receipt_long', policyKey: 'adminOrders' },
+    { index: 2, name: 'Menu Items', icon: 'menu_book', policyKey: 'menuItems' },
+    { index: 3, name: 'Orders', icon: 'shopping_cart', policyKey: 'Orders' },
+    { index: 4, name: 'Reviews', icon: 'rate_review', policyKey: 'Reviews' },
+    { index: 5, name: 'Users', icon: 'people', policyKey: 'User' },
+    { index: 6, name: 'Vendor Info', icon: 'store', policyKey: 'vendorInfo' },
+    { index: 7, name: 'Menu Counters', icon: 'countertops', policyKey: 'menuCounters' },
+    { index: 8, name: 'Audit Reports', icon: 'assessment', policyKey: 'auditReports' }
   ];
-
-  constructor(private apiMainService: ApiMainService, private router: Router, private ref: ChangeDetectorRef) {
+  tabs: any[] = [];
+  tabPolicy: any;
+  constructor(private apiMainService: ApiMainService, private router: Router, private ref: ChangeDetectorRef, private policyService: PolicyService) {
   }
 
   ngOnInit() {
+    this.tabPolicy = this.policyService.getCurrentTabPolicy();
+    this.filterTabs();
     this.getorganizations();
+  }
+
+  filterTabs() {
+    this.tabs = this.allTabs.filter(tab => !tab.policyKey || this.tabPolicy[tab.policyKey]);
+    if (this.tabs.length > 0) {
+      this.selectedIndex = this.tabs[0].index;
+    }
   }
 
   onTabChange(index: number) {
@@ -43,7 +54,9 @@ export class DashboardComponent implements OnInit {
     const id = e.value
     this.orgSelected = this.orglist.find((item: any) => item._id === id);
     this.isOrgSelected = true;
-    this.selectedIndex = 0; // Reset to first tab on org change
+    if (this.tabs.length > 0) {
+      this.selectedIndex = this.tabs[0].index; // Reset to first visible tab on org change
+    }
   }
 
 
