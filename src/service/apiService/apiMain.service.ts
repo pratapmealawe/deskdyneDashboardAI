@@ -1146,8 +1146,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbysearchObj, payload);
   }
 
-  fetchBulkOrdersbyfilter(payload: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchBulkOrdersbyfilter, payload);
+  fetchBulkOrdersByVendorFirmId(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchBulkOrdersByVendorFirmId, payload);
   }
 
   fetchDailyBulkOrdersbyOrgId(payload: any) {

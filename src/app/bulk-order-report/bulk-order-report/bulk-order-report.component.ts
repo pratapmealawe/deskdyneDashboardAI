@@ -94,7 +94,7 @@ export class BulkOrderReportComponent implements OnInit {
         fromDate: this.filteredData?.date_from,
         toDate: this.filteredData?.date_to,
       };
-      const res = await this.apiMainService.fetchBulkOrdersbyfilter(body);
+      const res = await this.apiMainService.fetchBulkOrdersByVendorFirmId(body);
       if (res) {
         this.orders = res.orders;
         this.orderWise = res.orderWise;
