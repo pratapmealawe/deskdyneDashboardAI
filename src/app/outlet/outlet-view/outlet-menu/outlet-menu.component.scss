@@ -1227,3 +1227,80 @@
     max-width: 150px;
   }
 }
+
+// Weekly date picker — trigger button
+.calendar-trigger-btn {
+  font-size: 0.85rem;
+}
+
+// Weekly date chips
+.weekly-dates-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .date-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: #e3f2fd;
+    color: #1565c0;
+    border-radius: 16px;
+    padding: 4px 8px 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    .chip-remove-btn {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      padding: 0;
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        color: #1565c0;
+      }
+    }
+  }
+}
+
+// Highlight selected dates on mat-calendar
+::ng-deep .weekly-date-selected {
+  .mat-calendar-body-cell-content {
+    background-color: #1976d2 !important;
+    color: #fff !important;
+    border-radius: 50%;
+  }
+}
+
+// Calendar menu panel (global — mat-menu renders outside component)
+::ng-deep .weekly-calendar-menu {
+  .mat-mdc-menu-content {
+    padding: 0 !important;
+  }
+
+  .weekly-calendar-wrap {
+    padding: 0;
+
+    mat-calendar {
+      width: 296px;
+    }
+
+    .calendar-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-top: 1px solid #e0e0e0;
+      background: #fafafa;
+      gap: 8px;
+
+      span {
+        font-size: 0.75rem;
+      }
+    }
+  }
+}

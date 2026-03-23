@@ -88,6 +88,11 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   searchTerm: string = '';        // for master menu
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
+  selectedDateFilter: Date | null = null;
+
+  // weekly menu dates
+  selectedWeeklyDates: Date[] = [];
+  today = new Date();
 
   // pagination removed
   energyTooltip = `
@@ -178,11 +183,21 @@ Nutrient Conversion Factors:
       );
     }
 
+    if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
+      temp = temp.filter((item: any) =>
+        (item.weeklyMenuDates || []).some((d: any) =>
+          this.isSameDay(new Date(d.date), this.selectedDateFilter!)
+        )
+      );
+    }
+
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
 
     // Show all items (no pagination)
-    this.groupedMenuList = this.buildGroupedMenu(this.filteredMenuList);
+    this.groupedMenuList = this.outletObj?.isWeeklyMenu
+      ? this.buildDateGroupedMenu(this.filteredMenuList)
+      : this.buildGroupedMenu(this.filteredMenuList);
   }
 
   private buildGroupedMenu(list: any[]) {
@@ -200,6 +215,74 @@ Nutrient Conversion Factors:
       items: grouped[category],
     }));
   }
+
+  private buildDateGroupedMenu(list: any[]): any[] {
+    const dateMap: Record<string, any[]> = {};
+
+    list.forEach((item: any) => {
+      const dates: any[] = item.weeklyMenuDates || [];
+      if (dates.length === 0) {
+        const key = 'No Date Assigned';
+        if (!dateMap[key]) dateMap[key] = [];
+        dateMap[key].push(item);
+      } else {
+        dates.forEach((d: any) => {
+          const dateObj = new Date(d.date);
+          const key = dateObj.toLocaleDateString('en-IN', {
+            weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+          });
+          if (!dateMap[key]) dateMap[key] = [];
+          if (!dateMap[key].find((i: any) => i._id === item._id)) {
+            dateMap[key].push(item);
+          }
+        });
+      }
+    });
+
+    const sortedKeys = Object.keys(dateMap).sort((a, b) => {
+      if (a === 'No Date Assigned') return 1;
+      if (b === 'No Date Assigned') return -1;
+      return new Date(a).getTime() - new Date(b).getTime();
+    });
+
+    return sortedKeys.map(key => ({ category: key, items: dateMap[key] }));
+  }
+
+  // Weekly date picker helpers
+  toggleDate(date: Date | null): void {
+    if (!date) return;
+    const idx = this.selectedWeeklyDates.findIndex(d => this.isSameDay(d, date));
+    if (idx >= 0) {
+      this.selectedWeeklyDates = this.selectedWeeklyDates.filter((_, i) => i !== idx);
+    } else {
+      this.selectedWeeklyDates = [...this.selectedWeeklyDates, date];
+    }
+    this.form.get('weeklyMenuDates')?.setValue(
+      this.selectedWeeklyDates.map(d => ({ date: d }))
+    );
+  }
+
+  isDateSelected(date: Date): boolean {
+    return this.selectedWeeklyDates.some(d => this.isSameDay(d, date));
+  }
+
+  isSameDay(a: Date, b: Date): boolean {
+    return a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+  }
+
+  weeklyDateClass = (date: Date): string => {
+    return this.isDateSelected(date) ? 'weekly-date-selected' : '';
+  };
+
+  weeklyDateFilter = (date: Date | null): boolean => {
+    if (!date) return false;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    // Allow future/today dates, and also already-selected past dates (so they can be removed on edit)
+    return date >= todayStart || this.isDateSelected(date);
+  };
 
   // Pagination methods removed
 
@@ -258,6 +341,7 @@ Nutrient Conversion Factors:
       doNotChangeInFuture: [false],
       energyValue: [10],
       sectionConfig: [null],
+      weeklyMenuDates: [[]],
       nutritionList: this.fb.array([
         this.fb.group({
           nutritionId: [null],
@@ -319,6 +403,8 @@ Nutrient Conversion Factors:
   patchFormValue(item: any) {
     console.log(item);
 
+    this.selectedWeeklyDates = (item.weeklyMenuDates || []).map((d: any) => new Date(d.date));
+
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
@@ -334,6 +420,7 @@ Nutrient Conversion Factors:
       description: item.description,
       energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
       sectionConfig: item.sectionConfig || null,
+      weeklyMenuDates: item.weeklyMenuDates || [],
       nutritionList: item.nutritionInfo
         ? [...item.nutritionInfo.nutritionList]
         : [],
@@ -578,6 +665,8 @@ Nutrient Conversion Factors:
         formData.append('sectionConfig', JSON.stringify(payload));
       }
 
+      formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
+
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
         this.menuId,
@@ -603,6 +692,7 @@ Nutrient Conversion Factors:
     this.showUpdateBtn = false;
     this.imageReplaced = false;
     this.noImages = false;
+    this.selectedWeeklyDates = [];
     this.nutrition_Lists.clear();
     this.addNutritionLists();
   }
@@ -681,6 +771,8 @@ Nutrient Conversion Factors:
         };
         formData.append('sectionConfig', JSON.stringify(payload));
       }
+
+      formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
 
       const res = await this.apiMainService.addOutletMenu(
         formData,

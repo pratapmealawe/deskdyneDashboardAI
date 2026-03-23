@@ -108,6 +108,7 @@ export class AddOutletComponent implements OnInit {
 
       outletOpened: [true],
       isSectionWiseMenu: [false],
+      isWeeklyMenu: [false],
       isPreOrder: [false],
       isCabinOrder: [false],
       preOrderMealType: ['lunch'],
@@ -259,6 +260,7 @@ export class AddOutletComponent implements OnInit {
 
         outletOpened: outlet.outletOpened ?? false,
         isSectionWiseMenu: outlet.isSectionWiseMenu ?? false,
+        isWeeklyMenu: outlet.isWeeklyMenu ?? false,
         isPreOrder: outlet.isPreOrder ?? false,
         isCabinOrder: outlet.isCabinOrder ?? false,
         preOrderMealType: outlet.preOrderMealType ?? 'lunch',
