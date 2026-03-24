@@ -21,6 +21,7 @@
         <app-vc-billing [selectedOrg]="adminOrg" *ngSwitchCase="'vcBilling'"></app-vc-billing>
         <app-daily-billing *ngSwitchCase="'dailyOrderBilling'"></app-daily-billing>
         <app-bulk-billing *ngSwitchCase="'bulkOrderBilling'"></app-bulk-billing>
-        <app-company-wallet-billing [selectedOrg]="adminOrg" *ngSwitchCase="'companyWalletBilling'"></app-company-wallet-billing>
+        <app-company-wallet-billing [selectedOrg]="adminOrg"
+            *ngSwitchCase="'companyWalletBilling'"></app-company-wallet-billing>
     </ng-container>
 </div>

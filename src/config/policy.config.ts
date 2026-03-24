@@ -269,6 +269,15 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   outletEmployee: false,
   virtualCafeteriaEmployee: false,
   qrEmployee: false,
+  outletWallet: false,
+  dailyOrder: false,
+  bulk: false,
+  billingoutletWallet: false,
+  billingvirtualCafeteria: false,
+  billingdailyOrder: false,
+  billingbulk: false,
+  billingWallet: false,
+  billingcompanyWallet: false,
   // emailConfig: false,
 };
 
@@ -422,6 +431,10 @@ export const GROUPED_TAB_POLICIES = [
     title: 'ORGANIZATION & COMPLIANCE',
     keys: ['orgDetails', 'compliance', 'bulkMenuSection', 'employeeBulkMenu', 'virtualCafeteria', 'dailyOrderMenu', 'companyWallet', 'consumptionMenu', 'employeeList', 'outletEmployee', 'virtualCafeteriaEmployee', 'qrEmployee']
   },
+  {
+    title: 'BILLING',
+    keys: ['billingoutletWallet', 'billingvirtualCafeteria', 'billingdailyOrder', 'billingWallet', 'billingbulk', 'billingcompanyWallet']
+  }
 ];
 
 /** Maps MODULE:ACTION keys to the flat button_policy keys. */
@@ -557,5 +570,11 @@ export const PERMISSION_MAP: Record<string, string> = {
   'PAYOUT:TRANSFER': 'vendorTransfer',
 
   // FEEDBACK
-  'FEEDBACK:EXPORT': 'exportFeedbackExcel'
+  'FEEDBACK:EXPORT': 'exportFeedbackExcel',
+  // BILLING
+  'BILLING:OUTLET_WALLET': 'outletWallet',
+  'BILLING:VIRTUAL_CAFETERIA': 'virtualCafeteria',
+  'BILLING:DAILY_ORDER': 'dailyOrder',
+  'BILLING:BULK': 'bulk',
+  'BILLING:COMPANY_WALLET': 'companyWallet'
 };
