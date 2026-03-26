@@ -491,9 +491,9 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 
-  getEmployeelistByCafeteriaId(cafeteriaId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
+  getEmployeelistByCafeteriaIds(data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaIds;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, data);
   }
 
   getConsumptionOrderByOrgId(orgId: any) {
@@ -1156,8 +1156,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbysearchObj, payload);
   }
 
-  fetchBulkOrdersbyfilter(payload: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchBulkOrdersbyfilter, payload);
+  fetchBulkOrdersByVendorFirmId(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchBulkOrdersByVendorFirmId, payload);
   }
 
   fetchDailyBulkOrdersbyOrgId(payload: any) {

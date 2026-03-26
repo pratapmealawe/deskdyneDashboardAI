@@ -18,10 +18,17 @@
   <!-- Filters Section -->
   <div class="card p-3 mb-4 border-0 shadow-sm" style="border-radius: 12px;">
     <div class="filters-section align-items-center mb-0">
-      <mat-form-field appearance="outline" class="dense-field">
+      <mat-form-field appearance="outline" class="dense-field" style="margin-right: 15px;">
         <mat-label>App Type</mat-label>
         <mat-select [(ngModel)]="selectedAppType" (selectionChange)="refreshSessions()">
           <mat-option *ngFor="let type of appTypes" [value]="type">{{ type }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="dense-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="refreshSessions()">
+          <mat-option *ngFor="let status of sessionStatuses" [value]="status">{{ status }}</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -58,17 +65,17 @@
           </div>
           <div class="notification-identity">
             <h3 class="notification-title" [matTooltip]="session.displayName">{{ session.displayName || 'Anonymous' }}</h3>
-            <div class="status-badge sent" *ngIf="session.loginAt">
+            <div class="status-badge sent" *ngIf="session.isActive">
                <mat-icon>check_circle</mat-icon>
                ACTIVE
             </div>
-            <div class="status-badge cancelled" *ngIf="!session.loginAt">
-               <mat-icon>schedule</mat-icon>
-               UNKNOWN
+            <div class="status-badge cancelled" *ngIf="!session.isActive">
+               <mat-icon>cancel</mat-icon>
+               INACTIVE
             </div>
           </div>
           <div class="card-actions">
-          <button mat-icon-button color="primary" (click)="forceLogoutSelected(session)" matTooltip="Terminate Session">
+          <button mat-icon-button color="primary" (click)="forceLogoutSelected(session)" matTooltip="Terminate Session" *ngIf="session.isActive">
             <mat-icon>logout</mat-icon>
           </button>
           </div>
@@ -115,8 +122,8 @@
             <mat-icon>devices</mat-icon>
             {{ selectedAppType }}
           </div>
-          <div class="recipient-count">
-            Status: Live
+          <div class="recipient-count" [ngStyle]="{'color': session.isActive ? '#4caf50' : '#f44336'}">
+            Status: {{ session.isActive ? 'Live' : 'Logged Out' }}
           </div>
         </div>
       </div>

@@ -102,6 +102,8 @@ Nutrient Conversion Factors:
 • Fat: 9 kcal/g
 • Fiber: 2 kcal/g
 `;
+  addonFileInputs: HTMLInputElement[] = [];
+  uploadedAddonImageFiles: (File | null)[] = [];
 
 
   constructor(
@@ -350,6 +352,14 @@ Nutrient Conversion Factors:
           nutritionUnit: [''],
         }),
       ]),
+      addOnsList: this.fb.array([
+        this.fb.group({
+          addOnImageUrl: [''],
+          addOnName: [''],
+          addOnPrice: [0, [Validators.min(0)]],
+          addOnType: ['NA'],
+        }),
+      ]),
     });
 
     this.form.get('nutritionList')?.valueChanges.subscribe(() => {
@@ -445,6 +455,35 @@ Nutrient Conversion Factors:
         }));
       });
     }
+    if (item.addOnsList?.length) {
+      this.addons_List.clear();
+      this.uploadedAddonImageFiles = [];
+
+      item.addOnsList.forEach((addon: any) => {
+        this.addons_List.push(this.fb.group({
+          addOnImageUrl: [addon.addOnImageUrl ?? ''],
+          addOnName: [addon.addOnName ?? ''],
+          addOnPrice: [addon.addOnPrice ?? 0, [Validators.min(0)]],
+          addOnType: [addon.addOnType ?? 'NA'],
+        }));
+        this.uploadedAddonImageFiles.push(null);
+      });
+      
+    } else {
+      this.addons_List.clear();
+      this.uploadedAddonImageFiles = [null];
+      this.addons_List.push(this.fb.group({
+        addOnImageUrl: [''], addOnName: [''], addOnPrice: [0], addOnType: ['NA']
+      }));
+    }
+  }
+
+  getAddonImageSrc(addon: any, index: number): string {
+    const url = addon.get('addOnImageUrl')?.value;
+    if (!url) return '';
+    if (url.startsWith('data:')) return url;
+    if (url.startsWith('http')) return url;
+    return this.displayImgUrl + url;
   }
 
   // MASTER MENU FILTER
@@ -657,6 +696,24 @@ Nutrient Conversion Factors:
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
+      const addOnsListMapped = this.form.value.addOnsList
+        .filter((a: any) => a.addOnName?.trim())
+        .map((a: any, i: number) => {
+          const isBase64 = (a.addOnImageUrl || '').startsWith('data:');
+          return {
+            addOnImageUrl: isBase64 ? '' : (a.addOnImageUrl || ''),
+            addOnName: a.addOnName.trim(),
+            addOnPrice: a.addOnPrice ?? 0,
+            addOnType: a.addOnType || 'NA',
+          };
+        });
+
+      formData.append('addOnsList', JSON.stringify(addOnsListMapped));
+      this.uploadedAddonImageFiles.forEach((file, i) => {
+        if (file instanceof File) {
+          formData.append(`addonImage_${i}`, file);
+        }
+      });
       if (this.form.value.sectionConfig) {
         const payload = {
           ...this.form.value.sectionConfig,
@@ -695,6 +752,13 @@ Nutrient Conversion Factors:
     this.selectedWeeklyDates = [];
     this.nutrition_Lists.clear();
     this.addNutritionLists();
+    this.addons_List.clear();
+    this.addons_List.push(this.fb.group({
+      addOnImageUrl: [''],
+      addOnName: [''],
+      addOnPrice: [0, [Validators.min(0)]],
+      addOnType: ['NA'],
+    }));
   }
 
   async submit() {
@@ -774,6 +838,27 @@ Nutrient Conversion Factors:
 
       formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
 
+      const addOnsListMapped = this.form.value.addOnsList
+        .filter((a: any) => a.addOnName?.trim())
+        .map((a: any, i: number) => {
+          const isBase64 = (a.addOnImageUrl || '').startsWith('data:');
+          return {
+            addOnImageUrl: isBase64 ? '' : (a.addOnImageUrl || ''),
+            addOnName: a.addOnName.trim(),
+            addOnPrice: a.addOnPrice ?? 0,
+            addOnType: a.addOnType || 'NA',
+          };
+        });
+
+      formData.append('addOnsList', JSON.stringify(addOnsListMapped));
+
+      this.uploadedAddonImageFiles.forEach((file, i) => {
+        if (file instanceof File) {
+          formData.append(`addonImage_${i}`, file);
+        }
+      });
+      formData.forEach((value: any, key: any) => console.log(key, value));
+      
       const res = await this.apiMainService.addOutletMenu(
         formData,
         this.outletObj._id
@@ -1059,6 +1144,45 @@ Nutrient Conversion Factors:
         }
       }
     });
+  }
+
+  get addons_List(): FormArray {
+    return this.form.get('addOnsList') as FormArray;
+  }
+
+  addAddon(): void {
+    this.addons_List.push(
+      this.fb.group({
+        addOnImageUrl: [''],
+        addOnName: [''],
+        addOnPrice: [0, [Validators.min(0)]],
+        addOnType: ['NA'],
+      })
+    );
+  }
+
+
+  handleAddonFileInput(event: any, index: number): void {
+    const file: File = event?.target?.files?.[0];
+    if (!file) return;
+
+    if (!this.uploadedAddonImageFiles[index]) {
+      this.uploadedAddonImageFiles.push(null);
+    }
+    this.uploadedAddonImageFiles[index] = file;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.addons_List.at(index).patchValue({
+        addOnImageUrl: reader.result as string
+      });
+    };
+  }
+
+  removeAddon(index: number): void {
+    this.addons_List.removeAt(index);
+    this.uploadedAddonImageFiles.splice(index, 1);
   }
 
 }
