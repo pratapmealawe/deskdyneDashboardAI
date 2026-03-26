@@ -19,6 +19,9 @@ export class SessionManagementComponent implements OnInit, OnDestroy {
   appTypes: string[] = ['USER', 'VENDOR', 'ADMIN'];
   selectedAppType: string = 'USER';
   
+  sessionStatuses: string[] = ['ALL', 'ACTIVE', 'INACTIVE'];
+  selectedStatus: string = 'ALL';
+  
   // Pagination
   pageSize: number = 10;
   pageIndex: number = 0;
@@ -63,7 +66,8 @@ export class SessionManagementComponent implements OnInit, OnDestroy {
     const options = {
       pageIndex: this.pageIndex,
       pageSize: this.pageSize,
-      searchTerm: this.searchTerm
+      searchTerm: this.searchTerm,
+      status: this.selectedStatus
     };
     
     this.apiMainService.getActiveSessions(this.selectedAppType, options).then((res: any) => {
