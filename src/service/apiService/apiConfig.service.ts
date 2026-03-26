@@ -420,7 +420,7 @@ export class ApiConfigService {
       getCompanyWalletByPhoneNo: p('/api/getCompanyWalletByPhoneNo', 'GET'),
       getCompanyOrganizationTransactionHistory: p('/api/getCompanyOrganizationTransactionHistory', 'POST'),
       getCustomerProfileDetails: p('/api/getCustomerProfileDetails', 'GET'),
-      getEmployeelistByCafeteriaId: p('/api/getEmployeelistByCafeteriaId', 'GET'),
+      getEmployeelistByCafeteriaIds: p('/api/getEmployeelistByCafeteriaIds', 'POST'),
       getOutletEmployeeListByCafeteriaId: p('/api/getOutletEmployeeListByCafeteriaId', 'GET'),
       createScheduledNotification: p('/api/createNotification', 'POST'),
       sendNowNotification: p('/api/sendNow', 'POST'),

@@ -8,7 +8,7 @@
     </div>
     <div class="cafeteria-pills">
       <button *ngFor="let cafeteria of orgObj.cafeteriaList" class="cafe-pill"
-        [class.active]="selectedCafeteriaId === cafeteria.cafeteria_id" (click)="selectCafeteria(cafeteria)">
+        [class.active]="isCafeteriaSelected(cafeteria.cafeteria_id)" (click)="selectCafeteria(cafeteria)">
         {{ cafeteria.cafeteria_name }}
       </button>
     </div>
@@ -153,10 +153,6 @@
           <mat-icon matPrefix>search</mat-icon>
           <input matInput placeholder="Search employees..." [(ngModel)]="searchQuery" />
         </mat-form-field>
-        <!-- <button mat-stroked-button color="warn" class="delete-all-btn" (click)="deleteAllEmployees()">
-          <mat-icon>delete_sweep</mat-icon>
-          Delete All
-        </button> -->
       </div>
     </div>
 
@@ -217,7 +213,9 @@
     <h2 class="delete-dialog-title">Delete All Employees?</h2>
     <p class="delete-dialog-message">
       You are about to delete <strong>{{ getCafeteriaEmployees().length }}</strong>
-      employee(s) from <strong>{{ selectedCafeteriaName }}</strong>
+      employee(s) from
+      <!-- ✅ Show all selected cafeteria names -->
+      <strong>{{ getSelectedCafeteriaNames() }}</strong>
     </p>
     <p class="delete-dialog-warning">
       <mat-icon>info</mat-icon>

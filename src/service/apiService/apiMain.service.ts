@@ -491,9 +491,9 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 
-  getEmployeelistByCafeteriaId(cafeteriaId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
+  getEmployeelistByCafeteriaIds(data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaIds;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, data);
   }
 
   getConsumptionOrderByOrgId(orgId: any) {

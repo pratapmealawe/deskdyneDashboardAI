@@ -81,17 +81,20 @@ export class OrgEmployeeListComponent implements OnInit, OnChanges {
   }
 
   async saveEmployee() {
-    console.log(this.employeeObj);
-    console.log(this.orgDetails);
-    let cafedetails = this.orgDetails.cafeteriaList.find((cafe: any) => {
-      return cafe._id == this.employeeObj.cafeteria_id;
-    });
-    console.log(cafedetails);
-    this.employeeObj.cafeteria_id = cafedetails.cafeteria_id;
-    this.employeeObj.cafeteria_name = cafedetails.cafeteria_name;
+    const cafeDetails = this.orgDetails.cafeteriaList.find((cafe: any) =>
+      cafe._id == this.employeeObj.cafeteria_id
+    );
 
+    if (!cafeDetails) { return; }
+    const payload = {
+        ...this.employeeObj,
+        cafeteria_list: [{
+            cafeteria_id: cafeDetails.cafeteria_id,
+            cafeteria_name: cafeDetails.cafeteria_name
+        }]
+    };
     try {
-      let res = await this.apiMainService.employeeAdd(this.employeeObj);
+      let res = await this.apiMainService.employeeAdd(payload);
     } catch (error) {
       console.log(error);
     }
