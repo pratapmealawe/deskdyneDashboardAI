@@ -43,7 +43,11 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
         {
           name: 'Daily Report',
           path: 'vendorFirmDailyReport'
-        }
+        },
+        {
+          name: 'Bulk Order Report',
+          path: 'bulkOrderReport'
+        },
       ],
     },
   ];
