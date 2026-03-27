@@ -116,55 +116,38 @@
               </mat-slide-toggle>
 
               <mat-slide-toggle formControlName="isPackagingRequired" color="primary">
-                Packaging Order Required
+                Packaging Required
               </mat-slide-toggle>
-            </div>
-
-            <div class="mt-4">
-              <mat-form-field appearance="outline" class="w-100 custom-field">
-                <mat-label>Packaging Amount</mat-label>
-                <input matInput type="number" formControlName="packagingAmount" />
-                <mat-icon matSuffix class="text-muted">currency_rupee</mat-icon>
-                <mat-error *ngIf="f['packagingAmount'].invalid">Required (Min 0)</mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="mt-4" *ngIf="form.get('isPreOrder')?.value">
-              <h4 class="text-secondary mb-2" style="font-size: 0.9rem;">Pre-Order Settings</h4>
-              <div class="d-flex flex-column gap-2 p-3 bg-light rounded">
-                <mat-radio-group formControlName="preOrderMealType" class="d-flex gap-3 mb-2">
-                  <mat-radio-button value="lunch">Lunch</mat-radio-button>
-                  <mat-radio-button value="dinner">Dinner</mat-radio-button>
-                  <mat-radio-button value="breakfast">Breakfast</mat-radio-button>
-                </mat-radio-group>
-
-                <mat-checkbox formControlName="isSatAvailable">Saturday Available</mat-checkbox>
-                <mat-checkbox formControlName="isSunAvailable">Sunday Available</mat-checkbox>
-              </div>
             </div>
           </div>
         </div>
 
-        <!-- BILLING TYPE -->
+        <!-- OUTLET CONFIGURATION -->
         <div class="modern-card mb-4">
           <div class="card-header">
-            <div class="icon-box warning">
-              <mat-icon>receipt_long</mat-icon>
+            <div class="icon-box info">
+              <mat-icon>settings_suggest</mat-icon>
             </div>
-            <h3>Billing Type</h3>
+            <h3>Outlet Configuration</h3>
           </div>
           <div class="card-body">
-            <mat-form-field appearance="outline" class="w-100 custom-field">
-              <mat-label>Billing Type</mat-label>
-              <mat-select formControlName="billingType">
-                <mat-option *ngFor="let type of billingTypeOptions" [value]="type">
-                  {{ type | titlecase }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="f['billingType'].invalid">
-                *Billing Type is required
-              </mat-error>
-            </mat-form-field>
+
+            <!-- Vertical Stack of Settings -->
+            <div class="mt-3">
+              <mat-form-field appearance="outline" class="w-100 custom-field mb-3">
+                <mat-label>Outlet Closing Time</mat-label>
+                <input matInput type="time" formControlName="closeTime" />
+                <mat-icon matSuffix class="text-muted">access_time</mat-icon>
+              </mat-form-field>
+
+
+              <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
+                <mat-label>Packaging Amount</mat-label>
+                <input matInput type="number" formControlName="packagingAmount" />
+                <mat-icon matSuffix class="text-muted">currency_rupee</mat-icon>
+                <mat-error *ngIf="form.get('packagingAmount')?.invalid">Required (Min 0)</mat-error>
+              </mat-form-field>
+            </div>
           </div>
         </div>
       </div>
@@ -244,49 +227,77 @@
           </div>
         </div>
 
-        <!-- LOCATION -->
-        <div class="modern-card mb-4">
-          <div class="card-header with-actions">
-            <div class="d-flex align-items-center gap-3">
-              <div class="icon-box success">
-                <mat-icon>location_on</mat-icon>
+        <div class="row">
+          <div class="col-12 col-md-6 mb-4">
+            <!-- LOCATION -->
+            <div class="modern-card h-100 mb-0">
+              <div class="card-header with-actions">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="icon-box success">
+                    <mat-icon>location_on</mat-icon>
+                  </div>
+                  <h3>Organization & Cafeteria</h3>
+                </div>
+                <button mat-stroked-button color="primary" type="button" (click)="openOrgList()" class="action-btn">
+                  <mat-icon>{{ showUpdate ? 'swap_horiz' : 'add' }}</mat-icon>
+                </button>
               </div>
-              <h3>Organization & Cafeteria</h3>
-            </div>
-            <button mat-stroked-button color="primary" type="button" (click)="openOrgList()" class="action-btn">
-              <mat-icon>{{ showUpdate ? 'swap_horiz' : 'add' }}</mat-icon>
-              {{ showUpdate ? 'Change' : 'Select' }}
-            </button>
-          </div>
-          <div class="card-body">
-            <div class="empty-placeholder" *ngIf="!seletedCafetria">
-              <mat-icon>business</mat-icon>
-              <p>No organization selected yet.</p>
-            </div>
+              <div class="card-body">
+                <div class="empty-placeholder py-4" *ngIf="!seletedCafetria">
+                  <mat-icon>business</mat-icon>
+                  <p>No organization selected yet.</p>
+                </div>
 
-            <div class="selected-cafe-info" *ngIf="seletedCafetria">
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">Organization</span>
-                  <span class="value">{{ seletedCafetria.organizationDetails.organization_name }}</span>
+                <div class="selected-cafe-info" *ngIf="seletedCafetria">
+                  <div class="info-grid vertical">
+                    <div class="info-item">
+                      <span class="label">Organization</span>
+                      <span class="value">{{ seletedCafetria.organizationDetails.organization_name }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">Cafeteria</span>
+                      <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_name }}</span>
+                    </div>
+                    <div class="info-item">
+                      <span class="label">City / Location</span>
+                      <span class="value">{{ seletedCafetria.organizationDetails.city }} / {{
+                        seletedCafetria.cafeteriaDetails.cafeteria_city }}</span>
+                    </div>
+                  </div>
                 </div>
-                <div class="info-item">
-                  <span class="label">City</span>
-                  <span class="value">{{ seletedCafetria.organizationDetails.city }}</span>
+                <mat-error *ngIf="!seletedCafetria && showError" class="mt-2 d-block text-center small">
+                  *Please select an organization and cafeteria
+                </mat-error>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-md-6 mb-4">
+            <!-- BILLING DETAILS -->
+            <div class="modern-card h-100 mb-0">
+              <div class="card-header">
+                <div class="icon-box warning">
+                  <mat-icon>receipt_long</mat-icon>
                 </div>
-                <div class="info-item">
-                  <span class="label">Cafeteria</span>
-                  <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_name }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="label">Location</span>
-                  <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_city }}</span>
+                <h3>Billing Details</h3>
+              </div>
+              <div class="card-body">
+                <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
+                  <mat-label>Billing Type</mat-label>
+                  <mat-select formControlName="billingType">
+                    <mat-option *ngFor="let type of billingTypeOptions" [value]="type">
+                      {{ type | titlecase }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="f['billingType'].invalid">
+                    *Billing Type is required
+                  </mat-error>
+                </mat-form-field>
+                <div class="mt-2 small text-muted">
+                  Select how invoices will be generated for this outlet.
                 </div>
               </div>
             </div>
-            <mat-error *ngIf="!seletedCafetria && showError" class="mt-2 d-block text-center">
-              *Please select an organization and cafeteria
-            </mat-error>
           </div>
         </div>
 
@@ -294,7 +305,7 @@
     </div>
 
     <!-- MEAL TIMINGS (FULL WIDTH) -->
-    <div class="row g-4 mt-1">
+    <div class="row g-4 mt-1" *ngIf="!form.get('isPreOrder')?.value">
       <div class="col-12">
         <div class="modern-card mb-4">
           <div class="card-header with-actions">
@@ -348,16 +359,16 @@
                           </mat-form-field>
                         </div>
                         <div class="col-6 col-md-4">
-                          <div class="time-input-styled">
-                            <label class="small text-secondary mb-1 d-block">From</label>
-                            <input type="time" formControlName="acceptOrderFrom" />
-                          </div>
+                          <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
+                            <mat-label>From</mat-label>
+                            <input matInput type="time" formControlName="acceptOrderFrom" />
+                          </mat-form-field>
                         </div>
                         <div class="col-6 col-md-4">
-                          <div class="time-input-styled">
-                            <label class="small text-secondary mb-1 d-block">To</label>
-                            <input type="time" formControlName="acceptOrderTill" />
-                          </div>
+                          <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
+                            <mat-label>To</mat-label>
+                            <input matInput type="time" formControlName="acceptOrderTill" />
+                          </mat-form-field>
                         </div>
                       </div>
                     </div>
@@ -369,6 +380,160 @@
             <mat-error *ngIf="mealTimingError" class="mt-2 d-block">
               {{ mealTimingError }}
             </mat-error>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRE-ORDER SETTINGS & HOLIDAYS (FULL WIDTH) -->
+    <div class="row g-4 mt-1" *ngIf="form.get('isPreOrder')?.value">
+      <div class="col-12">
+        <div class="modern-card mb-4">
+          <div class="card-header with-actions">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box info">
+                <mat-icon>event_available</mat-icon>
+              </div>
+              <h3>Pre-Order Settings & Holidays</h3>
+            </div>
+          </div>
+          <div class="card-body" formGroupName="preOrderConfig">
+            <div class="row g-4">
+              <!-- Settings Section -->
+              <div [class]="form.get('preOrderConfig.type')?.value === 'both' ? 'col-12' : 'col-12 col-xl-12'">
+
+                <div class="row mb-4 g-2 align-items-end">
+                  <!-- Pre-Order Type -->
+                  <div class="col-12 col-md-3">
+                    <div class="settings-sub-section mb-0">
+                      <h4 class="sub-title"><mat-icon>category</mat-icon> Pre-Order Type</h4>
+                      <div class="d-inline-flex">
+                        <mat-radio-group formControlName="type" class="modern-radio-group py-2 px-3">
+                          <mat-radio-button value="normal" class="me-3">Normal</mat-radio-button>
+                          <mat-radio-button value="holiday" class="me-3">Holiday Only</mat-radio-button>
+                          <mat-radio-button value="both">Both</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Start Time -->
+                  <div class="col-6 col-md-2">
+                    <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
+                      <mat-label>Start Time</mat-label>
+                      <input matInput type="time" formControlName="startTime" />
+                      <mat-icon matSuffix class="text-muted" style="font-size: 18px;">login</mat-icon>
+                    </mat-form-field>
+                  </div>
+                  <!-- End Time -->
+                  <div class="col-6 col-md-2">
+                    <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
+                      <mat-label>End Time</mat-label>
+                      <input matInput type="time" formControlName="endTime" />
+                      <mat-icon matSuffix class="text-muted" style="font-size: 18px;">logout</mat-icon>
+                    </mat-form-field>
+                  </div>
+                  <!-- Max Days (Narrow) -->
+                  <div class="col-6 col-md-2">
+                    <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
+                      <mat-label>Days</mat-label>
+                      <input matInput type="number" formControlName="maxDays" />
+                    </mat-form-field>
+                  </div>
+                  <!-- Meal Type (Wide enough for one row) -->
+                  <div class="col-12 col-md-3">
+                    <div class="settings-sub-section mb-0">
+                      <h4 class="sub-title small mb-2" style="font-size: 0.75rem; color: #64748b; font-weight: 500;">
+                        <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #64748b;">restaurant_menu</mat-icon> Meal Type
+                      </h4>
+                      <div class="d-inline-flex">
+                        <mat-radio-group formControlName="mealType" class="modern-radio-group py-2 px-2 w-100 d-flex justify-content-between" style="align-items: center;">
+                          <mat-radio-button value="breakfast" class="me-1">Breakfast</mat-radio-button>
+                          <mat-radio-button value="lunch" class="me-1">Lunch</mat-radio-button>
+                          <mat-radio-button value="dinner" class="me-1">Dinner</mat-radio-button>
+                          <mat-radio-button value="high tea">High Tea</mat-radio-button>
+                        </mat-radio-group>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="settings-sub-section" *ngIf="form.get('preOrderConfig.type')?.value !== 'holiday'">
+                  <h4 class="sub-title"><mat-icon>calendar_view_week</mat-icon> Available Days</h4>
+                  <div class="days-selector-grid" formGroupName="availableDays">
+                    <mat-checkbox formControlName="monday">Monday</mat-checkbox>
+                    <mat-checkbox formControlName="tuesday">Tuesday</mat-checkbox>
+                    <mat-checkbox formControlName="wednesday">Wednesday</mat-checkbox>
+                    <mat-checkbox formControlName="thursday">Thursday</mat-checkbox>
+                    <mat-checkbox formControlName="friday">Friday</mat-checkbox>
+                    <mat-checkbox formControlName="saturday">Saturday</mat-checkbox>
+                    <mat-checkbox formControlName="sunday">Sunday</mat-checkbox>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Holidays Section -->
+              <div class="col-12" *ngIf="form.get('preOrderConfig.type')?.value !== 'normal'">
+                <div class="holiday-manager-card">
+                  <div class="header-banner">
+                    <div class="banner-text">
+                      <h4 class="sub-title mb-1"><mat-icon>holiday_village</mat-icon> Holidays</h4>
+                      <p class="text-muted small mb-0">Bulk-add holidays to enable/disable pre-orders.</p>
+                    </div>
+                    <button mat-flat-button color="primary" type="button" (click)="holidayUpload.click()"
+                      class="upload-action-btn">
+                      <mat-icon>upload_file</mat-icon> Upload Sheet
+                    </button>
+                    <input type="file" #holidayUpload hidden
+                      accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                      (change)="handleHolidayUpload($event)">
+                  </div>
+
+                  <div class="holiday-content-area">
+                    <div class="template-box mb-3" *ngIf="holidays.length === 0">
+                      <div class="d-flex align-items-center justify-content-between w-100">
+                        <span class="small text-secondary">Need a starting point?</span>
+                        <a href="javascript:void(0)" (click)="downloadHolidayTemplate()" class="template-link">
+                          <mat-icon>download</mat-icon> Download Template
+                        </a>
+                      </div>
+                    </div>
+
+                    <mat-error *ngIf="holidayUploadError"
+                      class="mb-3 p-2 bg-danger-subtle rounded border border-danger-subtle d-block small">
+                      <mat-icon
+                        style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;">error</mat-icon> {{
+                      holidayUploadError }}
+                    </mat-error>
+
+                    <div class="holiday-scroll-container">
+                      <mat-chip-set class="premium-chip-set" *ngIf="holidays.length > 0">
+                        <mat-chip *ngFor="let h of holidays" class="modern-holiday-chip"
+                          (removed)="removeHoliday(h.date)">
+                          <div class="chip-content d-flex align-items-center">
+                            <div class="h-date-box text-center me-2 py-1 px-2 bg-light rounded shadow-sm">
+                              <div class="h-month small fw-bold text-uppercase" style="font-size: 0.65rem; color: #3b82f6;">{{ h.date | date:'MMM' }}</div>
+                              <div class="h-day fw-bold" style="font-size: 1rem; line-height: 1;">{{ h.date | date:'dd' }}</div>
+                            </div>
+                            <div class="h-info">
+                              <div class="h-name fw-semibold" style="font-size: 0.85rem;">{{ h.name }}</div>
+                              <div class="h-year text-muted small" style="font-size: 0.7rem;">{{ h.date | date:'yyyy' }}</div>
+                            </div>
+                          </div>
+                          <button matChipRemove><mat-icon>cancel</mat-icon></button>
+                        </mat-chip>
+                      </mat-chip-set>
+
+                      <div class="empty-state-illust" *ngIf="holidays.length === 0">
+                        <div class="illust-icon">
+                          <mat-icon>beach_access</mat-icon>
+                        </div>
+                        <h5>Relax! No Holidays Yet</h5>
+                        <p>Add holidays to block pre-orders on specific dates.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

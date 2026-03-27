@@ -92,7 +92,7 @@ export class AddDailyOrderMenuComponent implements OnInit {
     if (this.deliveryForm.valid) {
       const rawValue = this.deliveryForm.getRawValue();
       const payload = {
-        organization_nacomme: this.data.organization_name,
+        organization_name: this.data.organization_name,
         organizationId: this.data.organizationId,
         cafeteriaId: this.data.cafeteriaId,
         cafeteriaName: this.data.cafeteriaName,

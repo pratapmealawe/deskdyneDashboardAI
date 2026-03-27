@@ -131,11 +131,26 @@
             </p>
 
             <!-- Row 3: Subsidy -->
-            <div class="subsidy-row" *ngIf="item.subsidy">
-              <div class="subsidy-chip">
+            <div class="subsidy-row">
+              <div class="subsidy-chip" *ngIf="item.subsidy">
                 <mat-icon>sell</mat-icon>
                 <span>₹{{ item.subsidy }} subsidy</span>
               </div>
+
+              <ng-container *ngIf="item.discountEnabled">
+                <!-- Percentage -->
+                <div class="discount-chip" *ngIf="item.discountType === 'percentage'">
+                   <mat-icon>discount</mat-icon>
+                  <span class="discount-value">{{ item.discountValue }}%</span>
+                  <span class="discount-label">OFF</span>
+                </div>
+                <!-- Flat -->
+                <div class="discount-chip" *ngIf="item.discountType === 'flat'">
+                  <mat-icon>discount</mat-icon>
+                  <span class="discount-label">FLAT</span>
+                  <span class="discount-value">₹{{ item.discountValue }}</span>
+                </div>
+              </ng-container>
             </div>
 
             <!-- Row 4: Meal Chips + Section -->
@@ -342,6 +357,82 @@
                 </mat-form-field>
               </div>
             </div>
+          </div>
+
+          <!-- Discount Section -->
+          <div class="form-section">
+            <div class="section-header">
+              <mat-icon>discount</mat-icon>
+              <span>Discount</span>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-12">
+                <mat-slide-toggle formControlName="discountEnabled" color="primary"
+                  [disabled]="!form.get('price')?.value || (form.get('price')?.value - (form.get('subsidy')?.value || 0)) <= 0">
+                  Enable Discount
+                </mat-slide-toggle>
+                <div class="text-muted small mt-2" *ngIf="!form.get('price')?.value">
+                  <mat-icon class="info-icon">info</mat-icon>
+                  Add a price before enabling discount
+                </div>
+              </div>
+            </div>
+
+            <ng-container *ngIf="form.get('discountEnabled')?.value">
+              <div class="row g-3">
+                <div class="col-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Discount Type</mat-label>
+                    <mat-select formControlName="discountType">
+                      <mat-option value="percentage">Percentage (%)</mat-option>
+                      <mat-option value="flat">Flat (₹)</mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="f['discountType'].hasError('required')">Required</mat-error>
+                  </mat-form-field>
+                </div>
+
+                <div class="col-6">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>
+                      Discount Value
+                      <span *ngIf="form.get('discountType')?.value === 'flat'">
+                        (max: ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value || 0) - 1 }})
+                      </span>
+                      <span *ngIf="form.get('discountType')?.value === 'percentage'">(1–100%)</span>
+                    </mat-label>
+                    <input matInput type="number" formControlName="discountValue" [min]="1" [max]="form.get('discountType')?.value === 'percentage' ? 100 :
+                   (form.get('price')?.value - (form.get('subsidy')?.value || 0) - 1)"
+                      (keydown)="preventInvalidNumber($event)" />
+                    <mat-icon matPrefix class="field-icon">
+                      {{ form.get('discountType')?.value === 'percentage' ? 'percent' : 'currency_rupee' }}
+                    </mat-icon>
+                    <mat-error *ngIf="f['discountValue'].hasError('required')">Required</mat-error>
+                    <mat-error *ngIf="f['discountValue'].hasError('min')">Must be at least 1</mat-error>
+                  </mat-form-field>
+
+                  <!-- Form-level errors go HERE, outside mat-form-field -->
+                  <div class="text-danger small mt-1">
+                    <span *ngIf="form.hasError('priceMissing')">
+                      Please enter price first
+                    </span>
+                    <span *ngIf="form.hasError('invalidEffectivePrice')">
+                      Price after subsidy must be greater than 0
+                    </span>
+                    <span *ngIf="form.hasError('percentInvalid')">
+                      Percentage must be between 1 and 100
+                    </span>
+                    <span *ngIf="form.hasError('flatNegative')">
+                      Discount must be greater than 0
+                    </span>
+                    <span *ngIf="form.hasError('flatInvalid')">
+                      Flat discount must be less than ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value
+                      || 0) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </ng-container>
           </div>
 
           <!-- Meal Timings Section -->

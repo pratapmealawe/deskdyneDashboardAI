@@ -327,6 +327,11 @@
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 1rem;
+    
+    &.vertical {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
   }
 
   .info-item {
@@ -460,6 +465,249 @@
 .action-btn {
   border-radius: 8px;
   font-weight: 500;
+}
+
+// Settings Sub-sections
+.settings-sub-section {
+  .sub-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #475569;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 1rem;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: var.$primary-color1;
+    }
+  }
+}
+
+.days-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+  padding: 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  mat-checkbox {
+    width: 100%;
+    ::ng-deep {
+      .mdc-label {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #475569;
+        white-space: nowrap;
+      }
+      .mdc-checkbox {
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+.modern-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  padding: 0.75rem 1rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+
+  mat-radio-button {
+    ::ng-deep .mdc-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #64748b;
+    }
+  }
+}
+
+// Holiday Manager Card
+.holiday-manager-card {
+  background: white;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+
+  .header-banner {
+    background: #f1f5f9;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+
+    .sub-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #1e293b;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      mat-icon {
+        color: var.$primary-color1;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .holiday-content-area {
+    padding: 1.5rem;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+.template-box {
+  background: #f0f7ff;
+  border: 1px dashed #bfdbfe;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+}
+
+.template-link {
+  color: var.$primary-color1;
+  text-decoration: none;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+.holiday-scroll-container {
+  min-height: 180px;
+  max-height: 300px;
+  overflow-y: auto;
+  margin: 0 -0.5rem;
+  padding: 0.5rem;
+}
+
+.premium-chip-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.modern-holiday-chip {
+  background-color: white !important;
+  border: 1px solid #e2e8f0 !important;
+  border-radius: 10px !important;
+  height: auto !important;
+  padding: 6px 10px !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: var.$primary-color1 !important;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    background-color: #f8fafc !important;
+  }
+
+  .chip-content {
+    display: flex;
+    flex-direction: column;
+    padding-right: 4px;
+
+    .h-name {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+
+    .h-date {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+  }
+
+  mat-icon {
+    color: #94a3b8;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    
+    &:hover {
+      color: #ef4444;
+    }
+  }
+}
+
+.empty-state-illust {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+
+  .illust-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1rem;
+    color: #94a3b8;
+
+    mat-icon {
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #475569;
+    margin-bottom: 0.25rem;
+  }
+
+  p {
+    font-size: 0.85rem;
+    color: #94a3b8;
+    margin: 0;
+    max-width: 220px;
+  }
+}
+
+.upload-action-btn {
+  border-radius: 10px;
+  padding: 0 1.25rem;
+  font-weight: 600;
+  height: 40px;
+  box-shadow: 0 4px 12px rgba(var.$primary-color1, 0.15);
 }
 
 // Organization List Dialog

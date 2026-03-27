@@ -360,8 +360,11 @@ Nutrient Conversion Factors:
           addOnType: ['NA'],
         }),
       ]),
-    });
-
+      discountEnabled: [false],
+      discountType: [{ value: null, disabled: true }],
+      discountValue: [{ value: null, disabled: true }],
+    }, { validator: this.discountValidator() });
+    this.initDiscountListener();
     this.form.get('nutritionList')?.valueChanges.subscribe(() => {
       this.calculateEnergyValue();
     });
@@ -410,6 +413,84 @@ Nutrient Conversion Factors:
     this.nutrition_Lists.removeAt(index);
   }
 
+  initDiscountListener() {
+    const typeCtrl = this.form.get('discountType');
+    const valueCtrl = this.form.get('discountValue');
+    const priceCtrl = this.form.get('price');
+    const subsidyCtrl = this.form.get('subsidy');
+
+    const toggleControls = () => {
+      const enabled = this.form.get('discountEnabled')?.value;
+      const price = Number(priceCtrl?.value);
+      const subsidy = Number(subsidyCtrl?.value || 0);
+      const effectivePrice = price - subsidy;
+
+      if (enabled && price > 0 && effectivePrice > 0) {
+        typeCtrl?.enable();
+        valueCtrl?.enable();
+        typeCtrl?.setValidators([Validators.required]);
+        valueCtrl?.setValidators([Validators.required, Validators.min(1)]);
+      } else {
+        typeCtrl?.reset();
+        valueCtrl?.reset();
+        typeCtrl?.disable();
+        valueCtrl?.disable();
+      }
+
+      typeCtrl?.updateValueAndValidity();
+      valueCtrl?.updateValueAndValidity();
+      this.form.updateValueAndValidity();
+    };
+
+    toggleControls();
+
+    this.form.get('discountEnabled')?.valueChanges.subscribe(toggleControls);
+    this.form.get('price')?.valueChanges.subscribe(toggleControls);
+    this.form.get('subsidy')?.valueChanges.subscribe(toggleControls);
+    this.form.get('discountType')?.valueChanges.subscribe(() => {
+      this.form.updateValueAndValidity();
+    });
+  }
+
+  discountValidator() {
+    return (group: any) => {
+      const enabled = group.get('discountEnabled')?.value;
+      const type = group.get('discountType')?.value;
+      const value = Number(group.get('discountValue')?.value);
+      const price = Number(group.get('price')?.value);
+      const subsidy = Number(group.get('subsidy')?.value || 0);
+
+      if (!enabled) return null;
+
+      if (!price || price <= 0) {
+        return { priceMissing: true };
+      }
+
+      const effectivePrice = price - subsidy;
+
+      if (effectivePrice <= 0) {
+        return { invalidEffectivePrice: true };
+      }
+
+      if (type === 'percentage') {
+        if (value <= 0 || value > 100) {
+          return { percentInvalid: true };
+        }
+      }
+
+      if (type === 'flat') {
+        if (value <= 0) {
+          return { flatNegative: true };
+        }
+        if (value >= effectivePrice) {
+          return { flatInvalid: true };
+        }
+      }
+
+      return null;
+    };
+  }
+
   patchFormValue(item: any) {
     console.log(item);
 
@@ -431,6 +512,9 @@ Nutrient Conversion Factors:
       energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
       sectionConfig: item.sectionConfig || null,
       weeklyMenuDates: item.weeklyMenuDates || [],
+      discountEnabled: item.discountEnabled || false,
+      discountType: item.discountType || null,
+      discountValue: item.discountValue || null,
       nutritionList: item.nutritionInfo
         ? [...item.nutritionInfo.nutritionList]
         : [],
@@ -721,9 +805,18 @@ Nutrient Conversion Factors:
         };
         formData.append('sectionConfig', JSON.stringify(payload));
       }
+      const discountEnabled = this.form.value.discountEnabled ?? false;
+      formData.append('discountEnabled', String(discountEnabled));
 
       formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
 
+      if (discountEnabled) {
+        formData.append('discountType', this.form.getRawValue().discountType ?? '');
+        formData.append('discountValue', String(this.form.getRawValue().discountValue ?? 0));
+      } else {
+        formData.append('discountType', '');
+        formData.append('discountValue', '0');
+      }
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
         this.menuId,
@@ -859,6 +952,16 @@ Nutrient Conversion Factors:
       });
       formData.forEach((value: any, key: any) => console.log(key, value));
       
+      const discountEnabled = this.form.value.discountEnabled ?? false;
+      formData.append('discountEnabled', String(discountEnabled));
+
+      if (discountEnabled) {
+        formData.append('discountType', this.form.getRawValue().discountType ?? '');
+        formData.append('discountValue', String(this.form.getRawValue().discountValue ?? 0));
+      } else {
+        formData.append('discountType', '');
+        formData.append('discountValue', 0);
+      }
       const res = await this.apiMainService.addOutletMenu(
         formData,
         this.outletObj._id
