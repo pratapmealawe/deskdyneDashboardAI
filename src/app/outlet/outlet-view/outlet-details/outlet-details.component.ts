@@ -50,6 +50,7 @@ export class OutletDetailsComponent implements OnInit {
       'lunch': 'lunch_dining',
       'dinner': 'dinner_dining',
       'snacks': 'local_cafe',
+      'high tea': 'restaurant',
       'brunch': 'brunch_dining'
     };
     return icons[type] || 'restaurant';
