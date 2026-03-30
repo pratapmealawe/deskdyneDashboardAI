@@ -106,6 +106,77 @@
           </div>
         </div>
 
+        <!-- POS & DASHBOARD -->
+        <div class="modern-card mb-4">
+          <div class="card-header">
+            <div class="icon-box purple">
+              <mat-icon>point_of_sale</mat-icon>
+            </div>
+            <h3>POS & Dashboard</h3>
+          </div>
+          <div class="card-body">
+
+            <!-- Toggles -->
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-label">POS Enabled</span>
+                <span class="toggle-desc">Enable Point of Sale access</span>
+              </div>
+              <mat-slide-toggle formControlName="isPos" color="primary"></mat-slide-toggle>
+            </div>
+
+            <div class="toggle-row mt-3">
+              <div class="toggle-info">
+                <span class="toggle-label">Dashboard Enabled</span>
+                <span class="toggle-desc">Enable dashboard access</span>
+              </div>
+              <mat-slide-toggle formControlName="isDashboard" color="primary"></mat-slide-toggle>
+            </div>
+
+            <!-- POS Entry Type (top-level, shown when isPos is true) -->
+            <mat-form-field *ngIf="form.get('isPos')?.value" appearance="outline" class="w-100 custom-field mt-3">
+              <mat-label>POS Entry Type</mat-label>
+              <mat-select formControlName="posEntry">
+                <mat-option value="">None</mat-option>
+                <mat-option value="outlet">Outlet</mat-option>
+                <mat-option value="kiosk">Kiosk</mat-option>
+                <mat-option value="qr">QR</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- POS Configuration (shown only when isPos is true) -->
+            <div *ngIf="form.get('isPos')?.value" formGroupName="posConfiguration" class="pos-config-section mt-3">
+              <div class="config-section-label">POS Configuration</div>
+              <div class="config-options">
+                <mat-checkbox formControlName="enablePrinter" color="primary">Enable Printer</mat-checkbox>
+                <mat-checkbox formControlName="enableScanner" color="primary">Enable Scanner</mat-checkbox>
+                <mat-checkbox formControlName="enableSecondDisplay" color="primary">Enable Second Display</mat-checkbox>
+                <mat-checkbox formControlName="enableManualPrint" color="primary">Enable Manual Print</mat-checkbox>
+                <mat-checkbox formControlName="kitchenKot" color="primary">Kitchen KOT</mat-checkbox>
+                <mat-checkbox formControlName="userKot" color="primary">User KOT</mat-checkbox>
+                <mat-checkbox formControlName="userKotOnlyForManual" color="primary">User KOT (Manual Only)</mat-checkbox>
+              </div>
+            </div>
+
+            <!-- Login Code (edit mode only) -->
+            <div *ngIf="showUpdate" class="login-code-section mt-3">
+              <div class="config-section-label">Login Code</div>
+              <div class="login-code-display" *ngIf="loginCode; else noLoginCode">
+                <span class="code-value">{{ loginCode }}</span>
+                <button mat-icon-button (click)="refreshLoginCode()" matTooltip="Refresh Login Code" class="refresh-btn">
+                  <mat-icon>refresh</mat-icon>
+                </button>
+              </div>
+              <ng-template #noLoginCode>
+                <button mat-stroked-button color="primary" class="generate-code-btn" (click)="createLoginCode()">
+                  <mat-icon>vpn_key</mat-icon> Generate Login Code
+                </button>
+              </ng-template>
+            </div>
+
+          </div>
+        </div>
+
       </div>
 
       <!-- RIGHT COLUMN: Details -->
@@ -266,7 +337,7 @@
               <p>No popups added yet.</p>
             </div>
 
-            <div *ngIf="selectedPopupsList?.length > 0" class="list-container">
+            <div *ngIf="selectedPopupsList.length > 0" class="list-container">
               <div *ngFor="let popup of selectedPopupsList; index as i" class="list-item">
                 <div class="item-content">
                   <div class="item-main">

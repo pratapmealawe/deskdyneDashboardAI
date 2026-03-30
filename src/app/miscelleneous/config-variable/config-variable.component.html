@@ -1,136 +1,146 @@
-<div class="vendor-header">
-  <div>
-    <h4 class="m-0 fw-semibold">Config Variables</h4>
-  </div>
-  <div class="header-actions">
-    <button mat-raised-button color="primary" *ngIf="true || btnPolicy?.addVariable" (click)="addVariable()">
-      <mat-icon>add</mat-icon> Add Config
-    </button>
-  </div>
-</div>
+<div class="config-variable-container">
 
-<div class="container-fluid pb-4">
-
-  <!-- Edit Mode Section -->
-  <div *ngIf="editMode" class="bgpadding3 mb-4">
-    <div class="labelText mb-3" *ngIf="addnewVariable">Add New Config Variable</div>
-    <div class="labelText mb-3" *ngIf="!addnewVariable">Update Config Variable</div>
-
-    <div class="row g-3">
-      <!-- Variable Name -->
-      <div class="col-md-6 col-lg-3">
-        <label class="labelText mb-2" for="variableName">Variable Name</label>
-        <input type="text" class="form-control" id="variableName" [(ngModel)]="variableObj.configName"
-          placeholder="Enter name" />
+  <!-- PAGE HEADER -->
+  <div class="page-header-card mb-4">
+    <div class="header-content">
+      <div>
+        <h1 class="page-title">Config Variables</h1>
+        <p class="page-subtitle">Manage system-wide configuration keys and values.</p>
       </div>
+      <div class="header-right">
+        <button mat-flat-button color="primary" class="add-btn"
+          *ngIf="!editMode && (true || btnPolicy?.addVariable)" (click)="addVariable()">
+          <mat-icon>add</mat-icon> Add Config
+        </button>
+      </div>
+    </div>
+  </div>
 
-      <!-- Variable Type -->
-      <div class="col-md-6 col-lg-5">
-        <label class="labelText mb-2">Variable Type</label>
-        <div class="d-flex flex-wrap gap-3 align-items-center mt-2">
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="typeString" value="String" [(ngModel)]="variableType"
-              name="varType" />
-            <label class="form-check-label" for="typeString">String</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="typeNumber" value="Number" [(ngModel)]="variableType"
-              name="varType" />
-            <label class="form-check-label" for="typeNumber">Number</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="typeTime" value="Time" [(ngModel)]="variableType"
-              name="varType" />
-            <label class="form-check-label" for="typeTime">Time</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" id="typeDate" value="Date" [(ngModel)]="variableType"
-              name="varType" />
-            <label class="form-check-label" for="typeDate">Date</label>
+  <!-- EDIT / ADD FORM -->
+  <div *ngIf="editMode" class="modern-card mb-4">
+    <div class="card-header">
+      <div class="icon-box primary">
+        <mat-icon>{{ addnewVariable ? 'add_circle' : 'edit' }}</mat-icon>
+      </div>
+      <h3>{{ addnewVariable ? 'Add New Config Variable' : 'Update Config Variable' }}</h3>
+    </div>
+
+    <div class="card-body">
+      <div class="row g-3">
+
+        <!-- Variable Name -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <mat-form-field appearance="outline" class="w-100 custom-field">
+            <mat-label>Variable Name</mat-label>
+            <input matInput [(ngModel)]="variableObj.configName" placeholder="Enter name" />
+            <mat-icon matSuffix class="text-muted">label</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Variable Type -->
+        <div class="col-12 col-md-6 col-lg-5">
+          <div class="type-field-wrapper">
+            <span class="section-label">Variable Type</span>
+            <mat-radio-group [(ngModel)]="variableType" name="varType" class="custom-radio-group horizontal">
+              <mat-radio-button value="String" color="primary">String</mat-radio-button>
+              <mat-radio-button value="Number" color="primary">Number</mat-radio-button>
+              <mat-radio-button value="Time" color="primary">Time</mat-radio-button>
+              <mat-radio-button value="Date" color="primary">Date</mat-radio-button>
+            </mat-radio-group>
           </div>
         </div>
+
+        <!-- Variable Value -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <mat-form-field appearance="outline" class="w-100 custom-field">
+            <mat-label>Variable Value</mat-label>
+            <input *ngIf="variableType === 'String'" matInput type="text"
+              [(ngModel)]="variableObj.configData" placeholder="Enter text value" />
+            <input *ngIf="variableType === 'Number'" matInput type="number"
+              [(ngModel)]="variableObj.configData" placeholder="Enter number" />
+            <input *ngIf="variableType === 'Time'" matInput type="time"
+              [(ngModel)]="variableObj.configData" />
+            <input *ngIf="variableType === 'Date'" matInput type="date"
+              [(ngModel)]="variableObj.configData" />
+            <mat-icon matSuffix class="text-muted">data_object</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <!-- Variable Index -->
+        <div class="col-12 col-md-6 col-lg-1">
+          <mat-form-field appearance="outline" class="w-100 custom-field">
+            <mat-label>Index</mat-label>
+            <input matInput type="text" [(ngModel)]="variableObj.configIndex" placeholder="#" />
+          </mat-form-field>
+        </div>
+
       </div>
-
-      <!-- Variable Value -->
-      <div class="col-md-6 col-lg-3">
-        <label class="labelText mb-2" for="variableValue">Variable Value</label>
-
-        <input *ngIf="variableType === 'String'" type="text" class="form-control" [(ngModel)]="variableObj.configData"
-          placeholder="Enter text value" />
-
-        <input *ngIf="variableType === 'Number'" type="number" class="form-control" [(ngModel)]="variableObj.configData"
-          placeholder="Enter number value" />
-
-        <input *ngIf="variableType === 'Time'" type="time" class="form-control" [(ngModel)]="variableObj.configData"
-          placeholder="00:00" />
-
-        <input *ngIf="variableType === 'Date'" type="date" class="form-control" [(ngModel)]="variableObj.configData" />
-      </div>
-
-      <!-- Variable Index -->
-      <div class="col-md-6 col-lg-1">
-        <label class="labelText mb-2" for="variableIndex">Index</label>
-        <input type="text" class="form-control" id="variableIndex" [(ngModel)]="variableObj.configIndex"
-          placeholder="#" />
-      </div>
-    </div>
-
-    <div class="mt-4 d-flex gap-2">
-      <button *ngIf="addnewVariable && (true || btnPolicy?.addVariable)" mat-raised-button color="primary"
-        (click)="submitnewVariable(variableObj)">
-        Submit
-      </button>
-
-      <button *ngIf="!addnewVariable && (true || btnPolicy?.editVariable)" mat-raised-button color="primary"
-        (click)="updateVariable(variableObj)">
-        Update
-      </button>
-
-      <button mat-stroked-button color="warn" (click)="cancel()">
-        Cancel
-      </button>
     </div>
   </div>
 
-  <!-- List Section -->
+  <!-- LIST SECTION -->
   <div *ngIf="!editMode">
-    <div *ngIf="allVariables && allVariables.length === 0" class="center">
-      No Config Variables Found
-    </div>
 
-    <div *ngFor="let variable of allVariables" class="cardDesign">
-      <div class="container-fluid">
-        <div class="row align-items-center">
-
-          <div class="col-md-1 mb-2 mb-md-0">
-            <div class="labelText">Index</div>
-            <div class="labelData">{{ variable.configIndex }}</div>
-          </div>
-
-          <div class="col-md-4 mb-2 mb-md-0">
-            <div class="labelText">Name</div>
-            <div class="labelData">{{ variable.configName }}</div>
-          </div>
-
-          <div class="col-md-5 mb-2 mb-md-0">
-            <div class="labelText">Value</div>
-            <div class="labelData text-truncate" [matTooltip]="variable.configData">{{ variable.configData }}</div>
-          </div>
-
-          <!-- Actions -->
-          <div class="col-md-2 d-flex align-items-center justify-content-end p-0 gap-2">
-            <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editVariable"
-              (click)="editVariable(variable)" matTooltip="Edit">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteVariable" (click)="showPopup(variable)"
-              matTooltip="Delete">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-
+    <!-- Empty State -->
+    <div *ngIf="allVariables && allVariables.length === 0" class="modern-card">
+      <div class="card-body">
+        <div class="empty-placeholder">
+          <mat-icon>tune</mat-icon>
+          <p>No Config Variables Found</p>
+          <span>Click "Add Config" to create your first variable.</span>
         </div>
       </div>
+    </div>
+
+    <!-- Variable Cards -->
+    <div class="list-container">
+      <div *ngFor="let variable of allVariables" class="list-item">
+
+        <!-- Index Badge -->
+        <div class="index-badge">
+          <span>{{ variable.configIndex }}</span>
+        </div>
+
+        <!-- Content -->
+        <div class="item-content">
+          <div class="item-main">
+            <h4>{{ variable.configName }}</h4>
+            <p class="item-value" [matTooltip]="variable.configData">{{ variable.configData }}</p>
+          </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="item-actions">
+          <button mat-icon-button *ngIf="true || btnPolicy?.editVariable"
+            (click)="editVariable(variable)" matTooltip="Edit" class="edit-btn">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button *ngIf="true || btnPolicy?.deleteVariable"
+            (click)="showPopup(variable)" matTooltip="Delete" class="delete-btn">
+            <mat-icon>delete_outline</mat-icon>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- STICKY ACTION BAR (edit mode only) -->
+  <div *ngIf="editMode" class="action-bar-container">
+    <div class="action-bar">
+      <button class="btn-cancel" mat-button (click)="cancel()">Cancel</button>
+
+      <button class="btn-submit" mat-flat-button color="primary"
+        *ngIf="addnewVariable && (true || btnPolicy?.addVariable)"
+        (click)="submitnewVariable(variableObj)">
+        <mat-icon>check</mat-icon> Submit
+      </button>
+
+      <button class="btn-submit" mat-flat-button color="primary"
+        *ngIf="!addnewVariable && (true || btnPolicy?.editVariable)"
+        (click)="updateVariable(variableObj)">
+        <mat-icon>save</mat-icon> Update
+      </button>
     </div>
   </div>
 

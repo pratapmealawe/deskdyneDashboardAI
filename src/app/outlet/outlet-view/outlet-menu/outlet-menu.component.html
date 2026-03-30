@@ -60,6 +60,20 @@
         </mat-form-field>
       </div>
 
+      <div class="filter-group" *ngIf="outletObj?.isWeeklyMenu">
+        <mat-form-field appearance="outline" class="category-filter">
+          <mat-label>Filter by Date</mat-label>
+          <input matInput [matDatepicker]="menuDatePicker" [(ngModel)]="selectedDateFilter"
+            (dateChange)="applyMenuFilters()" placeholder="All dates" readonly />
+          <mat-datepicker-toggle matIconSuffix [for]="menuDatePicker"></mat-datepicker-toggle>
+          <button *ngIf="selectedDateFilter" matSuffix mat-icon-button
+            (click)="selectedDateFilter = null; applyMenuFilters()">
+            <mat-icon>close</mat-icon>
+          </button>
+          <mat-datepicker #menuDatePicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
       <div class="filter-stats">
         <div class="stat-chip">
           <mat-icon>inventory_2</mat-icon>
@@ -72,11 +86,11 @@
   <!-- MENU LIST -->
   <div class="menu-content-area" *ngIf="showCard">
     <div *ngFor="let group of groupedMenuList" class="category-section">
-      <!-- Category Header -->
+      <!-- Category / Date Header -->
       <div class="category-header">
         <div class="category-info">
           <div class="category-icon-circle">
-            <mat-icon>category</mat-icon>
+            <mat-icon>{{ outletObj?.isWeeklyMenu ? 'event' : 'category' }}</mat-icon>
           </div>
           <span class="category-name">{{ group.category }}</span>
         </div>
@@ -448,6 +462,47 @@
             <div class="text-danger small mt-1" *ngIf="f['category'].invalid && f['category'].touched">
               Category is required
             </div>
+          </div>
+
+          <!-- Weekly Menu Dates -->
+          <div class="form-section" *ngIf="outletObj?.isWeeklyMenu">
+            <div class="section-header">
+              <mat-icon>calendar_month</mat-icon>
+              <span>Weekly Menu Dates</span>
+            </div>
+
+            <!-- Selected date chips -->
+            <div class="weekly-dates-chips mb-3" *ngIf="selectedWeeklyDates.length > 0">
+              <span class="date-chip" *ngFor="let d of selectedWeeklyDates">
+                {{ d | date: 'dd MMM yyyy' }}
+                <button mat-icon-button class="chip-remove-btn" (click)="toggleDate(d)" type="button">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </span>
+            </div>
+            <p class="small text-muted mb-2" *ngIf="selectedWeeklyDates.length === 0">No dates selected.</p>
+
+            <!-- Calendar trigger button -->
+            <button mat-stroked-button color="primary" type="button"
+              [matMenuTriggerFor]="weeklyCalendarMenu" class="calendar-trigger-btn">
+              <mat-icon>event</mat-icon>
+              {{ selectedWeeklyDates.length > 0 ? 'Edit Dates' : 'Select Dates' }}
+            </button>
+
+            <!-- Calendar menu (stays open while picking multiple dates) -->
+            <mat-menu #weeklyCalendarMenu="matMenu" class="weekly-calendar-menu" [hasBackdrop]="true">
+              <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" class="weekly-calendar-wrap">
+                <mat-calendar
+                  [dateFilter]="weeklyDateFilter"
+                  [dateClass]="weeklyDateClass"
+                  (selectedChange)="toggleDate($event)">
+                </mat-calendar>
+                <div class="calendar-footer">
+                  <span class="small text-secondary">{{ selectedWeeklyDates.length }} date(s) selected</span>
+                  <span class="small text-muted">↑↓←→ to navigate · Enter/Space to select</span>
+                </div>
+              </div>
+            </mat-menu>
           </div>
 
           <!-- Section Config -->

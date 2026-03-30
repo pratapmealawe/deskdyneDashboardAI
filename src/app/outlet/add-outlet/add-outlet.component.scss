@@ -740,4 +740,30 @@
       pointer-events: none;
     }
   }
-}
+}
+
+// Pre-Order warning banner
+.preorder-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  color: #92400e;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    color: #d97706;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  strong {
+    color: #78350f;
+  }
+}
