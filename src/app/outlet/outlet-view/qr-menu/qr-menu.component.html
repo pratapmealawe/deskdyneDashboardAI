@@ -1,59 +1,72 @@
-<div class="pt-3 pb-3 outlet-menu container-fluid">
-  <!-- TOP ACTIONS -->
-  <div class="d-flex justify-content-between align-items-center mb-2">
-    <button mat-raised-button color="primary" *appHasPermission="'MENU:ADD'" (click)="open(); resetValues()">
-      Add Menu
-    </button>
-    <!-- Master Menu removed -->
+<div class="qr-menu-container">
+
+  <!-- HEADER SECTION -->
+  <div class="menu-header-card">
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>qr_code_2</mat-icon>
+      </div>
+      <div class="header-text">
+        <h2 class="header-title">QR Menu</h2>
+        <p class="header-subtitle">Manage QR-based menu items, pricing and availability</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-flat-button color="primary" class="action-btn primary-btn" *ngIf="true || btnPolicy?.addMenu"
+        (click)="open(); resetValues()">
+        <mat-icon>add</mat-icon>
+        Add Item
+      </button>
+    </div>
   </div>
 
-  <!-- MENU FILTERS -->
-  <div class="row g-2 mt-2 mb-2 outlet-menu-filters">
-    <div class="col-12 col-md-6">
-      <mat-form-field appearance="outline" class="w-100">
-        <mat-label>Search item</mat-label>
-        <input matInput placeholder="Search by name..." [(ngModel)]="searchTermMenu" (input)="applyMenuFilters()" />
-        <button *ngIf="searchTermMenu" matSuffix mat-icon-button aria-label="Clear"
-          (click)="searchTermMenu=''; applyMenuFilters()">
+  <!-- FILTERS SECTION -->
+  <div class="filters-card">
+    <div class="filters-row">
+      <div class="filter-group search-group">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" class="search-input" placeholder="Search menu items..." [(ngModel)]="searchTermMenu"
+          (input)="applyMenuFilters()" />
+        <button *ngIf="searchTermMenu" class="clear-btn" (click)="searchTermMenu=''; applyMenuFilters()">
           <mat-icon>close</mat-icon>
         </button>
-      </mat-form-field>
-    </div>
+      </div>
 
-    <div class="col-12 col-md-6">
-      <!-- Meal type filter -->
-      <mat-form-field appearance="outline" class="w-100 mb-2">
-        <mat-label>Filter by meal type</mat-label>
-        <mat-select [(value)]="selectedMealTypeFilter" (selectionChange)="applyMenuFilters()">
-          <mat-option value="">All meal types</mat-option>
-          <mat-option *ngFor="let mt of mealTypeOptions" [value]="mt">
-            {{ mt }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
+      <div class="filter-group">
+        <mat-form-field appearance="outline" class="category-filter">
+          <mat-label>Meal Type</mat-label>
+          <mat-select [(value)]="selectedMealTypeFilter" (selectionChange)="applyMenuFilters()">
+            <mat-option value="">All Meal Types</mat-option>
+            <mat-option *ngFor="let mt of mealTypeOptions" [value]="mt">{{ mt }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-stats">
+        <div class="stat-chip">
+          <mat-icon>inventory_2</mat-icon>
+          <span>{{ allGroups?.length || 0 }} group{{ (allGroups?.length || 0) !== 1 ? 's' : '' }}</span>
+        </div>
+      </div>
     </div>
   </div>
 
-  <!-- OUTLET MENU LIST -->
-  <div class="mt-2" *ngIf="showCard">
-    <!-- GROUPED MENU CARDS (one group per mealType) -->
+  <!-- MENU GROUPS LIST -->
+  <div *ngIf="showCard">
     <div *ngFor="let group of groupedMenuList" class="menu-category">
-      <!-- MealType header -->
+
+      <!-- Group Header -->
       <div class="menu-category-header">
-        <!-- Left: MealType + time -->
         <div class="category-pill">
           <span class="category-dot"></span>
           <span class="category-name">
             {{ group.mealType }}
-            <span class="time-text">
-              ({{ group.acceptOrderFrom }} - {{ group.acceptOrderTill }})
-            </span>
+            <span class="time-text">({{ group.acceptOrderFrom }} – {{ group.acceptOrderTill }})</span>
           </span>
         </div>
 
-        <!-- Right: controls -->
         <div class="header-controls">
-          <!-- Menu Type -->
+          <!-- Menu Mode -->
           <div class="control-block">
             <div class="control-label">Menu Mode</div>
             <mat-radio-group class="pill-radio-group" [value]="group.categoryMenuType"
@@ -63,7 +76,7 @@
             </mat-radio-group>
           </div>
 
-          <!-- Paid Type -->
+          <!-- Paid By -->
           <div class="control-block">
             <div class="control-label">Paid By</div>
             <mat-radio-group class="pill-radio-group" [value]="group.paidType" (change)="TogglePaidType(group, $event)">
@@ -73,7 +86,7 @@
             </mat-radio-group>
           </div>
 
-          <!-- Enable -->
+          <!-- Status -->
           <div class="control-block">
             <div class="control-label">Status</div>
             <mat-checkbox class="toggle-checkbox" [checked]="group.isMealTypeActive"
@@ -82,19 +95,17 @@
             </mat-checkbox>
           </div>
 
-          <!-- Count -->
           <span class="category-count">
-            {{ group.items.length }} item{{ group.items.length > 1 ? 's' : '' }}
+            {{ group.items.length }} item{{ group.items.length !== 1 ? 's' : '' }}
           </span>
         </div>
       </div>
 
-      <!-- Items under this mealType -->
+      <!-- Items -->
       <mat-card class="menu-item-card" *ngFor="let item of group.items; let i = index">
         <div class="menu-item-card-inner">
-          <!-- MIDDLE: content -->
+          <!-- CONTENT -->
           <div class="menu-content">
-            <!-- Name + active -->
             <div class="menu-header-row">
               <div class="menu-title-block">
                 <div class="menu-name">
@@ -104,12 +115,10 @@
                     height="18" alt="Non-Veg">
                   {{ item.itemName || 'Unnamed item' }}
                 </div>
-                <!-- Description -->
                 <div class="menu-desc" *ngIf="item.description" [matTooltip]="item.description">
                   {{ item.description }}
                 </div>
               </div>
-
               <div class="menu-active-chip d-none d-md-block">
                 <mat-checkbox color="primary" [checked]="item.isActive"
                   (change)="onItemActiveToggle(group, item, $event)">
@@ -118,7 +127,6 @@
               </div>
             </div>
 
-            <!-- Meta row: price / subsidy / precedence -->
             <div class="menu-meta-row">
               <div class="meta-block">
                 <div class="meta-label">Price</div>
@@ -126,25 +134,18 @@
               </div>
               <div class="meta-block">
                 <div class="meta-label">Subsidy</div>
-                <div class="meta-value">
-                  ₹{{ item.subsidy || 0 }}
-                </div>
+                <div class="meta-value">₹{{ item.subsidy || 0 }}</div>
               </div>
               <div class="meta-block">
-                <div class="meta-label">Max Quantity</div>
-                <div class="meta-value">
-                  {{ item.maxQuantity || 1 }}
-                </div>
+                <div class="meta-label">Max Qty</div>
+                <div class="meta-value">{{ item.maxQuantity || 1 }}</div>
               </div>
               <div class="meta-block">
                 <div class="meta-label">Precedence</div>
-                <div class="meta-value">
-                  {{ item.precedence || 0 }}
-                </div>
+                <div class="meta-value">{{ item.precedence || 0 }}</div>
               </div>
             </div>
 
-            <!-- Active checkbox on mobile -->
             <div class="menu-active-chip d-md-none mt-2">
               <mat-checkbox color="primary" [checked]="item.isActive"
                 (change)="onItemActiveToggle(group, item, $event)">
@@ -153,23 +154,17 @@
             </div>
           </div>
 
-          <!-- RIGHT: actions -->
+          <!-- ACTIONS -->
           <div class="menu-actions">
-            <!-- COPY -->
-            <button mat-icon-button color="primary" class="me-1" (click)="copyMenu(group, item)"
-              matTooltip="Copy menu item">
+            <button mat-icon-button color="primary" (click)="copyMenu(group, item)" matTooltip="Copy item">
               <mat-icon>content_copy</mat-icon>
             </button>
-
-            <!-- EDIT -->
-            <button mat-icon-button color="primary" class="me-1" *appHasPermission="'MENU:EDIT'"
-              (click)="edit(group, item, i)" matTooltip="Edit item">
+            <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editMenu" (click)="edit(group, item, i)"
+              matTooltip="Edit item">
               <mat-icon>edit</mat-icon>
             </button>
-
-            <!-- DELETE -->
-            <button mat-icon-button color="warn" *appHasPermission="'MENU:DELETE'" (click)="showPopup(group, item, i)"
-              matTooltip="Delete item">
+            <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu"
+              (click)="showPopup(group, item, i)" matTooltip="Delete item">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -177,19 +172,20 @@
       </mat-card>
     </div>
 
-    <!-- PAGINATOR (group-wise) -->
-    <div class="mt-3">
+    <!-- PAGINATOR -->
+    <div class="paginator-wrap">
       <mat-paginator [length]="allGroups.length" [pageSize]="menuPageSize" [pageIndex]="menuPageIndex"
         [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onMenuPageChange($event)" showFirstLastButtons>
       </mat-paginator>
     </div>
   </div>
 
-  <div class="center labelText mt-2" *ngIf="!showCard">
-    No items found
+  <div class="empty-state" *ngIf="!showCard">
+    <mat-icon>restaurant_menu</mat-icon>
+    <p>No items found</p>
   </div>
 
-  <!-- ADD / EDIT MENU DIALOG TEMPLATE -->
+  <!-- ADD / EDIT DIALOG -->
   <ng-template #content>
     <h2 mat-dialog-title>
       {{ showUpdateBtn ? 'Edit Menu Item' : 'Add Menu Item' }}
@@ -198,18 +194,13 @@
     <mat-dialog-content class="modal-body">
       <div [formGroup]="form">
         <div class="row pt-4 pb-2">
-          <!-- IMAGE -->
-          <!-- BASIC FIELDS -->
           <div class="col-12 col-md-6 col-lg-4">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Name</mat-label>
               <input matInput type="text" placeholder="Name" formControlName="itemName" />
-              <mat-error *ngIf="f['itemName'].hasError('required') && f['itemName'].touched">
-                Item name is required
-              </mat-error>
-              <mat-error *ngIf="f['itemName'].hasError('maxlength')">
-                Maximum 80 characters allowed
-              </mat-error>
+              <mat-error *ngIf="f['itemName'].hasError('required') && f['itemName'].touched">Item name is
+                required</mat-error>
+              <mat-error *ngIf="f['itemName'].hasError('maxlength')">Maximum 80 characters allowed</mat-error>
             </mat-form-field>
           </div>
 
@@ -218,12 +209,8 @@
               <mat-label>Price</mat-label>
               <input matInput type="number" min="1" (keydown)="preventInvalidNumber($event)"
                 (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Price" formControlName="price" />
-              <mat-error *ngIf="f['price'].hasError('required') && f['price'].touched">
-                Price is required
-              </mat-error>
-              <mat-error *ngIf="f['price'].hasError('min') && f['price'].touched">
-                Price must be at least 1
-              </mat-error>
+              <mat-error *ngIf="f['price'].hasError('required') && f['price'].touched">Price is required</mat-error>
+              <mat-error *ngIf="f['price'].hasError('min') && f['price'].touched">Price must be at least 1</mat-error>
             </mat-form-field>
           </div>
 
@@ -233,9 +220,8 @@
               <input matInput type="number" min="0" (keydown)="preventInvalidNumber($event)"
                 (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Subsidy Amount"
                 formControlName="subsidy" />
-              <mat-error *ngIf="f['subsidy'].hasError('min') && f['subsidy'].touched">
-                Subsidy cannot be negative
-              </mat-error>
+              <mat-error *ngIf="f['subsidy'].hasError('min') && f['subsidy'].touched">Subsidy cannot be
+                negative</mat-error>
             </mat-form-field>
           </div>
 
@@ -245,12 +231,11 @@
               <input matInput type="number" min="0" (keydown)="preventInvalidNumber($event)"
                 (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Max Quantity"
                 formControlName="maxQuantity" />
-              <mat-error *ngIf="f['maxQuantity'].hasError('min') && f['maxQuantity'].touched">
-                maxQuantity cannot be negative
-              </mat-error>
+              <mat-error *ngIf="f['maxQuantity'].hasError('min') && f['maxQuantity'].touched">Max quantity cannot be
+                negative</mat-error>
             </mat-form-field>
           </div>
-          <!-- ITEM TYPE -->
+
           <div class="col-sm-12 col-md-6 col-lg-4 mt-3">
             <mat-radio-group formControlName="itemType" class="d-flex gap-3">
               <mat-radio-button value="Veg">Veg</mat-radio-button>
@@ -258,37 +243,28 @@
             </mat-radio-group>
           </div>
 
-          <!-- ACTIVE / DO NOT CHANGE -->
           <div *ngIf="showUpdateBtn" class="col-sm-12 col-md-6 col-lg-4 d-flex align-items-center mt-3">
-            <mat-checkbox formControlName="isActive">
-              Active
-            </mat-checkbox>
+            <mat-checkbox formControlName="isActive">Active</mat-checkbox>
           </div>
 
-          <!-- DESCRIPTION -->
           <div class="col-sm-12 mt-3">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Description</mat-label>
               <input matInput type="text" formControlName="description" />
-              <mat-error *ngIf="f['description'].hasError('maxlength')">
-                Maximum 200 characters allowed
-              </mat-error>
+              <mat-error *ngIf="f['description'].hasError('maxlength')">Maximum 200 characters allowed</mat-error>
             </mat-form-field>
           </div>
 
-          <!-- PRECEDENCE -->
           <div class="col-12 col-md-6 col-lg-4 mt-3">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Precedence</mat-label>
               <input matInput type="number" min="0" placeholder="Precedence" formControlName="precedence"
                 (keydown)="preventInvalidNumber($event)" (paste)="preventInvalidPaste($event)" />
-              <mat-error *ngIf="f['precedence'].hasError('min') && f['precedence'].touched">
-                Precedence cannot be negative
-              </mat-error>
+              <mat-error *ngIf="f['precedence'].hasError('min') && f['precedence'].touched">Precedence cannot be
+                negative</mat-error>
             </mat-form-field>
           </div>
 
-          <!-- MEAL TYPE + TIMES -->
           <div class="col-sm-12 col-md-4 mt-3">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Meal Type</mat-label>
@@ -297,9 +273,8 @@
                   {{ chip.mealType }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="f['mealType'].hasError('required') && f['mealType'].touched">
-                Meal type is required
-              </mat-error>
+              <mat-error *ngIf="f['mealType'].hasError('required') && f['mealType'].touched">Meal type is
+                required</mat-error>
             </mat-form-field>
           </div>
 
@@ -307,12 +282,8 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Accept Order From</mat-label>
               <input matInput type="time" formControlName="acceptOrderFrom" readonly />
-              <mat-error *ngIf="
-                  f['acceptOrderFrom'].hasError('required') &&
-                  f['acceptOrderFrom'].touched
-                ">
-                Start time is required
-              </mat-error>
+              <mat-error *ngIf="f['acceptOrderFrom'].hasError('required') && f['acceptOrderFrom'].touched">Start time is
+                required</mat-error>
             </mat-form-field>
           </div>
 
@@ -320,20 +291,13 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Accept Order Till</mat-label>
               <input matInput type="time" formControlName="acceptOrderTill" readonly />
-              <mat-error *ngIf="
-                  f['acceptOrderTill'].hasError('required') &&
-                  f['acceptOrderTill'].touched
-                ">
-                End time is required
-              </mat-error>
+              <mat-error *ngIf="f['acceptOrderTill'].hasError('required') && f['acceptOrderTill'].touched">End time is
+                required</mat-error>
             </mat-form-field>
           </div>
 
-          <!-- CATEGORY -->
           <div class="col-sm-12 mt-2">
-            <label class="labelText form-label mb-1">
-              Select Category
-            </label>
+            <label class="labelText form-label mb-1">Select Category</label>
             <mat-chip-listbox formControlName="category" aria-label="Type selection">
               <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
                 <div class="chip-option">
@@ -350,9 +314,7 @@
     </mat-dialog-content>
 
     <mat-dialog-actions align="end" class="modal-footer">
-      <button mat-button mat-dialog-close>
-        Cancel
-      </button>
+      <button mat-button mat-dialog-close>Cancel</button>
       <button mat-raised-button color="primary" *ngIf="!showUpdateBtn" [disabled]="form.invalid"
         [mat-dialog-close]="'add'">
         Submit

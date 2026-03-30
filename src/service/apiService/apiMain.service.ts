@@ -72,6 +72,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
   }
 
+  bulkUploadOutletMenu(data: any, outletId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.bulkUploadOutletMenu;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, data);
+  }
+
   addQrOutletMenu(outlet: any, outletId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.addQrOutletMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}`, method: urlObj.method }, outlet);
@@ -486,9 +491,9 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 
-  getEmployeelistByCafeteriaId(cafeteriaId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
+  getEmployeelistByCafeteriaIds(data: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeelistByCafeteriaIds;
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, data);
   }
 
   getConsumptionOrderByOrgId(orgId: any) {
@@ -737,6 +742,16 @@ export class ApiMainService {
 
   deleteMultipleEmployee(ids: string[]) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMultipleEmployee, { ids });
+  }
+
+  createLoginCode(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.createLoginCode;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  refreshLoginCode(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.refreshLoginCode;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
   updateEmployee(id: any, employeeObj: any) {
@@ -1139,6 +1154,10 @@ export class ApiMainService {
 
   fetchDailyBulkOrdersbysearchObj(payload: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchDailyBulkOrdersbysearchObj, payload);
+  }
+
+  fetchBulkOrdersByVendorFirmId(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchBulkOrdersByVendorFirmId, payload);
   }
 
   fetchDailyBulkOrdersbyOrgId(payload: any) {
@@ -1746,7 +1765,10 @@ export class ApiMainService {
   B2B_changeVendor(payload: any): Promise<any> {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_changeVendor, payload);
   }
-
+  
+  B2B_fetchBulkOrdersbyFilter(payload: any): Promise<any> {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_fetchBulkOrdersbyFilter, payload);
+  }
 
   getAllEmployeeBulkMenus() {
     const urlObj = this.apiConfigService.apiEndPointObj.getAllEmployeeBulkMenus;

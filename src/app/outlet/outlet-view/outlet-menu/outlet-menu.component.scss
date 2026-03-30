@@ -414,6 +414,9 @@
   // Row 3: Subsidy
   .subsidy-row {
     display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
     margin-top: 4px;
 
     .subsidy-chip {
@@ -433,6 +436,35 @@
         height: 14px;
         color: #f59e0b;
       }
+    }
+  }
+
+
+  .discount-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: var.$border-radius-pill;
+    background: #dcfce7;
+
+    mat-icon {
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+      color: #f59e0b;
+    }
+
+    .discount-value {
+      font-size: 11px;
+      font-weight: 500;
+      color: #15803d;
+    }
+
+    .discount-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #15803d;
     }
   }
 
@@ -1048,6 +1080,165 @@
   }
 }
 
+.addon-card {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  background: #ffffff;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.addon-image-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+
+  input.uploadInput {
+    display: none;
+  }
+}
+
+.info-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 16px;
+}
+
+.addon-image-box {
+  position: relative;
+  width: 120px;
+  height: 130px;
+  border-radius: 10px;
+  border: 2px dashed #bdbdbd;
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  transition: border-color 0.2s, background 0.2s;
+
+  &:hover {
+    border-color: #3f51b5;
+    background: #eef2ff;
+
+    .addon-upload-overlay {
+      opacity: 1;
+    }
+  }
+
+  &.has-image {
+    border-style: solid;
+    border-color: #cbd5e1;
+  }
+
+  .addon-preview-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .addon-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    color: #94a3b8;
+    padding: 8px;
+    text-align: center;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: #94a3b8;
+    }
+
+    span {
+      font-size: 11px;
+      font-weight: 500;
+      line-height: 1.3;
+    }
+  }
+
+  .addon-upload-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 28%;
+    background: rgba(0, 0, 0, 0.52);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+}
+
+.addon-upload-hint {
+  font-size: 10px;
+  color: #94a3b8;
+  text-align: center;
+  margin: 0;
+  width: 90px;
+  line-height: 1.3;
+}
+
+.addon-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0px;
+  flex: 1;
+  min-width: 0;
+}
+
+.addon-row-top,
+.addon-row-bottom {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.addon-name-field {
+  flex: 1;
+  width: 100%;
+}
+
+.addon-price-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.addon-type-field {
+  width: 110px;
+  flex-shrink: 0;
+}
+
+.addon-card {
+  mat-form-field {
+    margin-bottom: 0 !important;
+  }
+}
+
 .field-icon {
   color: #94a3b8 !important;
   font-size: 18px !important;
@@ -1225,5 +1416,82 @@
 
   .item-name {
     max-width: 150px;
+  }
+}
+
+// Weekly date picker — trigger button
+.calendar-trigger-btn {
+  font-size: 0.85rem;
+}
+
+// Weekly date chips
+.weekly-dates-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  .date-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: #e3f2fd;
+    color: #1565c0;
+    border-radius: 16px;
+    padding: 4px 8px 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+
+    .chip-remove-btn {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+      padding: 0;
+
+      mat-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        line-height: 14px;
+        color: #1565c0;
+      }
+    }
+  }
+}
+
+// Highlight selected dates on mat-calendar
+::ng-deep .weekly-date-selected {
+  .mat-calendar-body-cell-content {
+    background-color: #1976d2 !important;
+    color: #fff !important;
+    border-radius: 50%;
+  }
+}
+
+// Calendar menu panel (global — mat-menu renders outside component)
+::ng-deep .weekly-calendar-menu {
+  .mat-mdc-menu-content {
+    padding: 0 !important;
+  }
+
+  .weekly-calendar-wrap {
+    padding: 0;
+
+    mat-calendar {
+      width: 296px;
+    }
+
+    .calendar-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 12px;
+      border-top: 1px solid #e0e0e0;
+      background: #fafafa;
+      gap: 8px;
+
+      span {
+        font-size: 0.75rem;
+      }
+    }
   }
 }

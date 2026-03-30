@@ -20,6 +20,30 @@
                     <mat-error *ngIf="form.get('body')?.hasError('required')">Body is required</mat-error>
                 </mat-form-field>
             </div>
+
+            <!-- Image Upload -->
+            <div class="col-md-12 mb-3">
+                <label class="d-block mb-1" style="font-size:13px;color:#555;">Notification Image (optional)</label>
+                <div class="notification-image-upload">
+                    <ng-container *ngIf="!imageUrl">
+                        <label class="upload-placeholder" for="notifImageInput">
+                            <mat-icon>add_photo_alternate</mat-icon>
+                            <span>Upload Image</span>
+                        </label>
+                        <input id="notifImageInput" type="file" accept="image/*" style="display:none"
+                            (change)="onImageChange($event)">
+                    </ng-container>
+                    <ng-container *ngIf="imageUrl">
+                        <div class="image-preview-wrapper">
+                            <img [src]="imageUrl" class="notif-preview-img" alt="notification image" />
+                            <button mat-icon-button class="remove-img-btn" type="button"
+                                (click)="removeImage()" matTooltip="Remove image">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
         </div>
 
         <div class="row mt-2">
@@ -135,30 +159,27 @@
 
                         <!-- Avatar -->
                         <div class="user-avatar">
-                            <span class="avatar-text">{{ getInitials(user?.emp_name) }}</span>
+                            <span class="avatar-text">{{ getInitials(user?.userName) }}</span>
                         </div>
 
                         <!-- User Info -->
                         <div class="user-info">
                             <div class="user-primary">
-                                <h3 class="user-name" matTooltip="{{user.emp_name}}">{{ user?.emp_name || 'Unknown' }}
+                                <h3 class="user-name" matTooltip="{{user.userName}}">{{ user?.userName || 'Unknown' }}
                                 </h3>
-                                <span class="user-org-badge" *ngIf="user?.org_name">
-                                    {{ user?.org_name }}
+                                <span class="user-org-badge" *ngIf="user?.organization">
+                                    {{ user?.organization }}
                                 </span>
                             </div>
                             <div class="user-details">
-                                <div class="detail-item">
-                                    <mat-icon>badge</mat-icon>
-                                    <span matTooltip="{{user.emp_id}}">{{ user?.emp_id || '-' }}</span>
-                                </div>
+    
                                 <div class="detail-item">
                                     <mat-icon>email</mat-icon>
-                                    <span matTooltip="{{user.emp_email}}">{{ user?.emp_email || '-' }}</span>
+                                    <span matTooltip="{{user.email}}">{{ user?.email || '-' }}</span>
                                 </div>
-                                <div class="detail-item" *ngIf="user?.phone_number">
+                                <div class="detail-item" *ngIf="user?.phoneNo">
                                     <mat-icon>phone</mat-icon>
-                                    <span>{{ user?.phone_number }}</span>
+                                    <span>{{ user?.phoneNo }}</span>
                                 </div>
                             </div>
                         </div>
@@ -187,8 +208,8 @@
                 </label>
                 <mat-chip-grid #chipGrid aria-label="Selected users" class="selected-users-chips">
                     <mat-chip-row *ngFor="let user of selectedUsers" (removed)="removeUser(user)">
-                        {{user.emp_name}}
-                        <button matChipRemove [attr.aria-label]="'remove ' + user.emp_name">
+                        {{user.userName}}
+                        <button matChipRemove [attr.aria-label]="'remove ' + user.userName">
                             <mat-icon>cancel</mat-icon>
                         </button>
                     </mat-chip-row>

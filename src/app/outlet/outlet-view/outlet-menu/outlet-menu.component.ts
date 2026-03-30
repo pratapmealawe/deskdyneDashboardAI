@@ -23,6 +23,7 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { ToasterService } from 'src/service/toaster.service';
+import { BulkMenuUploadDialogComponent } from '../bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -85,6 +86,11 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   searchTerm: string = '';        // for master menu
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
+  selectedDateFilter: Date | null = null;
+
+  // weekly menu dates
+  selectedWeeklyDates: Date[] = [];
+  today = new Date();
 
   // pagination removed
   energyTooltip = `
@@ -94,6 +100,8 @@ Nutrient Conversion Factors:
 • Fat: 9 kcal/g
 • Fiber: 2 kcal/g
 `;
+  addonFileInputs: HTMLInputElement[] = [];
+  uploadedAddonImageFiles: (File | null)[] = [];
 
 
   constructor(
@@ -173,11 +181,21 @@ Nutrient Conversion Factors:
       );
     }
 
+    if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
+      temp = temp.filter((item: any) =>
+        (item.weeklyMenuDates || []).some((d: any) =>
+          this.isSameDay(new Date(d.date), this.selectedDateFilter!)
+        )
+      );
+    }
+
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
 
     // Show all items (no pagination)
-    this.groupedMenuList = this.buildGroupedMenu(this.filteredMenuList);
+    this.groupedMenuList = this.outletObj?.isWeeklyMenu
+      ? this.buildDateGroupedMenu(this.filteredMenuList)
+      : this.buildGroupedMenu(this.filteredMenuList);
   }
 
   private buildGroupedMenu(list: any[]) {
@@ -195,6 +213,74 @@ Nutrient Conversion Factors:
       items: grouped[category],
     }));
   }
+
+  private buildDateGroupedMenu(list: any[]): any[] {
+    const dateMap: Record<string, any[]> = {};
+
+    list.forEach((item: any) => {
+      const dates: any[] = item.weeklyMenuDates || [];
+      if (dates.length === 0) {
+        const key = 'No Date Assigned';
+        if (!dateMap[key]) dateMap[key] = [];
+        dateMap[key].push(item);
+      } else {
+        dates.forEach((d: any) => {
+          const dateObj = new Date(d.date);
+          const key = dateObj.toLocaleDateString('en-IN', {
+            weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
+          });
+          if (!dateMap[key]) dateMap[key] = [];
+          if (!dateMap[key].find((i: any) => i._id === item._id)) {
+            dateMap[key].push(item);
+          }
+        });
+      }
+    });
+
+    const sortedKeys = Object.keys(dateMap).sort((a, b) => {
+      if (a === 'No Date Assigned') return 1;
+      if (b === 'No Date Assigned') return -1;
+      return new Date(a).getTime() - new Date(b).getTime();
+    });
+
+    return sortedKeys.map(key => ({ category: key, items: dateMap[key] }));
+  }
+
+  // Weekly date picker helpers
+  toggleDate(date: Date | null): void {
+    if (!date) return;
+    const idx = this.selectedWeeklyDates.findIndex(d => this.isSameDay(d, date));
+    if (idx >= 0) {
+      this.selectedWeeklyDates = this.selectedWeeklyDates.filter((_, i) => i !== idx);
+    } else {
+      this.selectedWeeklyDates = [...this.selectedWeeklyDates, date];
+    }
+    this.form.get('weeklyMenuDates')?.setValue(
+      this.selectedWeeklyDates.map(d => ({ date: d }))
+    );
+  }
+
+  isDateSelected(date: Date): boolean {
+    return this.selectedWeeklyDates.some(d => this.isSameDay(d, date));
+  }
+
+  isSameDay(a: Date, b: Date): boolean {
+    return a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+  }
+
+  weeklyDateClass = (date: Date): string => {
+    return this.isDateSelected(date) ? 'weekly-date-selected' : '';
+  };
+
+  weeklyDateFilter = (date: Date | null): boolean => {
+    if (!date) return false;
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    // Allow future/today dates, and also already-selected past dates (so they can be removed on edit)
+    return date >= todayStart || this.isDateSelected(date);
+  };
 
   // Pagination methods removed
 
@@ -253,6 +339,7 @@ Nutrient Conversion Factors:
       doNotChangeInFuture: [false],
       energyValue: [10],
       sectionConfig: [null],
+      weeklyMenuDates: [[]],
       nutritionList: this.fb.array([
         this.fb.group({
           nutritionId: [null],
@@ -261,8 +348,19 @@ Nutrient Conversion Factors:
           nutritionUnit: [''],
         }),
       ]),
-    });
-
+      addOnsList: this.fb.array([
+        this.fb.group({
+          addOnImageUrl: [''],
+          addOnName: [''],
+          addOnPrice: [0, [Validators.min(0)]],
+          addOnType: ['NA'],
+        }),
+      ]),
+      discountEnabled: [false],
+      discountType: [{ value: null, disabled: true }],
+      discountValue: [{ value: null, disabled: true }],
+    }, { validator: this.discountValidator() });
+    this.initDiscountListener();
     this.form.get('nutritionList')?.valueChanges.subscribe(() => {
       this.calculateEnergyValue();
     });
@@ -311,8 +409,88 @@ Nutrient Conversion Factors:
     this.nutrition_Lists.removeAt(index);
   }
 
+  initDiscountListener() {
+    const typeCtrl = this.form.get('discountType');
+    const valueCtrl = this.form.get('discountValue');
+    const priceCtrl = this.form.get('price');
+    const subsidyCtrl = this.form.get('subsidy');
+
+    const toggleControls = () => {
+      const enabled = this.form.get('discountEnabled')?.value;
+      const price = Number(priceCtrl?.value);
+      const subsidy = Number(subsidyCtrl?.value || 0);
+      const effectivePrice = price - subsidy;
+
+      if (enabled && price > 0 && effectivePrice > 0) {
+        typeCtrl?.enable();
+        valueCtrl?.enable();
+        typeCtrl?.setValidators([Validators.required]);
+        valueCtrl?.setValidators([Validators.required, Validators.min(1)]);
+      } else {
+        typeCtrl?.reset();
+        valueCtrl?.reset();
+        typeCtrl?.disable();
+        valueCtrl?.disable();
+      }
+
+      typeCtrl?.updateValueAndValidity();
+      valueCtrl?.updateValueAndValidity();
+      this.form.updateValueAndValidity();
+    };
+
+    toggleControls();
+
+    this.form.get('discountEnabled')?.valueChanges.subscribe(toggleControls);
+    this.form.get('price')?.valueChanges.subscribe(toggleControls);
+    this.form.get('subsidy')?.valueChanges.subscribe(toggleControls);
+    this.form.get('discountType')?.valueChanges.subscribe(() => {
+      this.form.updateValueAndValidity();
+    });
+  }
+
+  discountValidator() {
+    return (group: any) => {
+      const enabled = group.get('discountEnabled')?.value;
+      const type = group.get('discountType')?.value;
+      const value = Number(group.get('discountValue')?.value);
+      const price = Number(group.get('price')?.value);
+      const subsidy = Number(group.get('subsidy')?.value || 0);
+
+      if (!enabled) return null;
+
+      if (!price || price <= 0) {
+        return { priceMissing: true };
+      }
+
+      const effectivePrice = price - subsidy;
+
+      if (effectivePrice <= 0) {
+        return { invalidEffectivePrice: true };
+      }
+
+      if (type === 'percentage') {
+        if (value <= 0 || value > 100) {
+          return { percentInvalid: true };
+        }
+      }
+
+      if (type === 'flat') {
+        if (value <= 0) {
+          return { flatNegative: true };
+        }
+        if (value >= effectivePrice) {
+          return { flatInvalid: true };
+        }
+      }
+
+      return null;
+    };
+  }
+
   patchFormValue(item: any) {
     console.log(item);
+
+    this.selectedWeeklyDates = (item.weeklyMenuDates || []).map((d: any) => new Date(d.date));
 
     this.form.patchValue({
       itemName: item.itemName,
@@ -329,6 +507,10 @@ Nutrient Conversion Factors:
       description: item.description,
       energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
       sectionConfig: item.sectionConfig || null,
+      weeklyMenuDates: item.weeklyMenuDates || [],
+      discountEnabled: item.discountEnabled || false,
+      discountType: item.discountType || null,
+      discountValue: item.discountValue || null,
       nutritionList: item.nutritionInfo
         ? [...item.nutritionInfo.nutritionList]
         : [],
@@ -353,6 +535,35 @@ Nutrient Conversion Factors:
         }));
       });
     }
+    if (item.addOnsList?.length) {
+      this.addons_List.clear();
+      this.uploadedAddonImageFiles = [];
+
+      item.addOnsList.forEach((addon: any) => {
+        this.addons_List.push(this.fb.group({
+          addOnImageUrl: [addon.addOnImageUrl ?? ''],
+          addOnName: [addon.addOnName ?? ''],
+          addOnPrice: [addon.addOnPrice ?? 0, [Validators.min(0)]],
+          addOnType: [addon.addOnType ?? 'NA'],
+        }));
+        this.uploadedAddonImageFiles.push(null);
+      });
+      
+    } else {
+      this.addons_List.clear();
+      this.uploadedAddonImageFiles = [null];
+      this.addons_List.push(this.fb.group({
+        addOnImageUrl: [''], addOnName: [''], addOnPrice: [0], addOnType: ['NA']
+      }));
+    }
+  }
+
+  getAddonImageSrc(addon: any, index: number): string {
+    const url = addon.get('addOnImageUrl')?.value;
+    if (!url) return '';
+    if (url.startsWith('data:')) return url;
+    if (url.startsWith('http')) return url;
+    return this.displayImgUrl + url;
   }
 
   // MASTER MENU FILTER
@@ -470,7 +681,6 @@ Nutrient Conversion Factors:
       this.transformedMenuItems.forEach((item: any) => {
         delete item._id;
       });
-      console.log("transformedMenuItems", this.transformedMenuItems);
 
       // Check for duplicates
       const existingItemNames = new Set(
@@ -486,6 +696,9 @@ Nutrient Conversion Factors:
         this.toastr.error(`Duplicate items found: ${duplicateNames}`);
         return; // Stop execution
       }
+
+      console.log("transformedMenuItems", this.transformedMenuItems);
+
 
       const res = await this.apiMainService.addOutletList(
         this.outletObj._id,
@@ -563,6 +776,24 @@ Nutrient Conversion Factors:
       };
       formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
 
+      const addOnsListMapped = this.form.value.addOnsList
+        .filter((a: any) => a.addOnName?.trim())
+        .map((a: any, i: number) => {
+          const isBase64 = (a.addOnImageUrl || '').startsWith('data:');
+          return {
+            addOnImageUrl: isBase64 ? '' : (a.addOnImageUrl || ''),
+            addOnName: a.addOnName.trim(),
+            addOnPrice: a.addOnPrice ?? 0,
+            addOnType: a.addOnType || 'NA',
+          };
+        });
+
+      formData.append('addOnsList', JSON.stringify(addOnsListMapped));
+      this.uploadedAddonImageFiles.forEach((file, i) => {
+        if (file instanceof File) {
+          formData.append(`addonImage_${i}`, file);
+        }
+      });
       if (this.form.value.sectionConfig) {
         const payload = {
           ...this.form.value.sectionConfig,
@@ -570,7 +801,18 @@ Nutrient Conversion Factors:
         };
         formData.append('sectionConfig', JSON.stringify(payload));
       }
+      const discountEnabled = this.form.value.discountEnabled ?? false;
+      formData.append('discountEnabled', String(discountEnabled));
 
+      formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
+
+      if (discountEnabled) {
+        formData.append('discountType', this.form.getRawValue().discountType ?? '');
+        formData.append('discountValue', String(this.form.getRawValue().discountValue ?? 0));
+      } else {
+        formData.append('discountType', '');
+        formData.append('discountValue', '0');
+      }
       const res = await this.apiMainService.updateOutletMenu(
         outletId,
         this.menuId,
@@ -596,8 +838,16 @@ Nutrient Conversion Factors:
     this.showUpdateBtn = false;
     this.imageReplaced = false;
     this.noImages = false;
+    this.selectedWeeklyDates = [];
     this.nutrition_Lists.clear();
     this.addNutritionLists();
+    this.addons_List.clear();
+    this.addons_List.push(this.fb.group({
+      addOnImageUrl: [''],
+      addOnName: [''],
+      addOnPrice: [0, [Validators.min(0)]],
+      addOnType: ['NA'],
+    }));
   }
 
   async submit() {
@@ -675,6 +925,39 @@ Nutrient Conversion Factors:
         formData.append('sectionConfig', JSON.stringify(payload));
       }
 
+      formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
+
+      const addOnsListMapped = this.form.value.addOnsList
+        .filter((a: any) => a.addOnName?.trim())
+        .map((a: any, i: number) => {
+          const isBase64 = (a.addOnImageUrl || '').startsWith('data:');
+          return {
+            addOnImageUrl: isBase64 ? '' : (a.addOnImageUrl || ''),
+            addOnName: a.addOnName.trim(),
+            addOnPrice: a.addOnPrice ?? 0,
+            addOnType: a.addOnType || 'NA',
+          };
+        });
+
+      formData.append('addOnsList', JSON.stringify(addOnsListMapped));
+
+      this.uploadedAddonImageFiles.forEach((file, i) => {
+        if (file instanceof File) {
+          formData.append(`addonImage_${i}`, file);
+        }
+      });
+      formData.forEach((value: any, key: any) => console.log(key, value));
+      
+      const discountEnabled = this.form.value.discountEnabled ?? false;
+      formData.append('discountEnabled', String(discountEnabled));
+
+      if (discountEnabled) {
+        formData.append('discountType', this.form.getRawValue().discountType ?? '');
+        formData.append('discountValue', String(this.form.getRawValue().discountValue ?? 0));
+      } else {
+        formData.append('discountType', '');
+        formData.append('discountValue', 0);
+      }
       const res = await this.apiMainService.addOutletMenu(
         formData,
         this.outletObj._id
@@ -739,11 +1022,15 @@ Nutrient Conversion Factors:
     this.transformedMenuItems = this.selectedMenuItems.map((each: any) => {
       return {
         ...each,
-        mealTimingInfo: each.mealTimingInfo.map(
-          (info: any) => info.mealType
+        mealTimingInfo: (each.mealTimingInfo || []).map(
+          (info: any) => (typeof info === 'string' ? info : info.mealType)
         ),
       };
     });
+
+    console.log(this.transformedMenuItems);
+
+
   }
 
   isSelected(item: any): boolean {
@@ -936,6 +1223,65 @@ Nutrient Conversion Factors:
   compareNutrition(o1: any, o2: any): boolean {
     if (!o1 || !o2) return o1 === o2;
     return o1.id === o2.id;
+  }
+
+  openUploadExcelPopup() {
+    const dialogRef = this.dialog.open(BulkMenuUploadDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        outletId: this.outletObj._id,
+        outletObj: this.outletObj
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        if (result.menuList) {
+          this.outletObj.menuList = result.menuList;
+          this.init();
+        }
+      }
+    });
+  }
+
+  get addons_List(): FormArray {
+    return this.form.get('addOnsList') as FormArray;
+  }
+
+  addAddon(): void {
+    this.addons_List.push(
+      this.fb.group({
+        addOnImageUrl: [''],
+        addOnName: [''],
+        addOnPrice: [0, [Validators.min(0)]],
+        addOnType: ['NA'],
+      })
+    );
+  }
+
+
+  handleAddonFileInput(event: any, index: number): void {
+    const file: File = event?.target?.files?.[0];
+    if (!file) return;
+
+    if (!this.uploadedAddonImageFiles[index]) {
+      this.uploadedAddonImageFiles.push(null);
+    }
+    this.uploadedAddonImageFiles[index] = file;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.addons_List.at(index).patchValue({
+        addOnImageUrl: reader.result as string
+      });
+    };
+  }
+
+  removeAddon(index: number): void {
+    this.addons_List.removeAt(index);
+    this.uploadedAddonImageFiles.splice(index, 1);
   }
 
 }

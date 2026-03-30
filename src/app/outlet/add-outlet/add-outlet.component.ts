@@ -15,6 +15,7 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { DataFormatService } from 'src/service/data-format.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import * as XLSX from 'xlsx';
 
 interface MealTiming {
   mealType: string;
@@ -57,8 +58,11 @@ export class AddOutletComponent implements OnInit {
 
   outletSubsidy = 0;
 
+  holidays: { date: string, name: string }[] = [];
+  holidayUploadError: string | null = null;
+
   // For meal type dropdown
-  mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'EveningSnacks', 'Dinner'];
+  mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'Dinner', 'High Tea'];
   billingTypeOptions: string[] = ['ecommerce', 'revenueSharing'];
 
   // Error text for meal timings
@@ -107,13 +111,29 @@ export class AddOutletComponent implements OnInit {
       outletDescription: ['', Validators.required],
 
       outletOpened: [true],
+      closeTime: [''],
       isSectionWiseMenu: [false],
+      isWeeklyMenu: [false],
       isPreOrder: [false],
       isCabinOrder: [false],
-      preOrderMealType: ['lunch'],
-      isSatAvailable: [false],
-      isSunAvailable: [false],
-
+      isPriceHide: [false],
+      preOrderConfig: this.fb.group({
+        startTime: [''],
+        endTime: [''],
+        type: ['normal'],
+        mealType: ['lunch'],
+        maxDays: [7, [Validators.min(1)]],
+        availableDays: this.fb.group({
+          monday: [true],
+          tuesday: [true],
+          wednesday: [true],
+          thursday: [true],
+          friday: [true],
+          saturday: [false],
+          sunday: [false],
+        }),
+        holidays: [[]],
+      }),
       isPackagingRequired: [false],
       packagingAmount: [0, [Validators.min(0)]],
 
@@ -137,17 +157,17 @@ export class AddOutletComponent implements OnInit {
     // default one timing per standard meal type
     this.addDefaultMealTimings();
 
-    // When isPreOrder is false, clear related fields
+    // When isPreOrder changes, manage related fields and meal timings
     this.form.get('isPreOrder')?.valueChanges.subscribe((isPreOrder: boolean) => {
       if (!isPreOrder) {
-        this.form.patchValue(
+        this.form.get('preOrderConfig')?.patchValue(
           {
-            preOrderMealType: 'lunch',
-            isSatAvailable: false,
-            isSunAvailable: false,
+            mealType: 'lunch',
+            isPriceHide: false,
           },
           { emitEvent: false }
         );
+        this.holidays = [];
       }
     });
   }
@@ -209,6 +229,7 @@ export class AddOutletComponent implements OnInit {
   }
 
   addMealTiming(): void {
+    if (this.form.get('isPreOrder')?.value) return;
     this.mealTimings.push(this.createMealTimingGroup());
     this.mealTimings.markAsDirty();
   }
@@ -243,26 +264,48 @@ export class AddOutletComponent implements OnInit {
         this.addDefaultMealTimings();
       }
 
+      // emitEvent: false prevents the isPreOrder valueChanges subscription from
+      // firing and overwriting the meal timings we just loaded above.
       this.form.patchValue({
         outletName: outlet.outletName ?? '',
         outletDescription: outlet.outletDescription ?? '',
-        // outletType REMOVED
 
         outletOpened: outlet.outletOpened ?? false,
         isSectionWiseMenu: outlet.isSectionWiseMenu ?? false,
+        isWeeklyMenu: outlet.isWeeklyMenu ?? false,
         isPreOrder: outlet.isPreOrder ?? false,
         isCabinOrder: outlet.isCabinOrder ?? false,
-        preOrderMealType: outlet.preOrderMealType ?? 'lunch',
-        isSatAvailable: outlet.isSatAvailable ?? false,
-        isSunAvailable: outlet.isSunAvailable ?? false,
         isPackagingRequired: outlet.isPackagingRequired ?? false,
+                isPriceHide: outlet.isPriceHide ?? false,
         packagingAmount: outlet.packagingAmount ?? 0,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage ?? 0,
         MRPCommissionPercentage: outlet.MRPCommissionPercentage ?? 0,
         subsidy: outlet.subsidy ?? 0,
         precedence: outlet.precedence ?? 0,
         billingType: outlet.billingType ?? 'revenueSharing',
+        closeTime: outlet.closeTime ?? '',
       });
+
+      const preOrderConfigData = outlet.preOrderConfig || {};
+      this.form.get('preOrderConfig')?.patchValue({
+        ...preOrderConfigData,
+        maxDays: preOrderConfigData.maxDays ?? outlet.maxDays ?? 7,
+        mealType: preOrderConfigData.mealType || outlet.preOrderMealType || 'lunch',
+        availableDays: preOrderConfigData.availableDays || outlet.preOrderDays || {
+          monday: true, tuesday: true, wednesday: true, thursday: true, friday: true, saturday: false, sunday: false
+        }
+      });
+
+      if (outlet.holidays && Array.isArray(outlet.holidays)) {
+        this.holidays = outlet.holidays
+          .map((h: any) => ({
+            date: new Date(h.date || h).toISOString().split('T')[0],
+            name: h.name || 'Holiday'
+          }))
+          .sort((a: any, b: any) => a.date.localeCompare(b.date));
+      } else {
+        this.holidays = [];
+      }
 
       this.sectionConfig.clear();
       if (outlet.sectionConfig && Array.isArray(outlet.sectionConfig)) {
@@ -375,6 +418,80 @@ export class AddOutletComponent implements OnInit {
     }
   }
 
+  handleHolidayUpload(event: any): void {
+    const file = event.target.files[0];
+    if (!file) return;
+    this.holidayUploadError = null;
+
+    const reader = new FileReader();
+    reader.onload = (e: any) => {
+      try {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        // Expecting two columns: Date, Name
+        const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
+
+        let parsedHolidays: { date: string, name: string }[] = [];
+        excelData.forEach((row, index) => {
+          // skip header row if it seems like header
+          if (index === 0 && typeof row[0] === 'string' && row[0].toLowerCase().includes('date')) {
+            return;
+          }
+          if (row.length > 0 && row[0]) {
+            const dateVal = row[0];
+            const nameVal = row[1] || 'Holiday';
+            let dateObj: Date | null = null;
+            if (typeof dateVal === 'number') {
+              // excel date serial
+              dateObj = new Date((dateVal - (25567 + 1)) * 86400 * 1000);
+            } else if (typeof dateVal === 'string') {
+              dateObj = new Date(dateVal);
+            } else if (dateVal instanceof Date) {
+              dateObj = dateVal;
+            }
+
+            if (dateObj && !isNaN(dateObj.getTime())) {
+              parsedHolidays.push({
+                date: dateObj.toISOString().split('T')[0],
+                name: String(nameVal).trim()
+              });
+            }
+          }
+        });
+
+        if (parsedHolidays.length > 0) {
+          const combined = [...this.holidays, ...parsedHolidays];
+          const unique = new Map(combined.map(item => [item.date, item]));
+          this.holidays = Array.from(unique.values()).sort((a: any, b: any) => a.date.localeCompare(b.date));
+        } else {
+          this.holidayUploadError = 'No valid dates found in the file. Ensure dates are in the first column and names in the second.';
+        }
+      } catch (err) {
+        this.holidayUploadError = 'Error parsing file. Please upload a valid CSV or Excel file.';
+      }
+      event.target.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  removeHoliday(date: string) {
+    this.holidays = this.holidays.filter(h => h.date !== date);
+  }
+
+  downloadHolidayTemplate() {
+    const ws = XLSX.utils.aoa_to_sheet([
+      ['Date', 'Holiday Name'],
+      ['2025-12-25', 'Christmas'],
+      ['2026-01-01', 'New Year']
+    ]);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Holidays');
+    XLSX.writeFile(wb, 'Holiday_Template.xlsx');
+  }
+
   // For (ngSubmit) without explicit type
   onSubmit(type?: 'update'): void {
     this.submit(type);
@@ -412,6 +529,15 @@ export class AddOutletComponent implements OnInit {
         cabinConfig: this.cabinConfig.value,
         ...formValue,
       };
+
+      if (finalObj.isPreOrder) {
+        if (!finalObj.preOrderConfig) finalObj.preOrderConfig = {};
+        finalObj.preOrderConfig.holidays = this.holidays;
+      } else {
+        if (finalObj.preOrderConfig) {
+          finalObj.preOrderConfig.holidays = [];
+        }
+      }
 
       let formData = this.objectToFormData(this.trimStringValues(finalObj));
 
@@ -494,6 +620,18 @@ export class AddOutletComponent implements OnInit {
     if (!timings || timings.length === 0) {
       this.mealTimingError = 'Please add at least one meal timing.';
       return;
+    }
+
+    // Pre-order: exactly one Fullday timing
+    if (this.form.get('isPreOrder')?.value) {
+      if (timings.length > 1) {
+        this.mealTimingError = 'Pre-Order mode allows only one meal timing (Fullday).';
+        return;
+      }
+      if (timings[0].mealType !== 'Fullday') {
+        this.mealTimingError = 'Pre-Order mode requires the meal type to be "Fullday".';
+        return;
+      }
     }
 
     // Helper to convert HH:mm -> minutes

@@ -56,7 +56,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       name: 'Other Orders', showParent: true, image: 'Other orders_white', imageblue: 'Other orders_blue', children: [
         { name: 'Current Order', route: 'otherOrder', showChild: true },
         { name: 'Search Order', route: 'searchOrder', showChild: true },
-        { name: 'Daily Admin Export Orders', route: 'dailyAdminExcelExport', showChild: true  },
+        { name: 'Daily Admin Export Orders', route: 'dailyAdminExcelExport', showChild: true },
       ]
     },
     { name: 'Session Management', showParent: true, route: 'sessionManagement', image: 'Enquiries_white', imageblue: 'Enquiries_blue' },
@@ -67,11 +67,56 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { name: 'Billing', showParent: true, route: 'billing', image: 'Billing_white', imageblue: 'Billing_blue' },
     { name: 'Food Items', showParent: true, route: 'foodItem', image: 'Food items_white', imageblue: 'Food items_blue' },
     {
+      name: 'Incident Reporting',
+      showParent: true,
+      showBadge: true,
+      count: this.inReviewIncidentsCount$,
+      route: 'orgIncidentManagement',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
+    },
+    {
+      name: 'Audit Report',
+      showParent: true,
+      route: 'auditReport',
+      image: 'Incident reporting_white',
+      imageblue: 'Incident reporting_blue',
+    },
+    {
       name: 'CheckList', showParent: true, image: 'Checklist_white', imageblue: 'Checklist_blue', children: [
         { name: 'View Checklist', route: 'viewChecklistQuestion', showChild: true },
         { name: 'Submit CheckList', route: 'submitChecklist', showChild: true },
         { name: 'Checklist History', route: 'checklistHistory', showChild: true }
       ]
+    },
+    {
+      name: 'Reviews',
+      route: 'orgReviews',
+      image: 'Reviews_white',
+      imageblue: 'Reviews_blue',
+    },
+    {
+      name: 'Feedback',
+      showBadge: true,
+      count: this.unAcknowledgedFeedbackCount$,
+      route: 'appFeedbacks',
+      image: 'Feedback_white',
+      imageblue: 'Feedback_blue',
+    },
+    {
+      name: 'Excel Export',
+      showParent: true,
+      route: 'excelExport',
+      image: 'Excel reports_white',
+      imageblue: 'Excel reports_blue',
+    },
+    {
+      name: 'Enquiries',
+      showBadge: true,
+      count: this.enquiryCount$,
+      route: 'viewEnquiries',
+      image: 'Enquiries_white',
+      imageblue: 'Enquiries_blue',
     },
     {
       name: 'Policy', showParent: true, image: 'Policy_white', imageblue: 'Policy_blue', children: [

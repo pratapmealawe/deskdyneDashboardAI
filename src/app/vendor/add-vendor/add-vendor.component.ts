@@ -8,6 +8,7 @@ import { DataFormatService } from 'src/service/data-format.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { AddressItem, OutletItem, PopupItem, Vendor } from 'src/app/common/interfaces/vendor.interface';
 
 @Component({
   selector: 'app-add-vendor',
@@ -18,19 +19,19 @@ export class AddVendorCommponent {
   form: any;
   showError = false;
   showUpdate = false;
-  outletByCafeteriaList: any;
-  popupsByVendorFirm: any = [];
+  outletByCafeteriaList: OutletItem[] = [];
+  popupsByVendorFirm: PopupItem[] = [];
   showModalOutletList = false;
-  selectedOutletsList: any = [];
-  selectedPopupsList: any = [];
-  defaultRole: any = 'Cashier';
+  selectedOutletsList: OutletItem[] = [];
+  selectedPopupsList: PopupItem[] = [];
+  defaultRole: string = 'Cashier';
 
   showAddbutton: any = false;
   vendorRole = ['Owner', 'Manager', 'Cashier', 'Kitchen Manager'];
   showCafeteria = false;
   showSelectCafeteriaOption = true;
-  selectedVendor: any;
-  addressList: any = [];
+  selectedVendor: Vendor | null = null;
+  addressList: AddressItem[] = [];
   showEditModalOutletList = false;
   vendorId: number = 0
   title: string = ' Add Vendor '
@@ -38,9 +39,10 @@ export class AddVendorCommponent {
   @ViewChild('outletModal') outlet: any;
   @ViewChild('addressModal') address: any;
   @ViewChild('popupModal') popupModal: any;
-  selectedAddressList: any = [];
-  selectedAddress: any = null;  // holds the selected address object
+  selectedAddressList: AddressItem[] = [];
+  selectedAddress: AddressItem | null = null;  // holds the selected address object
 
+  loginCode: string | null = null;
   btnPolicy: any;
   vendorList: any;
   vendorLocation: any
@@ -71,6 +73,18 @@ export class AddVendorCommponent {
       vendorRole: ['', [Validators.required]],
       vendorId: ['', [Validators.required]],
       accessType: ['outlet', [Validators.required]],
+      isPos: [false],
+      isDashboard: [false],
+      posEntry: [''],
+      posConfiguration: this.fb.group({
+        enablePrinter: [false],
+        enableScanner: [false],
+        enableSecondDisplay: [false],
+        enableManualPrint: [false],
+        kitchenKot: [false],
+        userKot: [false],
+        userKotOnlyForManual: [false],
+      }),
     });
   }
 
@@ -160,6 +174,7 @@ export class AddVendorCommponent {
       this.selectedOutletsList = vendor.outletList;
       this.selectedAddressList = vendor.addressList;
       this.selectedPopupsList = vendor.popup_Details || [];
+      this.loginCode = vendor.loginCode || null;
       this.form.patchValue({
         vendorName: vendor.vendorName,
         vendorPhoneNo: vendor.vendorPhoneNo,
@@ -169,6 +184,18 @@ export class AddVendorCommponent {
         geolocation: vendor.geolocation,
         accessType: accessType,
         vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
+        isPos: vendor.isPos || false,
+        isDashboard: vendor.isDashboard || false,
+        posEntry: vendor.posEntry || '',
+        posConfiguration: {
+          enablePrinter: vendor.posConfiguration?.enablePrinter || false,
+          enableScanner: vendor.posConfiguration?.enableScanner || false,
+          enableSecondDisplay: vendor.posConfiguration?.enableSecondDisplay || false,
+          enableManualPrint: vendor.posConfiguration?.enableManualPrint || false,
+          kitchenKot: vendor.posConfiguration?.kitchenKot || false,
+          userKot: vendor.posConfiguration?.userKot || false,
+          userKotOnlyForManual: vendor.posConfiguration?.userKotOnlyForManual || false,
+        },
       });
       this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "";
       this.getAllVendors(); // to bind values of outletByCafeteriaList and popupsByVendorFirm after edit
@@ -212,7 +239,7 @@ export class AddVendorCommponent {
 
       if (type == 'update') {
         let updated = await this.apiMainService.updateVendor(
-          this.selectedVendor._id,
+          this.selectedVendor?._id,
           finalObj
         );
       } else {
@@ -288,8 +315,8 @@ export class AddVendorCommponent {
 
       // Check if this address is already in the list
       const addressExists = this.selectedAddressList.some(
-        (addr: any) => addr.address1 === this.selectedAddress.address1 &&
-          addr.location === this.selectedAddress.location
+        (addr: AddressItem) => addr.address1 === this.selectedAddress!.address1 &&
+          addr.location === this.selectedAddress!.location
       );
 
       if (!addressExists) {
@@ -429,6 +456,24 @@ export class AddVendorCommponent {
       this.dialog.closeAll();
     } catch (error) {
       console.error('Error getting selected popups:', error);
+    }
+  }
+
+  async createLoginCode() {
+    try {
+      const res: any = await this.apiMainService.createLoginCode(this.selectedVendor?._id!);
+      this.loginCode = res?.loginCode || null;
+    } catch (error) {
+      console.error('Error creating login code:', error);
+    }
+  }
+
+  async refreshLoginCode() {
+    try {
+      const res: any = await this.apiMainService.refreshLoginCode(this.selectedVendor?._id!);
+      this.loginCode = res?.loginCode || null;
+    } catch (error) {
+      console.error('Error refreshing login code:', error);
     }
   }
 
