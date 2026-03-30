@@ -8,8 +8,7 @@
         <p class="page-subtitle">Manage system-wide configuration keys and values.</p>
       </div>
       <div class="header-right">
-        <button mat-flat-button color="primary" class="add-btn" *ngIf="!editMode && (true || btnPolicy?.addVariable)"
-          (click)="addVariable()">
+        <button mat-flat-button color="primary" class="add-btn" *ngIf="!editMode" (click)="addVariable()">
           <mat-icon>add</mat-icon> Add Config
         </button>
       </div>
@@ -109,12 +108,10 @@
 
         <!-- Actions -->
         <div class="item-actions">
-          <button mat-icon-button *ngIf="true || btnPolicy?.editVariable" (click)="editVariable(variable)"
-            matTooltip="Edit" class="edit-btn">
+          <button mat-icon-button (click)="editVariable(variable)" matTooltip="Edit" class="edit-btn">
             <mat-icon>edit</mat-icon>
           </button>
-          <button mat-icon-button *ngIf="true || btnPolicy?.deleteVariable" (click)="showPopup(variable)"
-            matTooltip="Delete" class="delete-btn">
+          <button mat-icon-button (click)="showPopup(variable)" matTooltip="Delete" class="delete-btn">
             <mat-icon>delete_outline</mat-icon>
           </button>
         </div>
@@ -128,13 +125,13 @@
     <div class="action-bar">
       <button class="btn-cancel" mat-button (click)="cancel()">Cancel</button>
 
-      <button class="btn-submit" mat-flat-button color="primary"
-        *ngIf="addnewVariable && (true || btnPolicy?.addVariable)" (click)="submitnewVariable(variableObj)">
+      <button class="btn-submit" mat-flat-button color="primary" *ngIf="addnewVariable"
+        (click)="submitnewVariable(variableObj)">
         <mat-icon>check</mat-icon> Submit
       </button>
 
-      <button class="btn-submit" mat-flat-button color="primary"
-        *ngIf="!addnewVariable && (true || btnPolicy?.editVariable)" (click)="updateVariable(variableObj)">
+      <button class="btn-submit" mat-flat-button color="primary" *ngIf="!addnewVariable"
+        (click)="updateVariable(variableObj)">
         <mat-icon>save</mat-icon> Update
       </button>
     </div>
