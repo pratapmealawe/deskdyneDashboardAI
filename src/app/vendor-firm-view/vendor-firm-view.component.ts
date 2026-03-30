@@ -19,7 +19,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   tabPolicy: any;
 
   vendorViewList = [
-    { name: 'VendorFirm Details', path: 'vendorFirmDetails' },
+    { name: 'VendorFirm Details', path: 'vendorFirmDetails', policyKey: 'vendorFirmDetails' },
     {
       name: 'Wallet',
       path: 'wallet',
@@ -33,6 +33,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
           path: 'ledgerDetails'
         }
       ],
+      policyKey: 'vendorWallets'
     },
     {
       name: 'Order Report',
@@ -51,32 +52,23 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
           path: 'bulkOrderReport'
         },
       ],
+      policyKey: 'vendorOrderReport'
     },
-  ];
+  ]
 
   constructor(private policyService: PolicyService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.vendorFirmInfo = this.vendor;
+
   }
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
     this.tabPolicy = this.policyService.getCurrentTabPolicy();
-
-    const vendorTabMap: { [key: string]: string } = {
-      'vendorFirmDetails': 'vendorFirmDetails',
-      'wallet': 'wallets',
-      'orderReport': 'orderReport'
-    };
-
-    this.vendorViewList = this.vendorViewList.filter((item: any) => {
-      const policyKey = vendorTabMap[item.path];
-      if (policyKey && this.tabPolicy[policyKey] === false) {
-        return false;
-      }
-      return true;
-    });
+    this.vendorViewList = this.vendorViewList.filter(
+      (item: any) => this.tabPolicy[item.policyKey] !== false
+    );
 
     if (this.vendorViewList.length > 0) {
       if (this.vendorViewList.findIndex(x => x.path === this.selectedTab) === -1) {

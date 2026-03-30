@@ -13,11 +13,11 @@ export class OutletViewComponent implements OnInit {
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
   selectedtab: number = 0;
   outletViewList = [
-    { name: 'Basic Details', path: 'outlet-details' },
-    { name: 'Menu', path: 'outlet-menu' },
-    { name: 'QR Menu', path: 'qr-menu' },
-    { name: 'Outlet Orders', path: 'outlet-orders' },
-    { name: 'Reviews', path: 'outlet-feedback' },
+    { name: 'Basic Details', path: 'outlet-details', policyKey: 'outletBasicDetails' },
+    { name: 'Menu', path: 'outlet-menu', policyKey: 'outletMenu' },
+    { name: 'QR Menu', path: 'qr-menu', policyKey: 'outletQrMenu' },
+    { name: 'Outlet Orders', path: 'outlet-orders', policyKey: 'outletOrders' },
+    { name: 'Reviews', path: 'outlet-feedback', policyKey: 'outletReviews' },
   ];
   selectedTab = 'outlet-details';
   updateval: any = false;
@@ -32,23 +32,9 @@ export class OutletViewComponent implements OnInit {
   ngOnInit(): void {
     window.scrollTo(0, 0);
     this.tabPolicy = this.policyService.getCurrentTabPolicy();
-
-    const outletTabMap: { [key: string]: string } = {
-      'outlet-details': 'outletBasicDetails',
-      'outlet-menu': 'outletMenu',
-      'qr-menu': 'outletQrMenu',
-      'outlet-orders': 'outletOrders',
-      'outlet-feedback': 'outletReviews'
-    };
-
-    this.outletViewList = this.outletViewList.filter((item: any) => {
-      const policyKey = outletTabMap[item.path];
-      if (policyKey && this.tabPolicy[policyKey] === false) {
-        return false;
-      }
-      return true;
-    });
-
+    this.outletViewList = this.outletViewList.filter(
+      (item: any) => this.tabPolicy[item.policyKey] !== false
+    );
     if (this.selectedTab) {
       const foundIndex = this.outletViewList.findIndex(x => x.path === this.selectedTab);
       if (foundIndex === -1 && this.outletViewList.length > 0) {

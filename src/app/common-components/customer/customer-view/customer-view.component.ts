@@ -11,12 +11,12 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   @Output() backBtnEmitter: any = new EventEmitter();
 
   userViewList = [
-    { name: 'User Details', path: 'userDetails' },
+    { name: 'User Details', path: 'userDetails', policyKey: 'userDetails' },
     // { name: 'Past Orders', path: 'pastorders' },
     // { name: 'Past Meal Orders', path: 'pastmealorders' },
-    { name: 'Outlet Orders', path: 'outletOrders' },
-    { name: 'Wallet', path: 'wallet' },
-    { name: 'Company Wallet', path: 'companyWallet' }
+    { name: 'Outlet Orders', path: 'outletOrders', policyKey: 'customerOutletOrder' },
+    { name: 'Wallet', path: 'wallet', policyKey: 'customerWallet' },
+    { name: 'Company Wallet', path: 'companyWallet', policyKey: 'customerCompanyWallet' }
   ];
   selectedTab = 'userDetails';
   selectedTabIndex: number = 0;
@@ -31,23 +31,9 @@ export class CustomerViewComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.tabPolicy = this.policyService.getCurrentTabPolicy();
-
-    const customerTabMap: { [key: string]: string } = {
-      'userDetails': 'userDetails',
-      'outletOrders': 'customerOutletOrder',
-      'wallet': 'customerWallet',
-      'companyWallet': 'companyWallet',
-      'wellnessReport': 'wellnessReport'
-    };
-
-    this.userViewList = this.userViewList.filter((item: any) => {
-      const policyKey = customerTabMap[item.path];
-      if (policyKey && this.tabPolicy[policyKey] === false) {
-        return false;
-      }
-      return true;
-    });
-
+    this.userViewList = this.userViewList.filter(
+      (item: any) => this.tabPolicy[item.policyKey] !== false
+    );
     if (this.selectedTab) {
       const foundIndex = this.userViewList.findIndex(x => x.path === this.selectedTab);
       this.selectedTabIndex = foundIndex >= 0 ? foundIndex : 0;
