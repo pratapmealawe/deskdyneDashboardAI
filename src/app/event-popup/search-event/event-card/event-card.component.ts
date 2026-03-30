@@ -4,7 +4,6 @@ import { ToasterService } from 'src/app/toaster/toaster.service';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-event-card',
@@ -27,15 +26,13 @@ export class EventCardComponent implements OnInit {
   @Output() view: EventEmitter<any> = new EventEmitter<any>();
   @Output() refresh: EventEmitter<void> = new EventEmitter<void>();
   imageUrl: any = environment.imageUrl;
-  btnPolicy: any;
   eventInfo: any;
   pageSize: number = 10;
   pageIndex: number = 0;
   eventUpdated: any[] = [];
 
-  constructor(private policyService: PolicyService, private apiMainService: ApiMainService, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService) { }
+  constructor(private apiMainService: ApiMainService, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService) { }
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.eventUpdated = this.event;
   }
 

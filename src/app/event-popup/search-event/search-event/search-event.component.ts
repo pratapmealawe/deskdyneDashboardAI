@@ -3,7 +3,6 @@ import { FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 
@@ -18,20 +17,17 @@ export class SearchEventComponent {
   page: any = 0;
   eventList: any = [];
   selectedEvent: any;
-  btnPolicy: any;
   searchControl = new FormControl();
   pagedEvent: any[] = [];
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService,
     private runtimeStorageService: RuntimeStorageService,
     private searchService: SearchFilterService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.searchEvent();
     this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(value => { this.applyFilter(value) })
   }

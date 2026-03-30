@@ -11,11 +11,11 @@
           <mat-icon class="search-icon">search</mat-icon>
           <input type="text" placeholder="Search outlets..." [formControl]="searchControl" />
         </div>
-        <button mat-flat-button class="btn-add-outlet" (click)="addOutlet()">
+        <button mat-flat-button class="btn-add-outlet" (click)="addOutlet()" *appHasPermission="'OUTLET:ADD'">
           <mat-icon>add_business</mat-icon>
           <span>Add Outlet</span>
         </button>
-        <button mat-icon-button class="btn-deleted" (click)="openDeletedOutletsDialog()"
+        <button mat-icon-button class="btn-deleted" (click)="openDeletedOutletsDialog()" *appHasPermission="'OUTLET:DELETE'"
           matTooltip="View Deleted Outlets">
           <mat-icon>delete_sweep</mat-icon>
         </button>
@@ -29,7 +29,7 @@
       <mat-icon class="empty-icon">storefront</mat-icon>
       <h3>No Outlets Found</h3>
       <p>Get started by adding your first outlet.</p>
-      <button mat-stroked-button color="primary" (click)="addOutlet()">Add Outlet</button>
+      <button mat-stroked-button color="primary" (click)="addOutlet()" *appHasPermission="'OUTLET:ADD'">Add Outlet</button>
     </div>
 
     <ng-template #outletListTmp>

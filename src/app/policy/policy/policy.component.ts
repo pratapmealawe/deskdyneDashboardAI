@@ -5,7 +5,6 @@ import { FormControl } from '@angular/forms';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { startWith } from 'rxjs/operators';
 
@@ -17,8 +16,6 @@ import { startWith } from 'rxjs/operators';
 export class PolicyComponent implements OnInit {
   policyArr: any[] = [];
   filteredPolicyArr: any[] = [];
-  btnPolicy: any;
-
   // only search filter needed
   searchControl = new FormControl<string>('');
 
@@ -27,12 +24,10 @@ export class PolicyComponent implements OnInit {
     private router: Router,
     private localStorageService: LocalStorageService,
     private runtimeStorageService: RuntimeStorageService,
-    private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private confirmationModalService: ConfirmationModalService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.initSearch();
     this.getAllPolicy();
   }

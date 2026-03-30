@@ -40,10 +40,12 @@
 
       <!-- Right: Actions -->
       <div class="org-action-section">
-        <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View Details" class="view-btn">
+        <button mat-icon-button color="primary" (click)="vieworg(org)" matTooltip="View Details" class="view-btn"
+          *appHasPermission="'ORGANIZATION:EDIT'">
           <mat-icon>visibility</mat-icon>
         </button>
-        <button mat-icon-button color="warn" (click)="onSoftDelete(org)" matTooltip="Delete Organization">
+        <button mat-icon-button color="warn" (click)="onSoftDelete(org)" matTooltip="Delete Organization"
+          *appHasPermission="'ORGANIZATION:DELETE'">
           <mat-icon>delete_outline</mat-icon>
         </button>
       </div>

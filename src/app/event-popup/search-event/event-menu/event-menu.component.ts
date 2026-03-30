@@ -9,7 +9,6 @@ import { categoryList } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
@@ -58,7 +57,6 @@ export class EventMenuComponent implements OnInit {
   uploadStatus: boolean = false;
   noImages: boolean = false;
   foodItem: any;
-  btnPolicy: any;
   eventPopupList: any[] = [];
   menuInfo: any;
   eventInfo: any;
@@ -77,13 +75,11 @@ export class EventMenuComponent implements OnInit {
     private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService,
     private sendDataToComponent: SendDataToComponent,
     private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.fetchAllOutlets();
     this.createForm();
     this.init();

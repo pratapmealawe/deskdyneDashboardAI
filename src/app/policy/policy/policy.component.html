@@ -15,7 +15,7 @@
     </div>
 
     <!-- ADD BUTTON -->
-    <button class="btn-add" mat-raised-button (click)="addPolicy()" *ngIf="true || btnPolicy?.addPolicy">
+    <button class="btn-add" mat-raised-button (click)="addPolicy()" *appHasPermission="'POLICY:ADD'">
       <mat-icon>add_circle</mat-icon>
       Add Policy
     </button>
@@ -52,13 +52,13 @@
             </div>
 
             <div class="col-md-2 col-3 d-flex align-items-center gap-3 justify-content-end">
-              <mat-icon *ngIf="true || btnPolicy?.editPolicy" (click)="editPolicy(policy._id)" class="action-icon edit"
+              <mat-icon *appHasPermission="'POLICY:EDIT'" (click)="editPolicy(policy._id)" class="action-icon edit"
                 matTooltip="Edit">
                 edit
               </mat-icon>
-
-              <mat-icon *ngIf="true || btnPolicy?.deletePolicy" (click)="confirmDelete(policy._id)"
-                class="action-icon delete" matTooltip="Delete">
+              
+              <mat-icon *appHasPermission="'POLICY:DELETE'" (click)="confirmDelete(policy._id)" class="action-icon delete"
+                matTooltip="Delete">
                 delete
               </mat-icon>
             </div>

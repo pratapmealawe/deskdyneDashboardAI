@@ -6,7 +6,6 @@ import { combineLatest, startWith } from 'rxjs';
 
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 import { ChecklistQuestionDialogComponent } from './checklist-question-dialog/checklist-question-dialog.component';
 
 export interface ChecklistQuestion {
@@ -31,8 +30,6 @@ export class ChecklistQuestionComponent implements OnInit {
   pageSize = 10;
   pageIndex = 0;
 
-  btnPolicy: any;
-
   checklistTypes: string[] = [
     'Personal Hygiene',
     'Kitchen Cleaning',
@@ -49,14 +46,12 @@ export class ChecklistQuestionComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService,
     private dialog: MatDialog
   ) {
     this.getAllChecklistQuestions();
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.initFilters();
   }
 

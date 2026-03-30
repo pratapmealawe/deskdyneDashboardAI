@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-billing',
@@ -8,21 +9,30 @@ import { MatTabChangeEvent } from '@angular/material/tabs';
 })
 export class BillingComponent implements OnInit {
   @Input() adminOrg: any;
-  billingTypes: any = [
-    { name: "Outlet", type: "outletBilling" },
-    { name: "Wallet", type: "walletBilling" },
-    { name: "Virtual Cafeteria", type: "vcBilling" },
-    { name: "Daily Order", type: "dailyOrderBilling" },
-    { name: "Bulk", type: "bulkOrderBilling" },
-    { name: "Company Wallet", type: "companyWalletBilling" },
+  allBillingTypes: any = [
+    { name: "Outlet", type: "outletBilling", policyKey: "billingoutletWallet" },
+    { name: "Wallet", type: "walletBilling", policyKey: "billingWallet" },
+    { name: "Virtual Cafeteria", type: "vcBilling", policyKey: "billingvirtualCafeteria" },
+    { name: "Daily Order", type: "dailyOrderBilling", policyKey: "billingdailyOrder" },
+    { name: "Bulk", type: "bulkOrderBilling", policyKey: "billingbulk" },
+    { name: "Company Wallet", type: "companyWalletBilling", policyKey: "billingcompanyWallet" },
   ];
-
+  billingTypes: any = [];
   selectedTab: string = '';
   selectedTabIndex: number = 0;
+  tabPolicy: any;
 
-  constructor() { }
+  constructor(private policyService: PolicyService) { }
 
   ngOnInit(): void {
+    console.log(this.adminOrg);
+    this.tabPolicy = this.policyService.getCurrentTabPolicy();
+    this.filterBillingTabs();
+  }
+
+  filterBillingTabs() {
+    this.billingTypes = this.allBillingTypes.filter((tab: any) => !tab.policyKey || this.tabPolicy[tab.policyKey]);
+
     if (this.billingTypes.length) {
       this.selectedTab = this.billingTypes[0].type;
       this.selectedTabIndex = 0;

@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-config-variable',
@@ -14,19 +13,14 @@ export class ConfigVariableComponent implements OnInit {
   editMode = false;
   addnewVariable = false;
   variableType = 'String';
-  btnPolicy: any;
-
   constructor(
     private apiMainService: ApiMainService,
-    private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private confirmationModalService: ConfirmationModalService
   ) {
     this.getAllVariables();
   }
 
-  ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-  }
+  ngOnInit(): void {}
 
   async getAllVariables() {
     try {

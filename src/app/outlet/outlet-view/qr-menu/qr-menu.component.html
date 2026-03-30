@@ -79,8 +79,7 @@
           <!-- Paid By -->
           <div class="control-block">
             <div class="control-label">Paid By</div>
-            <mat-radio-group class="pill-radio-group" [value]="group.paidType"
-              (change)="TogglePaidType(group, $event)">
+            <mat-radio-group class="pill-radio-group" [value]="group.paidType" (change)="TogglePaidType(group, $event)">
               <mat-radio-button value="company">Company</mat-radio-button>
               <mat-radio-button value="partial">Partial</mat-radio-button>
               <mat-radio-button value="user">User</mat-radio-button>
@@ -110,8 +109,10 @@
             <div class="menu-header-row">
               <div class="menu-title-block">
                 <div class="menu-name">
-                  <img src="assets/icon/veg.png" *ngIf="item.itemType === 'Veg'" class="me-2" width="18" height="18" alt="Veg">
-                  <img src="assets/icon/nonveg.png" *ngIf="item.itemType === 'NonVeg'" class="me-2" width="18" height="18" alt="Non-Veg">
+                  <img src="assets/icon/veg.png" *ngIf="item.itemType === 'Veg'" class="me-2" width="18" height="18"
+                    alt="Veg">
+                  <img src="assets/icon/nonveg.png" *ngIf="item.itemType === 'NonVeg'" class="me-2" width="18"
+                    height="18" alt="Non-Veg">
                   {{ item.itemName || 'Unnamed item' }}
                 </div>
                 <div class="menu-desc" *ngIf="item.description" [matTooltip]="item.description">
@@ -158,8 +159,8 @@
             <button mat-icon-button color="primary" (click)="copyMenu(group, item)" matTooltip="Copy item">
               <mat-icon>content_copy</mat-icon>
             </button>
-            <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editMenu"
-              (click)="edit(group, item, i)" matTooltip="Edit item">
+            <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editMenu" (click)="edit(group, item, i)"
+              matTooltip="Edit item">
               <mat-icon>edit</mat-icon>
             </button>
             <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu"
@@ -197,7 +198,8 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Name</mat-label>
               <input matInput type="text" placeholder="Name" formControlName="itemName" />
-              <mat-error *ngIf="f['itemName'].hasError('required') && f['itemName'].touched">Item name is required</mat-error>
+              <mat-error *ngIf="f['itemName'].hasError('required') && f['itemName'].touched">Item name is
+                required</mat-error>
               <mat-error *ngIf="f['itemName'].hasError('maxlength')">Maximum 80 characters allowed</mat-error>
             </mat-form-field>
           </div>
@@ -216,8 +218,10 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Subsidy Amount (₹)</mat-label>
               <input matInput type="number" min="0" (keydown)="preventInvalidNumber($event)"
-                (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Subsidy Amount" formControlName="subsidy" />
-              <mat-error *ngIf="f['subsidy'].hasError('min') && f['subsidy'].touched">Subsidy cannot be negative</mat-error>
+                (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Subsidy Amount"
+                formControlName="subsidy" />
+              <mat-error *ngIf="f['subsidy'].hasError('min') && f['subsidy'].touched">Subsidy cannot be
+                negative</mat-error>
             </mat-form-field>
           </div>
 
@@ -225,8 +229,10 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Max Quantity</mat-label>
               <input matInput type="number" min="0" (keydown)="preventInvalidNumber($event)"
-                (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Max Quantity" formControlName="maxQuantity" />
-              <mat-error *ngIf="f['maxQuantity'].hasError('min') && f['maxQuantity'].touched">Max quantity cannot be negative</mat-error>
+                (paste)="preventInvalidPaste($event, 'decimal')" placeholder="Max Quantity"
+                formControlName="maxQuantity" />
+              <mat-error *ngIf="f['maxQuantity'].hasError('min') && f['maxQuantity'].touched">Max quantity cannot be
+                negative</mat-error>
             </mat-form-field>
           </div>
 
@@ -254,7 +260,8 @@
               <mat-label>Precedence</mat-label>
               <input matInput type="number" min="0" placeholder="Precedence" formControlName="precedence"
                 (keydown)="preventInvalidNumber($event)" (paste)="preventInvalidPaste($event)" />
-              <mat-error *ngIf="f['precedence'].hasError('min') && f['precedence'].touched">Precedence cannot be negative</mat-error>
+              <mat-error *ngIf="f['precedence'].hasError('min') && f['precedence'].touched">Precedence cannot be
+                negative</mat-error>
             </mat-form-field>
           </div>
 
@@ -266,7 +273,8 @@
                   {{ chip.mealType }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="f['mealType'].hasError('required') && f['mealType'].touched">Meal type is required</mat-error>
+              <mat-error *ngIf="f['mealType'].hasError('required') && f['mealType'].touched">Meal type is
+                required</mat-error>
             </mat-form-field>
           </div>
 
@@ -274,7 +282,8 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Accept Order From</mat-label>
               <input matInput type="time" formControlName="acceptOrderFrom" readonly />
-              <mat-error *ngIf="f['acceptOrderFrom'].hasError('required') && f['acceptOrderFrom'].touched">Start time is required</mat-error>
+              <mat-error *ngIf="f['acceptOrderFrom'].hasError('required') && f['acceptOrderFrom'].touched">Start time is
+                required</mat-error>
             </mat-form-field>
           </div>
 
@@ -282,7 +291,8 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Accept Order Till</mat-label>
               <input matInput type="time" formControlName="acceptOrderTill" readonly />
-              <mat-error *ngIf="f['acceptOrderTill'].hasError('required') && f['acceptOrderTill'].touched">End time is required</mat-error>
+              <mat-error *ngIf="f['acceptOrderTill'].hasError('required') && f['acceptOrderTill'].touched">End time is
+                required</mat-error>
             </mat-form-field>
           </div>
 
@@ -305,10 +315,12 @@
 
     <mat-dialog-actions align="end" class="modal-footer">
       <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" *ngIf="!showUpdateBtn" [disabled]="form.invalid" [mat-dialog-close]="'add'">
+      <button mat-raised-button color="primary" *ngIf="!showUpdateBtn" [disabled]="form.invalid"
+        [mat-dialog-close]="'add'">
         Submit
       </button>
-      <button mat-raised-button color="accent" *ngIf="showUpdateBtn" [disabled]="form.invalid" [mat-dialog-close]="'update'">
+      <button mat-raised-button color="accent" *ngIf="showUpdateBtn" [disabled]="form.invalid"
+        [mat-dialog-close]="'update'">
         Update
       </button>
     </mat-dialog-actions>

@@ -32,8 +32,8 @@
     <!-- Main Tabs (pill-style) -->
     <div class="tabs-container">
       <div class="main-tabs">
-        <button *ngFor="let tab of tabs; let i = index" class="tab-btn" [class.active]="selectedIndex === i"
-          (click)="onTabChange(i)">
+        <button *ngFor="let tab of tabs" class="tab-btn" [class.active]="selectedIndex === tab.index"
+          (click)="onTabChange(tab.index)">
           <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
           <span>{{ tab.name }}</span>
         </button>

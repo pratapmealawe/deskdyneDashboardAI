@@ -21,7 +21,7 @@
       </mat-form-field>
     </div>
 
-    <button class="btn-add" mat-raised-button color="primary" (click)="addAdmin()">
+    <button class="btn-add" mat-raised-button color="primary" (click)="addAdmin()" *appHasPermission="'ADMIN:ADD'">
       <mat-icon>add_circle</mat-icon> Add Admin
     </button>
   </div>
@@ -68,7 +68,7 @@
             </div>
           </div>
           <div class="col-md-1 d-flex align-items-center gap-3 justify-content-end">
-            <mat-icon *ngIf="true || btnPolicy?.editAdmin" (click)="editAdmin(admin)" class="action-icon edit"
+            <mat-icon *appHasPermission="'ADMIN:EDIT'" (click)="editAdmin(admin)" class="action-icon edit"
               [matTooltip]="'Edit'"> edit
             </mat-icon>
           </div>

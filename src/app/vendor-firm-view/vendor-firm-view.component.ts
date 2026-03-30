@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-vendor-firm-view',
@@ -15,6 +16,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   btnPolicy: any;
   selectedTabIndex: number = 0
   selectedSubTabIndex: number = 0;
+  tabPolicy: any;
 
   vendorViewList = [
     { name: 'VendorFirm Details', path: 'vendorFirmDetails' },
@@ -52,12 +54,35 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
     },
   ];
 
+  constructor(private policyService: PolicyService) { }
+
   ngOnChanges(changes: SimpleChanges): void {
     this.vendorFirmInfo = this.vendor;
   }
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
+    this.tabPolicy = this.policyService.getCurrentTabPolicy();
+
+    const vendorTabMap: { [key: string]: string } = {
+      'vendorFirmDetails': 'vendorFirmDetails',
+      'wallet': 'wallets',
+      'orderReport': 'orderReport'
+    };
+
+    this.vendorViewList = this.vendorViewList.filter((item: any) => {
+      const policyKey = vendorTabMap[item.path];
+      if (policyKey && this.tabPolicy[policyKey] === false) {
+        return false;
+      }
+      return true;
+    });
+
+    if (this.vendorViewList.length > 0) {
+      if (this.vendorViewList.findIndex(x => x.path === this.selectedTab) === -1) {
+        this.selectedTab = this.vendorViewList[0].path;
+      }
+    }
     this.initSubTabFor(this.selectedTab)
   }
 
