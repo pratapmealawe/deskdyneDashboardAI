@@ -52,23 +52,11 @@
     }
   }
 
-  .parent .access-section:nth-child(1) {
-    background-color: #ffc10761;
-    /* yellow */
-  }
 
-  .parent .access-section:nth-child(2) {
-    background-color: #28a74561;
-    /* green */
-  }
-
-  .parent .access-section:nth-child(3) {
-    background-color: #17a2b861;
-    /* blue */
-  }
 
   .access-section {
     margin-bottom: 40px;
+    padding: 25px;
 
 
     .section-header {

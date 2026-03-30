@@ -50,76 +50,80 @@
 
 
     <!-- ROUTE ACCESS SECTION -->
-    <div class="access-section">
-      <div class="section-header">
-        <div class="section-title-wrapper">
-          <mat-icon>lan</mat-icon>
-          <h2 class="section-title">Route Access</h2>
+    <mat-card class="route-card">
+      <div class="access-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon>lan</mat-icon>
+            <h2 class="section-title">Route Access</h2>
+          </div>
+          <button class="select-all-btn" (click)="selectAllRoutes()">Select All Routes</button>
         </div>
-        <button class="select-all-btn" (click)="selectAllRoutes()">Select All Routes</button>
-      </div>
 
-      <div class="subsection" *ngFor="let group of groupedRoutePolicies">
-        <h3 class="subsection-title">{{ group.title }}</h3>
-        <div class="permissions-grid">
-          <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.route_policies[key]"
-            (click)="togglePolicy('route', key)">
-            <div class="checkbox-box">
-              <mat-icon>check</mat-icon>
+        <div class="subsection" *ngFor="let group of groupedRoutePolicies">
+          <h3 class="subsection-title">{{ group.title }}</h3>
+          <div class="permissions-grid">
+            <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.route_policies[key]"
+              (click)="togglePolicy('route', key)">
+              <div class="checkbox-box">
+                <mat-icon>check</mat-icon>
+              </div>
+              <span class="permission-label">{{ key }}</span>
             </div>
-            <span class="permission-label">{{ key }}</span>
           </div>
         </div>
       </div>
-    </div>
-
+    </mat-card>
     <!-- BUTTON ACCESS SECTION -->
-    <div class="access-section">
-      <div class="section-header">
-        <div class="section-title-wrapper">
-          <mat-icon>ads_click</mat-icon>
-          <h2 class="section-title">Button Access</h2>
+    <mat-card class="button-card">
+      <div class="access-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon>ads_click</mat-icon>
+            <h2 class="section-title">Button Access</h2>
+          </div>
+          <button class="select-all-btn" (click)="selectAllButtons()">Select All Buttons</button>
         </div>
-        <button class="select-all-btn" (click)="selectAllButtons()">Select All Buttons</button>
-      </div>
 
-      <div class="subsection" *ngFor="let group of groupedButtonPolicies">
-        <h3 class="subsection-title">{{ group.title }}</h3>
-        <div class="permissions-grid">
-          <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.button_policies[key]"
-            (click)="togglePolicy('button', key)">
-            <div class="checkbox-box">
-              <mat-icon>check</mat-icon>
+        <div class="subsection" *ngFor="let group of groupedButtonPolicies">
+          <h3 class="subsection-title">{{ group.title }}</h3>
+          <div class="permissions-grid">
+            <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.button_policies[key]"
+              (click)="togglePolicy('button', key)">
+              <div class="checkbox-box">
+                <mat-icon>check</mat-icon>
+              </div>
+              <span class="permission-label">{{ key }}</span>
             </div>
-            <span class="permission-label">{{ key }}</span>
           </div>
         </div>
       </div>
-    </div>
-
+    </mat-card>
     <!-- TAB ACCESS SECTION -->
-    <div class="access-section">
-      <div class="section-header">
-        <div class="section-title-wrapper">
-          <mat-icon>tab</mat-icon>
-          <h2 class="section-title">Tab Access</h2>
+    <mat-card class="tab-card">
+      <div class="access-section">
+        <div class="section-header">
+          <div class="section-title-wrapper">
+            <mat-icon>tab</mat-icon>
+            <h2 class="section-title">Tab Access</h2>
+          </div>
+          <button class="select-all-btn" (click)="selectAllTabs()">Select All Tabs</button>
         </div>
-        <button class="select-all-btn" (click)="selectAllTabs()">Select All Tabs</button>
-      </div>
 
-      <div class="subsection" *ngFor="let group of groupedTabPolicies">
-        <h3 class="subsection-title">{{ group.title }}</h3>
-        <div class="permissions-grid">
-          <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.tab_policies[key]"
-            (click)="togglePolicy('tab', key)">
-            <div class="checkbox-box">
-              <mat-icon>check</mat-icon>
+        <div class="subsection" *ngFor="let group of groupedTabPolicies">
+          <h3 class="subsection-title">{{ group.title }}</h3>
+          <div class="permissions-grid">
+            <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.tab_policies[key]"
+              (click)="togglePolicy('tab', key)">
+              <div class="checkbox-box">
+                <mat-icon>check</mat-icon>
+              </div>
+              <span class="permission-label">{{ key }}</span>
             </div>
-            <span class="permission-label">{{ key }}</span>
           </div>
         </div>
       </div>
-    </div>
+    </mat-card>
   </div>
   <!-- ERROR MESSAGE -->
   <div class="error-message" *ngIf="showErrorMsg">
