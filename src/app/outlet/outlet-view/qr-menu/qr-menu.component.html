@@ -12,8 +12,7 @@
       </div>
     </div>
     <div class="header-actions">
-      <button mat-flat-button color="primary" class="action-btn primary-btn" *ngIf="true || btnPolicy?.addMenu"
-        (click)="open(); resetValues()">
+      <button mat-flat-button color="primary" class="action-btn primary-btn" (click)="open(); resetValues()">
         <mat-icon>add</mat-icon>
         Add Item
       </button>
@@ -159,12 +158,10 @@
             <button mat-icon-button color="primary" (click)="copyMenu(group, item)" matTooltip="Copy item">
               <mat-icon>content_copy</mat-icon>
             </button>
-            <button mat-icon-button color="primary" *ngIf="true || btnPolicy?.editMenu" (click)="edit(group, item, i)"
-              matTooltip="Edit item">
+            <button mat-icon-button color="primary" (click)="edit(group, item, i)" matTooltip="Edit item">
               <mat-icon>edit</mat-icon>
             </button>
-            <button mat-icon-button color="warn" *ngIf="true || btnPolicy?.deleteMenu"
-              (click)="showPopup(group, item, i)" matTooltip="Delete item">
+            <button mat-icon-button color="warn" (click)="showPopup(group, item, i)" matTooltip="Delete item">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
