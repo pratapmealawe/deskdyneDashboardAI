@@ -106,10 +106,7 @@ export class OrganizationViewComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
-    this.orgViewList = this.orgViewList.filter(
-      (item: any) => this.tabPolicy[item.policyKey] !== false
-    );
+    this.orgViewList = this.policyService.filterTabsByPolicy(this.orgViewList);
     this.initializeTabs();
     this.initializeCafeteria();
   }

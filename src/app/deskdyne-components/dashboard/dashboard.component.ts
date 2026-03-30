@@ -35,19 +35,8 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
-    this.tabs = this.tabs.filter(
-      (item: any) => this.tabPolicy[item.policyKey] !== false
-    );
-    this.filterTabs();
+    this.tabs = this.policyService.filterTabsByPolicy(this.allTabs);
     this.getorganizations();
-  }
-
-  filterTabs() {
-    this.tabs = this.allTabs.filter(tab => !tab.policyKey || this.tabPolicy[tab.policyKey]);
-    if (this.tabs.length > 0) {
-      this.selectedIndex = this.tabs[0].index;
-    }
   }
 
   onTabChange(index: number) {

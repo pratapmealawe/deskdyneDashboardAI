@@ -31,10 +31,7 @@ export class OutletViewComponent implements OnInit {
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
-    this.outletViewList = this.outletViewList.filter(
-      (item: any) => this.tabPolicy[item.policyKey] !== false
-    );
+    this.outletViewList = this.policyService.filterTabsByPolicy(this.outletViewList);
     if (this.selectedTab) {
       const foundIndex = this.outletViewList.findIndex(x => x.path === this.selectedTab);
       if (foundIndex === -1 && this.outletViewList.length > 0) {

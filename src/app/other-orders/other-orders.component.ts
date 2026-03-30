@@ -23,11 +23,7 @@ export class OtherOrdersComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
-    this.orderTypeList = this.orderTypeList.filter(
-      (item: any) => this.tabPolicy[item.policyKey] !== false
-    );
-
+    this.orderTypeList = this.policyService.filterTabsByPolicy(this.orderTypeList);
   }
 
   onCustomTabChange(index: number): void {
