@@ -232,30 +232,46 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
 
 /** Default shape for tab_policies */
 export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
+  // dashboarsd
   Dashboard: false,
   menuItems: false,
   Orders: false,
   Reviews: false,
   User: false,
   vendorInfo: false,
+  vendorInformation: false,
   menuCounters: false,
   auditReports: false,
+  dashBoardAdminOrder: false,
   adminOrders: false,
+  bulkOrders: false,
+  employeePoll: false,
   outletBasicDetails: false,
   outletMenu: false,
   outletQrMenu: false,
   outletOrders: false,
   outletReviews: false,
+  'outlet-details': false,
+  'outlet-menu': false,
+  'qr-menu': false,
+  'outlet-orders': false,
+  'outlet-feedback': false,
   eventBasicDetails: false,
   eventMenu: false,
   eventOrders: false,
   eventReviews: false,
-  vendorFirmDetails: false,
   wallets: false,
+  wallet: false,
+  walletDetails: false,
+  ledgerDetails: false,
   orderReport: false,
+  vendorFirmReport: false,
+  vendorFirmDailyReport: false,
+  bulkOrderReport: false,
   userDetails: false,
   customerOutletOrder: false,
   customerWallet: false,
+  customerCompanyWallet: false,
   companyWallet: false,
   wellnessReport: false,
   orgDetails: false,
@@ -279,6 +295,17 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   billingWallet: false,
   billingcompanyWallet: false,
   // emailConfig: false,
+  // others order
+  otherAdminOrders: false,
+  otherBulkOrders: false,
+  otherEmployeePoll: false,
+  otherVirtualCafeteria: false,
+  // vendor firm 
+  vendorFirmDetails: false,
+  vendorWallets: false,
+  vendorOrderReport: false,
+
+
 };
 
 /** Grouped Route Policies for UI */
@@ -409,7 +436,7 @@ export const GROUPED_BUTTON_POLICIES = [
 export const GROUPED_TAB_POLICIES = [
   {
     title: 'CORE TABS',
-    keys: ['Dashboard', 'menuItems', 'Orders', 'Reviews', 'User', 'menuCounters', 'vendorInfo', 'auditReports', 'adminOrders']
+    keys: ['Dashboard', 'menuItems', 'Orders', 'Reviews', 'User', 'menuCounters', 'vendorInfo', 'auditReports', 'dashBoardAdminOrder']
   },
   {
     title: 'OUTLET MANAGEMENT',
@@ -420,12 +447,12 @@ export const GROUPED_TAB_POLICIES = [
     keys: ['eventBasicDetails', 'eventMenu', 'eventOrders', 'eventReviews']
   },
   {
-    title: 'VENDOR & FINANCE',
-    keys: ['vendorInfo', 'vendorFirmDetails', 'wallets', 'orderReport']
+    title: 'VENDOR & FIRM',
+    keys: ['vendorFirmDetails', 'vendorWallets', 'vendorOrderReport']
   },
   {
     title: 'CUSTOMER',
-    keys: ['userDetails', 'customerOutletOrder', 'customerWallet', 'customerCompanyWallet', 'wellnessReport']
+    keys: ['userDetails', 'customerOutletOrder', 'customerWallet', 'customerCompanyWallet']
   },
   {
     title: 'ORGANIZATION & COMPLIANCE',
@@ -434,6 +461,14 @@ export const GROUPED_TAB_POLICIES = [
   {
     title: 'BILLING',
     keys: ['billingoutletWallet', 'billingvirtualCafeteria', 'billingdailyOrder', 'billingWallet', 'billingbulk', 'billingcompanyWallet']
+  },
+  {
+    title: 'OTHER ORDERS',
+    keys: ['otherAdminOrders', 'otherBulkOrders', 'otherEmployeePoll', 'otherVirtualCafeteria']
+  },
+  {
+    title: 'EXCEL REPORTS',
+    keys: ['bulkEvent', 'adminDaily', 'mealaweVirtualCafeteria', 'employeePoll']
   }
 ];
 

@@ -19,8 +19,8 @@ export class OrganizationViewComponent implements OnInit {
   selectedChildTabIndex = 0;
   btnPolicy: any;
   orgViewList = [
-    { name: 'Org Details', path: 'orgDetails' },
-    { name: 'Compliance', path: 'organizationCompliance' },
+    { name: 'Org Details', path: 'orgDetails', policyKey: 'orgDetails' },
+    { name: 'Compliance', path: 'organizationCompliance', policyKey: 'compliance' },
     {
       name: 'Bulk Menu Section',
       path: 'bulkMenuSection',
@@ -51,6 +51,7 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Lux', path: 'luxMenu' },
         { name: 'Pantry', path: 'pantryMenu' },
       ],
+      policyKey: 'bulkMenuSection'
     },
     {
       name: 'Employee Bulk Menu', path: 'employeebulkmenu',
@@ -81,16 +82,17 @@ export class OrganizationViewComponent implements OnInit {
         { name: 'Lux', path: 'employeeluxMenu' },
         { name: 'Pantry', path: 'employeepantryMenu' },
       ],
+      policyKey: 'employeeBulkMenu'
     },
-    { name: 'Virtual Cafeteria', path: 'virtualCafeteriaOutlet' },
-    { name: 'Daily Order Menu', path: 'dailyOrderMenu' },
-    { name: 'Consumption Menu', path: 'consumptionOrder' },
-    { name: 'Employee List', path: 'employeeList' },
-    { name: 'Outlet Employee', path: 'outletEmployee' },
-    { name: 'Virtual Cafeteria Employee', path: 'vcEmployee' },
+    { name: 'Virtual Cafeteria', path: 'virtualCafeteriaOutlet', policyKey: 'virtualCafeteria' },
+    { name: 'Daily Order Menu', path: 'dailyOrderMenu', policyKey: 'dailyOrderMenu' },
+    { name: 'Consumption Menu', path: 'consumptionOrder', policyKey: 'consumptionMenu' },
+    { name: 'Employee List', path: 'employeeList', policyKey: 'employeeList' },
+    { name: 'Outlet Employee', path: 'outletEmployee', policyKey: 'outletEmployee' },
+    { name: 'Virtual Cafeteria Employee', path: 'vcEmployee', policyKey: 'virtualCafeteriaEmployee' },
     // { name: 'Guest Employee', path: 'guestEmployeeList' },
-    { name: 'Company Wallet', path: 'companyWallet' },
-    { name: 'QR Employee', path: 'qrEmployee' },
+    { name: 'Company Wallet', path: 'companyWallet', policyKey: 'companyWallet' },
+    { name: 'QR Employee', path: 'qrEmployee', policyKey: 'qrEmployee' },
   ];
   isCategoryActive = true;
   selectedCafeteria: any;
@@ -105,32 +107,9 @@ export class OrganizationViewComponent implements OnInit {
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.tabPolicy = this.policyService.getCurrentTabPolicy();
-
-    // Mapping of tab paths to policy keys for Organization module
-    const orgTabMap: { [key: string]: string } = {
-      'orgDetails': 'orgDetails',
-      'organizationCompliance': 'compliance',
-      'bulkMenuSection': 'bulkMenuSection',
-      'employeebulkmenu': 'employeeBulkMenu',
-      'virtualCafeteriaOutlet': 'virtualCafeteria',
-      'dailyOrderMenu': 'dailyOrderMenu',
-      'consumptionOrder': 'consumptionMenu',
-      'employeeList': 'employeeList',
-      'outletEmployee': 'outletEmployee',
-      'vcEmployee': 'virtualCafeteriaEmployee',
-      'companyWallet': 'companyWallet',
-      'qrEmployee': 'qrEmployee',
-      'emailConfig': 'emailConfig'
-    };
-
-    this.orgViewList = this.orgViewList.filter((item: any) => {
-      const policyKey = orgTabMap[item.path];
-      if (policyKey && this.tabPolicy[policyKey] === false) {
-        return false;
-      }
-      return true;
-    });
-
+    this.orgViewList = this.orgViewList.filter(
+      (item: any) => this.tabPolicy[item.policyKey] !== false
+    );
     this.initializeTabs();
     this.initializeCafeteria();
   }

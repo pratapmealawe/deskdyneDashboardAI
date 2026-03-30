@@ -19,7 +19,7 @@ export class DashboardComponent implements OnInit {
   selectedIndex: number = 0;
   allTabs = [
     { index: 0, name: 'Dashboard', icon: 'dashboard', policyKey: 'Dashboard' },
-    { index: 1, name: 'Admin Orders', icon: 'receipt_long', policyKey: 'adminOrders' },
+    { index: 1, name: 'Admin Orders', icon: 'receipt_long', policyKey: 'dashBoardAdminOrder' },
     { index: 2, name: 'Menu Items', icon: 'menu_book', policyKey: 'menuItems' },
     { index: 3, name: 'Orders', icon: 'shopping_cart', policyKey: 'Orders' },
     { index: 4, name: 'Reviews', icon: 'rate_review', policyKey: 'Reviews' },
@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
     { index: 7, name: 'Menu Counters', icon: 'countertops', policyKey: 'menuCounters' },
     { index: 8, name: 'Audit Reports', icon: 'assessment', policyKey: 'auditReports' }
   ];
+
   tabs: any[] = [];
   tabPolicy: any;
   constructor(private apiMainService: ApiMainService, private router: Router, private ref: ChangeDetectorRef, private policyService: PolicyService) {
@@ -35,6 +36,9 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.tabPolicy = this.policyService.getCurrentTabPolicy();
+    this.tabs = this.tabs.filter(
+      (item: any) => this.tabPolicy[item.policyKey] !== false
+    );
     this.filterTabs();
     this.getorganizations();
   }

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
 @Component({
@@ -8,19 +9,25 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 })
 export class OtherOrdersComponent implements OnInit {
   orderTypeList = [
-    { name: 'Admin Orders', path: 'adminOrders', icon: 'receipt_long' },
-    { name: 'Bulk Orders', path: 'bulkOrders', icon: 'inventory_2' },
-    { name: 'Employee Poll', path: 'employeePoll', icon: 'how_to_vote' },
-    { name: 'Virtual Cafeteria', path: 'virtualCafeteria', icon: 'restaurant' }
+    { name: 'Admin Orders', path: 'adminOrders', icon: 'receipt_long', policyKey: 'otherAdminOrders' },
+    { name: 'Bulk Orders', path: 'bulkOrders', icon: 'inventory_2', policyKey: 'otherBulkOrders' },
+    { name: 'Employee Poll', path: 'employeePoll', icon: 'how_to_vote', policyKey: 'otherEmployeePoll' },
+    { name: 'Virtual Cafeteria', path: 'virtualCafeteria', icon: 'restaurant', policyKey: 'otherVirtualCafeteria' }
   ];
-
+  tabPolicy: any;
   selectedTabIndex = 0;
 
   constructor(
     private sendDataToComponent: SendDataToComponent,
+    private policyService: PolicyService
   ) { }
 
   ngOnInit(): void {
+    this.tabPolicy = this.policyService.getCurrentTabPolicy();
+    this.orderTypeList = this.orderTypeList.filter(
+      (item: any) => this.tabPolicy[item.policyKey] !== false
+    );
+
   }
 
   onCustomTabChange(index: number): void {
