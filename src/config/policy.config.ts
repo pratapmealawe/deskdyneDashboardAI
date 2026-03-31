@@ -304,7 +304,11 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   vendorFirmDetails: false,
   vendorWallets: false,
   vendorOrderReport: false,
-
+  // excel export 
+  excelBulkEvent: false,
+  excelAdminDaily: false,
+  excelMealaweVirtualCafeteria: false,
+  excelEmployeePoll: false,
 
 };
 
@@ -468,7 +472,7 @@ export const GROUPED_TAB_POLICIES = [
   },
   {
     title: 'EXCEL REPORTS',
-    keys: ['bulkEvent', 'adminDaily', 'mealaweVirtualCafeteria', 'employeePoll']
+    keys: ['excelBulkEvent', 'excelAdminDaily', 'excelMealaweVirtualCafeteria', 'excelEmployeePoll']
   }
 ];
 
