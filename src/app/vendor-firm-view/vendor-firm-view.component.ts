@@ -65,10 +65,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
-    this.vendorViewList = this.vendorViewList.filter(
-      (item: any) => this.tabPolicy[item.policyKey] !== false
-    );
+    this.vendorViewList = this.policyService.filterTabsByPolicy(this.vendorViewList);
 
     if (this.vendorViewList.length > 0) {
       if (this.vendorViewList.findIndex(x => x.path === this.selectedTab) === -1) {

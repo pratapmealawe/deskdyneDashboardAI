@@ -30,10 +30,7 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
-    this.userViewList = this.userViewList.filter(
-      (item: any) => this.tabPolicy[item.policyKey] !== false
-    );
+    this.userViewList = this.policyService.filterTabsByPolicy(this.userViewList);
     if (this.selectedTab) {
       const foundIndex = this.userViewList.findIndex(x => x.path === this.selectedTab);
       this.selectedTabIndex = foundIndex >= 0 ? foundIndex : 0;

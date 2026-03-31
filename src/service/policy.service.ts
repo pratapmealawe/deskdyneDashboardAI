@@ -37,7 +37,12 @@ export class PolicyService {
     return profile?.policy[0]?.tab_policies || {};
   }
 
-  /** Call on login / logout to bust the in-memory permission cache. */
+  filterTabsByPolicy(tabList: any[]): any[] {
+    const tabPolicy = this.getCurrentTabPolicy();
+    const hasPolicy = Object.keys(tabPolicy || {}).length > 0;
+    return hasPolicy ? tabList.filter(item => tabPolicy[item.policyKey] !== false) : [];
+  }
+
   clearCache(): void {
     this._cachedButtonPolicy = null;
   }
