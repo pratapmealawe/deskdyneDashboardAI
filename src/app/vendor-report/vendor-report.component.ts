@@ -144,9 +144,6 @@ export class VendorReportComponent {
     this.loadingOutlets = true
 
     this.outletList = this.vendorFirmInfo.outletList || []
-
-    console.log(this.outletList);
-
     this.outletList.length > 0 ? this.loadingOutlets = false : this.loadingOutlets = true
   }
 

@@ -42,7 +42,7 @@ export class ApiConfigService {
       deletePopupOutlet: p('/api/deletePopupOutlet', 'DELETE'),
       togglePopupOutletStatus: p('/api/togglePopupOutletStatus', 'PATCH'),
       saveMenuItem: p('/api/saveMenuItem', 'POST'),
-      getMenuItems: p('/api/getMenuItems', 'GET'),
+      getMenuItems: p('/api/getMenuItems', 'POST'),
       getMenuItemById: p('/api/getMenuItemById', 'GET'),
       updateMenuItem: p('/api/updateMenuItem', 'PUT'),
       deleteMenuItem: p('/api/deleteMenuItem', 'DELETE'),

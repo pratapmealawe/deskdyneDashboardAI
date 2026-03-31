@@ -1,28 +1,16 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild,
-  TemplateRef,
-} from '@angular/core';
-
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ToasterService } from 'src/service/toaster.service';
 import { BulkMenuUploadDialogComponent } from '../bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
 import { AddOutletMenuComponent } from './add-outlet-menu/add-outlet-menu.component';
-import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dialog.component';
 import { CopyOutletMenuComponent } from './copy-outlet-menu/copy-outlet-menu.component';
+import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dialog.component';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -40,21 +28,16 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   showCard: boolean = false;
   selectedCategory: any;
   menuItems: any[] = [];
-  outletList: any[] = [];
   foodItem: any;
-
   menuInfo: any;
   eventInfo: any;
-
   // main outlet menu lists
   filteredMenuList: any[] = [];
   groupedMenuList: any[] = [];
-
   // filters
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
   selectedDateFilter: Date | null = null;
-
   // weekly menu dates
   selectedWeeklyDates: Date[] = [];
   today = new Date();
@@ -67,7 +50,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   ) { }
 
   ngOnInit(): void {
-    this.fetchAllOutlets();
     if (this.outletObj?._id) {
       this.fetchMenuItems();
     }
@@ -85,6 +67,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   async fetchMenuItems() {
     try {
       const res = await this.apiMainService.getMenuItems(this.outletObj._id);
+      console.log('menu items', res);
       this.menuItems = res || [];
       this.init();
     } catch (e) {
@@ -96,25 +79,13 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   init() {
     if (this.menuItems && this.menuItems.length > 0) {
-      this.filteredMenuList = this.menuItems
-        .slice()
-        .sort((a: any, b: any) => a.precedence - b.precedence);
+      this.filteredMenuList = this.menuItems.slice().sort((a: any, b: any) => a.precedence - b.precedence);
       this.showCard = true;
     } else {
       this.filteredMenuList = [];
       this.showCard = false;
     }
     this.applyMenuFilters();
-  }
-
-  async fetchAllOutlets() {
-    try {
-      const res = await this.apiMainService.fetchAllOutlets();
-      this.outletList = res || [];
-    } catch (e) {
-      console.log('error while fetching outlets', e);
-      this.outletList = [];
-    }
   }
 
   applyMenuFilters() {
@@ -125,14 +96,10 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       return;
     }
 
-    let temp = this.menuItems
-      .slice()
-      .sort((a: any, b: any) => a.precedence - b.precedence);
+    let temp = this.menuItems.slice().sort((a: any, b: any) => a.precedence - b.precedence);
 
     if (this.selectedCategoryFilter) {
-      temp = temp.filter(
-        (item: any) => item.category === this.selectedCategoryFilter
-      );
+      temp = temp.filter((item: any) => item.category === this.selectedCategoryFilter);
     }
 
     if (this.searchTermMenu) {
@@ -145,19 +112,13 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     }
 
     if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
-      temp = temp.filter((item: any) =>
-        (item.weeklyMenuDates || []).some((d: any) =>
-          this.isSameDay(new Date(d.date), this.selectedDateFilter!)
-        )
-      );
+      temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
     }
 
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
 
-    this.groupedMenuList = this.outletObj?.isWeeklyMenu
-      ? this.buildDateGroupedMenu(this.filteredMenuList)
-      : this.buildGroupedMenu(this.filteredMenuList);
+    this.groupedMenuList = this.outletObj?.isWeeklyMenu ? this.buildDateGroupedMenu(this.filteredMenuList) : this.buildGroupedMenu(this.filteredMenuList);
   }
 
   private buildGroupedMenu(list: any[]) {
@@ -172,8 +133,18 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
     return Object.keys(grouped).map((category) => ({
       category,
-      items: grouped[category],
+      subGroups: [{ title: '', items: grouped[category] }]
     }));
+  }
+
+  private innerGroupBy(list: any[], key: string) {
+    const grouped = list.reduce((acc: any, item: any) => {
+      const val = item[key] || 'Uncategorized';
+      if (!acc[val]) acc[val] = [];
+      acc[val].push(item);
+      return acc;
+    }, {});
+    return Object.keys(grouped).map(title => ({ title, items: grouped[title] }));
   }
 
   isSameDay(d1: Date, d2: Date): boolean {
@@ -185,29 +156,38 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   buildDateGroupedMenu(list: any[]) {
-    const grouped: any = {};
+    const dateGroups: any = {};
+    const unassigned: any[] = [];
+
     list.forEach(item => {
-      (item.weeklyMenuDates || []).forEach((d: any) => {
-        const dateStr = new Date(d.date).toLocaleDateString('en-IN', {
-          weekday: 'long',
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric'
+      if (!item.weeklyMenuDates || item.weeklyMenuDates.length === 0) {
+        unassigned.push(item);
+      } else {
+        item.weeklyMenuDates.forEach((d: any) => {
+          const dateStr = new Date(d.date).toLocaleDateString('en-IN', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          if (!dateGroups[dateStr]) {
+            dateGroups[dateStr] = [];
+          }
+          if (!dateGroups[dateStr].find((i: any) => i._id === item._id)) {
+            dateGroups[dateStr].push(item);
+          }
         });
-        if (!grouped[dateStr]) {
-          grouped[dateStr] = [];
-        }
-        if (!grouped[dateStr].find((i: any) => i._id === item._id)) {
-          grouped[dateStr].push(item);
-        }
-      });
+      }
     });
 
-    return Object.keys(grouped).map(date => ({
+    const result = Object.keys(dateGroups).map(date => ({
       category: date,
-      items: grouped[date]
+      subGroups: this.innerGroupBy(dateGroups[date], 'category')
     }));
+
+    return result;
   }
+
 
   toggleDate(date: Date) {
     const index = this.selectedWeeklyDates.findIndex(d => this.isSameDay(d, date));
@@ -231,7 +211,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     return true;
   };
 
-  async edit(item: any, index: any) {
+  async edit(item: any) {
     this.open('update', item);
   }
 
@@ -251,10 +231,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     });
   }
 
-  async addMenuItem() {
-    this.open('add');
-  }
-
   compareSection(o1: any, o2: any): boolean {
     if (!o1 || !o2) {
       return o1 === o2;
@@ -267,10 +243,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   }
 
   async deleteFoodItem() {
-    const res: any = await this.apiMainService.deleteOutletMenu(
-      this.outletObj._id,
-      this.foodItem._id
-    );
+    const res: any = await this.apiMainService.deleteOutletMenu(this.outletObj._id, this.foodItem._id);
     if (res) {
       this.fetchMenuItems();
       this.toastr.success('Menu item deleted successfully');
@@ -282,22 +255,16 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     const menu = this.menuInfo;
     const event = this.eventInfo;
     menu.isActive = event.checked;
-
     const menuObj = {
       isActive: event.checked,
     };
-
-    const res = await this.apiMainService.changeMenuActivation(
-      this.outletObj._id,
-      menu._id,
-      menuObj
-    );
+    const res = await this.apiMainService.changeMenuActivation(this.outletObj._id, menu._id, menuObj);
     if (res) {
       this.toastr.success(`Item ${event.checked ? 'Enabled' : 'Disabled'} successfully`);
     }
   }
 
-  showPopup(item: any, i: any) {
+  showPopup(item: any) {
     this.foodItem = item;
     this.confirmationModalService.modal({
       msg: `Are you sure, you want to delete ${item.itemName}`,
@@ -337,24 +304,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       data: { outletObj: this.outletObj }
     });
 
-    dialogRef.afterClosed().subscribe(async (selectedItems) => {
-      if (selectedItems && selectedItems.length > 0) {
-        try {
-          const itemsToSave = selectedItems.map((item: any) => ({
-            ...item,
-            outletId: this.outletObj._id,
-            _id: undefined
-          }));
-
-          const res = await this.apiMainService.bulkUploadOutletMenu(itemsToSave, this.outletObj._id);
-          if (res) {
-            this.toastr.success(`${selectedItems.length} items added successfully`);
-            this.fetchMenuItems();
-          }
-        } catch (error) {
-          console.error('Error adding items from master menu:', error);
-          this.toastr.error('Failed to add items from master menu');
-        }
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        this.fetchMenuItems();
       }
     });
   }
@@ -367,24 +319,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       data: { outletObj: this.outletObj }
     });
 
-    dialogRef.afterClosed().subscribe(async (selectedItems) => {
-      if (selectedItems && selectedItems.length > 0) {
-        try {
-          const itemsToSave = selectedItems.map((item: any) => ({
-            ...item,
-            outletId: this.outletObj._id,
-            _id: undefined
-          }));
-
-          const res = await this.apiMainService.bulkUploadOutletMenu(itemsToSave, this.outletObj._id);
-          if (res) {
-            this.toastr.success(`${selectedItems.length} items copied successfully`);
-            this.fetchMenuItems();
-          }
-        } catch (error) {
-          console.error('Error copying items from outlet:', error);
-          this.toastr.error('Failed to copy items');
-        }
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        this.fetchMenuItems();
       }
     });
   }

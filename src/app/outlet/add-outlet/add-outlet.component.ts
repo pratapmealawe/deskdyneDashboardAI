@@ -1,11 +1,5 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  Validators,
-  AbstractControl,
-} from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -165,6 +159,18 @@ export class AddOutletComponent implements OnInit {
         this.holidays = [];
       }
     });
+
+    // When isFullAmountOrgPaid is disabled, reset meal subsidy types and counts
+    this.form.get('isFullAmountOrgPaid')?.valueChanges.subscribe((isEnabled: boolean) => {
+      if (!isEnabled) {
+        this.mealTimings.controls.forEach((group: AbstractControl) => {
+          group.patchValue({
+            mealSubsidyType: 'chargeable',
+            maxCountFree: 0
+          }, { emitEvent: false });
+        });
+      }
+    });
   }
 
   private createMealTimingGroup(
@@ -199,25 +205,25 @@ export class AddOutletComponent implements OnInit {
   onMealTypeChange(index: number): void {
     const group = this.mealTimings.at(index);
     const mealType = group.get('mealType')?.value;
-    
+
     // Auto-generate slug only if it's currently empty OR we are in "Add" mode
     // If it's an existing row in edit mode, we typically don't want to change the slug automatically
     if (mealType) {
-       const baseSlug = this.generateSlug(mealType);
-       let slug = baseSlug;
-       let counter = 1;
-       
-       // Check for duplicates in current timings
-       const existingSlugs = this.mealTimings.controls
-         .map((c, i) => i !== index ? c.get('slug')?.value : null)
-         .filter(s => !!s);
-         
-       while (existingSlugs.includes(slug)) {
-         slug = `${baseSlug}-${counter}`;
-         counter++;
-       }
-       
-       group.get('slug')?.patchValue(slug, { emitEvent: false });
+      const baseSlug = this.generateSlug(mealType);
+      let slug = baseSlug;
+      let counter = 1;
+
+      // Check for duplicates in current timings
+      const existingSlugs = this.mealTimings.controls
+        .map((c, i) => i !== index ? c.get('slug')?.value : null)
+        .filter(s => !!s);
+
+      while (existingSlugs.includes(slug)) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+
+      group.get('slug')?.patchValue(slug, { emitEvent: false });
     }
   }
 
@@ -307,7 +313,7 @@ export class AddOutletComponent implements OnInit {
       } else {
         this.addDefaultMealTimings();
       }
-
+      console.log(outlet,'outlet')
       // emitEvent: false prevents the isPreOrder valueChanges subscription from
       // firing and overwriting the meal timings we just loaded above.
       this.form.patchValue({
@@ -320,7 +326,7 @@ export class AddOutletComponent implements OnInit {
         isPreOrder: outlet.isPreOrder ?? false,
         isCabinOrder: outlet.isCabinOrder ?? false,
         isPackagingRequired: outlet.isPackagingRequired ?? false,
-                isPriceHide: outlet.isPriceHide ?? false,
+        isPriceHide: outlet.isPriceHide ?? false,
         packagingAmount: outlet.packagingAmount ?? 0,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage ?? 0,
         MRPCommissionPercentage: outlet.MRPCommissionPercentage ?? 0,
@@ -633,22 +639,22 @@ export class AddOutletComponent implements OnInit {
   }
 
   setStandardEndTime(): void {
-    // Set standard times based on mealType
+    // Set standard times based on slug
     const map: Record<string, { from: string; till: string }> = {
-      Fullday: { from: '06:00', till: '23:00' },
-      Breakfast: { from: '06:00', till: '10:00' },
-      Lunch: { from: '11:00', till: '14:00' },
-      EveningSnacks: { from: '16:00', till: '18:00' },
-      Dinner: { from: '19:00', till: '22:00' },
+      fullday: { from: '06:00', till: '23:00' },
+      breakfast: { from: '06:00', till: '10:00' },
+      lunch: { from: '11:00', till: '14:00' },
+      'high-tea': { from: '16:00', till: '18:00' },
+      dinner: { from: '19:00', till: '22:00' },
     };
 
     this.mealTimings.controls.forEach((ctrl: AbstractControl) => {
-      const mt = ctrl.get('mealType')?.value;
-      if (mt && map[mt]) {
+      const slug = ctrl.get('slug')?.value;
+      if (slug && map[slug]) {
         ctrl.patchValue(
           {
-            acceptOrderFrom: map[mt].from,
-            acceptOrderTill: map[mt].till,
+            acceptOrderFrom: map[slug].from,
+            acceptOrderTill: map[slug].till,
           },
           { emitEvent: false }
         );

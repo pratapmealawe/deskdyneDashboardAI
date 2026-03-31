@@ -73,7 +73,8 @@ export class CopyOutletMenuComponent implements OnInit {
   }
 
   onItemToggle(item: any) {
-    const index = this.selectedMenuItems.findIndex(i => i._id === item._id);
+    const itemId = item._id?.toString();
+    const index = this.selectedMenuItems.findIndex(i => i._id?.toString() === itemId);
     if (index === -1) {
       this.selectedMenuItems.push(item);
     } else {
@@ -82,19 +83,29 @@ export class CopyOutletMenuComponent implements OnInit {
   }
 
   isSelected(item: any): boolean {
-    return this.selectedMenuItems.some(i => i._id === item._id);
+    if (!item || !item._id) return false;
+    const itemId = item._id.toString();
+    return this.selectedMenuItems.some(i => i._id?.toString() === itemId);
   }
 
-  submit() {
-    // Transform selected items to match parent requirements
-    const transformedItems = this.selectedMenuItems.map((each: any) => {
-      return {
-        ...each,
-        mealTimingInfo: (each.mealTimingInfo || []).map(
-          (info: any) => (typeof info === 'string' ? info : (info.mealType || info))
-        ),
-      };
-    });
-    this.dialogRef.close(transformedItems);
+  async submit() {
+    if (this.selectedMenuItems && this.selectedMenuItems.length > 0) {
+      try {
+        const itemsToSave = this.selectedMenuItems.map((item: any) => {
+          const { _id, __v, createdAt, updatedAt, ...rest } = item;
+          return { ...rest, outletId: this.data.outletObj._id };
+        });
+
+        const res = await this.apiMainService.bulkUploadOutletMenu(itemsToSave, this.data.outletObj._id);
+        if (res) {
+          this.toastr.success(`${this.selectedMenuItems.length} items copied successfully`);
+          this.dialogRef.close(true);
+        }
+      } catch (error) {
+        console.error('Error copying items from outlet:', error);
+        this.toastr.error('Failed to copy items');
+      }
+    }
   }
+
 }

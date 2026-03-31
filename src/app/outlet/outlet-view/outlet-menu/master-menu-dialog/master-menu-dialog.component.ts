@@ -63,8 +63,14 @@ export class MasterMenuDialogComponent implements OnInit {
     this.filteredMasterMenuList = list;
   }
 
+  clearSearch() {
+    this.searchTerm = '';
+    this.applyMasterFilter();
+  }
+
   onItemToggle(item: any) {
-    const index = this.selectedItems.findIndex(i => i._id === item._id);
+    const itemId = item._id?.toString();
+    const index = this.selectedItems.findIndex(i => i._id?.toString() === itemId);
     if (index === -1) {
       this.selectedItems.push(item);
     } else {
@@ -73,10 +79,34 @@ export class MasterMenuDialogComponent implements OnInit {
   }
 
   isSelected(item: any): boolean {
-    return this.selectedItems.some(i => i._id === item._id);
+    if (!item || !item._id) return false;
+    const itemId = item._id.toString();
+    return this.selectedItems.some(i => i._id?.toString() === itemId);
   }
 
-  submit() {
-    this.dialogRef.close(this.selectedItems);
+  async submit() {
+    if (this.selectedItems && this.selectedItems.length > 0) {
+      try {
+        const itemsToSave = this.selectedItems.map((item: any) => {
+          const { _id, __v, createdAt, updatedAt, ...rest } = item;
+          return {
+            ...rest,
+            outletId: this.data.outletObj._id,
+            mainMenuItemId: _id, // Link to master menu item
+            isActive: true       // Default to active when added
+          };
+        });
+
+        const res = await this.apiMainService.bulkUploadOutletMenu(itemsToSave, this.data.outletObj._id);
+        if (res) {
+          this.toastr.success(`${this.selectedItems.length} items added successfully`);
+          this.dialogRef.close(true);
+        }
+      } catch (error) {
+        console.error('Error adding items from master menu:', error);
+        this.toastr.error('Failed to add items from master menu');
+      }
+    }
   }
+
 }

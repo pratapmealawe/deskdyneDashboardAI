@@ -120,7 +120,7 @@
               </mat-slide-toggle>
 
               <mat-slide-toggle formControlName="isFullAmountOrgPaid" color="primary">
-                Full Org Paid
+                Full Organization Amount Paid
               </mat-slide-toggle>
             </div>
           </div>
@@ -171,7 +171,7 @@
               <div class="col-12 col-md-6 mb-3">
                 <mat-form-field appearance="outline" class="w-100 custom-field">
                   <mat-label>Outlet Name</mat-label>
-                  <input matInput placeholder="e.g. Starbucks" formControlName="outletName" [readonly]="showUpdate" />
+                  <input matInput placeholder="e.g. Starbucks" formControlName="outletName" />
                   <mat-icon matSuffix class="text-muted">store</mat-icon>
                   <mat-error *ngIf="f['outletName'].invalid && (f['outletName'].touched || showError)">
                     *Outlet name is required
@@ -380,25 +380,27 @@
                           </mat-form-field>
                         </div>
 
-                        <!-- Subsidy Controls on a new logic line -->
-                        <div class="col-12 col-md-6 mb-2">
-                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
-                            <mat-label>Subsidy Type</mat-label>
-                            <mat-select formControlName="mealSubsidyType">
-                              <mat-option value="free">Free (Internal)</mat-option>
-                              <mat-option value="subsidized">Subsidized (User Pays Partial)</mat-option>
-                              <mat-option value="chargeable">Chargeable (Full Price)</mat-option>
-                            </mat-select>
-                          </mat-form-field>
-                        </div>
-                        <div class="col-12 col-md-6 mb-2">
-                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field"
-                            *ngIf="group.get('mealSubsidyType')?.value !== 'chargeable'">
-                            <mat-label>Max Count Free</mat-label>
-                            <input matInput type="number" formControlName="maxCountFree" />
-                            <mat-hint>0 for unlimited</mat-hint>
-                          </mat-form-field>
-                        </div>
+                        <!-- Subsidy Controls - Only shown if Full Org Paid is enabled -->
+                        <ng-container *ngIf="form.get('isFullAmountOrgPaid')?.value">
+                          <div class="col-12 col-md-6 mb-2">
+                            <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
+                              <mat-label>Subsidy Type</mat-label>
+                              <mat-select formControlName="mealSubsidyType">
+                                <mat-option value="free">Full Paid by Orgization and Free Meal </mat-option>
+                                <mat-option value="subsidized">Full Paid by Employee Salary</mat-option>
+                                <mat-option value="chargeable">Full Paid by Orgization and NotFree Meal</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                          <div class="col-12 col-md-6 mb-2">
+                            <mat-form-field appearance="outline" class="w-100 dense-field custom-field"
+                              *ngIf="group.get('mealSubsidyType')?.value !== 'chargeable'">
+                              <mat-label>Max Count Free</mat-label>
+                              <input matInput type="number" formControlName="maxCountFree" />
+                              <mat-hint>0 for unlimited</mat-hint>
+                            </mat-form-field>
+                          </div>
+                        </ng-container>
                       </div>
                     </div>
                   </div>

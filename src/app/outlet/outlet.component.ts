@@ -64,7 +64,6 @@ export class OutletComponent implements OnInit {
   async searchOutlet() {
     try {
       this.outletList = await this.apiMainService.searchOutlet({});
-      console.log(this.outletList);
 
       if (this.outletList.length > 0) {
         const orgMap = new Map<string, {
