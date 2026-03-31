@@ -37,7 +37,8 @@ import { OrderSubscriptionCardComponent } from './virtual-cafeteria/order-subscr
   ],
   exports: [
     OtherOrdersComponent,
-    DailyBulkCardComponent
+    DailyBulkCardComponent,
+    OrderSubscriptionPackageCardComponent
   ]
 })
 export class OtherOrdersModule { }

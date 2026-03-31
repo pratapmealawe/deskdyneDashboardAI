@@ -21,6 +21,9 @@ interface MealTiming {
   mealType: string;
   acceptOrderFrom: string;
   acceptOrderTill: string;
+  slug?: string;
+  maxCountFree?: number;
+  mealSubsidyType?: string;
 }
 
 interface SectionConfig {
@@ -109,7 +112,6 @@ export class AddOutletComponent implements OnInit {
     this.form = this.fb.group({
       outletName: ['', Validators.required],
       outletDescription: ['', Validators.required],
-
       outletOpened: [true],
       closeTime: [''],
       isSectionWiseMenu: [false],
@@ -129,26 +131,19 @@ export class AddOutletComponent implements OnInit {
           wednesday: [true],
           thursday: [true],
           friday: [true],
-          saturday: [false],
-          sunday: [false],
+          saturday: [true],
+          sunday: [true],
         }),
         holidays: [[]],
       }),
       isPackagingRequired: [false],
       packagingAmount: [0, [Validators.min(0)]],
-
-      vendorCommissionPercentage: [
-        0,
-        [Validators.required, Validators.min(0), Validators.max(100)],
-      ],
-      MRPCommissionPercentage: [
-        0,
-        [Validators.required, Validators.min(0), Validators.max(100)],
-      ],
+      vendorCommissionPercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      MRPCommissionPercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       precedence: [0, [Validators.min(0)]],
       billingType: ['revenueSharing', Validators.required],
-
+      isFullAmountOrgPaid: [false],
       mealTimings: this.fb.array([]),
       sectionConfig: this.fb.array([]),
       cabinConfig: this.fb.array([]),
@@ -175,13 +170,55 @@ export class AddOutletComponent implements OnInit {
   private createMealTimingGroup(
     mealType: string = '',
     from: string = '00:00',
-    till: string = '00:00'
+    till: string = '00:00',
+    slug: string = '',
+    maxCountFree: number = 0,
+    mealSubsidyType: string = 'chargeable'
   ): FormGroup {
-    return this.fb.group({
+    const group = this.fb.group({
       mealType: [mealType, Validators.required],
       acceptOrderFrom: [from, Validators.required],
       acceptOrderTill: [till, Validators.required],
+      slug: [slug],
+      maxCountFree: [maxCountFree, [Validators.min(0)]],
+      mealSubsidyType: [mealSubsidyType || 'chargeable'],
     });
+
+    if (!slug && mealType) {
+      group.get('slug')?.patchValue(this.generateSlug(mealType));
+    }
+
+    return group;
+  }
+
+  generateSlug(mealType: string): string {
+    if (!mealType) return '';
+    return mealType.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+  }
+
+  onMealTypeChange(index: number): void {
+    const group = this.mealTimings.at(index);
+    const mealType = group.get('mealType')?.value;
+    
+    // Auto-generate slug only if it's currently empty OR we are in "Add" mode
+    // If it's an existing row in edit mode, we typically don't want to change the slug automatically
+    if (mealType) {
+       const baseSlug = this.generateSlug(mealType);
+       let slug = baseSlug;
+       let counter = 1;
+       
+       // Check for duplicates in current timings
+       const existingSlugs = this.mealTimings.controls
+         .map((c, i) => i !== index ? c.get('slug')?.value : null)
+         .filter(s => !!s);
+         
+       while (existingSlugs.includes(slug)) {
+         slug = `${baseSlug}-${counter}`;
+         counter++;
+       }
+       
+       group.get('slug')?.patchValue(slug, { emitEvent: false });
+    }
   }
 
   addDefaultMealTimings(): void {
@@ -257,7 +294,14 @@ export class AddOutletComponent implements OnInit {
       if (outlet.mealTiming && Array.isArray(outlet.mealTiming)) {
         outlet.mealTiming.forEach((mt: MealTiming) => {
           this.mealTimings.push(
-            this.createMealTimingGroup(mt.mealType, mt.acceptOrderFrom, mt.acceptOrderTill)
+            this.createMealTimingGroup(
+              mt.mealType,
+              mt.acceptOrderFrom,
+              mt.acceptOrderTill,
+              mt.slug,
+              mt.maxCountFree,
+              mt.mealSubsidyType
+            )
           );
         });
       } else {
@@ -284,6 +328,7 @@ export class AddOutletComponent implements OnInit {
         precedence: outlet.precedence ?? 0,
         billingType: outlet.billingType ?? 'revenueSharing',
         closeTime: outlet.closeTime ?? '',
+        isFullAmountOrgPaid: outlet.isFullAmountOrgPaid ?? false,
       });
 
       const preOrderConfigData = outlet.preOrderConfig || {};

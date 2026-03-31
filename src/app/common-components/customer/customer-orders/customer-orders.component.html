@@ -1,0 +1,28 @@
+<div class="customer-orders-container">
+    <div class="sub-tabs-nav mb-3">
+        <button class="sub-tab-btn" [class.active]="selectedSubTab === 'outlet'" (click)="selectSubTab('outlet')">
+            <mat-icon>shopping_bag</mat-icon>
+            <span>Outlet Orders</span>
+        </button>
+        <button class="sub-tab-btn" [class.active]="selectedSubTab === 'poll'" (click)="selectSubTab('poll')">
+            <mat-icon>poll</mat-icon>
+            <span>Poll Orders</span>
+        </button>
+        <button class="sub-tab-btn" [class.active]="selectedSubTab === 'admin'" (click)="selectSubTab('admin')">
+            <mat-icon>admin_panel_settings</mat-icon>
+            <span>Admin Orders</span>
+        </button>
+    </div>
+
+    <div class="sub-tab-content">
+        <div *ngIf="selectedSubTab === 'outlet'">
+            <app-customer-outlet-orders [userDetails]="userDetails"></app-customer-outlet-orders>
+        </div>
+        <div *ngIf="selectedSubTab === 'poll'">
+            <app-customer-past-orders [userObj]="userDetails"></app-customer-past-orders>
+        </div>
+        <div *ngIf="selectedSubTab === 'admin'">
+            <app-customer-past-meal-orders [userObj]="userDetails"></app-customer-past-meal-orders>
+        </div>
+    </div>
+</div>

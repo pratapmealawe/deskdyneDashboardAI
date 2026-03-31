@@ -56,6 +56,7 @@ const routes: Routes = [
   { path: 'orgBulkOrderHistory', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-bulk-order-history/org-bulk-order-history.module').then(m => m.OrgBulkOrderHistoryModule) },
   { path: 'orgManualOrders', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-manual-orders/org-manual-orders.module').then(m => m.OrgManualOrdersModule) },
   { path: 'orgBilling', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-billing/org-billing.module').then(m => m.OrgBillingModule) },
+  { path: 'orgSalaryDeduction', canActivate: [accessGuard], loadChildren: () => import('./org-components/org-salary-deduction/org-salary-deduction.module').then(m => m.OrgSalaryDeductionModule) },
   { path: 'viewChecklistQuestion', canActivate: [accessGuard], loadChildren: () => import('./deskdyne-components/checklist-question/checklist-question.module').then(m => m.ChecklistQuestionModule) },
   { path: 'submitChecklist', canActivate: [accessGuard], loadChildren: () => import('./org-components/submit-checklist/submit-checklist.module').then(m => m.SubmitChecklistModule) },
   { path: 'checklistHistory', canActivate: [accessGuard], loadChildren: () => import('./checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },

@@ -118,6 +118,10 @@
               <mat-slide-toggle formControlName="isPackagingRequired" color="primary">
                 Packaging Required
               </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="isFullAmountOrgPaid" color="primary">
+                Full Org Paid
+              </mat-slide-toggle>
             </div>
           </div>
         </div>
@@ -167,7 +171,7 @@
               <div class="col-12 col-md-6 mb-3">
                 <mat-form-field appearance="outline" class="w-100 custom-field">
                   <mat-label>Outlet Name</mat-label>
-                  <input matInput placeholder="e.g. Starbucks" formControlName="outletName" />
+                  <input matInput placeholder="e.g. Starbucks" formControlName="outletName" [readonly]="showUpdate" />
                   <mat-icon matSuffix class="text-muted">store</mat-icon>
                   <mat-error *ngIf="f['outletName'].invalid && (f['outletName'].touched || showError)">
                     *Outlet name is required
@@ -351,23 +355,48 @@
                       </div>
 
                       <div class="row align-items-center">
-                        <div class="col-12 col-md-4 mb-2 mb-md-0">
+                        <div class="col-12 col-md-3 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
                             <mat-label>Meal Type</mat-label>
-                            <input matInput formControlName="mealType" placeholder="Breakfast"
-                              [readonly]="form.get('isPreOrder')?.value" />
+                            <input matInput formControlName="mealType" placeholder="Breakfast" (input)="onMealTypeChange(i)" />
                           </mat-form-field>
                         </div>
-                        <div class="col-6 col-md-4">
+                        <div class="col-6 col-md-2 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
                             <mat-label>From</mat-label>
                             <input matInput type="time" formControlName="acceptOrderFrom" />
                           </mat-form-field>
                         </div>
-                        <div class="col-6 col-md-4">
+                        <div class="col-6 col-md-2 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
                             <mat-label>To</mat-label>
                             <input matInput type="time" formControlName="acceptOrderTill" />
+                          </mat-form-field>
+                        </div>
+                        <div class="col-12 col-md-5 mb-2 mb-md-3">
+                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
+                            <mat-label>Slug (Unique Identifier)</mat-label>
+                            <input matInput formControlName="slug" placeholder="breakfast-main" [readonly]="showUpdate" />
+                          </mat-form-field>
+                        </div>
+
+                        <!-- Subsidy Controls on a new logic line -->
+                        <div class="col-12 col-md-6 mb-2">
+                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
+                            <mat-label>Subsidy Type</mat-label>
+                            <mat-select formControlName="mealSubsidyType">
+                              <mat-option value="free">Free (Internal)</mat-option>
+                              <mat-option value="subsidized">Subsidized (User Pays Partial)</mat-option>
+                              <mat-option value="chargeable">Chargeable (Full Price)</mat-option>
+                            </mat-select>
+                          </mat-form-field>
+                        </div>
+                        <div class="col-12 col-md-6 mb-2">
+                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field"
+                            *ngIf="group.get('mealSubsidyType')?.value !== 'chargeable'">
+                            <mat-label>Max Count Free</mat-label>
+                            <input matInput type="number" formControlName="maxCountFree" />
+                            <mat-hint>0 for unlimited</mat-hint>
                           </mat-form-field>
                         </div>
                       </div>

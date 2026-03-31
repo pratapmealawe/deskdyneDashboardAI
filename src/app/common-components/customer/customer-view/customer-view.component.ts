@@ -57,7 +57,7 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   getTabIcon(path: string): string {
     const icons: { [key: string]: string } = {
       'userDetails': 'person',
-      'outletOrders': 'receipt_long',
+      'orders': 'receipt_long',
       'wallet': 'account_balance_wallet',
       'companyWallet': 'corporate_fare'
     };

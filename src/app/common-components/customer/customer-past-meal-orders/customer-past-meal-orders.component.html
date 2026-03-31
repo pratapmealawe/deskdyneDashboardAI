@@ -1,15 +1,25 @@
-<div>
-    <div *ngIf="orderList.length > 0">
-        <ul *ngFor="let order of orderList" class="list-group">
-            <li class="list-group-item">      
-            <!-- <app-order-subscription-package-card [orderInput]="order" [parentPage]="'user'" [showDeliveryDetail]="false"></app-order-subscription-package-card> -->
-            </li> 
-        </ul> 
-        <button *ngIf="nextOn" type="button" class="btn white primary2BG header5 btnMargin"
-            (click)="getMore()">Load More</button>    
+<div class="customer-past-meal-orders-container">
+    <div *ngIf="orderList.length > 0; else noOrders" class="orders-grid">
+        <mat-card *ngFor="let order of orderList" class="order-card-wrapper border-0 shadow-sm mb-3">
+            <app-order-subscription-package-card 
+                [orderInput]="order" 
+                [parentPage]="'user'" 
+                [showDeliveryDetail]="false">
+            </app-order-subscription-package-card>
+        </mat-card>
+        
+        <div class="load-more-container mt-4 text-center">
+            <button *ngIf="nextOn" mat-flat-button color="primary" (click)="getMore()">
+                <mat-icon class="me-1">expand_more</mat-icon>
+                Load More
+            </button>
+        </div>
     </div>
 
-    <div class="center" *ngIf="orderList.length === 0">
-        No Records Found
-    </div>
+    <ng-template #noOrders>
+        <div class="empty-state p-5 text-center text-muted">
+            <mat-icon class="large-icon mb-3">fastfood</mat-icon>
+            <p class="h6">No admin meal orders found for this user.</p>
+        </div>
+    </ng-template>
 </div>

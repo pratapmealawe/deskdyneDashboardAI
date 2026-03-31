@@ -112,6 +112,15 @@
             </div>
           </div>
           <div class="info-item">
+            <div class="info-icon" [class.text-success]="outletObj?.isFullAmountOrgPaid"><mat-icon>paid</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Org Paid Full</span>
+              <span class="info-value" [class.text-success]="outletObj?.isFullAmountOrgPaid">
+                {{ outletObj?.isFullAmountOrgPaid ? 'Enabled' : 'Disabled' }}
+              </span>
+            </div>
+          </div>
+          <div class="info-item">
             <div class="info-icon"><mat-icon>update</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Closing Time</span>
@@ -212,13 +221,28 @@
       <span class="count-badge">{{ outletObj?.mealTiming?.length }}</span>
     </div>
     <div class="timing-grid">
-      <div class="timing-card" *ngFor="let meal of outletObj?.mealTiming">
-        <div class="timing-icon">
-          <mat-icon>{{ getMealIcon(meal.mealType) }}</mat-icon>
+      <div class="timing-card-complex" *ngFor="let meal of outletObj?.mealTiming">
+        <div class="timing-main">
+          <div class="timing-icon">
+            <mat-icon>{{ getMealIcon(meal.mealType) }}</mat-icon>
+          </div>
+          <div class="timing-content">
+            <div class="d-flex align-items-center gap-2">
+              <span class="meal-type">{{ meal.mealType }}</span>
+              <span class="subsidy-badge" [ngClass]="meal.mealSubsidyType">{{ meal.mealSubsidyType | titlecase }}</span>
+            </div>
+            <span class="meal-time">{{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}</span>
+          </div>
         </div>
-        <div class="timing-content">
-          <span class="meal-type">{{ meal.mealType }}</span>
-          <span class="meal-time">{{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}</span>
+        <div class="timing-footer">
+          <div class="footer-item" *ngIf="meal.slug">
+            <mat-icon>link</mat-icon>
+            <span>{{ meal.slug }}</span>
+          </div>
+          <div class="footer-item" *ngIf="meal.mealSubsidyType !== 'chargeable'">
+            <mat-icon>counter_{{ meal.maxCountFree > 0 ? meal.maxCountFree : '0' }}</mat-icon>
+            <span>{{ meal.maxCountFree > 0 ? meal.maxCountFree + ' Free/Day' : 'Unlimited Free' }}</span>
+          </div>
         </div>
       </div>
     </div>

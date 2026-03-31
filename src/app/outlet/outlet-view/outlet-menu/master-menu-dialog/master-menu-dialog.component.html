@@ -1,0 +1,55 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>library_add</mat-icon>
+  Add from Master Menu
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div class="dialog-filters">
+    <div class="filter-group search-group">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" class="search-input" placeholder="Search items..." [(ngModel)]="searchTerm"
+        (input)="applyMasterFilter()" />
+    </div>
+    <mat-form-field appearance="outline" class="category-select">
+      <mat-label>Category</mat-label>
+      <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyMasterFilter()">
+        <mat-option value="">All Categories</mat-option>
+        <mat-option *ngFor="let category of categoryList" [value]="category.value">
+          {{ category.title }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="selection-list">
+    <div class="selection-card" *ngFor="let item of filteredMasterMenuList"
+      [ngClass]="{ 'selected': isSelected(item) }" (click)="onItemToggle(item)">
+      <mat-checkbox [checked]="isSelected(item)" (click)="$event.stopPropagation()"
+        style="display:none"></mat-checkbox>
+      <img [src]="displayImgUrl + item.imageUrl" class="selection-thumb" />
+      <div class="selection-info">
+        <div class="selection-name">{{ item.itemName || '-' }}</div>
+        <div class="selection-meta">
+          <span class="meta-chip">{{ item.category || '-' }}</span>
+          <span class="meta-chip price">₹{{ item.price }}</span>
+          <span class="type-dot" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'nonveg'"></span>
+        </div>
+      </div>
+    </div>
+    <div class="empty-list" *ngIf="filteredMasterMenuList.length === 0">
+      <mat-icon>search_off</mat-icon>
+      <span>No items found</span>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <div class="selection-count" *ngIf="selectedItems.length > 0">
+    {{ selectedItems.length }} item(s) selected
+  </div>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()"
+    [disabled]="selectedItems.length === 0">
+    <mat-icon>add</mat-icon> Add Selected
+  </button>
+</mat-dialog-actions>

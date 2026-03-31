@@ -1,0 +1,62 @@
+<h2 mat-dialog-title class="dialog-title">
+  <mat-icon>content_copy</mat-icon>
+  Copy Menu from Outlet
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <div class="dialog-filters">
+    <mat-form-field appearance="outline" class="outlet-select">
+      <mat-label>Select Outlet</mat-label>
+      <mat-select [(ngModel)]="selectedOutlet" (selectionChange)="onOutletChange()">
+        <mat-option [value]="null">Select Outlet</mat-option>
+        <mat-option *ngFor="let outlet of outletList" [value]="outlet">
+          {{ outlet.outletName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filter-group search-group" *ngIf="selectedOutlet">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" class="search-input" placeholder="Search items..." [(ngModel)]="searchTerm"
+        (input)="applyFilter()" />
+    </div>
+  </div>
+
+  <div class="selection-list" *ngIf="selectedOutlet">
+    <div class="selection-card" *ngFor="let item of filteredOutletMenuList"
+      [ngClass]="{ 'selected': isSelected(item) }"
+      (click)="onItemToggle(item)">
+      <mat-checkbox [checked]="isSelected(item)" (click)="$event.stopPropagation()"
+        style="display:none"></mat-checkbox>
+      <img [src]="displayImgUrl + item.imageUrl" class="selection-thumb" />
+      <div class="selection-info">
+        <div class="selection-name">{{ item.itemName || '-' }}</div>
+        <div class="selection-meta">
+          <span class="meta-chip">{{ item.category || '-' }}</span>
+          <span class="meta-chip price">₹{{ item.price }}</span>
+          <span class="type-dot" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'nonveg'"></span>
+        </div>
+      </div>
+    </div>
+    <div class="empty-list" *ngIf="outletMenuList.length === 0">
+      <mat-icon>info</mat-icon>
+      <span>No menu items in selected outlet</span>
+    </div>
+  </div>
+
+  <div class="empty-list" *ngIf="!selectedOutlet">
+    <mat-icon>storefront</mat-icon>
+    <span>Select an outlet to view its menu</span>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <div class="selection-count" *ngIf="selectedMenuItems.length > 0">
+    {{ selectedMenuItems.length }} item(s) selected
+  </div>
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()"
+    [disabled]="selectedMenuItems.length === 0">
+    <mat-icon>content_copy</mat-icon> Copy Selected
+  </button>
+</mat-dialog-actions>

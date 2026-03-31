@@ -9,6 +9,7 @@ import { OrderFilterDialogComponent, OrderFilterDialogData } from '../../order-f
 
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import * as Highcharts from 'highcharts';
 
 @Component({
   selector: 'app-customer-outlet-orders',
@@ -57,6 +58,11 @@ export class CustomerOutletOrdersComponent implements OnInit {
     dateFrom: FormControl<Date | null>;
     dateTo: FormControl<Date | null>;
   }>;
+
+  // Highcharts
+  Highcharts: typeof Highcharts = Highcharts;
+  chartOptions: Highcharts.Options = {};
+  updateFlag: boolean = false;
 
   // Pagination
   pageIndex = 0;
@@ -231,9 +237,48 @@ export class CustomerOutletOrdersComponent implements OnInit {
 
     this.totalAmount = this.totalWalletUsed + this.totalAmountPaid;
 
+    this.updateChartData();
+
     // Reset pagination
     this.pageIndex = 0;
     this.updatePagedList();
+  }
+
+  updateChartData() {
+    const dataMap = new Map<string, number>();
+    
+    // Group by date
+    this.filteredList.forEach(order => {
+      const dateKey = new Date(order.orderDate).toLocaleDateString('en-IN');
+      const amount = this.getGrandTotal(order);
+      dataMap.set(dateKey, (dataMap.get(dateKey) || 0) + amount);
+    });
+
+    const categories = Array.from(dataMap.keys()).reverse(); // Reverse for chronological order if needed, but the list might already be sorted
+    const data = Array.from(dataMap.values()).reverse();
+
+    this.chartOptions = {
+      chart: { type: 'areaspline', height: 300, backgroundColor: 'transparent' },
+      title: { text: '' },
+      xAxis: { categories: categories, crosshair: true },
+      yAxis: { title: { text: 'Amount (₹)' } },
+      tooltip: { shared: true, valuePrefix: '₹' },
+      credits: { enabled: false },
+      series: [{
+        name: 'Daily Spend',
+        type: 'areaspline',
+        data: data,
+        color: '#4f46e5',
+        fillColor: {
+          linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+          stops: [
+            [0, 'rgba(79, 70, 229, 0.2)'],
+            [1, 'rgba(79, 70, 229, 0)']
+          ]
+        }
+      }]
+    };
+    this.updateFlag = true;
   }
 
   updatePagedList() {

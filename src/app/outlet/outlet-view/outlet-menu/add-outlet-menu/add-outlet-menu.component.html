@@ -1,0 +1,479 @@
+<div class="dialog-title" mat-dialog-title>
+  <div class="title-left">
+    <mat-icon>{{ data.item ? 'edit' : 'add_circle' }}</mat-icon>
+    <span>{{ data.item ? 'Edit Item' : 'Add New Item' }}</span>
+  </div>
+  <button mat-icon-button class="info-btn" [matMenuTriggerFor]="infoMenu">
+    <mat-icon>info</mat-icon>
+  </button>
+  <mat-menu #infoMenu="matMenu" class="info-menu-panel">
+    <div class="info-menu-content">
+      <div class="info-header">
+        <mat-icon>lightbulb</mat-icon>
+        <span>Quick Tips</span>
+      </div>
+      <ul class="info-list required">
+        <li><mat-icon>check_circle</mat-icon> Name and Price are mandatory</li>
+        <li><mat-icon>check_circle</mat-icon> Select at least one category</li>
+      </ul>
+      <ul class="info-list recommended">
+        <li><mat-icon>stars</mat-icon> Add an image for better visibility</li>
+        <li><mat-icon>stars</mat-icon> Include nutrition facts if available</li>
+      </ul>
+    </div>
+  </mat-menu>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <div [formGroup]="form" class="dialog-form-layout" *ngIf="form">
+    <!-- LEFT SIDEBAR: Image Upload -->
+    <div class="dialog-sidebar">
+      <div class="image-upload-card">
+        <div class="upload-card-header">
+          <mat-icon>image</mat-icon>
+          <span>Item Image</span>
+        </div>
+        <div class="upload-wrapper">
+          <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
+            (change)="handleFileInput($event)" />
+          <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
+            <img *ngIf="imageUrl && !imageReplaced" [src]="data.item ? displayImgUrl + imageUrl : imageUrl"
+              class="preview-image" />
+            <img *ngIf="imageUrl && imageReplaced" [src]="uploadStatus ? imageUrl : displayImgUrl + imageUrl"
+              class="preview-image" />
+            <div *ngIf="!imageUrl" class="placeholder-content">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Upload Image</span>
+            </div>
+            <div class="upload-overlay">
+              <span>Change Image</span>
+            </div>
+          </div>
+        </div>
+        <p class="upload-hint">Click to upload or drag an image</p>
+      </div>
+
+      <!-- Item Type Section -->
+      <div class="type-selection-card">
+        <div class="upload-card-header">
+          <mat-icon>restaurant</mat-icon>
+          <span>Item Type</span>
+        </div>
+        <mat-radio-group formControlName="itemType" class="type-radio-group">
+          <div class="type-option veg" [class.selected]="form.get('itemType')?.value === 'Veg'">
+            <mat-radio-button value="Veg">
+              <span class="type-indicator veg-dot"></span>
+              <span>Veg</span>
+            </mat-radio-button>
+          </div>
+          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value === 'NonVeg'">
+            <mat-radio-button value="NonVeg">
+              <span class="type-indicator nonveg-dot"></span>
+              <span>Non-Veg</span>
+            </mat-radio-button>
+          </div>
+        </mat-radio-group>
+      </div>
+
+      <!-- Quick Settings -->
+      <div class="quick-settings-card">
+        <div class="settings-toggle">
+          <mat-slide-toggle formControlName="isActive" color="primary">
+            Available
+          </mat-slide-toggle>
+        </div>
+        <div class="settings-toggle">
+          <mat-slide-toggle formControlName="doNotChangeInFuture" color="primary">
+            Lock Subsidy
+          </mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT MAIN: Form Fields -->
+    <div class="dialog-main">
+      <!-- Basic Info Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>info</mat-icon>
+          <span>Basic Information</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Item Name</mat-label>
+              <input matInput type="text" formControlName="itemName" placeholder="e.g. Masala Dosa" />
+              <mat-error *ngIf="f['itemName'].hasError('required')">Item name is required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="2"
+                placeholder="Brief description of the item..."></textarea>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>payments</mat-icon>
+          <span>Pricing</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Price (₹)</mat-label>
+              <input matInput type="number" min="1" formControlName="price"
+                (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+              <mat-error *ngIf="f['price'].hasError('required')">Required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Subsidy (₹)</mat-label>
+              <input matInput type="number" min="0" formControlName="subsidy"
+                (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">discount</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="col-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Display Order</mat-label>
+              <input matInput type="number" min="0" formControlName="precedence" />
+              <mat-icon matPrefix class="field-icon">sort</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Discount Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>discount</mat-icon>
+          <span>Discount</span>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-12">
+            <mat-slide-toggle formControlName="discountEnabled" color="primary"
+              [disabled]="!form.get('price')?.value || (form.get('price')?.value - (form.get('subsidy')?.value || 0)) <= 0">
+              Enable Discount
+            </mat-slide-toggle>
+            <div class="text-muted small mt-2" *ngIf="!form.get('price')?.value">
+              <mat-icon class="info-icon">info</mat-icon>
+              Add a price before enabling discount
+            </div>
+          </div>
+        </div>
+
+        <ng-container *ngIf="form.get('discountEnabled')?.value">
+          <div class="row g-3">
+            <div class="col-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Discount Type</mat-label>
+                <mat-select formControlName="discountType">
+                  <mat-option value="percentage">Percentage (%)</mat-option>
+                  <mat-option value="flat">Flat (₹)</mat-option>
+                </mat-select>
+                <mat-error *ngIf="f['discountType'].hasError('required')">Required</mat-error>
+              </mat-form-field>
+            </div>
+
+            <div class="col-6">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>
+                  Discount Value
+                  <span *ngIf="form.get('discountType')?.value === 'flat'">
+                    (max: ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value || 0) - 1 }})
+                  </span>
+                  <span *ngIf="form.get('discountType')?.value === 'percentage'">(1–100%)</span>
+                </mat-label>
+                <input matInput type="number" formControlName="discountValue" [min]="1" [max]="form.get('discountType')?.value === 'percentage' ? 100 :
+               (form.get('price')?.value - (form.get('subsidy')?.value || 0) - 1)"
+                  (keydown)="preventInvalidNumber($event)" />
+                <mat-icon matPrefix class="field-icon">
+                  {{ form.get('discountType')?.value === 'percentage' ? 'percent' : 'currency_rupee' }}
+                </mat-icon>
+                <mat-error *ngIf="f['discountValue'].hasError('required')">Required</mat-error>
+                <mat-error *ngIf="f['discountValue'].hasError('min')">Must be at least 1</mat-error>
+              </mat-form-field>
+
+              <!-- Form-level errors info -->
+              <div class="text-danger small mt-1">
+                <span *ngIf="form.hasError('priceMissing')">
+                  Please enter price first
+                </span>
+                <span *ngIf="form.hasError('invalidEffectivePrice')">
+                  Price after subsidy must be greater than 0
+                </span>
+                <span *ngIf="form.hasError('percentInvalid')">
+                  Percentage must be between 1 and 100
+                </span>
+                <span *ngIf="form.hasError('flatNegative')">
+                  Discount must be greater than 0
+                </span>
+                <span *ngIf="form.hasError('flatInvalid')">
+                  Flat discount must be less than ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value
+                  || 0) }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Meal Timings Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>schedule</mat-icon>
+          <span>Meal Timings</span>
+        </div>
+        <div class="meal-timing-selection-grid">
+          <div *ngFor="let chip of data.outletObj?.mealTiming" class="meal-timing-item"
+            [class.selected]="form.get('mealTimingInfo')?.value.includes(chip.mealType)"
+            (click)="toggleMealTiming(chip.mealType)">
+            <div class="timing-checkbox">
+              <mat-icon *ngIf="form.get('mealTimingInfo')?.value.includes(chip.mealType)">check</mat-icon>
+            </div>
+            <div class="timing-info-content">
+              <div class="timing-name-row">
+                <span class="timing-name">{{ chip?.mealType }}</span>
+                <span class="mini-subsidy-badge" [ngClass]="chip.mealSubsidyType">{{ chip.mealSubsidyType }}</span>
+              </div>
+              <div class="timing-duration">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ chip.acceptOrderFrom }} - {{ chip.acceptOrderTill }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>category</mat-icon>
+          <span>Category</span>
+        </div>
+        <mat-chip-listbox formControlName="category" class="chip-selection">
+          <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
+            {{ chip?.title }}
+          </mat-chip-option>
+        </mat-chip-listbox>
+        <div class="text-danger small mt-1" *ngIf="f['category'].invalid && f['category'].touched">
+          Category is required
+        </div>
+      </div>
+
+      <!-- Weekly Menu Dates -->
+      <div class="form-section" *ngIf="data.outletObj?.isWeeklyMenu">
+        <div class="section-header">
+          <mat-icon>calendar_month</mat-icon>
+          <span>Weekly Menu Dates</span>
+        </div>
+
+        <!-- Selected date chips -->
+        <div class="weekly-dates-chips mb-3" *ngIf="selectedWeeklyDates.length > 0">
+          <span class="date-chip" *ngFor="let d of selectedWeeklyDates">
+            {{ d | date: 'dd MMM yyyy' }}
+            <button mat-icon-button class="chip-remove-btn" (click)="toggleDate(d)" type="button">
+              <mat-icon>close</mat-icon>
+            </button>
+          </span>
+        </div>
+        <p class="small text-muted mb-2" *ngIf="selectedWeeklyDates.length === 0">No dates selected.</p>
+
+        <!-- Calendar trigger button -->
+        <button mat-stroked-button color="primary" type="button"
+          [matMenuTriggerFor]="weeklyCalendarMenu" class="calendar-trigger-btn">
+          <mat-icon>event</mat-icon>
+          {{ selectedWeeklyDates.length > 0 ? 'Edit Dates' : 'Select Dates' }}
+        </button>
+
+        <!-- Calendar menu (stays open while picking multiple dates) -->
+        <mat-menu #weeklyCalendarMenu="matMenu" class="weekly-calendar-menu" [hasBackdrop]="true">
+          <div (click)="$event.stopPropagation()" (keydown)="$event.stopPropagation()" class="weekly-calendar-wrap">
+            <mat-calendar
+              [dateFilter]="weeklyDateFilter"
+              [dateClass]="weeklyDateClass"
+              (selectedChange)="toggleDate($event)">
+            </mat-calendar>
+            <div class="calendar-footer">
+              <span class="small text-secondary">{{ selectedWeeklyDates.length }} date(s) selected</span>
+              <span class="small text-muted">↑↓←→ to navigate · Enter/Space to select</span>
+            </div>
+          </div>
+        </mat-menu>
+      </div>
+
+      <!-- Section Config -->
+      <div class="form-section" *ngIf="data.outletObj?.isSectionWiseMenu && data.outletObj?.sectionConfig?.length > 0">
+        <div class="section-header">
+          <mat-icon>layers</mat-icon>
+          <span>Outlet Section</span>
+        </div>
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>Select Section</mat-label>
+          <mat-select formControlName="sectionConfig" [compareWith]="compareSection">
+            <mat-option [value]="null">None</mat-option>
+            <mat-option *ngFor="let section of data.outletObj.sectionConfig" [value]="section">
+              {{ section.sectionName }} ({{ section.sectionType | titlecase }})
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- Addons Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>add_shopping_cart</mat-icon>
+          <span>Add Ons</span>
+        </div>
+
+        <div [formArrayName]="'addOnsList'" class="nutrition-list">
+          <div class="addon-card"
+            *ngFor="let addon of addons_List.controls; let i = index; let first = first; let last = last"
+            [formGroupName]="i">
+
+            <div class="addon-image-upload">
+              <input type="file" accept="image/*" class="uploadInput" #addonFileInput
+                (change)="handleAddonFileInput($event, i)" />
+
+              <div class="addon-image-box" [class.has-image]="addon.get('addOnImageUrl')?.value"
+                (click)="addonFileInput.click()">
+
+                <img *ngIf="addon.get('addOnImageUrl')?.value" [src]="getAddonImageSrc(addon, i)"
+                  class="addon-preview-image" />
+
+                <div *ngIf="!addon.get('addOnImageUrl')?.value" class="addon-placeholder">
+                  <mat-icon>cloud_upload</mat-icon>
+                  <span>Upload Image</span>
+                </div>
+
+                <div class="addon-upload-overlay">
+                  <span>Change</span>
+                </div>
+              </div>
+
+              <p class="addon-upload-hint">Click to upload</p>
+            </div>
+
+            <div class="addon-fields">
+
+              <div class="addon-row-top">
+                <mat-form-field appearance="outline" class="addon-name-field">
+                  <mat-label>Add-On Name</mat-label>
+                  <input matInput type="text" formControlName="addOnName" placeholder="e.g. Extra Cheese" />
+                </mat-form-field>
+              </div>
+
+              <div class="addon-row-bottom">
+                <mat-form-field appearance="outline" class="addon-price-field">
+                  <mat-label>Price (₹)</mat-label>
+                  <input matInput type="number" min="0" formControlName="addOnPrice"
+                    (keydown)="preventInvalidNumber($event)" />
+                  <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="addon-type-field">
+                  <mat-label>Type</mat-label>
+                  <mat-select formControlName="addOnType">
+                    <mat-option value="Veg">
+                      <span class="type-indicator veg-dot"></span> Veg
+                    </mat-option>
+                    <mat-option value="NonVeg">
+                      <span class="type-indicator nonveg-dot"></span> Non-Veg
+                    </mat-option>
+                    <mat-option value="NA">N/A</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <div class="nutrition-actions">
+                  <button mat-icon-button color="primary" *ngIf="last" (click)="addAddon()" type="button"
+                    matTooltip="Add Add-On">
+                    <mat-icon>add_circle</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" *ngIf="!first" (click)="removeAddon(i)" type="button"
+                    matTooltip="Remove">
+                    <mat-icon>remove_circle</mat-icon>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Nutrition Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>local_fire_department</mat-icon>
+          <span>Nutrition Information</span>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12 col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Energy (kcal)</mat-label>
+              <input matInput type="number" formControlName="energyValue" />
+              <mat-icon matPrefix class="field-icon">bolt</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <div [formArrayName]="'nutritionList'" class="nutrition-list">
+          <div class="nutrition-row"
+            *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first; let last = last"
+            [formGroupName]="i">
+            <mat-form-field appearance="outline" class="nutrition-field">
+              <mat-label>Nutrient</mat-label>
+              <mat-select formControlName="nutritionName">
+                <mat-option value="Protein">Protein</mat-option>
+                <mat-option value="Fat">Fat</mat-option>
+                <mat-option value="Carbs">Carbs</mat-option>
+                <mat-option value="Fiber">Fiber</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="nutrition-field">
+              <mat-label>Value</mat-label>
+              <input matInput type="number" formControlName="nutritionValue" />
+            </mat-form-field>
+            <mat-form-field appearance="outline" class="nutrition-field small">
+              <mat-label>Unit</mat-label>
+              <mat-select formControlName="nutritionUnit">
+                <mat-option value="gm">gm</mat-option>
+                <mat-option value="ml">ml</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <div class="nutrition-actions">
+              <button mat-icon-button color="primary" *ngIf="last" (click)="addNutritionLists()" class="add-btn"
+                type="button">
+                <mat-icon>add_circle</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" *ngIf="!first" (click)="removenNutritionLists(i)" type="button">
+                <mat-icon>remove_circle</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" *ngIf="!data.item" [disabled]="form.invalid"
+    (click)="submit()">
+    <mat-icon>add</mat-icon> Add Item
+  </button>
+  <button mat-raised-button color="accent" *ngIf="data.item" [disabled]="form.invalid"
+    (click)="submit()">
+    <mat-icon>save</mat-icon> Update Item
+  </button>
+</mat-dialog-actions>

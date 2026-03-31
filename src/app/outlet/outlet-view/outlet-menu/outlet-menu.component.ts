@@ -9,21 +9,20 @@ import {
   ViewChild,
   TemplateRef,
 } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { ToasterService } from 'src/service/toaster.service';
 import { BulkMenuUploadDialogComponent } from '../bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
+import { AddOutletMenuComponent } from './add-outlet-menu/add-outlet-menu.component';
+import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dialog.component';
+import { CopyOutletMenuComponent } from './copy-outlet-menu/copy-outlet-menu.component';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -35,55 +34,23 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
   @Output() dataToParent = new EventEmitter<string>();
 
-  @ViewChild('content') content!: TemplateRef<any>;
-  @ViewChild('masterMenu') masterMenu!: TemplateRef<any>;
-  @ViewChild('selectOutletModal') selectOutletModal!: TemplateRef<any>;
-
-  // @ViewChild(MatPaginator) menuPaginator!: MatPaginator; // Removed
-
   categoryList = categoryList;
   nutritionListOptions = nutritionListOptions;
-  form!: FormGroup;
-
-  selectedCategory: any;
-  uploadedImageFile: any;
-  imageUrl: any;
   displayImgUrl = environment.imageUrl;
   showCard: boolean = false;
-
-  // main outlet menu lists
-  menuList: any[] = [];
-  filteredMenuList: any[] = [];
-  groupedMenuList: any[] = [];
-
-  // outlet copy
-  selectedOutlet: any = null;
-  outletMenuList: any[] = [];
-  filteredOutletMenuList: any[] = [];
-  searchTermCopyMenu: string = '';
-
-  // master menu
-  filteredMasterMenuList: any[] = [];
-  tempList: any[] = [];
-
-  // selections for master/copy
-  selectedMasterItem: any = null;
-  selectedItems: any[] = [];
-  selectedMenuItems: any[] = [];
-  transformedMenuItems: any[] = [];
-
-  menuId: any = 0;
-  showUpdateBtn: boolean = false;
-  imageReplaced: boolean = false;
-  uploadStatus: boolean = false;
-  noImages: boolean = false;
-  foodItem: any;
+  selectedCategory: any;
+  menuItems: any[] = [];
   outletList: any[] = [];
+  foodItem: any;
+
   menuInfo: any;
   eventInfo: any;
 
+  // main outlet menu lists
+  filteredMenuList: any[] = [];
+  groupedMenuList: any[] = [];
+
   // filters
-  searchTerm: string = '';        // for master menu
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
   selectedDateFilter: Date | null = null;
@@ -92,45 +59,44 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   selectedWeeklyDates: Date[] = [];
   today = new Date();
 
-  // pagination removed
-  energyTooltip = `
-Nutrient Conversion Factors:
-• Protein: 4 kcal/g
-• Carbohydrates: 4 kcal/g
-• Fat: 9 kcal/g
-• Fiber: 2 kcal/g
-`;
-  addonFileInputs: HTMLInputElement[] = [];
-  uploadedAddonImageFiles: (File | null)[] = [];
-
-
   constructor(
-    private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private sendDataToComponent: SendDataToComponent,
     private dialog: MatDialog,
     private toastr: ToasterService
   ) { }
 
   ngOnInit(): void {
-    this.fetchOutletMasterMenus();
     this.fetchAllOutlets();
-    this.createForm();
-    this.init();
+    if (this.outletObj?._id) {
+      this.fetchMenuItems();
+    }
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['outletObj']) {
       this.outletObj = changes['outletObj'].currentValue;
+      if (this.outletObj?._id) {
+        this.fetchMenuItems();
+      }
+    }
+  }
+
+  async fetchMenuItems() {
+    try {
+      const res = await this.apiMainService.getMenuItems(this.outletObj._id);
+      this.menuItems = res || [];
+      this.init();
+    } catch (e) {
+      console.log('error while fetching menu items', e);
+      this.menuItems = [];
       this.init();
     }
   }
 
-  // INIT OUTLET MENU
   init() {
-    if (this.outletObj?.menuList && this.outletObj.menuList.length > 0) {
-      this.filteredMenuList = this.outletObj.menuList
+    if (this.menuItems && this.menuItems.length > 0) {
+      this.filteredMenuList = this.menuItems
         .slice()
         .sort((a: any, b: any) => a.precedence - b.precedence);
       this.showCard = true;
@@ -138,11 +104,9 @@ Nutrient Conversion Factors:
       this.filteredMenuList = [];
       this.showCard = false;
     }
-
     this.applyMenuFilters();
   }
 
-  // FETCH ALL OUTLETS
   async fetchAllOutlets() {
     try {
       const res = await this.apiMainService.fetchAllOutlets();
@@ -153,16 +117,15 @@ Nutrient Conversion Factors:
     }
   }
 
-  // OUTLET MENU FILTERS + PAGINATION
   applyMenuFilters() {
-    if (!this.outletObj?.menuList) {
+    if (!this.menuItems) {
       this.filteredMenuList = [];
       this.groupedMenuList = [];
       this.showCard = false;
       return;
     }
 
-    let temp = this.outletObj.menuList
+    let temp = this.menuItems
       .slice()
       .sort((a: any, b: any) => a.precedence - b.precedence);
 
@@ -192,7 +155,6 @@ Nutrient Conversion Factors:
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
 
-    // Show all items (no pagination)
     this.groupedMenuList = this.outletObj?.isWeeklyMenu
       ? this.buildDateGroupedMenu(this.filteredMenuList)
       : this.buildGroupedMenu(this.filteredMenuList);
@@ -214,776 +176,89 @@ Nutrient Conversion Factors:
     }));
   }
 
-  private buildDateGroupedMenu(list: any[]): any[] {
-    const dateMap: Record<string, any[]> = {};
-
-    list.forEach((item: any) => {
-      const dates: any[] = item.weeklyMenuDates || [];
-      if (dates.length === 0) {
-        const key = 'No Date Assigned';
-        if (!dateMap[key]) dateMap[key] = [];
-        dateMap[key].push(item);
-      } else {
-        dates.forEach((d: any) => {
-          const dateObj = new Date(d.date);
-          const key = dateObj.toLocaleDateString('en-IN', {
-            weekday: 'short', day: '2-digit', month: 'short', year: 'numeric',
-          });
-          if (!dateMap[key]) dateMap[key] = [];
-          if (!dateMap[key].find((i: any) => i._id === item._id)) {
-            dateMap[key].push(item);
-          }
-        });
-      }
-    });
-
-    const sortedKeys = Object.keys(dateMap).sort((a, b) => {
-      if (a === 'No Date Assigned') return 1;
-      if (b === 'No Date Assigned') return -1;
-      return new Date(a).getTime() - new Date(b).getTime();
-    });
-
-    return sortedKeys.map(key => ({ category: key, items: dateMap[key] }));
+  isSameDay(d1: Date, d2: Date): boolean {
+    return (
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
+    );
   }
 
-  // Weekly date picker helpers
-  toggleDate(date: Date | null): void {
-    if (!date) return;
-    const idx = this.selectedWeeklyDates.findIndex(d => this.isSameDay(d, date));
-    if (idx >= 0) {
-      this.selectedWeeklyDates = this.selectedWeeklyDates.filter((_, i) => i !== idx);
+  buildDateGroupedMenu(list: any[]) {
+    const grouped: any = {};
+    list.forEach(item => {
+      (item.weeklyMenuDates || []).forEach((d: any) => {
+        const dateStr = new Date(d.date).toLocaleDateString('en-IN', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        if (!grouped[dateStr]) {
+          grouped[dateStr] = [];
+        }
+        if (!grouped[dateStr].find((i: any) => i._id === item._id)) {
+          grouped[dateStr].push(item);
+        }
+      });
+    });
+
+    return Object.keys(grouped).map(date => ({
+      category: date,
+      items: grouped[date]
+    }));
+  }
+
+  toggleDate(date: Date) {
+    const index = this.selectedWeeklyDates.findIndex(d => this.isSameDay(d, date));
+    if (index === -1) {
+      this.selectedWeeklyDates.push(date);
     } else {
-      this.selectedWeeklyDates = [...this.selectedWeeklyDates, date];
+      this.selectedWeeklyDates.splice(index, 1);
     }
-    this.form.get('weeklyMenuDates')?.setValue(
-      this.selectedWeeklyDates.map(d => ({ date: d }))
-    );
   }
 
   isDateSelected(date: Date): boolean {
     return this.selectedWeeklyDates.some(d => this.isSameDay(d, date));
   }
 
-  isSameDay(a: Date, b: Date): boolean {
-    return a.getFullYear() === b.getFullYear() &&
-      a.getMonth() === b.getMonth() &&
-      a.getDate() === b.getDate();
-  }
-
   weeklyDateClass = (date: Date): string => {
-    return this.isDateSelected(date) ? 'weekly-date-selected' : '';
+    return this.isDateSelected(date) ? 'selected-date' : '';
   };
 
   weeklyDateFilter = (date: Date | null): boolean => {
     if (!date) return false;
-    const todayStart = new Date();
-    todayStart.setHours(0, 0, 0, 0);
-    // Allow future/today dates, and also already-selected past dates (so they can be removed on edit)
-    return date >= todayStart || this.isDateSelected(date);
+    return true;
   };
 
-  // Pagination methods removed
-
-
-  onOutletChange() {
-    if (this.selectedOutlet) {
-      this.outletMenuList = this.selectedOutlet.menuList || [];
-    } else {
-      this.outletMenuList = [];
-    }
-    this.applyCopyMenuFilter();
-  }
-
-  applyCopyMenuFilter() {
-    let temp = this.outletMenuList || [];
-    if (this.searchTermCopyMenu) {
-      const term = this.searchTermCopyMenu.toLowerCase();
-      temp = temp.filter((item: any) =>
-        (item.itemName || '').toLowerCase().includes(term) ||
-        (item.description || '').toLowerCase().includes(term)
-      );
-    }
-    this.filteredOutletMenuList = temp;
-  }
-
-  // NUMBER VALIDATIONS
-  preventInvalidNumber(e: KeyboardEvent) {
-    const invalidKeys = ['-', '+', 'e', 'E'];
-    if (invalidKeys.includes(e.key)) e.preventDefault();
-  }
-
-  preventInvalidPaste(
-    e: ClipboardEvent,
-    type: 'integer' | 'decimal' = 'integer'
-  ) {
-    const text = e.clipboardData?.getData('text') ?? '';
-    if (type === 'integer') {
-      if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
-    } else {
-      if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
-    }
-  }
-
-  // FORM
-  createForm() {
-    this.form = this.fb.group({
-      itemName: ['', [Validators.required, Validators.maxLength(80)]],
-      price: [null, [Validators.required, Validators.min(1)]],
-      subsidy: [0, [Validators.min(0)]],
-      category: ['', Validators.required],
-      mealTimingInfo: [[], Validators.required],
-      itemType: ['Veg', Validators.required],
-      precedence: [0, [Validators.min(0)]],
-      isActive: [false],
-      description: ['', [Validators.maxLength(200)]],
-      doNotChangeInFuture: [false],
-      energyValue: [10],
-      sectionConfig: [null],
-      weeklyMenuDates: [[]],
-      nutritionList: this.fb.array([
-        this.fb.group({
-          nutritionId: [null],
-          nutritionName: [''],
-          nutritionValue: [''],
-          nutritionUnit: [''],
-        }),
-      ]),
-      addOnsList: this.fb.array([
-        this.fb.group({
-          addOnImageUrl: [''],
-          addOnName: [''],
-          addOnPrice: [0, [Validators.min(0)]],
-          addOnType: ['NA'],
-        }),
-      ]),
-      discountEnabled: [false],
-      discountType: [{ value: null, disabled: true }],
-      discountValue: [{ value: null, disabled: true }],
-    }, { validator: this.discountValidator() });
-    this.initDiscountListener();
-    this.form.get('nutritionList')?.valueChanges.subscribe(() => {
-      this.calculateEnergyValue();
-    });
-  }
-
-  calculateEnergyValue() {
-    const nutritionList = this.form.get('nutritionList')?.value as any[];
-    if (!nutritionList) return;
-
-    let totalEnergy = 0;
-    nutritionList.forEach((item) => {
-      const value = parseFloat(item.nutritionValue) || 0;
-      const nutritionId = item.nutritionId;
-
-      if (nutritionId === 1) { // Protein
-        totalEnergy += value * 4;
-      } else if (nutritionId === 2) { // Fat
-        totalEnergy += value * 9;
-      } else if (nutritionId === 3) { // Carbohydrate
-        totalEnergy += value * 4;
-      } else if (nutritionId === 4) { // Fibre
-        totalEnergy += value * 2;
-      }
-    });
-
-    this.form.get('energyValue')?.patchValue(totalEnergy, { emitEvent: false });
-  }
-
-
-  get nutrition_Lists(): FormArray {
-    return this.form.get('nutritionList') as FormArray;
-  }
-
-  addNutritionLists() {
-    this.nutrition_Lists.push(
-      this.fb.group({
-        nutritionId: [null],
-        nutritionName: [''],
-        nutritionValue: [''],
-        nutritionUnit: [''],
-      })
-    );
-  }
-
-  removenNutritionLists(index: number) {
-    this.nutrition_Lists.removeAt(index);
-  }
-
-  initDiscountListener() {
-    const typeCtrl = this.form.get('discountType');
-    const valueCtrl = this.form.get('discountValue');
-    const priceCtrl = this.form.get('price');
-    const subsidyCtrl = this.form.get('subsidy');
-
-    const toggleControls = () => {
-      const enabled = this.form.get('discountEnabled')?.value;
-      const price = Number(priceCtrl?.value);
-      const subsidy = Number(subsidyCtrl?.value || 0);
-      const effectivePrice = price - subsidy;
-
-      if (enabled && price > 0 && effectivePrice > 0) {
-        typeCtrl?.enable();
-        valueCtrl?.enable();
-        typeCtrl?.setValidators([Validators.required]);
-        valueCtrl?.setValidators([Validators.required, Validators.min(1)]);
-      } else {
-        typeCtrl?.reset();
-        valueCtrl?.reset();
-        typeCtrl?.disable();
-        valueCtrl?.disable();
-      }
-
-      typeCtrl?.updateValueAndValidity();
-      valueCtrl?.updateValueAndValidity();
-      this.form.updateValueAndValidity();
-    };
-
-    toggleControls();
-
-    this.form.get('discountEnabled')?.valueChanges.subscribe(toggleControls);
-    this.form.get('price')?.valueChanges.subscribe(toggleControls);
-    this.form.get('subsidy')?.valueChanges.subscribe(toggleControls);
-    this.form.get('discountType')?.valueChanges.subscribe(() => {
-      this.form.updateValueAndValidity();
-    });
-  }
-
-  discountValidator() {
-    return (group: any) => {
-      const enabled = group.get('discountEnabled')?.value;
-      const type = group.get('discountType')?.value;
-      const value = Number(group.get('discountValue')?.value);
-      const price = Number(group.get('price')?.value);
-      const subsidy = Number(group.get('subsidy')?.value || 0);
-
-      if (!enabled) return null;
-
-      if (!price || price <= 0) {
-        return { priceMissing: true };
-      }
-
-      const effectivePrice = price - subsidy;
-
-      if (effectivePrice <= 0) {
-        return { invalidEffectivePrice: true };
-      }
-
-      if (type === 'percentage') {
-        if (value <= 0 || value > 100) {
-          return { percentInvalid: true };
-        }
-      }
-
-      if (type === 'flat') {
-        if (value <= 0) {
-          return { flatNegative: true };
-        }
-        if (value >= effectivePrice) {
-          return { flatInvalid: true };
-        }
-      }
-
-      return null;
-    };
-  }
-
-  patchFormValue(item: any) {
-    console.log(item);
-
-    this.selectedWeeklyDates = (item.weeklyMenuDates || []).map((d: any) => new Date(d.date));
-
-    this.form.patchValue({
-      itemName: item.itemName,
-      price: item.price,
-      subsidy: item.subsidy ? item.subsidy : 0,
-      category: item.category,
-      mealTimingInfo: item.mealTimingInfo
-        ? item.mealTimingInfo.map((a: any) => a.mealType)
-        : [],
-      itemType: item.itemType,
-      precedence: item.precedence,
-      isActive: item.isActive,
-      doNotChangeInFuture: item.doNotChangeInFuture,
-      description: item.description,
-      energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
-      sectionConfig: item.sectionConfig || null,
-      weeklyMenuDates: item.weeklyMenuDates || [],
-      discountEnabled: item.discountEnabled || false,
-      discountType: item.discountType || null,
-      discountValue: item.discountValue || null,
-      nutritionList: item.nutritionInfo
-        ? [...item.nutritionInfo.nutritionList]
-        : [],
-    });
-
-    if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
-      this.nutrition_Lists.clear();
-      item.nutritionInfo.nutritionList.forEach((nutrition: any) => {
-        const nutrientID = nutrition.nutrientID || nutrition.nutritionId;
-        const nutrientName = nutrition.nutrientname || nutrition.nutritionName;
-
-        // Find matching option from config
-        const option = this.nutritionListOptions.find(o =>
-          o.id === nutrientID || o.id === Number(nutrientName)
-        );
-
-        this.nutrition_Lists.push(this.fb.group({
-          nutritionId: [option ? option.id : nutrientID],
-          nutritionName: [option ? option : Number(nutrientName)],
-          nutritionValue: [nutrition.nutritionValue || 0],
-          nutritionUnit: [nutrition.nutritionUnit || 'gm']
-        }));
-      });
-    }
-    if (item.addOnsList?.length) {
-      this.addons_List.clear();
-      this.uploadedAddonImageFiles = [];
-
-      item.addOnsList.forEach((addon: any) => {
-        this.addons_List.push(this.fb.group({
-          addOnImageUrl: [addon.addOnImageUrl ?? ''],
-          addOnName: [addon.addOnName ?? ''],
-          addOnPrice: [addon.addOnPrice ?? 0, [Validators.min(0)]],
-          addOnType: [addon.addOnType ?? 'NA'],
-        }));
-        this.uploadedAddonImageFiles.push(null);
-      });
-      
-    } else {
-      this.addons_List.clear();
-      this.uploadedAddonImageFiles = [null];
-      this.addons_List.push(this.fb.group({
-        addOnImageUrl: [''], addOnName: [''], addOnPrice: [0], addOnType: ['NA']
-      }));
-    }
-  }
-
-  getAddonImageSrc(addon: any, index: number): string {
-    const url = addon.get('addOnImageUrl')?.value;
-    if (!url) return '';
-    if (url.startsWith('data:')) return url;
-    if (url.startsWith('http')) return url;
-    return this.displayImgUrl + url;
-  }
-
-  // MASTER MENU FILTER
-  applyMasterFilter() {
-    let tempList = [...(this.tempList || [])];
-
-    if (this.selectedCategory) {
-      tempList = tempList.filter(
-        (data: any) => data.category === this.selectedCategory
-      );
-    }
-
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-      tempList = tempList.filter((data: any) =>
-        (data.itemName?.toLowerCase() || '').includes(term)
-      );
-    }
-
-    this.filteredMasterMenuList = tempList;
-  }
-
-  async fetchOutletMasterMenus() {
-    try {
-      const res = await this.apiMainService.getAllOutletMasterMenus();
-      if (res) {
-        this.filteredMasterMenuList = res;
-        this.tempList = this.filteredMasterMenuList;
-      }
-    } catch (e) {
-      console.log('error while fetching outlet master menus', e);
-      this.filteredMasterMenuList = [];
-      this.tempList = [];
-    }
-  }
-
-  // IMAGE HANDLING (ImageCropper via NgbModal)
-  handleFileInput($event: any) {
-    if ($event && $event.target && $event.target.files) {
-      const file: File = $event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async (_event) => {
-          const imageUrl = reader.result;
-          try {
-            const dialogRef = this.dialog.open(ImageCropperComponent, {
-              width: '50%',
-              panelClass: 'image-cropper-dialog',
-              disableClose: true,
-              data: {
-                imageUrl: imageUrl,
-                imageWidth: 150,
-                imageHeight: 150,
-                aspectRatio: 1
-              }
-            });
-
-            dialogRef.afterClosed().subscribe((result: any) => {
-              if (result && result.croppedImages) {
-                this.uploadedImageFile = result.croppedImages.file;
-                this.imageUrl = result.croppedImages.resizeDataUrl;
-                this.uploadStatus = true;
-                this.imageReplaced = true;
-              }
-            });
-
-          } catch (e) {
-            console.log('error while opening image cropper', e);
-          }
-        };
-      }
-    }
-  }
-
-  // EDIT / ADD
   async edit(item: any, index: any) {
-    this.imageUrl = item.imageUrl;
-    this.showUpdateBtn = true;
-    this.menuId = item._id;
-
-    this.patchFormValue(item);
-    this.open();
+    this.open('update', item);
   }
 
-  async addMasterMenu() {
-    this.imageReplaced = true;
-    this.uploadStatus = false;
-    this.imageUrl = this.selectedMasterItem?.imageUrl;
+  open(action: 'add' | 'update' = 'add', item?: any) {
+    const dialogRef = this.dialog.open(AddOutletMenuComponent, {
+      width: '85vw',
+      maxWidth: '1200px',
+      panelClass: 'modern-dialog',
+      disableClose: true,
+      data: { outletObj: this.outletObj, item: item }
+    });
 
-    try {
-      console.log("selectedItems", this.selectedItems);
-
-      const res = await this.apiMainService.addOutletList(
-        this.outletObj._id,
-        { outletList: this.selectedItems }
-      );
-      this.selectedItems = [];
-      this.dataToParent.emit(res);
-    } catch (err) {
-      console.log(err);
-    }
-
-    if (this.selectedMasterItem) {
-      this.form.patchValue(this.selectedMasterItem);
-    }
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchMenuItems();
+      }
+    });
   }
 
   async addMenuItem() {
-    this.imageReplaced = true;
-    this.uploadStatus = false;
-    this.imageUrl = this.selectedMasterItem?.imageUrl;
-
-    try {
-      this.transformedMenuItems.forEach((item: any) => {
-        delete item._id;
-      });
-
-      // Check for duplicates
-      const existingItemNames = new Set(
-        (this.outletObj.menuList || []).map((item: any) => item.itemName.toLowerCase().trim())
-      );
-
-      const duplicates = this.transformedMenuItems.filter((item: any) =>
-        existingItemNames.has(item.itemName.toLowerCase().trim())
-      );
-
-      if (duplicates.length > 0) {
-        const duplicateNames = duplicates.map((d: any) => d.itemName).join(', ');
-        this.toastr.error(`Duplicate items found: ${duplicateNames}`);
-        return; // Stop execution
-      }
-
-      console.log("transformedMenuItems", this.transformedMenuItems);
-
-
-      const res = await this.apiMainService.addOutletList(
-        this.outletObj._id,
-        { outletList: this.transformedMenuItems }
-      );
-      this.transformedMenuItems = [];
-      this.selectedMenuItems = [];
-      this.dataToParent.emit(res);
-    } catch (err) {
-      console.log(err);
-    }
-
-
-    if (this.selectedMasterItem) {
-      this.form.patchValue(this.selectedMasterItem);
-    }
+    this.open('add');
   }
 
-  async updateMenu(index: any) {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    if (
-      typeof this.form.value.subsidy === 'undefined' ||
-      this.form.value.subsidy === null ||
-      this.form.value.subsidy === ''
-    ) {
-      this.form.patchValue({ subsidy: 0 });
-    }
-    try {
-      const outletId = this.outletObj._id;
-      const formData = new FormData();
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-      formData.append('imageUrl', this.form.value.imageUrl);
-      formData.append('description', this.form.value.description);
-      formData.append('isActive', this.form.value.isActive);
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append(
-        'quantityAvailable',
-        this.form.value.quantityAvailable
-      );
-      formData.append(
-        'setDailyQuantity',
-        this.form.value.setDailyQuantity
-      );
-      formData.append('subsidy', this.form.value.subsidy);
-      formData.append(
-        'doNotChangeInFuture',
-        this.form.value.doNotChangeInFuture
-      );
-      formData.append('category', this.form.value.category);
-      formData.append('subCategory', this.form.value.subCategory);
-      formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence);
-
-      const mealTypes = this.form.value.mealTimingInfo;
-      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
-        mealTypes.includes(meal.mealType)
-      );
-      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
-      const nutritionListMapped = this.form.value.nutritionList.map((item: any) => ({
-        nutritionId: item.nutritionId,
-        nutritionValue: item.nutritionValue,
-        nutritionUnit: item.nutritionUnit,
-        nutrientname: item.nutritionName && typeof item.nutritionName === 'object' ? item.nutritionName.title : item.nutritionName
-      }));
-
-      const nutritionInfo = {
-        energyValue: this.form.value.energyValue,
-        nutritionList: nutritionListMapped,
-      };
-      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
-
-      const addOnsListMapped = this.form.value.addOnsList
-        .filter((a: any) => a.addOnName?.trim())
-        .map((a: any, i: number) => {
-          const isBase64 = (a.addOnImageUrl || '').startsWith('data:');
-          return {
-            addOnImageUrl: isBase64 ? '' : (a.addOnImageUrl || ''),
-            addOnName: a.addOnName.trim(),
-            addOnPrice: a.addOnPrice ?? 0,
-            addOnType: a.addOnType || 'NA',
-          };
-        });
-
-      formData.append('addOnsList', JSON.stringify(addOnsListMapped));
-      this.uploadedAddonImageFiles.forEach((file, i) => {
-        if (file instanceof File) {
-          formData.append(`addonImage_${i}`, file);
-        }
-      });
-      if (this.form.value.sectionConfig) {
-        const payload = {
-          ...this.form.value.sectionConfig,
-          sectionId: this.form.value.sectionConfig._id,
-        };
-        formData.append('sectionConfig', JSON.stringify(payload));
-      }
-      const discountEnabled = this.form.value.discountEnabled ?? false;
-      formData.append('discountEnabled', String(discountEnabled));
-
-      formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
-
-      if (discountEnabled) {
-        formData.append('discountType', this.form.getRawValue().discountType ?? '');
-        formData.append('discountValue', String(this.form.getRawValue().discountValue ?? 0));
-      } else {
-        formData.append('discountType', '');
-        formData.append('discountValue', '0');
-      }
-      const res = await this.apiMainService.updateOutletMenu(
-        outletId,
-        this.menuId,
-        formData
-      );
-
-      if (res && res._id) {
-        this.outletObj = res;
-        this.init();
-      }
-
-      this.resetValues();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  resetValues() {
-    this.form.reset();
-    this.menuId = '';
-    this.imageUrl = '';
-    this.uploadedImageFile = '';
-    this.showUpdateBtn = false;
-    this.imageReplaced = false;
-    this.noImages = false;
-    this.selectedWeeklyDates = [];
-    this.nutrition_Lists.clear();
-    this.addNutritionLists();
-    this.addons_List.clear();
-    this.addons_List.push(this.fb.group({
-      addOnImageUrl: [''],
-      addOnName: [''],
-      addOnPrice: [0, [Validators.min(0)]],
-      addOnType: ['NA'],
-    }));
-  }
-
-  async submit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    try {
-      const formData: any = new FormData();
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-      formData.append('imageUrl', this.imageUrl);
-      formData.append('description', this.form.value.description);
-      formData.append(
-        'isActive',
-        this.form.value.isActive ? this.form.value.isActive : false
-      );
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append(
-        'quantityAvailable',
-        this.form.value.quantityAvailable
-          ? this.form.value.quantityAvailable
-          : 0
-      );
-      formData.append(
-        'setDailyQuantity',
-        this.form.value.setDailyQuantity
-          ? this.form.value.setDailyQuantity
-          : 0
-      );
-      formData.append(
-        'subsidy',
-        this.form.value.subsidy ? this.form.value.subsidy : 0
-      );
-      formData.append(
-        'doNotChangeInFuture',
-        this.form.value.doNotChangeInFuture
-          ? this.form.value.doNotChangeInFuture
-          : false
-      );
-      formData.append('category', this.form.value.category);
-      formData.append('subCategory', this.form.value.subCategory);
-      formData.append('itemType', this.form.value.itemType);
-      formData.append(
-        'precedence',
-        this.form.value.precedence ? this.form.value.precedence : 0
-      );
-
-      const mealTypes = this.form.value.mealTimingInfo;
-      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
-        mealTypes?.includes(meal.mealType)
-      );
-      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
-
-      const nutritionListMapped = this.form.value.nutritionList.map((item: any) => ({
-        nutritionId: item.nutritionId,
-        nutritionValue: item.nutritionValue,
-        nutritionUnit: item.nutritionUnit,
-        nutrientname: item.nutritionName && typeof item.nutritionName === 'object' ? item.nutritionName.title : item.nutritionName
-      }));
-
-      const nutritionInfo = {
-        energyValue: this.form.value.energyValue,
-        nutritionList: nutritionListMapped,
-      };
-      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
-
-      if (this.form.value.sectionConfig) {
-        const payload = {
-          ...this.form.value.sectionConfig,
-          sectionId: this.form.value.sectionConfig._id,
-        };
-        formData.append('sectionConfig', JSON.stringify(payload));
-      }
-
-      formData.append('weeklyMenuDates', JSON.stringify(this.form.value.weeklyMenuDates || []));
-
-      const addOnsListMapped = this.form.value.addOnsList
-        .filter((a: any) => a.addOnName?.trim())
-        .map((a: any, i: number) => {
-          const isBase64 = (a.addOnImageUrl || '').startsWith('data:');
-          return {
-            addOnImageUrl: isBase64 ? '' : (a.addOnImageUrl || ''),
-            addOnName: a.addOnName.trim(),
-            addOnPrice: a.addOnPrice ?? 0,
-            addOnType: a.addOnType || 'NA',
-          };
-        });
-
-      formData.append('addOnsList', JSON.stringify(addOnsListMapped));
-
-      this.uploadedAddonImageFiles.forEach((file, i) => {
-        if (file instanceof File) {
-          formData.append(`addonImage_${i}`, file);
-        }
-      });
-      formData.forEach((value: any, key: any) => console.log(key, value));
-      
-      const discountEnabled = this.form.value.discountEnabled ?? false;
-      formData.append('discountEnabled', String(discountEnabled));
-
-      if (discountEnabled) {
-        formData.append('discountType', this.form.getRawValue().discountType ?? '');
-        formData.append('discountValue', String(this.form.getRawValue().discountValue ?? 0));
-      } else {
-        formData.append('discountType', '');
-        formData.append('discountValue', 0);
-      }
-      const res = await this.apiMainService.addOutletMenu(
-        formData,
-        this.outletObj._id
-      );
-
-      if (res && res._id) {
-        this.outletObj = res;
-        this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-        this.init();
-      }
-      this.resetValues();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  get f() {
-    return this.form.controls;
-  }
-
-  // SELECTION HELPERS
   compareSection(o1: any, o2: any): boolean {
     if (!o1 || !o2) {
       return o1 === o2;
     }
-    // Check various ID combinations since saved item has sectionId but list has _id
     if (o1._id && o2._id) return o1._id === o2._id;
     if (o1.sectionId && o2._id) return o1.sectionId === o2._id;
     if (o1._id && o2.sectionId) return o1._id === o2.sectionId;
@@ -991,90 +266,35 @@ Nutrient Conversion Factors:
     return false;
   }
 
-  onItemSelected(item: any) {
-    this.selectedMasterItem = item;
-    console.log('Selected Master Menu Item:', item);
-  }
-
-  onItemToggle(item: any, event: any) {
-    const checkbox = event;
-
-    if (checkbox.checked) {
-      this.selectedItems.push(item);
-    } else {
-      this.selectedItems = this.selectedItems.filter(
-        (i) => i._id !== item._id
-      );
-    }
-  }
-
-  onMenuItemToggle(item: any, event: any) {
-    const checkbox = event;
-
-    if (checkbox.checked) {
-      this.selectedMenuItems.push(item);
-    } else {
-      this.selectedMenuItems = this.selectedMenuItems.filter(
-        (i: any) => i._id !== item._id
-      );
-    }
-
-    this.transformedMenuItems = this.selectedMenuItems.map((each: any) => {
-      return {
-        ...each,
-        mealTimingInfo: (each.mealTimingInfo || []).map(
-          (info: any) => (typeof info === 'string' ? info : info.mealType)
-        ),
-      };
-    });
-
-    console.log(this.transformedMenuItems);
-
-
-  }
-
-  isSelected(item: any): boolean {
-    return this.selectedItems.find((i) => i._id === item._id) !== undefined;
-  }
-
-  isMenuSelected(item: any): boolean {
-    return (
-      this.transformedMenuItems.find((i) => i._id === item._id) !==
-      undefined
-    );
-  }
-
-  // DELETE / ACTIVATE / DEACTIVATE
   async deleteFoodItem() {
     const res: any = await this.apiMainService.deleteOutletMenu(
       this.outletObj._id,
       this.foodItem._id
     );
-    if (res && res._id) {
-      this.outletObj = res;
-      this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-      this.showCard = true;
-      this.init();
+    if (res) {
+      this.fetchMenuItems();
+      this.toastr.success('Menu item deleted successfully');
     }
-    this.resetValues();
     this.back.emit(true);
   }
 
   async changeMenuActivation() {
     const menu = this.menuInfo;
     const event = this.eventInfo;
-
     menu.isActive = event.checked;
 
     const menuObj = {
       isActive: event.checked,
     };
 
-    await this.apiMainService.changeMenuActivation(
+    const res = await this.apiMainService.changeMenuActivation(
       this.outletObj._id,
       menu._id,
       menuObj
     );
+    if (res) {
+      this.toastr.success(`Item ${event.checked ? 'Enabled' : 'Disabled'} successfully`);
+    }
   }
 
   showPopup(item: any, i: any) {
@@ -1090,8 +310,7 @@ Nutrient Conversion Factors:
     this.menuInfo = menu;
     this.eventInfo = event;
     this.confirmationModalService.modal({
-      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'
-        } ${menu.itemName} Item`,
+      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
       callback: this.changeMenuActivation,
       cancelCallback: this.revertMenuActivation,
       context: this
@@ -1099,7 +318,6 @@ Nutrient Conversion Factors:
   }
 
   revertMenuActivation() {
-    // Revert the toggle to its original state
     if (this.menuInfo && this.eventInfo) {
       const originalState = !this.eventInfo.checked;
       this.menuInfo.isActive = originalState;
@@ -1109,54 +327,65 @@ Nutrient Conversion Factors:
     }
   }
 
-  // MAT DIALOG OPENERS
-  open() {
-    this.selectedMasterItem = null;
-
-    const dialogRef = this.dialog.open(this.content, {
-      width: '950px',
-      maxWidth: '95vw',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'add') {
-        this.submit();
-      } else if (result === 'update') {
-        this.updateMenu(this.menuId);
-      }
-    });
-  }
+  resetValues() { }
 
   openMenu() {
-    const dialogRef = this.dialog.open(this.masterMenu, {
-      width: '900px',
-      maxWidth: '95vw',
+    const dialogRef = this.dialog.open(MasterMenuDialogComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
       disableClose: false,
+      data: { outletObj: this.outletObj }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'addMasterMenu') {
-        this.addMasterMenu();
+    dialogRef.afterClosed().subscribe(async (selectedItems) => {
+      if (selectedItems && selectedItems.length > 0) {
+        try {
+          const itemsToSave = selectedItems.map((item: any) => ({
+            ...item,
+            outletId: this.outletObj._id,
+            _id: undefined
+          }));
+
+          const res = await this.apiMainService.bulkUploadOutletMenu(itemsToSave, this.outletObj._id);
+          if (res) {
+            this.toastr.success(`${selectedItems.length} items added successfully`);
+            this.fetchMenuItems();
+          }
+        } catch (error) {
+          console.error('Error adding items from master menu:', error);
+          this.toastr.error('Failed to add items from master menu');
+        }
       }
-      this.selectedItems = [];
-      this.selectedMenuItems = [];
     });
   }
 
   openOutlet() {
-    const dialogRef = this.dialog.open(this.selectOutletModal, {
-      width: '900px',
-      maxWidth: '95vw',
+    const dialogRef = this.dialog.open(CopyOutletMenuComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
       disableClose: false,
+      data: { outletObj: this.outletObj }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'addMenuItem') {
-        this.addMenuItem();
+    dialogRef.afterClosed().subscribe(async (selectedItems) => {
+      if (selectedItems && selectedItems.length > 0) {
+        try {
+          const itemsToSave = selectedItems.map((item: any) => ({
+            ...item,
+            outletId: this.outletObj._id,
+            _id: undefined
+          }));
+
+          const res = await this.apiMainService.bulkUploadOutletMenu(itemsToSave, this.outletObj._id);
+          if (res) {
+            this.toastr.success(`${selectedItems.length} items copied successfully`);
+            this.fetchMenuItems();
+          }
+        } catch (error) {
+          console.error('Error copying items from outlet:', error);
+          this.toastr.error('Failed to copy items');
+        }
       }
-      this.transformedMenuItems = [];
-      this.selectedMenuItems = [];
     });
   }
 
@@ -1177,7 +406,6 @@ Nutrient Conversion Factors:
       { header: 'Subsidy (₹)', key: 'subsidy', width: 15 }
     ];
 
-    // Header style
     worksheet.getRow(1).font = { bold: true };
     worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -1198,26 +426,9 @@ Nutrient Conversion Factors:
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
-      type:
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
     saveAs(blob, fileName);
-  }
-
-  onNutritionSelect(option: any, index: number) {
-    if (option) {
-      this.nutrition_Lists.at(index).patchValue({
-        nutritionId: option.id
-      });
-    }
-  }
-
-  isOptionSelected(optionId: number, currentIndex: number): boolean {
-    const selectedIds = this.nutrition_Lists.controls
-      .map((control, idx) => (idx !== currentIndex ? control.get('nutritionId')?.value : null))
-      .filter(id => id !== null && id !== undefined);
-
-    return selectedIds.includes(optionId);
   }
 
   compareNutrition(o1: any, o2: any): boolean {
@@ -1237,51 +448,9 @@ Nutrient Conversion Factors:
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        if (result.menuList) {
-          this.outletObj.menuList = result.menuList;
-          this.init();
-        }
+        this.fetchMenuItems();
+        this.toastr.success('Bulk upload successful');
       }
     });
   }
-
-  get addons_List(): FormArray {
-    return this.form.get('addOnsList') as FormArray;
-  }
-
-  addAddon(): void {
-    this.addons_List.push(
-      this.fb.group({
-        addOnImageUrl: [''],
-        addOnName: [''],
-        addOnPrice: [0, [Validators.min(0)]],
-        addOnType: ['NA'],
-      })
-    );
-  }
-
-
-  handleAddonFileInput(event: any, index: number): void {
-    const file: File = event?.target?.files?.[0];
-    if (!file) return;
-
-    if (!this.uploadedAddonImageFiles[index]) {
-      this.uploadedAddonImageFiles.push(null);
-    }
-    this.uploadedAddonImageFiles[index] = file;
-
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => {
-      this.addons_List.at(index).patchValue({
-        addOnImageUrl: reader.result as string
-      });
-    };
-  }
-
-  removeAddon(index: number): void {
-    this.addons_List.removeAt(index);
-    this.uploadedAddonImageFiles.splice(index, 1);
-  }
-
 }
