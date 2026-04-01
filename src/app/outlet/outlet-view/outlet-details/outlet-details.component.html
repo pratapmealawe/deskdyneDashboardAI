@@ -134,6 +134,15 @@
               <span class="info-value">₹{{ outletObj?.packagingAmount || 0 }}</span>
             </div>
           </div>
+          <div class="info-item">
+            <div class="info-icon" [class.text-primary]="outletObj?.isPreOrder"><mat-icon>schedule</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Pre-Order Status</span>
+              <span class="info-value" [class.text-primary]="outletObj?.isPreOrder">
+                {{ outletObj?.isPreOrder ? 'Enabled' : 'Disabled' }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

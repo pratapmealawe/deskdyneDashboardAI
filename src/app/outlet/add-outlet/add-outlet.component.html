@@ -388,7 +388,7 @@
                               <mat-select formControlName="mealSubsidyType">
                                 <mat-option value="free">Full Paid by Orgization and Free Meal </mat-option>
                                 <mat-option value="subsidized">Full Paid by Employee Salary</mat-option>
-                                <mat-option value="chargeable">Full Paid by Orgization and NotFree Meal</mat-option>
+                                <mat-option value="chargeable">Normal</mat-option>
                               </mat-select>
                             </mat-form-field>
                           </div>
@@ -715,13 +715,25 @@
   <h2 mat-dialog-title>Select Organization & Cafeteria</h2>
 
   <mat-dialog-content>
+    <div class="search-box mb-3">
+      <mat-form-field appearance="outline" class="w-100 custom-field dense-field">
+        <mat-label>Search Organization or Cafeteria</mat-label>
+        <input matInput [(ngModel)]="orgSearchText" placeholder="Search..." autocomplete="off">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
     <div class="org-list">
-      <div class="org-item" *ngFor="let org of formattedOrgList" (click)="selectedOrgCafeteria = org.key"
+      <div class="org-item" *ngFor="let org of filteredOrgList" (click)="selectedOrgCafeteria = org.key"
         [ngClass]="{ selected: selectedOrgCafeteria === org.key }">
         <mat-radio-button [checked]="selectedOrgCafeteria === org.key"
           (click)="$event.stopPropagation(); selectedOrgCafeteria = org.key">
           {{ org.key }}
         </mat-radio-button>
+      </div>
+      <div *ngIf="filteredOrgList.length === 0" class="empty-placeholder py-4">
+        <mat-icon>search_off</mat-icon>
+        <p>No matches found for "{{ orgSearchText }}"</p>
       </div>
     </div>
   </mat-dialog-content>

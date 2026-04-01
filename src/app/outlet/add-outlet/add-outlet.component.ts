@@ -6,6 +6,7 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { DataFormatService } from 'src/service/data-format.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
@@ -57,6 +58,7 @@ export class AddOutletComponent implements OnInit {
 
   holidays: { date: string, name: string }[] = [];
   holidayUploadError: string | null = null;
+  orgSearchText: string = '';
 
   // For meal type dropdown
   mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'Dinner', 'High Tea'];
@@ -73,7 +75,8 @@ export class AddOutletComponent implements OnInit {
     private dialog: MatDialog,
     private confirmationModal: ConfirmationModalService,
     private dataFormatService: DataFormatService,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
@@ -88,6 +91,16 @@ export class AddOutletComponent implements OnInit {
   // convenience getter for template
   get f() {
     return this.form.controls;
+  }
+
+  get filteredOrgList() {
+    if (!this.orgSearchText) {
+      return this.formattedOrgList;
+    }
+    const search = this.orgSearchText.toLowerCase();
+    return this.formattedOrgList.filter(org =>
+      org.key.toLowerCase().includes(search)
+    );
   }
 
   get mealTimings(): FormArray {
@@ -313,7 +326,6 @@ export class AddOutletComponent implements OnInit {
       } else {
         this.addDefaultMealTimings();
       }
-      console.log(outlet,'outlet')
       // emitEvent: false prevents the isPreOrder valueChanges subscription from
       // firing and overwriting the meal timings we just loaded above.
       this.form.patchValue({
@@ -392,6 +404,7 @@ export class AddOutletComponent implements OnInit {
 
   async openOrgList(): Promise<void> {
     this.selectedOrgCafeteria = undefined;
+    this.orgSearchText = '';
     await this.getOrgList();
 
     const dialogRef = this.dialog.open(this.contentOrg, {
@@ -544,9 +557,109 @@ export class AddOutletComponent implements OnInit {
   }
 
   // For (ngSubmit) without explicit type
+    // For (ngSubmit) without explicit type
   onSubmit(type?: 'update'): void {
-    this.submit(type);
+    // Determine action based on explicit type or the showUpdate flag
+    if (type === 'update' || this.showUpdate) {
+      this.updateOutlet();
+    } else {
+      this.createOutlet();
+    }
   }
+
+  /**
+   * Shared logic to validate and prepare the FormData for submission
+   */
+  private async prepareOutletData(): Promise<FormData | null> {
+    console.log('--- Preparing Outlet Data ---');
+    this.showError = true;
+    this.validateMealTimings();
+
+    if (this.form.invalid || !this.seletedCafetria || this.mealTimingError) {
+      console.warn('Submission blocked: Validation failed');
+      console.log('Form invalid:', this.form.invalid);
+      console.log('Cafeteria missing:', !this.seletedCafetria);
+      console.log('Meal timing error:', this.mealTimingError);
+
+      this.form.markAllAsTouched();
+      this.toasterService.error('Please fix the errors before saving.');
+      return null;
+    }
+
+    const formValue = this.form.getRawValue();
+    console.log('Form raw value:', formValue);
+
+    const finalObj: any = {
+      ...formValue,
+      cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
+      organizationDetails: this.seletedCafetria.organizationDetails,
+      mealTiming: this.mealTimings.value, // Mapping for backend
+      sectionConfig: this.sectionConfig.value,
+      cabinConfig: this.cabinConfig.value,
+    };
+
+    console.log('Final Object structured:', finalObj);
+
+    if (finalObj.isPreOrder) {
+      if (!finalObj.preOrderConfig) finalObj.preOrderConfig = {};
+      finalObj.preOrderConfig.holidays = this.holidays;
+    } else if (finalObj.preOrderConfig) {
+      finalObj.preOrderConfig.holidays = [];
+    }
+
+    const formData = this.objectToFormData(this.trimStringValues(finalObj));
+
+    if (this.uploadedImageFile) {
+      formData.append('image', this.uploadedImageFile);
+    }
+
+    return formData;
+  }
+
+  /**
+   * Logic for creating a new outlet (Submit)
+   */
+  async createOutlet(): Promise<void> {
+    console.log('--- Executing Create Outlet ---');
+    const formData = await this.prepareOutletData();
+    if (!formData) return;
+
+    try {
+      console.log('Calling saveOutlet API...');
+      await this.apiMainService.saveOutlet(formData);
+      this.toasterService.success('Outlet created successfully.');
+      console.log('Navigation to /outlet...');
+      this.router.navigate(['/outlet']);
+    } catch (error) {
+      console.error('Create API Error:', error);
+    }
+  }
+
+  /**
+   * Logic for updating an existing outlet (Update)
+   */
+  async updateOutlet(): Promise<void> {
+    console.log('--- Executing Update Outlet ---');
+    if (!this.selectedOutlet?._id) {
+      console.error('Update blocked: Missing outlet ID');
+      this.toasterService.error('Outlet ID missing for update.');
+      return;
+    }
+
+    const formData = await this.prepareOutletData();
+    if (!formData) return;
+
+    try {
+      console.log('Calling updateOutlet API...');
+      await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
+      this.toasterService.success('Outlet updated successfully.');
+      console.log('Navigation to /outlet...');
+      this.router.navigate(['/outlet']);
+    } catch (error) {
+      console.error('Update API Error:', error);
+    }
+  }
+
 
   trimStringValues(obj: any): any {
     if (obj instanceof File || obj instanceof Blob) return obj;
@@ -560,53 +673,7 @@ export class AddOutletComponent implements OnInit {
     return obj;
   }
 
-  async submit(type?: 'update'): Promise<void> {
-    this.showError = true;
-    this.validateMealTimings();
-
-    if (this.form.invalid || !this.seletedCafetria || this.mealTimingError) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    try {
-      const formValue = this.form.getRawValue();
-
-      const finalObj: any = {
-        cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
-        organizationDetails: this.seletedCafetria.organizationDetails,
-        mealTiming: this.mealTimings.value, // send array
-        sectionConfig: this.sectionConfig.value,
-        cabinConfig: this.cabinConfig.value,
-        ...formValue,
-      };
-
-      if (finalObj.isPreOrder) {
-        if (!finalObj.preOrderConfig) finalObj.preOrderConfig = {};
-        finalObj.preOrderConfig.holidays = this.holidays;
-      } else {
-        if (finalObj.preOrderConfig) {
-          finalObj.preOrderConfig.holidays = [];
-        }
-      }
-
-      let formData = this.objectToFormData(this.trimStringValues(finalObj));
-
-      if (this.uploadedImageFile) {
-        formData.append('image', this.uploadedImageFile);
-      }
-
-      if (type === 'update' && this.selectedOutlet?._id) {
-        await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
-      } else {
-        await this.apiMainService.saveOutlet(formData);
-      }
-
-      this.router.navigate(['/outlet']);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+ 
 
   objectToFormData(obj: any, formData = new FormData(), parentKey = ''): FormData {
     for (let key in obj) {
