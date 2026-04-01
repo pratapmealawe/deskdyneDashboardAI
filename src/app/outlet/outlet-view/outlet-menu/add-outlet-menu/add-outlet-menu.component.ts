@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
@@ -13,7 +13,26 @@ import { ToasterService } from 'src/service/toaster.service';
   styleUrls: ['./add-outlet-menu.component.scss']
 })
 export class AddOutletMenuComponent implements OnInit {
-  form!: FormGroup;
+  form: FormGroup =  new FormGroup({
+      itemName: new FormControl('', [Validators.required, Validators.maxLength(80)]),
+      price: new FormControl(null, [Validators.required, Validators.min(1)]),
+      subsidy: new FormControl(0, [Validators.min(0)]),
+      category: new FormControl('', Validators.required),
+      mealTimingInfo: new FormControl([], Validators.required),
+      itemType: new FormControl('Veg', Validators.required),
+      precedence: new FormControl(0, [Validators.min(0)]),
+      isActive: new FormControl(false),
+      description: new FormControl('', [Validators.maxLength(200)]),
+      doNotChangeInFuture: new FormControl(false),
+      energyValue: new FormControl(0),
+      sectionConfig: new FormControl(null),
+      nutritionList: new FormArray([]),
+      addOnsList: new FormArray([]),
+      weeklyMenuDates: new FormControl([]),
+      discountEnabled: new FormControl(false),
+      discountType: new FormControl({ value: null, disabled: true }),
+      discountValue: new FormControl({ value: null, disabled: true }),
+    }, { validators: [this.discountValidator()] });
   categoryList = categoryList;
   nutritionListOptions = nutritionListOptions;
   displayImgUrl = environment.imageUrl;
@@ -28,7 +47,6 @@ export class AddOutletMenuComponent implements OnInit {
   today = new Date();
 
   constructor(
-    private fb: FormBuilder,
     private dialog: MatDialog,
     private apiService: ApiMainService,
     private toastr: ToasterService,
@@ -45,41 +63,6 @@ export class AddOutletMenuComponent implements OnInit {
   }
 
   createForm() {
-    this.form = this.fb.group({
-      itemName: ['', [Validators.required, Validators.maxLength(80)]],
-      price: [null, [Validators.required, Validators.min(1)]],
-      subsidy: [0, [Validators.min(0)]],
-      category: ['', Validators.required],
-      mealTimingInfo: [[], Validators.required],
-      itemType: ['Veg', Validators.required],
-      precedence: [0, [Validators.min(0)]],
-      isActive: [false],
-      description: ['', [Validators.maxLength(200)]],
-      doNotChangeInFuture: [false],
-      energyValue: [0],
-      sectionConfig: [null],
-      nutritionList: this.fb.array([
-        this.fb.group({
-          nutritionId: [null],
-          nutritionName: [''],
-          nutritionValue: [0],
-          nutritionUnit: ['gm'],
-        }),
-      ]),
-      addOnsList: this.fb.array([
-        this.fb.group({
-          addOnImageUrl: [''],
-          addOnName: [''],
-          addOnPrice: [0, [Validators.min(0)]],
-          addOnType: ['NA'],
-        }),
-      ]),
-      weeklyMenuDates: [[]],
-      discountEnabled: [false],
-      discountType: [{ value: null, disabled: true }],
-      discountValue: [{ value: null, disabled: true }],
-    }, { validator: this.discountValidator() });
-
     this.initDiscountListener();
     this.form.get('nutritionList')?.valueChanges.subscribe(() => {
       this.calculateEnergyValue();
@@ -100,11 +83,11 @@ export class AddOutletMenuComponent implements OnInit {
 
   addNutritionLists() {
     this.nutrition_Lists.push(
-      this.fb.group({
-        nutritionId: [null],
-        nutritionName: [''],
-        nutritionValue: [0],
-        nutritionUnit: ['gm'],
+      new FormGroup({
+        nutritionId: new FormControl(null),
+        nutritionName: new FormControl(''),
+        nutritionValue: new FormControl(0),
+        nutritionUnit: new FormControl('gm'),
       })
     );
   }
@@ -114,11 +97,11 @@ export class AddOutletMenuComponent implements OnInit {
   }
 
   addAddon() {
-    this.addons_List.push(this.fb.group({
-      addOnImageUrl: [''],
-      addOnName: [''],
-      addOnPrice: [0, [Validators.min(0)]],
-      addOnType: ['NA'],
+    this.addons_List.push(new FormGroup({
+      addOnImageUrl: new FormControl(''),
+      addOnName: new FormControl(''),
+      addOnPrice: new FormControl(0, [Validators.min(0)]),
+      addOnType: new FormControl('NA'),
     }));
     this.uploadedAddonImageFiles.push(null);
   }
@@ -216,11 +199,11 @@ export class AddOutletMenuComponent implements OnInit {
           o.id === nutrientID || o.id === Number(nutrientName)
         );
 
-        this.nutrition_Lists.push(this.fb.group({
-          nutritionId: [option ? option.id : nutrientID],
-          nutritionName: [option ? option : Number(nutrientName)],
-          nutritionValue: [nutrition.nutritionValue || 0],
-          nutritionUnit: [nutrition.nutritionUnit || 'gm']
+        this.nutrition_Lists.push(new FormGroup({
+          nutritionId: new FormControl(option ? option.id : nutrientID),
+          nutritionName: new FormControl(option ? option : Number(nutrientName)),
+          nutritionValue: new FormControl(nutrition.nutritionValue || 0),
+          nutritionUnit: new FormControl(nutrition.nutritionUnit || 'gm')
         }));
       });
     }
@@ -230,19 +213,22 @@ export class AddOutletMenuComponent implements OnInit {
       this.uploadedAddonImageFiles = [];
 
       item.addOnsList.forEach((addon: any) => {
-        this.addons_List.push(this.fb.group({
-          addOnImageUrl: [addon.addOnImageUrl ?? ''],
-          addOnName: [addon.addOnName ?? ''],
-          addOnPrice: [addon.addOnPrice ?? 0, [Validators.min(0)]],
-          addOnType: [addon.addOnType ?? 'NA'],
+        this.addons_List.push(new FormGroup({
+          addOnImageUrl: new FormControl(addon.addOnImageUrl ?? ''),
+          addOnName: new FormControl(addon.addOnName ?? ''),
+          addOnPrice: new FormControl(addon.addOnPrice ?? 0, [Validators.min(0)]),
+          addOnType: new FormControl(addon.addOnType ?? 'NA'),
         }));
         this.uploadedAddonImageFiles.push(null);
       });
     } else {
       this.addons_List.clear();
       this.uploadedAddonImageFiles = [null];
-      this.addons_List.push(this.fb.group({
-        addOnImageUrl: [''], addOnName: [''], addOnPrice: [0], addOnType: ['NA']
+      this.addons_List.push(new FormGroup({
+        addOnImageUrl: new FormControl(''),
+        addOnName: new FormControl(''),
+        addOnPrice: new FormControl(0),
+        addOnType: new FormControl('NA')
       }));
     }
   }

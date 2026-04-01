@@ -67,26 +67,15 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   async fetchMenuItems() {
     try {
       const res = await this.apiMainService.getMenuItems(this.outletObj._id);
-      console.log('menu items', res);
       this.menuItems = res || [];
-      this.init();
+      this.applyMenuFilters();
     } catch (e) {
       console.log('error while fetching menu items', e);
       this.menuItems = [];
-      this.init();
+      this.applyMenuFilters();
     }
   }
 
-  init() {
-    if (this.menuItems && this.menuItems.length > 0) {
-      this.filteredMenuList = this.menuItems.slice().sort((a: any, b: any) => a.precedence - b.precedence);
-      this.showCard = true;
-    } else {
-      this.filteredMenuList = [];
-      this.showCard = false;
-    }
-    this.applyMenuFilters();
-  }
 
   applyMenuFilters() {
     if (!this.menuItems) {
@@ -111,13 +100,15 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       );
     }
 
-    if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
-      temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
-    }
+    // if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
+    //   temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
+    // }
 
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
-
+    
+    console.log('buildDateGroupedMenu',this.buildDateGroupedMenu(this.filteredMenuList))
+    console.log('buildGroupedMenu',this.buildGroupedMenu(this.filteredMenuList))
     this.groupedMenuList = this.outletObj?.isWeeklyMenu ? this.buildDateGroupedMenu(this.filteredMenuList) : this.buildGroupedMenu(this.filteredMenuList);
   }
 
@@ -184,6 +175,13 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       category: date,
       subGroups: this.innerGroupBy(dateGroups[date], 'category')
     }));
+
+    if (unassigned.length > 0) {
+      result.push({
+        category: 'Unassigned / All Days',
+        subGroups: this.innerGroupBy(unassigned, 'category')
+      });
+    }
 
     return result;
   }
@@ -294,7 +292,12 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     }
   }
 
-  resetValues() { }
+  resetValues() {
+    this.searchTermMenu = '';
+    this.selectedCategoryFilter = '';
+    this.selectedDateFilter = null;
+    this.applyMenuFilters();
+  }
 
   openMenu() {
     const dialogRef = this.dialog.open(MasterMenuDialogComponent, {
