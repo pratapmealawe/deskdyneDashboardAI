@@ -92,7 +92,7 @@ export const DEFAULT_BUTTON_POLICIES: Record<string, boolean> = {
 
   // B2B ORG
   restoreOrganization: false,
-  saveOrganization: false,
+  // saveOrganization: false,
   cancelOrganization: false,
   updateOrganization: false,
   createOrganization: false,
@@ -392,7 +392,7 @@ export const GROUPED_BUTTON_POLICIES = [
   },
   {
     title: 'B2B ORGANIZATION MANAGEMENT',
-    keys: ['addOrganization', 'restoreOrganization', 'viewOrganization', 'deleteOrganization', 'editOrganization', 'saveOrganization', 'cancelOrganization', 'updateOrganization', 'addCafeteria', 'addPoc', 'editCompliance', 'createOrganization']
+    keys: ['addOrganization', 'restoreOrganization', 'viewOrganization', 'deleteOrganization', 'editOrganization', 'cancelOrganization', 'updateOrganization', 'addCafeteria', 'addPoc', 'editCompliance', 'createOrganization']
   },
   {
     title: 'MENU MANAGEMENT',
