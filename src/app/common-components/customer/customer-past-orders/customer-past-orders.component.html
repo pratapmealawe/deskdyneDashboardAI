@@ -1,15 +1,21 @@
-<div>
-    <div *ngIf="orderList.length > 0"> 
-        <ul *ngFor="let order of orderList" class="list-group">
-            <li class="list-group-item">     
-            <app-order-card [order]="order" ></app-order-card>
-            </li>  
-        </ul>
-        <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm"
-            (click)="getMore()">Load More</button>    
+<div class="customer-past-orders-container">
+    <div *ngIf="orderList.length > 0; else noOrders" class="orders-grid">
+        <mat-card *ngFor="let order of orderList" class="order-card-wrapper border-0 shadow-sm mb-3">
+            <app-order-card [order]="order"></app-order-card>
+        </mat-card>
+        
+        <div class="load-more-container mt-4 text-center">
+            <button *ngIf="nextOn" mat-flat-button color="primary" (click)="getMore()">
+                <mat-icon class="me-1">expand_more</mat-icon>
+                Load More
+            </button>
+        </div>
     </div>
 
-    <div class="center" *ngIf="orderList.length === 0">
-        No Records Found
-    </div>
+    <ng-template #noOrders>
+        <div class="empty-state p-5 text-center text-muted">
+            <mat-icon class="large-icon mb-3">history_toggle_off</mat-icon>
+            <p class="h6">No poll orders found for this user.</p>
+        </div>
+    </ng-template>
 </div>

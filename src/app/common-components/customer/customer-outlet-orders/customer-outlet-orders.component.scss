@@ -1,6 +1,44 @@
 @use '/src/styles/theme/mixins' as mixin;
 @use '/src/styles/theme/variable' as var;
 
+// Local Variables for convenience
+$indigo-600: #4f46e5;
+$indigo-700: #4338ca;
+$success-600: #16a34a;
+$info-600: #0284c7;
+
+.bg-gradient-primary {
+  background: linear-gradient(135deg, $indigo-600, $indigo-700) !important;
+}
+
+.result-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+  height: 100%;
+  transition: transform 0.2s;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+
+  .card-icon {
+    position: absolute;
+    right: -10px;
+    bottom: -10px;
+    font-size: 80px;
+    width: 80px;
+    height: 80px;
+    opacity: 0.1;
+  }
+}
+
+.chart-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+
 .customer-outlet-orders {
 
   // ──────────────────────────────────────────────────────────────

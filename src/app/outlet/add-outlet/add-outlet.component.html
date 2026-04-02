@@ -118,6 +118,10 @@
               <mat-slide-toggle formControlName="isPackagingRequired" color="primary">
                 Packaging Required
               </mat-slide-toggle>
+
+              <mat-slide-toggle formControlName="isFullAmountOrgPaid" color="primary">
+                Full Organization Amount Paid
+              </mat-slide-toggle>
             </div>
           </div>
         </div>
@@ -351,25 +355,52 @@
                       </div>
 
                       <div class="row align-items-center">
-                        <div class="col-12 col-md-4 mb-2 mb-md-0">
+                        <div class="col-12 col-md-3 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
                             <mat-label>Meal Type</mat-label>
-                            <input matInput formControlName="mealType" placeholder="Breakfast"
-                              [readonly]="form.get('isPreOrder')?.value" />
+                            <input matInput formControlName="mealType" placeholder="Breakfast" (input)="onMealTypeChange(i)" />
                           </mat-form-field>
                         </div>
-                        <div class="col-6 col-md-4">
+                        <div class="col-6 col-md-2 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
                             <mat-label>From</mat-label>
                             <input matInput type="time" formControlName="acceptOrderFrom" />
                           </mat-form-field>
                         </div>
-                        <div class="col-6 col-md-4">
+                        <div class="col-6 col-md-2 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
                             <mat-label>To</mat-label>
                             <input matInput type="time" formControlName="acceptOrderTill" />
                           </mat-form-field>
                         </div>
+                        <div class="col-12 col-md-5 mb-2 mb-md-3">
+                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
+                            <mat-label>Slug (Unique Identifier)</mat-label>
+                            <input matInput formControlName="slug" placeholder="breakfast-main" [readonly]="showUpdate" />
+                          </mat-form-field>
+                        </div>
+
+                        <!-- Subsidy Controls - Only shown if Full Org Paid is enabled -->
+                        <ng-container *ngIf="form.get('isFullAmountOrgPaid')?.value">
+                          <div class="col-12 col-md-6 mb-2">
+                            <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
+                              <mat-label>Subsidy Type</mat-label>
+                              <mat-select formControlName="mealSubsidyType">
+                                <mat-option value="free">Full Paid by Orgization and Free Meal </mat-option>
+                                <mat-option value="subsidized">Full Paid by Employee Salary</mat-option>
+                                <mat-option value="chargeable">Normal</mat-option>
+                              </mat-select>
+                            </mat-form-field>
+                          </div>
+                          <div class="col-12 col-md-6 mb-2">
+                            <mat-form-field appearance="outline" class="w-100 dense-field custom-field"
+                              *ngIf="group.get('mealSubsidyType')?.value !== 'chargeable'">
+                              <mat-label>Max Count Free</mat-label>
+                              <input matInput type="number" formControlName="maxCountFree" />
+                              <mat-hint>0 for unlimited</mat-hint>
+                            </mat-form-field>
+                          </div>
+                        </ng-container>
                       </div>
                     </div>
                   </div>
@@ -684,13 +715,25 @@
   <h2 mat-dialog-title>Select Organization & Cafeteria</h2>
 
   <mat-dialog-content>
+    <div class="search-box mb-3">
+      <mat-form-field appearance="outline" class="w-100 custom-field dense-field">
+        <mat-label>Search Organization or Cafeteria</mat-label>
+        <input matInput [(ngModel)]="orgSearchText" placeholder="Search..." autocomplete="off">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
     <div class="org-list">
-      <div class="org-item" *ngFor="let org of formattedOrgList" (click)="selectedOrgCafeteria = org.key"
+      <div class="org-item" *ngFor="let org of filteredOrgList" (click)="selectedOrgCafeteria = org.key"
         [ngClass]="{ selected: selectedOrgCafeteria === org.key }">
         <mat-radio-button [checked]="selectedOrgCafeteria === org.key"
           (click)="$event.stopPropagation(); selectedOrgCafeteria = org.key">
           {{ org.key }}
         </mat-radio-button>
+      </div>
+      <div *ngIf="filteredOrgList.length === 0" class="empty-placeholder py-4">
+        <mat-icon>search_off</mat-icon>
+        <p>No matches found for "{{ orgSearchText }}"</p>
       </div>
     </div>
   </mat-dialog-content>

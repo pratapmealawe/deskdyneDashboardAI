@@ -147,7 +147,7 @@ export class ApiMainService {
 
   getMenuItems(outletId: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getMenuItems;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${outletId}/menu`, method: urlObj.method });
+    return this.apiHttpService.REQUEST(urlObj, { id: outletId });
   }
 
   getMenuItemById(outletId: any, menuId: any) {

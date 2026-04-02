@@ -55,4 +55,13 @@ export class OutletDetailsComponent implements OnInit {
     };
     return icons[type] || 'restaurant';
   }
+
+  getSubsidyLabel(type: string): string {
+    const labels: { [key: string]: string } = {
+      'free': 'Full Paid by Orgization and Free Meal',
+      'subsidized': 'Full Paid by Employee Salary',
+      'chargeable': 'Normal'
+    };
+    return labels[type] || (type ? type.charAt(0).toUpperCase() + type.slice(1) : '-');
+  }
 }

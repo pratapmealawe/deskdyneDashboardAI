@@ -156,6 +156,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     { name: 'Incident Management', showParent: true, route: 'orgIncidentManagement', image: 'Incident reporting_white', imageblue: 'Incident reporting_blue' },
     { name: 'Checklist', showParent: true, route: 'orgChecklist', image: 'Checklist_white', imageblue: 'Checklist_blue' },
     { name: 'Bulk Order History', showParent: true, route: 'orgBulkOrderHistory', image: 'Other orders_white', imageblue: 'Other orders_blue' },
+    { name: 'Salary Deduction', showParent: true, route: 'orgSalaryDeduction', image: 'Billing_white', imageblue: 'Billing_blue' },
     { name: 'Billing', showParent: true, route: 'billing', image: 'Billing_white', imageblue: 'Billing_Blue' }
   ];
 

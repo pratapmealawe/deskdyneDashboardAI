@@ -1,0 +1,97 @@
+<h2 mat-dialog-title class="dialog-title">
+  <div class="title-left">
+    <mat-icon>library_add</mat-icon>
+    <span>Add from Master Menu</span>
+  </div>
+  <div class="selection-count header-count" *ngIf="selectedItems.length > 0">
+    {{ selectedItems.length }} item{{ selectedItems.length > 1 ? 's' : '' }} selected
+  </div>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <!-- FILTERS SECTION -->
+  <div class="dialog-filters">
+    <div class="filter-group search-group">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" class="search-input" placeholder="Search items..." [(ngModel)]="searchTerm"
+        (input)="applyMasterFilter()" />
+      <button *ngIf="searchTerm" class="clear-btn" (click)="clearSearch()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+    
+    <div class="filter-group">
+      <mat-form-field appearance="outline" class="category-select">
+        <mat-label>Category</mat-label>
+        <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyMasterFilter()">
+          <mat-option value="">All Categories</mat-option>
+          <mat-option *ngFor="let category of categoryList" [value]="category.value">
+            {{ category.title }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- SELECTION LIST -->
+  <div class="selection-list">
+    <div class="menu-card-h selection-card" *ngFor="let item of filteredMasterMenuList"
+      [ngClass]="{ 'selected': isSelected(item) }" (click)="onItemToggle(item)">
+      
+      <!-- Checkbox overlay for selection -->
+      <div class="selection-indicator" *ngIf="isSelected(item)">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+
+      <!-- Square Image with padding -->
+      <div class="card-image-h">
+        <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" onerror="this.src='assets/images/placeholder.png'"/>
+        <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
+          <span class="indicator-dot"></span>
+        </div>
+      </div>
+
+      <!-- Card Content -->
+      <div class="card-content-h">
+        <!-- Row 1: Name + Category -->
+        <div class="content-top">
+          <h3 class="item-name">{{ item.itemName || 'Unnamed item' }}</h3>
+          <span class="category-tag">{{ item.category || 'General' }}</span>
+        </div>
+
+        <!-- Row 2: Description -->
+        <p class="item-description" *ngIf="item.description">
+          {{ item.description }}
+        </p>
+
+        <!-- Row 5: Price -->
+        <div class="card-footer">
+          <div class="price-display">
+            <span class="currency">₹</span>{{ item.price }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-list" *ngIf="filteredMasterMenuList.length === 0">
+      <div class="empty-icon">
+        <mat-icon>search_off</mat-icon>
+      </div>
+      <h3>No items found</h3>
+      <p>Try adjusting your search or category filters</p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button mat-dialog-close class="cancel-btn">Cancel</button>
+  <button mat-flat-button color="primary" class="submit-btn" (click)="submit()"
+    [disabled]="selectedItems.length === 0">
+    <mat-icon>add</mat-icon>
+    Add Selected Items
+  </button>
+</mat-dialog-actions>
