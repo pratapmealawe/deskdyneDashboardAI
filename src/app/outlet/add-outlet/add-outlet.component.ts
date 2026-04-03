@@ -127,8 +127,6 @@ export class AddOutletComponent implements OnInit {
       isCabinOrder: [false],
       isPriceHide: [false],
       preOrderConfig: this.fb.group({
-        startTime: [''],
-        endTime: [''],
         type: ['normal'],
         mealType: ['lunch'],
         maxDays: [7, [Validators.min(1)]],
@@ -164,13 +162,35 @@ export class AddOutletComponent implements OnInit {
       if (!isPreOrder) {
         this.form.get('preOrderConfig')?.patchValue(
           {
+            type: 'normal',
             mealType: 'lunch',
-            isPriceHide: false,
+            maxDays: 7,
+            availableDays: {
+              monday: true,
+              tuesday: true,
+              wednesday: true,
+              thursday: true,
+              friday: true,
+              saturday: true,
+              sunday: true,
+            },
+            holidays: [],
           },
           { emitEvent: false }
         );
+        this.form.get('isPriceHide')?.patchValue(false, { emitEvent: false });
         this.holidays = [];
+        
+        // Restore default meal timings if empty when switching back to normal mode
+        if (this.mealTimings.length === 0) {
+          this.addDefaultMealTimings();
+        }
+      } else {
+        // Meal timings and closing times are not needed for Pre-Order mode, remove any existing data
+        this.mealTimings.clear();
+        this.form.get('closeTime')?.patchValue('', { emitEvent: false });
       }
+      this.validateMealTimings();
     });
 
     // When isFullAmountOrgPaid is disabled, reset meal subsidy types and counts
@@ -570,7 +590,7 @@ export class AddOutletComponent implements OnInit {
   /**
    * Shared logic to validate and prepare the FormData for submission
    */
-  private async prepareOutletData(): Promise<FormData | null> {
+  prepareOutletData(): FormData | null {
     console.log('--- Preparing Outlet Data ---');
     this.showError = true;
     this.validateMealTimings();
@@ -621,7 +641,7 @@ export class AddOutletComponent implements OnInit {
    */
   async createOutlet(): Promise<void> {
     console.log('--- Executing Create Outlet ---');
-    const formData = await this.prepareOutletData();
+    const formData = this.prepareOutletData();
     if (!formData) return;
 
     try {
@@ -646,7 +666,7 @@ export class AddOutletComponent implements OnInit {
       return;
     }
 
-    const formData = await this.prepareOutletData();
+    const formData = this.prepareOutletData();
     if (!formData) return;
 
     try {
@@ -735,21 +755,9 @@ export class AddOutletComponent implements OnInit {
     this.mealTimingError = null;
 
     const timings = this.mealTimings.value as MealTiming[];
-    if (!timings || timings.length === 0) {
+    if (!this.form.get('isPreOrder')?.value && (!timings || timings.length === 0)) {
       this.mealTimingError = 'Please add at least one meal timing.';
       return;
-    }
-
-    // Pre-order: exactly one Fullday timing
-    if (this.form.get('isPreOrder')?.value) {
-      if (timings.length > 1) {
-        this.mealTimingError = 'Pre-Order mode allows only one meal timing (Fullday).';
-        return;
-      }
-      if (timings[0].mealType !== 'Fullday') {
-        this.mealTimingError = 'Pre-Order mode requires the meal type to be "Fullday".';
-        return;
-      }
     }
 
     // Helper to convert HH:mm -> minutes
