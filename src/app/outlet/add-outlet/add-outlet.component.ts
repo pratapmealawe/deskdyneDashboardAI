@@ -127,8 +127,6 @@ export class AddOutletComponent implements OnInit {
       isCabinOrder: [false],
       isPriceHide: [false],
       preOrderConfig: this.fb.group({
-        startTime: [''],
-        endTime: [''],
         type: ['normal'],
         mealType: ['lunch'],
         maxDays: [7, [Validators.min(1)]],
@@ -164,8 +162,6 @@ export class AddOutletComponent implements OnInit {
       if (!isPreOrder) {
         this.form.get('preOrderConfig')?.patchValue(
           {
-            startTime: '',
-            endTime: '',
             type: 'normal',
             mealType: 'lunch',
             maxDays: 7,
