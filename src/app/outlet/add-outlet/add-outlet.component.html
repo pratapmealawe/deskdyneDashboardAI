@@ -138,7 +138,7 @@
 
             <!-- Vertical Stack of Settings -->
             <div class="mt-3">
-              <mat-form-field appearance="outline" class="w-100 custom-field mb-3">
+              <mat-form-field appearance="outline" class="w-100 custom-field mb-3" *ngIf="!form.get('isPreOrder')?.value">
                 <mat-label>Outlet Closing Time</mat-label>
                 <input matInput type="time" formControlName="closeTime" />
                 <mat-icon matSuffix class="text-muted">access_time</mat-icon>
@@ -149,7 +149,9 @@
                 <mat-label>Packaging Amount</mat-label>
                 <input matInput type="number" formControlName="packagingAmount" />
                 <mat-icon matSuffix class="text-muted">currency_rupee</mat-icon>
-                <mat-error *ngIf="form.get('packagingAmount')?.invalid">Required (Min 0)</mat-error>
+                <mat-error *ngIf="form.get('packagingAmount')?.invalid && (form.get('packagingAmount')?.touched || showError)">
+                  *Packaging amount must be 0 or more
+                </mat-error>
               </mat-form-field>
             </div>
           </div>
@@ -183,6 +185,9 @@
                   <mat-label>Precedence</mat-label>
                   <input matInput type="number" formControlName="precedence" />
                   <mat-icon matSuffix class="text-muted">sort</mat-icon>
+                  <mat-error *ngIf="f['precedence'].invalid && (f['precedence'].touched || showError)">
+                    *Precedence must be 0 or more
+                  </mat-error>
                 </mat-form-field>
               </div>
               <div class="col-12 mb-3">
@@ -203,7 +208,9 @@
                   <mat-label>Vendor Commission (%)</mat-label>
                   <input matInput type="number" formControlName="vendorCommissionPercentage" />
                   <mat-icon matSuffix class="text-muted">percent</mat-icon>
-                  <mat-error *ngIf="f['vendorCommissionPercentage'].invalid">Required (0-100)</mat-error>
+                  <mat-error *ngIf="f['vendorCommissionPercentage'].invalid && (f['vendorCommissionPercentage'].touched || showError)">
+                    *Required (0-100)
+                  </mat-error>
                 </mat-form-field>
               </div>
               <div class="col-12 col-md-4 mb-3">
@@ -211,7 +218,9 @@
                   <mat-label>MRP Commission (%)</mat-label>
                   <input matInput type="number" formControlName="MRPCommissionPercentage" />
                   <mat-icon matSuffix class="text-muted">percent</mat-icon>
-                  <mat-error *ngIf="f['MRPCommissionPercentage'].invalid">Required (0-100)</mat-error>
+                  <mat-error *ngIf="f['MRPCommissionPercentage'].invalid && (f['MRPCommissionPercentage'].touched || showError)">
+                    *Required (0-100)
+                  </mat-error>
                 </mat-form-field>
               </div>
               <div class="col-12 col-md-4 mb-3">
@@ -220,6 +229,9 @@
                     <mat-label>Subsidy (%)</mat-label>
                     <input matInput type="number" formControlName="subsidy" />
                     <mat-icon matSuffix class="text-muted">savings</mat-icon>
+                    <mat-error *ngIf="f['subsidy'].invalid && (f['subsidy'].touched || showError)">
+                      *Subsidy must be between 0 and 100
+                    </mat-error>
                   </mat-form-field>
                   <button *ngIf="showUpdate" mat-icon-button color="primary" matTooltip="Update Subsidy"
                     (click)="updateOutletLevelSubsidy()" [disabled]="!selectedOutlet" type="button">
@@ -293,7 +305,7 @@
                       {{ type | titlecase }}
                     </mat-option>
                   </mat-select>
-                  <mat-error *ngIf="f['billingType'].invalid">
+                  <mat-error *ngIf="f['billingType'].invalid && (f['billingType'].touched || showError)">
                     *Billing Type is required
                   </mat-error>
                 </mat-form-field>
@@ -320,25 +332,17 @@
               <h3>Meal Timings</h3>
             </div>
             <div class="d-flex gap-2">
-              <button mat-stroked-button color="primary" type="button" (click)="setStandardEndTime()" class="action-btn"
-                [disabled]="form.get('isPreOrder')?.value">
+              <button mat-stroked-button color="primary" type="button" (click)="setStandardEndTime()" class="action-btn">
                 Set Standards
               </button>
-              <button mat-flat-button color="primary" type="button" (click)="addMealTiming()" class="action-btn"
-                [disabled]="form.get('isPreOrder')?.value"
-                [matTooltip]="form.get('isPreOrder')?.value ? 'Pre-Order allows only one Fullday timing' : ''">
+              <button mat-flat-button color="primary" type="button" (click)="addMealTiming()" class="action-btn">
                 <mat-icon>add</mat-icon> Add
               </button>
             </div>
           </div>
           <div class="card-body">
 
-            <!-- Pre-Order warning -->
-            <div *ngIf="form.get('isPreOrder')?.value" class="preorder-warning mb-3">
-              <mat-icon>info</mat-icon>
-              <span>Pre-Order mode is active — only <strong>one Fullday</strong> meal timing is allowed. The meal type
-                is locked to <strong>Fullday</strong> and cannot be removed.</span>
-            </div>
+
 
             <div formArrayName="mealTimings">
               <div class="container-fluid p-0">
@@ -349,7 +353,7 @@
                       <div class="timing-header">
                         <h4>Meal {{ i + 1 }}</h4>
                         <button mat-icon-button color="warn" (click)="removeMealTiming(i)"
-                          *ngIf="mealTimings.length > 1 && !form.get('isPreOrder')?.value" type="button">
+                          *ngIf="mealTimings.length > 1" type="button">
                           <mat-icon>close</mat-icon>
                         </button>
                       </div>
@@ -359,18 +363,27 @@
                           <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
                             <mat-label>Meal Type</mat-label>
                             <input matInput formControlName="mealType" placeholder="Breakfast" (input)="onMealTypeChange(i)" />
+                            <mat-error *ngIf="group.get('mealType')?.invalid && (group.get('mealType')?.touched || showError)">
+                              *Required
+                            </mat-error>
                           </mat-form-field>
                         </div>
                         <div class="col-6 col-md-2 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
                             <mat-label>From</mat-label>
                             <input matInput type="time" formControlName="acceptOrderFrom" />
+                            <mat-error *ngIf="group.get('acceptOrderFrom')?.invalid && (group.get('acceptOrderFrom')?.touched || showError)">
+                              *Required
+                            </mat-error>
                           </mat-form-field>
                         </div>
                         <div class="col-6 col-md-2 mb-2 mb-md-3">
                           <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
                             <mat-label>To</mat-label>
                             <input matInput type="time" formControlName="acceptOrderTill" />
+                            <mat-error *ngIf="group.get('acceptOrderTill')?.invalid && (group.get('acceptOrderTill')?.touched || showError)">
+                              *Required
+                            </mat-error>
                           </mat-form-field>
                         </div>
                         <div class="col-12 col-md-5 mb-2 mb-md-3">
@@ -398,6 +411,9 @@
                               <mat-label>Max Count Free</mat-label>
                               <input matInput type="number" formControlName="maxCountFree" />
                               <mat-hint>0 for unlimited</mat-hint>
+                              <mat-error *ngIf="group.get('maxCountFree')?.invalid && (group.get('maxCountFree')?.touched || showError)">
+                                *Must be 0 or more
+                              </mat-error>
                             </mat-form-field>
                           </div>
                         </ng-container>
@@ -442,7 +458,7 @@
                         <mat-radio-group formControlName="type" class="modern-radio-group py-2 px-3">
                           <mat-radio-button value="normal" class="me-3">Normal</mat-radio-button>
                           <mat-radio-button value="holiday" class="me-3">Holiday Only</mat-radio-button>
-                          <mat-radio-button value="both">Both</mat-radio-button>
+                          <!-- <mat-radio-button value="both">Both</mat-radio-button> -->
                         </mat-radio-group>
                       </div>
                     </div>
@@ -468,6 +484,9 @@
                     <mat-form-field appearance="outline" class="w-100 custom-field mb-0">
                       <mat-label>Days</mat-label>
                       <input matInput type="number" formControlName="maxDays" />
+                      <mat-error *ngIf="form.get('preOrderConfig.maxDays')?.invalid && (form.get('preOrderConfig.maxDays')?.touched || showError)">
+                        *Min 1 day
+                      </mat-error>
                     </mat-form-field>
                   </div>
                   <!-- Meal Type (Wide enough for one row) -->
