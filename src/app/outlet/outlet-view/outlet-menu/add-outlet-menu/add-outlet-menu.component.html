@@ -330,8 +330,13 @@
       <!-- Addons Section -->
       <div class="form-section">
         <div class="section-header">
-          <mat-icon>add_shopping_cart</mat-icon>
-          <span>Add Ons</span>
+          <div class="header-main">
+            <mat-icon>add_shopping_cart</mat-icon>
+            <span>Add Ons</span>
+          </div>
+          <button mat-icon-button color="primary" (click)="addAddon()" type="button" matTooltip="Add Add-On">
+            <mat-icon>add_circle</mat-icon>
+          </button>
         </div>
 
         <div [formArrayName]="'addOnsList'" class="nutrition-list">
@@ -393,17 +398,12 @@
                 </mat-form-field>
 
                 <div class="nutrition-actions">
-                  <button mat-icon-button color="primary" *ngIf="last" (click)="addAddon()" type="button"
-                    matTooltip="Add Add-On">
-                    <mat-icon>add_circle</mat-icon>
-                  </button>
                   <button mat-icon-button color="warn" *ngIf="!first" (click)="removeAddon(i)" type="button"
                     matTooltip="Remove">
                     <mat-icon>remove_circle</mat-icon>
                   </button>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -412,8 +412,14 @@
       <!-- Nutrition Section -->
       <div class="form-section">
         <div class="section-header">
-          <mat-icon>local_fire_department</mat-icon>
-          <span>Nutrition Information</span>
+          <div class="header-main">
+            <mat-icon>local_fire_department</mat-icon>
+            <span>Nutrition Information</span>
+          </div>
+          <button mat-icon-button color="primary" (click)="addNutritionLists()" type="button"
+            matTooltip="Add Nutrition">
+            <mat-icon>add_circle</mat-icon>
+          </button>
         </div>
 
         <div class="row g-3">
@@ -451,10 +457,6 @@
               </mat-select>
             </mat-form-field>
             <div class="nutrition-actions">
-              <button mat-icon-button color="primary" *ngIf="last" (click)="addNutritionLists()" class="add-btn"
-                type="button">
-                <mat-icon>add_circle</mat-icon>
-              </button>
               <button mat-icon-button color="warn" *ngIf="!first" (click)="removenNutritionLists(i)" type="button">
                 <mat-icon>remove_circle</mat-icon>
               </button>
