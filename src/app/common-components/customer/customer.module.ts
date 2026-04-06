@@ -10,11 +10,16 @@ import { CustomerPastOrdersComponent } from './customer-past-orders/customer-pas
 import { OrderCardModule } from 'src/app/order-card/order-card.module';
 import { CustomerPastMealOrdersComponent } from './customer-past-meal-orders/customer-past-meal-orders.component';
 import { CustomerOutletOrdersComponent } from './customer-outlet-orders/customer-outlet-orders.component';
+import { CustomerOrdersComponent } from './customer-orders/customer-orders.component';
 import { CustomerWalletComponent } from './customer-wallet/customer-wallet.component';
 import { WalletTransactionDialogComponent } from './customer-wallet/wallet-transaction-dialog/wallet-transaction-dialog.component';
 import { MaterialModule } from 'src/app/material.module';
 import { BulkWalletUploadDialogComponent } from './bulk-wallet-upload-dialog/bulk-wallet-upload-dialog.component';
 import { CustomerCompanyWalletComponent } from './customer-company-wallet/customer-company-wallet.component';
+import { HighchartsChartModule } from 'highcharts-angular';
+
+
+import { OtherOrdersModule } from '../../other-orders/other-orders.module';
 
 
 @NgModule({
@@ -25,7 +30,7 @@ import { CustomerCompanyWalletComponent } from './customer-company-wallet/custom
     CustomerPastOrdersComponent,
     CustomerPastMealOrdersComponent,
     CustomerOutletOrdersComponent,
-    CustomerWalletComponent,
+    CustomerOrdersComponent,
     CustomerWalletComponent,
     WalletTransactionDialogComponent,
     BulkWalletUploadDialogComponent,
@@ -37,7 +42,9 @@ import { CustomerCompanyWalletComponent } from './customer-company-wallet/custom
     FormsModule,
     ReactiveFormsModule,
     OrderCardModule,
-    MaterialModule
+    MaterialModule,
+    HighchartsChartModule,
+    OtherOrdersModule
   ],
   exports: [
     CustomerComponent,

@@ -6,20 +6,12 @@
 
 <div class="container-fluid">
     <mat-tab-group (selectedTabChange)="onTabChange($event)" class="custom-tabs pb-3">
-        <mat-tab label="allEventBulk">
-            <ng-template mat-tab-label>Bulk Event</ng-template>
-        </mat-tab>
-        <mat-tab label="dailyBulk">
-            <ng-template mat-tab-label>Admin Daily</ng-template>
-            <div class="pt-3">
+        <mat-tab *ngFor="let tab of excelViewList" [label]="tab.label">
+            <ng-template mat-tab-label>{{ tab.title }}</ng-template>
+
+            <div *ngIf="tab.label === 'dailyBulk'" class="pt-3">
                 <app-daily-admin-excel-export></app-daily-admin-excel-export>
             </div>
-        </mat-tab>
-        <mat-tab label="subscriptionPackage">
-            <ng-template mat-tab-label>Mealawe Virtual Cafe</ng-template>
-        </mat-tab>
-        <mat-tab label="empPoll">
-            <ng-template mat-tab-label>Emp Poll</ng-template>
         </mat-tab>
     </mat-tab-group>
 

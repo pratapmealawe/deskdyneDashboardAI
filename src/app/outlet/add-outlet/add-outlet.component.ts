@@ -1,17 +1,12 @@
 import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormGroup,
-  Validators,
-  AbstractControl,
-} from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ToasterService } from 'src/service/toaster.service';
 import { DataFormatService } from 'src/service/data-format.service';
 import { PolicyService } from 'src/service/policy.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
@@ -21,6 +16,9 @@ interface MealTiming {
   mealType: string;
   acceptOrderFrom: string;
   acceptOrderTill: string;
+  slug?: string;
+  maxCountFree?: number;
+  mealSubsidyType?: string;
 }
 
 interface SectionConfig {
@@ -60,6 +58,7 @@ export class AddOutletComponent implements OnInit {
 
   holidays: { date: string, name: string }[] = [];
   holidayUploadError: string | null = null;
+  orgSearchText: string = '';
 
   // For meal type dropdown
   mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'Dinner', 'High Tea'];
@@ -76,7 +75,8 @@ export class AddOutletComponent implements OnInit {
     private dialog: MatDialog,
     private confirmationModal: ConfirmationModalService,
     private dataFormatService: DataFormatService,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
@@ -91,6 +91,16 @@ export class AddOutletComponent implements OnInit {
   // convenience getter for template
   get f() {
     return this.form.controls;
+  }
+
+  get filteredOrgList() {
+    if (!this.orgSearchText) {
+      return this.formattedOrgList;
+    }
+    const search = this.orgSearchText.toLowerCase();
+    return this.formattedOrgList.filter(org =>
+      org.key.toLowerCase().includes(search)
+    );
   }
 
   get mealTimings(): FormArray {
@@ -109,7 +119,6 @@ export class AddOutletComponent implements OnInit {
     this.form = this.fb.group({
       outletName: ['', Validators.required],
       outletDescription: ['', Validators.required],
-
       outletOpened: [true],
       closeTime: [''],
       isSectionWiseMenu: [false],
@@ -118,8 +127,6 @@ export class AddOutletComponent implements OnInit {
       isCabinOrder: [false],
       isPriceHide: [false],
       preOrderConfig: this.fb.group({
-        startTime: [''],
-        endTime: [''],
         type: ['normal'],
         mealType: ['lunch'],
         maxDays: [7, [Validators.min(1)]],
@@ -129,26 +136,19 @@ export class AddOutletComponent implements OnInit {
           wednesday: [true],
           thursday: [true],
           friday: [true],
-          saturday: [false],
-          sunday: [false],
+          saturday: [true],
+          sunday: [true],
         }),
         holidays: [[]],
       }),
       isPackagingRequired: [false],
       packagingAmount: [0, [Validators.min(0)]],
-
-      vendorCommissionPercentage: [
-        0,
-        [Validators.required, Validators.min(0), Validators.max(100)],
-      ],
-      MRPCommissionPercentage: [
-        0,
-        [Validators.required, Validators.min(0), Validators.max(100)],
-      ],
+      vendorCommissionPercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
+      MRPCommissionPercentage: [0, [Validators.required, Validators.min(0), Validators.max(100)]],
       subsidy: [0, [Validators.min(0), Validators.max(100)]],
       precedence: [0, [Validators.min(0)]],
       billingType: ['revenueSharing', Validators.required],
-
+      isFullAmountOrgPaid: [false],
       mealTimings: this.fb.array([]),
       sectionConfig: this.fb.array([]),
       cabinConfig: this.fb.array([]),
@@ -162,12 +162,46 @@ export class AddOutletComponent implements OnInit {
       if (!isPreOrder) {
         this.form.get('preOrderConfig')?.patchValue(
           {
+            type: 'normal',
             mealType: 'lunch',
-            isPriceHide: false,
+            maxDays: 7,
+            availableDays: {
+              monday: true,
+              tuesday: true,
+              wednesday: true,
+              thursday: true,
+              friday: true,
+              saturday: true,
+              sunday: true,
+            },
+            holidays: [],
           },
           { emitEvent: false }
         );
+        this.form.get('isPriceHide')?.patchValue(false, { emitEvent: false });
         this.holidays = [];
+        
+        // Restore default meal timings if empty when switching back to normal mode
+        if (this.mealTimings.length === 0) {
+          this.addDefaultMealTimings();
+        }
+      } else {
+        // Meal timings and closing times are not needed for Pre-Order mode, remove any existing data
+        this.mealTimings.clear();
+        this.form.get('closeTime')?.patchValue('', { emitEvent: false });
+      }
+      this.validateMealTimings();
+    });
+
+    // When isFullAmountOrgPaid is disabled, reset meal subsidy types and counts
+    this.form.get('isFullAmountOrgPaid')?.valueChanges.subscribe((isEnabled: boolean) => {
+      if (!isEnabled) {
+        this.mealTimings.controls.forEach((group: AbstractControl) => {
+          group.patchValue({
+            mealSubsidyType: 'chargeable',
+            maxCountFree: 0
+          }, { emitEvent: false });
+        });
       }
     });
   }
@@ -175,13 +209,55 @@ export class AddOutletComponent implements OnInit {
   private createMealTimingGroup(
     mealType: string = '',
     from: string = '00:00',
-    till: string = '00:00'
+    till: string = '00:00',
+    slug: string = '',
+    maxCountFree: number = 0,
+    mealSubsidyType: string = 'chargeable'
   ): FormGroup {
-    return this.fb.group({
+    const group = this.fb.group({
       mealType: [mealType, Validators.required],
       acceptOrderFrom: [from, Validators.required],
       acceptOrderTill: [till, Validators.required],
+      slug: [slug],
+      maxCountFree: [maxCountFree, [Validators.min(0)]],
+      mealSubsidyType: [mealSubsidyType || 'chargeable'],
     });
+
+    if (!slug && mealType) {
+      group.get('slug')?.patchValue(this.generateSlug(mealType));
+    }
+
+    return group;
+  }
+
+  generateSlug(mealType: string): string {
+    if (!mealType) return '';
+    return mealType.toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w\-]+/g, '');
+  }
+
+  onMealTypeChange(index: number): void {
+    const group = this.mealTimings.at(index);
+    const mealType = group.get('mealType')?.value;
+
+    // Auto-generate slug only if it's currently empty OR we are in "Add" mode
+    // If it's an existing row in edit mode, we typically don't want to change the slug automatically
+    if (mealType) {
+      const baseSlug = this.generateSlug(mealType);
+      let slug = baseSlug;
+      let counter = 1;
+
+      // Check for duplicates in current timings
+      const existingSlugs = this.mealTimings.controls
+        .map((c, i) => i !== index ? c.get('slug')?.value : null)
+        .filter(s => !!s);
+
+      while (existingSlugs.includes(slug)) {
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+
+      group.get('slug')?.patchValue(slug, { emitEvent: false });
+    }
   }
 
   addDefaultMealTimings(): void {
@@ -257,13 +333,19 @@ export class AddOutletComponent implements OnInit {
       if (outlet.mealTiming && Array.isArray(outlet.mealTiming)) {
         outlet.mealTiming.forEach((mt: MealTiming) => {
           this.mealTimings.push(
-            this.createMealTimingGroup(mt.mealType, mt.acceptOrderFrom, mt.acceptOrderTill)
+            this.createMealTimingGroup(
+              mt.mealType,
+              mt.acceptOrderFrom,
+              mt.acceptOrderTill,
+              mt.slug,
+              mt.maxCountFree,
+              mt.mealSubsidyType
+            )
           );
         });
       } else {
         this.addDefaultMealTimings();
       }
-
       // emitEvent: false prevents the isPreOrder valueChanges subscription from
       // firing and overwriting the meal timings we just loaded above.
       this.form.patchValue({
@@ -276,7 +358,7 @@ export class AddOutletComponent implements OnInit {
         isPreOrder: outlet.isPreOrder ?? false,
         isCabinOrder: outlet.isCabinOrder ?? false,
         isPackagingRequired: outlet.isPackagingRequired ?? false,
-                isPriceHide: outlet.isPriceHide ?? false,
+        isPriceHide: outlet.isPriceHide ?? false,
         packagingAmount: outlet.packagingAmount ?? 0,
         vendorCommissionPercentage: outlet.vendorCommissionPercentage ?? 0,
         MRPCommissionPercentage: outlet.MRPCommissionPercentage ?? 0,
@@ -284,6 +366,7 @@ export class AddOutletComponent implements OnInit {
         precedence: outlet.precedence ?? 0,
         billingType: outlet.billingType ?? 'revenueSharing',
         closeTime: outlet.closeTime ?? '',
+        isFullAmountOrgPaid: outlet.isFullAmountOrgPaid ?? false,
       });
 
       const preOrderConfigData = outlet.preOrderConfig || {};
@@ -341,6 +424,7 @@ export class AddOutletComponent implements OnInit {
 
   async openOrgList(): Promise<void> {
     this.selectedOrgCafeteria = undefined;
+    this.orgSearchText = '';
     await this.getOrgList();
 
     const dialogRef = this.dialog.open(this.contentOrg, {
@@ -493,9 +577,109 @@ export class AddOutletComponent implements OnInit {
   }
 
   // For (ngSubmit) without explicit type
+    // For (ngSubmit) without explicit type
   onSubmit(type?: 'update'): void {
-    this.submit(type);
+    // Determine action based on explicit type or the showUpdate flag
+    if (type === 'update' || this.showUpdate) {
+      this.updateOutlet();
+    } else {
+      this.createOutlet();
+    }
   }
+
+  /**
+   * Shared logic to validate and prepare the FormData for submission
+   */
+  prepareOutletData(): FormData | null {
+    console.log('--- Preparing Outlet Data ---');
+    this.showError = true;
+    this.validateMealTimings();
+
+    if (this.form.invalid || !this.seletedCafetria || this.mealTimingError) {
+      console.warn('Submission blocked: Validation failed');
+      console.log('Form invalid:', this.form.invalid);
+      console.log('Cafeteria missing:', !this.seletedCafetria);
+      console.log('Meal timing error:', this.mealTimingError);
+
+      this.form.markAllAsTouched();
+      this.toasterService.error('Please fix the errors before saving.');
+      return null;
+    }
+
+    const formValue = this.form.getRawValue();
+    console.log('Form raw value:', formValue);
+
+    const finalObj: any = {
+      ...formValue,
+      cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
+      organizationDetails: this.seletedCafetria.organizationDetails,
+      mealTiming: this.mealTimings.value, // Mapping for backend
+      sectionConfig: this.sectionConfig.value,
+      cabinConfig: this.cabinConfig.value,
+    };
+
+    console.log('Final Object structured:', finalObj);
+
+    if (finalObj.isPreOrder) {
+      if (!finalObj.preOrderConfig) finalObj.preOrderConfig = {};
+      finalObj.preOrderConfig.holidays = this.holidays;
+    } else if (finalObj.preOrderConfig) {
+      finalObj.preOrderConfig.holidays = [];
+    }
+
+    const formData = this.objectToFormData(this.trimStringValues(finalObj));
+
+    if (this.uploadedImageFile) {
+      formData.append('image', this.uploadedImageFile);
+    }
+
+    return formData;
+  }
+
+  /**
+   * Logic for creating a new outlet (Submit)
+   */
+  async createOutlet(): Promise<void> {
+    console.log('--- Executing Create Outlet ---');
+    const formData = this.prepareOutletData();
+    if (!formData) return;
+
+    try {
+      console.log('Calling saveOutlet API...');
+      await this.apiMainService.saveOutlet(formData);
+      this.toasterService.success('Outlet created successfully.');
+      console.log('Navigation to /outlet...');
+      this.router.navigate(['/outlet']);
+    } catch (error) {
+      console.error('Create API Error:', error);
+    }
+  }
+
+  /**
+   * Logic for updating an existing outlet (Update)
+   */
+  async updateOutlet(): Promise<void> {
+    console.log('--- Executing Update Outlet ---');
+    if (!this.selectedOutlet?._id) {
+      console.error('Update blocked: Missing outlet ID');
+      this.toasterService.error('Outlet ID missing for update.');
+      return;
+    }
+
+    const formData = this.prepareOutletData();
+    if (!formData) return;
+
+    try {
+      console.log('Calling updateOutlet API...');
+      await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
+      this.toasterService.success('Outlet updated successfully.');
+      console.log('Navigation to /outlet...');
+      this.router.navigate(['/outlet']);
+    } catch (error) {
+      console.error('Update API Error:', error);
+    }
+  }
+
 
   trimStringValues(obj: any): any {
     if (obj instanceof File || obj instanceof Blob) return obj;
@@ -509,53 +693,7 @@ export class AddOutletComponent implements OnInit {
     return obj;
   }
 
-  async submit(type?: 'update'): Promise<void> {
-    this.showError = true;
-    this.validateMealTimings();
-
-    if (this.form.invalid || !this.seletedCafetria || this.mealTimingError) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    try {
-      const formValue = this.form.getRawValue();
-
-      const finalObj: any = {
-        cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
-        organizationDetails: this.seletedCafetria.organizationDetails,
-        mealTiming: this.mealTimings.value, // send array
-        sectionConfig: this.sectionConfig.value,
-        cabinConfig: this.cabinConfig.value,
-        ...formValue,
-      };
-
-      if (finalObj.isPreOrder) {
-        if (!finalObj.preOrderConfig) finalObj.preOrderConfig = {};
-        finalObj.preOrderConfig.holidays = this.holidays;
-      } else {
-        if (finalObj.preOrderConfig) {
-          finalObj.preOrderConfig.holidays = [];
-        }
-      }
-
-      let formData = this.objectToFormData(this.trimStringValues(finalObj));
-
-      if (this.uploadedImageFile) {
-        formData.append('image', this.uploadedImageFile);
-      }
-
-      if (type === 'update' && this.selectedOutlet?._id) {
-        await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
-      } else {
-        await this.apiMainService.saveOutlet(formData);
-      }
-
-      this.router.navigate(['/outlet']);
-    } catch (error) {
-      console.log(error);
-    }
-  }
+ 
 
   objectToFormData(obj: any, formData = new FormData(), parentKey = ''): FormData {
     for (let key in obj) {
@@ -588,22 +726,22 @@ export class AddOutletComponent implements OnInit {
   }
 
   setStandardEndTime(): void {
-    // Set standard times based on mealType
+    // Set standard times based on slug
     const map: Record<string, { from: string; till: string }> = {
-      Fullday: { from: '06:00', till: '23:00' },
-      Breakfast: { from: '06:00', till: '10:00' },
-      Lunch: { from: '11:00', till: '14:00' },
-      EveningSnacks: { from: '16:00', till: '18:00' },
-      Dinner: { from: '19:00', till: '22:00' },
+      fullday: { from: '06:00', till: '23:00' },
+      breakfast: { from: '06:00', till: '10:00' },
+      lunch: { from: '11:00', till: '14:00' },
+      'high-tea': { from: '16:00', till: '18:00' },
+      dinner: { from: '19:00', till: '22:00' },
     };
 
     this.mealTimings.controls.forEach((ctrl: AbstractControl) => {
-      const mt = ctrl.get('mealType')?.value;
-      if (mt && map[mt]) {
+      const slug = ctrl.get('slug')?.value;
+      if (slug && map[slug]) {
         ctrl.patchValue(
           {
-            acceptOrderFrom: map[mt].from,
-            acceptOrderTill: map[mt].till,
+            acceptOrderFrom: map[slug].from,
+            acceptOrderTill: map[slug].till,
           },
           { emitEvent: false }
         );
@@ -617,21 +755,9 @@ export class AddOutletComponent implements OnInit {
     this.mealTimingError = null;
 
     const timings = this.mealTimings.value as MealTiming[];
-    if (!timings || timings.length === 0) {
+    if (!this.form.get('isPreOrder')?.value && (!timings || timings.length === 0)) {
       this.mealTimingError = 'Please add at least one meal timing.';
       return;
-    }
-
-    // Pre-order: exactly one Fullday timing
-    if (this.form.get('isPreOrder')?.value) {
-      if (timings.length > 1) {
-        this.mealTimingError = 'Pre-Order mode allows only one meal timing (Fullday).';
-        return;
-      }
-      if (timings[0].mealType !== 'Fullday') {
-        this.mealTimingError = 'Pre-Order mode requires the meal type to be "Fullday".';
-        return;
-      }
     }
 
     // Helper to convert HH:mm -> minutes

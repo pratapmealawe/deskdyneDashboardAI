@@ -92,7 +92,7 @@ export const DEFAULT_BUTTON_POLICIES: Record<string, boolean> = {
 
   // B2B ORG
   restoreOrganization: false,
-  saveOrganization: false,
+  // saveOrganization: false,
   cancelOrganization: false,
   updateOrganization: false,
   createOrganization: false,
@@ -304,7 +304,11 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   vendorFirmDetails: false,
   vendorWallets: false,
   vendorOrderReport: false,
-
+  // excel export 
+  excelBulkEvent: false,
+  excelAdminDaily: false,
+  excelMealaweVirtualCafeteria: false,
+  excelEmployeePoll: false,
 
 };
 
@@ -388,7 +392,7 @@ export const GROUPED_BUTTON_POLICIES = [
   },
   {
     title: 'B2B ORGANIZATION MANAGEMENT',
-    keys: ['addOrganization', 'restoreOrganization', 'viewOrganization', 'deleteOrganization', 'editOrganization', 'saveOrganization', 'cancelOrganization', 'updateOrganization', 'addCafeteria', 'addPoc', 'editCompliance', 'createOrganization']
+    keys: ['addOrganization', 'restoreOrganization', 'viewOrganization', 'deleteOrganization', 'editOrganization', 'cancelOrganization', 'updateOrganization', 'addCafeteria', 'addPoc', 'editCompliance', 'createOrganization']
   },
   {
     title: 'MENU MANAGEMENT',
@@ -468,7 +472,7 @@ export const GROUPED_TAB_POLICIES = [
   },
   {
     title: 'EXCEL REPORTS',
-    keys: ['bulkEvent', 'adminDaily', 'mealaweVirtualCafeteria', 'employeePoll']
+    keys: ['excelBulkEvent', 'excelAdminDaily', 'excelMealaweVirtualCafeteria', 'excelEmployeePoll']
   }
 ];
 

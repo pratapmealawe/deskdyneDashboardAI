@@ -1,7 +1,53 @@
 <div class="customer-outlet-orders" *ngIf="userDetails">
 
-    <!-- Filters + totals -->
-    <mat-card class="mb-3 p-3 filter-card">
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm p-3 bg-gradient-primary text-white result-card">
+                <div class="small opacity-75">Total Spent</div>
+                <div class="h4 mb-0 font-weight-bold">₹{{ totalAmount | number:'1.2-2' }}</div>
+                <mat-icon class="card-icon">payments</mat-icon>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm p-3 bg-white result-card">
+                <div class="small text-muted">Order Count</div>
+                <div class="h4 mb-0 font-weight-bold">{{ filteredList.length }}</div>
+                <mat-icon class="card-icon text-primary">shopping_basket</mat-icon>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm p-3 bg-white result-card">
+                <div class="small text-muted">Wallet Used</div>
+                <div class="h4 mb-0 font-weight-bold text-success">₹{{ totalWalletUsed | number:'1.2-2' }}</div>
+                <mat-icon class="card-icon text-success">account_balance_wallet</mat-icon>
+            </div>
+        </div>
+        <div class="col-12 col-md-3">
+            <div class="card border-0 shadow-sm p-3 bg-white result-card">
+                <div class="small text-muted">Online Paid</div>
+                <div class="h4 mb-0 font-weight-bold text-info">₹{{ totalAmountPaid | number:'1.2-2' }}</div>
+                <mat-icon class="card-icon text-info">qr_code_2</mat-icon>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Section -->
+    <mat-card class="mb-4 p-3 chart-card border-0 shadow-sm" *ngIf="filteredList.length > 0">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mb-0 font-weight-bold text-dark">Order Trends</h5>
+            <span class="small text-muted">Daily Spends (Last 30 orders/filtered range)</span>
+        </div>
+        <highcharts-chart 
+            [Highcharts]="Highcharts"
+            [options]="chartOptions"
+            [(update)]="updateFlag"
+            style="width: 100%; height: 300px; display: block;">
+        </highcharts-chart>
+    </mat-card>
+
+    <!-- Filters -->
+    <mat-card class="mb-3 p-3 filter-card border-0 shadow-sm">
         <div class="row g-3 align-items-end">
             <!-- Date range -->
             <div class="col-12 col-md-4">
