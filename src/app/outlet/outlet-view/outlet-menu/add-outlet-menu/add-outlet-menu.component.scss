@@ -326,22 +326,52 @@
 .section-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   margin-bottom: 0.75rem;
-  padding-bottom: 0.5rem;
+  padding-bottom: 0.4rem;
   border-bottom: 1px solid #e2e8f0;
 
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: var.$primary-color1;
+  .header-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: var.$primary-color1;
+    }
+
+    span {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
   }
 
-  span {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: #1e293b;
+  button[mat-icon-button] {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+    margin-right: -4px; // Slight pull-in for alignment
+    color: var.$primary-color1;
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: scale(1.1);
+      background-color: rgba(var.$primary-color1, 0.08);
+    }
+
+    mat-icon {
+      font-size: 22px;
+      width: 22px;
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 
