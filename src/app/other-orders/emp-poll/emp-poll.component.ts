@@ -72,7 +72,7 @@ export class EmployeePollComponent implements OnInit {
             payload['employeePhoneNo'] = this.searchPhone;
         }
         if (this.selectedOrg) {
-            payload['org_id'] = this.selectedOrg;
+            payload['orgId'] = this.selectedOrg;
         }
 
         try {
