@@ -181,6 +181,9 @@ export class AddOutletComponent implements OnInit {
         this.form.get('isPriceHide')?.patchValue(false, { emitEvent: false });
         this.holidays = [];
         
+        // Remove validation when isPreOrder is disabled
+        this.form.get('preOrderConfig.mealType')?.clearValidators();
+        
         // Restore default meal timings if empty when switching back to normal mode
         if (this.mealTimings.length === 0) {
           this.addDefaultMealTimings();
@@ -189,7 +192,11 @@ export class AddOutletComponent implements OnInit {
         // Meal timings and closing times are not needed for Pre-Order mode, remove any existing data
         this.mealTimings.clear();
         this.form.get('closeTime')?.patchValue('', { emitEvent: false });
+
+        // Make mealType required when isPreOrder is enabled
+        this.form.get('preOrderConfig.mealType')?.setValidators([Validators.required]);
       }
+      this.form.get('preOrderConfig.mealType')?.updateValueAndValidity({ emitEvent: false });
       this.validateMealTimings();
     });
 

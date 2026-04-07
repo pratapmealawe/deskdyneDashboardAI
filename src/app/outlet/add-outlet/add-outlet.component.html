@@ -478,6 +478,7 @@
                     <div class="settings-sub-section mb-0">
                       <h4 class="sub-title small mb-2" style="font-size: 0.75rem; color: #64748b; font-weight: 500;">
                         <mat-icon style="font-size: 14px; width: 14px; height: 14px; color: #64748b;">restaurant_menu</mat-icon> Meal Type
+                        <span class="text-danger" *ngIf="form.get('isPreOrder')?.value">*</span>
                       </h4>
                       <div class="d-inline-flex">
                         <mat-radio-group formControlName="mealType" class="modern-radio-group py-2 px-2 w-100 d-flex justify-content-between" style="align-items: center;">
@@ -487,6 +488,10 @@
                           <mat-radio-button value="high tea">High Tea</mat-radio-button>
                         </mat-radio-group>
                       </div>
+                      <mat-error *ngIf="form.get('preOrderConfig.mealType')?.invalid && (form.get('preOrderConfig.mealType')?.touched || showError)" 
+                        class="d-block mt-1 small" style="font-size: 0.7rem;">
+                        *Meal type is required for pre-orders
+                      </mat-error>
                     </div>
                   </div>
                 </div>
