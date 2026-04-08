@@ -4,6 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-create-notification',
@@ -68,6 +69,10 @@ export class CreateNotificationComponent implements OnInit {
                 body: this.data.body,
                 targetType: (this.data.targetType || '').toLowerCase()
             });
+
+            if (this.data.imageUrl) {
+                this.imageUrl = environment.imageUrl + this.data.imageUrl;
+            }
 
             // Handle target population logic
             const type = (this.data.targetType || '').toLowerCase();
@@ -411,6 +416,9 @@ export class CreateNotificationComponent implements OnInit {
         }
 
         if (!this.imageReplaced || !this.uploadedImageFile) {
+            if (this.data && this.data.imageUrl && this.imageUrl) {
+                payload.imageUrl = this.data.imageUrl;
+            }
             return payload;
         }
 

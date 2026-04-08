@@ -4,6 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 import { CreateNotificationComponent } from '../create-notification/create-notification.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-notification-list',
@@ -19,6 +20,7 @@ export class NotificationListComponent implements OnInit {
     pagedNotificationList: any[] = [];
     pageSize = 10;
     pageIndex = 0;
+    imageUrl: string = environment.imageUrl;
 
     constructor(
         private apiMainService: ApiMainService,
