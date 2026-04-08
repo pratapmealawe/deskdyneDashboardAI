@@ -47,8 +47,8 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
           const isNotApplicable = item.notApplicable || false;
           const dayGroup = new FormGroup({
             itemDay: new FormControl(item.itemDay, Validators.required),
-            itemName: new FormControl(item.itemName, isNotApplicable ? Validators.required : []),
-            itemDescription: new FormControl(item.itemDescription, isNotApplicable ? Validators.required : []),
+            itemName: new FormControl({ value: item.itemName, disabled: !isNotApplicable }, isNotApplicable ? Validators.required : []),
+            itemDescription: new FormControl({ value: item.itemDescription, disabled: !isNotApplicable }, isNotApplicable ? Validators.required : []),
             notApplicable: new FormControl(isNotApplicable)
           });
           this.setupDayValidatorSubscription(dayGroup);
@@ -75,8 +75,8 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
   createDay(dayName: string, notApplicable: boolean = false): FormGroup {
     const dayGroup = new FormGroup({
       itemDay: new FormControl(dayName, Validators.required),
-      itemName: new FormControl('', notApplicable ? Validators.required : []),
-      itemDescription: new FormControl('', notApplicable ? Validators.required : []),
+      itemName: new FormControl({ value: '', disabled: !notApplicable }, notApplicable ? Validators.required : []),
+      itemDescription: new FormControl({ value: '', disabled: !notApplicable }, notApplicable ? Validators.required : []),
       notApplicable: new FormControl(notApplicable)
     });
 
@@ -90,16 +90,17 @@ export class AddSubTypeDailyOrderMenuComponent implements OnInit {
       const itemDescCtrl = dayGroup.get('itemDescription');
 
       if (isNotApplicable) {
-        // Add required validators when checkbox is checked (day IS applicable)
+        // day IS applicable
+        itemNameCtrl?.enable();
+        itemDescCtrl?.enable();
         itemNameCtrl?.setValidators(Validators.required);
         itemDescCtrl?.setValidators(Validators.required);
       } else {
-        // Clear validators when checkbox is unchecked (day NOT applicable)
+        // day NOT applicable
+        itemNameCtrl?.disable();
+        itemDescCtrl?.disable();
         itemNameCtrl?.clearValidators();
         itemDescCtrl?.clearValidators();
-        // Clear values when not applicable
-        itemNameCtrl?.setValue('');
-        itemDescCtrl?.setValue('');
       }
 
       itemNameCtrl?.updateValueAndValidity();

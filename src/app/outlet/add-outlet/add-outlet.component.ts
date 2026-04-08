@@ -539,9 +539,11 @@ export class AddOutletComponent implements OnInit {
         const excelData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as any[][];
 
         let parsedHolidays: { date: string, name: string }[] = [];
+        let invalidDateCount = 0;
+
         excelData.forEach((row, index) => {
           // skip header row if it seems like header
-          if (index === 0 && typeof row[0] === 'string' && row[0].toLowerCase().includes('date')) {
+          if (index === 0 && typeof row[0] === 'string' && (row[0].toLowerCase().includes('date') || row[0].toLowerCase().includes('holiday'))) {
             return;
           }
           if (row.length > 0 && row[0]) {
@@ -576,9 +578,15 @@ export class AddOutletComponent implements OnInit {
                 date: `${y}-${m}-${d}`,
                 name: String(nameVal).trim()
               });
+            } else {
+              invalidDateCount++;
             }
           }
         });
+
+        if (invalidDateCount > 0) {
+          this.toasterService.error(`Found ${invalidDateCount} row(s) with invalid date formats. These were skipped.`);
+        }
 
         if (parsedHolidays.length > 0) {
           const combined = [...this.holidays, ...parsedHolidays];
