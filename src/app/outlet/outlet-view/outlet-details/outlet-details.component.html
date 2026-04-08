@@ -326,15 +326,11 @@
         <div class="holiday-chips">
           <span class="holiday-chip d-flex align-items-center"
             *ngFor="let h of (outletObj?.preOrderConfig?.holidays || outletObj.holidays)">
-            <div class="h-date-box text-center me-2 py-1 px-2 bg-light rounded shadow-sm" style="min-width: 45px;">
-              <div class="h-month small fw-bold text-uppercase" style="font-size: 0.65rem; color: #3b82f6;">{{ h.date |
-                date:'MMM' }}</div>
-              <div class="h-day fw-bold" style="font-size: 1rem; line-height: 1; color: #1e293b;">{{ h.date | date:'dd'
-                }}</div>
-            </div>
-            <div class="h-info">
+            <div class="h-info py-1">
               <div class="h-name fw-semibold" style="font-size: 0.85rem; color: #111827;">{{ h.name }}</div>
-              <div class="h-year text-muted small" style="font-size: 0.7rem;">{{ h.date | date:'yyyy' }}</div>
+              <div class="h-date text-primary fw-medium" style="font-size: 0.75rem;">
+                {{ h.date | date:'dd/MM/yyyy' }}
+              </div>
             </div>
           </span>
         </div>

@@ -50,7 +50,7 @@ export class AddOutletComponent implements OnInit {
 
   formattedOrgList: any[] = [];
   selectedOrgCafeteria: string | undefined;
-  seletedCafetria: any;
+  selectedCafeteria: any;
 
   sectionTypes: string[] = ['alacarte', 'live'];
 
@@ -180,7 +180,10 @@ export class AddOutletComponent implements OnInit {
         );
         this.form.get('isPriceHide')?.patchValue(false, { emitEvent: false });
         this.holidays = [];
-        
+
+        // Remove validation when isPreOrder is disabled
+        this.form.get('preOrderConfig.mealType')?.clearValidators();
+
         // Restore default meal timings if empty when switching back to normal mode
         if (this.mealTimings.length === 0) {
           this.addDefaultMealTimings();
@@ -189,7 +192,11 @@ export class AddOutletComponent implements OnInit {
         // Meal timings and closing times are not needed for Pre-Order mode, remove any existing data
         this.mealTimings.clear();
         this.form.get('closeTime')?.patchValue('', { emitEvent: false });
+
+        // Make mealType required when isPreOrder is enabled
+        this.form.get('preOrderConfig.mealType')?.setValidators([Validators.required]);
       }
+      this.form.get('preOrderConfig.mealType')?.updateValueAndValidity({ emitEvent: false });
       this.validateMealTimings();
     });
 
@@ -324,7 +331,7 @@ export class AddOutletComponent implements OnInit {
       this.selectedOutlet = outlet;
       this.imageUrl = outlet.imageUrl ? environment.imageUrl + outlet.imageUrl : null;
 
-      this.seletedCafetria = {
+      this.selectedCafeteria = {
         organizationDetails: outlet.organizationDetails,
         cafeteriaDetails: outlet.cafeteriaDetails,
       };
@@ -379,12 +386,25 @@ export class AddOutletComponent implements OnInit {
         }
       });
 
-      if (outlet.holidays && Array.isArray(outlet.holidays)) {
-        this.holidays = outlet.holidays
-          .map((h: any) => ({
-            date: new Date(h.date || h).toISOString().split('T')[0],
-            name: h.name || 'Holiday'
-          }))
+      const existingHolidays = outlet.holidays || outlet.preOrderConfig?.holidays;
+      if (existingHolidays && Array.isArray(existingHolidays)) {
+        this.holidays = existingHolidays
+          .map((h: any) => {
+            const dateVal = h.date || h;
+            const dateObj = new Date(dateVal);
+            if (dateObj && !isNaN(dateObj.getTime())) {
+              const dateStr = dateVal.includes('T') || dateVal.length === 10
+                ? dateObj.toISOString().split('T')[0]
+                : `${dateObj.getFullYear()}-${String(dateObj.getMonth() + 1).padStart(2, '0')}-${String(dateObj.getDate()).padStart(2, '0')}`;
+
+              return {
+                date: dateStr,
+                name: h.name || 'Holiday'
+              };
+            }
+            return null;
+          })
+          .filter((h): h is { date: string, name: string } => !!h && !!h.date)
           .sort((a: any, b: any) => a.date.localeCompare(b.date));
       } else {
         this.holidays = [];
@@ -440,7 +460,7 @@ export class AddOutletComponent implements OnInit {
               (org: any) => org.key === this.selectedOrgCafeteria
             );
             if (selected) {
-              this.seletedCafetria = { ...selected };
+              this.selectedCafeteria = { ...selected };
             }
           },
           context: this
@@ -511,7 +531,7 @@ export class AddOutletComponent implements OnInit {
     reader.onload = (e: any) => {
       try {
         const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
+        const workbook = XLSX.read(data, { type: 'array', cellDates: true });
         const firstSheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[firstSheetName];
 
@@ -532,14 +552,28 @@ export class AddOutletComponent implements OnInit {
               // excel date serial
               dateObj = new Date((dateVal - (25567 + 1)) * 86400 * 1000);
             } else if (typeof dateVal === 'string') {
-              dateObj = new Date(dateVal);
+              // Support dd/mm/yyyy or dd-mm-yyyy
+              const parts = dateVal.includes('/') ? dateVal.split('/') : dateVal.includes('-') ? dateVal.split('-') : [];
+              if (parts.length === 3 && parts[0].length <= 2 && parts[2].length === 4) {
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10) - 1;
+                const year = parseInt(parts[2], 10);
+                dateObj = new Date(year, month, day);
+              } else {
+                dateObj = new Date(dateVal);
+              }
             } else if (dateVal instanceof Date) {
               dateObj = dateVal;
             }
 
             if (dateObj && !isNaN(dateObj.getTime())) {
+              // Use local parts to avoid timezone shift
+              const y = dateObj.getFullYear();
+              const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+              const d = String(dateObj.getDate()).padStart(2, '0');
+
               parsedHolidays.push({
-                date: dateObj.toISOString().split('T')[0],
+                date: `${y}-${m}-${d}`,
                 name: String(nameVal).trim()
               });
             }
@@ -551,7 +585,7 @@ export class AddOutletComponent implements OnInit {
           const unique = new Map(combined.map(item => [item.date, item]));
           this.holidays = Array.from(unique.values()).sort((a: any, b: any) => a.date.localeCompare(b.date));
         } else {
-          this.holidayUploadError = 'No valid dates found in the file. Ensure dates are in the first column and names in the second.';
+          this.holidayUploadError = 'No valid dates found in the file. Ensure dates are in the first column and holiday in the second.';
         }
       } catch (err) {
         this.holidayUploadError = 'Error parsing file. Please upload a valid CSV or Excel file.';
@@ -565,11 +599,15 @@ export class AddOutletComponent implements OnInit {
     this.holidays = this.holidays.filter(h => h.date !== date);
   }
 
+  clearAllHolidays() {
+    this.holidays = [];
+  }
+
   downloadHolidayTemplate() {
     const ws = XLSX.utils.aoa_to_sheet([
-      ['Date', 'Holiday Name'],
-      ['2025-12-25', 'Christmas'],
-      ['2026-01-01', 'New Year']
+      ['Date', 'Holiday'],
+      ['25/12/2026', 'Christmas'],
+      ['01/01/2027', 'New Year']
     ]);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Holidays');
@@ -577,7 +615,7 @@ export class AddOutletComponent implements OnInit {
   }
 
   // For (ngSubmit) without explicit type
-    // For (ngSubmit) without explicit type
+  // For (ngSubmit) without explicit type
   onSubmit(type?: 'update'): void {
     // Determine action based on explicit type or the showUpdate flag
     if (type === 'update' || this.showUpdate) {
@@ -595,10 +633,10 @@ export class AddOutletComponent implements OnInit {
     this.showError = true;
     this.validateMealTimings();
 
-    if (this.form.invalid || !this.seletedCafetria || this.mealTimingError) {
+    if (this.form.invalid || !this.selectedCafeteria || this.mealTimingError) {
       console.warn('Submission blocked: Validation failed');
       console.log('Form invalid:', this.form.invalid);
-      console.log('Cafeteria missing:', !this.seletedCafetria);
+      console.log('Cafeteria missing:', !this.selectedCafeteria);
       console.log('Meal timing error:', this.mealTimingError);
 
       this.form.markAllAsTouched();
@@ -611,8 +649,8 @@ export class AddOutletComponent implements OnInit {
 
     const finalObj: any = {
       ...formValue,
-      cafeteriaDetails: this.seletedCafetria.cafeteriaDetails,
-      organizationDetails: this.seletedCafetria.organizationDetails,
+      cafeteriaDetails: this.selectedCafeteria.cafeteriaDetails,
+      organizationDetails: this.selectedCafeteria.organizationDetails,
       mealTiming: this.mealTimings.value, // Mapping for backend
       sectionConfig: this.sectionConfig.value,
       cabinConfig: this.cabinConfig.value,
@@ -693,7 +731,7 @@ export class AddOutletComponent implements OnInit {
     return obj;
   }
 
- 
+
 
   objectToFormData(obj: any, formData = new FormData(), parentKey = ''): FormData {
     for (let key in obj) {
