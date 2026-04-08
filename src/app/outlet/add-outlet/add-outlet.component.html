@@ -43,9 +43,9 @@
           </mat-menu>
 
           <!-- Validity Badge -->
-          <div class="status-pill" [ngClass]="form.valid && seletedCafetria && !mealTimingError ? 'valid' : 'invalid'">
-            <mat-icon>{{ form.valid && seletedCafetria && !mealTimingError ? 'check_circle' : 'info' }}</mat-icon>
-            <span>{{ form.valid && seletedCafetria && !mealTimingError ? 'Ready to Save' : 'Incomplete' }}</span>
+          <div class="status-pill" [ngClass]="form.valid && selectedCafeteria && !mealTimingError ? 'valid' : 'invalid'">
+            <mat-icon>{{ form.valid && selectedCafeteria && !mealTimingError ? 'check_circle' : 'info' }}</mat-icon>
+            <span>{{ form.valid && selectedCafeteria && !mealTimingError ? 'Ready to Save' : 'Incomplete' }}</span>
           </div>
         </div>
       </div>
@@ -259,29 +259,29 @@
                 </button>
               </div>
               <div class="card-body">
-                <div class="empty-placeholder py-4" *ngIf="!seletedCafetria">
+                <div class="empty-placeholder py-4" *ngIf="!selectedCafeteria">
                   <mat-icon>business</mat-icon>
                   <p>No organization selected yet.</p>
                 </div>
 
-                <div class="selected-cafe-info" *ngIf="seletedCafetria">
+                <div class="selected-cafe-info" *ngIf="selectedCafeteria">
                   <div class="info-grid vertical">
                     <div class="info-item">
                       <span class="label">Organization</span>
-                      <span class="value">{{ seletedCafetria.organizationDetails.organization_name }}</span>
+                      <span class="value">{{ selectedCafeteria.organizationDetails.organization_name }}</span>
                     </div>
                     <div class="info-item">
                       <span class="label">Cafeteria</span>
-                      <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_name }}</span>
+                      <span class="value">{{ selectedCafeteria.cafeteriaDetails.cafeteria_name }}</span>
                     </div>
                     <div class="info-item">
                       <span class="label">City / Location</span>
-                      <span class="value">{{ seletedCafetria.organizationDetails.city }} / {{
-                        seletedCafetria.cafeteriaDetails.cafeteria_city }}</span>
+                      <span class="value">{{ selectedCafeteria.organizationDetails.city }} / {{
+                        selectedCafeteria.cafeteriaDetails.cafeteria_city }}</span>
                     </div>
                   </div>
                 </div>
-                <mat-error *ngIf="!seletedCafetria && showError" class="mt-2 d-block text-center small">
+                <mat-error *ngIf="!selectedCafeteria && showError" class="mt-2 d-block text-center small">
                   *Please select an organization and cafeteria
                 </mat-error>
               </div>
@@ -399,7 +399,7 @@
                             <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
                               <mat-label>Subsidy Type</mat-label>
                               <mat-select formControlName="mealSubsidyType">
-                                <mat-option value="free">Full Paid by Orgization and Free Meal </mat-option>
+                                <mat-option value="free">Organization Full Paid. </mat-option>
                                 <mat-option value="subsidized">Full Paid by Employee Salary</mat-option>
                                 <mat-option value="chargeable">Normal</mat-option>
                               </mat-select>
@@ -517,10 +517,16 @@
                       <h4 class="sub-title mb-1"><mat-icon>holiday_village</mat-icon> Holidays</h4>
                       <p class="text-muted small mb-0">Bulk-add holidays to enable/disable pre-orders.</p>
                     </div>
-                    <button mat-flat-button color="primary" type="button" (click)="holidayUpload.click()"
-                      class="upload-action-btn">
-                      <mat-icon>upload_file</mat-icon> Upload Sheet
-                    </button>
+                    <div class="d-flex gap-2">
+                      <button mat-stroked-button color="warn" type="button" (click)="clearAllHolidays()" 
+                        *ngIf="holidays.length > 0" class="upload-action-btn">
+                        <mat-icon>delete_sweep</mat-icon> Clear All
+                      </button>
+                      <button mat-flat-button color="primary" type="button" (click)="holidayUpload.click()"
+                        class="upload-action-btn">
+                        <mat-icon>upload_file</mat-icon> Upload Sheet
+                      </button>
+                    </div>
                     <input type="file" #holidayUpload hidden
                       accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                       (change)="handleHolidayUpload($event)">
@@ -548,13 +554,11 @@
                         <mat-chip *ngFor="let h of holidays" class="modern-holiday-chip"
                           (removed)="removeHoliday(h.date)">
                           <div class="chip-content d-flex align-items-center">
-                            <div class="h-date-box text-center me-2 py-1 px-2 bg-light rounded shadow-sm">
-                              <div class="h-month small fw-bold text-uppercase" style="font-size: 0.65rem; color: #3b82f6;">{{ h.date | date:'MMM' }}</div>
-                              <div class="h-day fw-bold" style="font-size: 1rem; line-height: 1;">{{ h.date | date:'dd' }}</div>
-                            </div>
-                            <div class="h-info">
+                            <div class="h-info py-1">
                               <div class="h-name fw-semibold" style="font-size: 0.85rem;">{{ h.name }}</div>
-                              <div class="h-year text-muted small" style="font-size: 0.7rem;">{{ h.date | date:'yyyy' }}</div>
+                              <div class="h-date text-primary fw-medium" style="font-size: 0.75rem;">
+                                {{ h.date | date:'dd/MM/yyyy' }}
+                              </div>
                             </div>
                           </div>
                           <button matChipRemove><mat-icon>cancel</mat-icon></button>
@@ -703,13 +707,13 @@
         <button class="btn-cancel" mat-button (click)="back()" type="button">Cancel</button>
 
         <button class="btn-submit" mat-flat-button color="primary" type="button" (click)="onSubmit('update')"
-          [disabled]="form.invalid || !seletedCafetria || !!mealTimingError"
+          [disabled]="form.invalid || !selectedCafeteria || !!mealTimingError"
           *ngIf="showUpdate && (btnPolicy?.editOutlet ?? true)">
           <mat-icon>save</mat-icon> Save Changes
         </button>
 
         <button class="btn-submit" mat-flat-button color="primary" type="submit"
-          [disabled]="form.invalid || !seletedCafetria || !!mealTimingError"
+          [disabled]="form.invalid || !selectedCafeteria || !!mealTimingError"
           *ngIf="!showUpdate && (btnPolicy?.addOutlet ?? true)">
           <mat-icon>check</mat-icon> Create Outlet
         </button>

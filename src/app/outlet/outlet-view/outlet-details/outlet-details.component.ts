@@ -27,6 +27,26 @@ export class OutletDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.normalizeHolidays();
+  }
+
+  private normalizeHolidays(): void {
+    if (!this.outletObj) return;
+
+    const normalize = (h: any) => {
+      if (!h) return null;
+      const dateStr = h.date || h;
+      const nameStr = h.name || 'Holiday';
+      return { date: dateStr, name: nameStr };
+    };
+
+    if (this.outletObj.holidays && Array.isArray(this.outletObj.holidays)) {
+      this.outletObj.holidays = this.outletObj.holidays.map(normalize).filter((h: any) => h !== null);
+    }
+
+    if (this.outletObj.preOrderConfig?.holidays && Array.isArray(this.outletObj.preOrderConfig.holidays)) {
+      this.outletObj.preOrderConfig.holidays = this.outletObj.preOrderConfig.holidays.map(normalize).filter((h: any) => h !== null);
+    }
   }
 
   editOrg() {
@@ -58,7 +78,7 @@ export class OutletDetailsComponent implements OnInit {
 
   getSubsidyLabel(type: string): string {
     const labels: { [key: string]: string } = {
-      'free': 'Full Paid by Orgization and Free Meal',
+      'free': 'Organization Full Paid',
       'subsidized': 'Full Paid by Employee Salary',
       'chargeable': 'Normal'
     };
