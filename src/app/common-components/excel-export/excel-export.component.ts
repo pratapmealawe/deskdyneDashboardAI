@@ -4,6 +4,7 @@ import { ToasterService } from 'src/service/toaster.service';
 import { ExcelService } from 'src/service/excel.service';
 import { DatePipe } from '@angular/common';
 import { MatTabChangeEvent } from '@angular/material/tabs';
+import { PolicyService } from 'src/service/policy.service';
 
 @Component({
   selector: 'app-excel-export',
@@ -26,10 +27,28 @@ export class ExcelExportComponent implements OnInit {
   filteredList: any;
   monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
 
-  constructor(private apiMainService: ApiMainService, private datePipe: DatePipe, private excelService: ExcelService, private toasterService: ToasterService) { }
+  excelViewList: any[] = [
+    { label: 'allEventBulk', title: 'Bulk Event', policyKey: 'excelBulkEvent' },
+    { label: 'dailyBulk', title: 'Admin Daily', policyKey: 'excelAdminDaily' },
+    { label: 'subscriptionPackage', title: 'Mealawe Virtual Cafe', policyKey: 'excelMealaweVirtualCafeteria' },
+    { label: 'empPoll', title: 'Emp Poll', policyKey: 'excelEmployeePoll' }
+  ];
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private datePipe: DatePipe,
+    private excelService: ExcelService,
+    private toasterService: ToasterService,
+    private policyService: PolicyService
+  ) { }
 
   ngOnInit(): void {
-    this.searchObj.orderType = 'allEventBulk';
+    this.excelViewList = this.policyService.filterTabsByPolicy(this.excelViewList);
+    if (this.excelViewList.length > 0) {
+      this.searchObj.orderType = this.excelViewList[0].label;
+    } else {
+      this.searchObj.orderType = 'allEventBulk';
+    }
   }
 
   onTabChange(event: MatTabChangeEvent) {
