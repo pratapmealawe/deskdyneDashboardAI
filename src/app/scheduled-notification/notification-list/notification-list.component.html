@@ -98,19 +98,27 @@
         <div class="card-body">
           <p class="body-text">{{ notification.body }}</p>
 
-          <div class="info-row" *ngIf="notification.scheduledAt">
-            <mat-icon class="info-icon">event</mat-icon>
-            <div class="info-content">
-              <span class="info-label">Scheduled For</span>
-              <span class="info-value">{{ notification.scheduledAt | date:'medium' }}</span>
-            </div>
-          </div>
+          <div class="body-content-split">
+            <div class="info-column">
+              <div class="info-row" *ngIf="notification.scheduledAt">
+                <mat-icon class="info-icon">event</mat-icon>
+                <div class="info-content">
+                  <span class="info-label">Scheduled For</span>
+                  <span class="info-value">{{ notification.scheduledAt | date:'medium' }}</span>
+                </div>
+              </div>
 
-          <div class="info-row" *ngIf="notification.sentAt">
-            <mat-icon class="info-icon">send</mat-icon>
-            <div class="info-content">
-              <span class="info-label">Sent At</span>
-              <span class="info-value">{{ notification.sentAt | date:'medium' }}</span>
+              <div class="info-row" *ngIf="notification.sentAt">
+                <mat-icon class="info-icon">send</mat-icon>
+                <div class="info-content">
+                  <span class="info-label">Sent At</span>
+                  <span class="info-value">{{ notification.sentAt | date:'medium' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="image-div" *ngIf="notification.imageUrl">
+              <img [src]="imageUrl + notification.imageUrl" alt="Notification Image">
             </div>
           </div>
         </div>
