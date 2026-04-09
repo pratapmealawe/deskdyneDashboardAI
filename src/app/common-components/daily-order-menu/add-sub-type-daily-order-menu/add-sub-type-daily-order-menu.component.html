@@ -69,13 +69,11 @@
                     <div class="card-body d-flex flex-column gap-2"
                         [class.opacity-50]="!day.get('notApplicable')?.value">
                         <mat-form-field appearance="outline" class="w-100 compact-field" subscriptSizing="dynamic">
-                            <input matInput formControlName="itemName" placeholder="Item Name"
-                                [disabled]="!day.get('notApplicable')?.value">
+                            <input matInput formControlName="itemName" placeholder="Item Name">
                             <mat-error *ngIf="day.get('itemName')?.hasError('required')">Required</mat-error>
                         </mat-form-field>
                         <mat-form-field appearance="outline" class="w-100 compact-field" subscriptSizing="dynamic">
-                            <input matInput formControlName="itemDescription" placeholder="Description"
-                                [disabled]="!day.get('notApplicable')?.value">
+                            <input matInput formControlName="itemDescription" placeholder="Description">
                             <mat-error *ngIf="day.get('itemDescription')?.hasError('required')">Required</mat-error>
                         </mat-form-field>
                     </div>
