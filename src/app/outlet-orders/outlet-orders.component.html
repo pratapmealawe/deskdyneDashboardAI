@@ -286,6 +286,22 @@
                                     </div>
                                     <span class="item-price">₹{{ i.price * (i.count || 1) | number : '1.2-2' }}</span>
                                 </div>
+                                <!-- Add-Ons -->
+                                <ng-container *ngFor="let i of (row.itemList || row.itemlist)">
+                                    <div class="addOn-row" *ngIf="i.addOnsList?.length > 0">
+                                        <div class="addon-chip">
+                                            <span class="addon-label">ADD-ONS :</span>
+                                            <span class="addon-text">
+                                                <ng-container *ngFor="let addon of i.addOnsList; let last = last">
+                                                    {{ addon.addOnName }}{{ !last ? ', ' : '' }}
+                                                </ng-container>
+                                            </span>
+                                        </div>
+                                        <span class="addOn-price">
+                                            ₹{{ getItemAddOnTotal(i) | number:'1.2-2' }}
+                                        </span>
+                                    </div>
+                                </ng-container>
                             </div>
                         </div>
                     </div>
@@ -298,6 +314,10 @@
                                 <span class="fin-label">Item Total</span>
                                 <span class="fin-value">₹{{ row.itemAmount | number : '1.2-2' }}</span>
                             </div>
+                            <div class="fin-cell" *ngIf="row.addOnCharges > 0">
+                                <span class="fin-label">Add-on Charges</span>
+                                <span class="fin-value">₹{{ row.addOnCharges | number: '1.2-2' }}</span>
+                            </div>
                             <div class="fin-cell" *ngIf="row.taxes">
                                 <span class="fin-label">Taxes</span>
                                 <span class="fin-value">₹{{ row.taxes | number : '1.2-2' }}</span>
@@ -309,6 +329,18 @@
                             <div class="fin-cell discount" *ngIf="row.subsidyAmount">
                                 <span class="fin-label">Subsidy</span>
                                 <span class="fin-value">- ₹{{ row.subsidyAmount | number : '1.2-2' }}</span>
+                            </div>
+                            <div class="fin-cell discount" *ngIf="row.totalDiscountAmount">
+                                <span class="fin-label">Item Discount</span>
+                                <span class="fin-value">- ₹{{ row.totalDiscountAmount | number: '1.2-2' }}</span>
+                            </div>
+                            <div class="fin-cell discount coupon-cell" *ngIf="row.appliedCoupon?.discountAmount">
+                                <span class="fin-label">
+                                    Coupon
+                                    <span class="coupon-code-inline">{{ row.appliedCoupon?.couponCode }}</span>
+                                </span>
+                                <span class="fin-value">- ₹{{ row.appliedCoupon?.discountAmount | number: '1.2-2'
+                                    }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.moneyWalletPointsUsed">
                                 <span class="fin-label">Wallet</span>
