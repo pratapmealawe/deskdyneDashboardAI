@@ -252,7 +252,7 @@ export class BulkMenuUploadDialogComponent {
     }
     catch (err) {
       console.error(err);
-      this.snackBar.open('Upload failed', 'OK', { duration: 3000 });
+      this.snackBar.open('Upload Failed', 'OK', { duration: 3000 });
     }
     finally {
       this.isUploading = false;
