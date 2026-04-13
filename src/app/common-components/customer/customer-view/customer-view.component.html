@@ -35,8 +35,8 @@
       <div *ngSwitchCase="'companyWallet'" class="fade-in">
         <app-customer-company-wallet [userObj]="userDetails"></app-customer-company-wallet>
       </div>
-      <div *ngSwitchCase="'orders'" class="fade-in">
-        <app-customer-orders [userDetails]="userDetails"></app-customer-orders>
+      <div *ngSwitchCase="'outletOrders'" class="fade-in">
+        <app-customer-outlet-orders [userDetails]="userDetails"></app-customer-outlet-orders>
       </div>
     </ng-container>
   </div>
