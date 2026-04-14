@@ -77,7 +77,7 @@ export class OrgLayoutComponent implements OnInit {
       if (dashboardPolicyKey && tabPolicies[dashboardPolicyKey] === false) {
         el.showParent = false;
       } else {
-        el.showParent = routePolicies[el.route] ? true : false;
+        el.showParent = routePolicies[el.route] !== false;
         if (el.children) {
           el.children.forEach((child: any) => {
             if (routePolicies[child.route]) {

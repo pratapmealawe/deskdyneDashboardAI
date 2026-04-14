@@ -787,7 +787,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.6rem 0;
-    border-bottom: 1px dashed #e2e8f0;
+    // border-bottom: 1px dashed #e2e8f0;
 
     &:last-child {
         border-bottom: none;
@@ -876,6 +876,41 @@
     }
 }
 
+.addOn-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px dashed #e2e8f0 !important;
+
+    .addon-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        background: #f0f9ff;
+        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 0.72rem;
+        color: #0369a1;
+        font-weight: 600;
+
+        .addon-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: #0c4a6e;
+            margin-right: 4px;
+        }
+
+        .addon-text {
+            line-height: normal;
+        }
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+}
+
 // ──────────────────────────────────────────────────────────────
 // Card Footer (matches outlet-card card-footer)
 // ──────────────────────────────────────────────────────────────
@@ -895,6 +930,31 @@
     flex-wrap: wrap;
     gap: 0.5rem 1.25rem;
     align-items: flex-end;
+
+    .fin-cell.coupon-cell {
+        .coupon-code-inline {
+            display: inline-block;
+            margin-left: 4px;
+            font-size: 0.62rem;
+            font-family: monospace;
+            font-weight: 700;
+            background: #dcfce7;
+            color: #15803d;
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px dashed #86efac;
+            letter-spacing: 0.5px;
+            vertical-align: middle;
+        }
+
+        .fin-value {
+            color: #15803d;
+        }
+    }
+
+    .addOns-row {
+        @extend .addOn-row;
+    }
 }
 
 .fin-cell {

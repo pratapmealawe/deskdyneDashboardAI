@@ -4,6 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { categoryList } from 'src/config/food-category.config';
 
 @Component({
   selector: 'app-bulk-menu-upload-dialog',
@@ -18,6 +19,7 @@ export class BulkMenuUploadDialogComponent {
   parsedData: any[] = [];
   isValidFile = false;
   errorMessage = '';
+  categoryList = categoryList;
 
   constructor(
     public dialogRef: MatDialogRef<BulkMenuUploadDialogComponent>,
@@ -31,35 +33,102 @@ export class BulkMenuUploadDialogComponent {
 
   downloadTemplate() {
     const workbook = new ExcelJS.Workbook();
+
+    // Main sheet
     const worksheet = workbook.addWorksheet('Outlet Menu Template');
+
+    // Hidden sheet
+    const hiddenSheet = workbook.addWorksheet('DropdownData');
+    hiddenSheet.state = 'veryHidden';
+
+    // Fill category list
+    this.categoryList.forEach((cat, index) => {
+      hiddenSheet.getCell(`A${index + 1}`).value = cat.value;
+    });
+
+    const categoryRange = `DropdownData!$A$1:$A$${this.categoryList.length}`;
+
+    // Columns
     worksheet.columns = [
       { header: 'Item Name', key: 'itemName', width: 25 },
       { header: 'Description', key: 'description', width: 30 },
       { header: 'Price', key: 'price', width: 12 },
-      { header: 'Category', key: 'category', width: 18 },
-      { header: 'Item Type (Veg/NonVeg)', key: 'itemType', width: 18 },
-      { header: 'Subsidy', key: 'subsidy', width: 10 },
-      { header: 'Is Active (TRUE/FALSE)', key: 'isActive', width: 18 },
+      { header: 'Category', key: 'category', width: 25 },
+      { header: 'Item Type', key: 'itemType', width: 18 },
+      { header: 'Subsidy', key: 'subsidy', width: 12 },
+      { header: 'Is Active', key: 'isActive', width: 15 },
       { header: 'Precedence', key: 'precedence', width: 12 },
-      { header: 'Meal Types (comma separated)', key: 'mealTypes', width: 30 },
+      {
+        header: 'Meal Types (e.g. Lunch,Dinner,Breakfast,Fullday,EveningSnacks)',
+        key: 'mealTypes',
+        width: 45
+      },
     ];
+
+    // Header styling
+    const headerRow = worksheet.getRow(1);
+    headerRow.font = { bold: true };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+
+    // Freeze header
+    worksheet.views = [{ state: 'frozen', ySplit: 1 }];
+
+    // Sample row
     worksheet.addRow({
       itemName: 'Special Thali',
       description: 'Full vegetarian meal with sweet',
       price: 140,
-      category: 'Dinner',
+      category: 'Thali',
       itemType: 'Veg',
       subsidy: 10,
-      isActive: true,
+      isActive: 'TRUE',
       precedence: 1,
       mealTypes: 'Lunch,Dinner',
     });
-    worksheet.getRow(1).font = { bold: true };
+
+    // Apply validations
+    for (let i = 2; i <= 100; i++) {
+
+      // ✅ Category dropdown (SAFE)
+      worksheet.getCell(`D${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: false,
+        formulae: [`=${categoryRange}`],
+        showErrorMessage: true,
+        error: 'Select a valid category'
+      };
+
+      // Veg / NonVeg
+      worksheet.getCell(`E${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: false,
+        formulae: ['"Veg,NonVeg"'],
+      };
+
+      // TRUE / FALSE
+      worksheet.getCell(`G${i}`).dataValidation = {
+        type: 'list',
+        allowBlank: false,
+        formulae: ['"TRUE,FALSE"'],
+      };
+    }
+
+    // Notes
+    worksheet.getCell('D1').note = 'Select category from dropdown';
+    worksheet.getCell('E1').note = 'Veg or NonVeg';
+    worksheet.getCell('G1').note = 'TRUE = Active';
+    worksheet.getCell('I1').note = 'Comma separated (e.g. Lunch,Dinner)';
+
+    // Align numeric columns
+    ['C', 'F', 'H'].forEach(col => {
+      worksheet.getColumn(col).alignment = { horizontal: 'center' };
+    });
+
+    // Download
     workbook.xlsx.writeBuffer().then(buffer => {
-      const blob = new Blob(
-        [buffer],
-        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }
-      );
+      const blob = new Blob([buffer], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
       saveAs(blob, 'Outlet_Menu_Upload_Template.xlsx');
     });
   }
@@ -174,8 +243,8 @@ export class BulkMenuUploadDialogComponent {
     this.isUploading = true;
     try {
       const res = await this.apiMainService.bulkUploadOutletMenu(this.parsedData, this.outletId);
-      if (res && res._id) {
-        this.snackBar.open('Bulk menu upload successful', 'OK', { duration: 3000 });
+      if (res && res.length > 0) {
+        this.snackBar.open('Bulk menus uploaded successfully', 'OK', { duration: 3000 });
         this.dialogRef.close(res);
       } else {
         this.snackBar.open(res?.message || 'Upload failed', 'OK', { duration: 3000 });
@@ -183,7 +252,7 @@ export class BulkMenuUploadDialogComponent {
     }
     catch (err) {
       console.error(err);
-      this.snackBar.open('Upload failed', 'OK', { duration: 3000 });
+      this.snackBar.open('Upload Failed', 'OK', { duration: 3000 });
     }
     finally {
       this.isUploading = false;

@@ -12,6 +12,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonOutletCafeSelectModule } from '../../common-outlet-cafe-select/common-outlet-cafe-select.module';
+import { LocalStorageService } from 'src/service/local-storage.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-org-salary-deduction',
@@ -21,7 +23,8 @@ import { CommonOutletCafeSelectModule } from '../../common-outlet-cafe-select/co
   imports: [
     CommonModule,
     MaterialModule,
-    CommonOutletCafeSelectModule
+    CommonOutletCafeSelectModule,
+    FormsModule
   ]
 })
 export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
@@ -44,9 +47,25 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
   estimatedTotal = 0;
   paginatedList: any[] = [];
 
-  constructor(private apiMainService: ApiMainService) { }
+  // Stats
+  totalEmployees = 0;
+  totalOrders = 0;
+  loading = false;
+  searchText = '';
+  fullDeductionList: any[] = [];
+
+  constructor(
+    private apiMainService: ApiMainService,
+    private localStorageService: LocalStorageService
+  ) { }
 
   ngOnInit(): void {
+    if (!this.adminOrg) {
+      const profile = this.localStorageService.getCacheData('ADMIN_PROFILE');
+      if (profile && profile.orgDetails) {
+        this.adminOrg = profile.orgDetails;
+      }
+    }
     this.setInitials();
   }
 
@@ -61,7 +80,10 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
       this.headerConfig = { ...this.headerConfig, defaultOrgId: this.adminOrg._id };
       this.filteredOrderList = [];
       this.deductionList = [];
+      this.fullDeductionList = [];
       this.totalDeductionAmount = 0;
+      this.totalEmployees = 0;
+      this.totalOrders = 0;
       this.pageIndex = 0;
       this.paginatedList = [];
     }
@@ -81,13 +103,14 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
 
   async getOrders(body: any) {
     try {
+      this.loading = true;
       const res = await this.apiMainService.fetchOutletOrdersbysearchObj(body);
       this.filteredOrderList = res;
       
       // Filter for salary deduction: 
       // 1. mealSubsidyType is 'chargeable'
       // OR 2. itemAmount > subsidyAmount (where employee pays the difference)
-      this.deductionList = this.filteredOrderList.filter(order => 
+      this.fullDeductionList = this.filteredOrderList.filter(order => 
         order.mealSubsidyType === 'chargeable' || (order.itemAmount > (order.subsidyAmount || 0))
       ).map(order => {
         const deductionAmount = (order.itemAmount || 0) - (order.subsidyAmount || 0);
@@ -97,12 +120,42 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
         };
       }).filter(order => order.deductionAmount > 0);
 
-      this.totalDeductionAmount = this.deductionList.reduce((sum, order) => sum + order.deductionAmount, 0);
-      this.pageIndex = 0;
-      this.updatePaginatedList();
+      this.applySearchFilter();
     } catch (err) {
       console.error('Error fetching orders for deduction report', err);
+    } finally {
+      this.loading = false;
     }
+  }
+
+  applySearchFilter() {
+    const search = this.searchText.trim().toLowerCase();
+    if (!search) {
+      this.deductionList = [...this.fullDeductionList];
+    } else {
+      this.deductionList = this.fullDeductionList.filter(order => 
+        (order.customerName && order.customerName.toLowerCase().includes(search)) ||
+        (order.customerPhoneNo && order.customerPhoneNo.toLowerCase().includes(search)) ||
+        (order.orderNo && order.orderNo.toLowerCase().includes(search))
+      );
+    }
+    this.calculateStats();
+    this.pageIndex = 0;
+    this.updatePaginatedList();
+  }
+
+  calculateStats() {
+    this.totalDeductionAmount = this.deductionList.reduce((sum, order) => sum + order.deductionAmount, 0);
+    this.totalOrders = this.deductionList.length;
+    
+    // Count unique employees
+    const employees = new Set(this.deductionList.map(o => o.customerPhoneNo));
+    this.totalEmployees = employees.size;
+  }
+
+  onSearchChange(event: any) {
+    this.searchText = event.target.value;
+    this.applySearchFilter();
   }
 
   updatePaginatedList() {

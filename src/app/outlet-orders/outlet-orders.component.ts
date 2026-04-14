@@ -158,10 +158,17 @@ export class OutletOrdersComponent implements OnInit, OnDestroy {
     this.totalAmount = this.totalWalletUsed + this.totalAmountPaid;
   }
 
+  getItemAddOnTotal(item: any): number {
+    if (!item.addOnsList?.length) return 0;
+    return item.addOnsList.reduce((sum: number, addon: any) => {
+      return sum + ((addon.addOnPrice ?? addon.addonPrice ?? 0) * (item.count || 1));
+    }, 0);
+  }
+
   getGrandTotal(order: any): number {
     return (Number(order.itemAmount) || 0)
       + (Number(order.taxes) || 0)
-      + (Number(order.packagingAmount) || 0);
+      + (Number(order.packagingAmount) || 0) + (Number(order.addOnCharges) || 0);
   }
 
   searchText = '';
