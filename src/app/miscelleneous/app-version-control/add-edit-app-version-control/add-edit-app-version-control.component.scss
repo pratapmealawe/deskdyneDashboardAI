@@ -1,0 +1,47 @@
+.dialog-container {
+  padding: 10px;
+}
+
+.mat-dialog-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 20px !important;
+  color: #333;
+}
+
+.mat-dialog-content {
+  margin-bottom: 20px;
+  overflow-x: hidden;
+}
+
+.mat-dialog-actions {
+  padding: 15px 0 0;
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+label.labelData {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #666;
+}
+
+.form-control {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  transition: border-color 0.2s;
+
+  &:focus {
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+}
+
+textarea.form-control {
+  resize: vertical;
+}

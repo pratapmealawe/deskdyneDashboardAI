@@ -11,47 +11,8 @@
 
 <div class="container-fluid pb-4">
 
-  <!-- Edit Mode Section -->
-  <div *ngIf="editMode" class="bgpadding3 mb-4">
-    <div class="labelText mb-3" *ngIf="addnewVariable">Add New App Version</div>
-    <div class="labelText mb-3" *ngIf="!addnewVariable">Update App Version</div>
-
-    <div class="row g-3">
-      <div class="col-sm-12 col-md-6">
-        <label class="labelData mb-2" for="variableName">Application Name</label>
-        <input type="text" class="form-control" id="variableName" [(ngModel)]="variableObj.appName"
-          placeholder="Enter application name" />
-      </div>
-      <div class="col-sm-12 col-md-6">
-        <label class="labelData mb-2" for="variableValue">Version</label>
-        <input class="form-control" type="text" id="variableValue" [(ngModel)]="variableObj.appVersion"
-          placeholder="Enter version" name="addonType" />
-      </div>
-    </div>
-
-    <div class="mt-4 d-flex gap-2">
-      <ng-container *appHasPermission="'APP_VERSION:ADD'">
-        <button *ngIf="addnewVariable" mat-raised-button color="primary"
-          (click)="submitnewVariable(variableObj)">
-          Submit
-        </button>
-      </ng-container>
-
-      <ng-container *appHasPermission="'APP_VERSION:EDIT'">
-        <button *ngIf="!addnewVariable" mat-raised-button color="primary"
-          (click)="updateVariable(variableObj)">
-          Update
-        </button>
-      </ng-container>
-
-      <button mat-stroked-button color="warn" (click)="cancel()">
-        Cancel
-      </button>
-    </div>
-  </div>
-
   <!-- List Section -->
-  <div *ngIf="!editMode">
+  <div>
     <div *ngIf="allAppVersions && allAppVersions.length === 0" class="center">
       No App Versions Found
     </div>
@@ -67,9 +28,19 @@
           </div>
 
           <!-- Version -->
-          <div class="col-md-5 mb-2 mb-md-0">
+          <div class="col-md-3 mb-2 mb-md-0">
             <div class="labelText">Version</div>
             <div class="labelData">{{ variable.appVersion }}</div>
+          </div>
+
+          <!-- Update Type -->
+          <div class="col-md-2 mb-2 mb-md-0">
+            <div class="labelText">Type</div>
+            <div class="labelData">
+              <span class="badge" [ngClass]="variable.isForceUpdate ? 'bg-danger text-white' : 'bg-info text-white'">
+                {{ variable.isForceUpdate ? 'Forceful' : 'Negligible' }}
+              </span>
+            </div>
           </div>
 
           <!-- Actions -->
@@ -78,6 +49,12 @@
               (click)="editVariable(variable)" matTooltip="Edit">
               <mat-icon>edit</mat-icon>
             </button>
+          </div>
+
+          <!-- Release Notes -->
+          <div class="col-md-12 mt-2" *ngIf="variable.releaseNotes">
+            <div class="labelText">Release Notes</div>
+            <div class="labelData text-muted small" style="white-space: pre-line;">{{ variable.releaseNotes }}</div>
           </div>
 
         </div>
