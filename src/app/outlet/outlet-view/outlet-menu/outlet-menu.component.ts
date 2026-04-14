@@ -7,7 +7,10 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { ToasterService } from 'src/service/toaster.service';
-import { BulkMenuUploadDialogComponent } from '../bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { BulkMenuUploadDialogComponent } from './bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
 import { AddOutletMenuComponent } from './add-outlet-menu/add-outlet-menu.component';
 import { CopyOutletMenuComponent } from './copy-outlet-menu/copy-outlet-menu.component';
 import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dialog.component';
@@ -16,6 +19,16 @@ import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dial
   selector: 'app-outlet-menu',
   templateUrl: './outlet-menu.component.html',
   styleUrls: ['./outlet-menu.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    DirectivesModule,
+    BulkMenuUploadDialogComponent,
+    AddOutletMenuComponent,
+    CopyOutletMenuComponent,
+    MasterMenuDialogComponent
+  ]
 })
 export class OutletMenuComponent implements OnInit, OnChanges {
   @Input() outletObj: any;

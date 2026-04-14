@@ -5,10 +5,18 @@ import { ConfirmationModalService } from 'src/service/confirmation-modal.service
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-outlet-vendor',
   templateUrl: './outlet-vendor.component.html',
-  styleUrls: ['./outlet-vendor.component.scss']
+  styleUrls: ['./outlet-vendor.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class OutletVendorComponent implements OnInit {
   @Input() outlet: any

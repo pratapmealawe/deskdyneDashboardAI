@@ -111,6 +111,16 @@
           color: #16a34a;
         }
       }
+      
+      &.info {
+        background: #eff6ff;
+        color: #2563eb;
+        border-color: #bfdbfe;
+
+        mat-icon {
+          color: #2563eb;
+        }
+      }
 
       &.danger {
         background: #fef2f2;

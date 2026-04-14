@@ -8,11 +8,28 @@ import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { DeletedOutletsDialogComponent } from './deleted-outlets-dialog/deleted-outlets-dialog.component';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OutletCardComponent } from './outlet-card/outlet-card.component';
+import { OutletViewComponent } from './outlet-view/outlet-view.component';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 
 @Component({
   selector: 'app-outlet',
   templateUrl: './outlet.component.html',
   styleUrls: ['./outlet.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    OutletCardComponent,
+    OutletViewComponent,
+    DeletedOutletsDialogComponent,
+    DirectivesModule
+  ]
 })
 export class OutletComponent implements OnInit {
   showSearchSection: boolean = true;

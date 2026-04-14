@@ -116,11 +116,11 @@
         </div>
       </div>
 
-      <!-- Pricing Section -->
+      <!-- Pricing & Pre-order Section -->
       <div class="form-section">
         <div class="section-header">
           <mat-icon>payments</mat-icon>
-          <span>Pricing</span>
+          <span>Pricing & Configuration</span>
         </div>
         <div class="row g-3">
           <div class="col-4">
@@ -147,6 +147,7 @@
               <mat-icon matPrefix class="field-icon">sort</mat-icon>
             </mat-form-field>
           </div>
+
         </div>
       </div>
 
@@ -231,13 +232,15 @@
         <div class="section-header">
           <mat-icon>schedule</mat-icon>
           <span>Meal Timings</span>
+          <span class="header-badge warning">Read-only (Outlet Config)</span>
         </div>
-        <div class="meal-timing-selection-grid">
+        <div class="meal-timing-selection-grid" [class.is-disabled]="data.outletObj?.isPreOrder">
           <div *ngFor="let chip of data.outletObj?.mealTiming" class="meal-timing-item"
-            [class.selected]="form.get('mealTimingInfo')?.value.includes(chip.mealType)"
+            [class.selected]="form.get('mealTimingInfo')?.value?.includes(chip.mealType)"
+            [class.disabled]="data.outletObj?.isPreOrder"
             (click)="toggleMealTiming(chip.mealType)">
             <div class="timing-checkbox">
-              <mat-icon *ngIf="form.get('mealTimingInfo')?.value.includes(chip.mealType)">check</mat-icon>
+              <mat-icon>check</mat-icon>
             </div>
             <div class="timing-info-content">
               <div class="timing-name-row">

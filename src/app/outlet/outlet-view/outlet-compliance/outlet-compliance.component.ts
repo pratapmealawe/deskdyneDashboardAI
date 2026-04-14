@@ -5,10 +5,20 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 import { MatDialog } from '@angular/material/dialog';
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-outlet-compliance',
   templateUrl: './outlet-compliance.component.html',
-  styleUrls: ['./outlet-compliance.component.scss']
+  styleUrls: ['./outlet-compliance.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule
+  ]
 })
 export class OutletComplianceComponent implements OnInit {
   @Input() outletObj: any;

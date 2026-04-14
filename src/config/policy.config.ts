@@ -283,6 +283,7 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   employeeBulkMenu: false,
   virtualCafeteria: false,
   dailyOrderMenu: false,
+  adminDailyOrder: false,
   consumptionMenu: false,
   employeeList: false,
   outletEmployee: false,
@@ -463,7 +464,7 @@ export const GROUPED_TAB_POLICIES = [
   },
   {
     title: 'ORGANIZATION & COMPLIANCE',
-    keys: ['orgDetails', 'compliance', 'bulkMenuSection', 'employeeBulkMenu', 'virtualCafeteria', 'dailyOrderMenu', 'companyWallet', 'consumptionMenu', 'employeeList', 'outletEmployee', 'virtualCafeteriaEmployee', 'qrEmployee']
+    keys: ['orgDetails', 'compliance', 'bulkMenuSection', 'employeeBulkMenu', 'virtualCafeteria', 'dailyOrderMenu', 'adminDailyOrder', 'companyWallet', 'consumptionMenu', 'employeeList', 'outletEmployee', 'virtualCafeteriaEmployee', 'qrEmployee']
   },
   {
     title: 'BILLING',

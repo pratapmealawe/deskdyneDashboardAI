@@ -4,10 +4,18 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-outlet-categories',
   templateUrl: './outlet-categories.component.html',
   styleUrls: ['./outlet-categories.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class OutletCategoriesComponent implements OnInit {
   @Input() outletObj: any;

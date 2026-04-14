@@ -18,9 +18,9 @@
             <mat-icon>{{ outletObj?.outletOpened ? 'storefront' : 'store' }}</mat-icon>
             {{ outletObj?.outletOpened ? 'Open' : 'Closed' }}
           </span>
-          <span class="quick-badge" *ngIf="outletObj?.isPreOrder">
+          <span class="quick-badge" [class.info]="outletObj?.isPreOrder">
             <mat-icon>schedule</mat-icon>
-            Pre-order
+            Pre-order {{ outletObj?.isPreOrder ? 'Enabled' : 'Disabled' }}
           </span>
           <span class="quick-badge" *ngIf="outletObj?.isSectionWiseMenu">
             <mat-icon>view_module</mat-icon>

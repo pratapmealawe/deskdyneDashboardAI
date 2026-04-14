@@ -9,7 +9,7 @@ import { CommonOutletCafeSelectModule } from 'src/app/common-outlet-cafe-select/
 import { MatChipsModule } from "@angular/material/chips";
 import { MaterialModule } from "src/app/material.module";
 import { OrderFilterDialogModule } from "../order-filter-dialog/order-filter-dialog.module";
-import { OrgOutletOrdersComponent } from "src/app/manage-organization/bulk/org-outlet-orders/org-outlet-orders.component";
+import { OrgOutletOrdersComponent } from "src/app/organization/manage-organization/bulk/org-outlet-orders/org-outlet-orders.component";
 
 
 @NgModule({
@@ -27,7 +27,7 @@ import { OrgOutletOrdersComponent } from "src/app/manage-organization/bulk/org-o
     MaterialModule,
     OrderFilterDialogModule,
     OrgOutletOrdersComponent
-],
+  ],
   providers: [DatePipe]
 })
 export class OutletExcelExportModule { }

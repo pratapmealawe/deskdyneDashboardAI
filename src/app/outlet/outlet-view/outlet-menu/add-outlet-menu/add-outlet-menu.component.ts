@@ -8,10 +8,18 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-add-outlet-menu',
   templateUrl: './add-outlet-menu.component.html',
-  styleUrls: ['./add-outlet-menu.component.scss']
+  styleUrls: ['./add-outlet-menu.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class AddOutletMenuComponent implements OnInit {
   @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
@@ -115,6 +123,8 @@ export class AddOutletMenuComponent implements OnInit {
   }
 
   toggleMealTiming(mealType: string): void {
+    if (this.data.outletObj?.isPreOrder) return;
+
     const control = this.form.get('mealTimingInfo');
     const currentValues = control?.value || [];
     const index = currentValues.indexOf(mealType);
@@ -181,9 +191,6 @@ export class AddOutletMenuComponent implements OnInit {
       price: item.price,
       subsidy: item.subsidy ? item.subsidy : 0,
       category: item.category,
-      mealTimingInfo: item.mealTimingInfo
-        ? item.mealTimingInfo.map((a: any) => a.mealType)
-        : [],
       itemType: item.itemType,
       precedence: item.precedence,
       isActive: item.isActive,
@@ -195,6 +202,10 @@ export class AddOutletMenuComponent implements OnInit {
       discountType: item.discountType || null,
       discountValue: item.discountValue || null,
       weeklyMenuDates: item.weeklyMenuDates || [],
+
+      mealTimingInfo: this.data.outletObj?.isPreOrder
+        ? this.data.outletObj?.mealTiming?.map((m: any) => m.mealType) || []
+        : (item.mealTimingInfo ? item.mealTimingInfo.map((a: any) => a.mealType) : [])
     });
 
     if (item.weeklyMenuDates?.length) {
@@ -408,6 +419,7 @@ export class AddOutletMenuComponent implements OnInit {
         energyValue: value.energyValue,
       },
       imageUrl: this.data.item?.imageUrl || '',
+
     };
 
     // Sanitize enum fields to match backend validation rules

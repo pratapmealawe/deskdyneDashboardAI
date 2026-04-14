@@ -4,10 +4,18 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-copy-outlet-menu',
   templateUrl: './copy-outlet-menu.component.html',
-  styleUrls: ['./copy-outlet-menu.component.scss']
+  styleUrls: ['./copy-outlet-menu.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class CopyOutletMenuComponent implements OnInit {
   displayImgUrl = environment.imageUrl;
