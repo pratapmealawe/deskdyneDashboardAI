@@ -6,7 +6,7 @@ import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { PdfPreviewDialogComponent } from 'src/app/org-components/audit-report/pdf-preview-dialog/pdf-preview-dialog.component';
+import { PdfPreviewDialogComponent } from 'src/app/organization-dashboard/audit-report/pdf-preview-dialog/pdf-preview-dialog.component';
 
 @Component({
   selector: 'app-vendor-compliance',

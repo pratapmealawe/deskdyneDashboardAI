@@ -10,7 +10,7 @@ const routes: Routes = [
   {
     path: 'dashboard',
     loadChildren: () =>
-      import('../deskdyne-components/dashboard/dashboard.module').then(
+      import('../dashboard/dashboard.module').then(
         (m) => m.DashboardModule
       ),
   },
@@ -20,4 +20,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class HomeRoutingModule {}
+export class HomeRoutingModule { }

@@ -50,7 +50,7 @@ export class AdminComponent implements OnInit {
   }
 
   addAdmin() {
-    this.router.navigate(['addAdmin']);
+    this.router.navigate(['/app/addAdmin']);
   }
 
   async getAllAdminList() {
@@ -67,7 +67,7 @@ export class AdminComponent implements OnInit {
 
   editAdmin(admin: any) {
     this.runtimeStorageService.setCacheData('VIEW_ADMIN', admin);
-    this.router.navigate(['addAdmin']);
+    this.router.navigate(['/app/addAdmin']);
   }
 
   onPageChange(event: PageEvent) {

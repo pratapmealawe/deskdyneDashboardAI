@@ -352,7 +352,7 @@ export class AddVendorFirmComponent {
       } else {
         await this.apiMainService.saveVendorFirm(finalObj);
       }
-      this.router.navigate(['/searchVendorFirm']);
+      this.router.navigate(['/app/searchVendorFirm']);
     } catch (error) {
       console.log('submit error', error);
     }
@@ -577,7 +577,7 @@ export class AddVendorFirmComponent {
   }
 
   goBack() {
-    this.router.navigate(['/searchVendorFirm']);
+    this.router.navigate(['/app/searchVendorFirm']);
   }
 
   hasError(form: FormGroup, controlName: string, error: string) {

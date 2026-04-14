@@ -227,6 +227,10 @@ export class ApiMainService {
     return this.runTimeCacheInterceptor('POLICIES', this.apiConfigService.apiEndPointObj.getAllPolicy);
   }
 
+  getPolicyByName(name: string) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getPolicyByName, { policy_name: name });
+  }
+
   addPolicy(policy: any) {
     this.runtimeStorageService.resetCacheData('POLICIES');
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addPolicy, policy);
@@ -373,55 +377,59 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
   }
 
-  B2B_addOrg(payload: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_addOrg, payload, null, false, true);
+  addOrg(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addOrg, payload, null, false, true);
   }
 
-  B2B_org_update(payload: any, id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_update;
+  orgUpdate(payload: any, id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.orgUpdate;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, payload, null, false, true);
   }
 
-  B2B_org_updateOrglevelSubsidy(payload: any, id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateOrglevelSubsidy;
+  updateOrglevelSubsidy(payload: any, id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateOrglevelSubsidy;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, payload, null, false, true);
   }
 
-  B2B_org_updateCafelevelSubsidy(payload: any, id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_org_updateCafelevelSubsidy;
+  updateCafelevelSubsidy(payload: any, id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateCafelevelSubsidy;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, payload, null, false, true);
   }
 
-  B2B_fetchFilteredAllOrgs(data: any, page: any = 1) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchFilteredAllOrgs;
+  fetchFilteredAllOrgs(data: any, page: any = 1) {
+    const urlObj = this.apiConfigService.apiEndPointObj.fetchFilteredAllOrgs;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}`, method: urlObj.method }, data);
   }
 
-  B2B_deleteOrganization(id: any, type: 'soft' | 'hard' = 'soft') {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_deleteOrganization;
+  B2B_fetchFilteredAllOrgs(data: any, page: any = 1) {
+    return this.fetchFilteredAllOrgs(data, page);
+  }
+
+  deleteOrganization(id: any, type: 'soft' | 'hard' = 'soft') {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteOrganization;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}?type=${type}`, method: urlObj.method });
   }
 
-  B2B_getDeletedOrganizations() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_getDeletedOrganizations);
+  getDeletedOrganizations() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getDeletedOrganizations);
   }
 
-  B2B_restoreOrganization(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_restoreOrganization;
+  restoreOrganization(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.restoreOrganization;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  B2B_deleteOutlet(id: any, type: 'soft' | 'hard' = 'soft') {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_deleteOutlet;
+  deleteOutlet(id: any, type: 'soft' | 'hard' = 'soft') {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteOutlet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}?type=${type}`, method: urlObj.method });
   }
 
-  B2B_getDeletedOutlets() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_getDeletedOutlets);
+  getDeletedOutlets() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getDeletedOutlets);
   }
 
-  B2B_restoreOutlet(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_restoreOutlet;
+  restoreOutlet(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.restoreOutlet;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
@@ -1201,8 +1209,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
   }
 
-  fetchtOrgInfo(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchtOrgInfo, body);
+  orgInfo(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.orgInfo, body);
   }
 
   b2b_fetchBulkCakeMenu(id: any) {
@@ -1394,10 +1402,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.moveDailyToWallet, body);
   }
 
-  deleteOutlet(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.deleteOutlet;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
 
   getConsumptionOrderByDateForDashboard(data: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getConsumptionOrderByDateForDashboard, data);

@@ -79,12 +79,12 @@ export class PolicyComponent implements OnInit {
   addPolicy(): void {
     // new policy => clear VIEW_POLICY
     this.runtimeStorageService.setCacheData('VIEW_POLICY', null);
-    this.router.navigate(['/addPolicy']);
+    this.router.navigate(['/app/addPolicy']);
   }
 
   editPolicy(id: any): void {
     this.runtimeStorageService.setCacheData('VIEW_POLICY', id);
-    this.router.navigate(['/addPolicy']);
+    this.router.navigate(['/app/addPolicy']);
   }
 
   async deletePolicy(id: any): Promise<void> {

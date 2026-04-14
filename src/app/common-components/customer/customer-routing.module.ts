@@ -1,10 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CustomerComponent } from './customer.component';
-import { CustomerViewComponent } from './customer-view/customer-view.component';
 
 const routes: Routes = [
-  {path: "", component: CustomerComponent},
+  { path: "", component: CustomerComponent },
 ];
 
 @NgModule({

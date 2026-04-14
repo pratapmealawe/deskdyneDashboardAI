@@ -86,7 +86,7 @@ export class SearchEventComponent {
 
   addEvent() {
     this.runtimeStorageService.setCacheData('EVENTPOPUP_EDIT', {});
-    this.router.navigate(['/addEventPopup']);
+    this.router.navigate(['/app/addEventPopup']);
   }
 
   toggleShowOrder(val: any) {

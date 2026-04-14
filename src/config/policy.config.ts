@@ -199,10 +199,12 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
   orgMenuCounters: false,
   orgIncidentManagement: false,
   orgChecklist: false,
+  orgEmpPoll: false,
   orgEmployeeList: false,
   orgBulkOrderHistory: false,
   orgManualOrders: false,
   orgBilling: false,
+  orgSalaryDeduction: false,
   viewChecklistQuestion: false,
   submitChecklist: false,
   checklistHistory: false,
@@ -246,6 +248,7 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   adminOrders: false,
   bulkOrders: false,
   employeePoll: false,
+  salaryDeduction: false,
   outletBasicDetails: false,
   outletMenu: false,
   outletQrMenu: false,
@@ -316,7 +319,7 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
 export const GROUPED_ROUTE_POLICIES = [
   {
     title: 'ORGANIZATION',
-    keys: ['b2bAddorg', 'b2bSearchOrg', 'orgDashboard', 'orgSubcription', 'orgEmployeeList', 'orgBilling', 'sessionManagement']
+    keys: ['b2bAddorg', 'b2bSearchOrg', 'orgDashboard', 'orgSubcription', 'orgEmployeeList', 'orgBilling', 'orgSalaryDeduction', 'sessionManagement']
   },
   {
     title: 'ORDERS & TRANSACTIONS',
@@ -328,7 +331,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'REVIEWS & FEEDBACK',
-    keys: ['orgReviews', 'appFeedbacks']
+    keys: ['orgReviews', 'appFeedbacks', 'orgEmpPoll']
   },
   {
     title: 'CHECKLIST & COMPLIANCE',
@@ -440,7 +443,7 @@ export const GROUPED_BUTTON_POLICIES = [
 export const GROUPED_TAB_POLICIES = [
   {
     title: 'CORE TABS',
-    keys: ['Dashboard', 'menuItems', 'Orders', 'Reviews', 'User', 'menuCounters', 'vendorInfo', 'auditReports', 'dashBoardAdminOrder']
+    keys: ['Dashboard', 'menuItems', 'Orders', 'Reviews', 'User', 'menuCounters', 'vendorInfo', 'auditReports', 'dashBoardAdminOrder', 'employeePoll', 'salaryDeduction']
   },
   {
     title: 'OUTLET MANAGEMENT',

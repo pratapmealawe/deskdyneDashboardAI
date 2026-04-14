@@ -673,7 +673,8 @@ export class AddOutletComponent implements OnInit {
       finalObj.preOrderConfig.holidays = [];
     }
 
-    const formData = this.objectToFormData(this.trimStringValues(finalObj));
+    const formData = new FormData();
+    formData.append('outletData', JSON.stringify(this.trimStringValues(finalObj)));
 
     if (this.uploadedImageFile) {
       formData.append('image', this.uploadedImageFile);
@@ -695,7 +696,7 @@ export class AddOutletComponent implements OnInit {
       await this.apiMainService.saveOutlet(formData);
       this.toasterService.success('Outlet created successfully.');
       console.log('Navigation to /outlet...');
-      this.router.navigate(['/outlet']);
+      this.router.navigate(['/app/outlet']);
     } catch (error) {
       console.error('Create API Error:', error);
     }
@@ -720,7 +721,7 @@ export class AddOutletComponent implements OnInit {
       await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
       this.toasterService.success('Outlet updated successfully.');
       console.log('Navigation to /outlet...');
-      this.router.navigate(['/outlet']);
+      this.router.navigate(['/app/outlet']);
     } catch (error) {
       console.error('Update API Error:', error);
     }
@@ -750,16 +751,8 @@ export class AddOutletComponent implements OnInit {
 
       if (value === undefined || value === null) continue;
 
-      if (Array.isArray(value)) {
-        value.forEach((item: any, index: number) => {
-          if (item && typeof item === 'object') {
-            this.objectToFormData(item, formData, `${keyName}[${index}]`);
-          } else {
-            formData.append(`${keyName}[${index}]`, item);
-          }
-        });
-      } else if (typeof value === 'object') {
-        this.objectToFormData(value, formData, keyName);
+      if (Array.isArray(value) || (typeof value === 'object' && !(value instanceof File) && !(value instanceof Blob))) {
+        formData.append(keyName, JSON.stringify(value));
       } else {
         formData.append(keyName, value);
       }
@@ -768,7 +761,7 @@ export class AddOutletComponent implements OnInit {
   }
 
   back(): void {
-    this.router.navigate(['/outlet']);
+    this.router.navigate(['/app/outlet']);
   }
 
   setStandardEndTime(): void {

@@ -138,7 +138,7 @@ export class ChecklistHistoryComponent implements OnInit {
   }
 
   editChecklist(report: any) {
-    this.router.navigate(['/submitChecklist'], { state: report });
+    this.router.navigate(['/orgapp/submitChecklist'], { state: report });
   }
 
   isToday(dateString: string | Date): boolean {

@@ -92,7 +92,54 @@ export class CopyOutletMenuComponent implements OnInit {
     if (this.selectedMenuItems && this.selectedMenuItems.length > 0) {
       try {
         const itemsToSave = this.selectedMenuItems.map((item: any) => {
-          const { _id, __v, createdAt, updatedAt, ...rest } = item;
+          // Destructure to remove top-level Mongoose/DB fields
+          const { _id, __v, createdAt, updatedAt, $__, _doc, ...rest } = item;
+
+          // Deeply sanitize nested arrays to remove internal Mongoose metadata
+          const sanitizeList = (list: any[], fields: string[]) => {
+            if (!list || !Array.isArray(list)) return [];
+            return list.map((obj: any) => {
+              const sanitized: any = {};
+              fields.forEach(f => {
+                if (obj[f] !== undefined) sanitized[f] = obj[f];
+              });
+              return sanitized;
+            });
+          };
+
+          // Sanitize addOnsList
+          if (rest.addOnsList) {
+            rest.addOnsList = sanitizeList(rest.addOnsList, ['addOnImageUrl', 'addOnName', 'addOnPrice', 'addOnType']);
+          }
+
+          // Sanitize nutritionList
+          if (rest.nutritionInfo?.nutritionList) {
+            rest.nutritionInfo.nutritionList = sanitizeList(rest.nutritionInfo.nutritionList, ['nutritionId', 'nutritionName', 'nutritionValue', 'nutritionUnit']);
+          }
+
+          // Sanitize itemContains
+          if (rest.itemContains) {
+            rest.itemContains = sanitizeList(rest.itemContains, ['name', 'quantity', 'contentType']);
+          }
+
+          // Sanitize mealTimingInfo
+          if (rest.mealTimingInfo) {
+            rest.mealTimingInfo = sanitizeList(rest.mealTimingInfo, ['mealType', 'slug', 'acceptOrderFrom', 'acceptOrderTill']);
+          }
+
+          // Sanitize weeklyMenuDates
+          if (rest.weeklyMenuDates) {
+            rest.weeklyMenuDates = sanitizeList(rest.weeklyMenuDates, ['date']);
+          }
+
+          // Normalize enum fields 
+          if (rest.discountType === null || rest.discountType === undefined) {
+            rest.discountType = '';
+          }
+          if (rest.itemType === null || rest.itemType === undefined) {
+            rest.itemType = 'Veg';
+          }
+
           return { ...rest, outletId: this.data.outletObj._id };
         });
 

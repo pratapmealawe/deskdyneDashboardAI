@@ -28,7 +28,7 @@ export class EventDetailsComponent implements OnInit {
 
   editOrg() {
     this.runtimeStorageService.setCacheData('EVENTPOPUP_EDIT', this.eventObj);
-    this.router.navigate(['/addEventPopup']);
+    this.router.navigate(['/app/addEventPopup']);
   }
 
 }

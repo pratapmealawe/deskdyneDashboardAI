@@ -23,7 +23,7 @@ export class DeletedOutletsDialogComponent implements OnInit {
     async fetchDeletedOutlets() {
         this.isLoading = true;
         try {
-            const deletedList = await this.apiMainService.B2B_getDeletedOutlets();
+            const deletedList = await this.apiMainService.getDeletedOutlets();
             this.deletedOutletList = deletedList || [];
         } catch (error) {
             console.error('Error fetching deleted outlets:', error);
@@ -35,7 +35,7 @@ export class DeletedOutletsDialogComponent implements OnInit {
 
     async restoreOutlet(outlet: any) {
         try {
-            await this.apiMainService.B2B_restoreOutlet(outlet._id);
+            await this.apiMainService.restoreOutlet(outlet._id);
             this.fetchDeletedOutlets();
         } catch (error) {
             console.error('Error restoring outlet:', error);

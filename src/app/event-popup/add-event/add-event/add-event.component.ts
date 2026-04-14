@@ -53,7 +53,7 @@ export class AddEventComponent implements OnInit {
   }
 
   back() {
-    this.router.navigate(['/eventPopup']);
+    this.router.navigate(['/app/eventPopup']);
   }
 
   handleFileInput($event: any): void {
@@ -215,13 +215,13 @@ export class AddEventComponent implements OnInit {
         const res = await this.apiMainService.updatePopupOutlet(this.selectedOutlet._id, formData);
         if (res) {
           this.resetAll();
-          this.router.navigate(['/eventPopup']);
+          this.router.navigate(['/app/eventPopup']);
         }
       } else {
         const res = await this.apiMainService.savePopupOutlet(formData);
         if (res) {
           this.resetAll();
-          this.router.navigate(['/eventPopup']);
+          this.router.navigate(['/app/eventPopup']);
         }
       }
     } catch (error) {

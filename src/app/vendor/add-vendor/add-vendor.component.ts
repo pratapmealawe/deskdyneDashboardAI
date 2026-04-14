@@ -245,7 +245,7 @@ export class AddVendorCommponent {
       } else {
         await this.apiMainService.saveVendor(finalObj);
       }
-      this.router.navigate(['/searchVendor']);
+      this.router.navigate(['/app/searchVendor']);
     } catch (error) {
       console.error('Error submitting vendor:', error);
     }
@@ -378,7 +378,7 @@ export class AddVendorCommponent {
 
   goBack() {
     this.form.reset();
-    this.router.navigate(['/searchVendor']);
+    this.router.navigate(['/app/searchVendor']);
   }
 
   hasError(form: FormGroup, control: string, error: string) {

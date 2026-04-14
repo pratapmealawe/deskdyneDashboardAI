@@ -46,10 +46,15 @@ type GroupRowCategory = { 'Category': string; 'Quantity': number; 'Final Amount'
 
 type AnyRow = ItemRow | GroupRowItemType | GroupRowCategory | MrpSplitPdfRow;
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-item-breakdown',
   templateUrl: './item-breakdown.component.html',
-  styleUrls: ['./item-breakdown.component.scss']
+  styleUrls: ['./item-breakdown.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MaterialModule]
 })
 export class ItemBreakdownComponent {
   orders: any[] = [];
