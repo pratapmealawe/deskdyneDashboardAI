@@ -186,23 +186,25 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
   b2bAddorg: false,
   b2bSearchOrg: false,
   consumptionOrders: false,
-  orgDashboard: false,
-  orgMenuItems: false,
-  orgOrders: false,
-  orgPreOrders: false,
-  orgSubcription: false,
-  orgReviews: false,
+  orgDashboard: true,
+  orgMenuItems: true,
+  orgOrders: true,
+  orgPreOrders: true,
+  orgSubcription: true,
+  orgReviews: true,
   appFeedbacks: false,
   excelExport: false,
   orgReports: false,
   orgVendorInfo: false,
   orgMenuCounters: false,
-  orgIncidentManagement: false,
-  orgChecklist: false,
+  orgIncidentManagement: true,
+  orgChecklist: true,
+  orgEmpPoll: true,
   orgEmployeeList: false,
-  orgBulkOrderHistory: false,
-  orgManualOrders: false,
-  orgBilling: false,
+  orgBulkOrderHistory: true,
+  orgManualOrders: true,
+  orgBilling: true,
+  orgSalaryDeduction: true,
   viewChecklistQuestion: false,
   submitChecklist: false,
   checklistHistory: false,
@@ -216,7 +218,7 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
   outletMasterMenu: false,
   addVendorFirm: false,
   searchVendorFirm: false,
-  billing: false,
+  billing: true,
   otherOrder: false,
   configImages: false,
   configImagesGroup: false,
@@ -233,11 +235,11 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
 /** Default shape for tab_policies */
 export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   // dashboarsd
-  Dashboard: false,
-  menuItems: false,
-  Orders: false,
-  Reviews: false,
-  User: false,
+  Dashboard: true,
+  menuItems: true,
+  Orders: true,
+  Reviews: true,
+  User: true,
   vendorInfo: false,
   vendorInformation: false,
   menuCounters: false,
@@ -246,6 +248,7 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
   adminOrders: false,
   bulkOrders: false,
   employeePoll: false,
+  salaryDeduction: false,
   outletBasicDetails: false,
   outletMenu: false,
   outletQrMenu: false,
@@ -316,7 +319,7 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
 export const GROUPED_ROUTE_POLICIES = [
   {
     title: 'ORGANIZATION',
-    keys: ['b2bAddorg', 'b2bSearchOrg', 'orgDashboard', 'orgSubcription', 'orgEmployeeList', 'orgBilling', 'sessionManagement']
+    keys: ['b2bAddorg', 'b2bSearchOrg', 'orgDashboard', 'orgSubcription', 'orgEmployeeList', 'orgBilling', 'orgSalaryDeduction', 'sessionManagement']
   },
   {
     title: 'ORDERS & TRANSACTIONS',
@@ -328,7 +331,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'REVIEWS & FEEDBACK',
-    keys: ['orgReviews', 'appFeedbacks']
+    keys: ['orgReviews', 'appFeedbacks', 'orgEmpPoll']
   },
   {
     title: 'CHECKLIST & COMPLIANCE',
@@ -440,7 +443,7 @@ export const GROUPED_BUTTON_POLICIES = [
 export const GROUPED_TAB_POLICIES = [
   {
     title: 'CORE TABS',
-    keys: ['Dashboard', 'menuItems', 'Orders', 'Reviews', 'User', 'menuCounters', 'vendorInfo', 'auditReports', 'dashBoardAdminOrder']
+    keys: ['Dashboard', 'menuItems', 'Orders', 'Reviews', 'User', 'menuCounters', 'vendorInfo', 'auditReports', 'dashBoardAdminOrder', 'employeePoll', 'salaryDeduction']
   },
   {
     title: 'OUTLET MANAGEMENT',

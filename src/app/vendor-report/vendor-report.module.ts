@@ -21,7 +21,6 @@ import { MatTabsModule } from '@angular/material/tabs';
 @NgModule({
   declarations: [
     VendorReportComponent,
-    ItemBreakdownComponent,
   ],
   imports: [
     CommonModule,
@@ -38,7 +37,8 @@ import { MatTabsModule } from '@angular/material/tabs';
     MatInputModule,
     MatPaginatorModule,
     MatTabsModule,
-    CommonOutletCafeSelectModule
+    CommonOutletCafeSelectModule,
+    ItemBreakdownComponent
   ],
   exports: [VendorReportComponent]
 })

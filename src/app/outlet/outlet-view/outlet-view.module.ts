@@ -8,7 +8,7 @@ import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.compo
 import { OutletMenuComponent } from './outlet-menu/outlet-menu.component';
 import { OutletViewComponent } from './outlet-view.component';
 import { MaterialModule } from 'src/app/material.module';
-import { OrgOrderModule } from 'src/app/org-components/org-reviews/org-order/org-order.module';
+import { OrgOrderComponent } from 'src/app/organization-dashboard/org-reviews/org-order/org-order.component';
 import { CustomPipeModule } from 'src/pipes/pipe.module';
 import { BulkMenuUploadDialogComponent } from './bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
 import { ComboPopupComponent } from './combo-popup/combo-popup.component';
@@ -42,7 +42,7 @@ import { QrMenuComponent } from './qr-menu/qr-menu.component';
     CustomPipeModule,
     MaterialModule,
     OutletOrdersModule,
-    OrgOrderModule
+    OrgOrderComponent
   ],
   exports: [OutletViewComponent, ComboPopupComponent],
 })

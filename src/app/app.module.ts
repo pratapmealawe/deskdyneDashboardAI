@@ -1,9 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -12,7 +10,6 @@ import { ConfirmationModalComponent } from './confirmation-modal/confirmation-mo
 import { MainLoaderComponent } from './main-loader/main-loader.component';
 import { ToasterComponent } from './toaster/toaster.component';
 import { ImageCropperComponent } from './image-cropper/image-cropper.component';
-import { HeaderComponent } from './header/header.component';
 import { SessionTimeoutComponent } from './session-timeout/session-timeout.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -26,7 +23,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MainLoaderComponent,
     ConfirmationModalComponent,
     ImageCropperComponent,
-    HeaderComponent,
     SessionTimeoutComponent,
   ],
   imports: [

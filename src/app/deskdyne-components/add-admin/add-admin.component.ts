@@ -318,7 +318,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
         await this.api.saveAdminProfile(formData);
       }
       this.store.resetCacheData('VIEW_ADMIN');
-      this.router.navigate(['admin']);
+      this.router.navigate(['/app/admin']);
     } catch (e) {
       console.log('Error saving admin profile', e);
     } finally {
@@ -328,6 +328,6 @@ export class AddAdminComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.store.resetCacheData('VIEW_ADMIN');
-    this.router.navigate(['admin']);
+    this.router.navigate(['/app/admin']);
   }
 }

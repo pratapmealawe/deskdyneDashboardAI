@@ -84,7 +84,7 @@ export class OutletOrdersComponent implements OnInit, OnDestroy {
 
 
   goBack() {
-    this.router.navigate(['/home/orders']);
+    this.router.navigate(['/app/home/orders']);
   }
 
   async getLatestOrderStatusList(status: string) {

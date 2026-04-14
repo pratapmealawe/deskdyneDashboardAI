@@ -105,6 +105,6 @@ export class SearchVendorComponent implements OnInit {
 
   addVendor() {
     this.resetForm()
-    this.router.navigate(['/addVendor']);
+    this.router.navigate(['/app/addVendor']);
   }
 }

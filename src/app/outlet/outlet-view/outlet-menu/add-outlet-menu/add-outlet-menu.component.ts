@@ -410,6 +410,14 @@ export class AddOutletMenuComponent implements OnInit {
       imageUrl: this.data.item?.imageUrl || '',
     };
 
+    // Sanitize enum fields to match backend validation rules
+    if (finalItem.discountType === null || finalItem.discountType === undefined) {
+      finalItem.discountType = '';
+    }
+    if (finalItem.itemType === null || finalItem.itemType === undefined) {
+      finalItem.itemType = 'Veg';
+    }
+
     // Remove unwanted fields for API
     delete (finalItem as any).nutritionList;
     delete (finalItem as any).energyValue;

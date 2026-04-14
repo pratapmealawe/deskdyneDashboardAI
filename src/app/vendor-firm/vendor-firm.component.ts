@@ -179,7 +179,7 @@ export class VendorFirmComponent {
 
   addVendor() {
     this.resetForm()
-    this.router.navigate(['/addVendorFirm']);
+    this.router.navigate(['/app/addVendorFirm']);
   }
 
 

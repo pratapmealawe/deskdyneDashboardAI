@@ -6,7 +6,6 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { CommonOutletCafeSelectModule } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.module';
 import { MaterialModule } from "src/app/material.module";
 import { OrderCardModule } from 'src/app/order-card/order-card.module';
-import { OrganizationViewModule } from "src/app/organization-view/organization-view.module";
 import { OrderFilterDialogModule } from "../order-filter-dialog/order-filter-dialog.module";
 import { OtherOrdersModule } from 'src/app/other-orders/other-orders.module';
 import { DailyAdminExcelExportComponent } from './daily-admin-excel-export.component';
@@ -27,7 +26,6 @@ import { DailyAdminExcelExportRoutingModule } from './daily-admin-excel-export-r
     HighchartsChartModule,
     OrderCardModule,
     CommonOutletCafeSelectModule,
-    OrganizationViewModule,
     MatChipsModule,
     MaterialModule,
     OrderFilterDialogModule,

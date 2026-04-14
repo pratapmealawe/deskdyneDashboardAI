@@ -1,0 +1,197 @@
+.navbar {
+  padding-left: 0;
+  background: white !important;
+  border-bottom: solid 1px lightgray;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+
+  .menu-burger {
+    font-size: 22px;
+    cursor: pointer;
+    margin-right: 6px;
+  }
+
+  .orgLogo {
+    width: 70px;
+    height: 30px;
+    object-fit: contain;
+  }
+
+  .profile-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+    cursor: pointer;
+
+    .name {
+      color: black;
+      padding-right: 10px;
+      font-weight: 600;
+    }
+
+    .role {
+      font-size: 11px;
+      color: gray;
+      margin-top: 2px;
+    }
+  }
+
+  .profileImg {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .initials-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+  }
+}
+
+.popover-wrapper {
+  padding: 5px;
+
+  .btn-primary {
+    background-color: #6571ff;
+    width: 100%;
+  }
+}
+
+.childMenuStyle {
+  padding: 10px 10px;
+  margin-left: 10px;
+  color: white;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.childMenuStyle:hover {
+  background: rgb(51, 65, 109);
+  transition: 0.3s ease;
+}
+
+.child-dot {
+  margin-right: 4px;
+  font-size: 6px;
+}
+
+.orgbutton {
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 8px;
+  transition: background 0.3s ease;
+}
+
+.orgbutton:hover {
+  background: rgb(51, 65, 109);
+  transition: 0.3s ease;
+}
+
+.active-link {
+  font-weight: 500;
+  background: rgb(51, 65, 109);
+  transition: 0.3s ease;
+}
+
+.offcanvas-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+  border-bottom: solid 0.6px #061a5b !important;
+  padding: 10px;
+  width: 100%;
+}
+
+.offcanvas-title {
+  color: white;
+  font-size: 2rem;
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.sidebar-icon {
+  object-fit: contain;
+  margin-right: 10px;
+  height: 18px;
+  width: 18px;
+}
+
+.sideOrgLogo {
+  width: 150px;
+  height: 80px;
+}
+
+.badge {
+  background: #2A3357;
+  color: #F6C66A;
+  font-weight: 600;
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: auto;
+  line-height: 1;
+  margin-left: auto;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #6f6f6f;
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8a8a8a;
+}
+
+@media (max-width: 768px) {
+  .offcanvas-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .initials-avatar {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .offcanvas-title {
+    font-size: 1.2rem;
+  }
+}
+
+.main-content {
+  padding-top: 80px;
+  min-height: 100vh;
+  background-color: #f3f3f3;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  transition: all 0.3s ease;
+}

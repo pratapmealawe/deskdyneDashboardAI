@@ -104,7 +104,7 @@ export class OutletComponent implements OnInit {
 
   addOutlet() {
     this.runtimeStorageService.setCacheData('OUTLET_EDIT', {});
-    this.router.navigate(['/addOutlet']);
+    this.router.navigate(['/app/addOutlet']);
   }
 
   toggleShowOrder(val: any) {

@@ -11,6 +11,8 @@ import { saveAs } from 'file-saver';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { OrderFilterDialogComponent, OrderFilterDialogData } from '../order-filter-dialog/order-filter-dialog.component';
+import { MaterialModule } from "src/app/material.module";
+import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
 
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
@@ -18,7 +20,7 @@ import { OrderFilterDialogComponent, OrderFilterDialogData } from '../order-filt
 @Component({
   selector: 'app-outlet-excel-export',
   templateUrl: './outlet-excel-export.component.html',
-  styleUrls: ['./outlet-excel-export.component.scss']
+  styleUrls: ['./outlet-excel-export.component.scss'],
 })
 export class OutletExcelExportComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts;

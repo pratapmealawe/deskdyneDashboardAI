@@ -98,7 +98,7 @@ export class SearchOrderComponent {
   }
 
   goBack() {
-    this.router.navigate(['/home/orders']);
+    this.router.navigate(['/app/home/orders']);
   }
 
 }

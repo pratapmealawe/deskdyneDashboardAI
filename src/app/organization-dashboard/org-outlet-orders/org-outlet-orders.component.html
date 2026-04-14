@@ -1,0 +1,63 @@
+<div class="container-fluid">
+  <h3 class="mb-0 pb-3">Outlet Orders</h3>
+  <div>
+    <app-common-outlet-cafe-select [config]="headerConfig"
+      (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+  </div>
+  <div *ngIf="filteredOrderList.length > 0" class="pb-4">
+    <div class="row my-2 align-items-center">
+      <div class="col-12 col-md-8">
+        <div class="d-flex flex-wrap gap-2">
+          <mat-chip-listbox>
+            <mat-chip> Total Orders: {{ filteredOrderList.length }} </mat-chip>
+            <mat-chip> Wallet Used: ₹{{ totalWalletUsed | number : '1.2-2' }} </mat-chip>
+            <mat-chip> Amount Paid: ₹{{ totalAmountPaid | number : '1.2-2' }} </mat-chip>
+            <mat-chip color="primary" selected>
+              Total Paid (Wallet + Amount): ₹{{ totalAmount | number : '1.2-2' }}
+            </mat-chip>
+          </mat-chip-listbox>
+        </div>
+      </div>
+      <div class="col-12 col-md-4 d-flex justify-content-end gap-2 mt-2 mt-md-0">
+
+        <button mat-mini-fab class="excel-btn" matTooltip="Excel Export" (click)="excelExport()">
+          <mat-icon>table_chart</mat-icon>
+        </button>
+        <button mat-mini-fab color="primary" (click)="downloadPdf()" matTooltip="Download PDF">
+          <mat-icon>picture_as_pdf</mat-icon>
+        </button>
+
+        <button mat-mini-fab color="primary" (click)="changeDataView()" matTooltip="Change View" class="btn iconBtn">
+          <i class="bi" [ngClass]="isShowChart ? 'bi-table' : 'bi-graph-down'"></i>
+        </button>
+
+      </div>
+    </div>
+    <ng-container *ngIf="!isShowChart">
+      <div *ngFor="let order of paginatedList">
+        <!-- <app-org-outlet-orders [order]="order"></app-org-outlet-orders> -->
+      </div>
+      <mat-paginator [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[10, 50, 100, 200, 500]"
+        [length]="estimatedTotal" (page)="onPageChange($event)" showFirstLastButtons>
+      </mat-paginator>
+    </ng-container>
+    <div class="row my-1" *ngIf="isShowChart">
+      <div class="col-12">
+        <div class="card shadow border-0 rounded-lg card-hover overflow-hidden">
+          <highcharts-chart *ngIf="filteredOrderList.length > 0" [Highcharts]="Highcharts" [options]="chartOptions"
+            [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
+            style="width: 100%; height: 400px; display: block">
+          </highcharts-chart>
+
+          <div class="h-100 d-flex justify-content-center align-items-center pt-2">
+            <p *ngIf="filteredOrderList.length <= 0">No Data Found</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <mat-card *ngIf="filteredOrderList.length === 0" class="text-center py-2 mt-2 rounded-4">
+    No Orders Found
+  </mat-card>
+</div>

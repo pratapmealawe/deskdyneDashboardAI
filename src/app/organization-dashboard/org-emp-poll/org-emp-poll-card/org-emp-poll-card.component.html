@@ -1,0 +1,157 @@
+<!-- Emp Poll Card — Matching daily-bulk-card design -->
+<div class="order-card">
+
+    <!-- Card Top -->
+    <div class="card-top">
+        <div class="order-avatar poll-avatar">
+            {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() || 'EP' }}
+        </div>
+        <div class="order-identity">
+            <h3 class="order-title">Employee Poll</h3>
+            <div class="order-sub-info">
+                <span class="type-chip poll-chip">
+                    <mat-icon>poll</mat-icon> {{ order?.mealType }}
+                </span>
+                <span class="date-text">
+                    <mat-icon>calendar_today</mat-icon>
+                    {{ order?.deliveryDate | date: 'MMM d, y' }}
+                </span>
+            </div>
+        </div>
+        <div class="card-top-right">
+            <span class="info-chip" title="Cutoff Time">
+                <mat-icon class="text-warn">schedule</mat-icon>
+                {{ formatTime12Hour(order?.mealTypeList?.[0]?.cutOffTime) }}
+            </span>
+            <span class="info-chip" title="Delivery Cost">
+                <mat-icon>local_shipping</mat-icon>
+                ₹{{ totalDeliveryCharge || 0 }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Card Body Grid -->
+    <div class="card-body-grid">
+
+        <!-- Left Column: Details -->
+        <div class="card-body-left">
+            <!-- POC Details -->
+            <div class="info-row">
+                <mat-icon class="info-icon">person</mat-icon>
+                <div class="info-content">
+                    <span class="info-label">POC Name</span>
+                    <span class="info-value">{{ order?.pocDetails?.pocName }}
+                        <span class="role-tag" *ngIf="order?.pocDetails?.pocRole">({{ order?.pocDetails?.pocRole
+                            }})</span>
+                    </span>
+                </div>
+            </div>
+            <div class="info-row" *ngIf="order?.pocDetails?.pocPhoneNo">
+                <mat-icon class="info-icon">phone</mat-icon>
+                <div class="info-content">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">{{ order?.pocDetails?.pocPhoneNo }}</span>
+                </div>
+            </div>
+            <div class="info-row" *ngIf="order?.pocDetails?.pocEmail">
+                <mat-icon class="info-icon">email</mat-icon>
+                <div class="info-content">
+                    <span class="info-label">Email</span>
+                    <span class="info-value text-truncate" [matTooltip]="order?.pocDetails?.pocEmail">{{
+                        order?.pocDetails?.pocEmail }}</span>
+                </div>
+            </div>
+
+            <!-- Organization Badge -->
+            <div class="badge-row">
+                <div class="org-badge" *ngIf="order?.orgName">
+                    <mat-icon>business</mat-icon>
+                    {{ order?.cafeteriaName }} ({{ order?.orgName }})
+                </div>
+            </div>
+
+            <!-- Location -->
+            <div class="info-row" *ngIf="order?.customerLocation?.address || order?.orgCity">
+                <mat-icon class="info-icon">location_on</mat-icon>
+                <div class="info-content">
+                    <span class="info-label">Location</span>
+                    <span class="info-value">{{ order?.customerLocation?.address || order?.orgCity }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Items -->
+        <div class="card-body-right">
+            <div class="section-header">
+                <span class="section-label">Meal Items</span>
+                <span class="items-count-badge">{{ order?.mealTypeList?.length || 0 }} items</span>
+            </div>
+            <div class="items-scroll">
+                <div class="item-row" *ngFor="let meal of order?.mealTypeList">
+                    <div class="item-left">
+                        <span class="item-qty-chip">{{ meal?.count }}x</span>
+                        <span class="item-name">{{ meal?.deliveredItem || 'N/A' }}</span>
+                    </div>
+                    <div class="item-tags">
+                        <span class="meta-tag meal-type">{{ meal?.itemName }}</span>
+                    </div>
+                    <span class="item-price">₹{{ (meal?.mealPrice || 0) * (meal?.count || 1) | number : '1.2-2'
+                        }}</span>
+                </div>
+                <div *ngIf="!order?.mealTypeList?.length" class="no-items">
+                    <mat-icon>info_outline</mat-icon>
+                    <span>No items found</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Employee Details (flat, always visible) -->
+    <div class="employees-section" *ngIf="orderInput?.employeeList?.length">
+        <div class="section-toggle" (click)="showEmployees = !showEmployees">
+            <div class="toggle-left">
+                <mat-icon>groups</mat-icon>
+                <span class="section-label">Employees</span>
+            </div>
+            <div class="toggle-right">
+                <span class="count-chip">{{ orderInput?.employeeList?.length }} employees</span>
+                <mat-icon [class.rotated]="showEmployees">expand_more</mat-icon>
+            </div>
+        </div>
+        <div class="employee-grid" *ngIf="showEmployees">
+            <div class="employee-chip" *ngFor="let emp of orderInput?.employeeList">
+                <div class="emp-avatar">
+                    {{ emp?.employeeName?.charAt(0) || 'U' }}
+                </div>
+                <div class="emp-info">
+                    <span class="emp-name">{{ emp?.employeeName || 'N/A' }}</span>
+                    <span class="emp-meta" *ngIf="emp?.employeePhoneNo">{{ emp?.employeePhoneNo }}</span>
+                    <span class="emp-meta" *ngIf="emp?.employeeEmail">{{ emp?.employeeEmail }}</span>
+                    <span class="emp-item" *ngIf="emp?.deliveredItem">{{ emp?.deliveredItem }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Footer -->
+    <div class="card-footer">
+        <div class="fin-strip">
+            <div class="fin-cell">
+                <span class="fin-label">Total Delivery</span>
+                <span class="fin-value">₹{{ totalDeliveryCharge || 0 | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell">
+                <span class="fin-label">Total Items</span>
+                <span class="fin-value">{{ getTotalItemCount() }}</span>
+            </div>
+            <div class="fin-cell">
+                <span class="fin-label">Employees</span>
+                <span class="fin-value">{{ orderInput?.employeeList?.length || 0 }}</span>
+            </div>
+            <div class="fin-cell" *ngIf="order?.pollStatus">
+                <span class="fin-label">Poll Status</span>
+                <span class="fin-value poll-status" [ngClass]="order?.pollStatus">{{ order?.pollStatus }}</span>
+            </div>
+        </div>
+    </div>
+</div>

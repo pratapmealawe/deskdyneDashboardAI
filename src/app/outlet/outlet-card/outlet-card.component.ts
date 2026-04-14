@@ -60,7 +60,7 @@ export class OutletCardComponent implements OnInit {
 
   async deleteOutletFunc() {
     try {
-      const res = await this.apiMainService.B2B_deleteOutlet(this.outletInfo?._id, 'soft');
+      const res = await this.apiMainService.deleteOutlet(this.outletInfo?._id, 'soft');
       console.log(res);
       this.toaster.success("Outlet deleted successfully!");
       this.softDelete.emit(this.outletInfo);

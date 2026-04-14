@@ -79,7 +79,7 @@ export class AddPolicyComponent implements OnInit {
     this.showErrorMsg = false;
     try {
       await this.apiMainService.addPolicy(this.policyObj);
-      this.router.navigate(['/policy']).then(() => {
+      this.router.navigate(['/app/policy']).then(() => {
         window.location.reload();
       });
     } catch (error) {
@@ -91,7 +91,7 @@ export class AddPolicyComponent implements OnInit {
     try {
       console.log(this.policyId, this.policyObj);
       await this.apiMainService.updatePolicy(this.policyId, this.policyObj);
-      this.router.navigate(['/policy']).then(() => {
+      this.router.navigate(['/app/policy']).then(() => {
         window.location.reload();
       });
     } catch (error) {
@@ -176,6 +176,6 @@ export class AddPolicyComponent implements OnInit {
   }
 
   cancelPolicy() {
-    this.router.navigate(['policy']);
+    this.router.navigate(['/app/policy']);
   }
 }

@@ -19,7 +19,7 @@ export class VendorDetailsComponent implements OnInit {
 
   editOrg() {
     this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', this.vendorObj);
-    this.router.navigate(['addVendorFirm']);
+    this.router.navigate(['/app/addVendorFirm']);
   }
 
   ngOnInit(): void {

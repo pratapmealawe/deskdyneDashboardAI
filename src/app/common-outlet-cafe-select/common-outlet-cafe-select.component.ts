@@ -109,7 +109,7 @@ export class CommonOutletCafeSelectComponent implements OnInit, OnChanges {
       this.loadingOrgs = true;
       const page = 1;
       const searchObj = { countOnly: false };
-      this.orglist = await this.api.B2B_fetchFilteredAllOrgs(searchObj, page);
+      this.orglist = await this.api.fetchFilteredAllOrgs(searchObj, page);
     } catch (err) {
       console.error('Error fetching org list:', err);
       this.orglist = [];

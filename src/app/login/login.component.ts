@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private localStorageService: LocalStorageService,
     private router: Router,
-    private apiMainService: ApiMainService
+    private apiMainService: ApiMainService,
+    private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
@@ -35,12 +37,32 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkIfTokenPresent() {
+  async checkIfTokenPresent() {
     const ADMIN_ID = this.localStorageService.getCacheData('ADMIN_ID');
     const ADMIN_TOKEN = this.localStorageService.getCacheData('ADMIN_TOKEN');
+    const ADMIN_PROFILE = this.localStorageService.getCacheData('ADMIN_PROFILE');
+
     if (ADMIN_ID && ADMIN_TOKEN) {
-      this.router.navigate(['/home']);
+      if (!ADMIN_PROFILE) {
+        try {
+          const profile = await this.apiMainService.getadminprofile(ADMIN_ID);
+          this.localStorageService.setCacheData('ADMIN_PROFILE', profile);
+          this.navigateToDashboard(profile);
+        } catch (error) {
+          console.error('Error fetching profile on auto-login:', error);
+          this.localStorageService.resetAllCacheData();
+          return;
+        }
+      } else {
+        this.navigateToDashboard(ADMIN_PROFILE);
+      }
     }
+  }
+
+  private navigateToDashboard(profile: any) {
+    const isOrgAdmin = profile.policy_name === 'orgAdmin' || profile.role === 'ORGADMIN';
+    const landingPage = isOrgAdmin ? '/orgapp/orgDashboard' : '/app/home';
+    this.router.navigate([landingPage]);
   }
 
   async login() {
@@ -52,6 +74,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.adminId = id;
 
       await this.apiMainService.loginAdmin({ adminId: id });
+      this.toasterService.success('OTP sent successfully');
 
       this.showOTP = true;
       this.resetOtp();
@@ -76,8 +99,15 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this.localStorageService.setCacheData('ADMIN_ID', this.adminId);
       this.localStorageService.setCacheData('ADMIN_TOKEN', loginObj.token);
-      this.router.navigate(['/home']);
+      
+      // Fetch and save profile before navigating to ensure the guard has permission data
+      const profile = await this.apiMainService.getadminprofile(this.adminId);
+      this.localStorageService.setCacheData('ADMIN_PROFILE', profile);
+
+      this.toasterService.success('Login successful');
+      this.navigateToDashboard(profile);
     } catch (error) {
+      this.toasterService.error(300);
       console.log('error while verifying otp ', error);
       // You can show snackbar/toast here and maybe reset OTP
     } finally {
@@ -119,9 +149,13 @@ export class LoginComponent implements OnInit, OnDestroy {
   async resendOTP() {
     if (this.timer !== 0) return;
 
-    await this.apiMainService.loginAdmin({ adminId: this.adminId });
-
-    this.startTimer();
+    try {
+      await this.apiMainService.loginAdmin({ adminId: this.adminId });
+      this.toasterService.success('OTP resent successfully');
+      this.startTimer();
+    } catch (error) {
+      this.toasterService.error(300);
+    }
   }
 
   private resetOtp() {
