@@ -61,12 +61,12 @@ export class PermissionsService {
       if (currentUrl === normalizedRedirectPath) {
         console.warn('Infinite loop detected in PermissionsService. Redirecting to login.');
         this.router.navigate(['/login']);
-        this.toasterService.error(122);
+        // this.toasterService.error(122);
         return false;
       }
 
       this.router.navigate([redirectPath]);
-      this.toasterService.error(122);
+      // this.toasterService.error(122);
       return false;
     }
     return true;

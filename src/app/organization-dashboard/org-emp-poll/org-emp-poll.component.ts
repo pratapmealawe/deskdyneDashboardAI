@@ -28,9 +28,16 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
     cafeteriaList: any = [];
     selectedOrg: any = null;
     selectedCafeteria: any = null;
-    searchPhone: string = '';
+    searchQuery: string = '';
     filteredList: any[] = [];
     isLoading: boolean = false;
+    allPollResults: any[] = [];
+    stats = {
+        totalVotes: 0,
+        mostVotedItem: 'N/A',
+        affectedEmployees: 0,
+        totalOrders: 0
+    };
 
     constructor(
         private apiMainService: ApiMainService,
@@ -90,15 +97,13 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
 
     async getEmployeePollList(dateInput?: any) {
         const targetDate = dateInput ? new Date(dateInput) : this.selectedPollDate;
+        this.allPollResults = [];
         this.filteredList = [];
         const payload: any = {
             fromDate: targetDate,
         };
         if (this.selectedCafeteria) {
             payload['cafeteriaId'] = this.selectedCafeteria;
-        }
-        if (this.searchPhone) {
-            payload['employeePhoneNo'] = this.searchPhone;
         }
         if (this.adminOrg) {
             payload['orgId'] = this.adminOrg._id;
@@ -164,20 +169,72 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
                         }
                     });
                 });
-                this.filteredList = Array.from(groupedMap.values()).map(group => {
+                this.allPollResults = Array.from(groupedMap.values()).map(group => {
                     group.mealTypeList = Array.from(group.mealTypeMap.values());
                     delete group.mealTypeMap;
                     return group;
                 });
+                this.applySearchFilter();
             } else {
-                this.filteredList = [];
+                this.allPollResults = [];
+                this.applySearchFilter();
             }
         } catch (error) {
             console.error('Error fetching employee poll list:', error);
-            this.filteredList = [];
+            this.allPollResults = [];
+            this.applySearchFilter();
         } finally {
             this.isLoading = false;
         }
+    }
+
+    applySearchFilter() {
+        if (!this.searchQuery) {
+            this.filteredList = [...this.allPollResults];
+        } else {
+            const query = this.searchQuery.toLowerCase();
+            this.filteredList = this.allPollResults.filter(group => {
+                const matchesOrg = group.orgName?.toLowerCase().includes(query);
+                const matchesCafe = group.cafeteriaName?.toLowerCase().includes(query);
+                const matchesEmp = group.employeeList.some((emp: any) =>
+                    emp.employeeName?.toLowerCase().includes(query) ||
+                    emp.employeePhoneNo?.includes(query)
+                );
+                return matchesOrg || matchesCafe || matchesEmp;
+            });
+        }
+        this.calculateStats();
+    }
+
+    calculateStats() {
+        let totalVotes = 0;
+        let employees = new Set<string>();
+        let itemVotes = new Map<string, number>();
+
+        this.filteredList.forEach(group => {
+            group.employeeList.forEach((emp: any) => {
+                totalVotes++;
+                employees.add(emp.employeeId);
+                const itemName = emp.deliveredItem || 'Unknown';
+                itemVotes.set(itemName, (itemVotes.get(itemName) || 0) + 1);
+            });
+        });
+
+        let mostVoted = 'N/A';
+        let maxVotes = 0;
+        itemVotes.forEach((votes, item) => {
+            if (votes > maxVotes) {
+                maxVotes = votes;
+                mostVoted = item;
+            }
+        });
+
+        this.stats = {
+            totalVotes,
+            mostVotedItem: mostVoted,
+            affectedEmployees: employees.size,
+            totalOrders: this.filteredList.length
+        };
     }
 
     async exportEmployeePollToExcel() {

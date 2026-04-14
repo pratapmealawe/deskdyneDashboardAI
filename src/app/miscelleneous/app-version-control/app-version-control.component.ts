@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { AddEditAppVersionControlComponent } from './add-edit-app-version-control/add-edit-app-version-control.component';
 
 @Component({
   selector: 'app-app-version-control',
@@ -8,16 +10,15 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 })
 export class AppVersionControlComponent implements OnInit {
   allAppVersions: any = [];
-  variableObj: any = {};
-  editMode = false;
-  addnewVariable = false;
+
   constructor(
-    private apiMainService: ApiMainService
-  ) {
+    private apiMainService: ApiMainService,
+    private dialog: MatDialog
+  ) {}
+
+  ngOnInit(): void {
     this.getAllAppVersions();
   }
-
-  ngOnInit(): void {}
 
   async getAllAppVersions() {
     try {
@@ -33,17 +34,40 @@ export class AppVersionControlComponent implements OnInit {
   }
 
   addVariable() {
-    this.editMode = true;
-    this.addnewVariable = true;
+    this.openDialog(null, true);
+  }
+
+  editVariable(variableObj: any) {
+    this.openDialog(variableObj, false);
+  }
+
+  openDialog(variableObj: any, addnewVariable: boolean) {
+    const dialogRef = this.dialog.open(AddEditAppVersionControlComponent, {
+      width: '600px',
+      data: {
+        variableObj: variableObj || {},
+        addnewVariable: addnewVariable
+      },
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        if (result.action === 'submit') {
+          await this.submitnewVariable(result.data);
+        } else if (result.action === 'update') {
+          await this.updateVariable(result.data);
+        }
+      }
+    });
   }
 
   async submitnewVariable(variableObj: any) {
     try {
       await this.apiMainService.saveAppVersion(variableObj);
       this.getAllAppVersions();
-      this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
+      console.log('Error while saving app version ', e);
     }
   }
 
@@ -51,21 +75,8 @@ export class AppVersionControlComponent implements OnInit {
     try {
       await this.apiMainService.updateAppVersion(variableObj);
       this.getAllAppVersions();
-      this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
+      console.log('Error while updating app version ', e);
     }
-  }
-
-  cancel() {
-    this.editMode = false;
-    this.addnewVariable = false;
-    this.variableObj = {};
-  }
-
-  editVariable(variableObj: any) {
-    this.editMode = true;
-    this.addnewVariable = false;
-    this.variableObj = variableObj;
   }
 }
