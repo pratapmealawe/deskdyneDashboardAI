@@ -67,6 +67,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   async fetchMenuItems() {
     try {
       const res = await this.apiMainService.getMenuItems(this.outletObj._id);
+      console.log('menu items', res);
       this.menuItems = res || [];
       this.applyMenuFilters();
     } catch (e) {
@@ -75,7 +76,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       this.applyMenuFilters();
     }
   }
-
 
   applyMenuFilters() {
     if (!this.menuItems) {
@@ -106,9 +106,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
-    
-    console.log('buildDateGroupedMenu',this.buildDateGroupedMenu(this.filteredMenuList))
-    console.log('buildGroupedMenu',this.buildGroupedMenu(this.filteredMenuList))
+
+    console.log('buildDateGroupedMenu', this.buildDateGroupedMenu(this.filteredMenuList))
+    console.log('buildGroupedMenu', this.buildGroupedMenu(this.filteredMenuList))
     this.groupedMenuList = this.outletObj?.isWeeklyMenu ? this.buildDateGroupedMenu(this.filteredMenuList) : this.buildGroupedMenu(this.filteredMenuList);
   }
 

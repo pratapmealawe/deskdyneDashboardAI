@@ -1,6 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatCalendar } from '@angular/material/datepicker';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
 import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
@@ -13,6 +14,8 @@ import { ToasterService } from 'src/service/toaster.service';
   styleUrls: ['./add-outlet-menu.component.scss']
 })
 export class AddOutletMenuComponent implements OnInit {
+  @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
+
   form: FormGroup =  new FormGroup({
       itemName: new FormControl('', [Validators.required, Validators.maxLength(80)]),
       price: new FormControl(null, [Validators.required, Validators.min(1)]),
@@ -138,6 +141,15 @@ export class AddOutletMenuComponent implements OnInit {
       this.selectedWeeklyDates.map(d => ({ date: d }))
     );
     this.form.get('weeklyMenuDates')?.markAsDirty();
+
+    // Reassign dateClass to trigger calendar view refresh
+    this.weeklyDateClass = (d: Date): string => {
+      return this.isDateSelected(d) ? 'selected-date' : '';
+    };
+
+    if (this.calendar) {
+      this.calendar.updateTodaysDate();
+    }
   }
 
   isSameDay(d1: Date, d2: Date): boolean {
