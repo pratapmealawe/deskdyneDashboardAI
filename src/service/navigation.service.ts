@@ -13,7 +13,7 @@ export class NavigationService {
     { name: 'Home', showParent: true, route: 'home', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
     { name: 'Dashboard', showParent: true, route: 'mainDashboard', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
     { name: 'Org Dashboard', showParent: true, route: 'dashboard', image: 'Dashbaord_white_1', imageblue: 'Organization_dashbaord_blue' },
-    { name: 'Orders Dashboard', showParent: true, route: 'orders-dashboard', image: 'Billing_white', imageblue: 'Billing_blue' },
+    { name: 'Orders Dashboard', showParent: true, route: 'allOrders', image: 'Billing_white', imageblue: 'Billing_blue' },
     { name: 'Organization', showParent: true, route: 'b2bSearchOrg', image: 'Organization_white', imageblue: 'Organization_Blue' },
     {
       name: 'Outlet', showParent: true, image: 'Outlet_white', imageblue: 'Outlet_blue', children: [
@@ -144,7 +144,7 @@ export class NavigationService {
     { name: 'Billing', showParent: true, route: 'billing', image: 'Billing_white', imageblue: 'Billing_Blue' }
   ];
 
-  constructor(private suggestionsFeedbackService: SuggestionsFeedbackService) {}
+  constructor(private suggestionsFeedbackService: SuggestionsFeedbackService) { }
 
   getDeskDineOptions() {
     return [...this.deskDineOptions];
