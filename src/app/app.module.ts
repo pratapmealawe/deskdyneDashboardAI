@@ -22,7 +22,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     ToasterComponent,
     MainLoaderComponent,
     ConfirmationModalComponent,
-    ImageCropperComponent,
     SessionTimeoutComponent,
   ],
   imports: [
@@ -35,7 +34,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatDatepickerModule,
     MatDialogModule,
     MatButtonModule,
-    MatTooltipModule
+    MatTooltipModule,
+    ImageCropperComponent
   ],
   providers: [],
   bootstrap: [AppComponent],

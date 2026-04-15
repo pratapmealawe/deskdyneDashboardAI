@@ -18,10 +18,27 @@ import {
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HighchartsChartModule } from 'highcharts-angular';
+import { OrderCardModule } from 'src/app/order-card/order-card.module';
+import { OrderFilterDialogModule } from 'src/app/common-components/order-filter-dialog/order-filter-dialog.module';
+
 @Component({
   selector: 'app-outlet-orders',
   templateUrl: './outlet-orders.component.html',
   styleUrls: ['./outlet-orders.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HighchartsChartModule,
+    OrderCardModule,
+    OrderFilterDialogModule
+  ]
 })
 export class OutletOrdersComponent implements OnInit {
   @Input() outletObj: any;

@@ -3,10 +3,28 @@ import { Router } from '@angular/router';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { PolicyService } from 'src/service/policy.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { OutletDetailsComponent } from './outlet-details/outlet-details.component';
+import { OutletMenuComponent } from './outlet-menu/outlet-menu.component';
+import { QrMenuComponent } from './qr-menu/qr-menu.component';
+import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
+import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.component';
+
 @Component({
   selector: 'app-outlet-view',
   templateUrl: './outlet-view.component.html',
   styleUrls: ['./outlet-view.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    OutletDetailsComponent,
+    OutletMenuComponent,
+    QrMenuComponent,
+    OutletOrdersComponent,
+    OutletFeedbackComponent
+  ]
 })
 export class OutletViewComponent implements OnInit {
   @Input() outlet: any;

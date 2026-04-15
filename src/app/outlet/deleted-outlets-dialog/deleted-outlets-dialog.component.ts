@@ -2,10 +2,18 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
     selector: 'app-deleted-outlets-dialog',
     templateUrl: './deleted-outlets-dialog.component.html',
     styleUrls: ['./deleted-outlets-dialog.component.scss'],
+    standalone: true,
+    imports: [
+        CommonModule,
+        MaterialModule
+    ]
 })
 export class DeletedOutletsDialogComponent implements OnInit {
     deletedOutletList: any[] = [];

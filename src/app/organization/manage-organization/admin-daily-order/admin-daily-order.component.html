@@ -1,0 +1,22 @@
+<div class="admin-daily-order-container">
+    <!-- Sub Tabs Navigation -->
+    <div class="sub-tabs-wrapper">
+        <div class="sub-tabs-container">
+            <button *ngFor="let tab of subTabs; let i = index" 
+                    class="sub-tab-btn" 
+                    [class.active]="selectedSubTabIndex === i"
+                    (click)="onSubTabChange(i)">
+                <mat-icon>{{ tab.icon }}</mat-icon>
+                <span>{{ tab.name }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="sub-tab-content">
+        <ng-container [ngSwitch]="selectedSubPath">
+            <app-admin-daily-order-menu *ngSwitchCase="'adminDailyOrderMenu'" [orgObj]="orgObj"></app-admin-daily-order-menu>
+            <app-employee-list *ngSwitchCase="'employeeList'" [orgObj]="orgObj"></app-employee-list>
+        </ng-container>
+    </div>
+</div>

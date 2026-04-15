@@ -30,10 +30,22 @@ interface CabinConfig {
   cabinName: string;
 }
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-add-outlet',
   templateUrl: './add-outlet.component.html',
   styleUrls: ['./add-outlet.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ImageCropperComponent
+  ]
 })
 export class AddOutletComponent implements OnInit {
   @ViewChild('contentOrg') contentOrg!: TemplateRef<any>;

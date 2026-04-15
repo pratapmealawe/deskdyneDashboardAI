@@ -6,10 +6,18 @@ import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-outlet-card',
   templateUrl: './outlet-card.component.html',
   styleUrls: ['./outlet-card.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class OutletCardComponent implements OnInit {
   private _outlet: any[] = [];

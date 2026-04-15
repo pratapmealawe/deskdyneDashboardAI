@@ -1,0 +1,50 @@
+<div class="org-view-container">
+
+  <!-- Header Section -->
+  <div class="org-header-card">
+    <div class="header-left">
+      <button mat-icon-button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="title-section">
+        <h1 class="page-title">
+          {{ organization?.organization_name || 'Organization Details' }}
+        </h1>
+        <p class="page-subtitle">
+          Manage organization menus, employees & settings
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Tabs -->
+  <div class="tabs-container">
+    <div class="main-tabs" #mainTabsContainer (mousedown)="onMouseDown($event)" (mouseleave)="onMouseLeave()"
+      (mouseup)="onMouseUp()" (mousemove)="onMouseMove($event)">
+      <button *ngFor="let view of orgViewList; let i = index" class="tab-btn"
+        [class.active]="selectedMainTabIndex === i" (click)="onMainTabChange(i)">
+        <mat-icon class="tab-icon">
+          {{ getTabIcon(view.path) }}
+        </mat-icon>
+        <span>{{ view.name }}</span>
+      </button>
+    </div>
+  </div>
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <!-- MAIN TABS WITHOUT SUB TABS -->
+    <ng-container *ngIf="!selectedMain?.subTabs?.length" [ngSwitch]="selectedMain?.path">
+      <app-org-details *ngSwitchCase="'orgDetails'" [orgObj]="organization"></app-org-details>
+      <app-organization-compliance *ngSwitchCase="'organizationCompliance'"
+        [orgObj]="organization"></app-organization-compliance>
+      <app-virtual-cafeteria *ngSwitchCase="'virtualCafeteriaOutlet'" [orgObj]="organization"></app-virtual-cafeteria>
+      <app-admin-daily-order *ngSwitchCase="'adminDailyOrder'" [orgObj]="organization"></app-admin-daily-order>
+      <app-consumption-order *ngSwitchCase="'consumptionOrder'" [orgObj]="organization"></app-consumption-order>
+      <app-outlet-employee *ngSwitchCase="'outletEmployee'" [orgObj]="organization"></app-outlet-employee>
+      <app-company-wallet *ngSwitchCase="'companyWallet'" [orgObj]="organization"> </app-company-wallet>
+      <app-qr-employee *ngSwitchCase="'qrEmployee'" [orgObj]="organization"></app-qr-employee>
+      <app-bulk *ngSwitchCase="'bulkMenuSection'" [selectedMainPath]="selectedMainPath" [selectedMainTabIndex]="selectedMainTabIndex"[orgObj]="organization"></app-bulk>
+      <app-bulk *ngSwitchCase="'employeebulkmenu'" [selectedMainPath]="selectedMainPath" [selectedMainTabIndex]="selectedMainTabIndex"[orgObj]="organization"></app-bulk>
+    </ng-container>
+  </div>
+</div>

@@ -1,10 +1,18 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ToasterService } from 'src/service/toaster.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-combo-popup',
   templateUrl: './combo-popup.component.html',
-  styleUrls: ['./combo-popup.component.scss']
+  styleUrls: ['./combo-popup.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class ComboPopupComponent {
   @Output() comboout: EventEmitter<any> = new EventEmitter<any>();

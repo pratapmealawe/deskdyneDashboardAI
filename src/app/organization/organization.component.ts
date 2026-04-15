@@ -7,7 +7,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { OrganizationCardComponent } from './organization-card/organization-card.component';
-import { ManageOrganizationComponent } from '../manage-organization/manage-organization.component';
+import { ManageOrganizationComponent } from './manage-organization/manage-organization.component';
 import { MaterialModule } from '../material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeletedOrgsDialogComponent } from './deleted-orgs-dialog/deleted-orgs-dialog.component';

@@ -6,10 +6,18 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-outlet-details',
   templateUrl: './outlet-details.component.html',
   styleUrls: ['./outlet-details.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class OutletDetailsComponent implements OnInit {
   @Input() outletObj: any;

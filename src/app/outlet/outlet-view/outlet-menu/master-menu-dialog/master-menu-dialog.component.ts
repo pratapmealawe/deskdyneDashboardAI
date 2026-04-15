@@ -5,10 +5,18 @@ import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
 import { categoryList } from 'src/config/food-category.config';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-master-menu-dialog',
   templateUrl: './master-menu-dialog.component.html',
-  styleUrls: ['./master-menu-dialog.component.scss']
+  styleUrls: ['./master-menu-dialog.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class MasterMenuDialogComponent implements OnInit {
   displayImgUrl = environment.imageUrl;

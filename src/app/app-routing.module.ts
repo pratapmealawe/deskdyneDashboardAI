@@ -5,14 +5,9 @@ import { AppLayoutComponent } from './layout/app-layout/app-layout.component';
 import { OrgLayoutComponent } from './layout/org-layout/org-layout.component';
 
 const routes: Routes = [
-  { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
+  { path: 'login', loadComponent: () => import('./login/login.component').then(m => m.LoginComponent) },
   { path: 'guest', loadChildren: () => import('./guest/guest.module').then(m => m.GuestModule) },
 
-  // Legacy Redirects
-  { path: 'home', redirectTo: 'app/home', pathMatch: 'full' },
-  { path: 'mainDashboard', redirectTo: 'app/mainDashboard', pathMatch: 'full' },
-  { path: 'dashboard', redirectTo: 'app/dashboard', pathMatch: 'full' },
-  { path: 'orgDashboard', redirectTo: 'orgapp/orgDashboard', pathMatch: 'full' },
 
   // General App Layout
   {
@@ -20,16 +15,17 @@ const routes: Routes = [
     component: AppLayoutComponent,
     canActivate: [accessGuard],
     children: [
-      { path: 'home', loadChildren: () => import('./home/home.module').then(m => m.HomeModule) },
+      { path: 'home', loadComponent: () => import('./home/home.component').then(m => m.HomeComponent) },
       { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
       { path: 'mainDashboard', loadChildren: () => import('./deskdyne-components/main-dashboard/main-dashboard.module').then(m => m.MainDashboardModule) },
+      { path: 'allOrders', loadChildren: () => import('./orders-dashboard/orders-dashboard.component').then(m => m.OrdersDashboardComponent) },
       { path: 'b2bSearchOrg', loadComponent: () => import('./organization/organization.component').then(m => m.OrganizationComponent) },
       { path: 'b2bAddorg', loadComponent: () => import('./organization/add-organization/add-organization.component').then(m => m.AddOrganizationComponent) },
 
 
 
-      { path: 'outlet', loadChildren: () => import('./outlet/outlet.module').then(m => m.OutletModule) },
-      { path: 'addOutlet', loadChildren: () => import('./outlet/add-outlet/add-outlet.module').then(m => m.AddOutletModule) },
+      { path: 'outlet', loadComponent: () => import('./outlet/outlet.component').then(m => m.OutletComponent) },
+      { path: 'addOutlet', loadComponent: () => import('./outlet/add-outlet/add-outlet.component').then(m => m.AddOutletComponent) },
       { path: 'eventPopup', loadChildren: () => import('./event-popup/event-popup.module').then(m => m.EventPopupModule) },
       { path: 'addEventPopup', loadChildren: () => import('./event-popup/add-event/add-event.module').then(m => m.AddEventModule) },
       { path: 'vendor', loadChildren: () => import('./vendor/vendor.module').then(m => m.VendorModule) },
@@ -48,8 +44,7 @@ const routes: Routes = [
       { path: 'policy', loadChildren: () => import('./policy/policy/policy.module').then(m => m.PolicyModule) },
       { path: 'addPolicy', loadChildren: () => import('./policy/add-policy/add-policy.module').then(m => m.AddPolicyModule) },
       { path: 'currentOrder', loadChildren: () => import('./outlet-orders/outlet-orders.module').then(m => m.OutletOrdersModule) },
-      { path: 'allOrders', loadChildren: () => import('./all-orders/all-orders.module').then(m => m.AllOrdersModule) },
-      { path: 'outletMasterMenu', loadChildren: () => import('./outlet-master-menu/outlet-master-menu.module').then(m => m.OutletMasterMenuModule) },
+      { path: 'outletMasterMenu', loadComponent: () => import('./outlet/outlet-master-menu/outlet-master-menu.component').then(m => m.OutletMasterMenuComponent) },
       { path: 'searchOrder', loadChildren: () => import('./search-order/search-order.module').then(m => m.SearchOrderModule) },
       { path: 'customer', loadChildren: () => import('./common-components/customer/customer.module').then(m => m.CustomerModule) },
       { path: 'serverlogs', loadChildren: () => import('./server-logs/server-logs.module').then(m => m.ServerLogsModule) },

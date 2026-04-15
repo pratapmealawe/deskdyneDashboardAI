@@ -1,9 +1,19 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { OrgOrderComponent } from 'src/app/organization-dashboard/org-reviews/org-order/org-order.component';
+
 @Component({
   selector: 'app-outlet-feedback',
   templateUrl: './outlet-feedback.component.html',
-  styleUrls: ['./outlet-feedback.component.scss']
+  styleUrls: ['./outlet-feedback.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    OrgOrderComponent
+  ]
 })
 export class OutletFeedbackComponent implements OnInit {
   @Input() outletObj: any;
