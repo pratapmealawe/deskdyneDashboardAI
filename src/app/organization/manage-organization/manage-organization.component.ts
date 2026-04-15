@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { PolicyService } from 'src/service/policy.service';
 import { MaterialModule } from '../../material.module';
-
 // Manage-organization sub-components
 import { CompanyWalletComponent } from './company-wallet/company-wallet.component';
 import { ConsumptionOrderComponent } from './consumption-order/consumption-order.component';

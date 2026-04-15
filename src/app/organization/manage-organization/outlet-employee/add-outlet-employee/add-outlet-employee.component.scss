@@ -1,0 +1,74 @@
+@use '/src/styles/theme/variable' as var;
+
+.add-edit-dialog {
+  display: flex;
+  flex-direction: column;
+  min-width: 450px;
+
+  .dialog-header {
+    display: flex;
+    align-items: center;
+    padding: 1.5rem;
+    gap: 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    background: #fafbfc;
+
+    .header-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: #ecfdf5;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.edit {
+        background: #eff6ff;
+        color: #3b82f6;
+      }
+
+      mat-icon { font-size: 24px; width: 24px; height: 24px; }
+    }
+
+    .header-title {
+      flex: 1;
+      h2 { margin: 0; font-size: 1.2rem; font-weight: 700; color: #1e293b; }
+      .subtitle { margin: 4px 0 0; font-size: 0.85rem; color: #64748b; }
+    }
+  }
+
+  .dialog-content {
+    padding: 1.5rem !important;
+
+    .employee-form {
+      .form-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+
+      .full-width { width: 100%; }
+    }
+  }
+
+  .dialog-actions {
+    padding: 1.25rem 1.5rem !important;
+    border-top: 1px solid #f1f5f9;
+    background: #fafbfc;
+    gap: 0.75rem;
+
+    button {
+      border-radius: 8px !important;
+      padding: 0.5rem 1.25rem !important;
+      font-weight: 500;
+    }
+
+    .submit-btn {
+      min-width: 140px;
+      &.loading { opacity: 0.8; pointer-events: none; }
+      mat-icon { margin-right: 6px; }
+      mat-spinner { margin-right: 8px; }
+    }
+  }
+}

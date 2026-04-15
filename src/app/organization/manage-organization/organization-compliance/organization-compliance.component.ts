@@ -1,12 +1,12 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { environment } from 'src/environments/environment';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
-import { MatDialog } from '@angular/material/dialog';
-import { PolicyService } from 'src/service/policy.service';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { DomSanitizer } from '@angular/platform-browser';
+import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { environment } from 'src/environments/environment';
+import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { PolicyService } from 'src/service/policy.service';
 import { MaterialModule } from '../../../material.module';
 import { PdfuploadComponent } from '../../../pdfupload/pdfupload.component';
 

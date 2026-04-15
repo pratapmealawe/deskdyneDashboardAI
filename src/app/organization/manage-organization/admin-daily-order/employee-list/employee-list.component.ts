@@ -1,88 +1,52 @@
-﻿import { Component, Input, ViewChild, TemplateRef } from "@angular/core";
-import { ApiMainService } from "src/service/apiService/apiMain.service";
-import { FormGroup, FormBuilder, Validators } from "@angular/forms";
-import { ExcelService } from "src/service/excel.service";
-import { ToasterService } from 'src/service/toaster.service';
+import { Component, Input, OnInit } from "@angular/core";
 import { MatDialog } from '@angular/material/dialog';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-
+import { ApiMainService } from "src/service/apiService/apiMain.service";
+import { ExcelService } from "src/service/excel.service";
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../../../material.module';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from "src/app/material.module";
+import { ConfirmationModalService } from "src/service/confirmation-modal.service";
+import { AddEmployeeComponent } from './add-employee/add-employee.component';
+import { BulkAddEmployeeComponent } from './bulk-add-employee/bulk-add-employee.component';
+import { ToasterService } from "src/service/toaster.service";
 
 @Component({
     selector: 'app-employee-list',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule],
+    imports: [CommonModule, FormsModule, MaterialModule],
     templateUrl: 'employee-list.component.html',
     styleUrls: ['employee-list.component.scss']
 })
-export class EmployeeListComponent {
+export class EmployeeListComponent implements OnInit {
     employeeList: any[] = [];
-    @ViewChild("editDialog") editDialog!: TemplateRef<any>;
-    @ViewChild("deleteDialog") deleteDialog!: TemplateRef<any>;
-    @ViewChild("deleteAllDialog") deleteAllDialog!: TemplateRef<any>;
     @Input() orgObj: any;
-    empId: any;
-    form!: FormGroup;
-    showMultipleEmployeeForm = false;
-    addMultipleEmploeeList: any[] = [];
-    disableSubmit: any = false;
-    showRemoveForm = false;
-    showAddMoreForm = true;
-    employeeObj: any;
     confirmDelete: boolean = false;
-    deleteEmployeeName: any = '';
     selectedCafeterias: { cafeteria_id: string; cafeteria_name: string }[] = [];
     selectedCafeteriaIds: string[] = [];
     cafeObj: { cafeteria_id: string; cafeteria_name: string }[] = [];
     deletedEmployee: any;
     showError: boolean = false;
     fileName: any;
-    searchQuery: string = '';
+    searchTerm: string = '';
     editingEmployee: any;
 
     constructor(
         private apiMainService: ApiMainService,
         private excelService: ExcelService,
-        private fb: FormBuilder,
         private toasterService: ToasterService,
-        private dialog: MatDialog
+        private dialog: MatDialog,
+        private confirmationModalService: ConfirmationModalService
     ) { }
 
     ngOnInit() {
-        this.initForm();
-        this.initEmployeeObj();
-
         if (this.orgObj?.cafeteriaList?.length > 0) {
             this.selectCafeteria(this.orgObj.cafeteriaList[0]);
         }
     }
 
-    initForm() {
-        this.form = this.fb.group({
-            organization_name: this.orgObj?.organization_name,
-            organization_id: this.orgObj?._id,
-            employeeName: ['', Validators.required],
-            employeeId: [''],
-            employeePhoneNo: ['', Validators.required],
-            employeeEmail: ['', Validators.required],
-        });
-    }
-
-    initEmployeeObj() {
-        this.employeeObj = {
-            organization_name: this.orgObj?.organization_name,
-            organization_id: this.orgObj?._id,
-            employeeName: '',
-            employeeId: '',
-            employeePhoneNo: '',
-            employeeEmail: '',
-        };
-    }
-
-    // ðŸ‘‰ Generate initials for avatar
+    // Generate initials for avatar
     getInitials(name: string | undefined): string {
         if (!name) return '?';
         const parts = name.trim().split(' ').filter(Boolean);
@@ -90,7 +54,7 @@ export class EmployeeListComponent {
         return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
     }
 
-    // ðŸ‘‰ Select cafeteria
+    // Select cafeteria
     async selectCafeteria(cafeteria: any) {
         const index = this.selectedCafeterias.findIndex(
             c => c.cafeteria_id === cafeteria.cafeteria_id
@@ -142,11 +106,11 @@ export class EmployeeListComponent {
             const matchesCafeteria = emp.cafeteria_list?.some((c: any) =>
                 this.selectedCafeteriaIds.includes(c.cafeteria_id)
             );
-            const matchesSearch = !this.searchQuery ||
-                emp.employeeName?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                emp.employeeId?.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-                emp.employeePhoneNo?.toString().includes(this.searchQuery) ||
-                emp.employeeEmail?.toLowerCase().includes(this.searchQuery.toLowerCase());
+            const matchesSearch = !this.searchTerm ||
+                emp.employeeName?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                emp.employeeId?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+                emp.employeePhoneNo?.toString().includes(this.searchTerm) ||
+                emp.employeeEmail?.toLowerCase().includes(this.searchTerm.toLowerCase());
             return matchesCafeteria && matchesSearch;
         });
     }
@@ -155,7 +119,6 @@ export class EmployeeListComponent {
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Employee Template');
 
-        // Define columns with headers
         worksheet.columns = [
             { header: 'Employee ID', key: 'empId', width: 15 },
             { header: 'Employee Name', key: 'empName', width: 25 },
@@ -163,7 +126,6 @@ export class EmployeeListComponent {
             { header: 'Email', key: 'empEmail', width: 30 }
         ];
 
-        // Style header row
         const headerRow = worksheet.getRow(1);
         headerRow.font = { bold: true, color: { argb: 'FFFFFF' } };
         headerRow.fill = {
@@ -174,7 +136,6 @@ export class EmployeeListComponent {
         headerRow.alignment = { horizontal: 'center', vertical: 'middle' };
         headerRow.height = 25;
 
-        // Add sample data row
         worksheet.addRow({
             empId: 'EMP001',
             empName: 'John Doe',
@@ -182,8 +143,7 @@ export class EmployeeListComponent {
             empEmail: 'john.doe@company.com'
         });
 
-        // Add borders to all cells
-        worksheet.eachRow((row, rowNumber) => {
+        worksheet.eachRow((row) => {
             row.eachCell((cell) => {
                 cell.border = {
                     top: { style: 'thin' },
@@ -194,20 +154,15 @@ export class EmployeeListComponent {
             });
         });
 
-        // Generate and download
         const buffer = await workbook.xlsx.writeBuffer();
         const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
         saveAs(blob, `employee_template_${this.orgObj?.organization_name || 'org'}.xlsx`);
     }
 
-    // ðŸ‘‰ Clear uploaded file
     clearFile() {
         this.fileName = null;
-        this.showMultipleEmployeeForm = false;
-        this.addMultipleEmploeeList = [];
     }
 
-    // ðŸ‘‰ Handle file drop
     onFileDrop(event: DragEvent) {
         event.preventDefault();
         const files = event.dataTransfer?.files;
@@ -216,17 +171,16 @@ export class EmployeeListComponent {
         }
     }
 
-    // ðŸ‘‰ Process uploaded file
     async processFile(file: File) {
         try {
             const data: any = await this.excelService.upload(file);
             this.fileName = file.name;
 
+            let parsedEmployees: any[] = [];
             if (data?.length > 0) {
-                this.addMultipleEmploeeList = [];
                 data.forEach((elm: any) => {
                     if (elm[0] && elm[0] !== 'Employee ID' && elm[0] !== '') {
-                        this.addMultipleEmploeeList.push({
+                        parsedEmployees.push({
                             organization_name: this.orgObj.organization_name,
                             organization_id: this.orgObj._id,
                             employeeId: elm[0],
@@ -238,16 +192,36 @@ export class EmployeeListComponent {
                     }
                 });
             }
-            this.showMultipleEmployeeForm = true;
-            this.showRemoveForm = true;
-            this.showAddMoreForm = false;
+
+            if (parsedEmployees.length > 0) {
+                this.openBulkAddDialog(parsedEmployees);
+            }
         } catch (error) {
             console.error(error);
             this.toasterService.error('Failed to process file');
         }
     }
 
-    // Fetch employees by selected cafeteriaIDs
+    openBulkAddDialog(existingEmployees: any[] = []) {
+        const dialogRef = this.dialog.open(BulkAddEmployeeComponent, {
+            width: '95vw',
+            maxWidth: '1200px',
+            data: {
+                orgObj: this.orgObj,
+                selectedCafeterias: this.cafeObj,
+                employees: existingEmployees
+            },
+            panelClass: 'full-screen-dialog'
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.getEmployeelistByCafeteriaId();
+            }
+            this.fileName = null;
+        });
+    }
+
     async getEmployeelistByCafeteriaId() {
         try {
             if (!this.selectedCafeteriaIds.length) {
@@ -262,159 +236,56 @@ export class EmployeeListComponent {
         }
     }
 
-    // Add new row to manual entry â€” cafeteria_list as array
-    addMoreEmployee() {
-        this.addMultipleEmploeeList.push({
-            ...this.employeeObj,
-            cafeteria_list: [...this.cafeObj]
-        });
-        this.showRemoveForm = true;
-        this.showAddMoreForm = false;
-    }
-
-    // Init manual entry form â€” cafeteria_list as array
     addMultipleEmployee() {
         if (!this.selectedCafeteriaIds.length) {
             this.toasterService.warning('Please select a cafeteria first');
             return;
         }
-        this.addMultipleEmploeeList = [{
-            ...this.employeeObj,
-            cafeteria_list: [...this.cafeObj]
-        }];
-        this.showMultipleEmployeeForm = true;
-    }
-
-    removeEmployeeForm(index: number) {
-        this.addMultipleEmploeeList.splice(index, 1);
-        if (this.addMultipleEmploeeList.length === 1) {
-            this.showRemoveForm = false;
-            this.showAddMoreForm = true;
-        }
-    }
-
-    async submitMultipleEmployee() {
-        const hasInvalid = this.addMultipleEmploeeList.some(emp =>
-            !emp.employeeName || !emp.employeePhoneNo || !emp.employeeEmail
-        );
-
-        if (hasInvalid) {
-            this.toasterService.warning('Please fill all required fields');
-            return;
-        }
-
-        try {
-            const payload = this.addMultipleEmploeeList.map(el => ({
-                ...el,
-                cafeteria_list: el.cafeteria_list?.length ? el.cafeteria_list : [...this.cafeObj]
-            }));
-
-            const res = await this.apiMainService.addEmployeeList(payload);
-            this.handleAddEmployeeListResult(res);
-
-        } catch (error: any) {
-            // Result is partial â€” some skipped, some inserted/updated
-            const result = error?.error?.result || error?.result;
-            if (result) {
-                this.handleAddEmployeeListResult(result);
-            } else {
-                this.toasterService.error('Failed to add employees');
-                console.error(error);
-            }
-        }
-
-        await this.getEmployeelistByCafeteriaId();
-        this.cancelMultipleEmployee();
-    }
-
-    handleAddEmployeeListResult(result: any) {
-        // New employees created
-        if (result?.insertedEmployees?.length > 0) {
-            this.toasterService.success(
-                `${result.insertedEmployees.length} new employees added successfully`
-            );
-        }
-
-        // Existing employees updated with new cafeterias
-        if (result?.cafeteriaUpdated?.length > 0) {
-            result.cafeteriaUpdated.forEach((entry: any) => {
-                const names = entry.addedCafeterias.map((c: any) => c.cafeteria_name).join(', ');
-                this.toasterService.info(
-                    `${entry.employee.employeeName} added to cafeteria: ${names}`
-                );
-            });
-        }
-
-        // Skipped employees
-        if (result?.skippedEmployees?.length > 0) {
-            result.skippedEmployees.forEach((emp: any) => {
-                if (emp.skipCode === 'DIFFERENT_ORG') {
-                    this.toasterService.error(
-                        `${emp.employeeName} skipped â€” belongs to a different organization`
-                    );
-                } else if (emp.skipCode === 'DUPLICATE_CAFETERIA') {
-                    this.toasterService.warning(
-                        `${emp.employeeName} skipped â€” already linked to all selected cafeterias`
-                    );
-                }
-            });
-        }
+        this.openBulkAddDialog();
     }
 
     editEmployee(employee: any) {
-        this.empId = employee._id;
-        this.editingEmployee = employee;
-        this.form.patchValue({
-            employeeName: employee.employeeName,
-            employeeId: employee.employeeId,
-            employeePhoneNo: employee.employeePhoneNo,
-            employeeEmail: employee.employeeEmail
+        const dialogRef = this.dialog.open(AddEmployeeComponent, {
+            width: 'auto',
+            maxWidth: '600px',
+            data: {
+                orgObj: this.orgObj,
+                employee: employee
+            },
+            panelClass: 'modern-dialog'
         });
-        this.dialog.open(this.editDialog);
+
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.getEmployeelistByCafeteriaId();
+            }
+        });
     }
 
-    async updateEmployeeAndClose() {
-        try {
-            // No cafeteria_list here â€” edit dialog only updates basic info
-            // If cafeteria_list is undefined/null, DAO preserves existing cafeteria_list
-            const payload: any = {
-                ...this.form.value
-            };
+    addIndividualEmployee() {
+        const dialogRef = this.dialog.open(AddEmployeeComponent, {
+            width: 'auto',
+            maxWidth: '600px',
+            data: {
+                orgObj: this.orgObj
+            },
+            panelClass: 'modern-dialog'
+        });
 
-            const res = await this.apiMainService.updateEmployee(this.empId, payload);
-
-            if (res?._id) {
-                this.toasterService.success('Employee updated successfully');
-                await this.getEmployeelistByCafeteriaId();
+        dialogRef.afterClosed().subscribe(result => {
+            if (result) {
+                this.getEmployeelistByCafeteriaId();
             }
-        } catch (error: any) {
-            const status = error?.status || error?.statusCode;
-            const message = error?.error?.message || error?.message || '';
-
-            // Handling all error cases from as per DAO
-            if (status === 404) {
-                this.toasterService.error('Employee not found');
-            } else if (status === 409) {
-                if (message.toLowerCase().includes('cafeteria')) {
-                    this.toasterService.error('Employee is already linked to this cafeteria');
-                } else if (message.toLowerCase().includes('phone') || message.toLowerCase().includes('organization')) {
-                    this.toasterService.error('Phone number already exists in the target organization');
-                } else {
-                    this.toasterService.error('Conflict: ' + message);
-                }
-            } else {
-                this.toasterService.error('Failed to update employee');
-            }
-            console.error(error);
-            this.toasterService.error('Failed to update employee');
-        }
-        this.dialog.closeAll();
+        });
     }
 
     deleteEmployee(employee: any) {
-        this.deleteEmployeeName = employee.employeeName;
         this.deletedEmployee = employee;
-        this.dialog.open(this.deleteDialog);
+        this.confirmationModalService.modal({
+            msg: `Are you sure you want to delete ${employee.employeeName}?`,
+            callback: this.confirmDeleteEmployee,
+            context: this
+        });
     }
 
     async confirmDeleteEmployee() {
@@ -426,11 +297,14 @@ export class EmployeeListComponent {
             console.error(error);
             this.toasterService.error('Failed to delete employee');
         }
-        this.dialog.closeAll();
     }
 
     deleteAllEmployees() {
-        this.dialog.open(this.deleteAllDialog);
+        this.confirmationModalService.modal({
+            msg: `Are you sure you want to delete all ${this.getCafeteriaEmployees().length} employees from ${this.getSelectedCafeteriaNames()}?`,
+            callback: this.confirmDeleteAllEmployees,
+            context: this
+        });
     }
 
     async confirmDeleteAllEmployees() {
@@ -443,7 +317,6 @@ export class EmployeeListComponent {
             console.error(error);
             this.toasterService.error('Failed to delete employees');
         }
-        this.dialog.closeAll();
     }
 
     async onFileChange(evt: any) {
@@ -453,14 +326,6 @@ export class EmployeeListComponent {
             return;
         }
         await this.processFile(target.files[0]);
-    }
-
-    cancelMultipleEmployee() {
-        this.showMultipleEmployeeForm = false;
-        this.showAddMoreForm = true;
-        this.showRemoveForm = false;
-        this.fileName = null;
-        this.addMultipleEmploeeList = [];
     }
 
     getSelectedCafeteriaNames() {

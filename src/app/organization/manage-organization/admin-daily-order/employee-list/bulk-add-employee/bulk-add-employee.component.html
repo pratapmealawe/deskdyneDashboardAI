@@ -1,0 +1,89 @@
+<div class="bulk-add-dialog">
+  <div class="dialog-header">
+    <div class="header-main">
+      <div class="header-icon">
+        <mat-icon>group_add</mat-icon>
+      </div>
+      <div class="header-text">
+        <h2 mat-dialog-title>Bulk Manual Entry</h2>
+        <p class="subtitle">Assigning to: 
+          <span class="cafe-tag" *ngFor="let cafe of selectedCafeterias">{{ cafe.cafeteria_name }}</span>
+        </p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div class="entry-table-container">
+      <table class="entry-table">
+        <thead>
+          <tr>
+            <th class="col-num">#</th>
+            <th class="col-id">Employee ID</th>
+            <th class="col-name">Full Name<span class="required">*</span></th>
+            <th class="col-phone">Phone Number<span class="required">*</span></th>
+            <th class="col-email">Email Address<span class="required">*</span></th>
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let emp of employeeList; let i = index" [class.row-invalid]="!isRowValid(emp) && (emp.employeeName || emp.employeePhoneNo || emp.employeeEmail)">
+            <td class="col-num">{{ i + 1 }}</td>
+            <td class="col-id">
+              <div class="input-wrapper">
+                <mat-icon>badge</mat-icon>
+                <input type="text" [(ngModel)]="emp.employeeId" placeholder="EMP123" maxlength="10">
+              </div>
+            </td>
+            <td class="col-name">
+              <div class="input-wrapper">
+                <mat-icon>person</mat-icon>
+                <input type="text" [(ngModel)]="emp.employeeName" placeholder="Full Name" required maxlength="40">
+              </div>
+            </td>
+            <td class="col-phone">
+              <div class="input-wrapper">
+                <mat-icon>phone</mat-icon>
+                <input type="text" [(ngModel)]="emp.employeePhoneNo" placeholder="10-digit #" required maxlength="10">
+              </div>
+            </td>
+            <td class="col-email">
+              <div class="input-wrapper">
+                <mat-icon>email</mat-icon>
+                <input type="email" [(ngModel)]="emp.employeeEmail" placeholder="email@company.com" required>
+              </div>
+            </td>
+            <td class="col-actions">
+              <button mat-icon-button color="warn" (click)="removeRow(i)" matTooltip="Remove row" [disabled]="employeeList.length === 1 && !isRowValid(emp)">
+                <mat-icon>delete_outline</mat-icon>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <button mat-button color="primary" class="add-row-btn" (click)="addRow()">
+      <mat-icon>add</mat-icon>
+      Add Another Row
+    </button>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <div class="summary-info" *ngIf="employeeList.length > 0">
+      <span>{{ employeeList.length }} row(s) in draft</span>
+    </div>
+    <div class="action-buttons">
+      <button mat-button (click)="close()" [disabled]="isSubmitting">Cancel</button>
+      <button mat-raised-button color="primary" (click)="submitBulk()" 
+              [disabled]="isSubmitting" class="submit-btn" [class.loading]="isSubmitting">
+        <mat-icon *ngIf="!isSubmitting">save</mat-icon>
+        <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+        <span>{{ isSubmitting ? 'Saving Employees...' : 'Save All' }}</span>
+      </button>
+    </div>
+  </mat-dialog-actions>
+</div>
