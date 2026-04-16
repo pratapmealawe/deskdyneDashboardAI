@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 
 type Mode = 'outlet' | 'cafeteria';
@@ -47,10 +47,15 @@ export interface SubmitPayload {
   date_to?: string;
 }
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-common-outlet-cafe-select',
   templateUrl: './common-outlet-cafe-select.component.html',
   styleUrls: ['./common-outlet-cafe-select.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule]
 })
 export class CommonOutletCafeSelectComponent implements OnInit, OnChanges {
   @Input() config: CommonSelectConfig = { mode: 'outlet', showDateRange: false, requireAll: true };

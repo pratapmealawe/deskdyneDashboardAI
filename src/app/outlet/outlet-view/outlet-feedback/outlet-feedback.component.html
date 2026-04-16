@@ -1,12 +1,26 @@
-<div class="bgsidepadding1">
-    <div class="mt-2" *ngIf="feedbackList.length>0">
-        <div class="row" *ngFor="let feedback of feedbackList; let i = index">
+<div class="feedback-container">
+    <!-- FEEDBACK LIST -->
+    <div *ngIf="feedbackList.length > 0">
+        <div class="feedback-item" *ngFor="let feedback of feedbackList; let i = index">
             <app-org-order [order]="feedback"></app-org-order>
         </div>
-        <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm mt-2 me-2" (click)="getMore()">Load
-            More</button>
+
+        <div class="load-more-container" *ngIf="nextOn">
+            <button mat-button class="btn-load-more" (click)="getMore()">
+                <mat-icon>expand_more</mat-icon> Load More Reviews
+            </button>
+        </div>
     </div>
-    <div class="center labelText mt-2" *ngIf="feedbackList.length==0">
-        No Feedback found
+
+    <!-- EMPTY STATE -->
+    <div class="empty-feedback-wrapper" *ngIf="feedbackList.length === 0">
+        <div class="icon-box">
+            <mat-icon>rate_review</mat-icon>
+        </div>
+        <h3 class="empty-title">No Feedback Yet</h3>
+        <p class="empty-subtitle">
+            This outlet hasn't received any customer feedback yet. reviews will appear here once customers start sharing
+            their experience.
+        </p>
     </div>
 </div>

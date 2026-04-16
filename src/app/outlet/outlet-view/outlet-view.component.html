@@ -35,21 +35,16 @@
         <ng-container [ngSwitch]="selectedTab">
             <app-outlet-details *ngSwitchCase="'outlet-details'" [outletObj]="outlet">
             </app-outlet-details>
-
             <app-outlet-menu *ngSwitchCase="'outlet-menu'" [outletObj]="outlet" (back)="updateOutlet($event)"
                 (dataToParent)="receiveData($event)">
             </app-outlet-menu>
-
             <app-qr-menu *ngSwitchCase="'qr-menu'" [outletObj]="outlet" (back)="updateOutlet($event)"
                 (dataToParent)="receiveData($event)">
             </app-qr-menu>
-
             <app-outlet-orders *ngSwitchCase="'outlet-orders'" [outletObj]="outlet">
             </app-outlet-orders>
-
             <app-outlet-feedback *ngSwitchCase="'outlet-feedback'" [outletObj]="outlet">
             </app-outlet-feedback>
-
             <div *ngSwitchDefault class="empty-state">
                 <mat-icon>error_outline</mat-icon>
                 <p>Component not found</p>

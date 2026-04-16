@@ -10,7 +10,7 @@ export class NavigationService {
   inReviewIncidentsCount$ = this.suggestionsFeedbackService.incidentCount$;
 
   deskDineOptions: any = [
-    { name: 'Home', showParent: true, route: 'home', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
+    { name: 'Home', showParent: true, route: 'home', image: 'home', imageblue: 'home_blue' },
     { name: 'Dashboard', showParent: true, route: 'mainDashboard', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
     { name: 'Org Dashboard', showParent: true, route: 'dashboard', image: 'Dashbaord_white_1', imageblue: 'Organization_dashbaord_blue' },
     { name: 'Orders Dashboard', showParent: true, route: 'allOrders', image: 'Billing_white', imageblue: 'Billing_blue' },
@@ -21,12 +21,7 @@ export class NavigationService {
         { name: 'Outlet Master Menu', route: 'outletMasterMenu', showChild: true }
       ]
     },
-    {
-      name: 'Event Popup', showParent: true, image: 'Outlet_white', imageblue: 'Outlet_blue', children: [
-        { name: 'Search Event Popup', route: 'eventPopup', showChild: true },
-        { name: 'Add Event Popup', route: 'addEventPopup', showChild: true, clearRunTimeStorage: ['OUTLET_EDIT'] }
-      ]
-    },
+    { name: 'Event Popup', showParent: true, route: 'eventPopup', image: 'Outlet_white', imageblue: 'Outlet_blue' },
     { name: 'Vendor Firm', showParent: true, route: 'searchVendorFirm', image: 'Vendor firm_white', imageblue: 'Vendor firm_blue' },
     { name: 'Vendor', showParent: true, route: 'searchVendor', image: 'Vendor_white', imageblue: 'Vendor_blue' },
     {
@@ -126,6 +121,7 @@ export class NavigationService {
   ];
 
   orgOptions: any = [
+    { name: 'Home', showParent: true, route: 'home', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
     { name: 'Dashboard', showParent: true, route: 'orgDashboard', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
     { name: 'Consumption Orders', showParent: true, route: 'consumptionOrders', image: 'Users_white', imageblue: 'Users_blue' },
     { name: 'Menu Items', showParent: true, route: 'orgMenuItems', image: 'Food items_white', imageblue: 'Food items_blue' },

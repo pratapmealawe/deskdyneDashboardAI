@@ -10,10 +10,18 @@ import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { AddressItem, OutletItem, PopupItem, Vendor } from 'src/app/common/interfaces/vendor.interface';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
+import { SetGeolocationComponent } from 'src/app/set-geolocation/set-geolocation.component';
+
 @Component({
   selector: 'app-add-vendor',
   templateUrl: 'add-vendor.component.html',
   styleUrls: ['add-vendor.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MaterialModule, FormsModule, ReactiveFormsModule, VendorComplianceComponent, SetGeolocationComponent]
 })
 export class AddVendorCommponent {
   form: any;

@@ -21,18 +21,16 @@ const routes: Routes = [
       { path: 'allOrders', loadChildren: () => import('./orders-dashboard/orders-dashboard.component').then(m => m.OrdersDashboardComponent) },
       { path: 'b2bSearchOrg', loadComponent: () => import('./organization/organization.component').then(m => m.OrganizationComponent) },
       { path: 'b2bAddorg', loadComponent: () => import('./organization/add-organization/add-organization.component').then(m => m.AddOrganizationComponent) },
-
-
-
       { path: 'outlet', loadComponent: () => import('./outlet/outlet.component').then(m => m.OutletComponent) },
-      { path: 'addOutlet', loadComponent: () => import('./outlet/add-outlet/add-outlet.component').then(m => m.AddOutletComponent) },
-      { path: 'eventPopup', loadChildren: () => import('./event-popup/event-popup.module').then(m => m.EventPopupModule) },
-      { path: 'addEventPopup', loadChildren: () => import('./event-popup/add-event/add-event.module').then(m => m.AddEventModule) },
+      { path: 'eventPopup', loadComponent: () => import('./event-popup/event-popup.component').then(m => m.EventPopupComponent) },
+
+      { path: 'searchVendorFirm', loadComponent: () => import('./vendor-firm/vendor-firm.component').then(m => m.VendorFirmComponent) },
+      { path: 'addVendorFirm', loadComponent: () => import('./vendor-firm/add-vendor-firm/add-vendor-firm.component').then(m => m.AddVendorFirmComponent) },
+
+
       { path: 'vendor', loadChildren: () => import('./vendor/vendor.module').then(m => m.VendorModule) },
       { path: 'searchVendor', loadChildren: () => import('./vendor/search-vendor/search-vendor.module').then(m => m.SearchVendorModule) },
-      { path: 'addVendorFirm', loadChildren: () => import('./add-vendor-firm/add-vendor-firm.module').then(m => m.AddVendorFirmModule) },
-      { path: 'searchVendorFirm', loadChildren: () => import('./vendor-firm/vendor-firm.module').then(m => m.VendorFirmModule) },
-      { path: 'addVendor', loadChildren: () => import('./vendor/add-vendor/add-vendor.module').then(m => m.AddVendorModule) },
+      { path: 'addVendor', loadComponent: () => import('./vendor/add-vendor/add-vendor.component').then(m => m.AddVendorCommponent) },
       { path: 'addAdmin', loadChildren: () => import('./deskdyne-components/add-admin/add-admin.module').then(m => m.AddAdminModule) },
       { path: 'admin', loadChildren: () => import('./deskdyne-components/admin/admin.module').then(m => m.AdminModule) },
       { path: 'faq', loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => m.FaqModule) },

@@ -12,9 +12,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 
 
 @NgModule({
-  declarations: [
-    CommonOutletCafeSelectComponent
-  ],
+  declarations: [],
   imports: [
     CommonModule,
     CommonOutletCafeSelectRoutingModule,
@@ -25,6 +23,7 @@ import { MatNativeDateModule } from '@angular/material/core';
     MatButtonModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    CommonOutletCafeSelectComponent
   ],
   exports: [CommonOutletCafeSelectComponent]
 })

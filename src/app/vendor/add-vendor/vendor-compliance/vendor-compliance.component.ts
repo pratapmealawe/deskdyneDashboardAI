@@ -5,10 +5,17 @@ import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.compo
 import { MatDialog } from '@angular/material/dialog';
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule } from '@angular/forms';
+import { PdfuploadComponent } from 'src/app/pdfupload/pdfupload.component';
+
 @Component({
   selector: 'app-vendor-compliance',
   templateUrl: './vendor-compliance.component.html',
-  styleUrls: ['./vendor-compliance.component.scss']
+  styleUrls: ['./vendor-compliance.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MaterialModule, FormsModule, PdfuploadComponent, ImageCropperComponent]
 })
 export class VendorComplianceComponent implements OnInit {
   @Input() venderDetails: any;

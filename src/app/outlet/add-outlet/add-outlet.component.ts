@@ -1,8 +1,8 @@
-import { Component, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { MatDialog } from '@angular/material/dialog';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Inject } from '@angular/core';
+
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
@@ -33,6 +33,9 @@ interface CabinConfig {
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { SelectOrgCafeteriaDialogComponent } from '../select-org-cafeteria-dialog/select-org-cafeteria-dialog.component';
+import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+
 
 @Component({
   selector: 'app-add-outlet',
@@ -44,11 +47,11 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
+    SelectOrgCafeteriaDialogComponent,
     ImageCropperComponent
   ]
 })
 export class AddOutletComponent implements OnInit {
-  @ViewChild('contentOrg') contentOrg!: TemplateRef<any>;
 
   form!: FormGroup;
   showError = false;
@@ -59,9 +62,6 @@ export class AddOutletComponent implements OnInit {
   btnPolicy: any;
   showUpdate = false;
   selectedOutlet: any;
-
-  formattedOrgList: any[] = [];
-  selectedOrgCafeteria: string | undefined;
   selectedCafeteria: any;
 
   sectionTypes: string[] = ['alacarte', 'live'];
@@ -70,7 +70,6 @@ export class AddOutletComponent implements OnInit {
 
   holidays: { date: string, name: string }[] = [];
   holidayUploadError: string | null = null;
-  orgSearchText: string = '';
 
   // For meal type dropdown
   mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'Dinner', 'High Tea'];
@@ -81,14 +80,14 @@ export class AddOutletComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private router: Router,
-    private runtimeStorageService: RuntimeStorageService,
     private fb: FormBuilder,
     private dialog: MatDialog,
     private confirmationModal: ConfirmationModalService,
     private dataFormatService: DataFormatService,
     private policyService: PolicyService,
-    private toasterService: ToasterService
+    private toasterService: ToasterService,
+    public dialogRef: MatDialogRef<AddOutletComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
@@ -103,16 +102,6 @@ export class AddOutletComponent implements OnInit {
   // convenience getter for template
   get f() {
     return this.form.controls;
-  }
-
-  get filteredOrgList() {
-    if (!this.orgSearchText) {
-      return this.formattedOrgList;
-    }
-    const search = this.orgSearchText.toLowerCase();
-    return this.formattedOrgList.filter(org =>
-      org.key.toLowerCase().includes(search)
-    );
   }
 
   get mealTimings(): FormArray {
@@ -161,6 +150,7 @@ export class AddOutletComponent implements OnInit {
       precedence: [0, [Validators.min(0)]],
       billingType: ['revenueSharing', Validators.required],
       isFullAmountOrgPaid: [false],
+      updateOutletLevelSubsidy: [false],
       mealTimings: this.fb.array([]),
       sectionConfig: this.fb.array([]),
       cabinConfig: this.fb.array([]),
@@ -336,7 +326,7 @@ export class AddOutletComponent implements OnInit {
   }
 
   private populateForEditIfNeeded(): void {
-    const outlet = this.runtimeStorageService.getCacheData('OUTLET_EDIT');
+    const outlet = this.data;
 
     if (outlet && outlet._id) {
       this.showUpdate = true;
@@ -443,37 +433,20 @@ export class AddOutletComponent implements OnInit {
       this.validateMealTimings();
     }
   }
-  async getOrgList(): Promise<void> {
-    try {
-      const orgList = await this.apiMainService.getOrgList();
-      if (orgList && orgList.length > 0) {
-        this.formattedOrgList = this.dataFormatService.getformattedOrgList(orgList);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   async openOrgList(): Promise<void> {
-    this.selectedOrgCafeteria = undefined;
-    this.orgSearchText = '';
-    await this.getOrgList();
-
-    const dialogRef = this.dialog.open(this.contentOrg, {
+    const dialogRef = this.dialog.open(SelectOrgCafeteriaDialogComponent, {
       width: '600px',
+      data: {
+        selectedOrgCafeteria: this.selectedCafeteria?.key
+      }
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'add') {
+      if (result) {
         this.confirmationModal.modal({
           msg: 'Are you sure you want to change Organization and Cafeteria?',
           callback: () => {
-            const selected = this.formattedOrgList.find(
-              (org: any) => org.key === this.selectedOrgCafeteria
-            );
-            if (selected) {
-              this.selectedCafeteria = { ...selected };
-            }
+            this.selectedCafeteria = { ...result };
           },
           context: this
         });
@@ -707,8 +680,7 @@ export class AddOutletComponent implements OnInit {
       console.log('Calling saveOutlet API...');
       await this.apiMainService.saveOutlet(formData);
       this.toasterService.success('Outlet created successfully.');
-      console.log('Navigation to /outlet...');
-      this.router.navigate(['/app/outlet']);
+      this.dialogRef.close(true);
     } catch (error) {
       console.error('Create API Error:', error);
     }
@@ -731,9 +703,14 @@ export class AddOutletComponent implements OnInit {
     try {
       console.log('Calling updateOutlet API...');
       await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
+      
+      if (this.form.get('updateOutletLevelSubsidy')?.value) {
+        console.log('Syncing outlet level subsidy...');
+        await this.updateOutletLevelSubsidy();
+      }
+
       this.toasterService.success('Outlet updated successfully.');
-      console.log('Navigation to /outlet...');
-      this.router.navigate(['/app/outlet']);
+      this.dialogRef.close(true);
     } catch (error) {
       console.error('Update API Error:', error);
     }
@@ -773,7 +750,7 @@ export class AddOutletComponent implements OnInit {
   }
 
   back(): void {
-    this.router.navigate(['/app/outlet']);
+    this.dialogRef.close();
   }
 
   setStandardEndTime(): void {

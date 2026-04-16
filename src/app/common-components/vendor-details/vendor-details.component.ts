@@ -3,10 +3,18 @@ import { Router } from '@angular/router';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-vendor-details',
   templateUrl: './vendor-details.component.html',
-  styleUrls: ['./vendor-details.component.scss']
+  styleUrls: ['./vendor-details.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class VendorDetailsComponent implements OnInit {
   @Input() vendorObj: any;

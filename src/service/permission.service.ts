@@ -52,7 +52,7 @@ export class PermissionsService {
 
     if (res === false) {
       const isOrgAdmin = profile.policy_name === 'orgAdmin' || profile.role === 'ORGADMIN';
-      const redirectPath = isOrgAdmin ? '/orgapp/orgDashboard' : '/app/mainDashboard';
+      const redirectPath = isOrgAdmin ? '/orgapp/home' : '/app/home';
       
       // Clean up URLs for comparison to prevent infinite loop
       const currentUrl = state.url.split('?')[0];

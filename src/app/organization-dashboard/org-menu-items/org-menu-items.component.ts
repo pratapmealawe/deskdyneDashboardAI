@@ -5,7 +5,7 @@ import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-out
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ItemBreakdownComponent } from 'src/app/vendor-report/item-breakdown/item-breakdown.component';
+import { ItemBreakdownComponent } from 'src/app/vendor-firm/vendor-firm-view/vendor-report/item-breakdown/item-breakdown.component';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 

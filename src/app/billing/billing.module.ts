@@ -21,7 +21,6 @@ import { CompanyWalletBillingComponent } from './company-wallet-billing/company-
     VcBillingComponent,
     DailyBillingComponent,
     BulkBillingComponent,
-    DatewiseOrdersDialogComponent,
     WalletBillingComponent,
     CompanyWalletBillingComponent
   ],
@@ -31,8 +30,9 @@ import { CompanyWalletBillingComponent } from './company-wallet-billing/company-
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    CommonOutletCafeSelectModule
+    CommonOutletCafeSelectModule,
+    DatewiseOrdersDialogComponent
   ],
-  exports: [BillingComponent],
+  exports: [BillingComponent, DatewiseOrdersDialogComponent],
 })
 export class BillingModule { }

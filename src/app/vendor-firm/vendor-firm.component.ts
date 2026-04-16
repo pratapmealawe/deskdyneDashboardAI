@@ -9,10 +9,25 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '../material.module';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { VendorFirmViewComponent } from './vendor-firm-view/vendor-firm-view.component';
+
 @Component({
   selector: 'app-vendor-firm',
   templateUrl: './vendor-firm.component.html',
-  styleUrls: ['./vendor-firm.component.scss']
+  styleUrls: ['./vendor-firm.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DirectivesModule,
+    VendorFirmViewComponent
+  ]
 })
 export class VendorFirmComponent {
   searchObj: any = {

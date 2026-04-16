@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OutletCardComponent } from './outlet-card/outlet-card.component';
 import { OutletViewComponent } from './outlet-view/outlet-view.component';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { AddOutletComponent } from './add-outlet/add-outlet.component';
 
 @Component({
   selector: 'app-outlet',
@@ -120,8 +121,18 @@ export class OutletComponent implements OnInit {
   }
 
   addOutlet() {
-    this.runtimeStorageService.setCacheData('OUTLET_EDIT', {});
-    this.router.navigate(['/app/addOutlet']);
+    const dialogRef = this.dialog.open(AddOutletComponent, {
+      width: '90vw',
+      maxWidth: '90vw',
+      maxHeight: '100vh',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.searchOutlet();
+      }
+    });
   }
 
   toggleShowOrder(val: any) {

@@ -3,10 +3,20 @@ import { GoogleStyle } from 'src/config/google.style.config';
 import { GoogleMapService } from 'src/service/google-map.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-set-geolocation',
   templateUrl: './set-geolocation.component.html',
-  styleUrls: ['./set-geolocation.component.scss']
+  styleUrls: ['./set-geolocation.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MaterialModule
+  ]
 })
 export class SetGeolocationComponent implements OnInit, AfterViewInit {
   google: any;

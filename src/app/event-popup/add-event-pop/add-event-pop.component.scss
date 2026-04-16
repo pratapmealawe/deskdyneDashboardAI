@@ -1,0 +1,419 @@
+@import 'src/styles.scss';
+
+// Premium Event Popup Design Tokens
+$primary-modern: #1e3a8a; // Deep Navy
+$primary-light: #eff6ff;
+$success-modern: #059669;
+$warning-modern: #d97706;
+$text-main: #1e293b;
+$text-muted: #64748b;
+$bg-faint: #f8fafc;
+$white: #ffffff;
+$radius-lg: 16px;
+$radius-md: 12px;
+$shadow-sm: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+$shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+$transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+:host {
+    display: block;
+    background: $bg-faint;
+}
+
+// Custom Dialog Overrides
+::ng-deep {
+    .modern-dialog {
+        .mat-mdc-dialog-container {
+            border-radius: $radius-lg !important;
+            padding: 0 !important;
+            overflow: hidden;
+        }
+    }
+}
+
+// HEADER
+.dialog-header {
+    background: $white;
+    padding: 24px 32px;
+    margin: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba($primary-modern, 0.08);
+
+    .title-group {
+        .page-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: $text-main;
+            letter-spacing: -0.02em;
+            margin: 0;
+        }
+        .page-subtitle {
+            font-size: 14px;
+            color: $text-muted;
+            margin: 4px 0 0 0;
+        }
+    }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .info-btn {
+            color: $text-muted;
+            background: $bg-faint;
+        }
+
+        .status-pill {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            transition: $transition;
+
+            mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+            &.active {
+                background: rgba($success-modern, 0.1);
+                color: $success-modern;
+            }
+            &.inactive {
+                background: rgba($text-muted, 0.1);
+                color: $text-muted;
+            }
+        }
+    }
+}
+
+// CONTENT
+.dialog-content {
+    padding: 32px;
+    max-height: 75vh;
+    overflow-y: auto;
+    background: $bg-faint;
+
+    // Custom Scrollbar
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-track { background: transparent; }
+    &::-webkit-scrollbar-thumb {
+        background: rgba($text-muted, 0.2);
+        border-radius: 10px;
+    }
+}
+
+// MODERN CARD
+.modern-card {
+    background: $white;
+    border-radius: $radius-md;
+    border: 1px solid rgba($primary-modern, 0.05);
+    box-shadow: $shadow-sm;
+    margin-bottom: 24px;
+    transition: $transition;
+
+    &:hover {
+        box-shadow: $shadow-md;
+        transform: translateY(-2px);
+    }
+
+    .card-header {
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border-bottom: 1px solid rgba($primary-modern, 0.04);
+
+        &.with-actions {
+            justify-content: space-between;
+        }
+
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            mat-icon { font-size: 20px; }
+
+            &.primary { background: rgba($primary-modern, 0.1); color: $primary-modern; }
+            &.success { background: rgba($success-modern, 0.1); color: $success-modern; }
+            &.warning { background: rgba($warning-modern, 0.1); color: $warning-modern; }
+            &.info { background: #e0f2fe; color: #0369a1; }
+            &.secondary { background: #f1f5f9; color: #475569; }
+            &.purple { background: #f3e8ff; color: #7e22ce; }
+        }
+
+        h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: $text-main;
+            margin: 0;
+        }
+    }
+
+    .card-body {
+        padding: 24px;
+    }
+}
+
+// FORM ELEMENTS
+.custom-field {
+    ::ng-deep {
+        .mat-mdc-form-field-flex {
+            background-color: transparent !important;
+        }
+        .mdc-notched-outline__leading,
+        .mdc-notched-outline__notch,
+        .mdc-notched-outline__trailing {
+            border-color: rgba($text-muted, 0.2) !important;
+        }
+    }
+
+    input, textarea {
+        font-weight: 500;
+        color: $text-main;
+    }
+
+    mat-icon {
+        color: $text-muted;
+    }
+}
+
+.switch-group {
+    background: $bg-faint;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+}
+
+// IMAGE UPLOAD
+.upload-wrapper {
+    .image-upload-box {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: $bg-faint;
+        border: 2px dashed rgba($text-muted, 0.2);
+        border-radius: $radius-md;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+        transition: $transition;
+
+        &:hover {
+            border-color: $primary-modern;
+            background: rgba($primary-modern, 0.02);
+
+            .upload-overlay { opacity: 1; }
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain; // Changed to contain for event images
+        }
+
+        .placeholder-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            color: $text-muted;
+
+            mat-icon { font-size: 40px; width: 40px; height: 40px; }
+            span { font-weight: 600; font-size: 14px; }
+        }
+
+        .upload-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba($primary-modern, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: $transition;
+
+            span { color: $white; font-weight: 700; font-size: 14px; }
+        }
+    }
+}
+
+// SELECTED CAFE INFO
+.selected-cafe-info {
+    background: rgba($primary-modern, 0.03);
+    border-radius: 12px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+
+        .label {
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: $text-muted;
+        }
+        .value {
+            font-size: 15px;
+            font-weight: 600;
+            color: $text-main;
+        }
+    }
+}
+
+// BANNER GALLERY
+.timing-section {
+    background: $white;
+    border-radius: $radius-lg;
+    padding: 24px;
+    box-shadow: $shadow-sm;
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+
+        .header-icon.timing {
+            width: 44px;
+            height: 44px;
+            background: #fdf2f8;
+            color: #db2777;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            mat-icon { font-size: 22px; }
+        }
+
+        h2 { font-size: 18px; font-weight: 800; color: $text-main; margin: 0; }
+
+        .count-badge {
+            background: $primary-modern;
+            color: $white;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+    }
+
+    .banner-gallery-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+
+        .banner-wrapper {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            box-shadow: $shadow-sm;
+            border: 1px solid rgba(0,0,0,0.05);
+
+            .banner-img { width: 100%; height: 100%; object-fit: cover; }
+
+            .remove-banner-btn {
+                position: absolute;
+                top: 8px;
+                right: 8px;
+                background: rgba(255,255,255,0.9);
+                color: #ef4444;
+                width: 32px;
+                height: 32px;
+                line-height: 32px;
+                mat-icon { font-size: 18px; }
+            }
+        }
+    }
+}
+
+// EMPTY PLACEHOLDER
+.empty-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: $text-muted;
+    opacity: 0.6;
+
+    mat-icon { font-size: 48px; width: 48px; height: 48px; }
+    p { font-weight: 600; margin: 0; }
+}
+
+// DIALOG ACTIONS
+.dialog-actions {
+    background: $white;
+    padding: 24px 32px;
+    margin: 0;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid rgba($primary-modern, 0.08);
+
+    .actions-pill {
+        display: flex;
+        background: $bg-faint;
+        padding: 6px;
+        border-radius: 50px;
+        gap: 8px;
+
+        button {
+            border-radius: 50px;
+            padding: 0 24px;
+            height: 44px;
+            font-weight: 700;
+            font-size: 14px;
+            transition: $transition;
+
+            &.btn-cancel {
+                color: $text-muted;
+                &:hover { background: rgba($text-muted, 0.1); }
+            }
+
+            &.btn-submit {
+                background: $primary-modern;
+                color: $white;
+                opacity: 0.7;
+                cursor: not-allowed;
+
+                &.active {
+                    opacity: 1;
+                    cursor: pointer;
+                    box-shadow: 0 4px 12px rgba($primary-modern, 0.3);
+                }
+            }
+        }
+    }
+}
+
+// ANIMATIONS
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-fadeIn { animation: fadeIn 0.4s ease forwards; }
+.animate-popIn { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }

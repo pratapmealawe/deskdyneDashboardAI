@@ -10,7 +10,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { WalletTxnDialogComponent } from '../vendor-firm-view/wallet-txn-dialog/wallet-txn-dialog.component';
+import { WalletTxnDialogComponent } from '../vendor-firm/vendor-firm-view/wallet-txn-dialog/wallet-txn-dialog.component';
 import { WalletHistoryDialogComponent } from './wallet-history-dialog/wallet-history-dialog.component';
 
 @Component({

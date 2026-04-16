@@ -212,11 +212,11 @@ export class OutletOrdersComponent implements OnInit {
     this.totalPackaging = 0;
 
     this.filteredOrders.forEach((o: any) => {
-      this.totalAmountPaid    += Number(o.amount) || 0;
-      this.totalWalletUsed    += Number(o.moneyWalletPointsUsed) || 0;
-      this.totalSubsidy       += Number(o.subsidyAmount) || 0;
+      this.totalAmountPaid += Number(o.amount) || 0;
+      this.totalWalletUsed += Number(o.moneyWalletPointsUsed) || 0;
+      this.totalSubsidy += Number(o.subsidyAmount) || 0;
       this.totalCompanyWallet += Number(o.companyWalletPointUsed) || 0;
-      this.totalPackaging     += Number(o.packagingAmount) || 0;
+      this.totalPackaging += Number(o.packagingAmount) || 0;
     });
 
     this.totalAmount = this.totalAmountPaid + this.totalWalletUsed;
@@ -261,22 +261,22 @@ export class OutletOrdersComponent implements OnInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.filterOrderStatus = result.filterOrderStatus;
-        this.filterPgName      = result.filterPgName;
-        this.filterAppVersion  = result.filterAppVersion;
-        this.filterPlatform    = result.filterPlatform;
-        this.filterIsPosOrder  = result.filterIsPosOrder;
+        this.filterPgName = result.filterPgName;
+        this.filterAppVersion = result.filterAppVersion;
+        this.filterPlatform = result.filterPlatform;
+        this.filterIsPosOrder = result.filterIsPosOrder;
         this.applyFilters();
       }
     });
   }
 
   clearFilters() {
-    this.searchText        = '';
+    this.searchText = '';
     this.filterOrderStatus = '';
-    this.filterPgName      = '';
-    this.filterAppVersion  = '';
-    this.filterPlatform    = '';
-    this.filterIsPosOrder  = '';
+    this.filterPgName = '';
+    this.filterAppVersion = '';
+    this.filterPlatform = '';
+    this.filterIsPosOrder = '';
     this.applyFilters();
   }
 
@@ -351,26 +351,26 @@ export class OutletOrdersComponent implements OnInit {
     const worksheet = workbook.addWorksheet('Outlet Orders');
 
     worksheet.columns = [
-      { header: 'Order No',           key: 'orderNo',        width: 12 },
-      { header: 'Token No',           key: 'tokenNo',        width: 10 },
-      { header: 'Order Date',         key: 'orderDate',      width: 20 },
-      { header: 'Status',             key: 'status',         width: 16 },
-      { header: 'Customer Name',      key: 'customerName',   width: 22 },
-      { header: 'Mobile',             key: 'mobile',         width: 16 },
-      { header: 'Email',              key: 'email',          width: 26 },
-      { header: 'Org Name',           key: 'orgName',        width: 22 },
-      { header: 'Cafe Name',          key: 'cafeName',       width: 18 },
-      { header: 'Items',              key: 'items',          width: 42 },
-      { header: 'Item Amount (₹)',    key: 'itemAmount',     width: 16 },
-      { header: 'Packaging (₹)',      key: 'packaging',      width: 14 },
-      { header: 'Subsidy (₹)',        key: 'subsidy',        width: 14 },
-      { header: 'Wallet Used (₹)',    key: 'walletUsed',     width: 16 },
-      { header: 'Company Wallet (₹)', key: 'companyWallet',  width: 18 },
-      { header: 'Amount Paid (₹)',    key: 'amountPaid',     width: 16 },
-      { header: 'PG Name',            key: 'pgName',         width: 14 },
-      { header: 'App Version',        key: 'appVersion',     width: 12 },
-      { header: 'Platform',           key: 'platform',       width: 12 },
-      { header: 'POS Order',          key: 'isPosOrder',     width: 10 },
+      { header: 'Order No', key: 'orderNo', width: 12 },
+      { header: 'Token No', key: 'tokenNo', width: 10 },
+      { header: 'Order Date', key: 'orderDate', width: 20 },
+      { header: 'Status', key: 'status', width: 16 },
+      { header: 'Customer Name', key: 'customerName', width: 22 },
+      { header: 'Mobile', key: 'mobile', width: 16 },
+      { header: 'Email', key: 'email', width: 26 },
+      { header: 'Org Name', key: 'orgName', width: 22 },
+      { header: 'Cafe Name', key: 'cafeName', width: 18 },
+      { header: 'Items', key: 'items', width: 42 },
+      { header: 'Item Amount (₹)', key: 'itemAmount', width: 16 },
+      { header: 'Packaging (₹)', key: 'packaging', width: 14 },
+      { header: 'Subsidy (₹)', key: 'subsidy', width: 14 },
+      { header: 'Wallet Used (₹)', key: 'walletUsed', width: 16 },
+      { header: 'Company Wallet (₹)', key: 'companyWallet', width: 18 },
+      { header: 'Amount Paid (₹)', key: 'amountPaid', width: 16 },
+      { header: 'PG Name', key: 'pgName', width: 14 },
+      { header: 'App Version', key: 'appVersion', width: 12 },
+      { header: 'Platform', key: 'platform', width: 12 },
+      { header: 'POS Order', key: 'isPosOrder', width: 10 },
     ];
 
     const headerRow = worksheet.getRow(1);
@@ -378,44 +378,44 @@ export class OutletOrdersComponent implements OnInit {
     headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
     let totItemAmt = 0, totPackaging = 0, totSubsidy = 0,
-        totWallet = 0, totCompanyWallet = 0, totAmountPaid = 0;
+      totWallet = 0, totCompanyWallet = 0, totAmountPaid = 0;
 
     this.filteredOrders.forEach((o: any) => {
-      const itemAmount    = Number(o.itemAmount) || 0;
-      const packaging     = Number(o.packagingAmount) || 0;
-      const subsidy       = Number(o.subsidyAmount) || 0;
-      const walletUsed    = Number(o.moneyWalletPointsUsed) || 0;
+      const itemAmount = Number(o.itemAmount) || 0;
+      const packaging = Number(o.packagingAmount) || 0;
+      const subsidy = Number(o.subsidyAmount) || 0;
+      const walletUsed = Number(o.moneyWalletPointsUsed) || 0;
       const companyWallet = Number(o.companyWalletPointUsed) || 0;
-      const amountPaid    = Number(o.amount) || 0;
+      const amountPaid = Number(o.amount) || 0;
 
       const items = (o.itemList || [])
         .map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`)
         .join('; ');
 
       worksheet.addRow({
-        orderNo:       o.orderNo,
-        tokenNo:       o.tokenNo || '-',
-        orderDate:     new Date(o.orderDate).toLocaleString('en-IN'),
-        status:        this.orderStatusMapper[o.orderstatus] || o.orderstatus,
-        customerName:  o.customerName,
-        mobile:        o.customerPhoneNo,
-        email:         o.customerEmail,
-        orgName:       o.organizationDetails?.organization_name || '-',
-        cafeName:      o.cafeteriaDetails?.cafeteria_name || '-',
+        orderNo: o.orderNo,
+        tokenNo: o.tokenNo || '-',
+        orderDate: new Date(o.orderDate).toLocaleString('en-IN'),
+        status: this.orderStatusMapper[o.orderstatus] || o.orderstatus,
+        customerName: o.customerName,
+        mobile: o.customerPhoneNo,
+        email: o.customerEmail,
+        orgName: o.organizationDetails?.organization_name || '-',
+        cafeName: o.cafeteriaDetails?.cafeteria_name || '-',
         items,
         itemAmount, packaging, subsidy, walletUsed, companyWallet, amountPaid,
-        pgName:        o.pgName || '-',
-        appVersion:    o.appVersion || '-',
-        platform:      o.deviceInfo?.platform || '-',
-        isPosOrder:    o.isPosOrder ? 'Yes' : 'No',
+        pgName: o.pgName || '-',
+        appVersion: o.appVersion || '-',
+        platform: o.deviceInfo?.platform || '-',
+        isPosOrder: o.isPosOrder ? 'Yes' : 'No',
       });
 
-      totItemAmt      += itemAmount;
-      totPackaging    += packaging;
-      totSubsidy      += subsidy;
-      totWallet       += walletUsed;
-      totCompanyWallet+= companyWallet;
-      totAmountPaid   += amountPaid;
+      totItemAmt += itemAmount;
+      totPackaging += packaging;
+      totSubsidy += subsidy;
+      totWallet += walletUsed;
+      totCompanyWallet += companyWallet;
+      totAmountPaid += amountPaid;
     });
 
     const totalsRow = worksheet.addRow({
@@ -429,10 +429,10 @@ export class OutletOrdersComponent implements OnInit {
       if (idx >= 1) {
         row.eachCell((cell) => {
           cell.border = {
-            top:    { style: 'thin', color: { argb: 'FFDDDDDD' } },
-            left:   { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            top: { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            left: { style: 'thin', color: { argb: 'FFDDDDDD' } },
             bottom: { style: 'thin', color: { argb: 'FFDDDDDD' } },
-            right:  { style: 'thin', color: { argb: 'FFDDDDDD' } },
+            right: { style: 'thin', color: { argb: 'FFDDDDDD' } },
           };
         });
       }
@@ -452,9 +452,9 @@ export class OutletOrdersComponent implements OnInit {
 
     const tableHeaders = [
       { text: 'Order No', bold: true }, { text: 'Token', bold: true },
-      { text: 'Date', bold: true },     { text: 'Status', bold: true },
+      { text: 'Date', bold: true }, { text: 'Status', bold: true },
       { text: 'Customer', bold: true }, { text: 'Mobile', bold: true },
-      { text: 'Items', bold: true },    { text: 'Item Amt (₹)', bold: true },
+      { text: 'Items', bold: true }, { text: 'Item Amt (₹)', bold: true },
       { text: 'Subsidy (₹)', bold: true }, { text: 'Wallet (₹)', bold: true },
       { text: 'Paid (₹)', bold: true },
     ];
@@ -464,10 +464,10 @@ export class OutletOrdersComponent implements OnInit {
 
     this.filteredOrders.forEach((o: any) => {
       const itemAmount = Number(o.itemAmount) || 0;
-      const subsidy    = Number(o.subsidyAmount) || 0;
-      const wallet     = Number(o.moneyWalletPointsUsed) || 0;
-      const paid       = Number(o.amount) || 0;
-      const items      = (o.itemList || []).map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`).join('; ');
+      const subsidy = Number(o.subsidyAmount) || 0;
+      const wallet = Number(o.moneyWalletPointsUsed) || 0;
+      const paid = Number(o.amount) || 0;
+      const items = (o.itemList || []).map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`).join('; ');
 
       body.push([
         o.orderNo || '', o.tokenNo || '',
@@ -507,13 +507,13 @@ export class OutletOrdersComponent implements OnInit {
           layout: {
             fillColor: (rowIndex: number) => (rowIndex === 0 ? '#2E75B6' : null),
             paddingLeft: () => 3, paddingRight: () => 3,
-            paddingTop: () => 3,  paddingBottom: () => 3,
+            paddingTop: () => 3, paddingBottom: () => 3,
             hLineColor: () => '#999999', vLineColor: () => '#999999',
           },
         },
       ],
       styles: {
-        header:    { fontSize: 15, bold: true, margin: [0, 0, 0, 6] },
+        header: { fontSize: 15, bold: true, margin: [0, 0, 0, 6] },
         subheader: { fontSize: 10, color: '#555' },
       },
       defaultStyle: { fontSize: 8, color: '#000' },

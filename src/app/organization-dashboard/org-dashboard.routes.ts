@@ -5,6 +5,7 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
   {
     path: "", component: OrgDashboardComponent,
     children: [
+      { path: 'home', loadComponent: () => import('../home/home.component').then(m => m.HomeComponent) },
       { path: 'orgDashboard', loadComponent: () => import('./main-dashboard/main-dashboard.component').then(m => m.MainDashboardComponent) },
       { path: 'hyperpureDashboard', loadComponent: () => import('./hyperpure-dashboard/hyperpure-dashboard.component').then(m => m.HyperpureDashboardComponent) },
       { path: 'orgMenuItems', loadComponent: () => import('./org-menu-items/org-menu-items.component').then(m => m.OrgMenuItemsComponent) },

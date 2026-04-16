@@ -1,7 +1,7 @@
 /** Default shape for button_policies */
 export const DEFAULT_BUTTON_POLICIES: Record<string, boolean> = {
   // EXISTING
-  addOutlet: false,
+
   editOutlet: false,
   deleteOutlet: false,
   viewOutlet: false,
@@ -167,8 +167,9 @@ export const DEFAULT_BUTTON_POLICIES: Record<string, boolean> = {
 
 /** Default shape for route_policies */
 export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
+  home: false,
   outlet: false,
-  addOutlet: false,
+
   vendor: false,
   searchVendor: false,
   addVendor: false,
@@ -225,7 +226,6 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
   vendorPayout: false,
   auditReport: false,
   eventPopup: false,
-  addEventPopup: false,
   vendorWalletDashboard: false,
   allOrders: false,
   scheduledNotifications: false,
@@ -344,7 +344,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'OUTLET MANAGEMENT',
-    keys: ['outlet', 'addOutlet', 'outletExcelExport']
+    keys: ['outlet', 'outletExcelExport']
   },
   {
     title: 'ADMIN & USERS',
@@ -356,7 +356,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'DASHBOARD',
-    keys: ['dashboard', 'mainDashboard', 'orgDashboard']
+    keys: ['home', 'dashboard', 'mainDashboard', 'orgDashboard']
   },
   {
     title: 'CONFIGURATION',
@@ -364,7 +364,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'SUPPORT & MISC',
-    keys: ['faq', 'viewEnquiries', 'serverlogs', 'eventPopup', 'addEventPopup']
+    keys: ['faq', 'viewEnquiries', 'serverlogs', 'eventPopup']
   }
 ];
 
@@ -372,7 +372,7 @@ export const GROUPED_ROUTE_POLICIES = [
 export const GROUPED_BUTTON_POLICIES = [
   {
     title: 'OUTLET MANAGEMENT',
-    keys: ['addOutlet', 'editOutlet', 'deleteOutlet', 'viewOutlet', 'addOutletCategory']
+    keys: ['editOutlet', 'deleteOutlet', 'viewOutlet', 'addOutletCategory']
   },
   {
     title: 'VENDOR MANAGEMENT',
@@ -490,7 +490,7 @@ export const PERMISSION_MAP: Record<string, string> = {
   'DASHBOARD_EXCEL:EXCEL': 'dashboardExcel',
 
   // OUTLET
-  'OUTLET:ADD': 'addOutlet',
+  'OUTLET:ADD': 'createOutlet',
   'OUTLET:EDIT': 'editOutlet',
   'OUTLET:DELETE': 'deleteOutlet',
   'OUTLET:VIEW': 'viewOutlet',

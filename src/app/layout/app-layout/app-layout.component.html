@@ -38,7 +38,7 @@
           <div class="orgbutton d-flex align-items-center justify-content-between"
             [ngClass]="{ 'active-link': selectedIndex === i }" (click)="selectLink(link, i)">
             <div class="d-flex align-items-center flex-wrap gap-2">
-              <img [src]="'assets/images/SideNavbar/' + (selectedIndex === i ? link.image : link.image) + '.svg'"
+              <img [src]="'assets/images/SideNavbar/' + (selectedIndex === i ? link.imageblue : link.image) + '.svg'"
                 alt="Nav Icon" class="sidebar-icon" />
               <span>{{ link.name }}</span>
             </div>
