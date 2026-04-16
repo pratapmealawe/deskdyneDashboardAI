@@ -277,17 +277,22 @@
                                 }})</div>
                             <div class="items-scroll">
                                 <div class="item-row" *ngFor="let i of (row.itemList || row.itemlist)">
-                                    <div class="item-left">
-                                        <span class="type-dot" [ngClass]="i.itemType === 'Veg' ? 'veg' : 'nonveg'"
-                                            [title]="i.itemType"></span>
-                                        <span class="item-qty" *ngIf="i.count > 0">{{ i.count }}x</span>
-                                        <span class="item-name">{{ i.itemName }}</span>
-                                        <span class="item-cat" *ngIf="i.category">{{ i.category }}</span>
+                                    <div class="item-main">
+                                        <div class="item-left">
+                                            <span class="type-dot"
+                                                [ngClass]="i.itemType === 'Veg' ? 'veg' : 'nonveg'"></span>
+                                            <span class="item-qty" *ngIf="i.count > 0">
+                                                {{ i.count }}x
+                                            </span>
+                                            <span class="item-name">{{ i.itemName }}</span>
+                                            <span class="item-cat" *ngIf="i.category">
+                                                {{ i.category }}
+                                            </span>
+                                        </div>
+                                        <span class="item-price">
+                                            ₹{{ i.price * (i.count || 1) | number : '1.2-2' }}
+                                        </span>
                                     </div>
-                                    <span class="item-price">₹{{ i.price * (i.count || 1) | number : '1.2-2' }}</span>
-                                </div>
-                                <!-- Add-Ons -->
-                                <ng-container *ngFor="let i of (row.itemList || row.itemlist)">
                                     <div class="addOn-row" *ngIf="i.addOnsList?.length > 0">
                                         <div class="addon-chip">
                                             <span class="addon-label">ADD-ONS :</span>
@@ -301,7 +306,7 @@
                                             ₹{{ getItemAddOnTotal(i) | number:'1.2-2' }}
                                         </span>
                                     </div>
-                                </ng-container>
+                                </div>
                             </div>
                         </div>
                     </div>
