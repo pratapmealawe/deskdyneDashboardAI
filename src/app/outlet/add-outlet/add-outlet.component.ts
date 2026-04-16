@@ -701,14 +701,10 @@ export class AddOutletComponent implements OnInit {
     if (!formData) return;
 
     try {
-      console.log('Calling updateOutlet API...');
       await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
-      
       if (this.form.get('updateOutletLevelSubsidy')?.value) {
-        console.log('Syncing outlet level subsidy...');
         await this.updateOutletLevelSubsidy();
       }
-
       this.toasterService.success('Outlet updated successfully.');
       this.dialogRef.close(true);
     } catch (error) {

@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../material.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { VendorFirmViewComponent } from './vendor-firm-view/vendor-firm-view.component';
+import { VendorFirmCardComponent } from './vendor-firm-card/vendor-firm-card.component';
 
 @Component({
   selector: 'app-vendor-firm',
@@ -26,7 +27,8 @@ import { VendorFirmViewComponent } from './vendor-firm-view/vendor-firm-view.com
     FormsModule,
     ReactiveFormsModule,
     DirectivesModule,
-    VendorFirmViewComponent
+    VendorFirmViewComponent,
+    VendorFirmCardComponent
   ]
 })
 export class VendorFirmComponent {

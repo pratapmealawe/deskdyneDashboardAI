@@ -9,6 +9,7 @@ import { LedgerDetailsComponent } from './ledger-details/ledger-details.componen
 import { BulkOrderReportComponent } from './bulk-order-report/bulk-order-report.component';
 import { VendorReportComponent } from './vendor-report/vendor-report.component';
 import { VendorDailyReportComponent } from './vendor-daily-report/vendor-daily-report.component';
+import { VendorFirmCardComponent } from '../vendor-firm-card/vendor-firm-card.component';
 
 @Component({
   selector: 'app-vendor-firm-view',
@@ -23,7 +24,8 @@ import { VendorDailyReportComponent } from './vendor-daily-report/vendor-daily-r
     LedgerDetailsComponent,
     BulkOrderReportComponent,
     VendorReportComponent,
-    VendorDailyReportComponent
+    VendorDailyReportComponent,
+    VendorFirmCardComponent
   ]
 })
 export class VendorFirmViewComponent implements OnChanges, OnInit {
