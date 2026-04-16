@@ -230,15 +230,24 @@
       <!-- Meal Timings Section -->
       <div class="form-section">
         <div class="section-header">
-          <mat-icon>schedule</mat-icon>
-          <span>Meal Timings</span>
-          <span class="header-badge warning">Read-only (Outlet Config)</span>
+          <div class="header-main">
+            <mat-icon>schedule</mat-icon>
+            <span>Meal Timings</span>
+            <span class="header-badge warning" *ngIf="data.outletObj?.isPreOrder">Pre-Order Fixed</span>
+          </div>
         </div>
+
+        <div class="preorder-notice" *ngIf="data.outletObj?.isPreOrder">
+          <mat-icon>lock</mat-icon>
+          <div class="notice-text">
+            <span>This outlet is in Pre-Order mode. Meal timings are automatically synchronized with the outlet configuration.</span>
+          </div>
+        </div>
+
         <div class="meal-timing-selection-grid" [class.is-disabled]="data.outletObj?.isPreOrder">
           <div *ngFor="let chip of data.outletObj?.mealTiming" class="meal-timing-item"
             [class.selected]="form.get('mealTimingInfo')?.value?.includes(chip.mealType)"
-            [class.disabled]="data.outletObj?.isPreOrder"
-            (click)="toggleMealTiming(chip.mealType)">
+            [class.disabled]="data.outletObj?.isPreOrder" (click)="toggleMealTiming(chip.mealType)">
             <div class="timing-checkbox">
               <mat-icon>check</mat-icon>
             </div>

@@ -1,97 +1,46 @@
-﻿import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../material.module';
+import { AddOutletEmployeeComponent } from './add-outlet-employee/add-outlet-employee.component';
+import { BulkAddOutletEmployeeComponent } from './bulk-add-outlet-employee/bulk-add-outlet-employee.component';
+import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ToasterService } from 'src/service/toaster.service';
 
 @Component({
   selector: 'app-outlet-employee',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, MaterialModule],
   templateUrl: './outlet-employee.component.html',
   styleUrls: ['./outlet-employee.component.scss']
 })
 export class OutletEmployeeComponent implements OnInit {
   @Input() orgObj: any;
-
-  // ViewChildren for Dialog Templates if we keep them inline
-  @ViewChild('addEditDialog') addEditDialog!: TemplateRef<any>;
-  @ViewChild('deleteDialog') deleteDialog!: TemplateRef<any>;
-
   employeeList: any[] = [];
-
   selectedCafeteria: any;
   selectedCafeteriaName: string | null = null;
   selectedCafeteriaId: string | null = null;
-
-  showMultipleEmployeeForm = false;
-  bulkForm!: FormGroup;
-  disableSubmit = false;
-
   loading = false;
   pageSize = 10;
   pageIndex = 0;
   pageSizeOptions = [5, 10, 25, 50];
-
-  // Dialog related
-  dialogForm!: FormGroup;
-  currentDialogRef: any;
-  isEditMode = false;
-  currentEmployeeId: string | null = null;
-  employeeToDelete: any = null;
   searchTerm: string = '';
+  fileName: string | null = null;
 
   constructor(
     private apiMainService: ApiMainService,
-    private fb: FormBuilder,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private confirmationModalService: ConfirmationModalService,
+    private toasterService: ToasterService
   ) { }
 
   ngOnInit(): void {
-    this.initBulkForm();
-    this.initDialogForm();
     this.initCafeteriaDefaults();
-    console.log(this.orgObj);
-
-  }
-
-  // ---------- INIT ----------
-
-  private initBulkForm(): void {
-    this.bulkForm = this.fb.group({
-      employees: this.fb.array([])
-    });
-    this.addBulkRow(); // start with 1 row
-  }
-
-  get employeesFA(): FormArray {
-    return this.bulkForm.get('employees') as FormArray;
-  }
-
-  private createBulkEmployeeGroup(): FormGroup {
-    return this.fb.group({
-      employeeName: ['', Validators.required],
-      employeeId: ['', Validators.required],
-      employeePhoneNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      employeeEmail: ['', [Validators.required, Validators.email]]
-    });
-  }
-
-  private initDialogForm(): void {
-    this.dialogForm = this.fb.group({
-      employeeName: ['', Validators.required],
-      employeeId: ['', Validators.required],
-      employeePhoneNo: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      employeeEmail: ['', [Validators.required, Validators.email]]
-    });
   }
 
   private initCafeteriaDefaults(): void {
@@ -100,7 +49,6 @@ export class OutletEmployeeComponent implements OnInit {
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
       this.getEmployeeListByCafeId();
-
     }
   }
 
@@ -111,20 +59,17 @@ export class OutletEmployeeComponent implements OnInit {
     this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
     this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     this.getEmployeeListByCafeId();
-
     this.resetPagination();
   }
 
-  // ðŸ‘‰ Select cafeteria (for pill buttons)
   selectCafeteria(cafeteria: any): void {
     this.selectedCafeteria = cafeteria;
     this.selectedCafeteriaName = cafeteria.cafeteria_name;
     this.selectedCafeteriaId = cafeteria.cafeteria_id;
-    this.getEmployeeListByCafeId()
+    this.getEmployeeListByCafeId();
     this.resetPagination();
   }
 
-  // ðŸ‘‰ Get initials for avatar
   getInitials(name: string): string {
     if (!name) return '?';
     const parts = name.trim().split(' ');
@@ -135,192 +80,100 @@ export class OutletEmployeeComponent implements OnInit {
   // ---------- API ----------
 
   async getEmployeeListByCafeId(): Promise<void> {
-    if (!this.orgObj?._id) return;
+    if (!this.orgObj?._id || !this.selectedCafeteriaId) return;
     try {
       this.loading = true;
-      // Using existing API call for outlet employees
       this.employeeList = await this.apiMainService.getOutletEmployeeListByCafeteriaId(this.selectedCafeteriaId) || [];
       this.resetPagination();
     } catch (error) {
       console.error(error);
-      this.snackBar.open('Failed to fetch employees', 'Close', { duration: 3000 });
+      this.toasterService.error('Failed to fetch employees');
     } finally {
       this.loading = false;
     }
   }
 
-  // ---------- ADD / EDIT (SINGLE) USING MATERIAL DIALOG ----------
+  // ---------- ACTIONS ----------
 
-  openAddDialog(): void {
+  addManualEmployee(): void {
     if (!this.selectedCafeteria) {
-      this.snackBar.open('Please select a cafeteria first', 'Close', { duration: 2500 });
+      this.toasterService.warning('Please select a cafeteria first');
       return;
     }
-    this.isEditMode = false;
-    this.currentEmployeeId = null;
-    this.dialogForm.reset();
-
-    this.currentDialogRef = this.dialog.open(this.addEditDialog, {
-      width: '500px',
-      autoFocus: true
-    });
+    this.openAddEditDialog();
   }
 
-  openEditDialog(employee: any): void {
-    this.isEditMode = true;
-    this.currentEmployeeId = employee._id;
-    this.dialogForm.patchValue({
-      employeeName: employee.employeeName,
-      employeeId: employee.employeeId,
-      employeePhoneNo: employee.employeePhoneNo,
-      employeeEmail: employee.employeeEmail
-    });
-
-    this.currentDialogRef = this.dialog.open(this.addEditDialog, {
-      width: '500px',
-      autoFocus: true
-    });
+  editEmployee(employee: any): void {
+    this.openAddEditDialog(employee);
   }
 
-  async saveEmployee(): Promise<void> {
-    if (this.dialogForm.invalid) {
-      this.dialogForm.markAllAsTouched();
-      return;
-    }
-
-    const formVal = this.dialogForm.value;
-    const payload = {
-      ...formVal,
-      organization_name: this.orgObj.organization_name,
-      organization_id: this.orgObj._id,
-      cafeteria_name: this.selectedCafeteriaName,
-      cafeteria_id: this.selectedCafeteriaId
-    };
-
-    try {
-      if (this.isEditMode && this.currentEmployeeId) {
-        const res = await this.apiMainService.updateOutletEmployee(this.currentEmployeeId, payload);
-        if (res && res._id) {
-          this.snackBar.open('Employee updated successfully', 'Close', { duration: 2500 });
-        }
-      } else {
-        // For Add, we use the list API generally or single if available. 
-        // Original uses addOutletEmployeeList for bulk.
-        // We can use the same bulk API for single add properly wrapped.
-        const listPayload = [payload];
-        const res = await this.apiMainService.addOutletEmployeeList(listPayload);
-        if (res && res.length > 0) {
-          this.snackBar.open('Employee added successfully', 'Close', { duration: 2500 });
-        }
+  openAddEditDialog(employee: any = null): void {
+    const dialogRef = this.dialog.open(AddOutletEmployeeComponent, {
+      width: '500px',
+      data: {
+        orgObj: this.orgObj,
+        selectedCafeteria: this.selectedCafeteria,
+        employee: employee
       }
-      this.currentDialogRef.close();
-      this.getEmployeeListByCafeId();
-    } catch (error: any) {
-      console.error(error);
-      this.snackBar.open('Failed to save employee', 'Close', { duration: 3000 });
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getEmployeeListByCafeId();
+      }
+    });
+  }
+
+  addMultipleEmployee(): void {
+    if (!this.selectedCafeteria) {
+      this.toasterService.warning('Please select a cafeteria first');
+      return;
     }
+    this.openBulkAddDialog();
+  }
+
+  openBulkAddDialog(employees: any[] = []): void {
+    const dialogRef = this.dialog.open(BulkAddOutletEmployeeComponent, {
+      width: '95vw',
+      maxWidth: '1200px',
+      data: {
+        orgObj: this.orgObj,
+        selectedCafeteria: this.selectedCafeteria,
+        employees: employees
+      },
+      panelClass: 'full-screen-dialog'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getEmployeeListByCafeId();
+      }
+      this.fileName = null;
+    });
   }
 
   // ---------- DELETE ----------
 
   deleteEmployee(employee: any): void {
-    this.employeeToDelete = employee;
-    this.currentDialogRef = this.dialog.open(this.deleteDialog, {
-      width: '400px',
-      autoFocus: false
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete ${employee.employeeName}?`,
+      callback: () => this.confirmDelete(employee._id),
+      context: this
     });
   }
 
-  async confirmDelete(): Promise<void> {
-    if (!this.employeeToDelete) return;
+  async confirmDelete(id: string): Promise<void> {
     try {
-      await this.apiMainService.deleteOutletEmployee(this.employeeToDelete._id);
-      this.snackBar.open('Employee deleted', 'Close', { duration: 2500 });
+      await this.apiMainService.deleteOutletEmployee(id);
+      this.toasterService.success('Employee deleted');
       this.getEmployeeListByCafeId();
-      this.currentDialogRef.close();
     } catch (error) {
       console.error(error);
-      this.snackBar.open('Failed to delete employee', 'Close', { duration: 3000 });
+      this.toasterService.error('Failed to delete employee');
     }
   }
 
-  // ---------- BULK ADD ----------
-
-  showBulkForm(): void {
-    if (!this.selectedCafeteria) {
-      this.snackBar.open('Please select a cafeteria first', 'Close', { duration: 2500 });
-      return;
-    }
-    this.showMultipleEmployeeForm = true;
-  }
-
-  hideBulkForm(): void {
-    this.showMultipleEmployeeForm = false;
-    this.bulkForm.reset();
-    this.employeesFA.clear();
-    this.addBulkRow();
-    this.disableSubmit = false;
-  }
-
-  addBulkRow(): void {
-    this.employeesFA.push(this.createBulkEmployeeGroup());
-  }
-
-  removeBulkRow(index: number): void {
-    if (this.employeesFA.length === 1) return;
-    this.employeesFA.removeAt(index);
-  }
-
-  async submitMultipleEmployee(): Promise<void> {
-    this.disableSubmit = false;
-
-    this.bulkForm.markAllAsTouched();
-    if (this.bulkForm.invalid) {
-      this.disableSubmit = true;
-      return;
-    }
-
-    if (!this.selectedCafeteriaId || !this.selectedCafeteriaName) {
-      this.snackBar.open('Cafeteria info missing', 'Close', { duration: 2500 });
-      return;
-    }
-
-    const employeesPayload: any[] = [];
-
-    for (const emp of this.employeesFA.value) {
-      employeesPayload.push({
-        organization_name: this.orgObj.organization_name,
-        organization_id: this.orgObj._id,
-        cafeteria_name: this.selectedCafeteriaName,
-        cafeteria_id: this.selectedCafeteriaId,
-        employeeName: emp.employeeName,
-        employeeId: emp.employeeId,
-        employeePhoneNo: emp.employeePhoneNo,
-        employeeEmail: emp.employeeEmail
-      });
-    }
-
-    try {
-      const res = await this.apiMainService.addOutletEmployeeList(employeesPayload);
-      if (res && res.length > 0) {
-        this.snackBar.open('Employees added successfully', 'Close', { duration: 2500 });
-        this.getEmployeeListByCafeId();
-        this.hideBulkForm();
-      }
-    } catch (error: any) {
-      console.error(error);
-      const errorArr = error?.error?.msg?.skippedEmployees;
-      if (Array.isArray(errorArr) && errorArr.length > 0) {
-        errorArr.forEach((emp: any) => {
-          alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
-        });
-      } else {
-        this.snackBar.open('Failed to add employees', 'Close', { duration: 3000 });
-      }
-    }
-  }
-
-  // ---------- FILTERED EMPLOYEES FOR SELECTED CAFETERIA ----------
+  // ---------- FILTER / PAGINATION ----------
 
   get filteredEmployees(): any[] {
     let list = this.employeeList || [];
@@ -356,14 +209,87 @@ export class OutletEmployeeComponent implements OnInit {
 
   // ---------- EXCEL HELPERS ----------
 
+  clearFile(): void {
+    this.fileName = null;
+  }
+
+  onFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    const files = event.dataTransfer?.files;
+    if (files && files.length > 0) {
+      this.processFile(files[0]);
+    }
+  }
+
+  onFileChange(event: any): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (file) {
+      this.processFile(file);
+    }
+  }
+
+  async processFile(file: File): Promise<void> {
+    this.fileName = file.name;
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(arrayBuffer);
+      const worksheet = workbook.worksheets[0];
+
+      let parsedEmployees: any[] = [];
+
+      worksheet.eachRow((row: any, rowNumber: number) => {
+        if (rowNumber === 1) return;
+
+        const idCell = row.getCell(1).value;
+        const nameCell = row.getCell(2).value;
+        const phoneCell = row.getCell(3).value;
+        const emailCell = row.getCell(4).value;
+
+        const employeeId = (idCell || '').toString().trim();
+        const employeeName = (nameCell || '').toString().trim();
+        const phone = (phoneCell || '').toString().trim();
+        let email = '';
+        if (emailCell && typeof emailCell === 'object' && 'text' in emailCell) {
+          email = (emailCell as any).text?.toString().trim() || '';
+        } else {
+          email = (emailCell || '').toString().trim();
+        }
+
+        if (!employeeId && !employeeName && !phone && !email) return;
+
+        parsedEmployees.push({
+          organization_name: this.orgObj.organization_name,
+          organization_id: this.orgObj._id,
+          cafeteria_name: this.selectedCafeteria.cafeteria_name,
+          cafeteria_id: this.selectedCafeteria.cafeteria_id,
+          employeeId,
+          employeeName,
+          employeePhoneNo: phone,
+          employeeEmail: email
+        });
+      });
+
+      if (parsedEmployees.length > 0) {
+        this.openBulkAddDialog(parsedEmployees);
+      } else {
+        this.toasterService.warning('No valid employees found in Excel');
+        this.fileName = null;
+      }
+    } catch (err) {
+      console.error('Error reading Excel file', err);
+      this.toasterService.error('Failed to read Excel file');
+      this.fileName = null;
+    }
+  }
+
   async downloadExcelTemplate(): Promise<void> {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Outlet Employees Template');
 
-    // Header row
     worksheet.addRow(['Employee ID', 'Employee Name', 'Phone No', 'Email']);
 
-    // Style header
     const headerRow = worksheet.getRow(1);
     headerRow.font = { bold: true };
     headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
@@ -377,79 +303,10 @@ export class OutletEmployeeComponent implements OnInit {
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
-      type:
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     });
     saveAs(blob, 'outlet_employees_template.xlsx');
   }
-
-  async onExcelUpload(event: Event): Promise<void> {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (!file) return;
-
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.load(arrayBuffer);
-      const worksheet = workbook.worksheets[0];
-
-      // Clear existing rows
-      this.employeesFA.clear();
-
-      worksheet.eachRow((row, rowNumber) => {
-        // Skip header
-        if (rowNumber === 1) return;
-
-        const idCell = row.getCell(1).value;
-        const nameCell = row.getCell(2).value;
-        const phoneCell = row.getCell(3).value;
-        const emailCell = row.getCell(4).value;
-
-        const employeeId = (idCell || '').toString().trim();
-        const employeeName = (nameCell || '').toString().trim();
-        const phone = (phoneCell || '').toString().trim();
-        let email = '';
-        if (emailCell && typeof emailCell === 'object' && 'text' in emailCell) {
-          // ExcelJS hyperlink cell -> { text, hyperlink }
-          email = (emailCell as any).text?.toString().trim() || '';
-        } else {
-          email = (emailCell || '').toString().trim();
-        }
-
-        // Skip completely empty rows
-        if (!employeeId && !employeeName && !phone && !email) return;
-
-        const group = this.createBulkEmployeeGroup();
-        group.patchValue({
-          employeeId,
-          employeeName,
-          employeePhoneNo: phone,
-          employeeEmail: email
-        });
-
-        this.employeesFA.push(group);
-      });
-
-      if (this.employeesFA.length === 0) {
-        // if nothing parsed, keep at least one empty row
-        this.addBulkRow();
-        this.snackBar.open('No valid rows found in Excel', 'Close', {
-          duration: 3000
-        });
-      } else {
-        this.snackBar.open('Excel imported successfully', 'Close', {
-          duration: 2500
-        });
-      }
-    } catch (err) {
-      console.error('Error reading Excel file', err);
-      this.snackBar.open('Failed to read Excel file', 'Close', {
-        duration: 3000
-      });
-    } finally {
-      (event.target as HTMLInputElement).value = '';
-    }
-  }
 }
+
 

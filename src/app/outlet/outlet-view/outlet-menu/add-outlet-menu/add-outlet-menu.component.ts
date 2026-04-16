@@ -23,31 +23,30 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class AddOutletMenuComponent implements OnInit {
   @ViewChild(MatCalendar) calendar!: MatCalendar<Date>;
-
-  form: FormGroup =  new FormGroup({
-      itemName: new FormControl('', [Validators.required, Validators.maxLength(80)]),
-      price: new FormControl(null, [Validators.required, Validators.min(1)]),
-      subsidy: new FormControl(0, [Validators.min(0)]),
-      category: new FormControl('', Validators.required),
-      mealTimingInfo: new FormControl([], Validators.required),
-      itemType: new FormControl('Veg', Validators.required),
-      precedence: new FormControl(0, [Validators.min(0)]),
-      isActive: new FormControl(false),
-      description: new FormControl('', [Validators.maxLength(200)]),
-      doNotChangeInFuture: new FormControl(false),
-      energyValue: new FormControl(0),
-      sectionConfig: new FormControl(null),
-      nutritionList: new FormArray([]),
-      addOnsList: new FormArray([]),
-      weeklyMenuDates: new FormControl([]),
-      discountEnabled: new FormControl(false),
-      discountType: new FormControl({ value: null, disabled: true }),
-      discountValue: new FormControl({ value: null, disabled: true }),
-    }, { validators: [this.discountValidator()] });
+  form: FormGroup = new FormGroup({
+    itemName: new FormControl('', [Validators.required, Validators.maxLength(80)]),
+    price: new FormControl(null, [Validators.required, Validators.min(1)]),
+    subsidy: new FormControl(0, [Validators.min(0)]),
+    category: new FormControl('', Validators.required),
+    mealTimingInfo: new FormControl([], Validators.required),
+    itemType: new FormControl('Veg', Validators.required),
+    precedence: new FormControl(0, [Validators.min(0)]),
+    isActive: new FormControl(false),
+    description: new FormControl('', [Validators.maxLength(200)]),
+    doNotChangeInFuture: new FormControl(false),
+    energyValue: new FormControl(0),
+    sectionConfig: new FormControl(null),
+    nutritionList: new FormArray([]),
+    addOnsList: new FormArray([]),
+    weeklyMenuDates: new FormControl([]),
+    discountEnabled: new FormControl(false),
+    discountType: new FormControl({ value: null, disabled: true }),
+    discountValue: new FormControl({ value: null, disabled: true }),
+  }, { validators: [this.discountValidator()] });
   categoryList = categoryList;
   nutritionListOptions = nutritionListOptions;
   displayImgUrl = environment.imageUrl;
-  
+
   imageUrl: any;
   uploadStatus: boolean = false;
   imageReplaced: boolean = false;
@@ -67,9 +66,16 @@ export class AddOutletMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
+    console.log(this.data.outletObj);
     if (this.data.item) {
       this.imageUrl = this.data.item.imageUrl;
       this.patchFormValue(this.data.item);
+    } else if (this.data.outletObj?.isPreOrder) {
+      const timings = this.data.outletObj?.mealTiming?.map((m: any) => m.mealType) || [];
+      const control = this.form.get('mealTimingInfo');
+      control?.patchValue(timings);
+      control?.clearValidators();
+      control?.updateValueAndValidity();
     }
   }
 
@@ -124,17 +130,14 @@ export class AddOutletMenuComponent implements OnInit {
 
   toggleMealTiming(mealType: string): void {
     if (this.data.outletObj?.isPreOrder) return;
-
     const control = this.form.get('mealTimingInfo');
     const currentValues = control?.value || [];
     const index = currentValues.indexOf(mealType);
-    
     if (index > -1) {
       currentValues.splice(index, 1);
     } else {
       currentValues.push(mealType);
     }
-    
     control?.patchValue([...currentValues]);
     control?.markAsDirty();
   }
@@ -186,6 +189,13 @@ export class AddOutletMenuComponent implements OnInit {
   };
 
   patchFormValue(item: any) {
+    let mealTimingInfoValue = [];
+    if (this.data.outletObj?.isPreOrder) {
+      mealTimingInfoValue = this.data.outletObj?.mealTiming?.map((m: any) => m.mealType) || [];
+    } else {
+      mealTimingInfoValue = item.mealTimingInfo?.length ? item.mealTimingInfo.map((a: any) => a.mealType) : [];
+    }
+
     this.form.patchValue({
       itemName: item.itemName,
       price: item.price,
@@ -202,25 +212,17 @@ export class AddOutletMenuComponent implements OnInit {
       discountType: item.discountType || null,
       discountValue: item.discountValue || null,
       weeklyMenuDates: item.weeklyMenuDates || [],
-
-      mealTimingInfo: this.data.outletObj?.isPreOrder
-        ? this.data.outletObj?.mealTiming?.map((m: any) => m.mealType) || []
-        : (item.mealTimingInfo ? item.mealTimingInfo.map((a: any) => a.mealType) : [])
+      mealTimingInfo: mealTimingInfoValue
     });
-
     if (item.weeklyMenuDates?.length) {
       this.selectedWeeklyDates = item.weeklyMenuDates.map((d: any) => new Date(d.date));
     }
-
     if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
       this.nutrition_Lists.clear();
       item.nutritionInfo.nutritionList.forEach((nutrition: any) => {
         const nutrientID = nutrition.nutrientID || nutrition.nutritionId;
         const nutrientName = nutrition.nutrientname || nutrition.nutritionName;
-
-        const option = this.nutritionListOptions.find(o =>
-          o.id === nutrientID || o.id === Number(nutrientName)
-        );
+        const option = this.nutritionListOptions.find(o => o.id === nutrientID || o.id === Number(nutrientName));
 
         this.nutrition_Lists.push(new FormGroup({
           nutritionId: new FormControl(option ? option.id : nutrientID),
@@ -299,7 +301,6 @@ export class AddOutletMenuComponent implements OnInit {
         typeCtrl?.clearValidators();
         valueCtrl?.clearValidators();
       }
-
       typeCtrl?.updateValueAndValidity();
       valueCtrl?.updateValueAndValidity();
       this.form.updateValueAndValidity();
@@ -439,7 +440,7 @@ export class AddOutletMenuComponent implements OnInit {
     if (this.uploadedImageFile) {
       formData.append('file', this.uploadedImageFile);
     }
-    
+
     if (this.uploadedAddonImageFiles?.length) {
       this.uploadedAddonImageFiles.forEach((file, index) => {
         if (file) {

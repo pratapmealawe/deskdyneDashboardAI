@@ -1,0 +1,61 @@
+<div class="add-edit-dialog">
+  <div class="dialog-header">
+    <div class="header-icon" [class.edit]="isEditMode">
+      <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+    </div>
+    <div class="header-title">
+      <h2>{{ isEditMode ? 'Update Employee' : 'Add New Employee' }}</h2>
+      <p class="subtitle">Assigning to: <strong>{{ selectedCafeteria?.cafeteria_name }}</strong></p>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="employeeForm" class="employee-form">
+      <div class="form-grid">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Employee Name</mat-label>
+          <mat-icon matPrefix>person</mat-icon>
+          <input matInput formControlName="employeeName" placeholder="e.g. Rahul Sharma" required>
+          <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">Name is required</mat-error>
+          <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('minlength')">Name must be at least 3 characters</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Employee ID</mat-label>
+          <mat-icon matPrefix>badge</mat-icon>
+          <input matInput formControlName="employeeId" placeholder="e.g. EMP1023" required>
+          <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">Employee ID is required</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Phone Number</mat-label>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input matInput formControlName="employeePhoneNo" placeholder="10-digit number" type="tel" required maxlength="10">
+          <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">Phone number is required</mat-error>
+          <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">Please enter a valid 10-digit number</mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email Address</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput formControlName="employeeEmail" placeholder="email@company.com" type="email" required>
+          <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">Email is required</mat-error>
+          <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">Please enter a valid email</mat-error>
+        </mat-form-field>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="dialog-actions">
+    <button mat-button (click)="close()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-raised-button color="primary" (click)="saveEmployee()" 
+            [disabled]="isSubmitting || employeeForm.invalid" class="submit-btn" [class.loading]="isSubmitting">
+      <mat-icon *ngIf="!isSubmitting">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
+      <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
+      <span>{{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Employee' : 'Add Employee') }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

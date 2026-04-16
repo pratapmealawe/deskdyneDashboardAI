@@ -80,6 +80,19 @@
           <span>{{ filteredMenuList?.length || 0 }} items</span>
         </div>
       </div>
+  </div>
+
+  <!-- PRE-ORDER INFO BANNER -->
+  <div class="preorder-info-banner mt-3" *ngIf="outletObj?.isPreOrder">
+    <div class="banner-content">
+      <mat-icon class="info-icon">info</mat-icon>
+      <div class="banner-text">
+        <span class="banner-title">Pre-Order Mode Enabled</span>
+        <span class="banner-description">
+          All menu items are automatically synchronized with the outlet's global meal timings. 
+          Individual item selection is disabled to ensure consistency across the pre-order schedule.
+        </span>
+      </div>
     </div>
   </div>
 
@@ -166,7 +179,7 @@
 
             <!-- Row 4: Meal Chips + Section -->
             <div class="chips-row">
-              <span class="meal-chip" *ngFor="let meal of item.mealTimingInfo" [ngClass]="meal.mealSubsidyType">
+              <span class="meal-chip" *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (outletObj?.isPreOrder ? outletObj.mealTiming : []))" [ngClass]="meal.mealSubsidyType">
                 {{ meal.mealType }}
               </span>
               <span class="section-chip" *ngIf="outletObj?.isSectionWiseMenu && item.sectionConfig">
