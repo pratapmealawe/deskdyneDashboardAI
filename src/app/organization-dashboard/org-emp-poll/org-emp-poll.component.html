@@ -60,7 +60,7 @@
     <div *ngIf="!isLoading">
         <div *ngIf="filteredList.length > 0; else noRecord">
             <div class="orders-list">
-                <app-org-emp-poll-card *ngFor="let group of filteredList" [orderInput]="group"></app-org-emp-poll-card>
+                <app-emp-poll-card *ngFor="let group of filteredList" [orderInput]="group" [hideActions]="true"></app-emp-poll-card>
             </div>
         </div>
     </div>

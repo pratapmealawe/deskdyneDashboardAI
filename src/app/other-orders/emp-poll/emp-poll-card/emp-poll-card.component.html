@@ -27,7 +27,7 @@
                 <mat-icon>local_shipping</mat-icon>
                 ₹{{ totalDeliveryCharge || 0 }}
             </span>
-            <div class="card-actions">
+            <div class="card-actions" *ngIf="!hideActions">
                 <ng-container *ngIf="order?.pollStatus !== 'inactive'">
                     <button mat-flat-button color="primary" (click)="createOrder()" *ngIf="showCreateBtn"
                         [disabled]="isCreating" class="action-btn">

@@ -11,10 +11,20 @@ import {
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-add-policy',
   templateUrl: './add-policy.component.html',
   styleUrls: ['./add-policy.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MaterialModule
+  ]
 })
 export class AddPolicyComponent implements OnInit {
   policyObj = {
@@ -33,6 +43,32 @@ export class AddPolicyComponent implements OnInit {
   editMode = false;
   showErrorMsg = false;
   policyId: string | null = null;
+
+  activeTab: 'main' | 'org' = 'main';
+
+  get filteredRoutePolicies() {
+    return this.groupedRoutePolicies.filter(g => {
+      const isOrgGroup = g.title === 'ORGANIZATION';
+      const hasOrgKeys = g.keys.some(k => k.startsWith('org') || k.includes('organization'));
+      return this.activeTab === 'org' ? (isOrgGroup || hasOrgKeys) : (!isOrgGroup && !hasOrgKeys);
+    });
+  }
+
+  get filteredButtonPolicies() {
+    return this.groupedButtonPolicies.filter(g => {
+      const isOrgGroup = g.title === 'ORGANIZATION' || g.title === 'B2B ORGANIZATION MANAGEMENT';
+      const hasOrgKeys = g.keys.some(k => k.startsWith('submit') || k.includes('Organization'));
+      return this.activeTab === 'org' ? (isOrgGroup || hasOrgKeys) : (!isOrgGroup && !hasOrgKeys);
+    });
+  }
+
+  get filteredTabPolicies() {
+    return this.groupedTabPolicies.filter(g => {
+      const isOrgGroup = g.title === 'ORGANIZATION & COMPLIANCE';
+      const hasOrgKeys = g.keys.some(k => k.startsWith('org') || k.includes('virtualCafeteria'));
+      return this.activeTab === 'org' ? (isOrgGroup || hasOrgKeys) : (!isOrgGroup && !hasOrgKeys);
+    });
+  }
 
   constructor(
     private apiMainService: ApiMainService,

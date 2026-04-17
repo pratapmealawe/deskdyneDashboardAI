@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { OrgEmpPollCardComponent } from './org-emp-poll-card/org-emp-poll-card.component';
+import { EmpPollCardComponent } from 'src/app/other-orders/emp-poll/emp-poll-card/emp-poll-card.component';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -18,7 +18,7 @@ import { saveAs } from 'file-saver';
         MaterialModule,
         FormsModule,
         ReactiveFormsModule,
-        OrgEmpPollCardComponent
+        EmpPollCardComponent
     ]
 })
 export class OrgEmpPollComponent implements OnInit, OnChanges {

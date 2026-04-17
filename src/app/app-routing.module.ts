@@ -34,10 +34,12 @@ const routes: Routes = [
       { path: 'notifications', loadComponent: () => import('./notification/notification.component').then(m => m.NotificationComponent) },
       { path: 'vendorWalletDashboard', loadComponent: () => import('./vendor-wallet-dashboard/vendor-wallet-dashboard.component').then(m => m.VendorWalletDashboardComponent) },
       { path: 'vendorPayout', loadComponent: () => import('./vendor-payout/vendor-payout.component').then(m => m.VendorPayoutComponent) },
-      
+
       { path: 'customer', loadChildren: () => import('./customer/customer.module').then(m => m.CustomerModule) },
-    
+
       { path: 'bulkMasterMenu', loadComponent: () => import('./bulk-master-menu/bulk-master-menu.component').then(m => m.BulkMasterMenuComponent) },
+      { path: 'policy', loadComponent: () => import('./policy/policy.component').then(m => m.PolicyComponent) },
+      { path: 'addPolicy', loadComponent: () => import('./policy/add-policy/add-policy.component').then(m => m.AddPolicyComponent) },
 
       { path: 'addAdmin', loadChildren: () => import('./admin/add-admin/add-admin.module').then(m => m.AddAdminModule) },
       { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
@@ -48,8 +50,6 @@ const routes: Routes = [
       { path: 'configImagesGroup', loadChildren: () => import('./miscelleneous/config-images-group/config-images-group.module').then(m => m.ConfigImagesGroupModule) },
 
 
-      { path: 'policy', loadChildren: () => import('./policy/policy/policy.module').then(m => m.PolicyModule) },
-      { path: 'addPolicy', loadChildren: () => import('./policy/add-policy/add-policy.module').then(m => m.AddPolicyModule) },
       { path: 'auditReport', loadChildren: () => import('./consumption-order-details/consumption-order-details.module').then(m => m.ConsumptionOrderDetailsModule) },
       { path: 'serverlogs', loadChildren: () => import('./miscelleneous/server-logs/server-logs.module').then(m => m.ServerLogsModule) },
       { path: 'billing', loadChildren: () => import('./billing/billing.module').then(m => m.BillingModule) },

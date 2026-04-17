@@ -19,6 +19,7 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class EmpPollCardComponent {
   @Input() orderInput: any;
+  @Input() hideActions: boolean = false;
   order: any;
   showCreateBtn: boolean = true;
   isCreating: boolean = false;
