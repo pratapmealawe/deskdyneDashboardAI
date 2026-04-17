@@ -4,7 +4,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { MatCalendar } from '@angular/material/datepicker';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ToasterService } from 'src/service/toaster.service';
 

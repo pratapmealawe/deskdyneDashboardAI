@@ -5,7 +5,7 @@ import { ConsumptionOrderDetailsRoutingModule } from './consumption-order-detail
 import { ConsumptionOrderDetailsComponent } from './consumption-order-details.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonOutletCafeSelectModule } from "../common-outlet-cafe-select/common-outlet-cafe-select.module";
+import { CommonOutletCafeSelectComponent } from "../common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CancelReasonDialogComponent } from './cancel-reason-dialog/cancel-reason-dialog.component';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -30,7 +30,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
-    CommonOutletCafeSelectModule
+    CommonOutletCafeSelectComponent
   ]
 })
 export class ConsumptionOrderDetailsModule { }

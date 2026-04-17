@@ -8,10 +8,16 @@ import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { GroupForceLogoutComponent } from './group-force-logout/group-force-logout.component';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-session-management',
   templateUrl: './session-management.component.html',
-  styleUrls: ['./session-management.component.scss']
+  styleUrls: ['./session-management.component.scss'],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, GroupForceLogoutComponent]
 })
 export class SessionManagementComponent implements OnInit, OnDestroy {
   pagedSessions: any[] = [];

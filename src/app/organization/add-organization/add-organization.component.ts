@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@a
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
 import { NavigationEnd, Router } from '@angular/router';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ToasterService } from 'src/service/toaster.service';
 import { environment } from 'src/environments/environment';
@@ -14,12 +14,12 @@ import { REGEX } from 'src/shared/constants/regex';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
-import { SetGeolocationComponent } from 'src/app/set-geolocation/set-geolocation.component';
+import { SetGeolocationComponent } from 'src/app/common-components/set-geolocation/set-geolocation.component';
 
 @Component({
   selector: 'app-add-organization',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, ImageCropperComponent, SetGeolocationComponent],
   templateUrl: './add-organization.component.html',
   styleUrls: ['./add-organization.component.scss'],
 })
@@ -608,7 +608,7 @@ export class AddOrganizationComponent implements OnInit {
 
       await this.apiMainService.addOrg(this.trimStringValues(this.form.getRawValue()));
       this.clearRunTimeStorage();
-      this.router.navigate(['/app/b2bSearchOrg']);
+      this.router.navigate(['/app/organization']);
     } catch (error) {
       console.log(error);
     }
@@ -642,7 +642,7 @@ export class AddOrganizationComponent implements OnInit {
 
       await this.apiMainService.orgUpdate(formData, this.viewOrg._id);
       this.clearRunTimeStorage();
-      this.router.navigate(['/app/b2bSearchOrg']);
+      this.router.navigate(['/app/organization']);
     } catch (error) {
       console.log(error);
     }
@@ -650,7 +650,7 @@ export class AddOrganizationComponent implements OnInit {
 
   back() {
     this.clearRunTimeStorage();
-    this.router.navigate(['/app/b2bSearchOrg']);
+    this.router.navigate(['/app/organization']);
   }
 
   goBack() {

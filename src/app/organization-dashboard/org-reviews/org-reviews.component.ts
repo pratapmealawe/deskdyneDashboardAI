@@ -3,7 +3,7 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import * as Highcharts from 'highcharts';
 import Drilldown from 'highcharts/modules/drilldown';
-import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
+import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
 import { OrgOrderComponent } from './org-order/org-order.component';
 
 @Component({
@@ -30,7 +30,7 @@ import { OrgOrderComponent } from './org-order/org-order.component';
     FormsModule,
     ReactiveFormsModule,
     HighchartsChartModule,
-    CommonOutletCafeSelectModule,
+    CommonOutletCafeSelectComponent,
     MaterialModule,
     OrgOrderComponent
   ]

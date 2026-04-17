@@ -1,0 +1,187 @@
+<div class="dialog-title" mat-dialog-title>
+  <div class="title-left">
+    <mat-icon>{{ showUpdateBtn ? 'edit' : 'add_circle' }}</mat-icon>
+    <span>{{ showUpdateBtn ? 'Edit Event Menu Item' : 'Add New Menu Item' }}</span>
+  </div>
+  <button mat-icon-button class="info-btn" [matMenuTriggerFor]="infoMenu">
+    <mat-icon>info</mat-icon>
+  </button>
+  <mat-menu #infoMenu="matMenu" class="info-menu-panel">
+    <div class="info-menu-content">
+      <div class="info-header">
+        <mat-icon>lightbulb</mat-icon>
+        <span>Quick Tips</span>
+      </div>
+      <ul class="info-list required">
+        <li><mat-icon>check_circle</mat-icon> Name and Price are mandatory</li>
+        <li><mat-icon>check_circle</mat-icon> Select a food category</li>
+      </ul>
+      <ul class="info-list recommended">
+        <li><mat-icon>stars</mat-icon> High precedence shows item first</li>
+      </ul>
+    </div>
+  </mat-menu>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <div [formGroup]="form" class="dialog-form-layout" *ngIf="form">
+    <!-- LEFT SIDEBAR: Image & Types -->
+    <div class="dialog-sidebar">
+      <div class="image-upload-card">
+        <div class="upload-card-header">
+          <mat-icon>image</mat-icon>
+          <span>Item Image</span>
+        </div>
+        <div class="upload-wrapper">
+          <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
+            (change)="handleFileInput($event)" />
+          <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
+            <!-- Current state logic -->
+            <img *ngIf="imageUrl && !imageReplaced" [src]="showUpdateBtn ? displayImgUrl + imageUrl : imageUrl" class="preview-image" />
+            <img *ngIf="imageUrl && imageReplaced" [src]="uploadStatus ? imageUrl : displayImgUrl + imageUrl" class="preview-image" />
+            
+            <div *ngIf="!imageUrl" class="placeholder-content">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Upload Image</span>
+            </div>
+            <div class="upload-overlay">
+              <span>Change Image</span>
+            </div>
+          </div>
+        </div>
+        <p class="upload-hint">Click to upload image</p>
+      </div>
+
+      <!-- Item Type -->
+      <div class="type-selection-card">
+        <div class="upload-card-header">
+          <mat-icon>restaurant</mat-icon>
+          <span>Item Type</span>
+        </div>
+        <mat-radio-group formControlName="itemType" class="type-radio-group">
+          <div class="type-option veg" [class.selected]="form.get('itemType')?.value === 'Veg'">
+            <mat-radio-button value="Veg">
+              <span class="type-indicator veg-dot"></span>
+              <span>Veg</span>
+            </mat-radio-button>
+          </div>
+          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value === 'NonVeg'">
+            <mat-radio-button value="NonVeg">
+              <span class="type-indicator nonveg-dot"></span>
+              <span>Non-Veg</span>
+            </mat-radio-button>
+          </div>
+        </mat-radio-group>
+      </div>
+
+      <!-- Quick Toggle -->
+      <div class="quick-settings-card">
+        <div class="settings-toggle">
+          <mat-slide-toggle formControlName="isActive" color="primary">
+            Available
+          </mat-slide-toggle>
+        </div>
+        <div class="settings-toggle">
+          <mat-slide-toggle formControlName="doNotChangeInFuture" color="primary">
+            Lock Subsidy
+          </mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT MAIN CONTENT -->
+    <div class="dialog-main">
+      <!-- Basic Info -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="header-main">
+            <mat-icon>info</mat-icon>
+            <span>Basic Information</span>
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Item Name</mat-label>
+              <input matInput type="text" formControlName="itemName" placeholder="e.g. Special Sandwich" />
+              <mat-error *ngIf="f['itemName'].hasError('required')">Required</mat-error>
+              <mat-error *ngIf="f['itemName'].hasError('maxLength')">Max 80 chars</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Description</mat-label>
+              <textarea matInput formControlName="description" rows="2" placeholder="Brief description..."></textarea>
+              <mat-error *ngIf="f['description'].hasError('maxLength')">Max 200 chars</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pricing & Precedence -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="header-main">
+            <mat-icon>payments</mat-icon>
+            <span>Pricing & Logistics</span>
+          </div>
+        </div>
+        <div class="row g-3">
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Price (₹)</mat-label>
+              <input matInput type="number" min="1" formControlName="price" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+              <mat-error *ngIf="f['price'].hasError('required')">Required</mat-error>
+              <mat-error *ngIf="f['price'].hasError('min')">Min 1</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Subsidy (₹)</mat-label>
+              <input matInput type="number" min="0" formControlName="subsidy" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">sell</mat-icon>
+              <mat-error *ngIf="f['subsidy'].hasError('min')">Cannot be negative</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-4">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Rank / Sort Order</mat-label>
+              <input matInput type="number" min="0" formControlName="precedence" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">sort</mat-icon>
+              <mat-error *ngIf="f['precedence'].hasError('min')">Cannot be negative</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="form-section">
+        <div class="section-header">
+          <div class="header-main">
+            <mat-icon>category</mat-icon>
+            <span>Select Category</span>
+          </div>
+        </div>
+        <mat-chip-listbox formControlName="category" class="chip-selection">
+          <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
+            {{ chip?.title }}
+          </mat-chip-option>
+        </mat-chip-listbox>
+        <div class="text-danger small mt-2" *ngIf="f['category'].invalid && f['category'].touched">
+          Category is required
+        </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="dismiss()">Cancel</button>
+  <button mat-raised-button color="primary" *ngIf="!showUpdateBtn" [disabled]="form.invalid" (click)="submit()">
+    <mat-icon>add</mat-icon> Submit
+  </button>
+  <button mat-raised-button color="accent" *ngIf="showUpdateBtn" [disabled]="form.invalid" (click)="updateMenu()">
+    <mat-icon>save</mat-icon> Update Item
+  </button>
+</mat-dialog-actions>

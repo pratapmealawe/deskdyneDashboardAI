@@ -391,40 +391,6 @@
   }
 }
 
-// Modal List Item Styles
-.list-item-modal {
-  cursor: pointer;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  transition: all 0.2s;
-  background-color: white;
-
-  &:hover {
-    background-color: #f8fafc;
-    border-color: var.$primary-color1;
-  }
-
-  &.selected {
-    border-color: var.$primary-color1;
-    background-color: rgba(var.$primary-color1, 0.04);
-  }
-
-  .labelText {
-    font-size: 0.7rem;
-    color: #64748b;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
-
-  .labelData {
-    color: #1e293b;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-}
 
 // ─── POS & Dashboard Card ────────────────────────────────────────────────────
 .toggle-row {

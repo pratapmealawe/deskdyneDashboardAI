@@ -77,7 +77,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   private navigateToDashboard(profile: any) {
     const isOrgAdmin = profile.policy_name === 'orgAdmin' || profile.role === 'ORGADMIN';
-    const landingPage = isOrgAdmin ? '/orgapp/orgDashboard' : '/app/home';
+    const landingPage = isOrgAdmin ? '/orgapp/home' : '/app/home';
     this.router.navigate([landingPage]);
   }
 

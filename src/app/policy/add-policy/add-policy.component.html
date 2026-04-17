@@ -46,6 +46,28 @@
       </div>
     </div>
   </div>
+  <div class="dashboard-toggle-section">
+    <div class="dashboard-tabs">
+      <div 
+        class="tab-item" 
+        [class.active]="activeTab === 'main'" 
+        (click)="activeTab = 'main'"
+      >
+        <mat-icon>dashboard</mat-icon>
+        <span>Main Dashboard</span>
+      </div>
+      <div 
+        class="tab-item" 
+        [class.active]="activeTab === 'org'" 
+        (click)="activeTab = 'org'"
+      >
+        <mat-icon>business</mat-icon>
+        <span>Organization Dashboard</span>
+      </div>
+      <div class="active-indicator" [style.transform]="activeTab === 'main' ? 'translateX(0)' : 'translateX(100%)'"></div>
+    </div>
+  </div>
+
   <div class="parent">
 
 
@@ -60,7 +82,7 @@
           <button class="select-all-btn" (click)="selectAllRoutes()">Select All Routes</button>
         </div>
 
-        <div class="subsection" *ngFor="let group of groupedRoutePolicies">
+        <div class="subsection" *ngFor="let group of filteredRoutePolicies">
           <h3 class="subsection-title">{{ group.title }}</h3>
           <div class="permissions-grid">
             <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.route_policies[key]"
@@ -85,7 +107,7 @@
           <button class="select-all-btn" (click)="selectAllButtons()">Select All Buttons</button>
         </div>
 
-        <div class="subsection" *ngFor="let group of groupedButtonPolicies">
+        <div class="subsection" *ngFor="let group of filteredButtonPolicies">
           <h3 class="subsection-title">{{ group.title }}</h3>
           <div class="permissions-grid">
             <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.button_policies[key]"
@@ -110,7 +132,7 @@
           <button class="select-all-btn" (click)="selectAllTabs()">Select All Tabs</button>
         </div>
 
-        <div class="subsection" *ngFor="let group of groupedTabPolicies">
+        <div class="subsection" *ngFor="let group of filteredTabPolicies">
           <h3 class="subsection-title">{{ group.title }}</h3>
           <div class="permissions-grid">
             <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.tab_policies[key]"

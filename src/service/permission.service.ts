@@ -52,7 +52,7 @@ export class PermissionsService {
 
     if (res === false) {
       const isOrgAdmin = profile.policy_name === 'orgAdmin' || profile.role === 'ORGADMIN';
-      const redirectPath = isOrgAdmin ? '/orgapp/orgDashboard' : '/app/mainDashboard';
+      const redirectPath = isOrgAdmin ? '/orgapp/home' : '/app/home';
       
       // Clean up URLs for comparison to prevent infinite loop
       const currentUrl = state.url.split('?')[0];
@@ -61,19 +61,17 @@ export class PermissionsService {
       if (currentUrl === normalizedRedirectPath) {
         console.warn('Infinite loop detected in PermissionsService. Redirecting to login.');
         this.router.navigate(['/login']);
-        // this.toasterService.error(122);
         return false;
       }
 
       this.router.navigate([redirectPath]);
-      // this.toasterService.error(122);
       return false;
     }
     return true;
   }
 
   checkForPermission(url: string, keys: any): boolean {
-    if (!url || url === '') return true;
+    if (!url || url === '' || url === 'home' || url === 'orgDashboard') return true;
     return keys[url] ? true : false;
   }
 }

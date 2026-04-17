@@ -3,16 +3,34 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AddVendorFirmComponent } from './add-vendor-firm/add-vendor-firm.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MaterialModule } from '../material.module';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { VendorFirmViewComponent } from './vendor-firm-view/vendor-firm-view.component';
+import { VendorFirmCardComponent } from './vendor-firm-card/vendor-firm-card.component';
+
 @Component({
   selector: 'app-vendor-firm',
   templateUrl: './vendor-firm.component.html',
-  styleUrls: ['./vendor-firm.component.scss']
+  styleUrls: ['./vendor-firm.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DirectivesModule,
+    VendorFirmViewComponent,
+    VendorFirmCardComponent
+  ]
 })
 export class VendorFirmComponent {
   searchObj: any = {
@@ -178,8 +196,20 @@ export class VendorFirmComponent {
   }
 
   addVendor() {
-    this.resetForm()
-    this.router.navigate(['/app/addVendorFirm']);
+    this.resetForm();
+    const dialogRef = this.dialog.open(AddVendorFirmComponent, {
+      width: '90vw',
+      maxWidth: '1000px',
+      maxHeight: '90vh',
+      disableClose: true,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getAllVendors();
+      }
+    });
   }
 
 

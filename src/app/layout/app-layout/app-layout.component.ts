@@ -60,7 +60,7 @@ export class AppLayoutComponent implements OnInit {
         el.showParent = true;
         el.children?.forEach((child: any) => child.showChild = true);
       } else {
-        el.showParent = routePolicies[el.route] ? true : false;
+        el.showParent = routePolicies[el.route] !== false;
         if (el.children) {
           el.children.forEach((child: any) => {
             if (routePolicies[child.route]) {

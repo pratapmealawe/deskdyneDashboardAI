@@ -1,11 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoaderstatusService } from 'src/app/main-loader/loaderstatus.service';
+import { LoaderstatusService } from 'src/service/loaderstatus.service';
 import { environment } from 'src/environments/environment';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-
+import { MatDialog } from '@angular/material/dialog';
+import { AddOutletComponent } from '../../add-outlet/add-outlet.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 
@@ -29,7 +30,8 @@ export class OutletDetailsComponent implements OnInit {
     private router: Router,
     private runtimeStorageService: RuntimeStorageService,
     private loadingService: LoaderstatusService,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    private dialog: MatDialog
   ) {
   }
 
@@ -58,8 +60,19 @@ export class OutletDetailsComponent implements OnInit {
   }
 
   editOrg() {
-    this.runtimeStorageService.setCacheData('OUTLET_EDIT', this.outletObj);
-    this.router.navigate(['/app/addOutlet']);
+    const dialogRef = this.dialog.open(AddOutletComponent, {
+      width: '90vw',
+      maxWidth: '90vw',
+      maxHeight: '100vh',
+      data: this.outletObj
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle refresh if needed, although usually parent might handle it
+        // For now, closing the dialog with true indicates success
+      }
+    });
   }
 
   getInitials(name: string): string {

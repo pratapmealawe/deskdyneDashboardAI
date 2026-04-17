@@ -75,7 +75,7 @@ export class OrgDetailsComponent implements OnInit {
 
   editOrg() {
     this.runtimeStorageService.setCacheData('VIEW_ORG', this.orgObj);
-    this.router.navigate(['/app/b2bAddorg']);
+    this.router.navigate(['/app/add-organization']);
   }
 
   getInitials(name: string): string {

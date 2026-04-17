@@ -52,6 +52,76 @@
     }
   }
 
+  .dashboard-toggle-section {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 32px;
+
+    .dashboard-tabs {
+      display: flex;
+      background: #f1f5f9;
+      padding: 6px;
+      border-radius: 12px;
+      position: relative;
+      width: fit-content;
+      gap: 4px;
+      border: 1px solid #e2e8f0;
+
+      .tab-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        z-index: 2;
+        transition: all 0.3s ease;
+        min-width: 200px;
+        justify-content: center;
+
+        mat-icon {
+          font-size: 20px;
+          height: 20px;
+          width: 20px;
+          color: #64748b;
+          transition: all 0.3s ease;
+        }
+
+        span {
+          font-size: 14px;
+          font-weight: 600;
+          color: #64748b;
+          transition: all 0.3s ease;
+        }
+
+        &:hover:not(.active) {
+          span, mat-icon {
+            color: #0f172a;
+          }
+        }
+
+        &.active {
+          span, mat-icon {
+            color: #1d4ed8;
+          }
+        }
+      }
+
+      .active-indicator {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        bottom: 6px;
+        width: calc(50% - 8px);
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        z-index: 1;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    }
+  }
+
 
 
   .access-section {

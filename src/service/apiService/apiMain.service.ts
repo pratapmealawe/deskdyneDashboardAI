@@ -111,32 +111,32 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, outlet);
   }
 
-  savePopupOutlet(outletObj: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.savePopupOutlet;
+  saveEventPopup(outletObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.saveEventPopup;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, outletObj);
   }
 
-  updatePopupOutlet(id: any, outletObj: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updatePopupOutlet;
+  updateEventPopup(id: any, outletObj: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateEventPopup;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, outletObj);
   }
 
-  getPopupOutlets() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getPopupOutlets);
+  getEventPopups() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getEventPopups);
   }
 
-  getPopupOutletsById(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getPopupOutletsById;
+  getEventPopupsById(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getEventPopupsById;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  deletePopupOutlet(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.deletePopupOutlet;
+  deleteEventPopup(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteEventPopup;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  togglePopupOutletStatus(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.togglePopupOutletStatus;
+  toggleEventPopupStatus(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.toggleEventPopupStatus;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
@@ -1155,8 +1155,8 @@ export class ApiMainService {
     );
   }
 
-  getPopupOutletsByOrgId(orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getPopupOutletsByOrgId;
+  getEventPopupsByOrgId(orgId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getEventPopupsByOrgId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
   }
 

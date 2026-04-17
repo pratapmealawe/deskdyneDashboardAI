@@ -2,11 +2,50 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { HighchartsChartModule } from 'highcharts-angular';
+import { MaterialModule } from 'src/app/material.module';
+// Organization Dashboard Standalone Components
+import { MainDashboardComponent } from 'src/app/organization-dashboard/main-dashboard/main-dashboard.component';
+import { OrgMenuItemsComponent } from 'src/app/organization-dashboard/org-menu-items/org-menu-items.component';
+import { OrgOutletOrdersComponent } from 'src/app/organization-dashboard/org-outlet-orders/org-outlet-orders.component';
+import { OrgReviewsComponent } from 'src/app/organization-dashboard/org-reviews/org-reviews.component';
+import { OrgVendorInfoComponent } from 'src/app/organization-dashboard/org-vendor-info/org-vendor-info.component';
+import { OrgMenuCountersComponent } from 'src/app/organization-dashboard/org-menu-counters/org-menu-counters.component';
+import { AuditReportComponent } from 'src/app/organization-dashboard/audit-report/audit-report.component';
+import { OrgEmpPollComponent } from 'src/app/organization-dashboard/org-emp-poll/org-emp-poll.component';
+// Other Components / Modules
+import { OtherOrdersComponent } from 'src/app/other-orders/other-orders.component';
+import { CustomerModule } from 'src/app/customer/customer.module';
+import { BillingModule } from 'src/app/billing/billing.module';
 
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    HighchartsChartModule,
+    MaterialModule,
+
+    // Standalone Components
+    MainDashboardComponent,
+    OrgMenuItemsComponent,
+    OrgOutletOrdersComponent,
+    OrgReviewsComponent,
+    OrgVendorInfoComponent,
+    OrgMenuCountersComponent,
+    AuditReportComponent,
+    OrgEmpPollComponent,
+    OtherOrdersComponent,
+
+    // Modules
+    CustomerModule,
+    BillingModule
+  ]
 })
 export class DashboardComponent implements OnInit {
 
@@ -70,4 +109,3 @@ export class DashboardComponent implements OnInit {
     }
   }
 }
-

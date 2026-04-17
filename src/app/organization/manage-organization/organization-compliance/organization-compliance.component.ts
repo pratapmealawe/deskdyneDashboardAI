@@ -3,12 +3,12 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { MaterialModule } from '../../../material.module';
-import { PdfuploadComponent } from '../../../pdfupload/pdfupload.component';
+import { PdfuploadComponent } from '../../../common-components/pdfupload/pdfupload.component';
 
 @Component({
   selector: 'app-organization-compliance',

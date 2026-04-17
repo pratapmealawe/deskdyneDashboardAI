@@ -8,10 +8,24 @@ import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { UtilityService } from 'src/service/utility.service';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { MaterialModule } from 'src/app/material.module';
+import { OrderSubscriptionPackageCardComponent } from './order-subscription-package-card/order-subscription-package-card.component';
+
 @Component({
   selector: 'app-virtual-cafeteria',
   templateUrl: './virtual-cafeteria.component.html',
-  styleUrls: ['./virtual-cafeteria.component.scss']
+  styleUrls: ['./virtual-cafeteria.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    NgbModalModule,
+    MaterialModule,
+    OrderSubscriptionPackageCardComponent
+  ]
 })
 export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
   @ViewChild("noConnectionContent") noConnectionContent: any;

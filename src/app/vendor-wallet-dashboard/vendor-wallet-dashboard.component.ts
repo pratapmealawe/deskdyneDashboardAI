@@ -7,9 +7,16 @@ import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from '../material.module';
 
 @Component({
   selector: 'app-vendor-wallet-dashboard',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ],
   templateUrl: './vendor-wallet-dashboard.component.html',
   styleUrls: ['./vendor-wallet-dashboard.component.scss']
 })

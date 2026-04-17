@@ -1,0 +1,40 @@
+<div class="dialog-header p-3 border-bottom d-flex justify-content-between align-items-center">
+  <h4 class="dialog-title m-0">Select Outlets</h4>
+  <button mat-icon-button (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<div class="dialog-content p-3">
+  <div class="mt-3" *ngIf="outlets.length; else noOutlets">
+    <div *ngFor="let outlet of outlets" class="list-item-modal" (click)="toggleCheckbox(outlet)"
+      [class.selected]="outlet.isChecked">
+      <div class="d-flex align-items-center gap-3">
+        <mat-checkbox [(ngModel)]="outlet.isChecked" color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+        <div class="w-100">
+          <div class="row align-items-center">
+            <div class="col-md-5 mb-1 mb-md-0">
+              <div class="labelText">Outlet Name</div>
+              <div class="labelData fw-bold">{{ outlet.outletName }}</div>
+            </div>
+            <div class="col-md-3 mb-1 mb-md-0">
+              <div class="labelText">Organization</div>
+              <div class="labelData text-truncate">{{ outlet.organizationDetails?.organization_name || '-' }}</div>
+            </div>
+            <div class="col-md-4">
+              <div class="labelText">Cafeteria</div>
+              <div class="labelData text-truncate">{{ outlet.cafeteriaDetails?.cafeteria_name || '-' }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="d-flex justify-content-end mt-3">
+      <button mat-flat-button (click)="confirmSelection()" color="primary">
+        <mat-icon>add</mat-icon> Add Selected
+      </button>
+    </div>
+  </div>
+  <ng-template #noOutlets>
+    <div class="alert alert-info">No outlets available for this vendor firm.</div>
+  </ng-template>
+</div>

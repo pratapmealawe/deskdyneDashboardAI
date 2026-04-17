@@ -1,19 +1,17 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { PageEvent } from '@angular/material/paginator';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { CommonSelectConfig, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
+import { LocalStorageService } from 'src/service/local-storage.service';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 (pdfMake as any).vfs = (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
-
-import { CommonModule } from '@angular/common';
-import { MaterialModule } from 'src/app/material.module';
-import { CommonOutletCafeSelectModule } from '../../common-outlet-cafe-select/common-outlet-cafe-select.module';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-org-salary-deduction',
@@ -23,7 +21,7 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     MaterialModule,
-    CommonOutletCafeSelectModule,
+    CommonOutletCafeSelectComponent,
     FormsModule
   ]
 })
@@ -106,11 +104,11 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
       this.loading = true;
       const res = await this.apiMainService.fetchOutletOrdersbysearchObj(body);
       this.filteredOrderList = res;
-      
+
       // Filter for salary deduction: 
       // 1. mealSubsidyType is 'chargeable'
       // OR 2. itemAmount > subsidyAmount (where employee pays the difference)
-      this.fullDeductionList = this.filteredOrderList.filter(order => 
+      this.fullDeductionList = this.filteredOrderList.filter(order =>
         order.mealSubsidyType === 'chargeable' || (order.itemAmount > (order.subsidyAmount || 0))
       ).map(order => {
         const deductionAmount = (order.itemAmount || 0) - (order.subsidyAmount || 0);
@@ -133,7 +131,7 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
     if (!search) {
       this.deductionList = [...this.fullDeductionList];
     } else {
-      this.deductionList = this.fullDeductionList.filter(order => 
+      this.deductionList = this.fullDeductionList.filter(order =>
         (order.customerName && order.customerName.toLowerCase().includes(search)) ||
         (order.customerPhoneNo && order.customerPhoneNo.toLowerCase().includes(search)) ||
         (order.orderNo && order.orderNo.toLowerCase().includes(search))
@@ -147,7 +145,7 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
   calculateStats() {
     this.totalDeductionAmount = this.deductionList.reduce((sum, order) => sum + order.deductionAmount, 0);
     this.totalOrders = this.deductionList.length;
-    
+
     // Count unique employees
     const employees = new Set(this.deductionList.map(o => o.customerPhoneNo));
     this.totalEmployees = employees.size;
@@ -214,9 +212,9 @@ export class OrgSalaryDeductionComponent implements OnInit, OnChanges {
             body: [
               ['Employee', 'Mobile', 'Date', 'Order No', 'Type', 'Total', 'Subsidy', 'Deduction'],
               ...this.deductionList.map(o => [
-                o.customerName, o.customerPhoneNo, 
+                o.customerName, o.customerPhoneNo,
                 new Date(o.orderDate).toLocaleDateString(), o.orderNo,
-                o.mealSubsidyType || '-', o.itemAmount.toFixed(2), 
+                o.mealSubsidyType || '-', o.itemAmount.toFixed(2),
                 (o.subsidyAmount || 0).toFixed(2), o.deductionAmount.toFixed(2)
               ])
             ]

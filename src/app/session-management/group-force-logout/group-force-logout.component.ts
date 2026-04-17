@@ -4,10 +4,16 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { ApiMainService } from '../../../service/apiService/apiMain.service';
 import { ToasterService } from '../../../service/toaster.service';
 
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
+
 @Component({
   selector: 'app-group-force-logout',
   templateUrl: './group-force-logout.component.html',
-  styleUrls: ['./group-force-logout.component.scss']
+  styleUrls: ['./group-force-logout.component.scss'],
+  standalone: true,
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MaterialModule]
 })
 export class GroupForceLogoutComponent implements OnInit {
   form: FormGroup;

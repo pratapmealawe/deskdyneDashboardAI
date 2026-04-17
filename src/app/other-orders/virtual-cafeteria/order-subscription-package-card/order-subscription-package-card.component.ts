@@ -11,10 +11,25 @@ import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { ToasterService } from 'src/service/toaster.service';
 
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
+import { MaterialModule } from 'src/app/material.module';
+import { CustomPipeModule } from 'src/pipes/pipe.module';
+
 @Component({
   selector: 'app-order-subscription-package-card',
   templateUrl: './order-subscription-package-card.component.html',
   styleUrls: ['./order-subscription-package-card.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    NgbModalModule,
+    MaterialModule,
+    CustomPipeModule
+  ]
 })
 export class OrderSubscriptionPackageCardComponent implements OnInit {
   @ViewChild('contentkitchen') contentkitchen: any;

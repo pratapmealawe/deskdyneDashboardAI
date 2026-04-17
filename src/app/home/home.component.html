@@ -31,16 +31,17 @@
             <h3 class="gallery-title">Photo Gallery</h3>
         </div>
         <div class="col-12">
-            <swiper-container #swiper navigation="false" pagination="false" pagination-clickable="false"
-                autoplay-delay="3000" space-between="20" slides-per-view="1" centered-slides="false"
-                breakpoints='{"640": {"slidesPerView": 2}, "1024": {"slidesPerView": 3}, "1280": {"slidesPerView": 4}}'>
-
-                <swiper-slide *ngFor="let imgUrl of carouselImages">
-                    <div class="slide-content">
-                        <img [src]="imageUrl + imgUrl" alt="Gallery Image" class="gallery-image">
+            <ngb-carousel *ngIf="chunkedImages.length > 0; else noImages" [showNavigationIndicators]="true" [interval]="3000">
+                <ng-template ngbSlide *ngFor="let chunk of chunkedImages">
+                    <div class="row slide-row px-md-5">
+                        <div class="col-6 col-md-3 mb-4" *ngFor="let imgUrl of chunk">
+                            <div class="slide-content">
+                                <img [src]="imageUrl + imgUrl" alt="Gallery Image" class="gallery-image shadow-sm">
+                            </div>
+                        </div>
                     </div>
-                </swiper-slide>
-            </swiper-container>
+                </ng-template>
+            </ngb-carousel>
             <ng-template #noImages>
                 <div class="text-center text-muted p-5 bg-light rounded">
                     <p>Loading gallery images...</p>

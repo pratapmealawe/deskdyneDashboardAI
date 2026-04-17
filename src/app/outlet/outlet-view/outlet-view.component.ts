@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { PolicyService } from 'src/service/policy.service';
-
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { OutletDetailsComponent } from './outlet-details/outlet-details.component';

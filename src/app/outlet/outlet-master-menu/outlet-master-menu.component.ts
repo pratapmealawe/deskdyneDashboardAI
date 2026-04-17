@@ -5,7 +5,7 @@ import { categoryList, nutritionListOptions } from 'src/config/food-category.con
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from '../../../service/confirmation-modal.service';
-import { ImageCropperComponent } from '../../image-cropper/image-cropper.component';
+import { ImageCropperComponent } from '../../common-components/image-cropper/image-cropper.component';
 import { AddOutletMasterMenuComponent } from './add-outlet-master-menu/add-outlet-master-menu.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';

@@ -2,10 +2,20 @@ import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { BulkOrderCardComponent } from './bulk-order-card/bulk-order-card.component';
+
 @Component({
     selector: 'app-bulk-order',
     templateUrl: './bulk-order.component.html',
-    styleUrls: ['./bulk-order.component.scss']
+    styleUrls: ['./bulk-order.component.scss'],
+    standalone: true,
+    imports: [
+        CommonModule,
+        MaterialModule,
+        BulkOrderCardComponent
+    ]
 })
 export class BulkOrderComponent implements OnInit {
     bulkOrderStatusList = [

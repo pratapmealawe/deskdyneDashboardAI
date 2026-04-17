@@ -42,7 +42,7 @@ import { OrgDashboardFilterDialogComponent } from './org-dashboard-filter-dialog
 import { CommonModule } from '@angular/common';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
-import { OtherOrdersModule } from 'src/app/other-orders/other-orders.module';
+import { DailyBulkCardComponent } from "src/app/other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component";
 
 @Component({
   selector: 'app-main-dashboard',
@@ -55,8 +55,8 @@ import { OtherOrdersModule } from 'src/app/other-orders/other-orders.module';
     HighchartsChartModule,
     ReactiveFormsModule,
     FormsModule,
-    OtherOrdersModule
-  ]
+    DailyBulkCardComponent
+]
 })
 export class MainDashboardComponent {
   Highcharts: typeof Highcharts = Highcharts;

@@ -2,10 +2,26 @@ import { Component, OnInit } from '@angular/core';
 import { PolicyService } from 'src/service/policy.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { DailyBulkOrderComponent } from './daily-bulk-order/daily-bulk-order.component';
+import { BulkOrderComponent } from './bulk-order/bulk-order.component';
+import { EmployeePollComponent } from './emp-poll/emp-poll.component';
+import { VirtualCafeteriaComponent } from './virtual-cafeteria/virtual-cafeteria.component';
+
 @Component({
   selector: 'app-other-orders',
   templateUrl: './other-orders.component.html',
-  styleUrls: ['./other-orders.component.scss']
+  styleUrls: ['./other-orders.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    DailyBulkOrderComponent,
+    BulkOrderComponent,
+    EmployeePollComponent,
+    VirtualCafeteriaComponent
+  ]
 })
 export class OtherOrdersComponent implements OnInit {
   orderTypeList = [

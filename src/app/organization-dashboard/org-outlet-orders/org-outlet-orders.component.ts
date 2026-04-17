@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import * as Highcharts from 'highcharts';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 (pdfMake as any).vfs =
@@ -14,8 +14,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
-import { OrderCardModule } from 'src/app/order-card/order-card.module';
+import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
+import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.component';
 
 @Component({
   selector: 'app-org-outlet-orders',
@@ -28,8 +28,8 @@ import { OrderCardModule } from 'src/app/order-card/order-card.module';
     ReactiveFormsModule,
     HighchartsChartModule,
     MaterialModule,
-    CommonOutletCafeSelectModule,
-    OrderCardModule,
+    CommonOutletCafeSelectComponent,
+    OrderCardComponent,
   ]
 })
 export class OrgOutletOrdersComponent implements OnInit, OnChanges {

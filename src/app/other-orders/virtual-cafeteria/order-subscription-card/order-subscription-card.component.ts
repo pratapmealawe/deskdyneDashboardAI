@@ -4,10 +4,16 @@ import { orderStatusMapper } from 'src/config/order-status.config';
 import { environment } from 'src/environments/environment';
 import { DeliveryOrderService } from 'src/service/delivery-order.service';
 
+import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-order-subscription-card',
   templateUrl: './order-subscription-card.component.html',
-  styleUrls: ['./order-subscription-card.component.scss']
+  styleUrls: ['./order-subscription-card.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule
+  ]
 })
 export class OrderSubscriptionCardComponent implements OnInit {
   @Input() order: any;
