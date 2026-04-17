@@ -535,21 +535,23 @@ export class MainDashboardComponent {
   async fetchDialogOrders() {
     this.dialogLoading = true;
     try {
-      const start = this.normalizeDate(this.dateGroup.value.start as Date, false);
-      const res: any = await this.apiMainService.getBulkDailyOrderList(
-        this.dialogStatus,
-        this.dialogPage,
-        this.dialogPageSize,
-        start.toISOString(),
-        this.orgAdmin?.orgDetails?._id
-      );
-      if (res) {
-        this.dialogOrders = res.orderList || [];
-        this.dialogTotalCount = res.totalCount || 0;
-      }
+      // Locally paginate the already fetched results in this.dailyOrders
+      const filteredOrders = this.dailyOrders.filter(o => {
+        const s = (o.orderstatus || 'Unknown').trim().toLowerCase();
+        return s === this.dialogStatus;
+      });
+      
+      this.dialogTotalCount = filteredOrders.length;
+      
+      const startIndex = (this.dialogPage - 1) * this.dialogPageSize;
+      const endIndex = startIndex + this.dialogPageSize;
+      
+      this.dialogOrders = filteredOrders.slice(startIndex, endIndex);
+
     } catch (err) {
-      console.error('Error fetching dialog orders:', err);
+      console.error('Error fetching dialog orders locally:', err);
       this.dialogOrders = [];
+      this.dialogTotalCount = 0;
     } finally {
       this.dialogLoading = false;
     }

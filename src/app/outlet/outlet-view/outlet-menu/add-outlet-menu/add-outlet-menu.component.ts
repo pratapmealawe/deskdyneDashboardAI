@@ -66,11 +66,11 @@ export class AddOutletMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.createForm();
-    console.log(this.data.outletObj);
     if (this.data.item) {
       this.imageUrl = this.data.item.imageUrl;
       this.patchFormValue(this.data.item);
-    } else if (this.data.outletObj?.isPreOrder) {
+    } 
+    if (this.data.outletObj?.isPreOrder) {
       const timings = this.data.outletObj?.mealTiming?.map((m: any) => m.mealType) || [];
       const control = this.form.get('mealTimingInfo');
       control?.patchValue(timings);
