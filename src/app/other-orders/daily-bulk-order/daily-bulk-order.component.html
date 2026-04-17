@@ -22,6 +22,9 @@
             </div>
         </div>
         <div class="filter-actions">
+            <button mat-icon-button class="refresh-btn" (click)="refreshOrderList()" matTooltip="Refresh">
+                <mat-icon>refresh</mat-icon>
+            </button>
             <button mat-stroked-button color="primary" (click)="exportAdminOrdersToExcel()"
                 [disabled]="!filteredList || filteredList.length === 0">
                 <mat-icon>download</mat-icon> Export

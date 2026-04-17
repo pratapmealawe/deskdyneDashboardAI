@@ -120,6 +120,11 @@ export class BulkOrderComponent implements OnInit {
         }
     }
 
+    refreshOrderList() {
+        this.getb2bBulkOrderList();
+        this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);
+    }
+
     onStatusChanged(status: any) {
         if (status) {
             this.getClusterb2bBulkOrderList(this.bulkOrderSelectedStatus, this.page);

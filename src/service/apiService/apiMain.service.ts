@@ -853,7 +853,14 @@ export class ApiMainService {
   getBulkDailyOrderList(status: any, page: any, limit: number, date?: any, orgId?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
     const url = urlObj.url + `/${page}/${limit}/${status}`;
-    const payload: any = date ? { date } : {};
+    let payload: any = {};
+    if (date) {
+      if (typeof date === 'string') {
+        payload.date = date;
+      } else {
+        payload = { ...date };
+      }
+    }
     if (orgId) payload.orgId = orgId;
     return this.apiHttpService.REQUEST({ url, method: urlObj.method }, payload);
   }
@@ -873,7 +880,14 @@ export class ApiMainService {
 
   getCurrentDailyOrdersCount(date?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getCurrentDailyOrdersCount;
-    const payload = date ? { date } : {};
+    let payload: any = {};
+    if (date) {
+      if (typeof date === 'string') {
+        payload.date = date;
+      } else {
+        payload = { ...date };
+      }
+    }
     return this.apiHttpService.REQUEST(urlObj, payload);
   }
 

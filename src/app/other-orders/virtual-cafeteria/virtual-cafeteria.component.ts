@@ -160,6 +160,9 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
     });
   }
 
+  refreshOrderList() {
+    this.refreshPage();
+  }
 
   goBack() {
     this.router.navigate(['/app/home/orders']);

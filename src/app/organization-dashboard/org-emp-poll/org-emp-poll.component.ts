@@ -1,12 +1,14 @@
+import { CommonSelectConfig, SubmitPayload, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { EmpPollCardComponent } from 'src/app/other-orders/emp-poll/emp-poll-card/emp-poll-card.component';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { EmpPollCardComponent } from 'src/app/other-orders/emp-poll/emp-poll-card/emp-poll-card.component';
-import * as ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
+import { LocalStorageService } from 'src/service/local-storage.service';
 
 @Component({
     selector: 'app-org-emp-poll',
@@ -18,92 +20,92 @@ import { saveAs } from 'file-saver';
         MaterialModule,
         FormsModule,
         ReactiveFormsModule,
-        EmpPollCardComponent
+        EmpPollCardComponent,
+        CommonOutletCafeSelectComponent
     ]
 })
 export class OrgEmpPollComponent implements OnInit, OnChanges {
     @Input() adminOrg: any;
-    selectedPollDate: Date = new Date();
-    orgList: any = [];
-    cafeteriaList: any = [];
-    selectedOrg: any = null;
-    selectedCafeteria: any = null;
-    searchQuery: string = '';
-    filteredList: any[] = [];
-    isLoading: boolean = false;
+
+    headerConfig: CommonSelectConfig = {
+        mode: 'cafeteria',
+        showDateRange: true,
+        disableOrg: true,
+        requireAll: true
+    };
+
+    currentFilter!: SubmitPayload;
     allPollResults: any[] = [];
+    filteredList: any[] = [];
+    searchQuery: string = '';
+    isLoading: boolean = false;
+    orgAdmin: any;
 
     constructor(
         private apiMainService: ApiMainService,
         private sendDataToComponent: SendDataToComponent,
+        private localStorageService: LocalStorageService
     ) { }
 
     ngOnInit(): void {
-        this.getOrgList();
+        this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
         this.subscribeEvents();
-        this.setInitialOrg();
-        this.getEmployeePollList(this.selectedPollDate);
+        this.updateHeaderConfig();
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
-            this.setInitialOrg();
-            this.getEmployeePollList(this.selectedPollDate);
+    ngOnChanges(changes: any): void {
+        if (changes['adminOrg']) {
+            this.updateHeaderConfig();
         }
     }
 
-    setInitialOrg() {
+    updateHeaderConfig() {
         if (this.adminOrg) {
-            this.selectedOrg = this.adminOrg._id;
-            this.cafeteriaList = this.adminOrg.cafeteriaList || [];
-        }
-    }
-
-    async getOrgList() {
-        if (this.adminOrg) return;
-        try {
-            const res: any = await this.apiMainService.getOrgList();
-            if (res && res.length > 0) {
-                this.orgList = res;
-            }
-        } catch (error) {
-            console.error('Error fetching org list:', error);
-        }
-    }
-
-    onOrgChange(event: any) {
-        if (event) {
-            this.selectedOrg = event._id;
-            this.cafeteriaList = event.cafeteriaList || [];
+            this.headerConfig.defaultOrgId = this.adminOrg._id;
+            this.headerConfig.disableOrg = true;
+        } else if (this.orgAdmin?.orgDetails?._id) {
+            this.headerConfig.defaultOrgId = this.orgAdmin.orgDetails._id;
+            this.headerConfig.disableOrg = true;
         } else {
-            this.selectedOrg = null;
-            this.cafeteriaList = [];
+            this.headerConfig.disableOrg = false;
+        }
+
+        if (this.orgAdmin?.role === 'HYPERPURE_POC') {
+            this.headerConfig.defaultCafeId = this.orgAdmin?.cafeDetails?.[0]?.cafeteria_id;
+            this.headerConfig.disableCafe = true;
+        }
+        
+        this.headerConfig = { ...this.headerConfig };
+    }
+
+    filterSubmitted(event: SubmitPayload) {
+        if (event) {
+            this.currentFilter = event;
+            this.getEmployeePollList();
         }
     }
+
+    // Removed redundant getOrgList and onOrgChange as they are handled by shared component
 
     subscribeEvents() {
         this.sendDataToComponent.subscribe('UPDATE_EMPLOYEE_POLL_PAGE', (data) => {
             if (data && data.reload) {
-                this.getEmployeePollList(this.selectedPollDate);
+                this.getEmployeePollList();
             }
         });
     }
 
-    async getEmployeePollList(dateInput?: any) {
-        const targetDate = dateInput ? new Date(dateInput) : this.selectedPollDate;
+    async getEmployeePollList() {
+        if (!this.currentFilter?.org_id || !this.currentFilter?.cafeteria_id) return;
+
         this.allPollResults = [];
         this.filteredList = [];
         const payload: any = {
-            fromDate: targetDate,
+            fromDate: this.currentFilter.date_from,
+            toDate: this.currentFilter.date_to,
+            cafeteriaId: this.currentFilter.cafeteria_id,
+            orgId: this.currentFilter.org_id
         };
-        if (this.selectedCafeteria) {
-            payload['cafeteriaId'] = this.selectedCafeteria;
-        }
-        if (this.adminOrg) {
-            payload['orgId'] = this.adminOrg._id;
-        } else if (this.selectedOrg) {
-            payload['orgId'] = this.selectedOrg;
-        }
 
         try {
             this.isLoading = true;
@@ -199,6 +201,14 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
         }
     }
 
+
+    excelExport() {
+        this.exportEmployeePollToExcel();
+    }
+
+    downloadPdf() {
+        console.log('PDF export not implemented for Employee Poll yet');
+    }
 
     async exportEmployeePollToExcel() {
         if (!this.filteredList || this.filteredList.length === 0) return;

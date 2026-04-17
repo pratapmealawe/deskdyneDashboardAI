@@ -52,6 +52,7 @@ export class DailyAdminExcelExportComponent implements OnInit {
   paginatedList: any[] = [];
   selectedStatus: string = 'placed';
   selectedAdminOrderDate: Date = new Date();
+  selectedAdminOrderDateTo: Date | null = null;
   isLoading: boolean = false;
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -69,13 +70,13 @@ export class DailyAdminExcelExportComponent implements OnInit {
   orgAdmin: any;
   headerConfig: CommonSelectConfig = {
     mode: 'cafeteria',
-    showDateRange: false,
+    showDateRange: true,
     disableOrg: true,
     requireAll: true
   };
   headerConfigAdmin: CommonSelectConfig = {
     mode: 'cafeteria',
-    showDateRange: false,
+    showDateRange: true,
     disableOrg: false,
     requireAll: true
   };
@@ -105,6 +106,11 @@ export class DailyAdminExcelExportComponent implements OnInit {
   filterSubmitted(event: any) {
     if (event) {
       this.selectedAdminOrderDate = new Date(event.date_from);
+      if (event.date_to) {
+        this.selectedAdminOrderDateTo = new Date(event.date_to);
+      } else {
+        this.selectedAdminOrderDateTo = null;
+      }
       this.getBulkDailyOrderList();
     }
   }
@@ -112,9 +118,10 @@ export class DailyAdminExcelExportComponent implements OnInit {
   async getBulkDailyOrderList() {
     try {
       this.isLoading = true;
-      const dateParam = this.selectedAdminOrderDate ?
-        this.selectedAdminOrderDate.toISOString() :
-        new Date().toISOString();
+      const dateParam = {
+        fromDate: this.selectedAdminOrderDate.toISOString(),
+        toDate: (this.selectedAdminOrderDateTo || this.selectedAdminOrderDate).toISOString()
+      };
       const res: any = await this.apiMainService.getCurrentDailyOrdersCount(dateParam);
       if (res) {
         this.adminOrderStatusList.forEach((status: any) => {
@@ -141,11 +148,12 @@ export class DailyAdminExcelExportComponent implements OnInit {
     try {
       this.isLoading = true;
       this.pageIndex = pageNum - 1;
-      const dateStr = this.selectedAdminOrderDate ?
-        this.selectedAdminOrderDate.toISOString() :
-        new Date().toISOString();
+      const dateParam = {
+        fromDate: this.selectedAdminOrderDate.toISOString(),
+        toDate: (this.selectedAdminOrderDateTo || this.selectedAdminOrderDate).toISOString()
+      };
 
-      const res: any = await this.apiMainService.getBulkDailyOrderList(status, pageNum, this.pageSize, dateStr);
+      const res: any = await this.apiMainService.getBulkDailyOrderList(status, pageNum, this.pageSize, dateParam);
       if (res) {
         this.allOrdersList = res.orderList || [];
         this.estimatedTotal = res.totalCount || 0;
@@ -251,6 +259,10 @@ export class DailyAdminExcelExportComponent implements OnInit {
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Daily Bulk Orders');
 
+    const fromStr = this.formatDate(this.selectedAdminOrderDate);
+    const toStr = this.selectedAdminOrderDateTo ? this.formatDate(this.selectedAdminOrderDateTo) : fromStr;
+    const dateRangeStr = fromStr === toStr ? fromStr : `${fromStr} to ${toStr}`;
+
     worksheet.columns = [
       { header: 'Order No', key: 'orderNo', width: 14 },
       { header: 'Order Date', key: 'orderDate', width: 20 },
@@ -344,7 +356,8 @@ export class DailyAdminExcelExportComponent implements OnInit {
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-    saveAs(blob, `Daily_Bulk_Orders_${new Date().toISOString().slice(0, 10)}.xlsx`);
+    const safeRange = dateRangeStr.replace(/[\\/:*?"<>|]/g, '-');
+    saveAs(blob, `Daily_Bulk_Orders_${safeRange}.xlsx`);
   }
 
   downloadPdf() {
@@ -387,7 +400,10 @@ export class DailyAdminExcelExportComponent implements OnInit {
       pageMargins: [20, 20, 20, 20],
       content: [
         { text: 'Daily Bulk Orders Report', style: 'header' },
-        { text: `Date: ${this.formatDate(this.selectedAdminOrderDate)}`, margin: [0, 0, 0, 10] },
+        {
+          text: `Date Range: ${this.formatDate(this.selectedAdminOrderDate)} ${this.selectedAdminOrderDateTo ? ' to ' + this.formatDate(this.selectedAdminOrderDateTo) : ''}`,
+          margin: [0, 0, 0, 10]
+        },
         {
           table: {
             headerRows: 1,
@@ -403,7 +419,11 @@ export class DailyAdminExcelExportComponent implements OnInit {
       defaultStyle: { fontSize: 9 }
     };
 
-    pdfMake.createPdf(docDefinition).download(`DailyBulkOrders_${new Date().toISOString().slice(0, 10)}.pdf`);
+    const fromStr = this.formatDate(this.selectedAdminOrderDate).replace(/\//g, '-');
+    const toStr = this.selectedAdminOrderDateTo ? this.formatDate(this.selectedAdminOrderDateTo).replace(/\//g, '-') : fromStr;
+    const pdfName = fromStr === toStr ? fromStr : `${fromStr}_to_${toStr}`;
+
+    pdfMake.createPdf(docDefinition).download(`DailyBulkOrders_${pdfName}.pdf`);
   }
 
   formatDate(dateInput: any): string {
