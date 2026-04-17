@@ -117,7 +117,7 @@ export class AddOutletMenuComponent implements OnInit {
     this.addons_List.push(new FormGroup({
       addOnImageUrl: new FormControl(''),
       addOnName: new FormControl(''),
-      addOnPrice: new FormControl(0, [Validators.min(0)]),
+      addOnPrice: new FormControl(1, [Validators.min(1)]),
       addOnType: new FormControl('NA'),
     }));
     this.uploadedAddonImageFiles.push(null);

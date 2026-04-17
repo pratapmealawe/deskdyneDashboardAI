@@ -174,9 +174,14 @@ export class OutletOrdersComponent implements OnInit, OnDestroy {
   }
 
   getItemAddOnTotal(item: any): number {
-    if (!item.addOnsList?.length) return 0;
-    return item.addOnsList.reduce((sum: number, addon: any) => {
-      return sum + ((addon.addOnPrice ?? addon.addonPrice ?? 0) * (item.count || 1));
+    if (!item?.addOnsList?.length) return 0;
+    const count = item.count || 1;
+    return item.addOnsList.reduce((sum: number, a: any) => {
+      if (a.totalPrice != null) {
+        return sum + a.totalPrice;
+      }
+      const price = a.addOnPrice ?? a.addonPrice ?? 0;
+      return sum + (price * count);
     }, 0);
   }
 

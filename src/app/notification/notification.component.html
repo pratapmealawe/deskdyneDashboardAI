@@ -96,7 +96,15 @@
 
         <!-- Card Body -->
         <div class="card-body">
-          <p class="body-text">{{ notification.body }}</p>
+          <p class="body-text">
+            {{ notification.expanded ? notification.body : (notification.body | slice:0:100) }}
+            <span *ngIf="notification.body?.length > 100">
+              {{ notification.expanded ? '' : '...' }}
+              <a href="javascript:void(0)" (click)="notification.expanded = !notification.expanded" class="read-more-link">
+                {{ notification.expanded ? 'Read Less' : 'Read More' }}
+              </a>
+            </span>
+          </p>
 
           <div class="body-content-split">
             <div class="info-column">
