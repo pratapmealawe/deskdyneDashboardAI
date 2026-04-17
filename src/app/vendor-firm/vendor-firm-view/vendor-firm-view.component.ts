@@ -1,15 +1,14 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { PolicyService } from 'src/service/policy.service';
-
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { VendorDetailsComponent } from '../../common-components/vendor-details/vendor-details.component';
-import { WalletDetailsComponent } from './wallet-details/wallet-details.component';
-import { LedgerDetailsComponent } from './ledger-details/ledger-details.component';
-import { BulkOrderReportComponent } from './bulk-order-report/bulk-order-report.component';
-import { VendorReportComponent } from './vendor-report/vendor-report.component';
-import { VendorDailyReportComponent } from './vendor-daily-report/vendor-daily-report.component';
+import { VendorFirmWalletDetailsComponent } from './vendor-firm-wallet-details/vendor-firm-wallet-details.component';
+import { VendorFirmLedgerDetailsComponent } from './vendor-firm-ledger-details/vendor-firm-ledger-details.component';
+import { VendorFirmBulkOrderReportComponent } from './vendor-firm-bulk-order-report/vendor-firm-bulk-order-report.component';
+import { VendorFirmReportComponent } from './vendor-firm-report/vendor-firm-report.component';
+import { VendorFirmDailyReportComponent } from './vendor-firm-daily-report/vendor-firm-daily-report.component';
 import { VendorFirmCardComponent } from '../vendor-firm-card/vendor-firm-card.component';
+import { VendorFirmDetailsComponent } from './vendor-firm-details/vendor-firm-details.component';
 
 @Component({
   selector: 'app-vendor-firm-view',
@@ -19,12 +18,12 @@ import { VendorFirmCardComponent } from '../vendor-firm-card/vendor-firm-card.co
   imports: [
     CommonModule,
     MaterialModule,
-    VendorDetailsComponent,
-    WalletDetailsComponent,
-    LedgerDetailsComponent,
-    BulkOrderReportComponent,
-    VendorReportComponent,
-    VendorDailyReportComponent,
+    VendorFirmDetailsComponent,
+    VendorFirmWalletDetailsComponent,
+    VendorFirmLedgerDetailsComponent,
+    VendorFirmBulkOrderReportComponent,
+    VendorFirmReportComponent,
+    VendorFirmDailyReportComponent,
     VendorFirmCardComponent
   ]
 })

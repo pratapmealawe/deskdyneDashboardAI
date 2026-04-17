@@ -1,0 +1,34 @@
+<div class="vendor-page-container">
+  <div class="vendor-header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Vendor Management</h1>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search by Firm, Name or Phone..." [formControl]="searchControl" />
+        </div>
+        <button mat-flat-button color="primary" class="btn-add-vendor" (click)="addVendor()" *appHasPermission="'VENDOR:ADD'">
+          <mat-icon>add_business</mat-icon>
+          <span>Add Vendor</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-body">
+    <div *ngIf="vendorList && vendorList.length === 0; else vendorListTmp" class="empty-state">
+      <mat-icon class="empty-icon">storefront</mat-icon>
+      <h3>No Vendors Found</h3>
+      <p>Get started by adding your first vendor.</p>
+      <button mat-stroked-button color="primary" (click)="addVendor()" *appHasPermission="'VENDOR:ADD'">Add Vendor</button>
+    </div>
+
+    <ng-template #vendorListTmp>
+      <div class="vendor-list-wrapper">
+        <app-vendor-card [vendorFirm]="filterVendorDuplicate" (deleted)="getAllVendors()"></app-vendor-card>
+      </div>
+    </ng-template>
+  </div>
+</div>

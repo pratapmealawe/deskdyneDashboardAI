@@ -41,15 +41,15 @@
   <!-- Tab Content -->
   <div class="tab-content">
     <ng-container [ngSwitch]="selectedTab">
-      <app-vendor-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-details>
+      <app-vendor-firm-details *ngSwitchCase="'vendorFirmDetails'" [vendorObj]="vendor"></app-vendor-firm-details>
     </ng-container>
     <ng-container [ngSwitch]="selectedSubTab">
-      <app-wallet-details *ngSwitchCase="'walletDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-wallet-details>
-      <app-ledger-details *ngSwitchCase="'ledgerDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-ledger-details>
-      <app-vendor-report *ngSwitchCase="'vendorFirmReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-report>
-      <app-vendor-daily-report *ngSwitchCase="'vendorFirmDailyReport'"
-        [vendorFirmInfo]="vendorFirmInfo"></app-vendor-daily-report>
-      <app-bulk-order-report *ngSwitchCase="'bulkOrderReport'" [vendorFirmInfo]="vendorFirmInfo"></app-bulk-order-report>
+      <app-vendor-firm-wallet-details *ngSwitchCase="'walletDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-firm-wallet-details>
+      <app-vendor-firm-ledger-details *ngSwitchCase="'ledgerDetails'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-firm-ledger-details>
+      <app-vendor-firm-report *ngSwitchCase="'vendorFirmReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-firm-report>
+      <app-vendor-firm-daily-report *ngSwitchCase="'vendorFirmDailyReport'"
+        [vendorFirmInfo]="vendorFirmInfo"></app-vendor-firm-daily-report>
+      <app-vendor-firm-bulk-order-report *ngSwitchCase="'bulkOrderReport'" [vendorFirmInfo]="vendorFirmInfo"></app-vendor-firm-bulk-order-report>
     </ng-container>
   </div>
 </div>

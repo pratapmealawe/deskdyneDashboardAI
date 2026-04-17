@@ -1,20 +1,19 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
-import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
-import { SetGeolocationComponent } from '../../set-geolocation/set-geolocation.component';
-
-
+import { SetGeolocationComponent } from '../../common-components/set-geolocation/set-geolocation.component';
+import { Inject, Optional } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../material.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { VendorComplianceComponent } from './vendor-firm-compliance/vendor-compliance.component';
 
 @Component({
   selector: 'app-add-vendor-firm',
@@ -81,7 +80,9 @@ export class AddVendorFirmComponent {
     private apiMainService: ApiMainService,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private policyService: PolicyService
+    private policyService: PolicyService,
+    @Optional() public dialogRef: MatDialogRef<AddVendorFirmComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.getOrgList();
   }
@@ -90,7 +91,15 @@ export class AddVendorFirmComponent {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.createForm();
     this.updateVendorFirm();
-    this.isVendorEdit = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
+    if (this.data && this.data._id) {
+      this.isVendorEdit = true;
+      this.showUpdate = true;
+      this.selectedVendorFirm = this.data;
+      this.patchVendorFirmAndBank(this.data);
+      // Additional patching if needed
+    } else {
+      this.isVendorEdit = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
+    }
   }
 
   async getOrgList() {
@@ -367,7 +376,11 @@ export class AddVendorFirmComponent {
       } else {
         await this.apiMainService.saveVendorFirm(finalObj);
       }
-      this.router.navigate(['/app/searchVendorFirm']);
+      if (this.dialogRef) {
+        this.dialogRef.close(true);
+      } else {
+        this.router.navigate(['/app/vendor-firm']);
+      }
     } catch (error) {
       console.log('submit error', error);
     }
@@ -592,7 +605,11 @@ export class AddVendorFirmComponent {
   }
 
   goBack() {
-    this.router.navigate(['/app/searchVendorFirm']);
+    if (this.dialogRef) {
+      this.dialogRef.close(false);
+    } else {
+      this.router.navigate(['/app/vendor-firm']);
+    }
   }
 
   hasError(form: FormGroup, controlName: string, error: string) {

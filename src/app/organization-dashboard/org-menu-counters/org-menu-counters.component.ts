@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -12,7 +12,7 @@ interface filter {
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
+import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
 import { A11yModule } from "@angular/cdk/a11y";
 
 @Component({
@@ -21,11 +21,11 @@ import { A11yModule } from "@angular/cdk/a11y";
   styleUrls: ['./org-menu-counters.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    ReactiveFormsModule, 
-    FormsModule, 
-    MaterialModule, 
-    CommonOutletCafeSelectModule, 
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MaterialModule,
+    CommonOutletCafeSelectComponent,
     A11yModule
   ]
 })

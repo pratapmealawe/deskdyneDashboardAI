@@ -5,10 +5,22 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { orderStatusMapper } from 'src/config/order-status.config';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
+import { DailyBulkCardComponent } from './daily-bulk-card/daily-bulk-card.component';
+
 @Component({
     selector: 'app-daily-bulk-order',
     templateUrl: './daily-bulk-order.component.html',
-    styleUrls: ['./daily-bulk-order.component.scss']
+    styleUrls: ['./daily-bulk-order.component.scss'],
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        MaterialModule,
+        DailyBulkCardComponent
+    ]
 })
 export class DailyBulkOrderComponent implements OnInit {
     orderStatusMapper: any = orderStatusMapper;

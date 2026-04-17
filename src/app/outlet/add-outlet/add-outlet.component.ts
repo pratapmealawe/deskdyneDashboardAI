@@ -34,7 +34,7 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectOrgCafeteriaDialogComponent } from '../select-org-cafeteria-dialog/select-org-cafeteria-dialog.component';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 
 
 @Component({

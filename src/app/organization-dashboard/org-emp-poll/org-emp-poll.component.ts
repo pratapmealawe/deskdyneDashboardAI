@@ -32,12 +32,6 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
     filteredList: any[] = [];
     isLoading: boolean = false;
     allPollResults: any[] = [];
-    stats = {
-        totalVotes: 0,
-        mostVotedItem: 'N/A',
-        affectedEmployees: 0,
-        totalOrders: 0
-    };
 
     constructor(
         private apiMainService: ApiMainService,
@@ -203,39 +197,8 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
                 return matchesOrg || matchesCafe || matchesEmp;
             });
         }
-        this.calculateStats();
     }
 
-    calculateStats() {
-        let totalVotes = 0;
-        let employees = new Set<string>();
-        let itemVotes = new Map<string, number>();
-
-        this.filteredList.forEach(group => {
-            group.employeeList.forEach((emp: any) => {
-                totalVotes++;
-                employees.add(emp.employeeId);
-                const itemName = emp.deliveredItem || 'Unknown';
-                itemVotes.set(itemName, (itemVotes.get(itemName) || 0) + 1);
-            });
-        });
-
-        let mostVoted = 'N/A';
-        let maxVotes = 0;
-        itemVotes.forEach((votes, item) => {
-            if (votes > maxVotes) {
-                maxVotes = votes;
-                mostVoted = item;
-            }
-        });
-
-        this.stats = {
-            totalVotes,
-            mostVotedItem: mostVoted,
-            affectedEmployees: employees.size,
-            totalOrders: this.filteredList.length
-        };
-    }
 
     async exportEmployeePollToExcel() {
         if (!this.filteredList || this.filteredList.length === 0) return;

@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { environment } from 'src/environments/environment';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';

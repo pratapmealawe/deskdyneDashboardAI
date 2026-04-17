@@ -6,16 +6,31 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { UtilityService } from 'src/service/utility.service';
 import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import { interval, Subscription } from 'rxjs';
-import { CommonSelectConfig } from '../common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { CommonSelectConfig } from '../common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 import { OrderFilterDialogComponent, OrderFilterDialogData } from '../common-components/order-filter-dialog/order-filter-dialog.component';
 import { ToasterService } from 'src/service/toaster.service';
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from '../material.module';
+import { FormsModule } from '@angular/forms';
+import { OrderCardComponent } from './order-card/order-card.component';
+import { CommonOutletCafeSelectComponent } from '../common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
+
 @Component({
   selector: 'app-orders',
   templateUrl: './outlet-orders.component.html',
-  styleUrls: ['./outlet-orders.component.scss']
+  styleUrls: ['./outlet-orders.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule, 
+    MaterialModule, 
+    FormsModule, 
+    OrderCardComponent, 
+    CommonOutletCafeSelectComponent, 
+    OrderFilterDialogComponent
+  ]
 })
 export class OutletOrdersComponent implements OnInit, OnDestroy {
   pollingSub!: Subscription;

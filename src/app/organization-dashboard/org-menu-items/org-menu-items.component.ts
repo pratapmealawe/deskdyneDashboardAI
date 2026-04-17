@@ -1,11 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import * as Highcharts from 'highcharts';
-import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ItemBreakdownComponent } from 'src/app/vendor-firm/vendor-firm-view/vendor-report/item-breakdown/item-breakdown.component';
+import { VendorFirmItemBreakdownComponent  } from 'src/app/vendor-firm/vendor-firm-view/vendor-firm-report/vendor-firm-item-breakdown/vendor-firm-item-breakdown.component';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -15,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
+import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
 
 @Component({
   selector: 'app-org-menu-items',
@@ -29,7 +29,7 @@ import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/
     ReactiveFormsModule,
     FormsModule,
     MaterialModule,
-    CommonOutletCafeSelectModule
+    CommonOutletCafeSelectComponent
   ]
 })
 export class OrgMenuItemsComponent implements OnInit, OnChanges {
@@ -177,7 +177,7 @@ export class OrgMenuItemsComponent implements OnInit, OnChanges {
     const imageUrl = 'assets/images/deskdyneLogoblue.png';
     const logoBase64 = await this.assetToBase64(imageUrl);
 
-    this.dialog.open(ItemBreakdownComponent, {
+    this.dialog.open(VendorFirmItemBreakdownComponent, {
       width: '960px',
       maxHeight: '85vh',
       autoFocus: false,

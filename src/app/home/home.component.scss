@@ -86,14 +86,7 @@
         max-height: 80%;
         max-width: 80%;
         object-fit: contain;
-        // filter: grayscale(100%);
-        // opacity: 0.8;
-        // transition: all 0.3s ease;
-
-        // &:hover {
-        //     filter: grayscale(0%);
-        //     opacity: 1;
-        // }
+       
     }
 }
 
@@ -116,38 +109,59 @@
     }
 }
 
-swiper-container {
+ngb-carousel {
     width: 100%;
-    // Add padding to bottom for pagination "out of image view"
-    // Add padding to sides for arrows "out of image container"
-    padding-bottom: 50px;
-    padding-left: 50px;
-    padding-right: 50px;
-    --swiper-navigation-size: 14px; // Smaller arrows
-}
-
-swiper-slide {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 300px;
-
-    .slide-content {
-        width: 100%;
-        height: 100%;
-        padding: 10px;
-
-        .gallery-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+    
+    ::ng-deep {
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 40px;
+            height: 40px;
+            background-color: #2950a2;
+            border-radius: 50%;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0.8;
+            margin: 0 10px;
 
             &:hover {
-                transform: translateY(-5px);
+                opacity: 1;
             }
+        }
+
+        .carousel-indicators {
+            bottom: -40px;
+            
+            button {
+                background-color: #2950a2;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                border: none;
+                margin: 0 5px;
+            }
+        }
+    }
+}
+
+.slide-row {
+    padding-bottom: 20px;
+}
+
+.slide-content {
+    width: 100%;
+    padding: 10px;
+
+    .gallery-image {
+        width: 100%;
+        height: 250px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 10%);
+        transition: transform 0.3s ease;
+
+        &:hover {
+            transform: translateY(-5px);
         }
     }
 }
@@ -246,37 +260,4 @@ swiper-slide {
     /* Keep text color consistent */
     box-shadow: none !important;
     /* Prevent shadow on focus */
-}
-
-// Custom Styling for Swiper Parts (Shadow DOM)
-swiper-container::part(button-prev),
-swiper-container::part(button-next) {
-    background-color: #2950a2; // Primary color
-    color: #ffffff;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    /* Circle */
-    padding: 8px;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 1;
-    /* Ensure visible */
-}
-
-swiper-container::part(button-prev) {
-    left: 5px; // Sit inside the padding-left area
-}
-
-swiper-container::part(button-next) {
-    right: 5px; // Sit inside the padding-right area
-}
-
-swiper-container::part(pagination) {
-    bottom: 0px; // Sit inside the padding-bottom area
 }

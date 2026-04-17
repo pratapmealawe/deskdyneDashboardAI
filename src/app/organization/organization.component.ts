@@ -107,7 +107,7 @@ export class OrganizationComponent implements OnInit {
   }
 
   addOrg() {
-    this.router.navigate(['/app/b2bAddorg'])
+    this.router.navigate(['/app/add-organization'])
   }
 
   openDeletedOrgsDialog() {

@@ -1,24 +1,28 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
 import { ConfirmationModalService } from '../../service/confirmation-modal.service';
-import { FormControl } from '@angular/forms';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { WalletTxnDialogComponent } from '../vendor-firm/vendor-firm-view/wallet-txn-dialog/wallet-txn-dialog.component';
+import { VendorFirmWalletTxnDialogComponent } from '../vendor-firm/vendor-firm-view/vendor-firm-wallet-details/vendor-firm-wallet-txn-dialog/vendor-firm-wallet-txn-dialog.component';
 import { WalletHistoryDialogComponent } from './wallet-history-dialog/wallet-history-dialog.component';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from '../material.module';
 
 @Component({
   selector: 'app-vendor-payout',
   templateUrl: './vendor-payout.component.html',
-  styleUrls: ['./vendor-payout.component.scss']
+  styleUrls: ['./vendor-payout.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MaterialModule, ReactiveFormsModule, WalletHistoryDialogComponent]
 })
-export class VendorPayoutComponent {
+export class VendorPayoutComponent implements OnInit {
   searchControl = new FormControl('');
   pageSize: number = 5;
   pageIndex: number = 0;
@@ -81,7 +85,7 @@ export class VendorPayoutComponent {
   }
 
   openTxnDialog(vendor: any, kind: 'Credit' | 'Debit' | 'Transfer', transferSource?: 'wallet' | 'subsidy' | 'daily') {
-    const ref = this.dialog.open(WalletTxnDialogComponent, {
+    const ref = this.dialog.open(VendorFirmWalletTxnDialogComponent, {
       width: '420px',
       disableClose: true,
       data: {
@@ -109,7 +113,7 @@ export class VendorPayoutComponent {
   }
 
   openVendorDetails(vendor: any) {
-    // this.router.navigate(['/searchVendorFirm'], { queryParams: { vendorFirmId: vendor.vendorFirmId || vendor._id } });
+    // this.router.navigate(['/vendor-firm'], { queryParams: { vendorFirmId: vendor.vendorFirmId || vendor._id } });
   }
 
   openHistoryDialog(vendor: any) {

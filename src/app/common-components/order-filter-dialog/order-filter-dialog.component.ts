@@ -26,10 +26,16 @@ export interface OrderFilterDialogResult {
     filterIsPosOrder: string;
 }
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule } from '@angular/forms';
+
 @Component({
     selector: 'app-order-filter-dialog',
     templateUrl: './order-filter-dialog.component.html',
-    styleUrls: ['./order-filter-dialog.component.scss']
+    styleUrls: ['./order-filter-dialog.component.scss'],
+    standalone: true,
+    imports: [CommonModule, MaterialModule, FormsModule]
 })
 export class OrderFilterDialogComponent {
     orderStatusMapper: any = orderStatusMapper;

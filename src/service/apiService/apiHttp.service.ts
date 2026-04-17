@@ -1,5 +1,5 @@
 import { SessionTimeoutService } from '../session-timeout.service';
-import { LoaderstatusService } from './../../app/main-loader/loaderstatus.service';
+import { LoaderstatusService } from '../loaderstatus.service';
 import { environment } from './../../environments/environment';
 import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';

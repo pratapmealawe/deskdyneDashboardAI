@@ -3,6 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
+import { AddVendorFirmComponent } from './add-vendor-firm/add-vendor-firm.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
@@ -195,8 +196,20 @@ export class VendorFirmComponent {
   }
 
   addVendor() {
-    this.resetForm()
-    this.router.navigate(['/app/addVendorFirm']);
+    this.resetForm();
+    const dialogRef = this.dialog.open(AddVendorFirmComponent, {
+      width: '90vw',
+      maxWidth: '1000px',
+      maxHeight: '90vh',
+      disableClose: true,
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getAllVendors();
+      }
+    });
   }
 
 

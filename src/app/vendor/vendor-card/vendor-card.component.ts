@@ -5,11 +5,21 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
 import { PolicyService } from 'src/service/policy.service';
 import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { AddVendorCommponent } from '../add-vendor/add-vendor.component';
+import { MatDialog } from '@angular/material/dialog';
+
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
 
 @Component({
   selector: 'app-vendor-card',
   templateUrl: 'vendor-card.component.html',
   styleUrls: ['vendor-card.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class VendorCardComponent implements OnInit {
   private _vendorFirm: any[] = [];
@@ -35,7 +45,8 @@ export class VendorCardComponent implements OnInit {
     private runtimeStorageService: RuntimeStorageService,
     private apiMainService: ApiMainService,
     private policyService: PolicyService,
-    private confirmationModalService: ConfirmationModalService
+    private confirmationModalService: ConfirmationModalService,
+    private dialog: MatDialog
   ) { }
   refreshData() {
     this.ngOnInit()
@@ -50,7 +61,17 @@ export class VendorCardComponent implements OnInit {
 
   editVendor(vendor: any) {
     this.runtimeStorageService.setCacheData('VENDOR_EDIT', vendor);
-    this.router.navigate(['/app/addVendor']);
+    const dialogRef = this.dialog.open(AddVendorCommponent, {
+      width: '1200px',
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.deleted.emit();
+      }
+    });
   }
 
   async deleteVendor() {

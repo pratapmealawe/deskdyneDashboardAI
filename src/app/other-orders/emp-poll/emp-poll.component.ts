@@ -4,10 +4,22 @@ import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
+import { EmpPollCardComponent } from './emp-poll-card/emp-poll-card.component';
+
 @Component({
     selector: 'app-emp-poll',
     templateUrl: './emp-poll.component.html',
-    styleUrls: ['./emp-poll.component.scss']
+    styleUrls: ['./emp-poll.component.scss'],
+    standalone: true,
+    imports: [
+        CommonModule,
+        FormsModule,
+        MaterialModule,
+        EmpPollCardComponent
+    ]
 })
 export class EmployeePollComponent implements OnInit {
     selectedPollDate: Date = new Date();

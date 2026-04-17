@@ -63,7 +63,7 @@ export const DEFAULT_BUTTON_POLICIES: Record<string, boolean> = {
   editIncident: false,
   deleteIncident: false,
 
-  addVendorFirm: false,
+  'add-vendor-firm': false,
   editVendorFirm: false,
   deleteVendorFirm: false,
 
@@ -184,8 +184,8 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
   searchOrder: false,
   dashboard: false,
   serverlogs: false,
-  b2bAddorg: false,
-  b2bSearchOrg: false,
+  'add-organization': false,
+  organization: false,
   consumptionOrders: false,
   orgDashboard: true,
   orgMenuItems: true,
@@ -214,20 +214,20 @@ export const DEFAULT_ROUTE_POLICIES: Record<string, boolean> = {
   viewEnquiries: false,
   outletExcelExport: false,
   dailyAdminExcelExport: false,
-  mainDashboard: false,
+  'organization-dashboard': false,
   customer: false,
-  outletMasterMenu: false,
-  addVendorFirm: false,
-  searchVendorFirm: false,
+  'outlet-master-menu': false,
+  'add-vendor-firm': false,
+  'vendor-firm': false,
   billing: true,
   otherOrder: false,
   configImages: false,
   configImagesGroup: false,
   vendorPayout: false,
   auditReport: false,
-  eventPopup: false,
+  'event-popup': false,
   vendorWalletDashboard: false,
-  allOrders: false,
+  'orders-dashboard': false,
   scheduledNotifications: false,
   sessionManagement: false,
 };
@@ -320,15 +320,15 @@ export const DEFAULT_TAB_POLICIES: Record<string, boolean> = {
 export const GROUPED_ROUTE_POLICIES = [
   {
     title: 'ORGANIZATION',
-    keys: ['b2bAddorg', 'b2bSearchOrg', 'orgDashboard', 'orgSubcription', 'orgEmployeeList', 'orgBilling', 'orgSalaryDeduction', 'sessionManagement']
+    keys: ['add-organization', 'organization', 'orgDashboard', 'orgSubcription', 'orgEmployeeList', 'orgBilling', 'orgSalaryDeduction', 'sessionManagement']
   },
   {
     title: 'ORDERS & TRANSACTIONS',
-    keys: ['currentOrder', 'searchOrder', 'pastOrder', 'allOrders', 'otherOrder', 'consumptionOrders', 'orgOrders', 'orgManualOrders', 'orgBulkOrderHistory']
+    keys: ['currentOrder', 'searchOrder', 'pastOrder', 'orders-dashboard', 'otherOrder', 'consumptionOrders', 'orgOrders', 'orgManualOrders', 'orgBulkOrderHistory']
   },
   {
     title: 'MENU & FOOD MANAGEMENT',
-    keys: ['orgMenuItems', 'foodItem', 'outletMasterMenu', 'orgMenuCounters']
+    keys: ['orgMenuItems', 'foodItem', 'outlet-master-menu', 'orgMenuCounters']
   },
   {
     title: 'REVIEWS & FEEDBACK',
@@ -340,7 +340,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'VENDOR MANAGEMENT',
-    keys: ['vendor', 'addVendor', 'searchVendor', 'addVendorFirm', 'searchVendorFirm', 'vendorPayout', 'vendorWalletDashboard']
+    keys: ['vendor', 'addVendor', 'searchVendor', 'add-vendor-firm', 'vendor-firm', 'vendorPayout', 'vendorWalletDashboard']
   },
   {
     title: 'OUTLET MANAGEMENT',
@@ -356,7 +356,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'DASHBOARD',
-    keys: ['home', 'dashboard', 'mainDashboard', 'orgDashboard']
+    keys: ['home', 'dashboard', 'organization-dashboard', 'orgDashboard']
   },
   {
     title: 'CONFIGURATION',
@@ -364,7 +364,7 @@ export const GROUPED_ROUTE_POLICIES = [
   },
   {
     title: 'SUPPORT & MISC',
-    keys: ['faq', 'viewEnquiries', 'serverlogs', 'eventPopup']
+    keys: ['faq', 'viewEnquiries', 'serverlogs', 'event-popup']
   }
 ];
 
@@ -376,7 +376,7 @@ export const GROUPED_BUTTON_POLICIES = [
   },
   {
     title: 'VENDOR MANAGEMENT',
-    keys: ['addVendor', 'editVendor', 'deleteVendor', 'addVendorFirm', 'editVendorFirm', 'deleteVendorFirm']
+    keys: ['addVendor', 'editVendor', 'deleteVendor', 'add-vendor-firm', 'editVendorFirm', 'deleteVendorFirm']
   },
   {
     title: 'ADMIN & EMPLOYEE',
@@ -509,7 +509,7 @@ export const PERMISSION_MAP: Record<string, string> = {
   'VENDOR:DELETE': 'deleteVendor',
 
   // VENDOR FIRM
-  'VENDOR_FIRM:ADD': 'addVendorFirm',
+  'VENDOR_FIRM:ADD': 'add-vendor-firm',
   'VENDOR_FIRM:EDIT': 'editVendorFirm',
   'VENDOR_FIRM:DELETE': 'deleteVendorFirm',
 

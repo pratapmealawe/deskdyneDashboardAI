@@ -4,7 +4,7 @@ import { FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Va
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { MatChipsModule } from '@angular/material/chips';
-import { ImageCropperComponent } from '../../../image-cropper/image-cropper.component';
+import { ImageCropperComponent } from '../../../common-components/image-cropper/image-cropper.component';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from 'src/environments/environment';
@@ -30,10 +30,10 @@ export class AddOutletMasterMenuComponent implements OnInit {
   uploadedImageFile: any;
   imageReplaced: boolean = false;
   displayImgUrl = environment.imageUrl;
-  
+
   categoryList = categoryList;
   nutritionListOptions = nutritionListOptions;
-  
+
   mealTimeList = [
     { "mealType": "Fullday", "acceptOrderFrom": "06:00", "acceptOrderTill": "23:00" },
     { "mealType": "Breakfast", "acceptOrderFrom": "07:00", "acceptOrderTill": "09:00" },
@@ -112,7 +112,7 @@ export class AddOutletMasterMenuComponent implements OnInit {
     if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
       this.nutrition_Lists.clear();
       item.nutritionInfo.nutritionList.forEach((nutrition: any) => {
-        const option = this.nutritionListOptions.find(opt => 
+        const option = this.nutritionListOptions.find(opt =>
           opt.id === nutrition.nutritionId || opt.title === nutrition.nutritionName
         );
         this.nutrition_Lists.push(this.fb.group({

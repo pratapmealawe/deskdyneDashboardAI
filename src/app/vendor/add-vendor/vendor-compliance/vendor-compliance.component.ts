@@ -1,14 +1,14 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { environment } from 'src/environments/environment';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
+import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PolicyService } from 'src/service/policy.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
-import { PdfuploadComponent } from 'src/app/pdfupload/pdfupload.component';
+import { PdfuploadComponent } from 'src/app/common-components/pdfupload/pdfupload.component';
 
 @Component({
   selector: 'app-vendor-compliance',

@@ -21,8 +21,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { OrderCardModule } from 'src/app/order-card/order-card.module';
-import { OrderFilterDialogModule } from 'src/app/common-components/order-filter-dialog/order-filter-dialog.module';
+import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.component';
 
 @Component({
   selector: 'app-event-pop-orders',
@@ -35,8 +34,8 @@ import { OrderFilterDialogModule } from 'src/app/common-components/order-filter-
     FormsModule,
     ReactiveFormsModule,
     HighchartsChartModule,
-    OrderCardModule,
-    OrderFilterDialogModule
+    OrderCardComponent,
+    OrderFilterDialogComponent
   ]
 })
 export class EventPopOrdersComponent implements OnInit {

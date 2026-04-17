@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoaderstatusService } from 'src/app/main-loader/loaderstatus.service';
+import { LoaderstatusService } from 'src/service/loaderstatus.service';
 import { environment } from 'src/environments/environment';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { PolicyService } from 'src/service/policy.service';

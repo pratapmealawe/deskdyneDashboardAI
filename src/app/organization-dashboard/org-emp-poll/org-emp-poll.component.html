@@ -1,31 +1,18 @@
-<div class="dashboard-header">
-    <div class="hero-section">
-        <div class="hero-content">
-            <div class="title-group">
-                <h1>Employee Engagement Poll</h1>
-                <p>Track internal feedback and meal preferences across organizations</p>
-            </div>
-            <div class="hero-badge" *ngIf="adminOrg">
-                <mat-icon>business</mat-icon> {{ adminOrg.organization_name }}
-            </div>
-        </div>
-    </div>
-
-    <!-- Filter Bar -->
-    <div class="filter-glass-bar">
+<div class="filter-card">
+    <div class="filter-row">
         <div class="filter-item">
-            <label>Poll Date</label>
-            <mat-form-field appearance="outline">
+            <span class="filter-label">Poll Date</span>
+            <mat-form-field appearance="outline" class="filter-field">
                 <mat-icon matPrefix>event</mat-icon>
-                <input matInput [matDatepicker]="picker" [(ngModel)]="selectedPollDate">
-                <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
+                <input matInput [matDatepicker]="pollDatePicker" [(ngModel)]="selectedPollDate" (dateChange)="getEmployeePollList($event.value)"
+                    placeholder="Select date">
+                <mat-datepicker-toggle matIconSuffix [for]="pollDatePicker"></mat-datepicker-toggle>
+                <mat-datepicker #pollDatePicker></mat-datepicker>
             </mat-form-field>
         </div>
-
         <div class="filter-item" *ngIf="!adminOrg">
-            <label>Organization</label>
-            <mat-form-field appearance="outline">
+            <span class="filter-label">Organization</span>
+            <mat-form-field appearance="outline" class="filter-field">
                 <mat-icon matPrefix>domain</mat-icon>
                 <mat-select placeholder="All Organizations" (selectionChange)="onOrgChange($event.value)">
                     <mat-option [value]="null">All Organizations</mat-option>
@@ -35,10 +22,9 @@
                 </mat-select>
             </mat-form-field>
         </div>
-
         <div class="filter-item">
-            <label>Cafeteria</label>
-            <mat-form-field appearance="outline">
+            <span class="filter-label">Cafeteria</span>
+            <mat-form-field appearance="outline" class="filter-field">
                 <mat-icon matPrefix>store</mat-icon>
                 <mat-select [(ngModel)]="selectedCafeteria" placeholder="All Cafes">
                     <mat-option [value]="null">All Cafes</mat-option>
@@ -48,79 +34,43 @@
                 </mat-select>
             </mat-form-field>
         </div>
-
+        <div class="filter-item">
+            <span class="filter-label">Search</span>
+            <mat-form-field appearance="outline" class="filter-field">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput [(ngModel)]="searchQuery" (input)="applySearchFilter()" placeholder="Search employee, phone...">
+            </mat-form-field>
+        </div>
         <div class="filter-actions">
-            <button class="btn-apply" (click)="getEmployeePollList(selectedPollDate)" [disabled]="isLoading">
+            <button mat-flat-button color="primary" (click)="getEmployeePollList(selectedPollDate)">
                 <mat-icon>filter_list</mat-icon> Apply
             </button>
-            <button class="btn-export" (click)="exportEmployeePollToExcel()" [disabled]="!filteredList?.length || isLoading">
+            <button mat-stroked-button color="primary" (click)="exportEmployeePollToExcel()" [disabled]="!filteredList?.length || isLoading">
                 <mat-icon>download</mat-icon> Export
             </button>
         </div>
     </div>
 </div>
 
-<!-- Stats Section -->
-<div class="stats-grid">
-    <div class="stat-card">
-        <div class="stat-icon blue"><mat-icon>how_to_reg</mat-icon></div>
-        <div class="stat-info">
-            <span class="stat-value">{{ stats.totalVotes | number }}</span>
-            <span class="stat-label">Total Votes</span>
-        </div>
+<div class="orders-container">
+    <div *ngIf="isLoading" class="loading-container">
+        <mat-spinner diameter="40"></mat-spinner>
     </div>
-    <div class="stat-card">
-        <div class="stat-icon purple"><mat-icon>star</mat-icon></div>
-        <div class="stat-info">
-            <span class="stat-value text-truncate" [matTooltip]="stats.mostVotedItem" style="max-width: 140px;">
-                {{ stats.mostVotedItem }}
-            </span>
-            <span class="stat-label">Top Choice</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon orange"><mat-icon>people</mat-icon></div>
-        <div class="stat-info">
-            <span class="stat-value">{{ stats.affectedEmployees | number }}</span>
-            <span class="stat-label">Employees Voted</span>
-        </div>
-    </div>
-    <div class="stat-card">
-        <div class="stat-icon green"><mat-icon>shopping_bag</mat-icon></div>
-        <div class="stat-info">
-            <span class="stat-value">{{ stats.totalOrders | number }}</span>
-            <span class="stat-label">Grouped Orders</span>
+
+    <div *ngIf="!isLoading">
+        <div *ngIf="filteredList.length > 0; else noRecord">
+            <div class="orders-list">
+                <app-org-emp-poll-card *ngFor="let group of filteredList" [orderInput]="group"></app-org-emp-poll-card>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- Main Content -->
-<div class="content-section">
-    <div class="section-header">
-        <h2>Poll Results ({{ filteredList.length }})</h2>
-        <div class="search-box">
-            <mat-icon>search</mat-icon>
-            <input type="text" [(ngModel)]="searchQuery" (input)="applySearchFilter()" 
-                   placeholder="Search employee, phone or organization...">
-        </div>
-    </div>
-
-    <div class="loading-overlay" *ngIf="isLoading">
-        <mat-spinner diameter="48" strokeWidth="4"></mat-spinner>
-    </div>
-
-    <div class="orders-list" *ngIf="!isLoading">
-        <ng-container *ngIf="filteredList.length > 0; else emptyState">
-            <app-org-emp-poll-card *ngFor="let group of filteredList" [orderInput]="group"></app-org-emp-poll-card>
-        </ng-container>
-    </div>
-</div>
-
-<!-- Empty State -->
-<ng-template #emptyState>
+<ng-template #noRecord>
     <div class="empty-state">
-        <mat-icon>ballot</mat-icon>
+        <mat-icon>search_off</mat-icon>
         <h3>No Poll Data Found</h3>
-        <p>There are no active polls matching your current criteria. Try adjusting the date or cafe selection.</p>
+        <p>We couldn't find any poll results matching your criteria. Try adjusting your filters.</p>
     </div>
 </ng-template>
+

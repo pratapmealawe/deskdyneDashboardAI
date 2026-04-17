@@ -11,18 +11,18 @@ export class NavigationService {
 
   deskDineOptions: any = [
     { name: 'Home', showParent: true, route: 'home', image: 'home', imageblue: 'home_blue' },
-    { name: 'Dashboard', showParent: true, route: 'mainDashboard', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
+    { name: 'Dashboard', showParent: true, route: 'organization-dashboard', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
     { name: 'Org Dashboard', showParent: true, route: 'dashboard', image: 'Dashbaord_white_1', imageblue: 'Organization_dashbaord_blue' },
-    { name: 'Orders Dashboard', showParent: true, route: 'allOrders', image: 'Billing_white', imageblue: 'Billing_blue' },
-    { name: 'Organization', showParent: true, route: 'b2bSearchOrg', image: 'Organization_white', imageblue: 'Organization_Blue' },
+    { name: 'Orders Dashboard', showParent: true, route: 'orders-dashboard', image: 'Billing_white', imageblue: 'Billing_blue' },
+    { name: 'Organization', showParent: true, route: 'organization', image: 'Organization_white', imageblue: 'Organization_Blue' },
     {
       name: 'Outlet', showParent: true, image: 'Outlet_white', imageblue: 'Outlet_blue', children: [
         { name: 'Search Outlet', route: 'outlet', showChild: true },
-        { name: 'Outlet Master Menu', route: 'outletMasterMenu', showChild: true }
+        { name: 'Outlet Master Menu', route: 'outlet-master-menu', showChild: true }
       ]
     },
-    { name: 'Event Popup', showParent: true, route: 'eventPopup', image: 'Outlet_white', imageblue: 'Outlet_blue' },
-    { name: 'Vendor Firm', showParent: true, route: 'searchVendorFirm', image: 'Vendor firm_white', imageblue: 'Vendor firm_blue' },
+    { name: 'Event Popup', showParent: true, route: 'event-popup', image: 'Outlet_white', imageblue: 'Outlet_blue' },
+    { name: 'Vendor Firm', showParent: true, route: 'vendor-firm', image: 'Vendor firm_white', imageblue: 'Vendor firm_blue' },
     { name: 'Vendor', showParent: true, route: 'searchVendor', image: 'Vendor_white', imageblue: 'Vendor_blue' },
     {
       name: 'Outlet Orders', showParent: true, image: 'Outlet orders_white', imageblue: 'Outlet orders_blue', children: [
@@ -43,7 +43,7 @@ export class NavigationService {
     { name: 'Vendor Payout', showParent: true, route: 'vendorPayout', image: 'Users_white', imageblue: 'Users_blue' },
     { name: 'Users', showParent: true, route: 'customer', image: 'Users_white', imageblue: 'Users_blue' },
     { name: 'Billing', showParent: true, route: 'billing', image: 'Billing_white', imageblue: 'Billing_blue' },
-    { name: 'Food Items', showParent: true, route: 'foodItem', image: 'Food items_white', imageblue: 'Food items_blue' },
+    { name: 'Bulk Master Menu', showParent: true, route: 'bulkMasterMenu', image: 'Food items_white', imageblue: 'Food items_blue' },
     {
       name: 'Incident Reporting',
       showParent: true,

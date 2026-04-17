@@ -18,7 +18,7 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'orgMenuCounters', loadComponent: () => import('./org-menu-counters/org-menu-counters.component').then(m => m.OrgMenuCountersComponent) },
       { path: 'orgIncidentManagement', loadComponent: () => import('./org-incident-management/org-incident-management.component').then(m => m.OrgIncidentManagementComponent) },
       { path: 'auditReport', loadComponent: () => import('./audit-report/audit-report.component').then(m => m.AuditReportComponent) },
-      { path: 'orgChecklist', loadChildren: () => import('../checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
+      { path: 'orgChecklist', loadChildren: () => import('../checklist-question/checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
       { path: 'orgEmployeeList', loadComponent: () => import('./org-employee-list/org-employee-list.component').then(m => m.OrgEmployeeListComponent) },
       { path: 'orgBulkOrderHistory', loadComponent: () => import('./org-bulk-order-history/org-bulk-order-history.component').then(m => m.OrgBulkOrderHistoryComponent) },
       { path: 'orgManualOrders', loadComponent: () => import('./org-manual-orders/org-manual-orders.component').then(m => m.OrgManualOrdersComponent) },
@@ -26,12 +26,12 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'orgSalaryDeduction', loadComponent: () => import('./org-salary-deduction/org-salary-deduction.component').then(m => m.OrgSalaryDeductionComponent) },
       { path: 'submitChecklist', loadComponent: () => import('./org-checklist/org-checklist.component').then(m => m.OrgChecklistComponent) },
       { path: 'consumptionOrders', loadChildren: () => import('../consumption-order-details/consumption-order-details.module').then(m => m.ConsumptionOrderDetailsModule) },
-      { path: 'outletExcelExport', loadChildren: () => import('../common-components/outlet-excel-export/outlet-excel-export.module').then(m => m.OutletExcelExportModule) },
-      { path: 'dailyAdminExcelExport', loadChildren: () => import('../common-components/daily-admin-excel-export/daily-admin-excel-export.module').then(m => m.DailyAdminExcelExportModule) },
-      { path: 'customer', loadChildren: () => import('../common-components/customer/customer.module').then(m => m.CustomerModule) },
+      { path: 'outletExcelExport', loadComponent: () => import('../outlet-excel-export/outlet-excel-export.component').then(m => m.OutletExcelExportComponent) },
+      { path: 'dailyAdminExcelExport', loadComponent: () => import('../excel-export/daily-admin-excel-export/daily-admin-excel-export.component').then(m => m.DailyAdminExcelExportComponent) },
+      { path: 'customer', loadChildren: () => import('../customer/customer.module').then(m => m.CustomerModule) },
       { path: 'billing', loadChildren: () => import('../billing/billing.module').then(m => m.BillingModule) },
       { path: 'orgEmpPoll', loadComponent: () => import('./org-emp-poll/org-emp-poll.component').then(m => m.OrgEmpPollComponent) },
-      { path: '', redirectTo: 'orgDashboard', pathMatch: 'full' }
+      { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   }
 ];
