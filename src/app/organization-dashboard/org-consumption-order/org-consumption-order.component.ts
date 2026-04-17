@@ -1,23 +1,32 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
-import { MatDialog } from '@angular/material/dialog';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
-import { ConfirmationModalService } from '../../service/confirmation-modal.service';
 import { environment } from 'src/environments/environment';
-import { ExcelService } from 'src/service/excel.service';
-import { CommonSelectConfig, SubmitPayload } from '../common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ToasterService } from 'src/service/toaster.service';
+import { CommonSelectConfig, SubmitPayload, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { MaterialModule } from 'src/app/material.module';
+import { ConsumptionOrderCardComponent } from 'src/app/common-components/consumption-order-card/consumption-order-card.component';
 
 @Component({
-  selector: 'app-consumption-order-details',
-  templateUrl: './consumption-order-details.component.html',
-  styleUrls: ['./consumption-order-details.component.scss']
+  selector: 'app-org-consumption-order',
+  templateUrl: './org-consumption-order.component.html',
+  styleUrls: ['./org-consumption-order.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    MaterialModule,
+    CommonOutletCafeSelectComponent,
+    ConsumptionOrderCardComponent
+  ]
 })
-export class ConsumptionOrderDetailsComponent implements OnInit {
+export class OrgConsumptionOrderComponent implements OnInit {
   headerConfig: CommonSelectConfig = {
     mode: 'cafeteria',
     showDateRange: true,
@@ -29,10 +38,15 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
   filteredData!: SubmitPayload;
 
   orgAdmin: any;
+  allOrderList: any[] = [];
   filteredOrderList: any[] = [];
+  searchText: string = '';
   imageUrl = environment.imageUrl;
-  orderDate: any;
-  statusPayload: any;
+  isLoading: boolean = false;
+
+  // Analytics
+  totalOrdersCount: number = 0;
+  totalItemAmount: number = 0;
 
   // Pagination state
   pageSize = 5;
@@ -41,38 +55,19 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private toaster: ToasterService,
-    private localStorageService: LocalStorageService,
-    private confirmationModalService: ConfirmationModalService,
-    private excel: ExcelService,
-    private dialog: MatDialog
+    private localStorageService: LocalStorageService
   ) { }
 
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.headerConfig.defaultOrgId = this.orgAdmin?.orgDetails?._id;
+    if (this.orgAdmin?.orgDetails?._id) {
+       this.headerConfig.defaultOrgId = this.orgAdmin.orgDetails._id;
+    }
+    
     if (this.orgAdmin?.role === 'HYPERPURE_POC') {
       this.headerConfig.defaultCafeId = this.orgAdmin?.cafeDetails?.[0]?.cafeteria_id;
       this.headerConfig.disableCafe = true;
     }
-  }
-
-  // Admin meta (safe fallback)
-  private get adminName(): string {
-    return (
-      this.orgAdmin?.adminDetails?.name ||
-      this.orgAdmin?.name ||
-      this.orgAdmin?.userName ||
-      'Admin'
-    );
-  }
-  private get adminMobile(): string {
-    return (
-      this.orgAdmin?.adminDetails?.mobile ||
-      this.orgAdmin?.phone ||
-      this.orgAdmin?.mobile ||
-      ''
-    );
   }
 
   // Slice list for current page
@@ -112,151 +107,68 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
 
   async getConsumptionOrderByFilter(body: any) {
     try {
+      this.isLoading = true;
       const res = await this.apiMainService.fetchConsumptionOrdersbysearchObj(body);
-      this.filteredOrderList = Array.isArray(res) ? res : [];
-      this.pageIndex = 0;
+      this.allOrderList = Array.isArray(res) ? res : [];
+      this.applySearchFilter();
     } catch (err: any) {
       console.error('Error fetching outlet orders', err);
-      this.filteredOrderList = [];
-      this.pageIndex = 0;
+      this.allOrderList = [];
+      this.applySearchFilter();
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  /** ===================== APPROVE / CANCEL ===================== */
-
-  // Approve All
-  showPopupForItemActivation(order: any, status: 'approved' | 'cancelled') {
-    if (status === 'cancelled') {
-      // handled via onCancelAll(...) elsewhere in your code
-      return;
-    }
-    this.orderDate = order.orderDate;
-    this.statusPayload = {
-      orderDate: this.orderDate,
-      status: 'approved',
-      // include admin meta on approve too
-      adminName: this.adminName,
-      adminMobile: this.adminMobile
-    };
-    const statusText = `Are you sure you want to approve all menu items?`;
-    this.confirmationModalService.modal({
-      msg: statusText,
-      callback: this.updateConsumptionOrderStatus,
-      context: this,
-      data: status
+  calculateTotals() {
+    this.totalOrdersCount = this.filteredOrderList.length;
+    let total = 0;
+    this.filteredOrderList.forEach(order => {
+      (order.mealTypeList || []).forEach((m: any) => {
+        const mealTotal = Number(m.totalPrice) || (Number(m.count) || 0) * (Number(m.mealPrice) || 0);
+        total += mealTotal;
+      });
     });
+    this.totalItemAmount = total;
   }
 
-  // Approve Single
-  showPopupForSinleItemActivation(order: any, meal: any, status: 'approved' | 'cancelled') {
-    if (status === 'cancelled') {
-      // handled via onCancelItem(...) elsewhere in your code
-      return;
+  applySearchFilter() {
+    if (!this.searchText) {
+      this.filteredOrderList = [...this.allOrderList];
+    } else {
+      const query = this.searchText.toLowerCase();
+      this.filteredOrderList = this.allOrderList.filter(order => {
+        const matchesMeal = (order.mealTypeList || []).some((m: any) =>
+          m.itemName?.toLowerCase().includes(query) ||
+          m.status?.toLowerCase().includes(query)
+        );
+        const matchesOrg = order.organization_name?.toLowerCase().includes(query);
+        const matchesCafe = order.cafeteria_name?.toLowerCase().includes(query);
+        const matchesUser = order.userDetails?.userName?.toLowerCase().includes(query) ||
+          order.userDetails?.phoneNo?.includes(query);
+
+        return matchesMeal || matchesOrg || matchesCafe || matchesUser;
+      });
     }
-    this.orderDate = order.orderDate;
-    this.statusPayload = {
-      orderDate: this.orderDate,
-      status: 'approved',
-      itemId: meal._id,
-      // include admin meta on approve too
-      adminName: this.adminName,
-      adminMobile: this.adminMobile
-    };
-    const statusText = `Are you sure you want to approve ${meal.itemName} item?`;
-    this.confirmationModalService.modal({
-      msg: statusText,
-      callback: this.updateConsumptionSingleMealStatus,
-      context: this,
-      data: status
-    });
+    this.calculateTotals();
+    this.pageIndex = 0;
   }
 
-  // === CANCEL: All items in an order ===
-  onCancelAll(order: any) {
-    const reason = (window.prompt('Enter cancel reason for all items') || '').trim();
-    if (!reason) return; // user aborted
-
-    this.orderDate = order.orderDate;
-    this.statusPayload = {
-      orderDate: this.orderDate,
-      status: 'cancelled',
-      cancelReason: reason,
-      adminName: this.adminName,
-      adminMobile: this.adminMobile
-    };
-
-    this.updateConsumptionOrderStatus(); // will refetch via filterOrders()
-  }
-
-  // === CANCEL: Single item ===
-  onCancelItem(order: any, meal: any) {
-    const reason = (window.prompt(`Enter cancel reason for "${meal?.itemName}"`) || '').trim();
-    if (!reason) return; // user aborted
-
-    this.orderDate = order.orderDate;
-    this.statusPayload = {
-      orderDate: this.orderDate,
-      status: 'cancelled',
-      itemId: meal._id,
-      cancelReason: reason,
-      adminName: this.adminName,
-      adminMobile: this.adminMobile
-    };
-
-    this.updateConsumptionSingleMealStatus(); // will refetch via filterOrders()
-  }
-
-  async updateConsumptionOrderStatus() {
-    try {
-      await this.apiMainService.updateConsumptionOrderStatus(
-        this.filteredOrderList?.[0]?.organization_id,
-        this.filteredOrderList?.[0]?.cafeteria_orignal_id,
-        this.statusPayload
-      );
-      this.filterOrders();
-    } catch (err: any) {
-      console.error('Error updating order status', err);
-    }
-  }
-
-  async updateConsumptionSingleMealStatus() {
-    try {
-      await this.apiMainService.updateConsumptionSingleMeslStatus(
-        this.filteredOrderList?.[0]?.organization_id,
-        this.filteredOrderList?.[0]?.cafeteria_orignal_id,
-        this.statusPayload
-      );
-      this.filterOrders();
-    } catch (err: any) {
-      console.error('Error updating single meal status', err);
-    }
-  }
-
-  checkAllMealStatus(order: any) {
-    return order.mealTypeList.find((data: any) => data.status == 'review');
-  }
-
-  downloadOrder(order: any) {
-    const url = `${this.imageUrl}${order.imageUrl}`;
-    const link = document.createElement('a');
-    link.href = url;
-    const fileName = order.imageUrl?.split('/').pop() || 'downloaded-file';
-    link.download = fileName;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  }
-
-  // Helpful for ngFor
   trackByOrderId = (_: number, order: any) => order?._id ?? order?.orderDate ?? _;
 
-  /** ===================== Excel Export (updated spec) ===================== */
+  /** ===================== Excel Export ===================== */
 
-  // pick latest status history for a meal (for admin meta / reason)
+  excelExport() {
+    this.exportConsumptionOrdersExcel();
+  }
+
+  downloadPdf() {
+    console.log('PDF export not implemented for Consumption Orders yet');
+  }
+
   private latestStatusEntry(meal: any): { orderstatus?: string; reason?: string; adminName?: string; adminMobile?: string } {
     const arr = Array.isArray(meal?.statusHistory) ? meal.statusHistory : [];
     if (!arr.length) return {};
-    // assuming chronological; if not, sort by updatedOn
     const last = [...arr].sort((a, b) => new Date(a?.updatedOn || 0).getTime() - new Date(b?.updatedOn || 0).getTime()).pop();
     return {
       orderstatus: last?.orderstatus,
@@ -282,27 +194,11 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
       return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
     };
 
-    // HEADERS (updated):
-    // Parent/date row still shows Date, Review, Image (group header)
-    // Child rows now have:
-    // Created At, Org Name, Cafeteria Name, Item Name, Meal Price, Count, Total, Item Status, Created By (Name), Created By (Phone), Admin Name, Admin Mobile, Cancel Reason
     const headers = [
-      'Date',            // A (parent)
-      'Review',          // B (parent)
-      'Image',           // C (parent)
-      'Created At',      // D
-      'Org Name',        // E
-      'Cafeteria Name',  // F
-      'Item Name',       // G
-      'Meal Price',      // H
-      'Count',           // I
-      'Total Amount (Incl. GST)', // J
-      'Item Status',     // K
-      'Created By (Name)', // L
-      'Created By (Phone)', // M
-      'Admin Name',      // N
-      'Admin Mobile',    // O
-      'Cancel Reason'    // P
+      'Date', 'Review', 'Image', 'Created At', 'Org Name', 'Cafeteria Name', 
+      'Item Name', 'Meal Price', 'Count', 'Total Amount (Incl. GST)', 
+      'Item Status', 'Created By (Name)', 'Created By (Phone)', 
+      'Admin Name', 'Admin Mobile', 'Cancel Reason'
     ];
     const headerRow = ws.addRow(headers);
     headerRow.height = 22;
@@ -322,7 +218,6 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
     [16, 28, 14, 20, 24, 24, 28, 14, 10, 22, 16, 22, 18, 18, 16, 28]
       .forEach((w, i) => (ws.getColumn(i + 1).width = w));
 
-    // Group data by local date
     const byDate = new Map<string, { orders: any[]; rows: any[] }>();
     for (const order of this.filteredOrderList) {
       const key = toLocalYmd(order.orderDate);
@@ -343,9 +238,7 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
           createdByPhone: order?.userDetails?.phoneNo || '',
           adminName: latest?.adminName || '',
           adminMobile: latest?.adminMobile || '',
-          cancelReason: (String(m.status).toLowerCase() === 'cancelled')
-            ? (latest?.reason || '')
-            : ''
+          cancelReason: (String(m.status).toLowerCase() === 'cancelled') ? (latest?.reason || '') : ''
         };
       });
       const entry = byDate.get(key) || { orders: [], rows: [] };
@@ -355,8 +248,6 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
     }
 
     const dateFill: ExcelJS.Fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFDE68A' } };
-
-    // preload one image per date (same as before)
     const dateImageBuffers = new Map<string, ArrayBuffer | null>();
     for (const [key, entry] of byDate) {
       const withImg = entry.orders.find(o => !!o.imageUrl);
@@ -369,7 +260,6 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
       }
     }
 
-    // Render
     for (const [key, entry] of byDate) {
       const firstOrder = entry.orders[0];
       const parent = ws.addRow([key, (firstOrder?.remark || '').toString(), '', '', '', '', '', '', '', '', '', '', '', '', '', '']);
@@ -403,37 +293,17 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
         }
       }
 
-      // child rows
       for (const it of entry.rows) {
-        const r = ws.addRow([
-          '',                 // Date (parent)
-          '',                 // Review (parent)
-          '',                 // Image (parent)
-          it.createdAt ? it.createdAt : '',    // Created At
-          it.orgName,                           // Org
-          it.cafeName,                          // Cafe
-          it.itemName,                          // Item
-          it.mealPrice,                         // Meal Price
-          it.count,                             // Count
-          it.totalPrice,                        // Total
-          it.itemStatus,                        // Item Status
-          it.createdByName,                     // Created By (Name)
-          it.createdByPhone,                    // Created By (Phone)
-          it.adminName,                         // Admin Name
-          it.adminMobile,                       // Admin Mobile
-          it.cancelReason                       // Cancel Reason
-        ]);
+        const r = ws.addRow(['', '', '', it.createdAt ? it.createdAt : '', it.orgName, it.cafeName, it.itemName, it.mealPrice, it.count, it.totalPrice, it.itemStatus, it.createdByName, it.createdByPhone, it.adminName, it.adminMobile, it.cancelReason]);
         r.outlineLevel = 1;
-
-        // styles
-        r.getCell(4).numFmt = dateTimeFmt; // Created At
+        r.getCell(4).numFmt = dateTimeFmt; 
         r.eachCell((c, idx) => {
           c.border = thinBorder;
-          if (idx === 8 || idx === 10) { // H (Meal Price), J (Total)
+          if (idx === 8 || idx === 10) { 
             c.numFmt = currencyFmt;
             c.alignment = { horizontal: 'right' };
           }
-          if (idx === 9) { // I (Count)
+          if (idx === 9) { 
             c.numFmt = '#,##0';
             c.alignment = { horizontal: 'center' };
           }
@@ -457,7 +327,6 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
     saveAs(blob, fileName);
   }
 
-  /** Fetch image as ArrayBuffer for ExcelJS embedding; falls back gracefully on CORS/errors. */
   private async fetchImageAsBuffer(url: string): Promise<ArrayBuffer | null> {
     try {
       const resp = await fetch(url, { mode: 'cors' });
@@ -468,11 +337,7 @@ export class ConsumptionOrderDetailsComponent implements OnInit {
     }
   }
 
-  /** Convert ArrayBuffer -> base64; guess extension from first order's imageUrl */
-  private async arrayBufferToBase64WithExt(
-    buf: ArrayBuffer,
-    ordersForDate: any[]
-  ): Promise<{ base64: string; ext: 'png' | 'jpeg' }> {
+  private async arrayBufferToBase64WithExt(buf: ArrayBuffer, ordersForDate: any[]): Promise<{ base64: string; ext: 'png' | 'jpeg' }> {
     const ext = this.detectImageExt(ordersForDate) as 'png' | 'jpeg';
     const base64 = await this.arrayBufferToBase64(buf);
     return { base64: `data:image/${ext};base64,${base64}`, ext };

@@ -1,0 +1,38 @@
+<div class="container-fluid">
+  <h3>Consumption Orders</h3>
+
+  <div class="container-fluid">
+    <div class="row mb-4 mt-3 p-3 bg-light rounded ">
+      <app-common-outlet-cafe-select [config]="headerConfig" (submitted)="filterSubmitted($event)">
+      </app-common-outlet-cafe-select>
+    </div>
+  </div>
+
+  <div class="container-fluid pb-4 mt-4">
+    <div class="d-flex justify-content-end mb-3" *ngIf="filteredOrderList.length > 0">
+      <button class="btn-export-excel" mat-stroked-button (click)="exportConsumptionOrdersExcel()">
+        <mat-icon>file_download</mat-icon> Export Excel
+      </button>
+    </div>
+
+    <!-- LIST -->
+    <div *ngFor="let order of pagedOrderList; trackBy: trackByOrderId" class="mb-4">
+      <app-consumption-order-card 
+        [order]="order" 
+        [orgAdmin]="orgAdmin"
+        (orderUpdated)="filterOrders()">
+      </app-consumption-order-card>
+    </div>
+
+    <!-- Paginator -->
+    <div *ngIf="filteredOrderList.length > 0" class="mt-3">
+      <mat-paginator [length]="filteredOrderList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPage($event)" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <div *ngIf="filteredOrderList.length === 0" class="text-center">
+    No Records Found
+  </div>
+</div>

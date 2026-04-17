@@ -42,10 +42,14 @@
             </mat-form-field>
         </div>
         <div class="filter-actions">
+            <button mat-icon-button class="refresh-btn" (click)="refreshOrderList()" matTooltip="Refresh">
+                <mat-icon>refresh</mat-icon>
+            </button>
             <button mat-flat-button color="primary" (click)="getEmployeePollList(selectedPollDate)">
                 <mat-icon>filter_list</mat-icon> Apply
             </button>
-            <button mat-stroked-button color="primary" (click)="exportEmployeePollToExcel()" [disabled]="!filteredList?.length || isLoading">
+            <button mat-stroked-button color="primary" (click)="exportEmployeePollToExcel()"
+                [disabled]="!filteredList?.length || isLoading">
                 <mat-icon>download</mat-icon> Export
             </button>
         </div>

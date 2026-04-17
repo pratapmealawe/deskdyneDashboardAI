@@ -50,7 +50,7 @@ const routes: Routes = [
       { path: 'configImagesGroup', loadChildren: () => import('./miscelleneous/config-images-group/config-images-group.module').then(m => m.ConfigImagesGroupModule) },
 
 
-      { path: 'auditReport', loadChildren: () => import('./consumption-order-details/consumption-order-details.module').then(m => m.ConsumptionOrderDetailsModule) },
+      { path: 'auditReport', loadComponent: () => import('./consumption-order/consumption-order.component').then(m => m.ConsumptionOrderComponent) },
       { path: 'serverlogs', loadChildren: () => import('./miscelleneous/server-logs/server-logs.module').then(m => m.ServerLogsModule) },
       { path: 'billing', loadChildren: () => import('./billing/billing.module').then(m => m.BillingModule) },
       { path: 'appFeedbacks', loadChildren: () => import('./suggessions-feedbacks/suggessions-feedbacks.module').then(m => m.SuggessionsFeedbacksModule) },

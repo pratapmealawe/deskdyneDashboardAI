@@ -1,9 +1,13 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { MaterialModule } from 'src/app/material.module';
 
 import { ApiMainService } from 'src/service/apiService/apiMain.service';
 import { LocalStorageService } from 'src/service/local-storage.service';
 import { SearchFilterService } from 'src/service/search-filter.service';
+import { CommonOutletCafeSelectComponent, CommonSelectConfig, SubmitPayload } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
+
 interface Employee {
   employeeId: string;
   employeeName: string;
@@ -15,154 +19,114 @@ interface Employee {
   cafeteria_name: string;
 }
 
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
 @Component({
   selector: 'app-org-employee-list',
   templateUrl: './org-employee-list.component.html',
   styleUrls: ['./org-employee-list.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule]
+  imports: [CommonModule, FormsModule, MaterialModule, CommonOutletCafeSelectComponent]
 })
 export class OrgEmployeeListComponent implements OnInit, OnChanges {
-  @Input() adminOrg: any
+  @Input() adminOrg: any;
   orgAdmin: any;
+  
   employeeList: Employee[] = [];
   filteredEmployeeList: Employee[] = [];
-  employeeObj: Employee = {
-    cafeteria_id: '',
-    cafeteria_name: '',
-    employeeEmail: '',
-    employeeId: '',
-    employeeName: '',
-    employeePhoneNo: 0,
-    organization_id: '',
-    organization_name: '',
+  searchTerm: string = '';
+  isLoading: boolean = false;
+
+  headerConfig: CommonSelectConfig = {
+    mode: 'cafeteria',
+    showDateRange: false,
+    disableOrg: true,
+    requireAll: false
   };
-  orglist: any[] = [];
-  orgDetails: any = {};
-  employeeForm!: FormGroup;
+
+  currentFilter!: SubmitPayload;
 
   constructor(
-    private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService
   ) { }
 
   ngOnInit(): void {
-    this.initFunc()
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['adminOrg'] && changes['adminOrg'].currentValue) {
-      this.initFunc()
-    }
-  }
-
-  initFunc() {
     this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
-    this.initEmployeeForm();
-    this.getEmployeeListByOrgId();
-    this.getOrgList();
+    this.updateHeaderConfig();
   }
 
-  initEmployeeForm() {
-    this.employeeForm = this.fb.group({
-      employeeId: ['', Validators.required],
-      employeeName: ['', Validators.required],
-      employeeEmail: ['', [Validators.required, Validators.email]],
-      employeePhoneNo: [
-        '',
-        [Validators.required, Validators.pattern('^\\d{10}$')],
-      ],
-      organization_id: [
-        { value: '', disabled: this.orgAdmin.role === 'ORGADMIN' },
-        Validators.required,
-      ],
-      cafeteria_id: ['', Validators.required],
-    });
-  }
-
-  async saveEmployee() {
-    const cafeDetails = this.orgDetails.cafeteriaList.find((cafe: any) =>
-      cafe._id == this.employeeObj.cafeteria_id
-    );
-
-    if (!cafeDetails) { return; }
-    const payload = {
-        ...this.employeeObj,
-        cafeteria_list: [{
-            cafeteria_id: cafeDetails.cafeteria_id,
-            cafeteria_name: cafeDetails.cafeteria_name
-        }]
-    };
-    try {
-      let res = await this.apiMainService.employeeAdd(payload);
-    } catch (error) {
-      console.log(error);
+  ngOnChanges(changes: any): void {
+    if (changes['adminOrg']) {
+      this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
+      this.updateHeaderConfig();
     }
   }
 
-  get f() {
-    return this.employeeForm.controls;
-  }
-
-  async getOrgList() {
-    try {
-      let page = 1;
-      let searchObj = { countOnly: false };
-      let data = await this.apiMainService.B2B_fetchFilteredAllOrgs(
-        searchObj,
-        page
-      );
-      this.orglist = data;
-      this.setInitialData();
-    } catch (error) {
-      console.log(error);
+  updateHeaderConfig() {
+    if (this.adminOrg) {
+      this.headerConfig.defaultOrgId = this.adminOrg._id;
+      this.headerConfig.disableOrg = true;
+    } else if (this.orgAdmin?.role === 'ORGADMIN') {
+      this.headerConfig.defaultOrgId = this.orgAdmin?.orgDetails?._id;
+      this.headerConfig.disableOrg = true;
+    } else {
+      this.headerConfig.disableOrg = false;
     }
+    this.headerConfig = { ...this.headerConfig }; // trigger change detection if needed
   }
 
-  setInitialData() {
-    if (this.orgAdmin.role === 'ORGADMIN') {
-      this.employeeObj.organization_id = this.orgAdmin?.orgDetails?._id;
-      this.employeeObj.organization_name =
-        this.orgAdmin?.orgDetails?.organization_name;
-      this.setOrgDetails();
+  filterSubmitted(event: SubmitPayload) {
+    if (event) {
+      this.currentFilter = event;
+      this.getEmployeeListByOrgId();
     }
-  }
-
-  setOrgDetails() {
-    this.orgDetails = this.orglist.find((org: any) => {
-      return org._id == this.employeeObj?.organization_id;
-    });
-    this.employeeObj.cafeteria_id = '';
   }
 
   async getEmployeeListByOrgId() {
+    if (!this.currentFilter?.org_id) return;
+
     try {
-      let data = await this.apiMainService.getEmployeeListByOrgId(
-        this.orgAdmin?.orgDetails?._id
-      );
-      this.employeeList = data;
-      this.filteredEmployeeList = data.length === 0 ? [] : data;
+      this.isLoading = true;
+      let data = await this.apiMainService.getEmployeeListByOrgId(this.currentFilter.org_id);
+      
+      // Filter by cafeteria if one is selected globally
+      if (this.currentFilter.cafeteria_id) {
+          data = data.filter((emp: any) => emp.cafeteria_id === this.currentFilter.cafeteria_id);
+      }
+      
+      this.employeeList = data || [];
+      this.applySearchFilter();
     } catch (err) {
       console.error('Error fetching employee:', err);
+      this.employeeList = [];
+      this.applySearchFilter();
+    } finally {
+      this.isLoading = false;
     }
   }
 
-  searchFilter(e: any) {
-    const searchText = e.target.value;
+  applySearchFilter() {
+    if (!this.searchTerm) {
+      this.filteredEmployeeList = [...this.employeeList];
+    } else {
+      const config = {
+        keys: ['employeeId', 'employeeName', 'employeeEmail', 'cafeteria_name'],
+      };
+      this.filteredEmployeeList = this.searchService.searchData(
+        this.employeeList,
+        config,
+        this.searchTerm
+      );
+    }
+  }
 
-    const config = {
-      keys: ['employeeId', 'employeeName', 'employeeEmail', 'cafeteria_name'],
-    };
-
-    this.filteredEmployeeList = this.searchService.searchData(
-      this.employeeList,
-      config,
-      searchText
-    );
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
   }
 }
+

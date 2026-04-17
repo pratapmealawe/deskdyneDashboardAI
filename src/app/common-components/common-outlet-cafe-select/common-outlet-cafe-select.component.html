@@ -63,8 +63,9 @@
         </form>
     </div>
     <!-- ===== Submit ===== -->
-    <div class="col-12 d-flex justify-content-end">
-        <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit">
+    <div class="col-12 col-md-auto d-flex align-items-center pt-md-2 mt-md-1">
+        <button mat-flat-button color="primary" (click)="onSubmit()" [disabled]="!canSubmit"
+            class="filter-submit-btn">
             Submit
         </button>
     </div>

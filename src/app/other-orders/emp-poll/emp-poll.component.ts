@@ -161,6 +161,10 @@ export class EmployeePollComponent implements OnInit {
         }
     }
 
+    refreshOrderList() {
+        this.getEmployeePollList(this.selectedPollDate);
+    }
+
     async exportEmployeePollToExcel() {
         if (!this.filteredList || this.filteredList.length === 0) return;
 

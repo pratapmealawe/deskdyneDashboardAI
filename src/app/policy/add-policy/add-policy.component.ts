@@ -46,28 +46,41 @@ export class AddPolicyComponent implements OnInit {
 
   activeTab: 'main' | 'org' = 'main';
 
+  private readonly ORG_DASHBOARD_KEYS = [
+    'home', 'orgDashboard', 'consumptionOrders', 'orgMenuItems', 'outletExcelExport', 
+    'dailyAdminExcelExport', 'orgReviews', 'customer', 'orgVendorInfo', 
+    'orgMenuCounters', 'auditReport', 'orgIncidentManagement', 'orgChecklist', 
+    'orgBulkOrderHistory', 'orgEmpPoll', 'orgSalaryDeduction', 'billing'
+  ];
+
   get filteredRoutePolicies() {
-    return this.groupedRoutePolicies.filter(g => {
-      const isOrgGroup = g.title === 'ORGANIZATION';
-      const hasOrgKeys = g.keys.some(k => k.startsWith('org') || k.includes('organization'));
-      return this.activeTab === 'org' ? (isOrgGroup || hasOrgKeys) : (!isOrgGroup && !hasOrgKeys);
-    });
+    return this.groupedRoutePolicies.map(g => ({
+      ...g,
+      keys: g.keys.filter(k => {
+        const isOrg = this.ORG_DASHBOARD_KEYS.includes(k) || k.startsWith('org');
+        return this.activeTab === 'org' ? isOrg : !isOrg;
+      })
+    })).filter(g => g.keys.length > 0);
   }
 
   get filteredButtonPolicies() {
-    return this.groupedButtonPolicies.filter(g => {
-      const isOrgGroup = g.title === 'ORGANIZATION' || g.title === 'B2B ORGANIZATION MANAGEMENT';
-      const hasOrgKeys = g.keys.some(k => k.startsWith('submit') || k.includes('Organization'));
-      return this.activeTab === 'org' ? (isOrgGroup || hasOrgKeys) : (!isOrgGroup && !hasOrgKeys);
-    });
+    return this.groupedButtonPolicies.map(g => ({
+      ...g,
+      keys: g.keys.filter(k => {
+        const isOrg = this.ORG_DASHBOARD_KEYS.includes(k) || k.startsWith('submit') || k.toLowerCase().includes('organization');
+        return this.activeTab === 'org' ? isOrg : !isOrg;
+      })
+    })).filter(g => g.keys.length > 0);
   }
 
   get filteredTabPolicies() {
-    return this.groupedTabPolicies.filter(g => {
-      const isOrgGroup = g.title === 'ORGANIZATION & COMPLIANCE';
-      const hasOrgKeys = g.keys.some(k => k.startsWith('org') || k.includes('virtualCafeteria'));
-      return this.activeTab === 'org' ? (isOrgGroup || hasOrgKeys) : (!isOrgGroup && !hasOrgKeys);
-    });
+    return this.groupedTabPolicies.map(g => ({
+      ...g,
+      keys: g.keys.filter(k => {
+        const isOrg = this.ORG_DASHBOARD_KEYS.includes(k) || k.startsWith('org') || k.toLowerCase().includes('virtualcafeteria');
+        return this.activeTab === 'org' ? isOrg : !isOrg;
+      })
+    })).filter(g => g.keys.length > 0);
   }
 
   constructor(

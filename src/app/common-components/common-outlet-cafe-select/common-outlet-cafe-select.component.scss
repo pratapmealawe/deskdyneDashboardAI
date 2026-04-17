@@ -2,6 +2,13 @@
   display: none;
 }
 
+.filter-submit-btn {
+  height: 52px !important;
+  border-radius: 8px !important;
+  padding: 0 24px !important;
+  font-weight: 500 !important;
+}
+
 // ::ng-deep .mainContainer .mdc-notched-outline__leading {
 //   border-top-left-radius: 12px !important;
 //   border-bottom-left-radius: 12px !important ;
