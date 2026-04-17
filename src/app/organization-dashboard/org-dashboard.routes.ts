@@ -9,10 +9,11 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'orgDashboard', loadComponent: () => import('./main-dashboard/main-dashboard.component').then(m => m.MainDashboardComponent) },
       { path: 'hyperpureDashboard', loadComponent: () => import('./hyperpure-dashboard/hyperpure-dashboard.component').then(m => m.HyperpureDashboardComponent) },
       { path: 'consumptionOrders', loadComponent: () => import('./org-consumption-order/org-consumption-order.component').then(m => m.OrgConsumptionOrderComponent) },
+      { path: 'orgMenuItems', loadComponent: () => import('./org-menu-items/org-menu-items.component').then(m => m.OrgMenuItemsComponent) },
+      { path: 'outletExcelExport', loadComponent: () => import('../outlet-excel-export/outlet-excel-export.component').then(m => m.OutletExcelExportComponent) },
      
      
       { path: 'orgOrders', loadComponent: () => import('./org-outlet-orders/org-outlet-orders.component').then(m => m.OrgOutletOrdersComponent) },
-      { path: 'orgMenuItems', loadComponent: () => import('./org-menu-items/org-menu-items.component').then(m => m.OrgMenuItemsComponent) },
       { path: 'orgPreOrders', loadComponent: () => import('./org-pre-orders/org-pre-orders.component').then(m => m.OrgPreOrdersComponent) },
       { path: 'orgSubcription', loadComponent: () => import('./org-subscription/org-subscription.component').then(m => m.OrgSubscriptionComponent) },
       { path: 'orgReviews', loadComponent: () => import('./org-reviews/org-reviews.component').then(m => m.OrgReviewsComponent) },
@@ -28,7 +29,6 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'orgBilling', loadComponent: () => import('./org-billing/org-billing.component').then(m => m.OrgBillingComponent) },
       { path: 'orgSalaryDeduction', loadComponent: () => import('./org-salary-deduction/org-salary-deduction.component').then(m => m.OrgSalaryDeductionComponent) },
       { path: 'submitChecklist', loadComponent: () => import('./org-checklist/org-checklist.component').then(m => m.OrgChecklistComponent) },
-      { path: 'outletExcelExport', loadComponent: () => import('../outlet-excel-export/outlet-excel-export.component').then(m => m.OutletExcelExportComponent) },
       { path: 'dailyAdminExcelExport', loadComponent: () => import('../excel-export/daily-admin-excel-export/daily-admin-excel-export.component').then(m => m.DailyAdminExcelExportComponent) },
       { path: 'customer', loadChildren: () => import('../customer/customer.module').then(m => m.CustomerModule) },
       { path: 'billing', loadChildren: () => import('../billing/billing.module').then(m => m.BillingModule) },

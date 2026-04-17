@@ -850,12 +850,19 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getBulkDailyOrderList(status: any, startDate?: any, endDate?: any, orgId?: any) {
+  getBulkDailyOrderList(status: any, startDate?: any, endDate?: any, orgId?: any, cafeteriaId?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
-    const payload: any = { status };
-    if (startDate) payload.startDate = startDate;
-    if (endDate) payload.endDate = endDate;
-    if (orgId) payload.orgId = orgId;
+    let payload: any = {};
+    
+    if (status && typeof status === 'object' && !Array.isArray(status)) {
+      payload = { ...status };
+    } else {
+      payload.status = status;
+      if (startDate) payload.startDate = startDate;
+      if (endDate) payload.endDate = endDate;
+      if (orgId) payload.orgId = orgId;
+      if (cafeteriaId) payload.cafeteriaId = cafeteriaId;
+    }
     
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
   }
@@ -884,6 +891,10 @@ export class ApiMainService {
       }
     }
     return this.apiHttpService.REQUEST(urlObj, payload);
+  }
+
+  getDailyOrdersCountByDateRange(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getDailyOrdersCountByDateRange, payload);
   }
 
   getCafeteriasPollingList(deliveryDate: any) {

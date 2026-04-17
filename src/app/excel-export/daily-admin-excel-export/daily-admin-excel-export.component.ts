@@ -53,6 +53,7 @@ export class DailyAdminExcelExportComponent implements OnInit {
   selectedStatus: string = 'placed';
   selectedAdminOrderDate: Date = new Date();
   selectedAdminOrderDateTo: Date | null = null;
+  selectedCafeteriaId: string | null = null;
   isLoading: boolean = false;
   pageIndex: number = 0;
   pageSize: number = 10;
@@ -111,6 +112,7 @@ export class DailyAdminExcelExportComponent implements OnInit {
       } else {
         this.selectedAdminOrderDateTo = null;
       }
+      this.selectedCafeteriaId = (event.cafeteria_id && event.cafeteria_id !== 'all') ? event.cafeteria_id : null;
       this.getBulkDailyOrderList();
     }
   }
@@ -118,11 +120,14 @@ export class DailyAdminExcelExportComponent implements OnInit {
   async getBulkDailyOrderList() {
     try {
       this.isLoading = true;
-      const dateParam = {
-        fromDate: this.selectedAdminOrderDate.toISOString(),
-        toDate: (this.selectedAdminOrderDateTo || this.selectedAdminOrderDate).toISOString()
+      const payload = {
+        startDate: this.selectedAdminOrderDate.toISOString(),
+        endDate: (this.selectedAdminOrderDateTo || this.selectedAdminOrderDate).toISOString(),
+        orgId: this.orgAdmin?.orgDetails?._id,
+        cafeteriaId: this.selectedCafeteriaId
       };
-      const res: any = await this.apiMainService.getCurrentDailyOrdersCount(dateParam);
+      
+      const res: any = await this.apiMainService.getDailyOrdersCountByDateRange(payload);
       if (res) {
         this.adminOrderStatusList.forEach((status: any) => {
           status.count = res[status.value] || 0;
@@ -151,7 +156,15 @@ export class DailyAdminExcelExportComponent implements OnInit {
       const startDate = this.selectedAdminOrderDate.toISOString();
       const endDate = (this.selectedAdminOrderDateTo || this.selectedAdminOrderDate).toISOString();
 
-      const res: any = await this.apiMainService.getBulkDailyOrderList(status, startDate, endDate, this.orgAdmin?.orgDetails?._id);
+      const payload = {
+        status,
+        startDate,
+        endDate,
+        orgId: this.orgAdmin?.orgDetails?._id,
+        cafeteriaId: this.selectedCafeteriaId
+      };
+
+      const res: any = await this.apiMainService.getBulkDailyOrderList(payload);
       if (res) {
         this.allOrdersList = res.orderList || [];
         this.estimatedTotal = res.totalCount || 0;

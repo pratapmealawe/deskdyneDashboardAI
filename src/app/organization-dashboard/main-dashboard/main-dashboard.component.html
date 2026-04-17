@@ -1,6 +1,6 @@
 <div class="dashboard-container">
   <!-- ── Header ──────────────────────────────────────────────────── -->
-  <header class="dashboard-header">
+  <div class="dashboard-header">
     <div class="header-content">
       <div class="title-section">
         <h1 class="page-title">{{ orgAdmin?.orgDetails?.organization_name }}</h1>
@@ -9,6 +9,7 @@
 
       <div class="actions-section">
         <mat-form-field appearance="outline" class="date-range-field" [formGroup]="dateGroup">
+          <mat-label>Date Range</mat-label>
           <mat-date-range-input [rangePicker]="picker" [max]="maxDate">
             <input matStartDate formControlName="start" placeholder="Start">
             <input matEndDate formControlName="end" placeholder="End" (dateChange)="onEndDateChange()">
@@ -17,32 +18,29 @@
           <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
 
-        <button mat-stroked-button class="filter-btn" [class.active-filter]="activeFilterCount() > 0"
-          (click)="openFilterDialog()">
-          <mat-icon>filter_list</mat-icon>
-          Filters
-          <span class="filter-badge" *ngIf="activeFilterCount() > 0">{{ activeFilterCount() }}</span>
-        </button>
-
         <button mat-stroked-button class="action-btn" (click)="excelExport()" [disabled]="orders.length === 0">
-          <mat-icon class="excel-icon">description</mat-icon>
-          Excel
+          <mat-icon class="excel-icon">table_view</mat-icon> Excel
         </button>
         <button mat-stroked-button class="action-btn" (click)="downloadPdf()" [disabled]="orders.length === 0">
-          <mat-icon class="pdf-icon">picture_as_pdf</mat-icon>
-          PDF
+          <mat-icon class="pdf-icon">picture_as_pdf</mat-icon> PDF
+        </button>
+
+        <button mat-stroked-button class="filter-btn" [class.active-filter]="activeFilterCount() > 0"
+          (click)="openFilterDialog()">
+          <mat-icon>filter_list</mat-icon> Filters
+          <span class="filter-badge" *ngIf="activeFilterCount() > 0">{{ activeFilterCount() }}</span>
         </button>
       </div>
     </div>
-  </header>
+  </div>
 
   <!-- ── Filter Chips ─────────────────────────────────────────────── -->
   <div class="active-filter-chips" *ngIf="activeFilterCount() > 0">
     <div class="chip-strip">
-      <span class="filter-chip" *ngIf="filterCafeteriaId">
+      <div class="filter-chip" *ngIf="filterCafeteriaId">
         Cafeteria: {{ selectedCafeName() }}
         <mat-icon (click)="removeFilter()">close</mat-icon>
-      </span>
+      </div>
     </div>
   </div>
 
@@ -148,9 +146,9 @@
   <!-- ── Employee Engagement (Polls) ──────────────────────────────── -->
   <ng-container *ngIf="dashboardConfig.showEmpPolls">
     <div class="section-divider mt-4">
-      <h2 class="section-title-small">Employee Engagement - Polls</h2>
+      <h2 class="section-title-small">Employee Polls</h2>
     </div>
-
+ 
     <div class="stats-row financial-stats">
       <div class="fin-card highlight-blue">
         <div class="fin-icon poll-icon"><mat-icon>poll</mat-icon></div>
@@ -166,13 +164,13 @@
           <span class="fin-value">{{ pollSummary.activePolls }}</span>
         </div>
       </div>
-      <div class="fin-card highlight-purple">
+      <!-- <div class="fin-card highlight-purple">
         <div class="fin-icon participants-icon"><mat-icon>groups</mat-icon></div>
         <div class="fin-info">
           <span class="fin-label">Total Participants</span>
           <span class="fin-value">{{ pollSummary.totalParticipants }}</span>
         </div>
-      </div>
+      </div>  -->
     </div>
   </ng-container>
 
@@ -200,10 +198,10 @@
     </div>
   </ng-container>
 
-  <!-- ── Daily Bulk Orders ────────────────────────────────────────── -->
+  <!-- ── Admin Daily Orders ────────────────────────────────────────── -->
   <ng-container *ngIf="dashboardConfig.showAdminDaily">
     <div class="section-divider mt-4">
-      <h2 class="section-title-small">Daily Bulk Orders Overview</h2>
+      <h2 class="section-title-small">Admin Daily Orders Overview</h2>
     </div>
 
     <div class="loading-strip" *ngIf="loading">

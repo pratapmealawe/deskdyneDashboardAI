@@ -548,8 +548,9 @@ export class MainDashboardComponent {
         this.dialogTotalCount = res.totalCount || 0;
       }
     } catch (err) {
-      console.error('Error fetching dialog orders:', err);
+      console.error('Error fetching dialog orders locally:', err);
       this.dialogOrders = [];
+      this.dialogTotalCount = 0;
     } finally {
       this.dialogLoading = false;
     }
