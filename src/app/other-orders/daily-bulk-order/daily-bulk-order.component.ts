@@ -106,11 +106,11 @@ export class DailyBulkOrderComponent implements OnInit {
         try {
             this.isLoading = true;
             this.page = pageNum;
-            const dateStr = this.selectedAdminOrderDate ?
-                this.selectedAdminOrderDate.toISOString() :
-                new Date().toISOString();
+            const selectedDate = this.selectedAdminOrderDate || new Date();
+            const startDate = selectedDate.toISOString();
+            const endDate = selectedDate.toISOString();
 
-            const res: any = await this.apiMainService.getBulkDailyOrderList(status, this.page, this.pageLimit, dateStr);
+            const res: any = await this.apiMainService.getBulkDailyOrderList(status, startDate, endDate);
             if (res) {
                 this.filteredList = res.orderList;
                 this.totalCount = res.totalCount;
