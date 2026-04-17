@@ -148,12 +148,10 @@ export class DailyAdminExcelExportComponent implements OnInit {
     try {
       this.isLoading = true;
       this.pageIndex = pageNum - 1;
-      const dateParam = {
-        fromDate: this.selectedAdminOrderDate.toISOString(),
-        toDate: (this.selectedAdminOrderDateTo || this.selectedAdminOrderDate).toISOString()
-      };
+      const startDate = this.selectedAdminOrderDate.toISOString();
+      const endDate = (this.selectedAdminOrderDateTo || this.selectedAdminOrderDate).toISOString();
 
-      const res: any = await this.apiMainService.getBulkDailyOrderList(status, pageNum, this.pageSize, dateParam);
+      const res: any = await this.apiMainService.getBulkDailyOrderList(status, startDate, endDate, this.orgAdmin?.orgDetails?._id);
       if (res) {
         this.allOrdersList = res.orderList || [];
         this.estimatedTotal = res.totalCount || 0;
