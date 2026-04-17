@@ -275,6 +275,7 @@ export class ApiConfigService {
       getCafeteriasPollingList: p('/api/getCafeteriasPollingList', 'POST'),
       getDailyFoodOrdersCount: p('/api/getDailyFoodOrdersCount', 'GET'),
       getCurrentDailyOrdersCount: p('/api/getCurrentDailyOrdersCount', 'POST'),
+      getDailyOrdersCountByDateRange: p('/api/getDailyOrdersCountByDateRange', 'POST'),
       searchVendorProfile: p('/api/searchVendorProfile', 'GET'),
       getNearestVendors: p('/api/getNearestVendors', 'GET'),
       getdeliveryAmount: p('/api/quote', 'POST'),
