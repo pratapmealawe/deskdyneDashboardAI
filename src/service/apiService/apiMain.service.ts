@@ -850,19 +850,14 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${page}/${limit}/${status}`, method: urlObj.method });
   }
 
-  getBulkDailyOrderList(status: any, page: any, limit: number, date?: any, orgId?: any) {
+  getBulkDailyOrderList(status: any, startDate?: any, endDate?: any, orgId?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getBulkDailyOrderList;
-    const url = urlObj.url + `/${page}/${limit}/${status}`;
-    let payload: any = {};
-    if (date) {
-      if (typeof date === 'string') {
-        payload.date = date;
-      } else {
-        payload = { ...date };
-      }
-    }
+    const payload: any = { status };
+    if (startDate) payload.startDate = startDate;
+    if (endDate) payload.endDate = endDate;
     if (orgId) payload.orgId = orgId;
-    return this.apiHttpService.REQUEST({ url, method: urlObj.method }, payload);
+    
+    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, payload);
   }
 
   getClusterb2bBulkOrderList(status: any, page: any, limit: number) {

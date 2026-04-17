@@ -536,11 +536,11 @@ export class MainDashboardComponent {
     this.dialogLoading = true;
     try {
       const start = this.normalizeDate(this.dateGroup.value.start as Date, false);
+      const end = this.normalizeDate(this.dateGroup.value.end as Date || this.dateGroup.value.start as Date, true);
       const res: any = await this.apiMainService.getBulkDailyOrderList(
         this.dialogStatus,
-        this.dialogPage,
-        this.dialogPageSize,
         start.toISOString(),
+        end.toISOString(),
         this.orgAdmin?.orgDetails?._id
       );
       if (res) {
