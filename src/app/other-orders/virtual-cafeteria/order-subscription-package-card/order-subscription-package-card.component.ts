@@ -2,20 +2,20 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { DeliveryOrderService } from 'src/service/delivery-order.service';
-import { GoogleMapService } from 'src/service/google-map.service';
-import { PolicyService } from 'src/service/policy.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { DeliveryOrderService } from '@service/delivery-order.service';
+import { GoogleMapService } from '@service/google-map.service';
+import { PolicyService } from '@service/policy.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { ToasterService } from '@service/toaster.service';
 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { MaterialModule } from 'src/app/material.module';
-import { CustomPipeModule } from 'src/pipes/pipe.module';
+import { CustomPipeModule } from '@pipes/pipe.module';
 
 @Component({
   selector: 'app-order-subscription-package-card',
@@ -161,14 +161,12 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
       try {
         await this.deliveryOrderService.trackDeliveryTask(this.order, this.order.deliveryVendor, this.order.orderCreatedBy);
       } catch (error) {
-        console.log('error while creating delivery task', error);
       }
     }
     else if (this.orderInput && this.orderInput.deliveryTaskId) {
       try {
         await this.deliveryOrderService.trackDeliveryTask(this.orderInput, this.orderInput.deliveryVendor, this.order.orderCreatedBy);
       } catch (error) {
-        console.log('error while creating delivery task', error);
       }
     }
   }
@@ -237,10 +235,8 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
   async performOrderTransfer() {
     try {
       const selectedOrderIds = this.selectedChildOrderList;
-      const kitchenObj: any = await this.googleMapService.getKitchenDistance(
-        this.searchedKitchen,
-        this.order.customerLocation.geolocation
-      );
+      const kitchenObj: any = { ...this.searchedKitchen };
+
       const orderObj = { ...this.order };
       if (orderObj.transferHistory && orderObj.transferHistory.length === 0) {
         orderObj.firstKitchenName = orderObj.kitchenName;
@@ -256,7 +252,7 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
       orderObj.skipWalletPayment = this.searchedKitchen.skipWalletPayment
         ? this.searchedKitchen.skipWalletPayment
         : false;
-      orderObj.distance = kitchenObj.distance;
+
       orderObj.transferExtraAmt = this.transferExtraAmt
         ? this.transferExtraAmt
         : 0;
@@ -308,7 +304,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
       }
       this.cancelTransfer();
     } catch (error) {
-      console.log('error while tranferring order ', error);
     }
   }
 
@@ -343,7 +338,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
       this.checkOrderCondition();
       this.showStopRefund = false;
     } catch (error) {
-      console.log('error while placePaymentFailedOrder order ', error);
     }
   }
 
@@ -357,7 +351,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
       this.showStopRefund = false;
       this.toasterService.success(116);
     } catch (error) {
-      console.log('error while getGatewayPaymentHistory order ', error);
     }
   }
 
@@ -377,7 +370,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
         _id: this.order._id,
       });
     } catch (error) {
-      console.log('error while changing staus', error);
     }
   }
 
@@ -412,7 +404,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
       this.checkOrderCondition();
       this.editOrderDate = false;
     } catch (error) {
-      console.log('error while changing staus', error);
     }
   }
 
@@ -423,7 +414,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
   async createDailyPackageOrder() {
     try {
       const order = { ...this.order };
-      console.log(order);
       if (order.orderCreatedBy === 'DDUser') {
         const updateOrder = await this.apiMainService.createDailyPackageOrder(
           order
@@ -442,7 +432,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
       }
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while changing staus', error);
       this.toasterService.error('Errror while accepting order');
     }
   }
@@ -471,7 +460,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
     });
     modalRef.result.then(
       (result) => {
-        console.log(result);
       },
       async (reason) => {
         try {
@@ -493,7 +481,6 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
             }
           }
         } catch (error) {
-          console.log(error);
         }
       }
     );
@@ -501,14 +488,12 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
   }
 
   orderEdited(status: any) {
-    console.log(status);
     this.orderEditFlag = status;
   }
 
   onEditOrder(order: any) {
     this.editMode = true;
     this.order = order;
-    this.googleMapService.getGoogle();
     this.checkOrderCondition();
     if (this.selectedTab === null) {
       this.selectedTab = "Order Details"

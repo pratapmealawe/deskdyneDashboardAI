@@ -1,11 +1,13 @@
-<div class="add-edit-dialog">
-  <div class="dialog-header">
-    <div class="header-icon" [class.edit]="isEditMode">
-      <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
-    </div>
-    <div class="header-title">
-      <h2>{{ isEditMode ? 'Update Employee' : 'Add New Employee' }}</h2>
-      <p class="subtitle">Assigning to: <strong>{{ selectedCafeteria?.cafeteria_name }}</strong></p>
+<div class="add-outlet-employee-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!isEditMode" [class.warning]="isEditMode">
+        <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ isEditMode ? 'Edit Staff Member' : 'Add New Staff' }}</h3>
+        <p>Assigning to: <strong>{{ selectedCafeteria?.cafeteria_name }}</strong></p>
+      </div>
     </div>
     <button mat-icon-button (click)="close()" class="close-btn">
       <mat-icon>close</mat-icon>
@@ -13,49 +15,75 @@
   </div>
 
   <mat-dialog-content class="dialog-content">
-    <form [formGroup]="employeeForm" class="employee-form">
-      <div class="form-grid">
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Employee Name</mat-label>
-          <mat-icon matPrefix>person</mat-icon>
-          <input matInput formControlName="employeeName" placeholder="e.g. Rahul Sharma" required>
-          <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">Name is required</mat-error>
-          <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('minlength')">Name must be at least 3 characters</mat-error>
-        </mat-form-field>
+    <form [formGroup]="employeeForm" (ngSubmit)="saveEmployee()" id="outletEmployeeForm" class="p-2">
+      <div class="form-grid-modern">
+        <!-- Name & ID Row -->
+        <div class="row g-3">
+          <div class="col-md-7">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee Name</mat-label>
+              <mat-icon matPrefix>person</mat-icon>
+              <input matInput formControlName="employeeName" placeholder="e.g. John Doe" />
+              <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">Name is required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('minlength')">Too short</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee ID</mat-label>
+              <mat-icon matPrefix>badge</mat-icon>
+              <input matInput formControlName="employeeId" placeholder="e.g. EMP123" />
+              <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">ID is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Employee ID</mat-label>
-          <mat-icon matPrefix>badge</mat-icon>
-          <input matInput formControlName="employeeId" placeholder="e.g. EMP1023" required>
-          <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">Employee ID is required</mat-error>
-        </mat-form-field>
+        <!-- Phone & Email Row -->
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Phone Number</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput formControlName="employeePhoneNo" placeholder="10-digit number" type="tel" />
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">Invalid number</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email Address</mat-label>
+              <mat-icon matPrefix>email</mat-icon>
+              <input matInput formControlName="employeeEmail" placeholder="e.g. john@company.com" type="email" />
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">Invalid email</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
 
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Phone Number</mat-label>
-          <mat-icon matPrefix>phone</mat-icon>
-          <input matInput formControlName="employeePhoneNo" placeholder="10-digit number" type="tel" required maxlength="10">
-          <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">Phone number is required</mat-error>
-          <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">Please enter a valid 10-digit number</mat-error>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" class="full-width">
-          <mat-label>Email Address</mat-label>
-          <mat-icon matPrefix>email</mat-icon>
-          <input matInput formControlName="employeeEmail" placeholder="email@company.com" type="email" required>
-          <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">Email is required</mat-error>
-          <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">Please enter a valid email</mat-error>
-        </mat-form-field>
+        <!-- Role Metadata (Optional Hint) -->
+        <div class="selection-container mt-3" *ngIf="!isEditMode">
+          <p class="section-label mb-2"><mat-icon>assignment_ind</mat-icon> Role Assignment</p>
+          <div class="alert alert-info py-2 px-3 m-0" style="font-size: 0.85rem; border-radius: 12px; background: #f0f7ff; border: 1px solid #e0efff; color: #1e40af;">
+            New staff will be assigned to the <strong>{{ selectedCafeteria?.cafeteria_name }}</strong> outlet by default.
+          </div>
+        </div>
       </div>
     </form>
   </mat-dialog-content>
 
-  <mat-dialog-actions align="end" class="dialog-actions">
-    <button mat-button (click)="close()" [disabled]="isSubmitting">Cancel</button>
-    <button mat-raised-button color="primary" (click)="saveEmployee()" 
-            [disabled]="isSubmitting || employeeForm.invalid" class="submit-btn" [class.loading]="isSubmitting">
-      <mat-icon *ngIf="!isSubmitting">{{ isEditMode ? 'save' : 'add' }}</mat-icon>
-      <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
-      <span>{{ isSubmitting ? 'Saving...' : (isEditMode ? 'Update Employee' : 'Add Employee') }}</span>
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="outletEmployeeForm" 
+            [disabled]="employeeForm.invalid || isSubmitting" class="btn-primary-action px-4"
+            [class.loading]="isSubmitting">
+      <ng-container *ngIf="!isSubmitting">
+        <mat-icon>{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+        <span>{{ isEditMode ? 'Update Staff Member' : 'Create Staff Member' }}</span>
+      </ng-container>
+      <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+        <mat-spinner diameter="20" color="accent"></mat-spinner>
+        <span>Saving...</span>
+      </div>
     </button>
   </mat-dialog-actions>
 </div>

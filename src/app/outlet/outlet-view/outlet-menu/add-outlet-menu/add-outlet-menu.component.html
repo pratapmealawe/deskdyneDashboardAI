@@ -1,7 +1,7 @@
 <div class="dialog-title" mat-dialog-title>
   <div class="title-left">
-    <mat-icon>{{ data.item ? 'edit' : 'add_circle' }}</mat-icon>
-    <span>{{ data.item ? 'Edit Item' : 'Add New Item' }}</span>
+    <mat-icon>{{ data.item ?'edit' :'add_circle' }}</mat-icon>
+    <span>{{ data.item ?'Edit Item' :'Add New Item' }}</span>
   </div>
   <button mat-icon-button class="info-btn" [matMenuTriggerFor]="infoMenu">
     <mat-icon>info</mat-icon>
@@ -60,13 +60,13 @@
           <span>Item Type</span>
         </div>
         <mat-radio-group formControlName="itemType" class="type-radio-group">
-          <div class="type-option veg" [class.selected]="form.get('itemType')?.value === 'Veg'">
+          <div class="type-option veg" [class.selected]="form.get('itemType')?.value ==='Veg'">
             <mat-radio-button value="Veg">
               <span class="type-indicator veg-dot"></span>
               <span>Veg</span>
             </mat-radio-button>
           </div>
-          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value === 'NonVeg'">
+          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value ==='NonVeg'">
             <mat-radio-button value="NonVeg">
               <span class="type-indicator nonveg-dot"></span>
               <span>Non-Veg</span>
@@ -188,16 +188,16 @@
               <mat-form-field appearance="outline" class="w-100">
                 <mat-label>
                   Discount Value
-                  <span *ngIf="form.get('discountType')?.value === 'flat'">
+                  <span *ngIf="form.get('discountType')?.value ==='flat'">
                     (max: ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value || 0) - 1 }})
                   </span>
-                  <span *ngIf="form.get('discountType')?.value === 'percentage'">(1–100%)</span>
+                  <span *ngIf="form.get('discountType')?.value ==='percentage'">(1–100%)</span>
                 </mat-label>
-                <input matInput type="number" formControlName="discountValue" [min]="1" [max]="form.get('discountType')?.value === 'percentage' ? 100 :
+                <input matInput type="number" formControlName="discountValue" [min]="1" [max]="form.get('discountType')?.value ==='percentage' ? 100 :
                (form.get('price')?.value - (form.get('subsidy')?.value || 0) - 1)"
                   (keydown)="preventInvalidNumber($event)" />
                 <mat-icon matPrefix class="field-icon">
-                  {{ form.get('discountType')?.value === 'percentage' ? 'percent' : 'currency_rupee' }}
+                  {{ form.get('discountType')?.value ==='percentage' ?'percent' :'currency_rupee' }}
                 </mat-icon>
                 <mat-error *ngIf="f['discountValue'].hasError('required')">Required</mat-error>
                 <mat-error *ngIf="f['discountValue'].hasError('min')">Must be at least 1</mat-error>
@@ -291,7 +291,7 @@
         <!-- Selected date chips -->
         <div class="weekly-dates-chips mb-3" *ngIf="selectedWeeklyDates.length > 0">
           <span class="date-chip" *ngFor="let d of selectedWeeklyDates">
-            {{ d | date: 'dd MMM yyyy' }}
+            {{ d | date:'dd MMM yyyy' }}
             <button mat-icon-button class="chip-remove-btn" (click)="toggleDate(d)" type="button">
               <mat-icon>close</mat-icon>
             </button>
@@ -303,7 +303,7 @@
         <button mat-stroked-button color="primary" type="button"
           [matMenuTriggerFor]="weeklyCalendarMenu" class="calendar-trigger-btn">
           <mat-icon>event</mat-icon>
-          {{ selectedWeeklyDates.length > 0 ? 'Edit Dates' : 'Select Dates' }}
+          {{ selectedWeeklyDates.length > 0 ?'Edit Dates' :'Select Dates' }}
         </button>
 
         <!-- Calendar menu (stays open while picking multiple dates) -->

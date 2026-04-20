@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, ViewChild, TemplateRef, Output, EventEmitter } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { ToasterService } from 'src/service/toaster.service';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -149,7 +149,6 @@ export class DailyBulkCardComponent implements OnInit {
       });
       this.updateOrderStage();
     } catch (error) {
-      console.log('error while changing status', error);
       this.toasterService.error(112);
     }
   }

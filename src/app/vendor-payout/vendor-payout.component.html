@@ -55,7 +55,7 @@
                             </div>
                             <div class="d-flex gap-2 justify-content-center flex-wrap">
                                 <button class="btn-import" mat-stroked-button class="flex-grow-1"
-                                    (click)="openTxnDialog(vendor, 'Transfer', 'wallet')">
+                                    (click)="openTxnDialog(vendor,'Transfer','wallet')">
                                     <mat-icon>swap_horiz</mat-icon> Transfer
                                 </button>
                                 <button class="btn-view" mat-stroked-button class="flex-grow-1"
@@ -81,7 +81,7 @@
                             <div class="text-center">
                                 <button class="btn-import" mat-flat-button class="w-100"
                                     *ngIf="vendor.subsidy_balance > 0"
-                                    (click)="openTxnDialog(vendor, 'Transfer', 'subsidy')">
+                                    (click)="openTxnDialog(vendor,'Transfer','subsidy')">
                                     <mat-icon>swap_horiz</mat-icon> Transfer to Wallet
                                 </button>
                                 <span *ngIf="!vendor.subsidy_balance || vendor.subsidy_balance <= 0"
@@ -105,7 +105,7 @@
                             <div class="text-center">
                                 <button class="btn-import" mat-flat-button class="w-100"
                                     *ngIf="vendor.daily_balance > 0"
-                                    (click)="openTxnDialog(vendor, 'Transfer', 'daily')">
+                                    (click)="openTxnDialog(vendor,'Transfer','daily')">
                                     <mat-icon>swap_horiz</mat-icon> Transfer to Wallet
                                 </button>
                                 <span *ngIf="!vendor.daily_balance || vendor.daily_balance <= 0"

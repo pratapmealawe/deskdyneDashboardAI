@@ -1,10 +1,9 @@
-﻿import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { QrEmployeeDialogComponent, QrEmployeeDialogData } from './qr-employee-dialog/qr-employee-dialog.component';
 import { PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
@@ -12,7 +11,7 @@ import { saveAs } from 'file-saver';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
+import { environment } from '@environments/environment';
 
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
@@ -52,7 +51,6 @@ export class QrEmployeeComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private excelService: ExcelService,
     private fb: FormBuilder,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
@@ -103,7 +101,7 @@ export class QrEmployeeComponent implements OnInit {
         }
       });
     } else {
-      // No logo uploaded â†’ fallback to org name
+      // No logo uploaded → fallback to org name
       this.orgLogoDataUrl = '';
     }
   }
@@ -265,7 +263,6 @@ export class QrEmployeeComponent implements OnInit {
 
     try {
       const deletedEmployee = await this.apiMainService.deleteQrEmployee(employee._id);
-      console.log('deleted', deletedEmployee);
       this.snackBar.open('Employee deleted', 'Close', { duration: 2500 });
       this.getEmployeeListByCafeId();
     } catch (error) {
@@ -473,7 +470,6 @@ export class QrEmployeeComponent implements OnInit {
   }
 
   downloadEmployeeCardPdf(employee: any): void {
-    console.log(employee);
 
     // 1. Validation
     if (!employee.qrCode) {
@@ -614,15 +610,15 @@ export class QrEmployeeComponent implements OnInit {
                             widths: [10, 'auto'], // Auto width for email to fit tight
                             body: [
                               [
-                                { text: 'ðŸ“ž', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                                { text: '📞', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
                                 { text: employee.employeePhoneNo || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 4] }
                               ],
                               [
-                                { text: 'âœ‰', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                                { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
                                 { text: employee.employeeEmail || '', color: textColor, fontSize: 7, bold: true, margin: [0, 0, 0, 0] }
                               ],
                               [
-                                { text: 'âœ‰', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                                { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
                                 { text: 'ML89', color: textColor, fontSize: 7, bold: true, margin: [0, 0, 0, 0] }
                               ],
                             ]
@@ -808,11 +804,11 @@ export class QrEmployeeComponent implements OnInit {
                           widths: [10, 'auto'],
                           body: [
                             [
-                              { text: 'ðŸ“ž', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                              { text: '📞', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
                               { text: employee.employeePhoneNo || '', color: textColor, fontSize: 8, bold: true, margin: [0, 0, 0, 4] }
                             ],
                             [
-                              { text: 'âœ‰', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
+                              { text: '✉', color: textColor, fontSize: 8, margin: [0, 1, 0, 0] },
                               { text: employee.employeeEmail || '', color: textColor, fontSize: 7, bold: true, margin: [0, 0, 0, 0] }
                             ]
                           ]

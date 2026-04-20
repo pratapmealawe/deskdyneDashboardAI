@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, EventEmitter, Inject, Input, OnInit, Output, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { GoogleStyle } from 'src/config/google.style.config';
-import { GoogleMapService } from 'src/service/google-map.service';
+import { GoogleMapService } from '@service/google-map.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 import { CommonModule } from '@angular/common';
@@ -87,7 +87,6 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
         this.findMarkerAddress(center);
       }, 500);
     } catch (e) {
-      console.log('error while fetching coordinates ', e);
     }
   }
 
@@ -129,7 +128,6 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
     ) => {
       if (status === 'OK') {
         if (results[0]) {
-          console.log(results[0].formatted_address);
           this.location = results[0].formatted_address.replace("Unnamed Road, ", "");
           this.latlng = latlng;
 
@@ -156,7 +154,7 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
   //   });
   //   autocomplete.addListener('place_changed', () => {
   //     const place = autocomplete.getPlace();
-  //     console.log(place, place.name);
+  //     
   //     if (!place.geometry || !place.geometry.location) {
   //       // User entered the name of a Place that was not suggested and
   //       // pressed the Enter key, or the Place Details request failed.
@@ -167,7 +165,7 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
   //     for (const component of place.address_components as google.maps.GeocoderAddressComponent[]){
   //       fullAddress += `${component.long_name} `;
   //     }
-  //     console.log(fullAddress);
+  //     
   //     // If the place has a geometry, then present it on a map.
   //     if (place.geometry.viewport) {
   //       map.fitBounds(place.geometry.viewport);
@@ -275,7 +273,6 @@ export class SetGeolocationComponent implements OnInit, AfterViewInit {
       autocomplete.addListener('place_changed', () => {
         const place = autocomplete.getPlace();
         if (!place.geometry || !place.geometry.location) {
-          console.log('No details available for input: \'' + place.name + '\'');
           return;
         }
 

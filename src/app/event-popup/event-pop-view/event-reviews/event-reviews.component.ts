@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -78,7 +78,6 @@ export class EventReviewsComponent implements OnInit {
         this.feedbackList = [];
       }
     } catch (e) {
-      console.log('error while fetching feedback list', e);
       this.feedbackList = [];
     }
   }

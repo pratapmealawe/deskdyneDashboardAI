@@ -3,7 +3,7 @@
     <!-- Card Top -->
     <div class="card-top">
         <div class="order-avatar">
-            {{ order.customerName?.[0]?.toUpperCase() || 'O' }}
+            {{ order.customerName?.[0]?.toUpperCase() ||'O' }}
         </div>
         <div class="order-identity">
             <h3 class="order-title">#{{ order.orderNo }}</h3>
@@ -12,17 +12,17 @@
                     <mat-icon>confirmation_number</mat-icon> Token {{ order.tokenNo }}
                 </span>
                 <span class="date-text">
-                    {{ order.SubmitedDate || order.orderDate | date: 'MMM d, y, h:mm a' }}
+                    {{ order.SubmitedDate || order.orderDate | date:'MMM d, y, h:mm a' }}
                 </span>
             </div>
         </div>
         <div class="card-top-right">
             <div class="status-badge" [ngClass]="order.orderstatus">
-                <mat-icon>{{ order.orderstatus === 'completed' ? 'check_circle' :
-                    order.orderstatus === 'placed' ? 'restaurant' :
-                    order.orderstatus === 'paymentFailed' ? 'error' :
-                    order.orderstatus === 'paymentInprogress' ? 'hourglass_empty' :
-                    order.orderstatus === 'cancelled' ? 'cancel' : 'info' }}</mat-icon>
+                <mat-icon>{{ order.orderstatus ==='completed' ?'check_circle' :
+                    order.orderstatus ==='placed' ?'restaurant' :
+                    order.orderstatus ==='paymentFailed' ?'error' :
+                    order.orderstatus ==='paymentInprogress' ?'hourglass_empty' :
+                    order.orderstatus ==='cancelled' ?'cancel' :'info' }}</mat-icon>
                 {{ orderStatusMapper[order.orderstatus] || order.orderstatus }}
             </div>
         </div>
@@ -95,13 +95,13 @@
             <div class="items-scroll">
                 <div class="item-row" *ngFor="let i of (order.itemList || order.itemlist)">
                     <div class="item-left">
-                        <span class="type-dot" [ngClass]="i.itemType === 'Veg' ? 'veg' : 'nonveg'"
+                        <span class="type-dot" [ngClass]="i.itemType ==='Veg' ?'veg' :'nonveg'"
                             [title]="i.itemType"></span>
                         <span class="item-qty" *ngIf="i.count > 0">{{ i.count }}x</span>
                         <span class="item-name">{{ i.itemName }}</span>
                         <span class="item-cat" *ngIf="i.category">{{ i.category }}</span>
                     </div>
-                    <span class="item-price">₹{{ i.price * (i.count || 1) | number : '1.2-2' }}</span>
+                    <span class="item-price">₹{{ i.price * (i.count || 1) | number :'1.2-2' }}</span>
                 </div>
             </div>
         </div>
@@ -113,35 +113,35 @@
         <div class="fin-strip">
             <div class="fin-cell">
                 <span class="fin-label">Item Total</span>
-                <span class="fin-value">₹{{ order.itemAmount | number : '1.2-2' }}</span>
+                <span class="fin-value">₹{{ order.itemAmount | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell" *ngIf="order.taxes">
                 <span class="fin-label">Taxes</span>
-                <span class="fin-value">₹{{ order.taxes | number : '1.2-2' }}</span>
+                <span class="fin-value">₹{{ order.taxes | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell" *ngIf="order.packagingAmount">
                 <span class="fin-label">Packaging</span>
-                <span class="fin-value">₹{{ order.packagingAmount | number : '1.2-2' }}</span>
+                <span class="fin-value">₹{{ order.packagingAmount | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell discount" *ngIf="order.subsidyAmount">
                 <span class="fin-label">Subsidy</span>
-                <span class="fin-value">- ₹{{ order.subsidyAmount | number : '1.2-2' }}</span>
+                <span class="fin-value">- ₹{{ order.subsidyAmount | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell discount" *ngIf="order.moneyWalletPointsUsed">
                 <span class="fin-label">Wallet</span>
-                <span class="fin-value">- ₹{{ order.moneyWalletPointsUsed | number : '1.2-2' }}</span>
+                <span class="fin-value">- ₹{{ order.moneyWalletPointsUsed | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell discount" *ngIf="order.companyWalletPointUsed">
                 <span class="fin-label">Company</span>
-                <span class="fin-value">- ₹{{ order.companyWalletPointUsed | number : '1.2-2' }}</span>
+                <span class="fin-value">- ₹{{ order.companyWalletPointUsed | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell paid">
                 <span class="fin-label">Paid (PG)</span>
-                <span class="fin-value">₹{{ order.amount | number : '1.2-2' }}</span>
+                <span class="fin-value">₹{{ order.amount | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell grand">
                 <span class="fin-label">Grand Total</span>
-                <span class="fin-value">₹{{ getGrandTotal(order) | number : '1.2-2' }}</span>
+                <span class="fin-value">₹{{ getGrandTotal(order) | number :'1.2-2' }}</span>
             </div>
         </div>
 

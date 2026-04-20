@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { PolicyService } from 'src/service/policy.service';
+import { PolicyService } from '@service/policy.service';
 
 @Directive({
   selector: '[appHasPermission]',

@@ -61,10 +61,10 @@
         <div class="card-top">
           <div class="notification-icon session-icon">
             <mat-icon>person</mat-icon>
-            <span class="avatar-letter">{{ (session.displayName || '?')[0] | uppercase }}</span>
+            <span class="avatar-letter">{{ (session.displayName ||'?')[0] | uppercase }}</span>
           </div>
           <div class="notification-identity">
-            <h3 class="notification-title" [matTooltip]="session.displayName">{{ session.displayName || 'Anonymous' }}</h3>
+            <h3 class="notification-title" [matTooltip]="session.displayName">{{ session.displayName ||'Anonymous' }}</h3>
             <div class="status-badge sent" *ngIf="session.isActive">
                <mat-icon>check_circle</mat-icon>
                ACTIVE
@@ -122,8 +122,8 @@
             <mat-icon>devices</mat-icon>
             {{ selectedAppType }}
           </div>
-          <div class="recipient-count" [ngStyle]="{'color': session.isActive ? '#4caf50' : '#f44336'}">
-            Status: {{ session.isActive ? 'Live' : 'Logged Out' }}
+          <div class="recipient-count" [ngStyle]="{'color': session.isActive ?'#4caf50' :'#f44336'}">
+            Status: {{ session.isActive ?'Live' :'Logged Out' }}
           </div>
         </div>
       </div>

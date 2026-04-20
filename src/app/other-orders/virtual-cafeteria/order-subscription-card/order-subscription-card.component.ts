@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { environment } from 'src/environments/environment';
-import { DeliveryOrderService } from 'src/service/delivery-order.service';
+import { environment } from '@environments/environment';
+import { DeliveryOrderService } from '@service/delivery-order.service';
 
 import { CommonModule } from '@angular/common';
 
@@ -32,9 +32,6 @@ export class OrderSubscriptionCardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log('component2')
-    if (this.showDeliveryDetail) {
-      this.getDeliveryStatus();
     }
   }
 
@@ -67,7 +64,6 @@ export class OrderSubscriptionCardComponent implements OnInit {
       try {
         await this.deliveryOrderService.trackDeliveryTask(this.order, this.order.deliveryVendor, this.order.orderCreatedBy);
       } catch (error) {
-        console.log('error while creating delivery task', error);
       }
     }
 

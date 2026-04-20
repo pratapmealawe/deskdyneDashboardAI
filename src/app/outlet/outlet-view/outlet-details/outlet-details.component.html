@@ -15,12 +15,12 @@
         <h1 class="outlet-name">{{ outletObj?.outletName }}</h1>
         <div class="quick-badges">
           <span class="quick-badge" [class.success]="outletObj?.outletOpened" [class.danger]="!outletObj?.outletOpened">
-            <mat-icon>{{ outletObj?.outletOpened ? 'storefront' : 'store' }}</mat-icon>
-            {{ outletObj?.outletOpened ? 'Open' : 'Closed' }}
+            <mat-icon>{{ outletObj?.outletOpened ?'storefront' :'store' }}</mat-icon>
+            {{ outletObj?.outletOpened ?'Open' :'Closed' }}
           </span>
           <span class="quick-badge" [class.info]="outletObj?.isPreOrder">
             <mat-icon>schedule</mat-icon>
-            Pre-order {{ outletObj?.isPreOrder ? 'Enabled' : 'Disabled' }}
+            Pre-order {{ outletObj?.isPreOrder ?'Enabled' :'Disabled' }}
           </span>
           <span class="quick-badge" *ngIf="outletObj?.isSectionWiseMenu">
             <mat-icon>view_module</mat-icon>
@@ -66,7 +66,7 @@
             <div class="info-icon"><mat-icon>description</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Description</span>
-              <span class="info-value">{{ outletObj?.outletDescription || 'No description' }}</span>
+              <span class="info-value">{{ outletObj?.outletDescription ||'No description' }}</span>
             </div>
           </div>
         </div>
@@ -87,7 +87,7 @@
             <div class="info-icon"><mat-icon>receipt</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Billing Type</span>
-              <span class="info-value">{{ outletObj?.billingType || '-' }}</span>
+              <span class="info-value">{{ outletObj?.billingType ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
@@ -116,7 +116,7 @@
             <div class="info-content">
               <span class="info-label">Org Paid Full</span>
               <span class="info-value" [class.text-success]="outletObj?.isFullAmountOrgPaid">
-                {{ outletObj?.isFullAmountOrgPaid ? 'Enabled' : 'Disabled' }}
+                {{ outletObj?.isFullAmountOrgPaid ?'Enabled' :'Disabled' }}
               </span>
             </div>
           </div>
@@ -124,7 +124,7 @@
             <div class="info-icon"><mat-icon>update</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Closing Time</span>
-              <span class="info-value">{{ outletObj?.closeTime || 'Not Set' }}</span>
+              <span class="info-value">{{ outletObj?.closeTime ||'Not Set' }}</span>
             </div>
           </div>
           <div class="info-item">
@@ -139,7 +139,7 @@
             <div class="info-content">
               <span class="info-label">Pre-Order Status</span>
               <span class="info-value" [class.text-primary]="outletObj?.isPreOrder">
-                {{ outletObj?.isPreOrder ? 'Enabled' : 'Disabled' }}
+                {{ outletObj?.isPreOrder ?'Enabled' :'Disabled' }}
               </span>
             </div>
           </div>
@@ -251,9 +251,9 @@
             <span>{{ meal.slug }}</span>
           </div>
           <div class="footer-item"
-            *ngIf="meal.mealSubsidyType !== 'chargeable' && outletObj?.isFullAmountOrgPaid && meal.maxCountFree > 0">
+            *ngIf="meal.mealSubsidyType !=='chargeable' && outletObj?.isFullAmountOrgPaid && meal.maxCountFree > 0">
             <mat-icon>counter_{{ meal.maxCountFree }}</mat-icon>
-            <span>{{ meal.maxCountFree > 0 ? meal.maxCountFree + ' Free/Day' : '' }}</span>
+            <span>{{ meal.maxCountFree > 0 ? meal.maxCountFree +' Free/Day' :'' }}</span>
           </div>
         </div>
       </div>
@@ -274,13 +274,13 @@
         <div class="col-6 col-md-3">
           <div class="quick-info-box">
             <span class="label">Pre-Order Type</span>
-            <span class="value badge">{{ outletObj?.preOrderConfig?.type || 'Normal' | titlecase }}</span>
+            <span class="value badge">{{ outletObj?.preOrderConfig?.type ||'Normal' | titlecase }}</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="quick-info-box">
             <span class="label">Meal Type</span>
-            <span class="value">{{ outletObj?.preOrderConfig?.mealType || outletObj?.preOrderMealType || 'Not Set' |
+            <span class="value">{{ outletObj?.preOrderConfig?.mealType || outletObj?.preOrderMealType ||'Not Set' |
               titlecase }}</span>
           </div>
         </div>
@@ -293,13 +293,13 @@
         <div class="col-6 col-md-3">
           <div class="quick-info-box">
             <span class="label">Order Window</span>
-            <span class="value small">{{ outletObj?.preOrderConfig?.startTime || '00:00' }} - {{
-              outletObj?.preOrderConfig?.endTime || '23:59' }}</span>
+            <span class="value small">{{ outletObj?.preOrderConfig?.startTime ||'00:00' }} - {{
+              outletObj?.preOrderConfig?.endTime ||'23:59' }}</span>
           </div>
         </div>
       </div>
 
-      <div class="days-display mb-4" *ngIf="outletObj?.preOrderConfig?.type !== 'holiday'">
+      <div class="days-display mb-4" *ngIf="outletObj?.preOrderConfig?.type !=='holiday'">
         <h4 class="sub-label">Weekly Availability</h4>
         <div class="days-badges">
           <span class="day-badge"
@@ -320,9 +320,8 @@
       </div>
 
       <div class="holidays-display"
-        *ngIf="outletObj?.preOrderConfig?.type !== 'normal' && (outletObj?.preOrderConfig?.holidays?.length > 0 || outletObj?.holidays?.length > 0)">
-        <h4 class="sub-label">Holidays ({{ outletObj?.preOrderConfig?.type === 'normal' ? 'Pre-orders Disabled' :
-          'Pre-orders Enabled' }})</h4>
+        *ngIf="outletObj?.preOrderConfig?.type !=='normal' && (outletObj?.preOrderConfig?.holidays?.length > 0 || outletObj?.holidays?.length > 0)">
+        <h4 class="sub-label">Holidays ({{ outletObj?.preOrderConfig?.type ==='normal' ?'Pre-orders Disabled' :'Pre-orders Enabled' }})</h4>
         <div class="holiday-chips">
           <span class="holiday-chip d-flex align-items-center"
             *ngFor="let h of (outletObj?.preOrderConfig?.holidays || outletObj.holidays)">

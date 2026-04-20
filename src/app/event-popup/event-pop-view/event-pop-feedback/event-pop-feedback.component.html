@@ -61,14 +61,14 @@
   <div class="feedback-content" *ngIf="!loading && feedbackList.length > 0; else noFeedback">
     <div class="feedback-grid">
       <div class="feedback-card glass-card animate-slide-up" *ngFor="let f of feedbackList; let i = index" 
-           [style.animation-delay]="i * 0.1 + 's'">
+           [style.animation-delay]="i * 0.1 +'s'">
         <div class="card-header">
           <div class="user-info">
             <div class="user-avatar">
-              {{ (f.customerDetails?.name?.charAt(0) || 'C') | uppercase }}
+              {{ (f.customerDetails?.name?.charAt(0) ||'C') | uppercase }}
             </div>
             <div class="user-meta">
-              <h4 class="user-name">{{ f.customerDetails?.name || 'Customer' }}</h4>
+              <h4 class="user-name">{{ f.customerDetails?.name ||'Customer' }}</h4>
               <span class="review-date">{{ f.createdAt | date:'mediumDate' }}</span>
             </div>
           </div>
@@ -79,7 +79,7 @@
         </div>
         
         <div class="card-body">
-          <p class="feedback-text">{{ f.feedbackComment || 'No comment provided' }}</p>
+          <p class="feedback-text">{{ f.feedbackComment ||'No comment provided' }}</p>
           <div class="food-info" *ngIf="f.foodDetails?.itemName">
             <mat-icon>restaurant</mat-icon>
             <span>Ordered: {{ f.foodDetails.itemName }}</span>
@@ -87,7 +87,7 @@
         </div>
 
         <div class="card-footer">
-          <span class="order-ref">Order #{{ f.orderNo || 'N/A' }}</span>
+          <span class="order-ref">Order #{{ f.orderNo ||'N/A' }}</span>
           <button mat-button class="reply-btn">
             <mat-icon>reply</mat-icon>
             <span>Reply</span>

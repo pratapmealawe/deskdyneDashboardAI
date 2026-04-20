@@ -1,10 +1,8 @@
 import { Component, Input, ViewChild } from "@angular/core";
-import { ApiMainService } from "src/service/apiService/apiMain.service";
+import { ApiMainService } from "@service/apiService/apiMain.service";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { FormArray, FormBuilder, Validators } from "@angular/forms";
 import { DirectivesModule } from "src/shared/directives/common-directives.directives.modules";
-// import { DirectivesModule } from "src/shared/directives/common-directives.directives.modules";
-// import { ExcelService } from "src/service/excel.service";
 
 @Component({
     selector: 'app-guest-employee-list',
@@ -71,10 +69,6 @@ export class GuestEmployeeListComponent {
         if (this.selectedCafeteria) {
             this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
             this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
-            console.log('cafeteria', this.selectedCafeteria)
-
-        } else {
-            alert('select cafeteria');
             return
         }
         const employee = {
@@ -97,56 +91,23 @@ export class GuestEmployeeListComponent {
         try {
             this.guestEmployeeList = await this.apiMainService.getGuestEmployeelistByOrgId(this.orgObj._id);
         } catch (error) {
-            console.log(error)
-        }
-    }
-    addEmployeeForm() {
-        this.modalService.open(this.content);
     }
     showAddMultipleEmployee() {
         this.showMultipleEmployeeForm = true;
     }
     async submitMultipleGuestEmployee() {
-        console.log('multiple guest employee', this.addMultipleEmploeeList);
         this.addMultipleEmploeeList.forEach((emp: any) => {
-            console.log(emp)
-            if (emp && !emp.employeeName || !emp.employeeId || !emp.employeePhoneNo || !emp.employeeEmail || !emp.expiry) {
-                this.disableSubmit = true;
-            }
-            else {
-                this.disableSubmit = false;
-            }
-        })
-        if (this.disableSubmit) {
-            return;
-        }
-
-        this.addMultipleEmploeeList.forEach((el: any) => {
-            el.cafeteria_name = this.selectedCafeteriaName;
-            el.cafeteria_id = this.selectedCafeteriaId;
-        })
-        const guestEmployeeList = [...this.addMultipleEmploeeList];
-        console.log(guestEmployeeList)
-        try {
-            await this.apiMainService.addGuestEmployeeList(guestEmployeeList);
-        }
-        catch (error) {
-            console.log(error);
-        }
-        this.getGuestEmployeelistByOrgId();
+            
         this.showMultipleEmployeeForm = false;
     }
     onCafeteriaChange(event: any) {
-        // console.log('radio change event', event);
+        // 
         if (this.selectedCafeteria) {
             this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
             this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
         }
-        console.log(this.selectedCafeteria)
-        console.log('guset emploee', this.guestEmployeeList);
     }
     editGuestEmployee(employee: any) {
-        console.log('guestEmployee', employee);
         this.modalService.open(this.content);
         this.guestEmpId = employee._id;
         const date = this.formatDate(employee.expiry);
@@ -162,11 +123,8 @@ export class GuestEmployeeListComponent {
     async updateGuestEmployee(id: any, employeeObj: any) {
         try {
             const formdata = { ...employeeObj }
-            console.log('expiry date update', employeeObj.expiry, typeof employeeObj.expiry);
             const res = await this.apiMainService.updateGuestEmployee(id, formdata);
-            console.log('response', res);
         } catch (error) {
-            console.log(error);
         }
         this.getGuestEmployeelistByOrgId();
 
@@ -194,7 +152,6 @@ export class GuestEmployeeListComponent {
         this.confirmDelete = false;
     }
     async deleteGuestEmployee(employee: any) {
-        console.log(this.guestEmployeeList);
         this.employeeDetail = employee;
         this.deleteEmployeeName = employee.employeeName;
         if (!this.confirmDelete) {
@@ -205,31 +162,20 @@ export class GuestEmployeeListComponent {
             if (this.confirmDelete) {
                 const deletedEmployee = await this.apiMainService.deleteGuestEmployee(employee._id);
                 this.getGuestEmployeelistByOrgId();
-                console.log(deletedEmployee)
-                this.getGuestEmployeelistByOrgId();
-                console.log(deletedEmployee)
-            }
-
-        } catch (error) {
-            console.log(error);
         }
 
     }
     //     async onFileChange(evt: any) {
-    //         console.log('file change');
+    //         
     //         // this.showMultipleEmployeeForm = false;
     //         this.isuploadEmployeeData = true;
     //         try {
     //             const target: DataTransfer = <DataTransfer>(evt.target);
     //             if (target.files.length !== 1) throw new Error('Cannot use multiple files');
     //             const data = await this.excelService.upload(target.files[0])
-    //             console.log('target.files[0]',data);
-    //             console.log(target.files[0].name)
-    //             if(target.files[0] && target.files[0].name)
-    //             this.fileName = target.files[0].name;
-
-    //             this.uploadEmployeeData = data.slice(1);
-    //             console.log('uploaded excel data',this.uploadEmployeeData);
+    //             
+    //             
+    //             
     //             if(this.uploadEmployeeData && this.uploadEmployeeData.length>0){
     //                 this.addMultipleEmploeeList.length=0;
     //                this.uploadEmployeeData.forEach((elm:any)=>{
@@ -237,16 +183,9 @@ export class GuestEmployeeListComponent {
     //               this.employeeObj.guestEmployeeId = elm[1];
     //               this.employeeObj.guestEmployeePhoneNo = elm[2];
     //               this.employeeObj.guestEmployeeEmail = elm[3];
-    //               console.log('date in the excel',elm[4])
-    //               const date = this.formatDate(elm[4]);
+    //               
     //               this.employeeObj.expiry = date;
-    //               console.log('uploaded employee object',this.employeeObj)
-    //               const employee = {
-    //                 cafeteria_name:this.selectedCafeteriaName,
-    //                 cafeteria_id:this.selectedCafeteriaId,
-    //                 ...this.employeeObj
-    //             }
-    //             this.addMultipleEmploeeList.push({...employee});
+    //               
     //             if(this.addMultipleEmploeeList.length == this.uploadEmployeeData.length){
     //                 this.employeeObj={
     //                     organization_name : this.orgObj.organization_name,

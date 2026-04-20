@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ToasterService } from 'src/service/toaster.service';
-import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
+
+import { OrdersDashboardCardComponent } from './orders-dashboard-card/orders-dashboard-card.component';
 
 @Component({
   selector: 'app-orders-dashboard',
@@ -14,7 +16,8 @@ import { MaterialModule } from '../material.module';
   standalone: true,
   imports: [
     CommonModule,
-    MaterialModule
+    MaterialModule,
+    OrdersDashboardCardComponent
   ]
 })
 export class OrdersDashboardComponent implements OnInit {
@@ -136,10 +139,7 @@ export class OrdersDashboardComponent implements OnInit {
       const orderNos = ordersList.map(o => o.orderNo);
       const payload = { orderNos: orderNos };
 
-      console.log(payload);
-
       const res = await this.apiMainService.updateBulkOrdersList(payload);
-      console.log(res);
 
       this.toaster.success('Bulk completion successful');
       this.getAllOrders();
@@ -170,10 +170,7 @@ export class OrdersDashboardComponent implements OnInit {
       const orderNos = ordersList.map(o => o.orderNo);
       const payload = { orderNos: orderNos };
 
-      console.log('Bulk Payment Failed Payload:', payload);
-
       const res = await this.apiMainService.updateBulkOrdersListPaymentFailed(payload);
-      console.log('Bulk Payment Failed Response:', res);
 
       this.toaster.success('Bulk Payment Failed update successful');
       this.getAllOrders();
@@ -215,6 +212,65 @@ export class OrdersDashboardComponent implements OnInit {
     } catch (err) {
       console.error(err);
       this.toaster.error("Error validating payment");
+    }
+  }
+
+  bulkValidatePayments(ordersList: any[]) {
+    if (!ordersList || ordersList.length === 0) {
+      return;
+    }
+
+    const eligibleOrders = ordersList.filter(o => o.orderstatus === 'paymentInprogress' && this.isPaymentValidationVisible(o));
+
+    if (eligibleOrders.length === 0) {
+      this.toaster.info('No orders eligible for validation in this group (must be > 20 mins old)');
+      return;
+    }
+
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to validate ${eligibleOrders.length} payments?`,
+      callback: () => this.submitBulkValidation(eligibleOrders),
+      context: this,
+      data: null
+    });
+  }
+
+  async submitBulkValidation(ordersList: any[]) {
+    try {
+      this.isLoading = true;
+      let successCount = 0;
+      let failCount = 0;
+
+      for (const order of ordersList) {
+        try {
+          const res = await this.apiMainService.validateJusPayPaymentTransactionManual({
+            foodOrderId: order._id,
+            orderType: "outletOrder"
+          });
+          if (res.status === 'success' || res.status === 'placed' || res.status === true) {
+            successCount++;
+          } else {
+            failCount++;
+          }
+        } catch (err) {
+          console.error(`Validation failed for order ${order.orderNo}`, err);
+          failCount++;
+        }
+      }
+
+      if (successCount > 0) {
+        this.toaster.success(`Successfully validated ${successCount} payments`);
+      }
+      if (failCount > 0) {
+        this.toaster.warning(`Failed to validate ${failCount} payments`);
+      }
+
+      this.getAllOrders();
+    } catch (err) {
+      console.error('Bulk validation process failed', err);
+      this.toaster.error('An error occurred during bulk validation');
+    } finally {
+      this.isLoading = false;
     }
   }
   // Helper to check if date is strictly in the past (before today)

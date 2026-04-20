@@ -3,10 +3,10 @@ import { MatDialog } from '@angular/material/dialog';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
@@ -80,11 +80,9 @@ export class OutletMenuComponent implements OnInit, OnChanges {
   async fetchMenuItems() {
     try {
       const res = await this.apiMainService.getMenuItems(this.outletObj._id);
-      console.log('menu items', res);
       this.menuItems = res || [];
       this.applyMenuFilters();
     } catch (e) {
-      console.log('error while fetching menu items', e);
       this.menuItems = [];
       this.applyMenuFilters();
     }
@@ -119,10 +117,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
     this.filteredMenuList = temp;
     this.showCard = this.filteredMenuList.length > 0;
-
-    console.log('buildDateGroupedMenu', this.buildDateGroupedMenu(this.filteredMenuList))
-    console.log('buildGroupedMenu', this.buildGroupedMenu(this.filteredMenuList))
-    this.groupedMenuList = this.outletObj?.isWeeklyMenu ? this.buildDateGroupedMenu(this.filteredMenuList) : this.buildGroupedMenu(this.filteredMenuList);
   }
 
   private buildGroupedMenu(list: any[]) {

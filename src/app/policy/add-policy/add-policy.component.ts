@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import {
   DEFAULT_BUTTON_POLICIES,
   DEFAULT_ROUTE_POLICIES,
@@ -8,8 +8,7 @@ import {
   GROUPED_BUTTON_POLICIES,
   GROUPED_TAB_POLICIES
 } from 'src/config/policy.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -85,12 +84,12 @@ export class AddPolicyComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private runtimeStorage: RuntimeStorageService,
-    private router: Router
+    public dialogRef: MatDialogRef<AddPolicyComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
-    this.policyId = this.runtimeStorage.getCacheData('VIEW_POLICY');
+    this.policyId = this.data?.id || null;
     this.loadPolicies();
   }
 
@@ -99,15 +98,15 @@ export class AddPolicyComponent implements OnInit {
       const response: any = await this.apiMainService.getAllPolicy();
       this.policyArr = response || [];
       if (this.policyId) {
-        this.editPolicy(this.policyId);
+        this.editMode = true;
+        this.populatePolicy(this.policyId);
       }
     } catch (error) {
       console.error('Error loading policies:', error);
     }
   }
 
-  editPolicy(id: string) {
-    this.editMode = true;
+  populatePolicy(id: string) {
     const policy = this.policyArr.find((p) => p._id === id);
     if (policy) {
       this.policyObj = {
@@ -120,31 +119,21 @@ export class AddPolicyComponent implements OnInit {
     }
   }
 
-  async addPolicy() {
+  async savePolicy() {
     if (!this.policyObj.policy_name || !this.policyObj.policy_description) {
       this.showErrorMsg = true;
       return;
     }
     this.showErrorMsg = false;
     try {
-      await this.apiMainService.addPolicy(this.policyObj);
-      this.router.navigate(['/app/policy']).then(() => {
-        window.location.reload();
-      });
+      if (this.editMode) {
+        await this.apiMainService.updatePolicy(this.policyId, this.policyObj);
+      } else {
+        await this.apiMainService.addPolicy(this.policyObj);
+      }
+      this.dialogRef.close(true);
     } catch (error) {
-      console.error('Error adding policy:', error);
-    }
-  }
-
-  async updatePolicy() {
-    try {
-      console.log(this.policyId, this.policyObj);
-      await this.apiMainService.updatePolicy(this.policyId, this.policyObj);
-      this.router.navigate(['/app/policy']).then(() => {
-        window.location.reload();
-      });
-    } catch (error) {
-      console.error('Error updating policy:', error);
+      console.error('Error saving policy:', error);
     }
   }
 
@@ -161,13 +150,13 @@ export class AddPolicyComponent implements OnInit {
   }
 
   selectAllRoutes() {
-    const allKeys: string[] = [];
-    this.groupedRoutePolicies.forEach(g => allKeys.push(...g.keys));
+    const activeKeys: string[] = [];
+    this.filteredRoutePolicies.forEach(g => activeKeys.push(...g.keys));
 
-    const allSelected = allKeys.every(k => this.policyObj.route_policies[k]);
+    const allSelected = activeKeys.every(k => this.policyObj.route_policies[k]);
     const updated = { ...this.policyObj.route_policies };
 
-    allKeys.forEach(k => updated[k] = !allSelected);
+    activeKeys.forEach(k => updated[k] = !allSelected);
 
     this.policyObj = {
       ...this.policyObj,
@@ -176,13 +165,13 @@ export class AddPolicyComponent implements OnInit {
   }
 
   selectAllButtons() {
-    const allKeys: string[] = [];
-    this.groupedButtonPolicies.forEach(g => allKeys.push(...g.keys));
+    const activeKeys: string[] = [];
+    this.filteredButtonPolicies.forEach(g => activeKeys.push(...g.keys));
 
-    const allSelected = allKeys.every(k => this.policyObj.button_policies[k]);
+    const allSelected = activeKeys.every(k => this.policyObj.button_policies[k]);
     const updated = { ...this.policyObj.button_policies };
 
-    allKeys.forEach(k => updated[k] = !allSelected);
+    activeKeys.forEach(k => updated[k] = !allSelected);
 
     this.policyObj = {
       ...this.policyObj,
@@ -191,13 +180,13 @@ export class AddPolicyComponent implements OnInit {
   }
 
   selectAllTabs() {
-    const allKeys: string[] = [];
-    this.groupedTabPolicies.forEach(g => allKeys.push(...g.keys));
+    const activeKeys: string[] = [];
+    this.filteredTabPolicies.forEach(g => activeKeys.push(...g.keys));
 
-    const allSelected = allKeys.every(k => this.policyObj.tab_policies[k]);
+    const allSelected = activeKeys.every(k => this.policyObj.tab_policies[k]);
     const updated = { ...this.policyObj.tab_policies };
 
-    allKeys.forEach(k => updated[k] = !allSelected);
+    activeKeys.forEach(k => updated[k] = !allSelected);
 
     this.policyObj = {
       ...this.policyObj,
@@ -206,7 +195,6 @@ export class AddPolicyComponent implements OnInit {
   }
 
   togglePolicy(type: 'route' | 'button' | 'tab', key: string) {
-    console.log(type, key)
     if (type === 'route') {
       const updated = { ...this.policyObj.route_policies };
       updated[key] = !updated[key];
@@ -220,11 +208,9 @@ export class AddPolicyComponent implements OnInit {
       updated[key] = !updated[key];
       this.policyObj = { ...this.policyObj, tab_policies: updated };
     }
-
-    console.log(this.policyObj, "policyy objee u")
   }
 
-  cancelPolicy() {
-    this.router.navigate(['/app/policy']);
+  closeDialog() {
+    this.dialogRef.close();
   }
 }

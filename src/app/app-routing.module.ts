@@ -39,10 +39,8 @@ const routes: Routes = [
 
       { path: 'bulkMasterMenu', loadComponent: () => import('./bulk-master-menu/bulk-master-menu.component').then(m => m.BulkMasterMenuComponent) },
       { path: 'policy', loadComponent: () => import('./policy/policy.component').then(m => m.PolicyComponent) },
-      { path: 'addPolicy', loadComponent: () => import('./policy/add-policy/add-policy.component').then(m => m.AddPolicyComponent) },
-
-      { path: 'addAdmin', loadChildren: () => import('./admin/add-admin/add-admin.module').then(m => m.AddAdminModule) },
-      { path: 'admin', loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule) },
+      { path: 'admin', loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent) },
+    
       { path: 'faq', loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => m.FaqModule) },
       { path: 'configVariable', loadChildren: () => import('./miscelleneous/config-variable/config-variable.module').then(m => m.ConfigVariableModule) },
       { path: 'appVersionControl', loadChildren: () => import('./miscelleneous/app-version-control/app-version-control.module').then(m => m.AppVersionControlModule) },
@@ -50,11 +48,9 @@ const routes: Routes = [
       { path: 'configImagesGroup', loadChildren: () => import('./miscelleneous/config-images-group/config-images-group.module').then(m => m.ConfigImagesGroupModule) },
 
 
-      { path: 'auditReport', loadComponent: () => import('./consumption-order/consumption-order.component').then(m => m.ConsumptionOrderComponent) },
       { path: 'serverlogs', loadChildren: () => import('./miscelleneous/server-logs/server-logs.module').then(m => m.ServerLogsModule) },
       { path: 'billing', loadChildren: () => import('./billing/billing.module').then(m => m.BillingModule) },
       { path: 'appFeedbacks', loadChildren: () => import('./suggessions-feedbacks/suggessions-feedbacks.module').then(m => m.SuggessionsFeedbacksModule) },
-      { path: 'excelExport', loadChildren: () => import('./excel-export/excel-export.module').then(m => m.ExcelExportModule) },
       { path: 'checklistHistory', loadComponent: () => import('./checklist-question/checklist-history/checklist-history.component').then(m => m.ChecklistHistoryComponent) },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]

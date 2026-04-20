@@ -1,203 +1,112 @@
-<div class="vendor-header">
-    <div>
-        <h4 class="m-0 fw-semibold">Outlet Orders</h4>
-    </div>
-    <div class="header-actions">
-        <div class="input-wrapper">
-            <mat-form-field appearance="outline" class="w-100 search-input">
-                <input matInput type="text" placeholder="Order #, Name, Mobile, Email"
-                    (keyup)="onSearch($any($event.target).value)" />
-                <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-                    <mat-icon>search</mat-icon>
+<div class="dashboard-container">
+    <!-- Header Card -->
+    <div class="page-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Orders Dashboard</h1>
+                <p class="page-subtitle">Real-time view of all outlet orders</p>
+            </div>
+            <div class="actions-section">
+                <!-- Search -->
+                <div class="search-wrapper">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search order #, Name, Mobile..."
+                        (keyup)="onSearch($any($event.target).value)" />
+                </div>
+
+                <!-- Refresh -->
+                <button mat-stroked-button class="btn-refresh" [class.isLoading]="isLoading" (click)="reloadPage()"
+                    [disabled]="isLoading">
+                    <mat-icon>refresh</mat-icon>
+                    <span>Refresh</span>
                 </button>
-            </mat-form-field>
+            </div>
         </div>
-
-        <button mat-raised-button color="primary" (click)="reloadPage()" [disabled]="isLoading">
-            <mat-icon [class.spin]="isLoading">refresh</mat-icon>
-            <span class="d-none d-md-inline ms-2">Refresh</span>
-        </button>
     </div>
-</div>
-
-
-<div class="container-fluid mt-3 pb-4">
 
     <!-- Status Tiles / Stats -->
-    <div class="stats-grid mb-4">
+    <div class="stats-row mb-4">
         <div class="stat-card" *ngFor="let status of statusList" [class.active]="selectedStatus === status"
             (click)="getAllOrders(status)">
-            <div class="stat-icon" [ngClass]="{
-                    'warning-bg': status === 'paymentInprogress' || status === 'readyOrder',
-                    'error-bg': status === 'paymentFailed' || status === 'cancelled',
-                    'primary-bg': status === 'placed' || status === 'autoComplete',
-                    'success-bg': status === 'completed'
+
+            <div class="stat-icon-wrap" [ngClass]="{'pending-gradient': status ==='paymentInprogress' || status ==='readyOrder','error-gradient': status ==='paymentFailed' || status ==='cancelled','primary-gradient': status ==='placed' || status ==='autoComplete','success-gradient': status ==='completed','ready-gradient': status ==='readyOrder'
                 }">
-                <!-- Ideally map icons based on status, using generic here or logic -->
-                <mat-icon *ngIf="status === 'paymentInprogress'">hourglass_empty</mat-icon>
-                <mat-icon *ngIf="status === 'paymentFailed'">error</mat-icon>
-                <mat-icon *ngIf="status === 'placed'">restaurant</mat-icon>
-                <mat-icon *ngIf="status === 'completed'">check_circle</mat-icon>
-                <mat-icon *ngIf="status === 'cancelled'">cancel</mat-icon>
-                <mat-icon *ngIf="status === 'readyOrder'">thumb_up</mat-icon>
-                <mat-icon *ngIf="status === 'autoComplete'">autorenew</mat-icon>
+                <mat-icon *ngIf="status ==='paymentInprogress'">hourglass_empty</mat-icon>
+                <mat-icon *ngIf="status ==='paymentFailed'">error</mat-icon>
+                <mat-icon *ngIf="status ==='placed'">restaurant</mat-icon>
+                <mat-icon *ngIf="status ==='completed'">check_circle</mat-icon>
+                <mat-icon *ngIf="status ==='cancelled'">cancel</mat-icon>
+                <mat-icon *ngIf="status ==='readyOrder'">thumb_up</mat-icon>
+                <mat-icon *ngIf="status ==='autoComplete'">autorenew</mat-icon>
             </div>
-            <div class="stat-content">
-                <div class="stat-value">{{ orderStatusMapper[status] || status }}</div>
-                <!-- <div class="stat-label">Orders</div> -->
+
+            <div class="stat-info">
+                <span class="stat-label">Order Status</span>
+                <span class="stat-value">{{ orderStatusMapper[status] || status }}</span>
             </div>
+
+            <div class="active-indicator" *ngIf="selectedStatus === status"></div>
         </div>
     </div>
 
-    <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
-        <mat-spinner diameter="50"></mat-spinner>
+    <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Fetching latest orders...</p>
     </div>
 
     <div *ngIf="!isLoading">
         <div class="container-fluid px-0" *ngIf="orders.length > 0">
             <mat-accordion multi>
-                <mat-expansion-panel *ngFor="let dateKey of dateKeys" class="mb-3 shadow-sm border-0">
-                    <mat-expansion-panel-header class="py-3">
+                <mat-expansion-panel *ngFor="let dateKey of dateKeys" class="mb-3">
+                    <mat-expansion-panel-header class="py-4">
                         <div class="w-100 d-flex justify-content-between align-items-center pe-3">
-                            <mat-panel-title class="fw-bold fs-5 mb-0 text-primary">
-                                {{ dateKey }} <span class="badge bg-light text-dark ms-2">{{
-                                    ordersByDate[dateKey]?.length }}</span>
+                            <mat-panel-title class="group-title">
+                                <mat-icon class="calendar-icon">calendar_today</mat-icon>
+                                <span class="date-text">{{ dateKey }}</span>
+                                <span class="count-badge">{{ ordersByDate[dateKey]?.length }}</span>
                             </mat-panel-title>
-                            <!-- Bulk Complete Button for this Date Group -->
-                            <button mat-raised-button color="accent" class="ms-3"
-                                *ngIf="(selectedStatus === 'placed' || selectedStatus === 'readyOrder' || selectedStatus === 'paymentInprogress') && isPastDate(dateKey)"
-                                (click)="$event.stopPropagation(); bulkCompleteOrders(ordersByDate[dateKey])">
-                                <mat-icon>done_all</mat-icon>
-                                <span class="d-none d-md-inline ms-2">Complete All</span>
-                            </button>
 
-                            <!-- Bulk Payment Failed Button for this Date Group -->
-                            <button mat-raised-button color="warn" class="ms-3"
-                                *ngIf="selectedStatus === 'paymentInprogress' && isPastDate(dateKey)"
-                                (click)="$event.stopPropagation(); bulkPaymentFailedOrders(ordersByDate[dateKey])">
-                                <mat-icon>error_outline</mat-icon>
-                                <span class="d-none d-md-inline ms-2">Payment Failed</span>
-                            </button>
+                            <!-- Bulk Actions -->
+                            <div class="bulk-actions">
+                                <button mat-flat-button class="bulk-btn success-btn"
+                                    *ngIf="(selectedStatus ==='placed' || selectedStatus ==='readyOrder' || selectedStatus ==='paymentInprogress') && isPastDate(dateKey)"
+                                    (click)="$event.stopPropagation(); bulkCompleteOrders(ordersByDate[dateKey])">
+                                    <mat-icon>done_all</mat-icon>
+                                    <span>Complete All</span>
+                                </button>
+
+                                <button mat-flat-button class="bulk-btn warn-btn"
+                                    *ngIf="selectedStatus ==='paymentInprogress' && isPastDate(dateKey)"
+                                    (click)="$event.stopPropagation(); bulkPaymentFailedOrders(ordersByDate[dateKey])">
+                                    <mat-icon>error_outline</mat-icon>
+                                    <span>Payment Failed</span>
+                                </button>
+
+                                <button mat-flat-button class="bulk-btn primary-btn"
+                                    *ngIf="selectedStatus ==='paymentInprogress'"
+                                    (click)="$event.stopPropagation(); bulkValidatePayments(ordersByDate[dateKey])">
+                                    <mat-icon>verified_user</mat-icon>
+                                    <span>Validate All</span>
+                                </button>
+                            </div>
                         </div>
                     </mat-expansion-panel-header>
 
                     <!-- Order Cards Grid for this Date -->
-                    <div class="row g-3 pt-3">
+                    <div class="row g-4 pt-3">
                         <div class="col-12 col-md-6 col-xl-4" *ngFor="let row of ordersByDate[dateKey]">
-                            <mat-card class="order-card h-100 shadow-sm border-0">
-                                <div class="order-card-inner">
-                                    <!-- LEFT PANEL: Context & Customer -->
-                                    <div class="order-left-panel">
-                                        <div class="order-meta-group">
-                                            <div class="d-flex justify-content-between align-items-start">
-                                                <div>
-                                                    <div class="label">Order #</div>
-                                                    <div class="value-large text-truncate" style="max-width: 120px;">
-                                                        {{ row.orderNo }}
-                                                    </div>
-                                                </div>
-                                                <div class="text-end">
-                                                    <div class="label">Token</div>
-                                                    <div class="value-large text-primary">#{{ row.tokenNo || '-' }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="value-date">
-                                                {{ row.SubmitedDate || row.orderDate | date: 'MMM d, y, h:mm a' }}
-                                            </div>
-                                        </div>
-
-                                        <div class="badges-container">
-                                            <span class="status-pill" [ngClass]="row.orderstatus">
-                                                {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
-                                            </span>
-
-                                            <div class="meta-badge" *ngIf="row.isCabinOrder">
-                                                <span>Cabin: {{row.cabinConfig?.cabinName}}</span>
-                                            </div>
-                                            <div class="meta-badge" *ngIf="row.organizationDetails?.organization_name">
-                                                <mat-icon>business</mat-icon> {{
-                                                row.organizationDetails?.organization_name }}
-                                            </div>
-                                            <div class="meta-badge" *ngIf="row.cafeteriaDetails?.cafeteria_name">
-                                                <mat-icon>store</mat-icon> {{ row.cafeteriaDetails?.cafeteria_name }}
-                                            </div>
-                                        </div>
-
-                                        <div class="customer-profile">
-                                            <div class="avatar-circle">
-                                                {{ row.customerName?.[0] || 'C' }}
-                                            </div>
-                                            <div class="customer-info">
-                                                <h6 class="text-truncate" style="max-width: 150px;">{{ row.customerName
-                                                    }}</h6>
-                                                <p>{{ row.customerPhoneNo }}</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- RIGHT PANEL: Items & Actions -->
-                                    <div class="order-right-panel">
-                                        <div class="items-section">
-                                            <span class="section-title">Order Items ({{ (row.itemList ||
-                                                row.itemlist)?.length
-                                                || 0 }})</span>
-
-                                            <div class="item-list-container">
-                                                <div class="item-row-new"
-                                                    *ngFor="let i of (row.itemList || row.itemlist)">
-                                                    <div class="item-info">
-                                                        <span class="qty" *ngIf="i.count > 1">{{ i.count }}x</span>
-                                                        <span class="name">{{ i.itemName }}</span>
-                                                    </div>
-                                                    <div class="item-price">
-                                                        ₹{{ i.price | number : '1.2-2' }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="order-footer">
-                                            <div class="financials">
-                                                <div class="fin-item">
-                                                    <span>Item Total</span>
-                                                    <span>₹{{ row.itemAmount | number : '1.2-2' }}</span>
-                                                </div>
-
-                                                <div class="fin-item text-success" *ngIf="row.moneyWalletPointsUsed">
-                                                    <span>Wallet</span>
-                                                    <span>- ₹{{ row.moneyWalletPointsUsed | number : '1.2-2' }}</span>
-                                                </div>
-
-                                                <div class="fin-item total-paid">
-                                                    <span>Total Paid</span>
-                                                    <span>₹{{ (row.amount || 0) + (row.moneyWalletPointsUsed || 0) |
-                                                        number :
-                                                        '1.2-2' }}</span>
-                                                </div>
-                                            </div>
-                                            <div class="text-end"
-                                                *ngIf="isPaymentValidationVisible(row) && row.orderstatus === 'paymentInprogress'">
-                                                <button mat-stroked-button color="warn" class="btn-sm"
-                                                    (click)="validatePayment(row)">
-                                                    Validate Payment
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </mat-card>
+                            <app-orders-dashboard-card [order]="row" (refresh)="getAllOrders()">
+                            </app-orders-dashboard-card>
                         </div>
                     </div>
                 </mat-expansion-panel>
             </mat-accordion>
         </div>
 
-        <div *ngIf="orders.length === 0" class="text-center py-5">
-            <div class="mb-3 opacity-50">
-                <mat-icon style="font-size: 48px; width: 48px; height: 48px;">receipt_long</mat-icon>
-            </div>
-            <h5 class="text-muted fw-normal">No orders found</h5>
+        <div *ngIf="orders.length === 0" class="empty-state">
+            <mat-icon>receipt_long</mat-icon>
+            <h3>No Orders Found</h3>
+            <p>We couldn't find any orders for the selected status.</p>
         </div>
     </div>
 </div>

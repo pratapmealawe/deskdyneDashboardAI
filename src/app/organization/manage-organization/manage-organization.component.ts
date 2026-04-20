@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { PolicyService } from 'src/service/policy.service';
+import { PolicyService } from '@service/policy.service';
 import { MaterialModule } from '../../material.module';
 // Manage-organization sub-components
 import { CompanyWalletComponent } from './company-wallet/company-wallet.component';
 import { ConsumptionOrderComponent } from './consumption-order/consumption-order.component';
 import { VirtualCafeteriaComponent } from './virtual-cafeteria/virtual-cafeteria.component';
-import { OrgDetailsComponent } from './org-details/org-details.component';
+import { OrganizationDetailsComponent } from './organization-details/organization-details.component';
 import { OrgComplianceComponent } from './organization-compliance/organization-compliance.component';
 import { OutletEmployeeComponent } from './outlet-employee/outlet-employee.component';
 import { QrEmployeeComponent } from './qr-employee/qr-employee.component';
 import { BulkComponent } from "./bulk/bulk.component";
 import { AdminDailyOrderComponent } from './admin-daily-order/admin-daily-order.component';
+import { EmployeeListComponent } from './employee-list/employee-list.component';
 
 
 @Component({
@@ -20,7 +21,7 @@ import { AdminDailyOrderComponent } from './admin-daily-order/admin-daily-order.
   imports: [
     CommonModule,
     MaterialModule,
-    OrgDetailsComponent,
+    OrganizationDetailsComponent,
     OrgComplianceComponent,
     VirtualCafeteriaComponent,
     ConsumptionOrderComponent,
@@ -28,7 +29,8 @@ import { AdminDailyOrderComponent } from './admin-daily-order/admin-daily-order.
     CompanyWalletComponent,
     QrEmployeeComponent,
     BulkComponent,
-    AdminDailyOrderComponent
+    AdminDailyOrderComponent,
+    EmployeeListComponent
   ],
   templateUrl: './manage-organization.component.html',
   styleUrls: ['./manage-organization.component.scss'],
@@ -45,12 +47,12 @@ export class ManageOrganizationComponent implements OnInit {
   orgViewList = [
     { name: 'Org Details', path: 'orgDetails', policyKey: 'orgDetails' },
     { name: 'Compliance', path: 'organizationCompliance', policyKey: 'compliance' },
-    { name: 'Bulk Menu Section', path: 'bulkMenuSection', policyKey: 'bulkMenuSection' },
-    { name: 'Employee Bulk Menu', path: 'employeebulkmenu', policyKey: 'employeeBulkMenu' },
+    { name: 'Bulk Menu', path: 'bulkMenu', policyKey: 'bulkMenu' },
     { name: 'Virtual Cafeteria', path: 'virtualCafeteriaOutlet', policyKey: 'virtualCafeteria' },
     { name: 'Admin Daily Order', path: 'adminDailyOrder', policyKey: 'adminDailyOrder' },
+    { name: 'Employee Listing', path: 'employeeList', policyKey: 'employeeList' },
     { name: 'Consumption Menu', path: 'consumptionOrder', policyKey: 'consumptionMenu' },
-    { name: 'Outlet Employee', path: 'outletEmployee', policyKey: 'outletEmployee' },
+    { name: 'Outlet Employee Listing', path: 'outletEmployee', policyKey: 'outletEmployee' },
     { name: 'Company Wallet', path: 'companyWallet', policyKey: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee', policyKey: 'qrEmployee' },
   ];
@@ -116,7 +118,8 @@ export class ManageOrganizationComponent implements OnInit {
       // 'guestEmployeeList': 'person_add',
       'companyWallet': 'account_balance_wallet',
       'qrEmployee': 'qr_code',
-      'adminDailyOrder': 'fact_check'
+      'adminDailyOrder': 'fact_check',
+      'employeeList': 'people'
     };
     return icons[path] || 'article';
   }

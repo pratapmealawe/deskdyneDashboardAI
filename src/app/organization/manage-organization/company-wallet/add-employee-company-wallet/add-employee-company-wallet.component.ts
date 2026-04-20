@@ -6,7 +6,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-add-employee-company-wallet',
@@ -18,7 +19,8 @@ import { ApiMainService } from 'src/service/apiService/apiMain.service';
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule
+    MatSelectModule,
+    MatIconModule
   ],
   templateUrl: './add-employee-company-wallet.component.html',
   styleUrls: ['./add-employee-company-wallet.component.scss']
@@ -46,7 +48,7 @@ export class AddEmployeeCompanyWalletComponent implements OnInit {
     if (this.data && this.data.cafeteriaList) {
       this.cafeteriaList = this.data.cafeteriaList;
     }
-    
+
     // If editing, patch values (data.employee would be passed)
     if (this.data.employee) {
       this.employeeForm.patchValue({
@@ -58,10 +60,10 @@ export class AddEmployeeCompanyWalletComponent implements OnInit {
         cafeteria: this.cafeteriaList.find(c => c.cafeteria_id === this.data.employee.cafeteria_id)
       });
     } else if (this.data.selectedCafeteria) {
-       // Pre-select cafeteria if passed
-       this.employeeForm.patchValue({
-         cafeteria: this.data.selectedCafeteria
-       });
+      // Pre-select cafeteria if passed
+      this.employeeForm.patchValue({
+        cafeteria: this.data.selectedCafeteria
+      });
     }
   }
 

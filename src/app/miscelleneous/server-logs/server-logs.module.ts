@@ -4,7 +4,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ServerLogsComponent } from './server-logs.component';
 import { ServerLogsRoutingModule } from './server-logs-routing.module';
 import { FormsModule } from '@angular/forms';
-import { CustomPipeModule } from 'src/pipes/pipe.module';
+import { CustomPipeModule } from '@pipes/pipe.module';
 
 
 

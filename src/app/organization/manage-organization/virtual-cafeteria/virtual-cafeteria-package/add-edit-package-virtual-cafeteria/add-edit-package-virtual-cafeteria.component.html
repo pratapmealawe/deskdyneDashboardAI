@@ -1,0 +1,92 @@
+<h2 mat-dialog-title>{{ data?.package ?'Edit Package' :'Add Package' }}</h2>
+<mat-dialog-content>
+    <form [formGroup]="packageForm" class="dialog-form" *ngIf="data">
+        <div class="row mt-3">
+            <div class="col-12 col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Selected Clusters</mat-label>
+                    <mat-select formControlName="selectedClusters" multiple>
+                        <mat-option *ngFor="let cluster of clusters" [value]="cluster.clusterId">
+                            {{ cluster.clusterName }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Package Categories</mat-label>
+                    <mat-select formControlName="packageCategory" multiple>
+                        <mat-option *ngFor="let category of packageCategories" [value]="category">
+                            {{ category }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-12 col-md-4">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Selected Meals</mat-label>
+                    <mat-select formControlName="selectedMeals" multiple>
+                        <mat-option *ngFor="let meal of filteredMeals" [value]="meal._id">
+                            {{ meal.packageName }} (₹{{ meal.packagePrice - meal.discount }})
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+        <div formArrayName="itemList" class="row mt-3">
+            <div *ngFor="let item of itemListArray.controls; let i = index" [formGroupName]="i" class="row g-2 mt-3">
+                <div class="col-12 col-md-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Meal</mat-label>
+                        <input matInput formControlName="name" readonly>
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-md-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Pay to Kitchen Slab 1</mat-label>
+                        <input matInput type="number" formControlName="payToKitchenPerMeal">
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-md-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Pay to Kitchen Slab 2</mat-label>
+                        <input matInput type="number" formControlName="payToKitchenPerMeal2">
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-md-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>DD Discount</mat-label>
+                        <input matInput type="number" formControlName="ddDiscount">
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-md-2">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Subsidy Value</mat-label>
+                        <input matInput type="number" formControlName="subsidyValue">
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-md-2">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Subsidy Type</mat-label>
+                        <mat-select formControlName="subsidyType">
+                            <mat-option value="">-- Select Type --</mat-option>
+                            <mat-option value="flat">Flat</mat-option>
+                            <mat-option value="percentage">Percentage</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <div class="col-12 col-md-1 d-flex align-items-center">
+                    <button mat-icon-button color="warn" (click)="removeItem(i)">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-raised-button color="primary" (click)="savePackage()" [disabled]="packageForm.invalid">
+        Save
+    </button>
+    <button mat-stroked-button color="warn" (click)="closeDialog()">Cancel</button>
+</mat-dialog-actions>

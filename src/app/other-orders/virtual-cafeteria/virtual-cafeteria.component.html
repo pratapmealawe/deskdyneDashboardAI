@@ -38,7 +38,7 @@
             <div class="orders-list">
                 <ng-container *ngFor="let order of filteredList">
                     <app-order-subscription-package-card [orderInput]="order" [parentPage]="'currentOrder'"
-                        *ngIf="order.orderType === 'subscriptionPackage'"></app-order-subscription-package-card>
+                        *ngIf="order.orderType ==='subscriptionPackage'"></app-order-subscription-package-card>
                 </ng-container>
             </div>
 
@@ -57,9 +57,9 @@
                         <mat-icon>chevron_left</mat-icon>
                     </button>
                     <ng-container *ngFor="let p of visiblePages">
-                        <button *ngIf="p !== '...'" class="page-btn" [class.active]="p === page"
+                        <button *ngIf="p !=='...'" class="page-btn" [class.active]="p === page"
                             (click)="goToPage(p)">{{p}}</button>
-                        <span *ngIf="p === '...'" class="page-dots">...</span>
+                        <span *ngIf="p ==='...'" class="page-dots">...</span>
                     </ng-container>
                     <button class="page-btn" (click)="next(page)" [disabled]="paginationOver">
                         <mat-icon>chevron_right</mat-icon>

@@ -5,10 +5,10 @@ import { PageEvent } from '@angular/material/paginator';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AddVendorFirmComponent } from './add-vendor-firm/add-vendor-firm.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
-import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -81,7 +81,6 @@ export class VendorFirmComponent {
       this.extractOrganizations();
       this.applyFilter();
     } catch (error) {
-      console.log('getAllVendor', error);
     }
   }
 
@@ -176,7 +175,6 @@ export class VendorFirmComponent {
       const deleted = await this.apiMainService.deleteVendorFirm(id);
       this.getAllVendors();
     } catch (error) {
-      console.log('deleteVendor', error);
     }
   }
 

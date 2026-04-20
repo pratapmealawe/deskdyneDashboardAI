@@ -25,40 +25,39 @@
     <div class="incident-page">
       <div class="d-flex gap-2 mt-3 justify-content-end">
         <button class="btn-add" mat-raised-button color="primary" *ngIf="
-            orgAdmin?.role === 'ORGADMIN' &&
+            orgAdmin?.role ==='ORGADMIN' &&
             isFilterApplied &&
-            filterObj?.cafeteria_id
-          " (click)="addIncident()">
+            filterObj?.cafeteria_id" (click)="addIncident()">
           <mat-icon class="me-1">add</mat-icon>
           Add Incident
         </button>
       </div>
-      <div class="incident-list mt-3 " *ngIf="pagedIncidentList.length > 0; else noRecords">
+      <div class="incident-list mt-3" *ngIf="pagedIncidentList.length > 0; else noRecords">
         <mat-card class="incident-card mb-2" *ngFor="let incident of pagedIncidentList">
           <mat-card-content>
             <div class="row g-2 align-items-center">
               <div class="col-12 col-md-3">
                 <div class="labelText">Incident Type</div>
                 <div class="labelData fw-semibold">
-                  {{ incident?.incidentType || '-' }}
+                  {{ incident?.incidentType ||'-' }}
                 </div>
                 <div class="labelText mt-1">Subject</div>
                 <div class="labelData">
-                  {{ incident?.incidentSubject || '-' }}
+                  {{ incident?.incidentSubject ||'-' }}
                 </div>
               </div>
 
               <div class="col-12 col-md-3">
                 <div class="labelText">Description</div>
                 <div class="labelData text-truncate-3">
-                  {{ incident?.incidentDescription || '-' }}
+                  {{ incident?.incidentDescription ||'-' }}
                 </div>
               </div>
 
               <div class="col-6 col-md-2">
                 <div class="labelText">Date</div>
                 <div class="labelData">
-                  {{ incident?.createdAt | date : 'MMM d, y, h:mm:ss a' }}
+                  {{ incident?.createdAt | date :'MMM d, y, h:mm:ss a' }}
                 </div>
                 <div class="labelText mt-1">Status</div>
                 <mat-chip class="status-chip" [ngClass]="incident.status" selected>
@@ -69,30 +68,29 @@
               <div class="col-12 col-md-3">
                 <div class="labelText mb-1">Change Status</div>
                 <div class="statusBtn">
-                  <button class="btn-edit" mat-stroked-button color="primary" [disabled]="orgAdmin?.role === 'ORGADMIN'"
-                    *ngIf="incident.status !== 'resolved'" (click)="
+                  <button class="btn-edit" mat-stroked-button color="primary" [disabled]="orgAdmin?.role ==='ORGADMIN'"
+                    *ngIf="incident.status !=='resolved'" (click)="
                     openChangeStatus(
                       incident,
-                      incident.status === 'created'
-                        ? 'acknowledged'
-                        : incident.status === 'acknowledged'
-                        ? 'inReview'
-                        : 'resolved'
-                    )
-                  ">
+                      incident.status ==='created'
+                        ?'acknowledged'
+                        : incident.status ==='acknowledged'
+                        ?'inReview'
+                        :'resolved'
+                    )">
                     {{
-                    (incident.status === 'created'
-                    ? 'acknowledged'
-                    : incident.status === 'acknowledged'
-                    ? 'inReview'
-                    : 'resolved') | titlecase
+                    (incident.status ==='created'
+                    ?'acknowledged'
+                    : incident.status ==='acknowledged'
+                    ?'inReview'
+                    :'resolved') | titlecase
                     }}
                   </button>
 
-                  <button class="btn-delete" mat-stroked-button color="warn" [disabled]="orgAdmin?.role === 'ORGADMIN'"
-                    *ngIf="incident.status === 'inReview' || incident.status === 'resolved'"
-                    (click)="openChangeStatus(incident, 'blocked')">
-                    {{ 'blocked' | titlecase }}
+                  <button class="btn-delete" mat-stroked-button color="warn" [disabled]="orgAdmin?.role ==='ORGADMIN'"
+                    *ngIf="incident.status ==='inReview' || incident.status ==='resolved'"
+                    (click)="openChangeStatus(incident,'blocked')">
+                    {{'blocked' | titlecase }}
                   </button>
                 </div>
               </div>
@@ -138,11 +136,10 @@
       <div class="mb-3 col-md-12">
         <label class="labelText">User</label>
         <select class="form-select" [disabled]="
-            orgAdmin.role === 'SITEEXE' ||
-            incidentObj.status === 'inReview' ||
-            incidentObj.status === 'blocked' ||
-            incidentObj.status === 'resolved'
-          " [(ngModel)]="assignedToInfo.id">
+            orgAdmin.role ==='SITEEXE' ||
+            incidentObj.status ==='inReview' ||
+            incidentObj.status ==='blocked' ||
+            incidentObj.status ==='resolved'" [(ngModel)]="assignedToInfo.id">
           <option selected disabled value="">Select User</option>
           <option *ngFor="let admin of adminList" [value]="admin._id">
             {{ admin.name }}

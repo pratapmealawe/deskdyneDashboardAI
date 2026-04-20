@@ -1,70 +1,72 @@
-<div class="admin-header">
-  <div>
-    <h4 class="m-0 fw-semibold">Policy</h4>
-  </div>
-
-  <div class="header-actions">
-    <!-- SEARCH FIELD -->
-    <div class="input-wrapper">
-      <mat-form-field appearance="outline" class="w-100 search-input">
-        <input matInput type="text" placeholder="Search policy..." [formControl]="searchControl" />
-        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-          <mat-icon>search</mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-
-    <!-- ADD BUTTON -->
-    <button class="btn-add" mat-raised-button (click)="addPolicy()" *appHasPermission="'POLICY:ADD'">
-      <mat-icon>add_circle</mat-icon>
-      Add Policy
-    </button>
-  </div>
-</div>
-
-<div class="container-fluid mt-2 policy-wrapper">
-  <!-- NO RECORDS -->
-  <div *ngIf="filteredPolicyArr && filteredPolicyArr.length === 0" class="center mt-5">
-    No Records Found
-  </div>
-
-  <!-- LIST -->
-  <div class="row" *ngIf="filteredPolicyArr && filteredPolicyArr.length > 0">
-    <div class="mt-2">
-      <div *ngFor="let policy of filteredPolicyArr" class="cardDesign mb-2">
-        <div class="container-fluid">
-          <div class="row align-items-center">
-            <div class="col-md-10 col-9">
-              <div class="row">
-                <div class="col-md-4 col-12 mb-2 mb-md-0">
-                  <div class="labelText">Policy Name</div>
-                  <div class="labelData">
-                    {{ policy.policy_name }}
-                  </div>
-                </div>
-                <div class="col-md-8 col-12">
-                  <div class="labelText">Description</div>
-                  <div class="labelData">
-                    {{ policy.policy_description }}
-                  </div>
-                </div>
-              </div>
+<div class="policy-listing-board">
+    <!-- Premium Header -->
+    <div class="premium-header mb-4">
+        <div class="header-left">
+            <div class="icon-box primary">
+                <mat-icon>security</mat-icon>
             </div>
-
-            <div class="col-md-2 col-3 d-flex align-items-center gap-3 justify-content-end">
-              <mat-icon *appHasPermission="'POLICY:EDIT'" (click)="editPolicy(policy._id)" class="action-icon edit"
-                matTooltip="Edit">
-                edit
-              </mat-icon>
-              
-              <mat-icon *appHasPermission="'POLICY:DELETE'" (click)="confirmDelete(policy._id)" class="action-icon delete"
-                matTooltip="Delete">
-                delete
-              </mat-icon>
+            <div class="title-wrap">
+                <h2 class="page-title">Policy & Permissions</h2>
+                <p class="page-subtitle">Manage role-based access control and system permissions</p>
             </div>
-          </div>
         </div>
-      </div>
+
+        <div class="header-actions">
+            <!-- Search field -->
+            <div class="search-box-wrap">
+                <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput [formControl]="searchControl" placeholder="Search policies...">
+                </mat-form-field>
+            </div>
+
+            <button mat-flat-button color="primary" class="btn-add-policy" (click)="addPolicy()" *appHasPermission="'POLICY:ADD'">
+                <mat-icon>add</mat-icon>
+                <span>Add New Policy</span>
+            </button>
+        </div>
     </div>
-  </div>
-</div>
+
+    <!-- Policy Cards Grid -->
+    <div class="policy-grid" *ngIf="filteredPolicyArr.length > 0; else emptyState">
+        <div class="policy-card-modern" *ngFor="let policy of filteredPolicyArr">
+            <div class="card-content">
+                <div class="policy-branding">
+                    <div class="icon-circle">
+                        <mat-icon>admin_panel_settings</mat-icon>
+                    </div>
+                </div>
+                
+                <div class="policy-info">
+                    <h3 class="policy-name">{{ policy.policy_name }}</h3>
+                    <p class="policy-desc">{{ policy.policy_description }}</p>
+                </div>
+
+                <div class="card-actions">
+                    <button mat-icon-button class="btn-edit" (click)="editPolicy(policy._id)" 
+                            matTooltip="Edit Permissions" *appHasPermission="'POLICY:EDIT'">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button class="btn-delete" (click)="confirmDelete(policy._id)" 
+                            matTooltip="Delete Policy" *appHasPermission="'POLICY:DELETE'">
+                        <mat-icon>delete_outline</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #emptyState>
+        <div class="empty-media-card p-5 center">
+            <div class="media-wrap mb-3">
+                <mat-icon class="huge-icon text-soft">policy</mat-icon>
+            </div>
+            <h3 class="text-secondary fw-bold">No Policies Found</h3>
+            <p class="text-muted">Create a new policy to start managing system access.</p>
+            <button mat-button color="primary" class="mt-2" (click)="addPolicy()" *appHasPermission="'POLICY:ADD'">
+                <mat-icon>add</mat-icon> Create First Policy
+            </button>
+        </div>
+    </ng-template>
+</div>

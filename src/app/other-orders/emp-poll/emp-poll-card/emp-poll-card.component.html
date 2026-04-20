@@ -4,7 +4,7 @@
     <!-- Card Top -->
     <div class="card-top">
         <div class="order-avatar poll-avatar">
-            {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() || 'EP' }}
+            {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() ||'EP' }}
         </div>
         <div class="order-identity">
             <h3 class="order-title">Employee Poll</h3>
@@ -14,7 +14,7 @@
                 </span>
                 <span class="date-text">
                     <mat-icon>calendar_today</mat-icon>
-                    {{ order?.deliveryDate | date: 'MMM d, y' }}
+                    {{ order?.deliveryDate | date:'MMM d, y' }}
                 </span>
             </div>
         </div>
@@ -28,11 +28,11 @@
                 ₹{{ totalDeliveryCharge || 0 }}
             </span>
             <div class="card-actions" *ngIf="!hideActions">
-                <ng-container *ngIf="order?.pollStatus !== 'inactive'">
+                <ng-container *ngIf="order?.pollStatus !=='inactive'">
                     <button mat-flat-button color="primary" (click)="createOrder()" *ngIf="showCreateBtn"
                         [disabled]="isCreating" class="action-btn">
                         <mat-icon>add_circle</mat-icon>
-                        {{ isCreating ? 'Creating...' : 'Create Order' }}
+                        {{ isCreating ?'Creating...' :'Create Order' }}
                     </button>
                     <span *ngIf="!showCreateBtn" matTooltip="Order will be created after cutoff time">
                         <button mat-stroked-button disabled class="action-btn">
@@ -40,7 +40,7 @@
                         </button>
                     </span>
                 </ng-container>
-                <button mat-stroked-button color="warn" disabled *ngIf="order?.pollStatus === 'inactive'"
+                <button mat-stroked-button color="warn" disabled *ngIf="order?.pollStatus ==='inactive'"
                     class="action-btn">
                     <mat-icon>block</mat-icon> Poll Closed
                 </button>
@@ -108,12 +108,12 @@
                 <div class="item-row" *ngFor="let meal of order?.mealTypeList">
                     <div class="item-left">
                         <span class="item-qty-chip">{{ meal?.count }}x</span>
-                        <span class="item-name">{{ meal?.deliveredItem || 'N/A' }}</span>
+                        <span class="item-name">{{ meal?.deliveredItem ||'N/A' }}</span>
                     </div>
                     <div class="item-tags">
                         <span class="meta-tag meal-type">{{ meal?.itemName }}</span>
                     </div>
-                    <span class="item-price">₹{{ (meal?.mealPrice || 0) * (meal?.count || 1) | number : '1.2-2'
+                    <span class="item-price">₹{{ (meal?.mealPrice || 0) * (meal?.count || 1) | number :'1.2-2'
                         }}</span>
                 </div>
                 <div *ngIf="!order?.mealTypeList?.length" class="no-items">
@@ -139,10 +139,10 @@
         <div class="employee-grid" *ngIf="showEmployees">
             <div class="employee-chip" *ngFor="let emp of orderInput?.employeeList">
                 <div class="emp-avatar">
-                    {{ emp?.employeeName?.charAt(0) || 'U' }}
+                    {{ emp?.employeeName?.charAt(0) ||'U' }}
                 </div>
                 <div class="emp-info">
-                    <span class="emp-name">{{ emp?.employeeName || 'N/A' }}</span>
+                    <span class="emp-name">{{ emp?.employeeName ||'N/A' }}</span>
                     <span class="emp-meta" *ngIf="emp?.employeePhoneNo">{{ emp?.employeePhoneNo }}</span>
                     <span class="emp-meta" *ngIf="emp?.employeeEmail">{{ emp?.employeeEmail }}</span>
                     <span class="emp-item" *ngIf="emp?.deliveredItem">{{ emp?.deliveredItem }}</span>
@@ -156,7 +156,7 @@
         <div class="fin-strip">
             <div class="fin-cell">
                 <span class="fin-label">Total Delivery</span>
-                <span class="fin-value">₹{{ totalDeliveryCharge || 0 | number : '1.2-2' }}</span>
+                <span class="fin-value">₹{{ totalDeliveryCharge || 0 | number :'1.2-2' }}</span>
             </div>
             <div class="fin-cell">
                 <span class="fin-label">Total Items</span>

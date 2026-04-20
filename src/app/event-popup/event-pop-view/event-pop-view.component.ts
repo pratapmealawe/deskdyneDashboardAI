@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { PolicyService } from 'src/service/policy.service';
+import { PolicyService } from '@service/policy.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { EventPopDetailsComponent } from './event-pop-details/event-pop-details.component';

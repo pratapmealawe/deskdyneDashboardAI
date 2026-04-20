@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
 
 @Component({
   standalone: true,
@@ -27,11 +27,9 @@ export class PdfuploadComponent implements OnChanges {
     private toasterService: ToasterService
   ) { }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
 
     if (this.documentUrl) {
       this.selectedFileURL = this.sanitizer.bypassSecurityTrustResourceUrl(this.documentUrl);
-      console.log(this.selectedFileURL);
 
     }
   }

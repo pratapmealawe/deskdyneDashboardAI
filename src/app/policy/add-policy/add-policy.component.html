@@ -1,172 +1,161 @@
-<div class="policy-container">
-  <!-- HEADER -->
-  <div class="header-section">
-    <h1 class="header-title">Permissions Management</h1>
-    <p class="header-subtitle">Configure role-based access for routes, buttons, and tabs.</p>
-  </div>
-
-  <!-- POLICY DETAILS CARD -->
-  <div class="policy-meta-card">
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="input-field">
-          <div class="field-label">Policy Name <span class="text-danger">*</span></div>
-          <mat-form-field appearance="outline">
-            <input matInput [(ngModel)]="policyObj.policy_name" required placeholder="e.g. Policy Name" />
-            <mat-error *ngIf="showErrorMsg && !policyObj.policy_name">
-              Policy name is required.
-            </mat-error> </mat-form-field>
+<div class="policy-edit-modal premium-modal">
+    <!-- Header with Icon Box -->
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>security</mat-icon>
+            </div>
+            <div class="text">
+                <h3>{{ editMode ?'Edit' :'Create' }} Policy Permissions</h3>
+                <p>Configure role-based access for routes, actions, and dashboard tabs</p>
+            </div>
         </div>
-
-      </div>
-
-      <div class="col-md-4" *ngIf="policyArr.length > 0">
-        <div class="input-field">
-          <div class="field-label">Copy From Existing</div>
-          <mat-form-field appearance="outline">
-            <mat-select (selectionChange)="showReferencePolicy($event)" placeholder="Select a policy to copy">
-              <mat-option disabled selected value="">
-                -- Select Policy --
-              </mat-option>
-              <mat-option *ngFor="let item of policyArr" [value]="item._id">
-                {{ item.policy_name }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="input-field">
-          <div class="field-label">Description <span class="text-danger">*</span></div>
-          <mat-form-field appearance="outline">
-            <input matInput [(ngModel)]="policyObj.policy_description" required placeholder="What this role can do" />
-          </mat-form-field>
-        </div>
-      </div>
+        <button mat-icon-button (click)="closeDialog()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
     </div>
-  </div>
-  <div class="dashboard-toggle-section">
-    <div class="dashboard-tabs">
-      <div 
-        class="tab-item" 
-        [class.active]="activeTab === 'main'" 
-        (click)="activeTab = 'main'"
-      >
-        <mat-icon>dashboard</mat-icon>
-        <span>Main Dashboard</span>
-      </div>
-      <div 
-        class="tab-item" 
-        [class.active]="activeTab === 'org'" 
-        (click)="activeTab = 'org'"
-      >
-        <mat-icon>business</mat-icon>
-        <span>Organization Dashboard</span>
-      </div>
-      <div class="active-indicator" [style.transform]="activeTab === 'main' ? 'translateX(0)' : 'translateX(100%)'"></div>
-    </div>
-  </div>
 
-  <div class="parent">
-
-
-    <!-- ROUTE ACCESS SECTION -->
-    <mat-card class="route-card">
-      <div class="access-section">
-        <div class="section-header">
-          <div class="section-title-wrapper">
-            <mat-icon>lan</mat-icon>
-            <h2 class="section-title">Route Access</h2>
-          </div>
-          <button class="select-all-btn" (click)="selectAllRoutes()">Select All Routes</button>
-        </div>
-
-        <div class="subsection" *ngFor="let group of filteredRoutePolicies">
-          <h3 class="subsection-title">{{ group.title }}</h3>
-          <div class="permissions-grid">
-            <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.route_policies[key]"
-              (click)="togglePolicy('route', key)">
-              <div class="checkbox-box">
-                <mat-icon>check</mat-icon>
-              </div>
-              <span class="permission-label">{{ key }}</span>
+    <mat-dialog-content class="dialog-content custom-scrollbar bg-light-soft">
+        <!-- Section 1: Policy Identity & References -->
+        <div class="sticky-config-bar p-4 bg-white border-bottom shadow-sm">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                        <mat-label>Policy Name</mat-label>
+                        <input matInput [(ngModel)]="policyObj.policy_name" placeholder="e.g. Cafe Manager">
+                        <mat-icon matPrefix color="primary" class="me-1">badge</mat-icon>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4">
+                    <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                        <mat-label>Policy Description</mat-label>
+                        <input matInput [(ngModel)]="policyObj.policy_description" placeholder="What this role can do">
+                        <mat-icon matPrefix color="primary" class="me-1">description</mat-icon>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-4" *ngIf="policyArr.length > 0">
+                    <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                        <mat-label>Copy From Template</mat-label>
+                        <mat-select (selectionChange)="showReferencePolicy($event)">
+                            <mat-option *ngFor="let item of policyArr" [value]="item._id">
+                                {{ item.policy_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-icon matPrefix color="primary" class="me-1">content_copy</mat-icon>
+                    </mat-form-field>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </mat-card>
-    <!-- BUTTON ACCESS SECTION -->
-    <mat-card class="button-card">
-      <div class="access-section">
-        <div class="section-header">
-          <div class="section-title-wrapper">
-            <mat-icon>ads_click</mat-icon>
-            <h2 class="section-title">Button Access</h2>
-          </div>
-          <button class="select-all-btn" (click)="selectAllButtons()">Select All Buttons</button>
         </div>
 
-        <div class="subsection" *ngFor="let group of filteredButtonPolicies">
-          <h3 class="subsection-title">{{ group.title }}</h3>
-          <div class="permissions-grid">
-            <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.button_policies[key]"
-              (click)="togglePolicy('button', key)">
-              <div class="checkbox-box">
-                <mat-icon>check</mat-icon>
-              </div>
-              <span class="permission-label">{{ key }}</span>
+        <div class="p-4">
+            <!-- Dashboard Context Switcher -->
+            <div class="dashboard-context-toggle mb-4">
+                <div class="context-pill">
+                    <button class="pill-item" [class.active]="activeTab ==='main'" (click)="activeTab ='main'">
+                        <mat-icon>dashboard</mat-icon>
+                        <span>Main App</span>
+                    </button>
+                    <button class="pill-item" [class.active]="activeTab ==='org'" (click)="activeTab ='org'">
+                        <mat-icon>business</mat-icon>
+                        <span>Organization</span>
+                    </button>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </mat-card>
-    <!-- TAB ACCESS SECTION -->
-    <mat-card class="tab-card">
-      <div class="access-section">
-        <div class="section-header">
-          <div class="section-title-wrapper">
-            <mat-icon>tab</mat-icon>
-            <h2 class="section-title">Tab Access</h2>
-          </div>
-          <button class="select-all-btn" (click)="selectAllTabs()">Select All Tabs</button>
-        </div>
 
-        <div class="subsection" *ngFor="let group of filteredTabPolicies">
-          <h3 class="subsection-title">{{ group.title }}</h3>
-          <div class="permissions-grid">
-            <div class="permission-item" *ngFor="let key of group.keys" [class.active]="policyObj.tab_policies[key]"
-              (click)="togglePolicy('tab', key)">
-              <div class="checkbox-box">
-                <mat-icon>check</mat-icon>
-              </div>
-              <span class="permission-label">{{ key }}</span>
+            <div class="permissions-container d-grid gap-4">
+                <!-- Route Access -->
+                <div class="permission-section">
+                    <div class="section-header-wrap mb-3">
+                        <div class="section-title-badge">
+                            <mat-icon>lan</mat-icon> Route Access
+                        </div>
+                        <button mat-button class="select-all-link" (click)="selectAllRoutes()">
+                            <mat-icon>done_all</mat-icon> Toggle All
+                        </button>
+                    </div>
+                    
+                    <div class="group-stack">
+                        <div class="permission-group-card mb-3" *ngFor="let group of filteredRoutePolicies">
+                            <h4 class="group-label">{{ group.title }}</h4>
+                            <div class="permission-pill-grid">
+                                <div class="perm-pill" *ngFor="let key of group.keys" 
+                                     [class.active]="policyObj.route_policies[key]"
+                                     (click)="togglePolicy('route', key)">
+                                    <mat-icon class="pill-check">{{ policyObj.route_policies[key] ?'check_circle' :'radio_button_unchecked' }}</mat-icon>
+                                    <span class="pill-text">{{ key }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Button Access -->
+                <div class="permission-section">
+                    <div class="section-header-wrap mb-3">
+                        <div class="section-title-badge">
+                            <mat-icon>ads_click</mat-icon> Action Buttons
+                        </div>
+                        <button mat-button class="select-all-link" (click)="selectAllButtons()">
+                            <mat-icon>done_all</mat-icon> Toggle All
+                        </button>
+                    </div>
+                    
+                    <div class="group-stack">
+                        <div class="permission-group-card mb-3" *ngFor="let group of filteredButtonPolicies">
+                            <h4 class="group-label">{{ group.title }}</h4>
+                            <div class="permission-pill-grid">
+                                <div class="perm-pill" *ngFor="let key of group.keys" 
+                                     [class.active]="policyObj.button_policies[key]"
+                                     (click)="togglePolicy('button', key)">
+                                    <mat-icon class="pill-check">{{ policyObj.button_policies[key] ?'check_circle' :'radio_button_unchecked' }}</mat-icon>
+                                    <span class="pill-text">{{ key }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tab Access -->
+                <div class="permission-section">
+                    <div class="section-header-wrap mb-3">
+                        <div class="section-title-badge">
+                            <mat-icon>tab</mat-icon> UI Tabs
+                        </div>
+                        <button mat-button class="select-all-link" (click)="selectAllTabs()">
+                            <mat-icon>done_all</mat-icon> Toggle All
+                        </button>
+                    </div>
+                    
+                    <div class="group-stack">
+                        <div class="permission-group-card mb-3" *ngFor="let group of filteredTabPolicies">
+                            <h4 class="group-label">{{ group.title }}</h4>
+                            <div class="permission-pill-grid">
+                                <div class="perm-pill" *ngFor="let key of group.keys" 
+                                     [class.active]="policyObj.tab_policies[key]"
+                                     (click)="togglePolicy('tab', key)">
+                                    <mat-icon class="pill-check">{{ policyObj.tab_policies[key] ?'check_circle' :'radio_button_unchecked' }}</mat-icon>
+                                    <span class="pill-text">{{ key }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
+
+            <!-- Error Feedback -->
+            <div class="error-alert mt-4" *ngIf="showErrorMsg">
+                <mat-icon>warning</mat-icon>
+                <span>Policy Name and Description are required to save changes.</span>
+            </div>
         </div>
-      </div>
-    </mat-card>
-  </div>
-  <!-- ERROR MESSAGE -->
-  <div class="error-message" *ngIf="showErrorMsg">
-    <mat-icon>error_outline</mat-icon>
-    <span>Please provide both a Policy Name and Description to proceed.</span>
-  </div>
+    </mat-dialog-content>
 
-  <!-- FOOTER ACTIONS -->
-  <div class="footer-actions">
-    <button class="btn-cancel" (click)="cancelPolicy()">
-      Cancel
-    </button>
-
-    <button class="btn-primary" *ngIf="!editMode" (click)="addPolicy()">
-      <mat-icon>save</mat-icon>
-      Save Policy
-    </button>
-
-    <button class="btn-primary" *ngIf="editMode" (click)="updatePolicy()">
-      <mat-icon>system_update_alt</mat-icon>
-      Update Permissions
-    </button>
-  </div>
-</div>
+    <!-- Modal Actions -->
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-white border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeDialog()">Discard Changes</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="savePolicy()">
+            <mat-icon>{{ editMode ?'system_update_alt' :'save_alt' }}</mat-icon>
+            <span>{{ editMode ?'Update Permissions' :'Create Policy' }}</span>
+        </button>
+    </mat-dialog-actions>
+</div>

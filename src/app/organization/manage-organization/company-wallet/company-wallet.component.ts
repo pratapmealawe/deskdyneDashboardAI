@@ -1,5 +1,5 @@
-﻿import { Component, Input, OnInit } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEmployeeCompanyWalletComponent } from './add-employee-company-wallet/add-employee-company-wallet.component';
 import { AddMultipleEmployeeCompanyWalletComponent } from './add-multiple-employee-company-wallet/add-multiple-employee-company-wallet.component';
@@ -7,7 +7,7 @@ import { AddAutoRuleComponent } from './add-auto-rule/add-auto-rule.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -32,6 +32,7 @@ export class CompanyWalletComponent implements OnInit {
   totalPages: number = 0;
   autoRules: any[] = [];
   searchSubject = new Subject<string>();
+  activeTabIndex: number = 0;
 
   constructor(
     private apiMainService: ApiMainService,

@@ -3,8 +3,7 @@ import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { OrderFilterDialogComponent, OrderFilterDialogData } from '../../common-components/order-filter-dialog/order-filter-dialog.component';
 
 import * as ExcelJS from 'exceljs';
@@ -70,7 +69,6 @@ export class CustomerOutletOrdersComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private excelService: ExcelService, // keep if used elsewhere
     fb: FormBuilder,
     private dialog: MatDialog
   ) {

@@ -2,20 +2,19 @@ import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/cor
 import { FormControl, FormGroup } from '@angular/forms';
 import * as Highcharts from 'highcharts';
 import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { VendorFirmItemBreakdownComponent  } from 'src/app/vendor-firm/vendor-firm-view/vendor-firm-report/vendor-firm-item-breakdown/vendor-firm-item-breakdown.component';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-
 
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
-import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
+import { CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 
 @Component({
   selector: 'app-org-menu-items',
@@ -82,14 +81,12 @@ export class OrgMenuItemsComponent implements OnInit, OnChanges {
   }
 
   setInitials() {
-    // if Admin is logged in
     if (this.adminOrg) {
       this.headerConfig = {
         ...this.headerConfig,
         defaultOrgId: this.adminOrg._id,
       };
     }
-    //if OrgAdmin is logged in
     this.orgAdmin = this.adminOrg ? { orgDetails: this.adminOrg } : this.localStorageService.getCacheData('ADMIN_PROFILE');
     if (this.orgAdmin?.role === 'ORGADMIN') {
       this.headerConfig = {
@@ -108,54 +105,31 @@ export class OrgMenuItemsComponent implements OnInit, OnChanges {
         this.generateChartData(res);
       }
     } catch (err: any) {
-      console.log(err)
     }
   }
 
-  async generateChartData(data: any) {
+  generateChartData(res: any[]) {
+    const completedOrders = res.filter((o: any) => o?.orderstatus === 'completed');
     const itemData: any = {};
-
-    data.forEach((order: any) => {
-      if (order?.orderstatus === 'completed') {
-        order.itemList.forEach((item: any) => {
-          if (!itemData[item.itemName]) {
-            itemData[item.itemName] = {
-              count: 0,
-              totalAmount: 0,
-              totalSubsidy: 0
-            };
-          }
-
-          itemData[item.itemName].count += item.count;
-          itemData[item.itemName].totalAmount += item.price * item.count;
-        });
-      }
+    completedOrders.forEach((order: any) => {
+      (order.itemList || []).forEach((item: any) => {
+        const name = item.itemName || 'Unknown';
+        if (!itemData[name]) itemData[name] = { totalAmount: 0, count: 0 };
+        itemData[name].totalAmount += item.totalAmount || 0;
+        itemData[name].count += 1;
+      });
     });
 
     const chartData = Object.keys(itemData).map(itemName => {
       const item = itemData[itemName];
-      return {
-        name: itemName,
-        y: item.totalAmount,
-        count: item.count,
-      };
+      return { name: itemName, y: item.totalAmount, count: item.count };
     });
 
     this.chartOptions = {
-      chart: {
-        type: 'pie'
-      },
-      title: {
-        text: 'Item Distribution by Total Amount (Completed Orders)'
-      },
-      tooltip: {
-        pointFormat: '{series.name}: <b>₹{point.y}</b> (Count: {point.count})'
-      },
-      series: [{
-        type: 'pie',
-        name: 'Total',
-        data: chartData
-      }]
+      chart: { type: 'pie' },
+      title: { text: 'Item Distribution by Total Amount (Completed Orders)' },
+      tooltip: { pointFormat: '{series.name}: <b>₹{point.y}</b> (Count: {point.count})' },
+      series: [{ type: 'pie', name: 'Total', data: chartData }]
     };
 
     this.updateOrdersFlag = !this.updateOrdersFlag;

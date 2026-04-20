@@ -1,147 +1,130 @@
-<div class="outlet-employee-container">
- 
-  <!-- Cafeteria Selector -->
-  <div class="cafeteria-selector" *ngIf="orgObj?.cafeteriaList?.length > 0">
-    <div class="selector-label">
-      <mat-icon>storefront</mat-icon>
-      Select Cafeteria
-    </div>
-    <div class="cafeteria-pills">
-      <button *ngFor="let cafeteria of orgObj.cafeteriaList" class="cafe-pill"
-        [class.active]="selectedCafeteriaId === cafeteria.cafeteria_id" (click)="selectCafeteria(cafeteria)">
-        {{ cafeteria.cafeteria_name }}
-      </button>
+<div class="employee-list-container animate-all">
+  <!-- Page Header Standard -->
+  <div class="page-header-card mb-4 mt-2" *ngIf="orgObj?.cafeteriaList?.length > 0">
+    <div class="header-content">
+      <div class="title-section">
+        <h2 class="page-title">Outlet Employees</h2>
+        <p class="page-subtitle">Manage staff profiles and permissions for specific cafeteria outlets</p>
+      </div>
+
+      <div class="cafeteria-chip-selection mt-4">
+        <p class="selection-label">Select Cafeteria</p>
+        <div class="chip-list-wrapper mt-2">
+          <button class="cafe-chip" 
+                  *ngFor="let cafe of orgObj.cafeteriaList"
+                  [class.active]="selectedCafeteriaId === cafe.cafeteria_id"
+                  (click)="selectCafeteria(cafe)">
+            <mat-icon>storefront</mat-icon>
+            <span class="chip-text">{{ cafe.cafeteria_name }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+        <button mat-flat-button color="primary" class="btn-primary-action" (click)="addManualEmployee()">
+          <mat-icon>person_add</mat-icon> Add Employee
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="addMultipleEmployee()">
+          <mat-icon>playlist_add</mat-icon> Bulk Add
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="openImportDialog()">
+          <mat-icon>file_upload</mat-icon> Import
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="exportEmployees()">
+          <mat-icon>download</mat-icon> Export
+        </button>
+      </div>
     </div>
   </div>
- 
-  <!-- Header Actions -->
-  <div class="info-card">
-    <div class="card-header">
-      <div class="header-icon">
-        <mat-icon>badge</mat-icon>
+
+  <!-- Main Content Card -->
+  <div class="modern-card animate-fadeIn" *ngIf="filteredEmployees.length > 0 || searchTerm">
+    <div class="card-header with-actions">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box info">
+          <mat-icon>groups</mat-icon>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <h3 class="mb-0">Employee Directory</h3>
+          <span class="count-badge-premium">{{ filteredEmployees.length }}</span>
+        </div>
       </div>
-      <h3>Outlet Employees</h3>
-      <div class="header-actions">
-        <button mat-stroked-button class="template-btn" (click)="downloadExcelTemplate()">
-          <mat-icon>download</mat-icon>
-          Template
-        </button>
-        <button mat-stroked-button color="primary" class="add-btn" (click)="addMultipleEmployee()">
-          <mat-icon>group_add</mat-icon>
-          Add Multiple
-        </button>
-        <button mat-raised-button color="primary" class="add-btn" (click)="addManualEmployee()">
-          <mat-icon>person_add</mat-icon>
-          Add Manual
-        </button>
+
+      <div class="search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" placeholder="Search employees by name, ID, or email..." [(ngModel)]="searchTerm">
       </div>
     </div>
- 
-    <div class="card-body">
-      <!-- Excel Dropzone -->
-      <div class="upload-section">
-        <div class="upload-dropzone" [class.has-file]="fileName" (dragover)="$event.preventDefault()"
-          (drop)="onFileDrop($event)">
-          <input #fileInput type="file" accept=".xlsx, .xls" class="hidden-file-input"
-            (change)="onFileChange($event)" />
- 
-          <div class="dropzone-content" *ngIf="!fileName">
-            <div class="dropzone-icon">
-              <mat-icon>upload_file</mat-icon>
-            </div>
-            <p class="dropzone-text">Drag and drop Excel or <span class="browse-link" (click)="fileInput.click()">browse</span></p>
-          </div>
- 
-          <div class="file-preview" *ngIf="fileName">
-            <div class="file-icon">
-              <mat-icon>description</mat-icon>
-            </div>
-            <div class="file-info">
-              <span class="file-name">{{ fileName }}</span>
-              <span class="file-status">Processing...</span>
-            </div>
-            <button mat-icon-button class="remove-file" (click)="clearFile()">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-        </div>
+
+    <div class="card-body p-4">
+      <!-- Loading State -->
+      <div class="loading-overlay animate-fadeIn" *ngIf="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+        <span>Refreshing registry...</span>
       </div>
- 
-      <!-- Employee List Container -->
-      <ng-container>
-        <!-- Section Header -->
-        <div class="section-header" *ngIf="employeeList.length > 0">
-          <div class="section-title">
-            <mat-icon>groups</mat-icon>
-            <span>{{ filteredEmployees.length }} Employee(s)</span>
-            <span class="cafe-badge" *ngIf="selectedCafeteriaName">{{ selectedCafeteriaName }}</span>
-          </div>
-          <div class="search-box">
-            <mat-icon>search</mat-icon>
-            <input type="text" placeholder="Search employees..." [(ngModel)]="searchTerm" />
-          </div>
-        </div>
- 
-        <!-- Employee Cards -->
-        <div class="employee-list" *ngIf="pagedEmployees.length > 0">
-          <div class="employee-card" *ngFor="let employee of pagedEmployees">
-            <div class="employee-avatar">
-              {{ getInitials(employee.employeeName) }}
+
+      <!-- Employee Grid Premium -->
+      <div class="employee-grid-premium" *ngIf="!loading && pagedEmployees.length > 0">
+        <div class="employee-item-card" *ngFor="let employee of pagedEmployees">
+          <div class="employee-main">
+            <div class="employee-avatar-wrapper">
+              <div class="avatar-circle">
+                {{ getInitials(employee.employeeName) }}
+              </div>
+              <div class="status-indicator online"></div>
             </div>
-            <div class="employee-info">
-              <div class="employee-name">{{ employee.employeeName }}</div>
-              <div class="employee-meta">
-                <span class="meta-item" *ngIf="employee.employeeId">
+            <div class="employee-details">
+              <h4 class="employee-name">{{ employee.employeeName }}</h4>
+              <div class="employee-meta-strip">
+                <span class="meta-pill">
                   <mat-icon>badge</mat-icon>
-                  {{ employee.employeeId }}
+                  {{ employee.employeeId || 'N/A' }}
                 </span>
-                <span class="meta-item">
+                <span class="meta-pill">
                   <mat-icon>phone</mat-icon>
                   {{ employee.employeePhoneNo }}
                 </span>
-                <span class="meta-item email">
+                <span class="meta-pill email-pill" [matTooltip]="employee.employeeEmail">
                   <mat-icon>email</mat-icon>
-                  {{ employee.employeeEmail }}
+                  <span class="truncate-text">{{ employee.employeeEmail }}</span>
                 </span>
               </div>
             </div>
-            <div class="employee-actions">
-              <button mat-icon-button class="action-btn edit" (click)="editEmployee(employee)">
+          </div>
+
+          <div class="employee-footer">
+            <div class="cafe-tag">
+              <mat-icon>storefront</mat-icon>
+              <span>{{ selectedCafeteria?.cafeteria_name || 'Outlet' }}</span>
+            </div>
+
+            <div class="action-buttons">
+              <button mat-icon-button class="premium-icon-btn edit" (click)="editEmployee(employee)" matTooltip="Edit Staff">
                 <mat-icon>edit</mat-icon>
               </button>
-              <button mat-icon-button class="action-btn delete" (click)="deleteEmployee(employee)">
+              <button mat-icon-button class="premium-icon-btn delete" (click)="deleteEmployee(employee)" matTooltip="Remove Staff">
                 <mat-icon>delete</mat-icon>
               </button>
             </div>
           </div>
         </div>
- 
-        <!-- Pagination -->
-        <mat-paginator *ngIf="filteredEmployees.length > 0" [length]="filteredEmployees.length" [pageSize]="pageSize"
-          [pageIndex]="pageIndex" [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)"
-          showFirstLastButtons>
+      </div>
+
+      <!-- Pagination -->
+      <div class="pagination-footer mt-4" *ngIf="!loading && filteredEmployees.length > 0">
+        <mat-paginator [length]="filteredEmployees.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+          [pageSizeOptions]="pageSizeOptions" (page)="onPageChange($event)" showFirstLastButtons>
         </mat-paginator>
- 
-        <!-- No Search Results -->
-        <div class="empty-state" *ngIf="searchTerm && filteredEmployees.length === 0 && !loading">
-          <mat-icon>search_off</mat-icon>
-          <p>No employees found for "{{ searchTerm }}"</p>
-          <span>Try a different search term</span>
+      </div>
+
+      <!-- Empty States -->
+      <div class="empty-state-modern py-5 animate-fadeIn" *ngIf="!loading && filteredEmployees.length === 0">
+        <div class="empty-icon-wrap">
+          <mat-icon>{{ searchTerm ? 'search_off' : 'person_off' }}</mat-icon>
         </div>
- 
-        <!-- Empty State -->
-        <div class="empty-state" *ngIf="!searchTerm && filteredEmployees.length === 0 && !loading">
-          <mat-icon>groups</mat-icon>
-          <p>No employees found</p>
-          <span>Click "Add Manual" or drop an Excel file to add outlet employees</span>
-        </div>
- 
-        <!-- Loading State -->
-        <div class="loading-state" *ngIf="loading">
-          <mat-spinner diameter="40"></mat-spinner>
-          <span>Loading employees...</span>
-        </div>
-      </ng-container>
+        <h4>{{ searchTerm ? 'No matching staff found' : 'No staff registered' }}</h4>
+        <p>{{ searchTerm ? 'Try adjusting your search criteria' : 'Start by importing or adding employees manually' }}</p>
+      </div>
     </div>
   </div>
 </div>

@@ -6,15 +6,15 @@
                 <mat-icon>arrow_back</mat-icon>
             </button>
             <div class="title-section">
-                <h1 class="page-title">{{ outlet?.outletName || 'Outlet Details' }}</h1>
-                <p class="page-subtitle">{{ outlet?.organizationDetails?.organization_name || 'Organization' }} • {{
-                    outlet?.cafeteriaDetails?.cafeteria_name || 'Cafeteria' }}</p>
+                <h1 class="page-title">{{ outlet?.outletName ||'Outlet Details' }}</h1>
+                <p class="page-subtitle">{{ outlet?.organizationDetails?.organization_name ||'Organization' }} • {{
+                    outlet?.cafeteriaDetails?.cafeteria_name ||'Cafeteria' }}</p>
             </div>
         </div>
         <div class="header-right">
             <span class="status-badge" [class.open]="outlet?.outletOpened" [class.closed]="!outlet?.outletOpened">
-                <mat-icon>{{ outlet?.outletOpened ? 'storefront' : 'store' }}</mat-icon>
-                {{ outlet?.outletOpened ? 'Open' : 'Closed' }}
+                <mat-icon>{{ outlet?.outletOpened ?'storefront' :'store' }}</mat-icon>
+                {{ outlet?.outletOpened ?'Open' :'Closed' }}
             </span>
         </div>
     </div>
@@ -33,7 +33,7 @@
     <!-- Tab Content -->
     <div class="tab-content">
         <ng-container [ngSwitch]="selectedTab">
-            <app-outlet-details *ngSwitchCase="'outlet-details'" [outletObj]="outlet">
+            <app-outlet-details *ngSwitchCase="'outlet-details'" [outletObj]="outlet" (dataToParent)="receiveData($event)">
             </app-outlet-details>
             <app-outlet-menu *ngSwitchCase="'outlet-menu'" [outletObj]="outlet" (back)="updateOutlet($event)"
                 (dataToParent)="receiveData($event)">

@@ -1,96 +1,163 @@
-<div style="width:99%">
-    <div class="responsive-btn d-flex justify-content-between align-items-center">
-            <button *ngIf="!editMode && access" color="primary" mat-raised-button (click)="editMode = true">Edit</button>
+<div class="compliance-container">
+    <!-- Header & Status Banner -->
+    <div class="status-banner" [ngClass]="{'status-approved': profileApproval ==='approved','status-pending': profileApproval ==='pending','status-rejected': profileApproval ==='rejected','status-suspended': profileApproval ==='suspended'
+    }">
+        <div class="status-info">
+            <span class="title">Store Compliance Documents</span>
+            <span class="subtitle">Management and verification of legal documentation</span>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <div class="status-badge" [ngClass]="profileApproval">
+                {{ profileApproval ||'No Status' }}
+            </div>
+            <button *ngIf="!editMode && access" mat-stroked-button color="primary" class="btn-edit" (click)="editMode = true">
+                <mat-icon>edit</mat-icon> Edit Details
+            </button>
+        </div>
     </div>
-    <mat-card style="margin: 20px 0px; padding: 20px;">
-        <div class="row">
-            <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-                <div *ngIf="!editMode" class="labelText">
-                    Gst Number: <span class="labelData">{{compliance.gstNumber}}</span>
+
+    <!-- Compliance Grid -->
+    <div class="compliance-grid">
+        <!-- GST Section -->
+        <div class="modern-card">
+            <div class="card-header">
+                <div class="icon-wrapper">
+                    <mat-icon>business</mat-icon>
                 </div>
-                <div *ngIf="editMode" class="labelText">
-                    Gst Number: (If annual turnover of rupees more than 12 lakhs?)
-                    <input type="text" class="form-control" placeholder="Gst Number"
-                        [(ngModel)]="compliance.gstNumber" />
+                <div class="header-text">
+                    <h3>GST Registration</h3>
+                    <p>Goods and Services Tax documentation</p>
                 </div>
             </div>
-            <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-                <div *ngIf="editMode && !compliance.GSTFileUrl">
+
+            <div class="view-mode" *ngIf="!editMode">
+                <div class="data-item">
+                    <span class="label">GST Number</span>
+                    <span class="value">{{ compliance.gstNumber ||'Not Provided' }}</span>
+                </div>
+            </div>
+
+            <div class="edit-mode" *ngIf="editMode">
+                <mat-form-field appearance="outline" class="w-100 form-field">
+                    <mat-label>GST Number</mat-label>
+                    <input matInput placeholder="Enter GST Number" [(ngModel)]="compliance.gstNumber">
+                    <mat-hint>Required if annual turnover > 12 lakhs</mat-hint>
+                </mat-form-field>
+
+                <div class="upload-section mt-2" *ngIf="!compliance.GSTFileUrl">
                     <app-pdfupload [documentname]="GSTFile" [documentUrl]="compliance.GSTFileUrl"
-                        (upload)=uploadDoc($event)></app-pdfupload>
+                        (upload)="uploadDoc($event)"></app-pdfupload>
                 </div>
-                <ng-container *ngIf="compliance.GSTFileUrl">
-                    <div *ngIf="compliance.GSTFileUrl" class="pdf-preview">
-                        <iframe [src]="compliance.GSTFileUrl" type="application/pdf"></iframe>
-                        <button *ngIf="editMode" mat-raised-button color="primary" class="cancel-btn"
-                            (click)="DeleteFile('GSTFile')">Delete</button>
-                    </div>
-                </ng-container>
+            </div>
+
+            <div class="pdf-preview-container mt-3" *ngIf="compliance.GSTFileUrl">
+                <div class="preview-header">
+                    <span>GST Certificate Preview</span>
+                    <button *ngIf="editMode" mat-icon-button color="warn" (click)="DeleteFile('GSTFile')" matTooltip="Remove File">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+                <iframe [src]="compliance.GSTFileUrl" type="application/pdf"></iframe>
+            </div>
+            <div class="pdf-preview-container mt-3" *ngIf="!compliance.GSTFileUrl && !editMode">
+                <div class="placeholder">
+                    <mat-icon class="me-2">description</mat-icon> No GST document uploaded
+                </div>
             </div>
         </div>
-    </mat-card>
-    <mat-card style="margin: 20px 0px;padding: 20px;">
-        <div class="row">
-            <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-                <div *ngIf="!editMode" class="labelText">
-                    Pan Card Number: <span class="labelData">{{compliance.panNumber}}</span>
+
+        <!-- PAN Section -->
+        <div class="modern-card">
+            <div class="card-header">
+                <div class="icon-wrapper">
+                    <mat-icon>assignment_ind</mat-icon>
                 </div>
-                <div *ngIf="editMode" class="labelText">
-                    Pan Card Number:
-                    <input type="text" class="form-control" placeholder="Pan Card Number"
-                        [(ngModel)]="compliance.panNumber" />
-                </div>
-            </div>
-            <div class="col-sm-6 col-md-6 col-lg-6 mt-2">
-                <div *ngIf="editMode && !compliance.PanCardFileUrl">
-                    <app-pdfupload [documentname]="PanCardFile" [documentUrl]="compliance.PanCardFile"
-                        (upload)=uploadDoc($event)></app-pdfupload>
-                </div>
-                <ng-container *ngIf="compliance.PanCardFileUrl">
-                    <div *ngIf="compliance.PanCardFileUrl" class="pdf-preview">
-                        <iframe [src]="compliance.PanCardFileUrl" type="application/pdf"></iframe>
-                        <button *ngIf="editMode" class="cancel-btn" (click)="DeleteFile('PanCardFile')">Delete</button>
-                    </div>
-                </ng-container>
-            </div>
-        </div>
-    </mat-card>
-    <div class="row">
-        <div class="col-sm-12 col-md-12 col-lg-12">
-            <div *ngIf="!editMode">
-                <div class="mt-2 me-2" *ngIf="profileApproval === 'pending' || profileApproval === 'approved'">
-                    <div class="labelData">Reject/Suspend Comment</div>
-                    <input type="text" class="form-control" [(ngModel)]="comment" placeholder="House No./streetName">
-                </div>
-                <div class="inline mt-2 me-2"
-                    *ngIf="(profileApproval === 'pending' || profileApproval === 'suspended') && access?.complianceApprove">
-                    <button type="button" class="btn btn-primary btn-sm"
-                        (click)="updateProfileApproval('approved')">Approve</button>
-                </div>
-                <div class="inline mt-2 me-2" *ngIf="profileApproval === 'pending' && access?.complianceReject">
-                    <button type="button" class="btn btn-danger btn-sm"
-                        (click)="updateProfileApproval('rejected')">Reject</button>
-                </div>
-                <div class="inline mt-2 me-2" *ngIf="profileApproval === 'approved' && access?.complianceSuspend">
-                    <button type="button" class="btn btn-danger btn-sm"
-                        (click)="updateProfileApproval('suspended')">Suspend</button>
-                </div>
-                <div class="inline mt-2 me-2"
-                    *ngIf="(profileApproval === 'rejected' || profileApproval === 'suspended') && access?.compliancePending ">
-                    <button type="button" class="btn btn-danger btn-sm"
-                        (click)="updateProfileApproval('pending')">Pending</button>
+                <div class="header-text">
+                    <h3>PAN Card Details</h3>
+                    <p>Permanent Account Number registration</p>
                 </div>
             </div>
-            <div *ngIf="editMode" class="d-flex justify-content-end gap-2">
-                <div class="inline">
-                    <button color="primary" mat-raised-button
-                        (click)="saveImages()"><mat-icon>save</mat-icon>Save</button>
+
+            <div class="view-mode" *ngIf="!editMode">
+                <div class="data-item">
+                    <span class="label">PAN Card Number</span>
+                    <span class="value">{{ compliance.panNumber ||'Not Provided' }}</span>
                 </div>
-                <div class="inline">
-                    <button color="warn" mat-raised-button
-                        (click)="cancelEdit()"><mat-icon>close</mat-icon>Cancel</button>
+            </div>
+
+            <div class="edit-mode" *ngIf="editMode">
+                <mat-form-field appearance="outline" class="w-100 form-field">
+                    <mat-label>PAN Card Number</mat-label>
+                    <input matInput placeholder="Enter PAN Number" [(ngModel)]="compliance.panNumber">
+                </mat-form-field>
+
+                <div class="upload-section mt-2" *ngIf="!compliance.PanCardFileUrl">
+                    <app-pdfupload [documentname]="PanCardFile" [documentUrl]="compliance.PanCardFileUrl"
+                        (upload)="uploadDoc($event)"></app-pdfupload>
+                </div>
+            </div>
+
+            <div class="pdf-preview-container mt-3" *ngIf="compliance.PanCardFileUrl">
+                <div class="preview-header">
+                    <span>PAN Card Preview</span>
+                    <button *ngIf="editMode" mat-icon-button color="warn" (click)="DeleteFile('PanCardFile')" matTooltip="Remove File">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+                <iframe [src]="compliance.PanCardFileUrl" type="application/pdf"></iframe>
+            </div>
+            <div class="pdf-preview-container mt-3" *ngIf="!compliance.PanCardFileUrl && !editMode">
+                <div class="placeholder">
+                    <mat-icon class="me-2">account_box</mat-icon> No PAN document uploaded
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+    <!-- Administrative Actions -->
+    <div class="action-dashboard" *ngIf="!editMode && (access?.complianceApprove || access?.complianceReject || access?.complianceSuspend)">
+        <div class="section-title">
+            <mat-icon>admin_panel_settings</mat-icon> Administrative Actions
+        </div>
+        
+        <div class="comment-box">
+            <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Reject/Suspend Comment</mat-label>
+                <textarea matInput [(ngModel)]="comment" placeholder="Provide a reason for rejection or suspension..." rows="2"></textarea>
+                <mat-icon matSuffix>comment</mat-icon>
+            </mat-form-field>
+        </div>
+
+        <div class="action-buttons">
+            <button *ngIf="(profileApproval ==='pending' || profileApproval ==='suspended') && access?.complianceApprove"
+                mat-raised-button color="primary" class="btn-update" (click)="updateProfileApproval('approved')">
+                <mat-icon>check_circle</mat-icon> Approve Compliance
+            </button>
+            
+            <button *ngIf="profileApproval ==='pending' && access?.complianceReject"
+                mat-raised-button color="warn" class="btn-delete" (click)="updateProfileApproval('rejected')">
+                <mat-icon>cancel</mat-icon> Reject
+            </button>
+            
+            <button *ngIf="profileApproval ==='approved' && access?.complianceSuspend"
+                mat-raised-button color="warn" (click)="updateProfileApproval('suspended')">
+                <mat-icon>pause_circle</mat-icon> Suspend
+            </button>
+            
+            <button *ngIf="(profileApproval ==='rejected' || profileApproval ==='suspended') && access?.compliancePending"
+                mat-stroked-button color="accent" (click)="updateProfileApproval('pending')">
+                <mat-icon>history</mat-icon> Set to Pending
+            </button>
+        </div>
+    </div>
+
+    <!-- Edit Actions -->
+    <div class="edit-actions" *ngIf="editMode">
+        <button mat-raised-button color="primary" class="btn-update" (click)="saveImages()">
+            <mat-icon>save</mat-icon> Save Changes
+        </button>
+        <button mat-stroked-button color="warn" (click)="cancelEdit()">
+            <mat-icon>close</mat-icon> Cancel
+        </button>
+    </div>
+</div>

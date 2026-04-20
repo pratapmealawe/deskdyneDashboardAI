@@ -1,0 +1,134 @@
+<div class="modern-dialog import-employee-dialog">
+    <!-- Header -->
+    <div class="dialog-header modern-header">
+        <div class="header-content">
+            <div class="icon-box primary">
+                <mat-icon ripple>cloud_upload</mat-icon>
+            </div>
+            <div class="title-section">
+                <h2 *ngIf="currentStep ==='select'">Bulk Excel Import</h2>
+                <h2 *ngIf="currentStep ==='preview'">Review Import Data</h2>
+                <span class="section-badge">{{ data.orgObj.organization_name }}</span>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeModal()" class="close-btn">
+            <mat-icon ripple>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <mat-dialog-content class="dialog-content custom-scrollbar">
+        <!-- Step 1: File Selection & Template Download -->
+        <div *ngIf="currentStep ==='select'" class="selection-view animate-fade-in">
+            <!-- Import Template Card -->
+            <div class="template-card mb-4">
+                <div class="d-flex align-items-center gap-4 p-4">
+                    <div class="icon-blob accent">
+                        <mat-icon>table_view</mat-icon>
+                    </div>
+                    <div class="content-text flex-grow-1">
+                        <h3>Import Template</h3>
+                        <p class="text-muted small m-0">Download our pre-formatted Excel template to ensure all fields like Phone and Email match our system requirements.</p>
+                    </div>
+                    <button mat-stroked-button color="accent" class="px-4" (click)="downloadTemplate()">
+                        <mat-icon ripple>download</mat-icon> Download Template
+                    </button>
+                </div>
+            </div>
+
+            <!-- Upload Zone -->
+            <div class="upload-wrapper">
+                <div class="drop-zone" 
+                     [class.drag-over]="dragOver" 
+                     (dragover)="onDragOver($event)" 
+                     (dragleave)="onDragLeave($event)" 
+                     (drop)="onDrop($event)"
+                     (click)="fileInput.click()">
+                    
+                    <div class="drop-illustration" *ngIf="!isLoading">
+                        <div class="upload-icon-wrapper">
+                            <mat-icon>upload_file</mat-icon>
+                        </div>
+                        <div class="drop-text">
+                            <h4>Drag & drop your file here</h4>
+                            <p>or click to browse from your computer</p>
+                            <span class="file-type-hint">Supports .xlsx, .xls</span>
+                        </div>
+                    </div>
+
+                    <div class="loading-overlay" *ngIf="isLoading">
+                        <mat-spinner diameter="48"></mat-spinner>
+                        <p class="mt-3">Analyzing your spreadsheet...</p>
+                    </div>
+
+                    <input #fileInput type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" hidden>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Preview Table -->
+        <div *ngIf="currentStep ==='preview'" class="preview-view animate-fade-in">
+            <div class="preview-info-bar mb-4">
+                <div class="file-chip">
+                    <mat-icon>description</mat-icon>
+                    <span>{{ fileName }}</span>
+                </div>
+                <div class="stat-pill">
+                    <strong>{{ employeeList.length }}</strong> records found
+                </div>
+                <div class="spacer"></div>
+                <button mat-button color="warn" (click)="resetImport()" class="change-file-btn">
+                    <mat-icon ripple>sync</mat-icon> Change File
+                </button>
+            </div>
+
+            <div class="table-container-modern">
+                <table class="modern-preview-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Employee Details</th>
+                            <th>Contact Info</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let emp of employeeList; let i = index">
+                            <td class="index-cell">{{ i + 1 }}</td>
+                            <td>
+                                <div class="emp-main-info">
+                                    <div class="name">{{ emp.employeeName }}</div>
+                                    <div class="id-badge">ID: {{ emp.employeeId }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="contact-info">
+                                    <div class="phone"><mat-icon>phone</mat-icon> {{ emp.employeePhoneNo }}</div>
+                                    <div class="email"><mat-icon>email</mat-icon> {{ emp.employeeEmail }}</div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="status-chip success">Ready</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <!-- Footer -->
+    <mat-dialog-actions align="end" class="dialog-footer">
+        <button mat-button (click)="closeModal()" class="btn-cancel">Cancel</button>
+        <div class="spacer"></div>
+        <button mat-flat-button color="primary" 
+                *ngIf="currentStep ==='preview'"
+                [class.spinner]="isLoading" 
+                [disabled]="isLoading || employeeList.length === 0" 
+                (click)="onSubmit()" 
+                class="btn-submit">
+            <mat-icon *ngIf="!isLoading">cloud_done</mat-icon>
+            {{ isLoading ?'Importing...' :'Finalize Bulk Import' }}
+        </button>
+    </mat-dialog-actions>
+</div>

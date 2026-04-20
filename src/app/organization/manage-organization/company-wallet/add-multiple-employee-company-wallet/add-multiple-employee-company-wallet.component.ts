@@ -6,7 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
     selector: 'app-add-multiple-employee-company-wallet',

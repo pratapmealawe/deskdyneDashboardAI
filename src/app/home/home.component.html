@@ -31,7 +31,8 @@
             <h3 class="gallery-title">Photo Gallery</h3>
         </div>
         <div class="col-12">
-            <ngb-carousel *ngIf="chunkedImages.length > 0; else noImages" [showNavigationIndicators]="true" [interval]="3000">
+            <ngb-carousel *ngIf="chunkedImages.length > 0; else noImages" [showNavigationIndicators]="true"
+                [showNavigationArrows]="false" [interval]="3000">
                 <ng-template ngbSlide *ngFor="let chunk of chunkedImages">
                     <div class="row slide-row px-md-5">
                         <div class="col-6 col-md-3 mb-4" *ngFor="let imgUrl of chunk">

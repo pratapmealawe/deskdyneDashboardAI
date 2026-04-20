@@ -10,10 +10,10 @@
         <div class="d-flex flex-wrap gap-2">
           <mat-chip-listbox>
             <mat-chip> Total Orders: {{ filteredOrderList.length }} </mat-chip>
-            <mat-chip> Wallet Used: ₹{{ totalWalletUsed | number : '1.2-2' }} </mat-chip>
-            <mat-chip> Amount Paid: ₹{{ totalAmountPaid | number : '1.2-2' }} </mat-chip>
+            <mat-chip> Wallet Used: ₹{{ totalWalletUsed | number :'1.2-2' }} </mat-chip>
+            <mat-chip> Amount Paid: ₹{{ totalAmountPaid | number :'1.2-2' }} </mat-chip>
             <mat-chip color="primary" selected>
-              Total Paid (Wallet + Amount): ₹{{ totalAmount | number : '1.2-2' }}
+              Total Paid (Wallet + Amount): ₹{{ totalAmount | number :'1.2-2' }}
             </mat-chip>
           </mat-chip-listbox>
         </div>
@@ -28,7 +28,7 @@
         </button>
 
         <button mat-mini-fab color="primary" (click)="changeDataView()" matTooltip="Change View" class="btn iconBtn">
-          <i class="bi" [ngClass]="isShowChart ? 'bi-table' : 'bi-graph-down'"></i>
+          <i class="bi" [ngClass]="isShowChart ?'bi-table' :'bi-graph-down'"></i>
         </button>
 
       </div>

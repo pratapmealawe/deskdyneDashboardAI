@@ -6,18 +6,11 @@
         <mat-icon>arrow_back</mat-icon>
       </button>
       <div class="title-section">
-        <h1 class="page-title">{{ vendor?.vendorFirmName || 'Vendor Details' }}</h1>
+        <h1 class="page-title">{{ vendor?.vendorFirmName ||'Vendor Details' }}</h1>
         <p class="page-subtitle">Manage vendor information, wallet & reports</p>
       </div>
     </div>
   </div>
-  
-  <!-- Firm Summary Card -->
-  <div class="firm-summary-card-wrapper mb-4">
-    <app-vendor-firm-card [vendor]="vendor" [isViewMode]="true"></app-vendor-firm-card>
-  </div>
-
-  <!-- Tab Navigation -->
   <div class="tabs-container">
     <div class="main-tabs">
       <button *ngFor="let view of vendorViewList; let i = index" class="tab-btn" [class.active]="selectedTabIndex === i"

@@ -1,0 +1,127 @@
+@use "styles/theme/variable" as var;
+
+.add-employee-dialog {
+    display: flex;
+    flex-direction: column;
+    max-height: 90vh;
+    width: 600px;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+
+    .dialog-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #edf2f7;
+        background: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+
+            .icon-box {
+                width: 48px;
+                height: 48px;
+                border-radius: 12px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: rgba(var.$primary-color, 0.1);
+                color: var.$primary-color;
+
+                &.edit {
+                    background: rgba(#3182ce, 0.1);
+                    color: #3182ce;
+                }
+
+                mat-icon {
+                    font-size: 24px;
+                }
+            }
+
+            .title-section {
+                h2 {
+                    margin: 0;
+                    font-size: 1.25rem;
+                    font-weight: 700;
+                    color: #1a202c;
+                    letter-spacing: -0.5px;
+                }
+
+                .section-badge {
+                    font-size: 0.75rem;
+                    color: #718096;
+                    font-weight: 500;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+            }
+        }
+    }
+
+    .dialog-content {
+        padding: 24px;
+        background: #f8fafc;
+
+        .form-label-modern {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4a5568;
+            letter-spacing: 0.2px;
+        }
+
+        ::ng-deep .mat-form-field-appearance-outline {
+            .mat-form-field-wrapper {
+                margin: 0;
+            }
+            .mat-form-field-outline {
+                background: #fff;
+                border-radius: 8px;
+            }
+            .mat-form-field-infix {
+                padding: 12px 0;
+            }
+            &.mat-focused .mat-form-field-outline-thick {
+                color: var.$primary-color;
+            }
+            .mat-form-field-prefix {
+                top: 4px;
+                margin-right: 8px;
+                color: #a0aec0;
+            }
+        }
+    }
+
+    .dialog-footer {
+        padding: 16px 24px;
+        border-top: 1px solid #edf2f7;
+        background: #fff;
+        display: flex;
+        gap: 12px;
+
+        button {
+            height: 44px;
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 0 24px;
+        }
+
+        .btn-cancel {
+            color: #718096;
+        }
+
+        .btn-submit {
+            box-shadow: 0 4px 6px -1px rgba(var.$primary-color, 0.2);
+            mat-icon {
+                margin-right: 8px;
+            }
+        }
+    }
+}
+
+

@@ -3,13 +3,13 @@ import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
 
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { ToasterService } from 'src/service/toaster.service';
-import { DataFormatService } from 'src/service/data-format.service';
-import { PolicyService } from 'src/service/policy.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { ToasterService } from '@service/toaster.service';
+import { DataFormatService } from '@service/data-format.service';
+import { PolicyService } from '@service/policy.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import * as XLSX from 'xlsx';
 
 interface MealTiming {
@@ -52,15 +52,13 @@ import { ImageCropperComponent } from 'src/app/common-components/image-cropper/i
   ]
 })
 export class AddOutletComponent implements OnInit {
-
   form!: FormGroup;
   showError = false;
-
   imageUrl: string | null = null;
   uploadedImageFile: File | null = null;
-
   btnPolicy: any;
   showUpdate = false;
+  isSubmitting = false;
   selectedOutlet: any;
   selectedCafeteria: any;
 
@@ -443,13 +441,10 @@ export class AddOutletComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.confirmationModal.modal({
-          msg: 'Are you sure you want to change Organization and Cafeteria?',
-          callback: () => {
-            this.selectedCafeteria = { ...result };
-          },
-          context: this
-        });
+        console.log(result)
+        // Direct assignment to ensure the UI updates immediately
+        this.selectedCafeteria = { ...result };
+        this.form.markAsDirty();
       }
     });
   }
@@ -484,7 +479,6 @@ export class AddOutletComponent implements OnInit {
             }
           });
         } catch (e) {
-          console.log('error while changing outlet image ', e);
         }
       };
     }
@@ -503,7 +497,6 @@ export class AddOutletComponent implements OnInit {
         this.outletSubsidy
       );
     } catch (err) {
-      console.log(err);
     }
   }
 
@@ -622,15 +615,11 @@ export class AddOutletComponent implements OnInit {
    * Shared logic to validate and prepare the FormData for submission
    */
   prepareOutletData(): FormData | null {
-    console.log('--- Preparing Outlet Data ---');
     this.showError = true;
     this.validateMealTimings();
 
     if (this.form.invalid || !this.selectedCafeteria || this.mealTimingError) {
       console.warn('Submission blocked: Validation failed');
-      console.log('Form invalid:', this.form.invalid);
-      console.log('Cafeteria missing:', !this.selectedCafeteria);
-      console.log('Meal timing error:', this.mealTimingError);
 
       this.form.markAllAsTouched();
       this.toasterService.error('Please fix the errors before saving.');
@@ -638,7 +627,6 @@ export class AddOutletComponent implements OnInit {
     }
 
     const formValue = this.form.getRawValue();
-    console.log('Form raw value:', formValue);
 
     const finalObj: any = {
       ...formValue,
@@ -648,8 +636,6 @@ export class AddOutletComponent implements OnInit {
       sectionConfig: this.sectionConfig.value,
       cabinConfig: this.cabinConfig.value,
     };
-
-    console.log('Final Object structured:', finalObj);
 
     if (finalObj.isPreOrder) {
       if (!finalObj.preOrderConfig) finalObj.preOrderConfig = {};
@@ -672,17 +658,30 @@ export class AddOutletComponent implements OnInit {
    * Logic for creating a new outlet (Submit)
    */
   async createOutlet(): Promise<void> {
-    console.log('--- Executing Create Outlet ---');
     const formData = this.prepareOutletData();
     if (!formData) return;
 
+    this.isSubmitting = true;
     try {
-      console.log('Calling saveOutlet API...');
       await this.apiMainService.saveOutlet(formData);
       this.toasterService.success('Outlet created successfully.');
-      this.dialogRef.close(true);
+      
+      // Extract final object to return it
+      const formValue = this.form.getRawValue();
+      const finalObj = {
+        ...formValue,
+        mealTiming: this.mealTimings.value,
+        sectionConfig: this.sectionConfig.value,
+        cabinConfig: this.cabinConfig.value,
+        organizationDetails: this.selectedCafeteria?.organizationDetails,
+        cafeteriaDetails: this.selectedCafeteria?.cafeteriaDetails
+      };
+      
+      this.dialogRef.close(finalObj);
     } catch (error) {
       console.error('Create API Error:', error);
+    } finally {
+      this.isSubmitting = false;
     }
   }
 
@@ -690,7 +689,6 @@ export class AddOutletComponent implements OnInit {
    * Logic for updating an existing outlet (Update)
    */
   async updateOutlet(): Promise<void> {
-    console.log('--- Executing Update Outlet ---');
     if (!this.selectedOutlet?._id) {
       console.error('Update blocked: Missing outlet ID');
       this.toasterService.error('Outlet ID missing for update.');
@@ -700,15 +698,31 @@ export class AddOutletComponent implements OnInit {
     const formData = this.prepareOutletData();
     if (!formData) return;
 
+    this.isSubmitting = true;
     try {
       await this.apiMainService.updateOutlet(this.selectedOutlet._id, formData, 0);
       if (this.form.get('updateOutletLevelSubsidy')?.value) {
         await this.updateOutletLevelSubsidy();
       }
       this.toasterService.success('Outlet updated successfully.');
-      this.dialogRef.close(true);
+      
+      // Return the updated object to the caller for UI sync
+      const formValue = this.form.getRawValue();
+      const finalObj = {
+        ...this.selectedOutlet, // Original data like _id, etc.
+        ...formValue,
+        mealTiming: this.mealTimings.value,
+        sectionConfig: this.sectionConfig.value,
+        cabinConfig: this.cabinConfig.value,
+        organizationDetails: this.selectedCafeteria?.organizationDetails,
+        cafeteriaDetails: this.selectedCafeteria?.cafeteriaDetails
+      };
+
+      this.dialogRef.close(finalObj);
     } catch (error) {
       console.error('Update API Error:', error);
+    } finally {
+      this.isSubmitting = false;
     }
   }
 

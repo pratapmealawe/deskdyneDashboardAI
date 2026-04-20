@@ -4,7 +4,7 @@
     <span>Copy Menu items</span>
   </div>
   <div class="selection-count header-count" *ngIf="transformedMenuItems.length > 0">
-    {{ transformedMenuItems.length }} item{{ transformedMenuItems.length > 1 ? 's' : '' }} selected
+    {{ transformedMenuItems.length }} item{{ transformedMenuItems.length > 1 ?'s' :'' }} selected
   </div>
   <button mat-icon-button mat-dialog-close class="close-btn">
     <mat-icon>close</mat-icon>
@@ -33,7 +33,7 @@
   <!-- SELECTION LIST GRID -->
   <div class="selection-list" *ngIf="selectedEvent">
     <div class="menu-card-h selection-card" *ngFor="let item of eventMenuList"
-      [ngClass]="{ 'selected': isMenuSelected(item) }" (click)="onMenuItemToggle(item, $event)">
+      [ngClass]="{'selected': isMenuSelected(item) }" (click)="onMenuItemToggle(item, $event)">
       
       <!-- Checkbox overlay for selection -->
       <div class="selection-indicator" *ngIf="isMenuSelected(item)">
@@ -43,7 +43,7 @@
       <!-- Square Image -->
       <div class="card-image-h">
         <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" onerror="this.src='assets/images/placeholder-food.png'"/>
-        <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
+        <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
           <span class="indicator-dot"></span>
         </div>
       </div>
@@ -51,8 +51,8 @@
       <!-- Card Content -->
       <div class="card-content-h">
         <div class="content-top">
-          <h3 class="item-name">{{ item.itemName || 'Unnamed item' }}</h3>
-          <span class="category-tag">{{ item.category || 'General' }}</span>
+          <h3 class="item-name">{{ item.itemName ||'Unnamed item' }}</h3>
+          <span class="category-tag">{{ item.category ||'General' }}</span>
         </div>
 
         <p class="item-description" *ngIf="item.description">
@@ -92,6 +92,6 @@
   <button mat-flat-button color="primary" class="submit-btn" (click)="addMenuItem()"
     [disabled]="transformedMenuItems.length === 0">
     <mat-icon>content_copy</mat-icon>
-    Copy {{ transformedMenuItems.length > 0 ? transformedMenuItems.length : '' }} Selected
+    Copy {{ transformedMenuItems.length > 0 ? transformedMenuItems.length :'' }} Selected
   </button>
 </mat-dialog-actions>

@@ -1,0 +1,45 @@
+<h2 mat-dialog-title class="dialog-header">
+    <div class="header-content">
+        <mat-icon>delete_sweep</mat-icon>
+        <span>Deleted Organizations</span>
+    </div>
+    <button mat-icon-button (click)="close()">
+        <mat-icon>close</mat-icon>
+    </button>
+</h2>
+
+<mat-dialog-content class="dialog-body">
+    <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="40"></mat-spinner>
+        <p>Loading deleted organizations...</p>
+    </div>
+
+    <ng-container *ngIf="!isLoading">
+        <div *ngIf="deletedOrgList.length > 0; else emptyState" class="deleted-list">
+            <div class="deleted-item" *ngFor="let org of deletedOrgList">
+                <div class="org-avatar">
+                    <span>{{ getInitials(org?.organization_name) }}</span>
+                </div>
+                <div class="org-info">
+                    <h4>{{ org?.organization_name }}</h4>
+                    <p>
+                        <mat-icon>place</mat-icon>
+                        {{ org?.location ||'No location' }}
+                    </p>
+                </div>
+                <button mat-flat-button color="primary" class="restore-btn" (click)="restoreOrg(org)">
+                    <mat-icon>restore</mat-icon>
+                    Restore
+                </button>
+            </div>
+        </div>
+
+        <ng-template #emptyState>
+            <div class="empty-state">
+                <mat-icon>restore_from_trash</mat-icon>
+                <h3>No Deleted Organizations</h3>
+                <p>There are no soft-deleted organizations to restore.</p>
+            </div>
+        </ng-template>
+    </ng-container>
+</mat-dialog-content>

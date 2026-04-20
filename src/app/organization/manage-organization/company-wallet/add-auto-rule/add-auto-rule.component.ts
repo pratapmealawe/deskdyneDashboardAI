@@ -8,8 +8,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { debounceTime } from 'rxjs/operators';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
 
 @Component({
     selector: 'app-add-auto-rule',
@@ -182,8 +182,6 @@ export class AddAutoRuleComponent implements OnInit {
 
             // Check for duplicates
             const existingRules = this.data.autoRules || [];
-            console.log('Existing Rules:', existingRules);
-            console.log('Current Payload:', payload);
 
             let isDuplicate = false;
 
@@ -192,7 +190,6 @@ export class AddAutoRuleComponent implements OnInit {
                     const existingId = r.cafeteriaId || r.cafeteria_id;
                     const newId = payload.cafeteriaId;
                     const matches = r.level === 'CAFETERIA' && existingId === newId;
-                    if (matches) console.log('Duplicate detected for Cafeteria:', existingId);
                     return matches && (!this.isEdit || r._id !== this.data.rule._id);
                 });
             } else if (payload.level === 'EMPLOYEE') {
@@ -200,7 +197,6 @@ export class AddAutoRuleComponent implements OnInit {
                     const existingId = r.employeeId || r.employee_id || r.employee?._id;
                     const newId = payload.employee_id;
                     const matches = r.level === 'EMPLOYEE' && existingId === newId;
-                    if (matches) console.log('Duplicate detected for Employee:', existingId);
                     return matches && (!this.isEdit || r._id !== this.data.rule._id);
                 });
             }

@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PolicyService } from '@service/policy.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -57,7 +57,6 @@ export class OutletVendorComponent implements OnInit {
         }
       }
     } catch (err: any) {
-      console.log(err);
     }
   }
 

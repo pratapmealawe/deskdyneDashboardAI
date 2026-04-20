@@ -2,7 +2,7 @@ import { Component, Input, SimpleChanges, TemplateRef, ViewChild } from '@angula
 import { AbstractControl, FormControl, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import * as Highcharts from 'highcharts';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 import * as ExcelJS from 'exceljs';
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -37,7 +37,7 @@ type OutletOrder = {
   customerEmail?: string;
 };
 
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import { OrgDashboardFilterDialogComponent } from './org-dashboard-filter-dialog/org-dashboard-filter-dialog.component';
 import { CommonModule } from '@angular/common';
 import { HighchartsChartModule } from 'highcharts-angular';
@@ -283,14 +283,11 @@ export class MainDashboardComponent {
       }
     }
     this.dashboardConfig = config;
-    console.log('dashboardConfig',this.dashboardConfig)
   }
 
   async getVendorFirmsByOrgId() {
     try {
-      const res: any = await this.apiMainService.searchVendorFirmByOrgId({
-        orgId: this.orgAdmin?.orgDetails?._id
-      });
+      const res = await this.apiMainService.searchVendorFirmByOrgId({ orgId: this.orgAdmin?.orgDetails?._id });
       this.vendorFirmsCount = Array.isArray(res) ? res.length : 0;
     } catch (err) {
       console.error(err);
@@ -345,14 +342,7 @@ export class MainDashboardComponent {
         this.dashboardConfig.showEmpPolls ? this.apiMainService.getAdminEmpPolls(payload) : Promise.resolve([]),
         this.dashboardConfig.showVirtualCafe ? this.apiMainService.fetchFoodOrderPackagebysearchObj(payload) : Promise.resolve([])
       ]);
-      console.log('dailyRes', dailyRes)
-      this.orders = Array.isArray(outletRes) ? outletRes : [];
-      this.dailyOrders = Array.isArray(dailyRes) ? dailyRes : [];
-      const pollData = Array.isArray(pollRes) ? pollRes : [];
-      const vcData = Array.isArray(vcRes) ? vcRes : [];
-
-      this.dataFetched = true;
-      this.computeFinancials(pollData, vcData);
+      
       this.refreshStatusPie();
     } catch (err) {
       console.error('Error fetching dashboard data:', err);

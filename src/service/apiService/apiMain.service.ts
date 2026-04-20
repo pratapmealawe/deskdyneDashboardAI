@@ -8,6 +8,7 @@ import { HttpParams } from '@angular/common/http';
   providedIn: 'root',
 })
 export class ApiMainService {
+  
   constructor(
     private apiConfigService: ApiConfigService,
     private apiHttpService: ApiHttpService,
@@ -494,9 +495,9 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${lineLimit}`, method: urlObj.method });
   }
 
-  getEmployeeListByOrgId(orgId: any) {
+  getEmployeeListByOrgId(orgId: any, cafeteriaId?: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeListByOrgId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+    return this.apiHttpService.REQUEST(urlObj, { orgId, cafeteriaId });
   }
 
   getEmployeelistByCafeteriaIds(data: any) {
@@ -821,7 +822,6 @@ export class ApiMainService {
   }
 
   getAdminDailyBulkOrders(payload: any) {
-    console.log(payload, "payload");
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAdminDailyBulkOrders, payload);
   }
 
@@ -1501,6 +1501,10 @@ export class ApiMainService {
   }
 
   updateWeeklyMenuCategory(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateWeeklyMenuCategory, body);
+  }
+
+  updateVirtualCafeteriaWeeklyMenu(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateWeeklyMenuCategory, body);
   }
 

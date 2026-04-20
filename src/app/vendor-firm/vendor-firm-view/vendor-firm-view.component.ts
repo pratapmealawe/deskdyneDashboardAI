@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { PolicyService } from 'src/service/policy.service';
+import { PolicyService } from '@service/policy.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { VendorFirmWalletDetailsComponent } from './vendor-firm-wallet-details/vendor-firm-wallet-details.component';
@@ -23,8 +23,7 @@ import { VendorFirmDetailsComponent } from './vendor-firm-details/vendor-firm-de
     VendorFirmLedgerDetailsComponent,
     VendorFirmBulkOrderReportComponent,
     VendorFirmReportComponent,
-    VendorFirmDailyReportComponent,
-    VendorFirmCardComponent
+    VendorFirmDailyReportComponent
   ]
 })
 export class VendorFirmViewComponent implements OnChanges, OnInit {

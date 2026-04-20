@@ -2,14 +2,13 @@ import { Component, Input } from '@angular/core';
 import { DatewiseDialogData, DatewiseDialogResult } from '../../../billing/datewise-orders-dialog/datewise-orders-dialog.component';
 import { KeyValue } from '@angular/common';
 import { PageEvent } from '@angular/material/paginator';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CommonSelectConfig, SubmitPayload } from '../../../common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { environment } from 'src/environments/environment';
+import { environment } from '@environments/environment';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -141,7 +140,7 @@ export class VendorFirmReportComponent {
     return this.orderWise.slice(start, start + this.mainPageSize);
   }
 
-  constructor(private apiMainService: ApiMainService, private http: HttpClient, private excelService: ExcelService, private dialog: MatDialog, fb: FormBuilder) {
+  constructor(private apiMainService: ApiMainService, private http: HttpClient, private dialog: MatDialog, fb: FormBuilder) {
     this.dateForm = fb.group({
       dateFrom: new FormControl<Date | null>(null),
       dateTo: new FormControl<Date | null>(null),
@@ -176,7 +175,6 @@ export class VendorFirmReportComponent {
   }
 
   filterSubmitted(e: any) {
-    console.log(e);
     if (e.outlet_id) {
       this.filteredData = e
       this.getOrders()
@@ -198,11 +196,9 @@ export class VendorFirmReportComponent {
   async fetchOutletOrders(body: any) {
     try {
       const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
-      console.log(res);
       this.orders = res || [];
       this.buildSummaries();
     } catch (err: any) {
-      console.log("err", err);
     }
   }
 
@@ -504,7 +500,7 @@ export class VendorFirmReportComponent {
       if (!res) return;
       // res.dateKey has the selected yyyy-mm-dd (IST)
       // res.records is the array of orders of that date
-      // Example: console.log(res);
+      // Example: 
     });
   }
 
@@ -799,8 +795,6 @@ export class VendorFirmReportComponent {
       fromDate: dateFrom,
       toDate: dateTo
     }
-
-    console.log(body);
     this.fetchOutletOrders(body);
   }
 }

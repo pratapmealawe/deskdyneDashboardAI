@@ -6,9 +6,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { LocalStorageService } from '@service/local-storage.service';
 
 @Component({
     selector: 'app-org-emp-poll',
@@ -101,6 +101,7 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
         this.allPollResults = [];
         this.filteredList = [];
         const payload: any = {
+            id: this.currentFilter.org_id, // Map org_id to id for the server
             fromDate: this.currentFilter.date_from,
             toDate: this.currentFilter.date_to,
             cafeteriaId: this.currentFilter.cafeteria_id,
@@ -109,7 +110,7 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
 
         try {
             this.isLoading = true;
-            const res: any[] = await this.apiMainService.getAdminEmpPolls(payload);
+            const res: any[] = await this.apiMainService.getOrgEmployeePollingList(payload);
             if (res && res.length > 0) {
                 const groupedMap = new Map<string, any>();
                 res.forEach(order => {
@@ -207,7 +208,6 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
     }
 
     downloadPdf() {
-        console.log('PDF export not implemented for Employee Poll yet');
     }
 
     async exportEmployeePollToExcel() {

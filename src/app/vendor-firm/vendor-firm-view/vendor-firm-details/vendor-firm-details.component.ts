@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { PolicyService } from '@service/policy.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
 
 @Component({
   selector: 'app-vendor-firm-details',
@@ -30,7 +30,6 @@ export class VendorFirmDetailsComponent implements OnInit {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.bankDetails = this.vendorObj.bank_details;
     this.filteredOutletList = this.filterOutletListByCafeteria(this.vendorObj.outletList);
-    console.log(this.filteredOutletList);
 
   }
 

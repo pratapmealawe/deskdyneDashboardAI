@@ -1,5 +1,5 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 
 // Dialog Container Adjustments
 :host {
@@ -325,3 +325,4 @@
   h3 { font-size: 1.1rem; font-weight: 700; color: #1e293b; margin-bottom: 0.5rem; }
   p { font-size: 0.85rem; color: #64748b; }
 }
+

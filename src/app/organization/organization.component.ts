@@ -4,13 +4,13 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { OrganizationCardComponent } from './organization-card/organization-card.component';
 import { ManageOrganizationComponent } from './manage-organization/manage-organization.component';
 import { MaterialModule } from '../material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DeletedOrgsDialogComponent } from './deleted-orgs-dialog/deleted-orgs-dialog.component';
+import { DeletedOrganizationListingComponent } from './deleted-organization-listing/deleted-organization-listing.component';
 
 @Component({
   selector: 'app-organization',
@@ -87,7 +87,6 @@ export class OrganizationComponent implements OnInit {
         this.originalOrgList = [];
       }
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -110,8 +109,8 @@ export class OrganizationComponent implements OnInit {
     this.router.navigate(['/app/add-organization'])
   }
 
-  openDeletedOrgsDialog() {
-    this.dialog.open(DeletedOrgsDialogComponent, {
+  openDeletedOrganizationListing() {
+    this.dialog.open(DeletedOrganizationListingComponent, {
       width: '850px',
       maxHeight: '85vh',
       panelClass: 'deleted-orgs-dialog-container'

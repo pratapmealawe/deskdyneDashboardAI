@@ -5,8 +5,7 @@
         <div
           *ngFor="
             let category of categoryForm.get('categories').controls;
-            let i = index
-          "
+            let i = index"
           [formGroupName]="i"
           class="category"
         >
@@ -34,8 +33,7 @@
             <div
               *ngFor="
                 let value of category.get('subCategories').controls;
-                let j = index
-              "
+                let j = index"
               class="form-group col-2"
             >
               <label for="value{{ i }}-{{ j }}">SubCategories</label>

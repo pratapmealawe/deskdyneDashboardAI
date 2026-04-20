@@ -5,18 +5,18 @@ import { Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { DataFormatService } from 'src/service/data-format.service';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { DataFormatService } from '@service/data-format.service';
+import { PolicyService } from '@service/policy.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SelectOrgCafeteriaDialogComponent } from '../../outlet/select-org-cafeteria-dialog/select-org-cafeteria-dialog.component';
-import { ToasterService } from 'src/service/toaster.service';
+import { ToasterService } from '@service/toaster.service';
 
 @Component({
   selector: 'app-add-event-pop',
@@ -111,11 +111,9 @@ export class AddEventPopComponent implements OnInit {
               }
             },
             () => {
-              console.log('Image crop modal dismissed');
             }
           );
         } catch (e) {
-          console.log('error while changing outlet image ', e);
         }
       };
     }
@@ -168,7 +166,7 @@ export class AddEventPopComponent implements OnInit {
   //       this.outletSubsidy
   //     );
   //   } catch (err) {
-  //     console.log(err);
+  //     
   //   }
   // }
 
@@ -310,7 +308,6 @@ export class AddEventPopComponent implements OnInit {
         this.formattedOrgList = this.dataFormatService.getformattedOrgList(orgList);
       }
     } catch (error) {
-      console.log(error);
     }
   }
 

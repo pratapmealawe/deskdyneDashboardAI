@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
-import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PolicyService } from '@service/policy.service';
+import { SuggestionsFeedbackService } from '@service/suggestions-feedback.service';
+import { SearchFilterService } from '@service/search-filter.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -48,7 +48,6 @@ export class SuggessionsFeedbacksComponent implements OnInit {
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.admin = this.localStorageService.getCacheData("ADMIN_PROFILE");
-    console.log(this.admin);
 
     this.getFeedbackList();
   }
@@ -91,7 +90,6 @@ export class SuggessionsFeedbacksComponent implements OnInit {
         this.pagedFeedback = [];
       }
     } catch (error) {
-      console.log('error while fetching feedbacklist ', error);
     } finally {
       this.isLoading = false;
     }
@@ -219,7 +217,6 @@ export class SuggessionsFeedbacksComponent implements OnInit {
       this.getFeedbackList()
       this.suggestionsFeedbackService.getGeneralAppFeebackCount(false);
     } catch (error) {
-      console.log('error while acknowledge feedback ', error);
     }
   }
 

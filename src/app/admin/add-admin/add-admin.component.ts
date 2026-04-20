@@ -1,16 +1,18 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit, inject, Inject, Optional } from '@angular/core';
+import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, startWith, takeUntil } from 'rxjs';
 
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { PolicyService } from 'src/service/policy.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { PolicyService } from '@service/policy.service';
 
 // OLD IMAGE METHOD (NgbModal)
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
 
 interface Cafeteria {
   _id: string;
@@ -46,6 +48,14 @@ const requiredArray = (): ValidatorFn => {
   selector: 'app-add-admin',
   templateUrl: './add-admin.component.html',
   styleUrls: ['./add-admin.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MaterialModule,
+    MatDialogModule
+  ]
 })
 export class AddAdminComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -105,6 +115,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
   private store = inject(RuntimeStorageService);
   private policyService = inject(PolicyService);
   private dialog = inject(MatDialog);
+  private dialogRef = inject(MatDialogRef<AddAdminComponent>, { optional: true });
+  private data = inject(MAT_DIALOG_DATA, { optional: true });
 
   ngOnInit(): void {
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
@@ -112,8 +124,8 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     this.loadPolicies();
     this.loadOrganizations();
 
-    // edit mode (from cache)
-    this.cacheAdmin = this.store.getCacheData('VIEW_ADMIN');
+    // edit mode (from cache or dialog data)
+    this.cacheAdmin = this.data || this.store.getCacheData('VIEW_ADMIN');
     if (this.cacheAdmin) {
       this.editMode = true;
       this.patchEditData(this.cacheAdmin);
@@ -177,8 +189,6 @@ export class AddAdminComponent implements OnInit, OnDestroy {
   private patchEditData(admin: any) {
     this.adminId = admin?._id ?? null;
 
-    console.log(admin);
-
     this.form.patchValue({
       name: (admin?.name ?? '') as string,
       phoneNo: (admin?.phoneNo ?? '') as string,
@@ -203,7 +213,6 @@ export class AddAdminComponent implements OnInit, OnDestroy {
       const arr: any = await this.api.getAllPolicy();
       this.policyArr = Array.isArray(arr) ? arr : [];
     } catch (e) {
-      console.log('Failed to load policies', e);
     }
   }
 
@@ -221,7 +230,6 @@ export class AddAdminComponent implements OnInit, OnDestroy {
         this.cafeteriaOptions = org?.cafeteriaList || [];
       }
     } catch (e) {
-      console.log('Failed to load organizations', e);
     }
   }
 
@@ -254,7 +262,6 @@ export class AddAdminComponent implements OnInit, OnDestroy {
             }
           });
         } catch (e) {
-          console.log('Error opening cropper modal', e);
         }
       };
     }
@@ -318,9 +325,12 @@ export class AddAdminComponent implements OnInit, OnDestroy {
         await this.api.saveAdminProfile(formData);
       }
       this.store.resetCacheData('VIEW_ADMIN');
-      this.router.navigate(['/app/admin']);
+      if (this.dialogRef) {
+        this.dialogRef.close(true);
+      } else {
+        this.router.navigate(['/app/admin']);
+      }
     } catch (e) {
-      console.log('Error saving admin profile', e);
     } finally {
       this.submitting = false;
     }
@@ -328,6 +338,10 @@ export class AddAdminComponent implements OnInit, OnDestroy {
 
   onCancel() {
     this.store.resetCacheData('VIEW_ADMIN');
-    this.router.navigate(['/app/admin']);
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    } else {
+      this.router.navigate(['/app/admin']);
+    }
   }
 }

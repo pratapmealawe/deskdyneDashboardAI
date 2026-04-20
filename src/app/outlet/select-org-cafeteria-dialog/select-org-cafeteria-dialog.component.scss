@@ -1,4 +1,4 @@
-@use '/src/styles/theme/variable' as var;
+@use "styles/theme/variable" as var;
 
 // Organization List Dialog Styles moved from add-outlet
 .org-list {
@@ -59,3 +59,4 @@
     background-color: white !important;
   }
 }
+

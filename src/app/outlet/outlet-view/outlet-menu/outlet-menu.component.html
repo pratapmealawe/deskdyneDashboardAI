@@ -102,7 +102,7 @@
       <div class="category-header">
         <div class="category-info">
           <div class="category-icon-circle">
-            <mat-icon>{{ outletObj?.isWeeklyMenu ? 'event' : 'category' }}</mat-icon>
+            <mat-icon>{{ outletObj?.isWeeklyMenu ?'event' :'category' }}</mat-icon>
           </div>
           <span class="category-name">{{ group.category }}</span>
         </div>
@@ -127,7 +127,7 @@
           <!-- Square Image with padding -->
           <div class="card-image-h">
             <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" />
-            <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
+            <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
               <span class="indicator-dot"></span>
             </div>
           </div>
@@ -136,7 +136,7 @@
           <div class="card-content-h">
             <!-- Row 1: Name + Actions -->
             <div class="content-top">
-              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h3>
+              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName ||'Unnamed item' }}</h3>
               <div class="item-actions">
                 <button mat-icon-button class="edit-btn" *appHasPermission="'MENU:EDIT'" (click)="edit(item)"
                   matTooltip="Edit">
@@ -163,13 +163,13 @@
 
               <ng-container *ngIf="item.discountEnabled">
                 <!-- Percentage -->
-                <div class="discount-chip" *ngIf="item.discountType === 'percentage'">
+                <div class="discount-chip" *ngIf="item.discountType ==='percentage'">
                    <mat-icon>discount</mat-icon>
                   <span class="discount-value">{{ item.discountValue }}%</span>
                   <span class="discount-label">OFF</span>
                 </div>
                 <!-- Flat -->
-                <div class="discount-chip" *ngIf="item.discountType === 'flat'">
+                <div class="discount-chip" *ngIf="item.discountType ==='flat'">
                   <mat-icon>discount</mat-icon>
                   <span class="discount-label">FLAT</span>
                   <span class="discount-value">₹{{ item.discountValue }}</span>

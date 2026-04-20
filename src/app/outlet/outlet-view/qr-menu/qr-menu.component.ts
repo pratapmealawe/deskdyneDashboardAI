@@ -15,11 +15,11 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { categoryList } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -130,7 +130,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
       this.menuPageIndex = 0;
       this.applyMenuFilters();
     } catch (err: any) {
-      console.log(err);
       this.qrMenus = [];
       this.allGroups = [];
       this.groupedMenuList = [];
@@ -223,7 +222,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         { duration: 2500 }
       );
     } catch (err) {
-      console.log('Error changing mealType active flag', err);
       group.isMealTypeActive = prev;
       this.snackBar.open('Failed to update meal status. Please try again.', 'Close', {
         duration: 2500,
@@ -248,7 +246,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
       this.snackBar.open(msg, 'Close', { duration: 3000 });
     } catch (err) {
-      console.log('Error changing category menu type', err);
       group.categoryMenuType = prev;
       this.snackBar.open('Failed to update menu mode. Please try again.', 'Close', {
         duration: 2500,
@@ -273,7 +270,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
       this.snackBar.open(msg, 'Close', { duration: 2500 });
     } catch (err) {
-      console.log('Error changing paid type', err);
       group.paidType = prev;
       this.snackBar.open('Failed to update paid type. Please try again.', 'Close', {
         duration: 2500,
@@ -348,21 +344,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
   }
 
   patchFormValue(group: any, item: any) {
-    console.log(item)
-    this.form.patchValue({
-      itemName: item.itemName,
-      mealType: group?.mealType || '',
-      acceptOrderFrom: group?.acceptOrderFrom || '',
-      acceptOrderTill: group?.acceptOrderTill || '',
-      price: item.price,
-      subsidy: item.subsidy ? item.subsidy : 0,
-      maxQuantity: item.maxQuantity ? item.maxQuantity : 1,
-      category: item.category,
-      itemType: item.itemType,
-      precedence: item.precedence,
-      isActive: item.isActive,
-      description: item.description,
-    });
   }
 
 
@@ -420,7 +401,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
       this.resetValues();
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -474,13 +454,11 @@ export class QrMenuComponent implements OnInit, OnChanges {
       }
       this.resetValues();
     } catch (error) {
-      console.log(error);
     }
   }
 
   // COPY MENU (creates a new identical menu item)
   async copyMenu(group: any, item: any) {
-    console.log(group);
 
     try {
       const outletId = this.outletObj._id;
@@ -510,7 +488,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         await this.init();
       }
     } catch (error) {
-      console.log('Error while copying menu item', error);
     }
   }
 
@@ -529,7 +506,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
       this.resetValues();
       this.back.emit(true);
     } catch (err) {
-      console.log(err);
     }
   }
 
@@ -554,7 +530,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         );
       }
     } catch (err) {
-      console.log('Error updating item activation', err);
       menu.isActive = prev;
 
       if (showToast) {
@@ -606,7 +581,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         { duration: 3000 }
       );
     } catch (err) {
-      console.log('Error applying fixed-mode activation', err);
 
       // Revert UI state
       menu.isActive = false;

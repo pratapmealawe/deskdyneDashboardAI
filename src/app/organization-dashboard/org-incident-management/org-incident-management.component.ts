@@ -7,10 +7,10 @@ import { PageEvent } from '@angular/material/paginator';
 
 import { AddIncidentDialogComponent } from './add-incident-dialog/add-incident-dialog.component';
 import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 
 export interface SubmittedByInfo {
   name: string;
@@ -278,7 +278,6 @@ export class OrgIncidentManagementComponent implements OnInit {
         cafeteria_name: (incident.cafeteriaDetails as any).cafeteria_name,
       });
     } catch (e) {
-      console.log('error while searching admin profile', e);
     }
   }
 
@@ -467,10 +466,8 @@ export class OrgIncidentManagementComponent implements OnInit {
     this.modalRef = this.modalService.open(this.statusChangeDiv);
     this.modalRef.result.then(
       (result: any) => {
-        console.log(result);
       },
       () => {
-        console.log('Model Dismissed');
       }
     );
   }
@@ -493,7 +490,6 @@ export class OrgIncidentManagementComponent implements OnInit {
       await this.apiMainService.deleteIncident(this.deleteIncidentObj._id);
       this.getIncidentListByFilter();
     } catch (err: any) {
-      console.log(err);
     }
   }
 

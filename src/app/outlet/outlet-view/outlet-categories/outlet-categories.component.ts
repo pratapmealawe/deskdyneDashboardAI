@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { PolicyService } from '@service/policy.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -85,7 +85,6 @@ export class OutletCategoriesComponent implements OnInit {
       const obj = { ...this.outletObj, ...this.categoryForm.value };
       await this.apiMainService.updateCategories(obj);
     } catch (error) {
-      console.log(error);
     }
   }
 }

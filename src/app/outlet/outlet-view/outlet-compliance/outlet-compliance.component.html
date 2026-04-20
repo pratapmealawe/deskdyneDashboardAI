@@ -83,25 +83,25 @@
                 <input type="text" class="form-control" placeholder="Gst Number" [(ngModel)]="compliance.gstNumber" />
             </div>
             <div *ngIf="!editMode">
-                <div class="mt-2 me-2" *ngIf="profileApproval === 'pending' || profileApproval === 'approved'">
+                <div class="mt-2 me-2" *ngIf="profileApproval ==='pending' || profileApproval ==='approved'">
                     <div class="labelData">Reject/Suspend Comment</div>
                     <input type="text" class="form-control" [(ngModel)]="comment" placeholder="House No./streetName">
                 </div>
                 <div class="inline mt-2 me-2"
-                    *ngIf="(profileApproval === 'pending' || profileApproval === 'suspended') && access?.complianceApprove">
+                    *ngIf="(profileApproval ==='pending' || profileApproval ==='suspended') && access?.complianceApprove">
                     <button type="button" class="btn btn-primary btn-sm"
                         (click)="updateProfileApproval('approved')">Approve</button>
                 </div>
-                <div class="inline mt-2 me-2" *ngIf="profileApproval === 'pending' && access?.complianceReject">
+                <div class="inline mt-2 me-2" *ngIf="profileApproval ==='pending' && access?.complianceReject">
                     <button type="button" class="btn btn-danger btn-sm"
                         (click)="updateProfileApproval('rejected')">Reject</button>
                 </div>
-                <div class="inline mt-2 me-2" *ngIf="profileApproval === 'approved' && access?.complianceSuspend">
+                <div class="inline mt-2 me-2" *ngIf="profileApproval ==='approved' && access?.complianceSuspend">
                     <button type="button" class="btn btn-danger btn-sm"
                         (click)="updateProfileApproval('suspended')">Suspend</button>
                 </div>
                 <div class="inline mt-2 me-2"
-                    *ngIf="(profileApproval === 'rejected' || profileApproval === 'suspended') && access?.compliancePending ">
+                    *ngIf="(profileApproval ==='rejected' || profileApproval ==='suspended') && access?.compliancePending">
                     <button type="button" class="btn btn-danger btn-sm"
                         (click)="updateProfileApproval('pending')">Pending</button>
                 </div>

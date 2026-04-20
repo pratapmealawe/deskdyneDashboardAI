@@ -26,9 +26,9 @@
             <mat-icon>picture_as_pdf</mat-icon> PDF
           </button>
           <button mat-icon-button class="btn-view-toggle"
-            [matTooltip]="isShowChart ? 'Show List' : 'Show Chart'"
+            [matTooltip]="isShowChart ?'Show List' :'Show Chart'"
             (click)="toggleChartView()">
-            <mat-icon>{{ isShowChart ? 'view_list' : 'bar_chart' }}</mat-icon>
+            <mat-icon>{{ isShowChart ?'view_list' :'bar_chart' }}</mat-icon>
           </button>
         </div>
       </div>
@@ -60,29 +60,28 @@
   <!-- ACTIVE FILTER CHIPS -->
   <div class="active-filter-chips mb-4" *ngIf="activeFilterCount > 0 || searchText">
     <div class="chip-strip">
-      <div class="filter-chip" *ngIf="searchText">
-        "{{ searchText }}"
-        <mat-icon (click)="searchText = ''; applyFilters()">close</mat-icon>
+      <div class="filter-chip" *ngIf="searchText">"{{ searchText }}"
+        <mat-icon (click)="searchText =''; applyFilters()">close</mat-icon>
       </div>
       <div class="filter-chip" *ngIf="filterOrderstatus">
         {{ orderStatusMapper[filterOrderstatus] || filterOrderstatus }}
-        <mat-icon (click)="filterOrderstatus = ''; applyFilters()">close</mat-icon>
+        <mat-icon (click)="filterOrderstatus =''; applyFilters()">close</mat-icon>
       </div>
       <div class="filter-chip" *ngIf="filterPgName">
         PG: {{ filterPgName }}
-        <mat-icon (click)="filterPgName = ''; applyFilters()">close</mat-icon>
+        <mat-icon (click)="filterPgName =''; applyFilters()">close</mat-icon>
       </div>
       <div class="filter-chip" *ngIf="filterAppVersion">
         v{{ filterAppVersion }}
-        <mat-icon (click)="filterAppVersion = ''; applyFilters()">close</mat-icon>
+        <mat-icon (click)="filterAppVersion =''; applyFilters()">close</mat-icon>
       </div>
       <div class="filter-chip" *ngIf="filterPlatform">
         {{ filterPlatform }}
-        <mat-icon (click)="filterPlatform = ''; applyFilters()">close</mat-icon>
+        <mat-icon (click)="filterPlatform =''; applyFilters()">close</mat-icon>
       </div>
       <div class="filter-chip" *ngIf="filterIsPosOrder">
-        POS: {{ filterIsPosOrder === 'true' ? 'Yes' : 'No' }}
-        <mat-icon (click)="filterIsPosOrder = ''; applyFilters()">close</mat-icon>
+        POS: {{ filterIsPosOrder ==='true' ?'Yes' :'No' }}
+        <mat-icon (click)="filterIsPosOrder =''; applyFilters()">close</mat-icon>
       </div>
       <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
         <mat-icon>filter_alt_off</mat-icon> Clear All
@@ -138,11 +137,11 @@
             <!-- LEFT: customer info -->
             <div class="order-left">
               <div class="order-card-header">
-                <div class="order-avatar">{{ row.customerName?.[0] || 'C' }}</div>
+                <div class="order-avatar">{{ row.customerName?.[0] ||'C' }}</div>
                 <div class="order-header-text">
                   <div class="order-title">Order #{{ row.orderNo }}</div>
                   <div class="order-subtitle">
-                    Token #{{ row.tokenNo || '–' }} &nbsp;·&nbsp;
+                    Token #{{ row.tokenNo ||'–' }} &nbsp;·&nbsp;
                     {{ row.orderDate | date:'MMM d, y, h:mm a' }}
                   </div>
                 </div>

@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { ConfirmationModalService } from '../../../service/confirmation-modal.service';
-import { environment } from 'src/environments/environment';
-import { PolicyService } from 'src/service/policy.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { environment } from '@environments/environment';
+import { PolicyService } from '@service/policy.service';
 
 @Component({
   selector: 'app-bulk-master-menu-card',

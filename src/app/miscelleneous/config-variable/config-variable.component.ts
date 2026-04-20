@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-config-variable',
@@ -31,7 +31,6 @@ export class ConfigVariableComponent implements OnInit {
         this.allVariables = [];
       }
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -46,7 +45,6 @@ export class ConfigVariableComponent implements OnInit {
       this.getAllVariables();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -56,7 +54,6 @@ export class ConfigVariableComponent implements OnInit {
       this.getAllVariables();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -72,7 +69,6 @@ export class ConfigVariableComponent implements OnInit {
       this.getAllVariables();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 

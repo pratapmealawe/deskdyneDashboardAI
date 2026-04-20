@@ -1,10 +1,10 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { PolicyService } from '@service/policy.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { AddVendorCommponent } from '../add-vendor/add-vendor.component';
 import { MatDialog } from '@angular/material/dialog';
 
@@ -53,7 +53,6 @@ export class VendorCardComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    console.log(this.vendorFirm, "vendorFirm");
 
     this.btnPolicy = this.policyService.getCurrentButtonPolicy();
     this.updatePage();
@@ -80,7 +79,6 @@ export class VendorCardComponent implements OnInit {
       const deleted = await this.apiMainService.deleteVendor(id);
       this.deleted.emit();
     } catch (error) {
-      console.log('deleteVendor', error);
     }
   }
 

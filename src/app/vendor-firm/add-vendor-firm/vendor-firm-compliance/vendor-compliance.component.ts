@@ -1,10 +1,10 @@
 import { Component, OnInit, Input, ViewChild, ElementRef, Inject, Optional } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { environment } from 'src/environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { environment } from '@environments/environment';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
-import { PolicyService } from 'src/service/policy.service';
+import { PolicyService } from '@service/policy.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { PdfPreviewDialogComponent } from 'src/app/organization-dashboard/audit-report/pdf-preview-dialog/pdf-preview-dialog.component';
 
@@ -97,8 +97,6 @@ export class VendorComplianceComponent implements OnInit {
     this.orgVendorInfo = this.localStorageService.getCacheData('ORG_VENDOR_INFO');
     if (this.venderDetails.compliance) {
       this.compliance = this.venderDetails.compliance;
-
-      console.log(this.compliance);
 
       this.originalCompliance = { ...this.venderDetails.compliance };
 
@@ -237,16 +235,13 @@ export class VendorComplianceComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe((result: any) => {
-              console.log('Closed with:', result);
               if (result && result.croppedImages) {
-                console.log('croppedImages ', result.croppedImages);
                 this.uploadedCompliance[filename] = result.croppedImages.file;
                 // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];
                 this.compliance[filename] = result.croppedImages.resizeDataUrl;
               }
             });
           } catch (error) {
-            console.log('error while changes kitchen opened status ', error);
           }
         }
       }
@@ -369,7 +364,6 @@ export class VendorComplianceComponent implements OnInit {
       this.uploadedCompliance = {};
       this.prepareForEdit();
     } catch (error) {
-      console.log('error while save compliance Images ', error);
     }
   }
 
@@ -436,7 +430,6 @@ export class VendorComplianceComponent implements OnInit {
   }
 
   downloadFile(fileUrl: string | SafeResourceUrl): void {
-    console.log(fileUrl);
     let urlString: string = '';
 
     // Get the raw URL string from the sanitized object

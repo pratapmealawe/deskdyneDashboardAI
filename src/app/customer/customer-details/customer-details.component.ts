@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
 
 @Component({
   selector: 'app-customer-details',
@@ -22,7 +22,6 @@ export class CustomerDetailsComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    console.log(this.userDetails);
     this.getUserCustomerDetails()
 
   }
@@ -46,10 +45,9 @@ export class CustomerDetailsComponent implements OnInit {
   async getUserCustomerDetails() {
     try {
       const res = await this.apiMainService.getCustomerProfileDetails(this.userDetails?.phoneNo)
-      // console.log(res);
+      // 
       this.customerDetails = res
     } catch (err: any) {
-      console.log(err);
     }
   }
 
@@ -59,7 +57,6 @@ export class CustomerDetailsComponent implements OnInit {
       this.toasterService.success("Deleted User SuccessFully")
       this.getUserCustomerDetails()
     } catch (err: any) {
-      console.log(err);
     }
   }
 

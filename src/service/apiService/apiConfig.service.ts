@@ -1,4 +1,4 @@
-import { environment } from './../../environments/environment';
+import { environment } from '@environments/environment';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -112,7 +112,7 @@ export class ApiConfigService {
       getDayRangeBasedLogs: p('/utility/getDayRangeBasedLogs', 'GET'),
       getTimeBasedLogs: p('/utility/getTimeBasedLogs', 'GET'),
       getLineBasedLogs: p('/utility/getLineBasedLogs', 'GET'),
-      getEmployeeListByOrgId: p('/api/getEmployeeListByOrgId', 'GET'),
+      getEmployeeListByOrgId: p('/api/getEmployeeListByOrgId', 'POST'),
       getConsumptionOrderByOrgId: p('/api/getConsumptionOrderByOrgId', 'GET'),
       updateConsumptionMenu: p('/api/updateConsumptionMenuList', 'POST'),
       updateConsumptionOrderStatus: p('/api/updateConsumptionOrderStatus', 'POST'),

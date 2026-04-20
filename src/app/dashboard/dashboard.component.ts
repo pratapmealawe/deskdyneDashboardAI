@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from "@angular/router";
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PolicyService } from '@service/policy.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
@@ -105,7 +105,6 @@ export class DashboardComponent implements OnInit {
       this.isLoading = false;
     } catch (error) {
       this.isLoading = false;
-      console.log(error)
     }
   }
 }

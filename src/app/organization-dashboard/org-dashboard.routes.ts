@@ -11,8 +11,8 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'consumptionOrders', loadComponent: () => import('./org-consumption-order/org-consumption-order.component').then(m => m.OrgConsumptionOrderComponent) },
       { path: 'orgMenuItems', loadComponent: () => import('./org-menu-items/org-menu-items.component').then(m => m.OrgMenuItemsComponent) },
       { path: 'outletExcelExport', loadComponent: () => import('../outlet-excel-export/outlet-excel-export.component').then(m => m.OutletExcelExportComponent) },
-     
-     
+
+
       { path: 'orgOrders', loadComponent: () => import('./org-outlet-orders/org-outlet-orders.component').then(m => m.OrgOutletOrdersComponent) },
       { path: 'orgPreOrders', loadComponent: () => import('./org-pre-orders/org-pre-orders.component').then(m => m.OrgPreOrdersComponent) },
       { path: 'orgSubcription', loadComponent: () => import('./org-subscription/org-subscription.component').then(m => m.OrgSubscriptionComponent) },
@@ -29,7 +29,7 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'orgBilling', loadComponent: () => import('./org-billing/org-billing.component').then(m => m.OrgBillingComponent) },
       { path: 'orgSalaryDeduction', loadComponent: () => import('./org-salary-deduction/org-salary-deduction.component').then(m => m.OrgSalaryDeductionComponent) },
       { path: 'submitChecklist', loadComponent: () => import('./org-checklist/org-checklist.component').then(m => m.OrgChecklistComponent) },
-      { path: 'dailyAdminExcelExport', loadComponent: () => import('../excel-export/daily-admin-excel-export/daily-admin-excel-export.component').then(m => m.DailyAdminExcelExportComponent) },
+      { path: 'orgAdminDailyOrder', loadComponent: () => import('./org-admin-daily-order/org-admin-daily-order.component').then(m => m.OrgAdminDailyOrderComponent) },
       { path: 'customer', loadChildren: () => import('../customer/customer.module').then(m => m.CustomerModule) },
       { path: 'billing', loadChildren: () => import('../billing/billing.module').then(m => m.BillingModule) },
       { path: 'orgEmpPoll', loadComponent: () => import('./org-emp-poll/org-emp-poll.component').then(m => m.OrgEmpPollComponent) },

@@ -2,9 +2,9 @@ import { Component, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { Router } from "@angular/router";
 import { debounceTime, distinctUntilChanged } from "rxjs";
-import { ApiMainService } from "src/service/apiService/apiMain.service";
-import { RuntimeStorageService } from "src/service/runtime-storage.service";
-import { SearchFilterService } from "src/service/search-filter.service";
+import { ApiMainService } from "@service/apiService/apiMain.service";
+import { RuntimeStorageService } from "@service/runtime-storage.service";
+import { SearchFilterService } from "@service/search-filter.service";
 import { VendorCardComponent } from "./vendor-card/vendor-card.component";
 import { AddVendorCommponent } from "./add-vendor/add-vendor.component";
 import { MatDialog } from "@angular/material/dialog";
@@ -71,7 +71,6 @@ export class VendorComponent implements OnInit {
       } else {
         this.filterVendorDuplicate = [...this.filteredVendorList];
       }
-      console.log("Updated:", this.filterVendorDuplicate);
     });
   }
 
@@ -108,11 +107,8 @@ export class VendorComponent implements OnInit {
 
         this.filteredVendorList = Array.from(vendorFirmMap.values());
         this.filterVendorDuplicate = Array.from(vendorFirmMap.values());
-
-        console.log(this.filteredVendorList);
       }
     } catch (error) {
-      console.log('searchVendor', error);
     }
   }
 

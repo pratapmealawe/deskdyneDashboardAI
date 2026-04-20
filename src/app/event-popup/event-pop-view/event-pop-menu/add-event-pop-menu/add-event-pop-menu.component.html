@@ -1,7 +1,7 @@
 <div class="dialog-title" mat-dialog-title>
   <div class="title-left">
-    <mat-icon>{{ showUpdateBtn ? 'edit' : 'add_circle' }}</mat-icon>
-    <span>{{ showUpdateBtn ? 'Edit Event Menu Item' : 'Add New Menu Item' }}</span>
+    <mat-icon>{{ showUpdateBtn ?'edit' :'add_circle' }}</mat-icon>
+    <span>{{ showUpdateBtn ?'Edit Event Menu Item' :'Add New Menu Item' }}</span>
   </div>
   <button mat-icon-button class="info-btn" [matMenuTriggerFor]="infoMenu">
     <mat-icon>info</mat-icon>
@@ -59,13 +59,13 @@
           <span>Item Type</span>
         </div>
         <mat-radio-group formControlName="itemType" class="type-radio-group">
-          <div class="type-option veg" [class.selected]="form.get('itemType')?.value === 'Veg'">
+          <div class="type-option veg" [class.selected]="form.get('itemType')?.value ==='Veg'">
             <mat-radio-button value="Veg">
               <span class="type-indicator veg-dot"></span>
               <span>Veg</span>
             </mat-radio-button>
           </div>
-          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value === 'NonVeg'">
+          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value ==='NonVeg'">
             <mat-radio-button value="NonVeg">
               <span class="type-indicator nonveg-dot"></span>
               <span>Non-Veg</span>

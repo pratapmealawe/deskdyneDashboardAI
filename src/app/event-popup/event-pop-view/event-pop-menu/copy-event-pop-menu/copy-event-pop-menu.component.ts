@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { environment } from 'src/environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { environment } from '@environments/environment';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule } from '@angular/forms';
@@ -49,7 +49,6 @@ export class CopyEventPopMenuComponent implements OnInit {
       // Filter out the current event itself from the source list
       this.eventPopupList = (res || []).filter((e: any) => e._id !== this.data.eventObj._id);
     } catch (e) {
-      console.log('error while fetching outlets', e);
       this.eventPopupList = [];
     }
   }
@@ -103,7 +102,6 @@ export class CopyEventPopMenuComponent implements OnInit {
       );
       this.dialogRef.close(res);
     } catch (err) {
-      console.log(err);
     }
   }
 

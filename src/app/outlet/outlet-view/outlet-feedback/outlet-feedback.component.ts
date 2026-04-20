@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { OrgOrderComponent } from 'src/app/organization-dashboard/org-reviews/org-order/org-order.component';
@@ -24,7 +24,6 @@ export class OutletFeedbackComponent implements OnInit {
   constructor(private apiMainService: ApiMainService) { }
 
   ngOnInit(): void {
-    console.log(this.outletObj, "<------this.outletObj------->");
     this.getFeedbacklist();
   }
 

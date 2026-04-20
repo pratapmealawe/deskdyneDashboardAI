@@ -11,7 +11,7 @@
           class="avatar-image" alt="User Image" />
       </div>
       <div class="hero-info">
-        <h1 class="user-name">{{ customerDetails?.customer?.userName || userDetails?.userName || 'User Name' }}</h1>
+        <h1 class="user-name">{{ customerDetails?.customer?.userName || userDetails?.userName ||'User Name' }}</h1>
         <div class="quick-badges">
           <span class="quick-badge" *ngIf="customerDetails?.customer?.phoneNo">
             <mat-icon>phone</mat-icon>
@@ -55,35 +55,35 @@
             <div class="info-icon"><mat-icon>badge</mat-icon></div>
             <div class="info-content">
               <span class="info-label">User Name</span>
-              <span class="info-value">{{ customerDetails?.customer?.userName || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.userName ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>phone</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Phone No</span>
-              <span class="info-value">{{ customerDetails?.customer?.phoneNo || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.phoneNo ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>email</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Email</span>
-              <span class="info-value">{{ customerDetails?.customer?.email || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.email ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>location_city</mat-icon></div>
             <div class="info-content">
               <span class="info-label">City</span>
-              <span class="info-value">{{ customerDetails?.customer?.city || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.city ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>place</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Location</span>
-              <span class="info-value">{{ customerDetails?.customer?.location || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.location ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
@@ -111,21 +111,21 @@
             <div class="info-icon"><mat-icon>storefront</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Cafeteria Name</span>
-              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.cafeteria_name || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.cafeteria_name ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>location_city</mat-icon></div>
             <div class="info-content">
               <span class="info-label">City</span>
-              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.cafeteria_city || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.cafeteria_city ||'-' }}</span>
             </div>
           </div>
           <div class="info-item full-width">
             <div class="info-icon"><mat-icon>home</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Address</span>
-              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.address || '-' }}</span>
+              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.address ||'-' }}</span>
             </div>
           </div>
         </div>

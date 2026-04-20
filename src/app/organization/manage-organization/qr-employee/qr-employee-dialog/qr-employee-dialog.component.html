@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-    {{ data.mode === 'add' ? 'Add Employee' : 'Update Employee' }}
+    {{ data.mode ==='add' ?'Add Employee' :'Update Employee' }}
 </h2>
 
 <mat-dialog-content [formGroup]="form" class="dialog-content pt-2">
@@ -55,6 +55,6 @@
 <mat-dialog-actions align="end">
     <button mat-button (click)="onCancel()">Cancel</button>
     <button mat-flat-button color="primary" (click)="onSave()">
-        {{ data.mode === 'add' ? 'Save' : 'Update' }}
+        {{ data.mode ==='add' ?'Save' :'Update' }}
     </button>
 </mat-dialog-actions>

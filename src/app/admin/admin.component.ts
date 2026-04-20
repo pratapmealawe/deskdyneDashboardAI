@@ -1,17 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { AddAdminComponent } from './add-admin/add-admin.component';
 
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
   styleUrls: ['./admin.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatDialogModule
+  ]
 })
 export class AdminComponent implements OnInit {
   adminList: any = [];
@@ -26,12 +38,13 @@ export class AdminComponent implements OnInit {
   pageSize: number = 10;
   pageIndex: number = 0;
 
-  constructor(
-    public router: Router,
-    private apiMainService: ApiMainService,
-    private runtimeStorageService: RuntimeStorageService,
-    private searchService: SearchFilterService
-  ) {
+  private apiMainService = inject(ApiMainService);
+  private runtimeStorageService = inject(RuntimeStorageService);
+  private searchService = inject(SearchFilterService);
+  private dialog = inject(MatDialog);
+  public router = inject(Router);
+
+  constructor() {
     this.getAllAdminList();
   }
 
@@ -50,7 +63,17 @@ export class AdminComponent implements OnInit {
   }
 
   addAdmin() {
-    this.router.navigate(['/app/addAdmin']);
+    const dialogRef = this.dialog.open(AddAdminComponent, {
+      width: '80%',
+      maxWidth: '1000px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getAllAdminList();
+      }
+    });
   }
 
   async getAllAdminList() {
@@ -61,13 +84,22 @@ export class AdminComponent implements OnInit {
       this.filteredAdminList = [...this.adminList];
       this.updateCard();
     } catch (e) {
-      console.log('error while fetching admin profile');
     }
   }
 
   editAdmin(admin: any) {
-    this.runtimeStorageService.setCacheData('VIEW_ADMIN', admin);
-    this.router.navigate(['/app/addAdmin']);
+    const dialogRef = this.dialog.open(AddAdminComponent, {
+      width: '80%',
+      maxWidth: '1000px',
+      disableClose: true,
+      data: admin
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getAllAdminList();
+      }
+    });
   }
 
   onPageChange(event: PageEvent) {

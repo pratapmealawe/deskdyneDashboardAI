@@ -31,13 +31,13 @@
         <span class="labelText">Kitchen Ph : </span>{{order.kitchenPhoneNo}}
     </div>
     <div class="col-sm-12 col-md-4 col-lg-2">
-        <span class="labelText">Date : </span>{{order.orderDate| date: 'MMM d, y'}}
+        <span class="labelText">Date : </span>{{order.orderDate| date:'MMM d, y'}}
     </div> 
-    <div class="col-sm-12 col-md-4 col-lg-2" *ngIf="order.orderType === 'advance'">
-        <span class="labelText">Time : </span>{{order.orderComplitionTime | date: 'shortTime'}}
+    <div class="col-sm-12 col-md-4 col-lg-2" *ngIf="order.orderType ==='advance'">
+        <span class="labelText">Time : </span>{{order.orderComplitionTime | date:'shortTime'}}
     </div>   
-    <div class="col-sm-12 col-md-4 col-lg-2" *ngIf="order.orderType === 'allDay'">
-        <span class="labelText">Slot : </span>{{order.slotStartTime | date : 'shortTime' }}-{{order.slotEndTime | date : 'shortTime' }}
+    <div class="col-sm-12 col-md-4 col-lg-2" *ngIf="order.orderType ==='allDay'">
+        <span class="labelText">Slot : </span>{{order.slotStartTime | date :'shortTime' }}-{{order.slotEndTime | date :'shortTime' }}
     </div> 
     <div class="col-12" *ngIf="order.kitchenAddress">
         <span class="labelText">Kitchen Address : </span>
@@ -61,7 +61,7 @@
         <span class="labelText">MealType : </span>{{order.mealType}}
     </div>
     <div class="col-sm-12 col-md-4 col-lg-3">
-        <span class="labelText" [ngClass]="{orange:order.orderCreatedBy === 'DDUser'}">Order CreatedBy : </span>{{order.orderCreatedBy}}
+        <span class="labelText" [ngClass]="{orange:order.orderCreatedBy ==='DDUser'}">Order CreatedBy : </span>{{order.orderCreatedBy}}
     </div>
     <div class="col-sm-12 col-md-4 col-lg-3" *ngIf="order.deliveryTaskId">
         <span class="labelText">DeliveryTaskId : </span>{{order.deliveryTaskId}}

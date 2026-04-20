@@ -15,7 +15,7 @@
             <div class="header-right">
                 <div class="count-pill" *ngIf="!isLoading && !hasError">
                     <mat-icon>folder</mat-icon>
-                    <span>{{ totalItems }} Group{{ totalItems !== 1 ? 's' : '' }}</span>
+                    <span>{{ totalItems }} Group{{ totalItems !== 1 ?'s' :'' }}</span>
                 </div>
                 <button mat-flat-button color="primary" (click)="openAddConfigModal()" class="add-btn">
                     <mat-icon>add_circle</mat-icon> New Group
@@ -64,7 +64,7 @@
         class="state-container empty">
         <mat-icon class="state-icon">search_off</mat-icon>
         <h4>No Results</h4>
-        <p class="state-text">No groups match "{{ searchTerm }}".</p>
+        <p class="state-text">No groups match"{{ searchTerm }}".</p>
         <button mat-stroked-button color="primary" (click)="clearSearch()">
             <mat-icon>clear</mat-icon> Clear Search
         </button>
@@ -76,7 +76,7 @@
             <div class="item-content">
                 <div class="item-main">
                     <div class="d-flex align-items-center mb-1 gap-2">
-                        <h4 class="m-0">{{ config.name || 'Untitled Group' }}</h4>
+                        <h4 class="m-0">{{ config.name ||'Untitled Group' }}</h4>
                         <span class="badge-count" *ngIf="config.imageData?.length">
                             <mat-icon>image</mat-icon>
                             {{ config.imageData.length }}
@@ -85,11 +85,11 @@
                     <div class="d-flex flex-wrap gap-3 text-muted small">
                         <span class="d-flex align-items-center gap-1" *ngIf="config.createdAt">
                             <mat-icon style="font-size: 14px; height: 14px; width: 14px;">calendar_today</mat-icon>
-                            Created {{ config.createdAt | date: 'dd MMM yyyy' }}
+                            Created {{ config.createdAt | date:'dd MMM yyyy' }}
                         </span>
                         <span class="d-flex align-items-center gap-1" *ngIf="config.updatedAt">
                             <mat-icon style="font-size: 14px; height: 14px; width: 14px;">update</mat-icon>
-                            Updated {{ config.updatedAt | date: 'dd MMM yyyy' }}
+                            Updated {{ config.updatedAt | date:'dd MMM yyyy' }}
                         </span>
                     </div>
                 </div>

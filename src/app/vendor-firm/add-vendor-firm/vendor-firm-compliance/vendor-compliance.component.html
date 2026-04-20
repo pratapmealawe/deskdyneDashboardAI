@@ -22,7 +22,7 @@
         <div class="col-12 col-md-6" *ngIf="value || fileUrl">
           <div class="compliance-item-card">
             <div class="labelText">{{label}}</div>
-            <div class="labelData">{{value || 'Document Attached'}}</div>
+            <div class="labelData">{{value ||'Document Attached'}}</div>
 
             <!-- Enhanced File Preview for View Mode -->
             <div class="file-preview-inline" *ngIf="fileUrl">
@@ -33,8 +33,7 @@
               </div>
               <div class="file-meta-small">
                 <span class="file-name-small">{{fileName}}</span>
-                <span class="file-type">{{isPdf(fileUrl) ? 'PDF Document' : (isImage(fileUrl) ? 'Image/Photo' :
-                  'File')}}</span>
+                <span class="file-type">{{isPdf(fileUrl) ?'PDF Document' : (isImage(fileUrl) ?'Image/Photo' :'File')}}</span>
               </div>
               <div class="d-flex gap-2">
                 <button mat-stroked-button color="primary" class="view-btn-small" (click)="viewFile(fileUrl, fileName)">
@@ -52,59 +51,59 @@
 
       <!-- FSSAI -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'FSSAI License No', value: compliance?.fssaiNo, fileUrl: compliance?.fssaiFileUrl || compliance?.fssaiImageUrl, fileName: 'Fssai Cert'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'FSSAI License No', value: compliance?.fssaiNo, fileUrl: compliance?.fssaiFileUrl || compliance?.fssaiImageUrl, fileName:'Fssai Cert'}"></ng-container>
 
       <!-- Site FSSAI -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Site FSSAI No', value: compliance?.siteFssaiNo, fileUrl: compliance?.siteFssaiFileUrl, fileName: 'Site FSSAI Cert'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Site FSSAI No', value: compliance?.siteFssaiNo, fileUrl: compliance?.siteFssaiFileUrl, fileName:'Site FSSAI Cert'}"></ng-container>
 
       <!-- Shop Act -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Shop Act License', value: compliance?.shopActLicenseNo, fileUrl: compliance?.shopActLicenseFileUrl, fileName: 'Shop Act Cert'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Shop Act License', value: compliance?.shopActLicenseNo, fileUrl: compliance?.shopActLicenseFileUrl, fileName:'Shop Act Cert'}"></ng-container>
 
       <!-- Aadhar -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Aadhar Card No', value: compliance?.adhaar, fileUrl: compliance?.aadharFileUrl || compliance?.adhaarFrontImageUrl, fileName: 'Aadhar Card'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Aadhar Card No', value: compliance?.adhaar, fileUrl: compliance?.aadharFileUrl || compliance?.adhaarFrontImageUrl, fileName:'Aadhar Card'}"></ng-container>
 
       <!-- Udyam -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Udyam Aadhar', value: compliance?.udyamAadharNo, fileUrl: compliance?.udyamAadharFileUrl, fileName: 'Udyam Card'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Udyam Aadhar', value: compliance?.udyamAadharNo, fileUrl: compliance?.udyamAadharFileUrl, fileName:'Udyam Card'}"></ng-container>
 
       <!-- Trade License -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Trade License', value: compliance?.tradeLicNumber, fileUrl: compliance?.TradeLicUrl, fileName: 'Trade License'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Trade License', value: compliance?.tradeLicNumber, fileUrl: compliance?.TradeLicUrl, fileName:'Trade License'}"></ng-container>
 
       <!-- GST -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'GST Identification No', value: compliance?.gstNumber, fileUrl: compliance?.GSTFileUrl, fileName: 'GST Cert'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'GST Identification No', value: compliance?.gstNumber, fileUrl: compliance?.GSTFileUrl, fileName:'GST Cert'}"></ng-container>
 
       <!-- PAN -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'PAN Card No', value: compliance?.panNumber, fileUrl: compliance?.PanCardFileUrl, fileName: 'PAN Card'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'PAN Card No', value: compliance?.panNumber, fileUrl: compliance?.PanCardFileUrl, fileName:'PAN Card'}"></ng-container>
 
       <!-- PF -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'PF Number', value: compliance?.pfno, fileUrl: compliance?.pfFileUrl, fileName: 'PF Doc'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'PF Number', value: compliance?.pfno, fileUrl: compliance?.pfFileUrl, fileName:'PF Doc'}"></ng-container>
 
       <!-- ESI -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'ESI Number', value: compliance?.ESIFileno, fileUrl: compliance?.ESIFileUrl, fileName: 'ESI Doc'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'ESI Number', value: compliance?.ESIFileno, fileUrl: compliance?.ESIFileUrl, fileName:'ESI Doc'}"></ng-container>
 
       <!-- ESI T3 -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'ESI T3 Number', value: compliance?.esiT3Number, fileUrl: compliance?.esiT3FileUrl, fileName: 'ESI T3 Doc'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'ESI T3 Number', value: compliance?.esiT3Number, fileUrl: compliance?.esiT3FileUrl, fileName:'ESI T3 Doc'}"></ng-container>
 
       <!-- Pest Control -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Pest Control Doc', value: compliance?.pestconNumber, fileUrl: compliance?.pestconFileUrl, fileName: 'Pest Control Doc'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Pest Control Doc', value: compliance?.pestconNumber, fileUrl: compliance?.pestconFileUrl, fileName:'Pest Control Doc'}"></ng-container>
 
       <!-- Cancelled Cheque -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Cancelled Cheque', value: '', fileUrl: compliance?.cancelledChequeFileUrl, fileName: 'Cancelled Cheque'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Cancelled Cheque', value:'', fileUrl: compliance?.cancelledChequeFileUrl, fileName:'Cancelled Cheque'}"></ng-container>
 
       <!-- Self Declaration -->
       <ng-container
-        *ngTemplateOutlet="viewItem; context: {label: 'Self Declaration', value: '', fileUrl: compliance?.selfDeclarationFileUrl, fileName: 'Self Declaration'}"></ng-container>
+        *ngTemplateOutlet="viewItem; context: {label:'Self Declaration', value:'', fileUrl: compliance?.selfDeclarationFileUrl, fileName:'Self Declaration'}"></ng-container>
 
       <!-- Comment -->
       <div class="col-12" *ngIf="compliance?.comment">
@@ -153,7 +152,7 @@
               <span class="file-type">Ready to save</span>
             </div>
             <div class="d-flex gap-1">
-              <button mat-icon-button color="primary" (click)="viewFile(compliance.fssaiFileUrl, 'Fssai')"
+              <button mat-icon-button color="primary" (click)="viewFile(compliance.fssaiFileUrl,'Fssai')"
                 matTooltip="View"><mat-icon>visibility</mat-icon></button>
               <button mat-icon-button color="warn" (click)="DeleteFile('fssailic')"
                 matTooltip="Remove"><mat-icon>delete_outline</mat-icon></button>
@@ -193,7 +192,7 @@
               <span class="file-type">Ready to save</span>
             </div>
             <div class="d-flex gap-1">
-              <button mat-icon-button color="primary" (click)="viewFile(compliance.aadharFileUrl, 'Aadhar')"
+              <button mat-icon-button color="primary" (click)="viewFile(compliance.aadharFileUrl,'Aadhar')"
                 matTooltip="View"><mat-icon>visibility</mat-icon></button>
               <button mat-icon-button color="warn" (click)="DeleteFile('aadharFile')"
                 matTooltip="Remove"><mat-icon>delete_outline</mat-icon></button>

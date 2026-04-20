@@ -1,4 +1,4 @@
-@use '/src/styles/theme/variable' as var;
+@use "styles/theme/variable" as var;
 
 .export-page-container {
     padding: 1.5rem;
@@ -201,26 +201,6 @@
             }
         }
     }
-
-    .employee-cafe {
-        .cafe-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            background: #fff7ed;
-            color: #ea580c;
-            padding: 0.4rem 0.75rem;
-            border-radius: var.$border-radius-pill;
-            font-size: 0.8rem;
-            font-weight: 500;
-
-            mat-icon {
-                font-size: 14px;
-                width: 14px;
-                height: 14px;
-            }
-        }
-    }
 }
 
 // Empty State
@@ -268,3 +248,4 @@
         width: 100%;
     }
 }
+

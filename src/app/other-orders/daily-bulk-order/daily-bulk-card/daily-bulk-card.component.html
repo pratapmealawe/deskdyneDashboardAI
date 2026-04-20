@@ -4,7 +4,7 @@
   <!-- Card Top -->
   <div class="card-top">
     <div class="order-avatar">
-      {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() || 'DB' }}
+      {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() ||'DB' }}
     </div>
     <div class="order-identity">
       <h3 class="order-title">#{{ order?.orderNo }}</h3>
@@ -13,7 +13,7 @@
           <mat-icon>inventory_2</mat-icon> Daily Bulk
         </span>
         <span class="date-text">
-          {{ order?.orderDate | date: 'MMM d, y, h:mm a' }}
+          {{ order?.orderDate | date:'MMM d, y, h:mm a' }}
         </span>
       </div>
     </div>
@@ -24,7 +24,7 @@
       </div>
       <div class="card-actions" *ngIf="showActions">
         <ng-container *ngFor="let action of actionList">
-          <button mat-flat-button [color]="action.color === 'warn' ? 'warn' : 'primary'" class="action-btn"
+          <button mat-flat-button [color]="action.color ==='warn' ?'warn' :'primary'" class="action-btn"
             (click)="handleAction(action.action)">
             <mat-icon>{{ action.icon }}</mat-icon>
             {{ action.label }}
@@ -125,7 +125,7 @@
           <mat-icon>calendar_today</mat-icon>
           <div>
             <span class="info-label">Delivery Date</span>
-            <span class="info-value">{{ order?.deliveryDate | date: 'MMM d, y' }}</span>
+            <span class="info-value">{{ order?.deliveryDate | date:'MMM d, y' }}</span>
           </div>
         </div>
         <div class="delivery-cell">
@@ -140,7 +140,7 @@
           <mat-icon>local_shipping</mat-icon>
           <div>
             <span class="info-label">Mode</span>
-            <span class="info-value">{{ order?.deliveryVendor || 'Standard' }}</span>
+            <span class="info-value">{{ order?.deliveryVendor ||'Standard' }}</span>
           </div>
         </div>
         <div class="delivery-cell" *ngIf="order?.startManualDelivery">
@@ -175,7 +175,7 @@
             <span class="meta-tag meal-type">{{ item?.mealType }}</span>
             <span class="meta-tag item-type" *ngIf="item?.itemName">{{ item?.itemName }}</span>
           </div>
-          <span class="item-price">₹{{ (item?.mealPrice || 0) * (item?.count || 1) | number : '1.2-2' }}</span>
+          <span class="item-price">₹{{ (item?.mealPrice || 0) * (item?.count || 1) | number :'1.2-2' }}</span>
         </div>
       </div>
 
@@ -231,23 +231,23 @@
     <div class="fin-strip">
       <div class="fin-cell">
         <span class="fin-label">Subtotal</span>
-        <span class="fin-value">₹{{ (order?.orderAmount || 0) | number : '1.2-2' }}</span>
+        <span class="fin-value">₹{{ (order?.orderAmount || 0) | number :'1.2-2' }}</span>
       </div>
       <div class="fin-cell" *ngIf="order?.deliveryCharge">
         <span class="fin-label">Delivery</span>
-        <span class="fin-value">₹{{ order?.deliveryCharge | number : '1.2-2' }}</span>
+        <span class="fin-value">₹{{ order?.deliveryCharge | number :'1.2-2' }}</span>
       </div>
       <div class="fin-cell" *ngIf="order?.taxes">
         <span class="fin-label">Taxes</span>
-        <span class="fin-value">₹{{ order?.taxes | number : '1.2-2' }}</span>
+        <span class="fin-value">₹{{ order?.taxes | number :'1.2-2' }}</span>
       </div>
       <div class="fin-cell grand">
         <span class="fin-label">Total</span>
-        <span class="fin-value">₹{{ (order?.amount || 0) | number : '1.2-2' }}</span>
+        <span class="fin-value">₹{{ (order?.amount || 0) | number :'1.2-2' }}</span>
       </div>
       <div class="fin-cell paid">
         <span class="fin-label">Paid to Kitchen</span>
-        <span class="fin-value">₹{{ (order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0) | number : '1.2-2'
+        <span class="fin-value">₹{{ (order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0) | number :'1.2-2'
           }}</span>
       </div>
     </div>
@@ -265,7 +265,7 @@
 <!-- Action Confirm Dialog Template -->
 <ng-template #actionDialogTpl>
   <h2 mat-dialog-title class="dialog-title-row">
-    <mat-icon>{{ tempStatus === 'cancelled' ? 'warning' : 'check_circle' }}</mat-icon>
+    <mat-icon>{{ tempStatus ==='cancelled' ?'warning' :'check_circle' }}</mat-icon>
     {{ activeModalAction }}
   </h2>
   <mat-dialog-content>
@@ -283,7 +283,7 @@
   </mat-dialog-content>
   <mat-dialog-actions align="end">
     <button mat-stroked-button mat-dialog-close>Cancel</button>
-    <button mat-flat-button [color]="tempStatus === 'cancelled' ? 'warn' : 'primary'" (click)="confirmAction()"
+    <button mat-flat-button [color]="tempStatus ==='cancelled' ?'warn' :'primary'" (click)="confirmAction()"
       [disabled]="commentRequired && !statusComment">
       Confirm
     </button>
@@ -303,8 +303,8 @@
         <div class="history-connector" *ngIf="!last"></div>
         <div class="history-content">
           <div class="history-status">{{ getStatusLabel(log?.orderstatus) }}</div>
-          <div class="history-date">{{ log?.updatedOn | date: 'd MMM y, h:mm a' }}</div>
-          <div class="history-actor">by {{ log?.actionBy || 'System Admin' }}</div>
+          <div class="history-date">{{ log?.updatedOn | date:'d MMM y, h:mm a' }}</div>
+          <div class="history-actor">by {{ log?.actionBy ||'System Admin' }}</div>
           <div class="history-comment" *ngIf="log?.comment">"{{ log?.comment }}"</div>
         </div>
       </div>

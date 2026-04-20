@@ -1,13 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ToasterService } from 'src/service/toaster.service';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { AddEditPackageCategoryComponent } from './add-edit-package-category/add-edit-package-category.component';
-import { AddEditPackageVirtualCafeteriaComponent } from './add-edit-package-virtual-cafeteria/add-edit-package-virtual-cafeteria.component';
-import { AddEditPackageWeeklyMenuComponent } from './add-edit-package-weekly-menu/add-edit-package-weekly-menu.component';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { VirtualCafeteriaEmployeeListingComponent } from './virtual-cafeteria-employee-listing/virtual-cafeteria-employee-listing.component';
+import { VirtualCafeteriaCategoriesComponent } from './virtual-cafeteria-categories/virtual-cafeteria-categories.component';
+import { VirtualCafeteriaPackageComponent } from './virtual-cafeteria-package/virtual-cafeteria-package.component';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../material.module';
@@ -15,7 +14,7 @@ import { MaterialModule } from '../../../material.module';
 @Component({
   selector: 'app-virtual-cafeteria',
   standalone: true,
-  imports: [CommonModule, FormsModule, MaterialModule, VirtualCafeteriaEmployeeListingComponent],
+  imports: [CommonModule, FormsModule, MaterialModule, VirtualCafeteriaEmployeeListingComponent, VirtualCafeteriaCategoriesComponent, VirtualCafeteriaPackageComponent],
   templateUrl: './virtual-cafeteria.component.html',
   styleUrls: ['./virtual-cafeteria.component.scss']
 })
@@ -85,7 +84,6 @@ export class VirtualCafeteriaComponent implements OnInit {
     try {
 
       this.mealOutlet = await this.apiMainService.getMealAweOutletByCafeteria(this.cafeteriaId);
-      console.log("mealOutlet", this.mealOutlet);
 
       if (this.mealOutlet) {
         this.config = this.config.map(item => {
@@ -154,146 +152,6 @@ export class VirtualCafeteriaComponent implements OnInit {
     } catch (error) {
       console.error("❌ Update failed", error);
       this.toaster.error("Update failed. No changes applied.  ");
-    }
-  }
-
-  openModal(component: any, data: any) {
-    const dialogRef = this.modalService.open(component, {
-      width: '800px',
-      data,
-      autoFocus: true,
-      disableClose: false
-    });
-    dialogRef.afterClosed().subscribe(() => this.getVirtualCafeteriaByCafeteria());
-  }
-
-  createPackages() {
-    this.openModal(AddEditPackageVirtualCafeteriaComponent, {
-      orgObj: this.orgObj,
-      addNew: this.addNew,
-      selectedCafeteria: this.selectedCafeteria,
-      alreadyPackages: this.packages.map((e: any) => e.masterMenuId)
-    });
-  }
-
-  createCategory() {
-    const data = {
-      orgObj: this.orgObj,
-      selectedCafeteria: this.selectedCafeteria,
-    }
-    this.openModal(AddEditPackageCategoryComponent, data);
-  }
-
-  async changePackageStatus(status: boolean, masterMenuId: string) {
-    try {
-      await this.apiMainService.changePackageStatus({ status, mealId: masterMenuId, cafeteriaId: this.cafeteriaId });
-      this.toaster.success("Status updated");
-      this.getVirtualCafeteriaByCafeteria();
-    } catch (error) {
-      console.error("❌ Status update failed", error);
-      this.toaster.error("Status update failed");
-    }
-  }
-
-  async changeCategoryStatus(status: boolean, id: string) {
-    try {
-      await this.apiMainService.changeCategoryStatus({ status, id, cafeteriaId: this.cafeteriaId });
-      this.toaster.success("Status updated");
-      this.getVirtualCafeteriaByCafeteria();
-    } catch (error) {
-      console.error("❌ Status update failed", error);
-      this.toaster.error("Status update failed");
-    }
-  }
-
-  updatePackage(pkg: any) {
-    if (!pkg?._id) return this.toaster.error("Invalid package");
-    pkg.editing = false;
-    this.updateVirtualCafeteria();
-  }
-
-  deleteCategoryVirtualCafeteria(categoryName: string) {
-    this.confirmationModalService.modal({
-      msg: `Are you sure you want to delete ${categoryName}?`,
-      callback: async () => {
-        try {
-          await this.apiMainService.deleteCategoryMealAweOutlet(this.cafeteriaId, { categoryName });
-          this.toaster.success(`${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} deleted`);
-          this.getVirtualCafeteriaByCafeteria();
-        } catch (err) {
-          console.error(`❌ Delete error:`, err);
-          this.toaster.error(`Delete failed. No changes applied.`);
-        }
-      },
-      context: this
-    });
-  }
-
-
-  deleteItem(type: 'package' | 'category', item: any) {
-    const name = type === 'package' ? item.packageName : item.categoryName;
-    const apiCall = type === 'package' ? () => this.apiMainService.deleteMealItem({ cafeteriaId: this.cafeteriaId, masterMenuId: item.masterMenuId }) : () => this.apiMainService.deleteCategoryConfig({ cafeteriaId: this.cafeteriaId, categoryName: item.categoryName });
-    this.confirmationModalService.modal({
-      msg: `Are you sure you want to delete ${type === 'package' ? name : 'category' + name}?`,
-      callback: async () => {
-        try {
-          await apiCall();
-          this.toaster.success(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted`);
-          this.getVirtualCafeteriaByCafeteria();
-        } catch (err) {
-          console.error(`❌ Delete error:`, err);
-          this.toaster.error(`Delete failed. No changes applied.`);
-        }
-      },
-      context: this
-    });
-  }
-
-  openEditCategoryDialog(category: any) {
-    const data = {
-      orgObj: this.orgObj,
-      selectedCafeteria: this.selectedCafeteria,
-      category
-    }
-    this.openModal(AddEditPackageCategoryComponent, data);
-  }
-
-  openWeeklyMenu(category: any) {
-    const dialogData: any = {
-      category,
-      cafeteriaList: this.cafeteriaList,
-      selectedCafeteria: this.selectedCafeteria
-    };
-    const dialogRef = this.modalService.open(AddEditPackageWeeklyMenuComponent, {
-      width: '1200px',
-      data: dialogData,
-      autoFocus: true,
-      disableClose: false
-    });
-    dialogRef.afterClosed().subscribe(() => this.getVirtualCafeteriaByCafeteria());
-  }
-
-  async createDefaultCategories() {
-    try {
-      const { cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = this.selectedCafeteria;
-      const payload: any = {
-        org_id: this.orgObj._id,
-        org_name: this.orgObj.organization_name,
-        cafeteriaDetails: {
-          cafeteria_name,
-          address1,
-          address2,
-          cafeteria_city,
-          cafeteria_location,
-          cafeteria_id
-        }
-      };
-      await this.apiMainService.createDefaultCategories(payload);
-      this.toaster.success("Updated successfully");
-      this.getVirtualCafeteriaByCafeteria();
-    } catch (error) {
-      console.error("❌ Update failed", error);
-      this.toaster.error("Create default categories failed");
     }
   }
 

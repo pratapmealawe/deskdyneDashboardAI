@@ -19,8 +19,8 @@
             <mat-icon>picture_as_pdf</mat-icon> PDF
           </button>
           <button mat-icon-button class="btn-view-toggle" (click)="changeDataView()"
-            [matTooltip]="isChartShow ? 'Show List' : 'Show Chart'">
-            <mat-icon>{{ isChartShow ? 'view_list' : 'bar_chart' }}</mat-icon>
+            [matTooltip]="isChartShow ?'Show List' :'Show Chart'">
+            <mat-icon>{{ isChartShow ?'view_list' :'bar_chart' }}</mat-icon>
           </button>
         </div>
       </div>
@@ -49,12 +49,12 @@
       </div>
       <div class="total-chip" *ngIf="averageRating > 0">
         <span class="chip-label">Avg Rating</span>
-        <span class="chip-value">⭐ {{ averageRating | number : '1.1-1' }}</span>
+        <span class="chip-value">⭐ {{ averageRating | number :'1.1-1' }}</span>
       </div>
       <div class="total-chip clickable" *ngFor="let rc of ratingCounts"
-        [class.active]="filterRating === (rc.stars === 0 ? 'skipped' : rc.stars.toString())"
-        (click)="onFilterRating(rc.stars === 0 ? 'skipped' : rc.stars.toString())">
-        <span class="chip-label">{{ rc.stars === 0 ? 'Skipped' : rc.stars + ' Star' + (rc.stars !== 1 ? 's' : '')
+        [class.active]="filterRating === (rc.stars === 0 ?'skipped' : rc.stars.toString())"
+        (click)="onFilterRating(rc.stars === 0 ?'skipped' : rc.stars.toString())">
+        <span class="chip-label">{{ rc.stars === 0 ?'Skipped' : rc.stars +' Star' + (rc.stars !== 1 ?'s' :'')
           }}</span>
         <span class="chip-value">{{ rc.count }}</span>
       </div>
@@ -65,8 +65,8 @@
       <div class="chip-strip">
         <div class="filter-chip">
           <mat-icon>star</mat-icon>
-          {{ filterRating === 'skipped' ? 'Skipped' : filterRating + ' Star' + (filterRating !== '1' ? 's' : '') }}
-          <mat-icon class="close-icon" (click)="filterRating = ''; applySearch()">close</mat-icon>
+          {{ filterRating ==='skipped' ?'Skipped' : filterRating +' Star' + (filterRating !=='1' ?'s' :'') }}
+          <mat-icon class="close-icon" (click)="filterRating =''; applySearch()">close</mat-icon>
         </div>
         <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
           <mat-icon>filter_alt_off</mat-icon> Clear

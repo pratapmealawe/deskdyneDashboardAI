@@ -1,0 +1,103 @@
+<div class="import-container premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>restaurant_menu</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Bulk Menu Import</h3>
+                <p>Upload Excel file to add menu items in bulk for <strong>{{ data.selectedCafeteria?.cafeteria_name }}</strong></p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeModal()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="modal-body p-4">
+        <!-- STEP 1: SELECT FILE -->
+        <div *ngIf="currentStep === 'select'" class="selection-step animate-fadeIn">
+            <div class="upload-area-premium" [class.drag-over]="dragOver" (dragover)="onDragOver($event)"
+                (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()">
+
+                <input #fileInput type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" hidden>
+
+                <div class="upload-content">
+                    <div class="icon-circle-premium">
+                        <mat-icon>upload_file</mat-icon>
+                    </div>
+                    <h4>Click or drag menu Excel file here</h4>
+                    <p class="format-text">Format supported: <strong>.xlsx, .xls</strong></p>
+                    <div class="browse-btn-wrap mt-3">
+                        <span class="browse-link">Browse files</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="template-section-modern mt-4">
+                <div class="info-banner">
+                    <mat-icon>info</mat-icon>
+                    <p>Please use the correctly formatted template with Item Name, Price, and Min Guarantees columns.</p>
+                </div>
+                <button mat-stroked-button class="btn-secondary-action w-100 mt-2" (click)="downloadTemplate()">
+                    <mat-icon>download</mat-icon> Download Menu Template
+                </button>
+            </div>
+        </div>
+
+        <!-- STEP 2: PREVIEW -->
+        <div *ngIf="currentStep === 'preview'" class="preview-step animate-fadeIn">
+            <div class="preview-header-modern mb-3">
+                <div class="file-info-box">
+                    <div class="icon-square">
+                        <mat-icon>description</mat-icon>
+                    </div>
+                    <div class="details">
+                        <span class="file-name">{{ fileName }}</span>
+                        <div class="badge-row">
+                            <span class="record-badge">{{ menuList.length }} Items Found</span>
+                            <span class="status-badge ready">Validated</span>
+                        </div>
+                    </div>
+                </div>
+                <button mat-button class="reset-btn" (click)="resetImport()">
+                    <mat-icon>restart_alt</mat-icon> Change File
+                </button>
+            </div>
+
+            <div class="premium-table-container shadow-sm">
+                <table class="premium-preview-table">
+                    <thead>
+                        <tr>
+                            <th>Item Name</th>
+                            <th>Price (Incl. GST)</th>
+                            <th>Min Guarantees</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of menuList">
+                            <td class="fw-bold">{{ item.itemName }}</td>
+                            <td><span class="price-tag">₹{{ item.mealPrice }}</span></td>
+                            <td>{{ item.minGuarantees }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer p-3 border-top bg-light-soft">
+        <button mat-button class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" [disabled]="currentStep !== 'preview' || isLoading"
+            (click)="onSubmit()">
+            <ng-container *ngIf="!isLoading">
+                <mat-icon>cloud_upload</mat-icon>
+                <span>Import Menu</span>
+            </ng-container>
+            <div class="d-flex align-items-center gap-2" *ngIf="isLoading">
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+                <span>Processing...</span>
+            </div>
+        </button>
+    </div>
+</div>

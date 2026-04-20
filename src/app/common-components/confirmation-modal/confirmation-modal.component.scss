@@ -1,4 +1,4 @@
-@import '../../../styles/theme/variable';
+@use "styles/theme/variable" as var;
 
 .dialog-wrapper {
     position: fixed;
@@ -6,7 +6,7 @@
     height: 100%;
     top: 0;
     left: 0;
-    background: $backdrop-color;
+    background: var.$backdrop-color;
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     z-index: 10000;
@@ -50,10 +50,10 @@
         gap: 8px;
         font-size: 16px;
         font-weight: 600;
-        color: $text-dark;
+        color: var.$text-dark;
 
         .warning-icon {
-            color: $color-warning;
+            color: var.$color-warning;
             font-size: 18px;
         }
     }
@@ -73,8 +73,8 @@
     justify-content: center;
 
     &:hover {
-        color: $primary-color;
-        background-color: rgba($primary-color, 0.1);
+        color: var.$primary-color;
+        background-color: rgba(var.$primary-color, 0.1);
     }
 }
 
@@ -84,7 +84,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    color: $text-dark;
+    color: var.$text-dark;
 
     p {
         font-size: 16px;

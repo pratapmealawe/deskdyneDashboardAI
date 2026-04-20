@@ -87,7 +87,7 @@
                                 <tr *ngFor="let o of grp.orders">
                                     <td class="fw-medium text-primary">{{ o.orderNo || o._id }}</td>
                                     <td>
-                                        <div class="fw-semibold">{{ o.customerName || '-' }}</div>
+                                        <div class="fw-semibold">{{ o.customerName ||'-' }}</div>
                                         <div class="small text-muted" *ngIf="o.customerPhoneNo">{{ o.customerPhoneNo }}
                                         </div>
                                     </td>

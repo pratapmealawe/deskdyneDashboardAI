@@ -5,9 +5,8 @@ import {
   Router,
 } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
-import { WebNotificationService } from 'src/service/webNotification.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SuggestionsFeedbackService } from '@service/suggestions-feedback.service';
 
 @Component({
   selector: 'app-root',
@@ -19,12 +18,10 @@ export class AppComponent {
   private unsubscribe$ = new Subject<void>();
 
   constructor(
-    private webNotificationService: WebNotificationService,
     private router: Router,
     private apiMainService: ApiMainService,
     private suggestionsFeedbackService: SuggestionsFeedbackService
   ) {
-    this.webNotificationService.requestPermission();
     this.router.events
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((event: any) => {

@@ -1,5 +1,5 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 
 .event-pop-menu-container {
   margin: 0 auto;
@@ -346,3 +346,4 @@
   .filter-group:not(.search-group) { order: 2; }
   .filter-stats { order: 3; }
 }
+

@@ -4,9 +4,9 @@ import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PolicyService } from '@service/policy.service';
 import { MaterialModule } from '../../../material.module';
 import { PdfuploadComponent } from '../../../common-components/pdfupload/pdfupload.component';
 
@@ -49,7 +49,6 @@ export class OrgComplianceComponent implements OnInit {
 
   constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private policyService: PolicyService) {
     this.access = this.policyService.getCurrentButtonPolicy();
-    console.log(this.access);
   }
 
 
@@ -133,7 +132,6 @@ export class OrgComplianceComponent implements OnInit {
       await this.apiMainService.updateProfileApproval(this.orgObj._id, status, { comment: this.comment });
       this.profileApproval = status;
     } catch (error) {
-      console.log('error while updating kitchen wallet', error);
     }
   }
 
@@ -144,7 +142,6 @@ export class OrgComplianceComponent implements OnInit {
       if (file) {
         // this.uploadedCompliance = file;
         const fileName = file.name;
-        console.log(fileName);
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (_event) => {
@@ -162,16 +159,13 @@ export class OrgComplianceComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe((result: any) => {
-              console.log('Closed with:', result);
               if (result && result.croppedImages) {
-                console.log('croppedImages ', result.croppedImages);
                 this.uploadedCompliance[filename] = result.croppedImages.file;
                 // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];
                 this.compliance[filename] = result.croppedImages.resizeDataUrl;
               }
             });
           } catch (error) {
-            console.log('error while changes kitchen opened status ', error);
           }
         }
       }
@@ -261,7 +255,6 @@ export class OrgComplianceComponent implements OnInit {
       if (this.originalCompliance.pestconFileUrlOld) {
         formData.append('pestconFile', this.originalCompliance.pestconFileUrlOld);
       }
-      console.log('formData', formData);
       const kitchen = await this.apiMainService.updateOrgComplianceByAdmin(this.orgObj._id, formData);
       this.orgObj.compliance = kitchen.compliance;
       this.compliance = this.orgObj.compliance;
@@ -270,7 +263,6 @@ export class OrgComplianceComponent implements OnInit {
       this.uploadedCompliance = {};
       this.prepareForEdit();
     } catch (error) {
-      console.log('error while save compliance Images ', error);
     }
   }
 
@@ -279,19 +271,13 @@ export class OrgComplianceComponent implements OnInit {
     this.editMode = false;
   }
   uploadDoc(event: any) {
-    console.log("harish");
     if (event.documentname == "aadharFile") {
       this.originalCompliance.adhaarFileUrlold = event.url;
       // this.compliance.adhaarFileUrl=this.fileUrl + event.url;
       this.compliance.adhaarFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.adhaarFileUrl);
-      console.log("eventaadharFile", event);
     } else if (event.documentname == "fssaiFile") {
       this.originalCompliance.fssaiFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      console.log(this.compliance.fssaiFileUrl)
-      this.compliance.fssaiFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log("eventfssaiFile", event);
     }
     else if (event.documentname == "TradeLic") {
       this.originalCompliance.TradeLicFileUrlOld = event.url;

@@ -1,4 +1,4 @@
-@use '/src/styles/theme/variable' as var;
+@use "styles/theme/variable" as var;
 
 // ── Page Container ────────────────────────────────────────────
 .orders-page-container {
@@ -596,3 +596,4 @@
 
   .amounts-grid { grid-template-columns: repeat(2, 1fr); }
 }
+

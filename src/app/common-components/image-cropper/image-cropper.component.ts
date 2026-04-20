@@ -61,7 +61,6 @@ export class ImageCropperComponent implements OnInit {
       const resizedImage = await this.resize({ imgUrl: this.croppr.imageClippedEl.getAttribute('src'), ...finalValue });
       this.goback(true, resizedImage);
     } catch (error) {
-      console.log('resizedImage error ', error);
     }
   }
 

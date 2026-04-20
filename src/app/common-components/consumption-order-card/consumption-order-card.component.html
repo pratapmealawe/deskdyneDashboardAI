@@ -5,7 +5,7 @@
         {{ order.organization_name }} — {{ order.cafeteria_name }}
       </div>
       <div class="fw-bold fs-6 text-primary">
-        {{ order.orderDate | date: 'MMM d, y' }}
+        {{ order.orderDate | date:'MMM d, y' }}
       </div>
       <div class="text-md-center">
         <small class="">{{ order.remark }}</small>
@@ -19,8 +19,8 @@
 
       <!-- Approve All -->
       <button class="btn btn-primary btn-sm"
-        [disabled]="order.status === 'cancelled' || order.status === 'approved' || !checkAllMealStatus(order)"
-        (click)="showPopupForItemActivation(order, 'approved')">
+        [disabled]="order.status ==='cancelled' || order.status ==='approved' || !checkAllMealStatus(order)"
+        (click)="showPopupForItemActivation(order,'approved')">
         Approve All
       </button>
     </div>
@@ -52,10 +52,7 @@
       <div class="d-flex flex-column">
         <div>
           <span class="me-2 small text-muted">Status:</span>
-          <span class="badge" [ngClass]="{
-            'bg-success': meal.status === 'approved',
-            'bg-danger': meal.status === 'cancelled',
-            'bg-warning text-dark': meal.status === 'review'
+          <span class="badge" [ngClass]="{'bg-success': meal.status ==='approved','bg-danger': meal.status ==='cancelled','bg-warning text-dark': meal.status ==='review'
           }">
             {{ meal.status | titlecase }}
           </span>
@@ -70,14 +67,14 @@
     <div class="col-md-1 col-sm-12 d-flex justify-content-md-end justify-content-start gap-2">
       <!-- Approve single -->
       <button class="btn btn-sm btn-outline-success rounded-circle"
-        [disabled]="order.status === 'cancelled' || order.status === 'approved' || meal.status === 'cancelled' || meal.status === 'approved'"
-        title="Approve" (click)="showPopupForSinleItemActivation(order, meal, 'approved')">
+        [disabled]="order.status ==='cancelled' || order.status ==='approved' || meal.status ==='cancelled' || meal.status ==='approved'"
+        title="Approve" (click)="showPopupForSinleItemActivation(order, meal,'approved')">
         <i class="bi bi-check"></i>
       </button>
 
       <!-- Cancel single -->
       <button class="btn btn-sm btn-outline-danger rounded-circle"
-        [disabled]="order.status === 'cancelled' || order.status === 'approved' || meal.status === 'cancelled' || meal.status === 'approved'"
+        [disabled]="order.status ==='cancelled' || order.status ==='approved' || meal.status ==='cancelled' || meal.status ==='approved'"
         title="Cancel" (click)="onCancelItem(order, meal)">
         <i class="bi bi-x"></i>
       </button>

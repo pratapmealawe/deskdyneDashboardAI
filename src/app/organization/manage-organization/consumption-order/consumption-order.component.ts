@@ -1,16 +1,18 @@
-﻿import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-
 import { CommonModule } from '@angular/common';
+import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MaterialModule } from '../../../material.module';
+import { AddConsumptionOrderComponent } from './add-consumption-order/add-consumption-order.component';
+import { ImportConsumptionMenuComponent } from './import-consumption-menu/import-consumption-menu.component';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
-  selector: 'app-consumption-order',
+  selector: 'app-consumption-order', 
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, AddConsumptionOrderComponent, ImportConsumptionMenuComponent],
   templateUrl: './consumption-order.component.html',
   styleUrls: ['./consumption-order.component.scss']
 })
@@ -19,240 +21,151 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   selectedCafeteria: any;
   selectedCafeteriaName: any;
   selectedCafeteriaId: any;
-  consumptionMenuId: any;
-  selectedOriginalCafeteriaId: any;
-  showMultipleConsumptionForm = false;
-  addMultipleConsumptionList: any = [];
   disableSubmit: any = false;
   consumptionList: any = [];
-  consumptionObj: any;
-  cafeOriginalId: any;
-  showRemoveForm = false;
-  showAddMoreForm = true;
+  searchTerm = '';
   @ViewChild("content") content: any;
 
-  mealTimeList = [
-    {
-      "mealType": "Fullday",
-      "acceptOrderFrom": "06:00",
-      "acceptOrderTill": "23:00"
-    },
-    {
-      "mealType": "Breakfast",
-      "acceptOrderFrom": "07:00",
-      "acceptOrderTill": "09:00"
-    },
-    {
-      "mealType": "Lunch",
-      "acceptOrderFrom": "11:00",
-      "acceptOrderTill": "13:00"
-    },
-    {
-      "mealType": "EveningSnacks",
-      "acceptOrderFrom": "15:00",
-      "acceptOrderTill": "17:00"
-    },
-    {
-      "mealType": "Dinner",
-      "acceptOrderFrom": "20:00",
-      "acceptOrderTill": "22:00"
-    }
-  ];
-
-  MealForm!: FormGroup;
-  modalRef: any;
-
-
-  constructor(private apiMainService: ApiMainService, private modalService: NgbModal, private fb: FormBuilder) { }
+  constructor(
+    private apiMainService: ApiMainService,
+    private dialog: MatDialog
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(this.orgObj);
   }
 
   ngOnInit(): void {
-    this.MealForm = this.fb.group({
-      itemName: [''],
-      mealPrice: [''],
-      selctedmealtype: [''],
-      minGuarantees: ['']
-    })
-
-    this.consumptionObj = {
-      organization_name: this.orgObj.organization_name,
-      organization_id: this.orgObj._id,
-      itemName: '',
-      mealPrice: '',
-      selctedmealtype: '',
-      minGuarantees: ''
-    }
     if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
       this.selectedCafeteria = this.orgObj.cafeteriaList[0];
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
-      this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
     }
-    this.fetchOrgMeals()
+    this.fetchOrgMeals();
   }
 
-  onCafeteriaChange(event: any) {
-    // console.log('radio change event', event.target.checked);
-    this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
-    this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
-    this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
-  }
-
-  // ðŸ‘‰ Select cafeteria (for pill buttons)
   selectCafeteria(cafeteria: any) {
     this.selectedCafeteria = cafeteria;
     this.selectedCafeteriaName = cafeteria.cafeteria_name;
     this.selectedCafeteriaId = cafeteria.cafeteria_id;
-    this.selectedOriginalCafeteriaId = cafeteria._id;
   }
 
-  // ðŸ‘‰ Get filtered items by selected cafeteria
   getFilteredItems(): any[] {
     if (!this.consumptionList) return [];
-
-    const items: any[] = [];
+    let items: any[] = [];
     this.consumptionList.forEach((consumptionItem: any) => {
       if (consumptionItem.cafeteria_id === this.selectedCafeteriaId) {
         consumptionItem.mealTypeList?.forEach((mealItem: any) => {
-          items.push({
-            ...mealItem,
-            cafeteria_orignal_id: consumptionItem.cafeteria_orignal_id
-          });
+          items.push({ ...mealItem, cafeteria_orignal_id: consumptionItem.cafeteria_orignal_id });
         });
       }
     });
+
+    if (this.searchTerm) {
+      const search = this.searchTerm.toLowerCase();
+      items = items.filter(item => 
+        item.itemName?.toLowerCase().includes(search) || 
+        item.mealPrice?.toString().includes(search) ||
+        item.minGuarantees?.toString().includes(search)
+      );
+    }
+
     return items;
   }
 
-  // ðŸ‘‰ Cancel multiple consumption form
-  cancelMultipleConsumption() {
-    this.showMultipleConsumptionForm = false;
-    this.showAddMoreForm = true;
-    this.showRemoveForm = false;
-    this.addMultipleConsumptionList = [];
-  }
-
-  async updateMealTypeList() {
-    console.log(this.MealForm.value);
-    let obj = {
-      ...this.MealForm.value,
-      _id: this.consumptionMenuId
+  async exportMenu() {
+    const items = this.getFilteredItems();
+    if (items.length === 0) {
+      alert('No menu items to export');
+      return;
     }
 
-    this.modalRef.dismiss();
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Consumption Menu');
 
-    const res = await this.apiMainService.updateConsumptionMenu(this.orgObj._id, this.cafeOriginalId, obj);
-    console.log(res);
-    this.fetchOrgMeals();
+    // Header styling
+    const headerRow = worksheet.addRow(['Item Name', 'Price (Incl. GST)', 'Min Guarantees', 'Cafeteria']);
+    headerRow.eachCell((cell) => {
+      cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '0E49B5' } };
+      cell.font = { color: { argb: 'FFFFFF' }, bold: true };
+    });
 
+    // Content
+    items.forEach(item => {
+      worksheet.addRow([
+        item.itemName,
+        item.mealPrice,
+        item.minGuarantees,
+        this.selectedCafeteriaName
+      ]);
+    });
+
+    worksheet.columns.forEach(col => col.width = 25);
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), `Consumption_Menu_${this.selectedCafeteriaName}_${new Date().toLocaleDateString()}.xlsx`);
   }
 
-  addMoreEmployee() {
-    this.addMultipleConsumptionList.push({ ...this.consumptionObj });
-    this.showRemoveForm = true;
-    this.showAddMoreForm = false;
-  }
-
-  removeEmployeeForm(index: any) {
-    this.addMultipleConsumptionList.splice(index, 1)
-    if (this.addMultipleConsumptionList.length == 1) {
-      this.showRemoveForm = false;
-      this.showAddMoreForm = true;
+  openImportDialog() {
+    if (!this.selectedCafeteria) {
+      alert('Please select a cafeteria first');
+      return;
     }
 
+    const dialogRef = this.dialog.open(ImportConsumptionMenuComponent, {
+      width: '700px',
+      data: {
+        orgObj: this.orgObj,
+        selectedCafeteria: this.selectedCafeteria
+      },
+      panelClass: 'premium-dialog-panel'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.fetchOrgMeals();
+    });
   }
 
-  editConsumption(mealInfo: any, selectedCafeteriaId: any) {
-    this.modalRef = this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl', });
-    console.log(mealInfo);
-    this.consumptionMenuId = mealInfo._id;
-    this.cafeOriginalId = selectedCafeteriaId;
-    console.log(this.orgObj._id);
+  editConsumption(mealItem: any, cafeteria_orignal_id: any) {
+    const dialogRef = this.dialog.open(AddConsumptionOrderComponent, {
+      width: '600px',
+      data: {
+        mealItem: { ...mealItem, cafeteria_orignal_id },
+        orgObj: this.orgObj
+      },
+      panelClass: 'premium-dialog-panel'
+    });
 
-
-    this.MealForm.patchValue(
-      {
-        itemName: mealInfo.itemName,
-        mealPrice: mealInfo.mealPrice,
-        selctedmealtype: mealInfo.selctedmealtype,
-        minGuarantees: mealInfo.minGuarantees
-      }
-    );
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.fetchOrgMeals();
+    });
   }
 
   addConsumptionOrder() {
-    this.addMultipleConsumptionList.length = 0;
-    if (this.selectedCafeteria) {
-      this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
-      this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
-      this.selectedOriginalCafeteriaId = this.selectedCafeteria._id;
-
-    } else {
-      alert('select cafeteria');
+    if (!this.selectedCafeteria) {
+      alert('Please select a cafeteria first');
       return;
     }
-    this.addMultipleConsumptionList.push({ ...this.consumptionObj });
-    this.showMultipleConsumptionForm = true;
+
+    const dialogRef = this.dialog.open(AddConsumptionOrderComponent, {
+      width: '600px',
+      data: {
+        selectedCafeteria: this.selectedCafeteria,
+        orgObj: this.orgObj
+      },
+      panelClass: 'premium-dialog-panel'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.fetchOrgMeals();
+    });
   }
 
   async fetchOrgMeals() {
     try {
-      const result = await this.apiMainService.getConsumptionOrderByOrgId(this.orgObj._id)
-      this.consumptionList = result;
-    }
-    catch (error) {
-      console.log(error)
+      const result = await this.apiMainService.getConsumptionOrderByOrgId(this.orgObj._id);
+      this.consumptionList = result || [];
+    } catch (error) {
+      console.error('Error fetching meals:', error);
     }
   }
-
-  async submitMultipleConsumption() {
-    console.log(this.addMultipleConsumptionList, "sss");
-
-    const hasInvalid = this.addMultipleConsumptionList.some(
-      (consumption: any) =>
-        !consumption.itemName || !consumption.mealPrice || !consumption.minGuarantees
-    );
-    if (hasInvalid) {
-      this.disableSubmit = true;
-      return;
-    }
-    this.disableSubmit = false;
-
-    try {
-      const transformedConsumptionList =
-      {
-        organization_name: this.orgObj.organization_name,
-        organization_id: this.orgObj._id,
-        cafeteria_name: this.selectedCafeteriaName,
-        cafeteria_id: this.selectedCafeteriaId,
-        cafeteria_orignal_id: this.selectedOriginalCafeteriaId,
-        mealTypeList: this.addMultipleConsumptionList.map((item: any) => ({
-          itemName: item.itemName,
-          mealPrice: item.mealPrice,
-          selctedmealtype: item.selctedmealtype,
-          minGuarantees: item.minGuarantees
-        }))
-      }
-
-      const res = await this.apiMainService.addConsumptionOrderList(transformedConsumptionList);
-      if (res) {
-        this.addMultipleConsumptionList = [];
-        this.fetchOrgMeals();
-      }
-    } catch (error: any) {
-      const errorArr = error?.error?.msg?.skippedEmployees;
-      if (Array.isArray(errorArr) && errorArr.length > 0) {
-        errorArr.forEach(emp => {
-          alert(`Duplicate Entry For ${emp.employeeName}: ${emp.employeePhoneNo}`);
-        });
-      }
-    }
-
-    this.showMultipleConsumptionForm = false;
-  }
-
 }
-

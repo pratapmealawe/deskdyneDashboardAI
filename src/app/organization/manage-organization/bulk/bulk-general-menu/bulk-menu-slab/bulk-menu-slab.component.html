@@ -1,0 +1,85 @@
+<div class="bulk-slab-config-modal premium-modal">
+    <!-- Header with Icon Box -->
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>tune</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Delivery Slab Configuration</h3>
+                <p>Configure tiered volume ranges and per-drop delivery fees</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="onCancel()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content custom-scrollbar bg-light-soft">
+        <div class="p-4">
+            <!-- Section 1: Core Limits -->
+            <div class="modern-form-section mb-4">
+                <div class="section-title-badge mb-3">
+                    <mat-icon>shopping_cart</mat-icon> Order Thresholds
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>MOQ (Min Order)</mat-label>
+                            <input matInput type="number" [(ngModel)]="data.moq">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Slab 1 Limit</mat-label>
+                            <input matInput type="number" [(ngModel)]="data.slabLimit1">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Slab 2 Limit</mat-label>
+                            <input matInput type="number" [(ngModel)]="data.slabLimit2">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Slab 3 Limit</mat-label>
+                            <input matInput type="number" [(ngModel)]="data.slabLimit3">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 2: Delivery Fees -->
+            <div class="modern-form-section">
+                <div class="section-title-badge mb-3">
+                    <mat-icon>local_shipping</mat-icon> Per Slab Delivery Fees (₹)
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3" *ngFor="let s of [1,2,3,4]">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Slab {{s}} Fee</mat-label>
+                            <input matInput type="number" [(ngModel)]="data['slab' + s +'DeliveryPrice']" placeholder="0.00">
+                            <mat-icon matPrefix color="primary" class="me-1">payments</mat-icon>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Hint -->
+            <div class="hint-card mt-4 p-3 d-flex align-items-center gap-2 shadow-sm">
+                <mat-icon color="primary">info</mat-icon>
+                <p class="small text-muted mb-0">These limits define the volume triggers for item pricing and delivery charges across the bulk menu.</p>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <!-- Modal Actions -->
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-white border-top">
+        <button mat-button class="btn-cancel me-2" (click)="onCancel()">Discard</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="onSave()" [disabled]="!isValid()">
+            <mat-icon>save_alt</mat-icon>
+            <span>Update Configuration</span>
+        </button>
+    </mat-dialog-actions>
+</div>

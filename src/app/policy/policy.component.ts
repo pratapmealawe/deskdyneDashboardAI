@@ -1,16 +1,16 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { MatDialog } from '@angular/material/dialog';
 import { startWith } from 'rxjs/operators';
+
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
+import { AddPolicyComponent } from './add-policy/add-policy.component';
 
 @Component({
   selector: 'app-policy',
@@ -20,20 +20,19 @@ import { MaterialModule } from 'src/app/material.module';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    MaterialModule
+    MaterialModule,
+    AddPolicyComponent
   ]
 })
 export class PolicyComponent implements OnInit {
   policyArr: any[] = [];
   filteredPolicyArr: any[] = [];
-  // only search filter needed
   searchControl = new FormControl<string>('');
 
   constructor(
     private apiMainService: ApiMainService,
-    private router: Router,
+    private dialog: MatDialog,
     private localStorageService: LocalStorageService,
-    private runtimeStorageService: RuntimeStorageService,
     private confirmationModalService: ConfirmationModalService
   ) { }
 
@@ -61,7 +60,6 @@ export class PolicyComponent implements OnInit {
       }
       this.applyFilter(this.searchControl.value || '');
     } catch (error) {
-      console.log(error);
       this.policyArr = [];
       this.applyFilter(this.searchControl.value || '');
     }
@@ -87,14 +85,31 @@ export class PolicyComponent implements OnInit {
   }
 
   addPolicy(): void {
-    // new policy => clear VIEW_POLICY
-    this.runtimeStorageService.setCacheData('VIEW_POLICY', null);
-    this.router.navigate(['/app/addPolicy']);
+    const dialogRef = this.dialog.open(AddPolicyComponent, {
+      width: '1000px',
+      panelClass: 'custom-dialog-container',
+      data: { id: null }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getAllPolicy();
+      }
+    });
   }
 
   editPolicy(id: any): void {
-    this.runtimeStorageService.setCacheData('VIEW_POLICY', id);
-    this.router.navigate(['/app/addPolicy']);
+    const dialogRef = this.dialog.open(AddPolicyComponent, {
+      width: '1000px',
+      panelClass: 'custom-dialog-container',
+      data: { id }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.getAllPolicy();
+      }
+    });
   }
 
   async deletePolicy(id: any): Promise<void> {
@@ -102,7 +117,6 @@ export class PolicyComponent implements OnInit {
       await this.apiMainService.deletePolicy(id);
       await this.getAllPolicy();
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -114,7 +128,6 @@ export class PolicyComponent implements OnInit {
         context: this
       });
     } catch (e) {
-      console.log('error while Deleting Policy ', e);
     }
   }
 }

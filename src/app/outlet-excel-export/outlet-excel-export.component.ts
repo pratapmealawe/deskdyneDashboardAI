@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import * as Highcharts from 'highcharts';
 import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { PageEvent } from '@angular/material/paginator';
@@ -118,7 +118,6 @@ export class OutletExcelExportComponent implements OnInit {
     this.isLoading = true;
     this.resetTotals();
     try {
-      console.log('body', body);
 
       const res = await this.apiMainService.fetchAllOutletOrdersbysearchObj(body);
       this.filteredOrderList = res || [];

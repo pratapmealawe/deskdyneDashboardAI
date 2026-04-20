@@ -1,10 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
-import { LoaderstatusService } from 'src/service/loaderstatus.service';
-import { environment } from 'src/environments/environment';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { LoaderstatusService } from '@service/loaderstatus.service';
+import { environment } from '@environments/environment';
+import { PolicyService } from '@service/policy.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddOutletComponent } from '../../add-outlet/add-outlet.component';
 import { CommonModule } from '@angular/common';
@@ -22,6 +21,8 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class OutletDetailsComponent implements OnInit {
   @Input() outletObj: any;
+  @Output() dataToParent = new EventEmitter<any>();
+  
   imageUrl: any = environment.imageUrl;
   btnPolicy: any;
   loading: boolean = false
@@ -68,9 +69,10 @@ export class OutletDetailsComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // Handle refresh if needed, although usually parent might handle it
-        // For now, closing the dialog with true indicates success
+      if (result && typeof result === 'object') {
+        this.outletObj = result;
+        this.normalizeHolidays();
+        this.dataToParent.emit(this.outletObj);
       }
     });
   }

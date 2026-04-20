@@ -6,12 +6,15 @@
             <!-- Cafeteria selection -->
             <div class="mb-2 labelText">Select Cafeteria</div>
 
-            <mat-radio-group class="d-flex flex-wrap cafeteria-radio-group" [(ngModel)]="selectedCafeteria"
-                (change)="onCafeteriaChange()">
-                <mat-radio-button *ngFor="let cafeteria of orgObj?.cafeteriaList" [value]="cafeteria" class="me-3 mb-2">
-                    {{ cafeteria.cafeteria_name }}
-                </mat-radio-button>
-            </mat-radio-group>
+            <div class="cafeteria-selector-wrapper mb-3">
+                <div class="cafeteria-pills">
+                    <button *ngFor="let cafeteria of orgObj?.cafeteriaList" class="tab-btn"
+                        [class.active]="selectedCafeteria?._id === cafeteria._id" (click)="selectedCafeteria = cafeteria; onCafeteriaChange()">
+                        <mat-icon class="tab-icon">storefront</mat-icon>
+                        <span>{{ cafeteria.cafeteria_name }}</span>
+                    </button>
+                </div>
+            </div>
 
             <!-- Actions row -->
             <div class="d-flex flex-wrap gap-2 mt-3">

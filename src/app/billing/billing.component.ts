@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { PolicyService } from 'src/service/policy.service';
+import { PolicyService } from '@service/policy.service';
 
 @Component({
   selector: 'app-billing',
@@ -25,7 +25,6 @@ export class BillingComponent implements OnInit {
   constructor(private policyService: PolicyService) { }
 
   ngOnInit(): void {
-    console.log(this.adminOrg);
     this.tabPolicy = this.policyService.getCurrentTabPolicy();
     this.filterBillingTabs();
   }

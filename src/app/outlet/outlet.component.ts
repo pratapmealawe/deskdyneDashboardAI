@@ -3,10 +3,10 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { DeletedOutletsDialogComponent } from './deleted-outlets-dialog/deleted-outlets-dialog.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -43,10 +43,6 @@ export class OutletComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private router: Router,
-    private runtimeStorageService: RuntimeStorageService,
-    private sendDataToComponent: SendDataToComponent,
-    private searchService: SearchFilterService,
     private dialog: MatDialog
   ) { }
 
@@ -76,7 +72,6 @@ export class OutletComponent implements OnInit {
         })
         .filter((org: any) => org !== null);
     }
-    console.log(this.pagedOutLet, "update value ");
   }
 
   async searchOutlet() {
@@ -109,7 +104,6 @@ export class OutletComponent implements OnInit {
         this.pagedOutLet = this.filteredOutletList
       }
     } catch (error) {
-      console.log('seachOutlet', error);
     }
   }
 

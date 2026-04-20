@@ -1,0 +1,64 @@
+<div class="modern-card">
+    <div class="card-header with-actions">
+        <div class="d-flex align-items-center gap-3">
+            <div class="icon-box primary">
+                <mat-icon>format_list_bulleted</mat-icon>
+            </div>
+            <div class="header-titles">
+                <h3>Package Categories</h3>
+                <p class="text-muted small mb-0">Define groups for meals and snacks</p>
+            </div>
+        </div>
+        <button mat-flat-button color="primary" class="btn-primary-action" (click)="createCategory()">
+            <mat-icon>add</mat-icon> Add Category
+        </button>
+    </div>
+    <div class="card-body">
+        <div class="row" *ngIf="categories && categories.length > 0; else noCategories">
+            <div class="col-6 col-md-4 col-lg-3 mb-3" *ngFor="let category of categories">
+                <div class="item-card category-item p-0 overflow-hidden">
+                    <div class="category-image-wrap position-relative">
+                        <img [src]="category.categoryImg ? (category.categoryImg.startsWith('http') ? category.categoryImg : (serverDDUrl + category.categoryImg)) :'assets/Imageunavailable.webp'" 
+                             onerror="this.src='assets/Imageunavailable.webp'"
+                             class="w-100" style="height: 140px; object-fit: cover;" alt="Category Banner">
+                    </div>
+                    <div class="p-3">
+                        <div class="item-header d-flex justify-content-between align-items-start gap-2">
+                            <div class="category-name text-truncate flex-grow-1" [matTooltip]="category.categoryDisplayName || category.categoryName">
+                                {{ category.categoryDisplayName || category.categoryName }}
+                            </div>
+                            <mat-slide-toggle class="flex-shrink-0" [checked]="category.isActive" (change)="changeCategoryStatus($event.checked, category._id)" color="primary"></mat-slide-toggle>
+                        </div>
+                        <div class="item-actions d-flex justify-content-between align-items-center mt-3 gap-2 flex-wrap">
+                            <div class="d-flex gap-2">
+                                <button class="custom-icon-btn edit-btn" matTooltip="Edit" (click)="openEditCategoryDialog(category)">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button class="custom-icon-btn delete-btn" matTooltip="Delete" (click)="deleteCategoryVirtualCafeteria(category.categoryName)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                            <button class="custom-outline-pill alert-pill" (click)="openWeeklyMenu(category)">
+                                <mat-icon style="transform: rotate(90deg)">view_headline</mat-icon>
+                                <div class="btn-text">
+                                    <span>Weekly</span>
+                                    <span>Menu</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #noCategories>
+            <div class="empty-state">
+                <mat-icon>category</mat-icon>
+                <h3>No Categories Found</h3>
+                <p>Create categories to start organizing your menu items.</p>
+                <button mat-stroked-button color="primary" class="mt-3" *ngIf="defaultCategories" (click)="createDefaultCategories()">
+                    Setup Default Categories
+                </button>
+            </div>
+        </ng-template>
+    </div>
+</div>

@@ -1,5 +1,53 @@
+@use "styles/theme/variable" as var;
+
 .qr-thumb {
   width: 80px;
   height: 80px;
   object-fit: contain;
 }
+
+.cafeteria-pills {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    padding: 0.5rem 0;
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    border: none;
+    background: #f1f3f5;
+    border-radius: var.$border-radius-pill;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6c757d;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+
+    .tab-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+
+    &:hover {
+        background: #e9ecef;
+        color: var.$primary-color2;
+    }
+
+    &.active {
+        background: var.$primary-color1;
+        color: white;
+        box-shadow: 0 4px 12px rgba(var.$primary-color1, 0.3);
+
+        .tab-icon {
+            color: white;
+        }
+    }
+}
+
+

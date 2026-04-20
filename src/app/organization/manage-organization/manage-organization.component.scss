@@ -1,5 +1,5 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'src/styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 
 .org-view-container {
   min-height: 100vh;
@@ -176,3 +176,5 @@
     }
   }
 }
+
+
