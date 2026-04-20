@@ -30,6 +30,7 @@ export class ApiConfigService {
       saveOutlet: p('/api/saveOutlet', 'POST'),
       updateCategories: p('/api/updateCategories', 'POST'),
       addOutletList: p('/api/addOutletList', 'PUT'),
+      getOutletById: p('/api/getOutletById', 'GET'),
       updateOutlet: p('/api/updateOutlet', 'POST'),
       updateOutletLevelSubsidy: p('/api/updateOutletMenusubsidy', 'POST'),
       updateOutletNoImages: p('/api/updateOutletNoImages', 'POST'),

@@ -27,6 +27,8 @@ export class AddEditPackageCategoryComponent {
   categoryImgFile!: File;
   banners: { preview: string, file?: File, isExisting: boolean, path?: string }[] = [];
   deletedBannerPaths: string[] = [];
+  isEditMode: boolean = false;
+  isSubmitting: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -36,6 +38,7 @@ export class AddEditPackageCategoryComponent {
 
   ngOnInit() {
     const category = this.data?.category;
+    this.isEditMode = !!category;
     if (category) {
       if (category.categoryBanners && Array.isArray(category.categoryBanners)) {
         this.banners = category.categoryBanners.map((bannerPath: string) => ({
@@ -103,12 +106,13 @@ export class AddEditPackageCategoryComponent {
   }
 
   saveCategory() {
-    if (this.categoryForm.invalid) return;
+    if (this.categoryForm.invalid || this.isSubmitting) return;
     this.sendCategoryToServer()
   }
 
   async sendCategoryToServer() {
     if (this.categoryForm.invalid) return;
+    this.isSubmitting = true;
     const formValue = this.categoryForm.getRawValue();
     const selectedCafeteria = this.data.selectedCafeteria;
     const { cafeteria_id, cafeteria_name, address1, address2, cafeteria_city, cafeteria_location } = selectedCafeteria;
@@ -173,6 +177,8 @@ export class AddEditPackageCategoryComponent {
       this.dialogRef.close(response);
     } catch (err) {
       console.error('❌ Failed to save/update category', err);
+    } finally {
+      this.isSubmitting = false;
     }
   }
 }

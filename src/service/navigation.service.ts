@@ -23,7 +23,7 @@ export class NavigationService {
     },
     { name: 'Event Popup', showParent: true, route: 'event-popup', matIcon: 'campaign' },
     { name: 'Vendor Firm', showParent: true, route: 'vendor-firm', matIcon: 'business' },
-    { name: 'Vendor', showParent: true, route: 'searchVendor', matIcon: 'person_search' },
+    { name: 'Vendor', showParent: true, route: 'vendor', matIcon: 'person_search' },
     {
       name: 'Outlet Orders', showParent: true, matIcon: 'receipt_long', children: [
         { name: 'Outlet Current Order', route: 'currentOrder', showChild: true, matIcon: 'pending_actions' },
@@ -37,7 +37,7 @@ export class NavigationService {
       ]
     },
     { name: 'Session Management', showParent: true, route: 'sessionManagement', matIcon: 'manage_accounts' },
-    { name: 'Notifications', showParent: true, route: 'scheduledNotifications', matIcon: 'notifications' },
+    { name: 'Notifications', showParent: true, route: 'notifications', matIcon: 'notifications' },
     { name: 'Vendor Wallet Dashboard', showParent: true, route: 'vendorWalletDashboard', matIcon: 'account_balance_wallet' },
     { name: 'Vendor Payout', showParent: true, route: 'vendorPayout', matIcon: 'payments' },
     { name: 'Users', showParent: true, route: 'customer', matIcon: 'group' },

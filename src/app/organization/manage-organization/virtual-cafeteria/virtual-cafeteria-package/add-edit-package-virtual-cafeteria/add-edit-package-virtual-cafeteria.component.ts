@@ -6,6 +6,8 @@ import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MlApiMainService } from '@service/apiService/mlApiMain.service';
 
+import { ToasterService } from '@service/toaster.service';
+
 @Component({
   selector: 'app-add-edit-package-virtual-cafeteria',
   standalone: true,
@@ -24,15 +26,19 @@ export class AddEditPackageVirtualCafeteriaComponent implements OnInit {
   meals: any[] = [];
   filteredMeals: any[] = [];
   packageCategories: string[] = [];
+  isSubmitting: boolean = false;
+  isEditMode: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<AddEditPackageVirtualCafeteriaComponent>,
     private mlApiMainService: MlApiMainService,
-    private apiMainService: ApiMainService
+    private apiMainService: ApiMainService,
+    private toasterService: ToasterService
   ) { }
 
   async ngOnInit(): Promise<void> {
+    this.isEditMode = !this.data.addNew;
     this.clusters = await this.mlApiMainService.getAllGeoFencingList() as any[];
     this.meals = await this.mlApiMainService.getMealPackageList() as any[];
     if (!this.data.addNew) {
@@ -118,13 +124,14 @@ export class AddEditPackageVirtualCafeteriaComponent implements OnInit {
   async savePackage(): Promise<void> {
     try {
       if (!this.packageForm.valid) {
-        console.warn("❌ Form invalid");
+        this.toasterService.warning("Please complete the form requirements");
         return;
       }
+      this.isSubmitting = true;
       const orgObj = this.data.orgObj;
       const selectedCafeteria = this.data.selectedCafeteria;
       if (!orgObj || !selectedCafeteria) {
-        console.error("❌ Missing orgObj or selected cafeteria");
+        this.toasterService.error("System error: Missing context data");
         return;
       }
       const { _id: org_id, organization_name } = orgObj;
@@ -133,7 +140,6 @@ export class AddEditPackageVirtualCafeteriaComponent implements OnInit {
       const mergedMeals = itemList.map((item: any) => {
         const originalMeal = this.meals.find(m => m._id === item.masterMenuId);
         if (!originalMeal) {
-          console.warn("⚠ Missing meal with ID:", item.masterMenuId);
           return { ...item, masterMenuId: item.masterMenuId, isActive: true, };
         }
         const { _id, ...mealWithoutId } = originalMeal;
@@ -144,7 +150,8 @@ export class AddEditPackageVirtualCafeteriaComponent implements OnInit {
           cafeteriaId: cafeteria_id,
           itemList: mergedMeals
         };
-        const response = await this.apiMainService.updateMealItemList(payload);
+        await this.apiMainService.updateMealItemList(payload);
+        this.toasterService.success('Package items updated successfully');
         this.closeDialog();
         return;
       }
@@ -161,10 +168,14 @@ export class AddEditPackageVirtualCafeteriaComponent implements OnInit {
         },
         itemList: mergedMeals
       };
-      const response = await this.apiMainService.saveMealAweOutlet(payload);
+      await this.apiMainService.saveMealAweOutlet(payload);
+      this.toasterService.success('New package saved successfully');
       this.closeDialog();
     } catch (error) {
       console.error("❌ Error saving package:", error);
+      this.toasterService.error('Failed to save package details');
+    } finally {
+      this.isSubmitting = false;
     }
   }
 

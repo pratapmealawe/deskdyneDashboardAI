@@ -112,6 +112,11 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, outlet);
   }
 
+  getOutletById(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getOutletById;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
   saveEventPopup(outletObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.saveEventPopup;
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, outletObj);

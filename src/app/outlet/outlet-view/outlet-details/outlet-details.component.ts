@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AddOutletComponent } from '../../add-outlet/add-outlet.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-outlet-details',
@@ -32,7 +33,8 @@ export class OutletDetailsComponent implements OnInit {
     private runtimeStorageService: RuntimeStorageService,
     private loadingService: LoaderstatusService,
     private policyService: PolicyService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private apiMainService: ApiMainService
   ) {
   }
 
@@ -68,11 +70,18 @@ export class OutletDetailsComponent implements OnInit {
       data: this.outletObj
     });
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && typeof result === 'object') {
-        this.outletObj = result;
-        this.normalizeHolidays();
-        this.dataToParent.emit(this.outletObj);
+    dialogRef.afterClosed().subscribe(async result => {
+      if (result) {
+        try {
+          const res: any = await this.apiMainService.getOutletById(this.outletObj._id);
+          if (res) {
+            this.outletObj = res;
+            this.normalizeHolidays();
+            this.dataToParent.emit(this.outletObj);
+          }
+        } catch (error) {
+          console.error("Error refreshing outlet details:", error);
+        }
       }
     });
   }

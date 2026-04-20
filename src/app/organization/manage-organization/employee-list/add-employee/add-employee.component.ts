@@ -53,10 +53,8 @@ export class AddEmployeeComponent implements OnInit {
 
   patchForm(): void {
     const selectedCafeteriaIds = this.employee.cafeteria_list?.map((c: any) => c.cafeteria_id) || [];
-    
-    // Fallback for older data format
     if (selectedCafeteriaIds.length === 0 && this.employee.cafeteria_id) {
-        selectedCafeteriaIds.push(this.employee.cafeteria_id);
+      selectedCafeteriaIds.push(this.employee.cafeteria_id);
     }
 
     this.form.patchValue({
@@ -81,8 +79,7 @@ export class AddEmployeeComponent implements OnInit {
     this.isSubmitting = true;
     try {
       const formValue = this.form.value;
-      
-      // Transform cafeteria IDs back to the expected object format
+
       const selectedCafeteriaObjects = this.availableCafeterias
         .filter(c => formValue.cafeteria_list.includes(c.cafeteria_id))
         .map(c => ({
@@ -96,24 +93,22 @@ export class AddEmployeeComponent implements OnInit {
         organization_id: this.orgObj._id,
         cafeteria_list: selectedCafeteriaObjects
       };
-
+      console.log("payload", payload);
       let res;
       if (this.isEditMode) {
         res = await this.apiMainService.updateEmployee(this.employee._id, payload);
         this.toasterService.success('Employee updated successfully');
       } else {
-        // addEmployeeList takes an array
         res = await this.apiMainService.addEmployeeList([payload]);
-        
         // Handle complex response from bulk add logic
         if (res?.insertedEmployees?.length > 0) {
           this.toasterService.success('Employee added successfully');
         } else if (res?.skippedEmployees?.length > 0) {
           const skipReason = res.skippedEmployees[0].skipCode;
           if (skipReason === 'DUPLICATE_CAFETERIA') {
-             this.toasterService.warning('Employee already exists in selected cafeterias');
+            this.toasterService.warning('Employee already exists in selected cafeterias');
           } else {
-             this.toasterService.error('Failed to add employee: ' + skipReason);
+            this.toasterService.error('Failed to add employee: ' + skipReason);
           }
         }
       }

@@ -5,6 +5,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-add-edit-package-weekly-menu',
@@ -25,7 +26,9 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   selectedOrg: any;
   activeWeekIndex: number = 0;
   showRequiredError: boolean = false;
-  categoryKey: string = 'breakfast'; // Default or determined dynamically
+  categoryKey: string = 'breakfast';
+  isEditMode: boolean = false;
+  isSubmitting: boolean = false;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
@@ -35,13 +38,28 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   ) { }
 
   menuSources = [
-    { label: 'Organization Cafe', color: 'accent', action: (data: any) => { this.selectedSource = 'otherCafe'; this.getVirtualCafeteriaByCafeteria() } },
-    { label: 'Other Org Cafe', color: 'warn', action: (data: any) => { this.selectedSource = 'otherOrgCafe'; this.getOrgCafeteriaWeeklyMenu(); } },
-    { label: 'Custom Menu', color: 'success', action: (data: any) => { this.selectedSource = 'custom'; this.weekMenuList = []; } }
+    { 
+      label: 'Organization Cafe', 
+      desc: 'Import from another cafeteria within your organization',
+      icon: 'business',
+      color: 'accent', 
+      action: (data: any) => { this.selectedSource = 'otherCafe'; this.getVirtualCafeteriaByCafeteria() } 
+    },
+    { 
+      label: 'Other Org Cafe', 
+      desc: 'Import menu from a separate organization',
+      icon: 'share_location',
+      color: 'warn', 
+      action: (data: any) => { this.selectedSource = 'otherOrgCafe'; this.getOrgCafeteriaWeeklyMenu(); } 
+    },
+    { 
+      label: 'Custom Menu', 
+      desc: 'Create and manage a unique weekly menu manually',
+      icon: 'edit_note',
+      color: 'success', 
+      action: (data: any) => { this.selectedSource = 'custom'; this.weekMenuList = []; } 
+    }
   ];
-  menuTypes = ['Veg', 'Non-Veg'];
-  mealTimes = ['Breakfast', 'Lunch', 'Dinner'];
-
 
   ngOnInit(): void {
     if (this.data.cafeteriaList) {
@@ -61,16 +79,16 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
       } else if (name.includes('breakfast')) {
         this.categoryKey = 'breakfast';
       } else {
-        this.categoryKey = 'lunch'; // fallback
+        this.categoryKey = 'lunch';
       }
     }
 
     if (this.data?.category?.weeklyMenu && this.data.category.weeklyMenu.length > 0) {
-      // Deep copy to avoid mutating parent data before save
       this.weekMenuList = JSON.parse(JSON.stringify(this.data.category.weeklyMenu));
       this.selectedSource = 'custom';
       this.activeWeekIndex = this.weekMenuList.findIndex(w => w.isSelected);
       if (this.activeWeekIndex === -1) this.activeWeekIndex = 0;
+      this.isEditMode = true;
     }
   }
 
@@ -79,15 +97,6 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     this.weekMenuList = matchedMenu ? matchedMenu.weekMenuList : [];
     this.activeWeekIndex = this.weekMenuList.findIndex(w => w.isSelected);
     if (this.activeWeekIndex === -1) this.activeWeekIndex = 0;
-  }
-
-  getMenuList(week: any, type: string) {
-    return type === 'veg' ? week.vegMenuList : week.nonvegMenuList;
-  }
-
-  getVisibleMeals(data: any) {
-    if (!data?.category?.categoryName) return this.mealTimes;
-    return this.mealTimes.filter(meal => meal === data.category.categoryName);
   }
 
   selectWeek(i: number) {
@@ -123,10 +132,7 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
       return;
     }
     this.weekMenuList.splice(index, 1);
-    // Re-index remaining weeks
     this.weekMenuList.forEach((w, i) => w.weekNumber = i + 1);
-
-    // Adjust active index
     if (this.activeWeekIndex >= this.weekMenuList.length) {
       this.activeWeekIndex = this.weekMenuList.length - 1;
     }
@@ -136,8 +142,10 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
     const active = this.weekMenuList.some(w => w.isSelected);
     if (!active) {
       this.showRequiredError = true;
+      this.toastService.warning('Please select an active week');
       return;
     }
+
     for (let week of this.weekMenuList) {
       const allItems = [...week.vegMenuList, ...week.nonvegMenuList];
       for (let item of allItems) {
@@ -149,19 +157,25 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
         }
       }
     }
+
+    this.isSubmitting = true;
     const body = {
       cafeteriaId: this.data.selectedCafeteria.cafeteria_id,
       weeklyMenu: this.weekMenuList,
       categoryName: this.data.category.categoryName
     };
+
     try {
       await this.apiMainService.updateVirtualCafeteriaWeeklyMenu(body);
+      this.toastService.success('Weekly menu updated successfully');
       this.dialogRef.close(true);
     } catch (error) {
       console.error('Save failed', error);
+      this.toastService.error('Failed to update weekly menu');
+    } finally {
+      this.isSubmitting = false;
     }
   }
-
 
   async getVirtualCafeteriaByCafeteria(): Promise<void> {
     try {
@@ -194,12 +208,10 @@ export class AddEditPackageWeeklyMenuComponent implements OnInit {
   resetCreateType() {
     this.selectedSource = "";
     this.cafeteriaList = this.cafeteriaList.filter(c => c._id !== this.data.selectedCafeteria._id);
-    this.selectedCafeteria = null;   // clears cafeteria
+    this.selectedCafeteria = null;
     this.weekMenuList = [];
   }
 
-
-  /** Close dialog */
   closeDialog() {
     this.dialogRef.close();
   }

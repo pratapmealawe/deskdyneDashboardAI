@@ -34,16 +34,28 @@
     </div>
   </div>
 
-  <mat-tab-group animationDuration="0ms" [(selectedIndex)]="activeTabIndex">
-    <mat-tab label="Employees">
-      <ng-template matTabContent>
-        <div class="pt-3">
-          <div class="modern-card animate-fadeIn shadow-none border-0 rounded-4 overflow-hidden bg-white mt-2">
+  <div class="tabs-container">
+    <mat-tab-group animationDuration="200ms" [(selectedIndex)]="activeTabIndex">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="tab-label-content">
+            <mat-icon class="tab-icon">groups</mat-icon>
+            <span>Employees</span>
+          </div>
+        </ng-template>
+        <ng-template matTabContent>
+          <div class="pt-2">
+            <div class="animate-fadeIn mt-2">
             <!-- Header / Search -->
-            <div class="card-header bg-white border-bottom-0 p-4 d-flex justify-content-between align-items-center">
-              <div class="d-flex align-items-center gap-2">
-                <h3 class="mb-0">Employee Credits</h3>
-                <span class="count-badge-premium" *ngIf="displayedEmployees.length">{{ displayedEmployees.length }}</span>
+            <div class="card-header with-actions">
+              <div class="d-flex align-items-center gap-3">
+                <div class="icon-box info">
+                  <mat-icon>account_balance_wallet</mat-icon>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                  <h3 class="mb-0">Employee Credits</h3>
+                  <span class="count-badge-premium" *ngIf="displayedEmployees.length">{{ displayedEmployees.length }}</span>
+                </div>
               </div>
               <div class="search-wrapper">
                 <mat-icon class="search-icon">search</mat-icon>
@@ -52,61 +64,59 @@
               </div>
             </div>
 
-            <div class="table-responsive px-4">
-              <table class="table mb-0">
-                <thead>
-                  <tr>
-                    <th class="text-secondary text-uppercase small fw-bold ps-0 pb-3 border-bottom">Employee ID</th>
-                    <th class="text-secondary text-uppercase small fw-bold pb-3 border-bottom">Employee Details</th>
-                    <th class="text-secondary text-uppercase small fw-bold pb-3 border-bottom">Contact Number</th>
-                    <th class="text-secondary text-uppercase small fw-bold pb-3 border-bottom">Wallet Balance</th>
-                    <th class="text-secondary text-uppercase small fw-bold pb-3 border-bottom">Cafeteria</th>
-                    <th class="text-secondary text-uppercase small fw-bold text-end pe-0 pb-3 border-bottom">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let element of displayedEmployees; let i = index">
-                    <td class="align-middle border-bottom-0 ps-0 fw-bold text-dark">{{element.employeeId}}</td>
-                    <td class="align-middle border-bottom-0">
-                      <div class="d-flex align-items-center gap-3">
-                        <div class="avatar-circle-sm d-flex align-items-center justify-content-center fw-bold"
-                             [ngClass]="getAvatarClass(i)">
-                          {{getInitials(element.employeeName)}}
-                        </div>
-                        <div>
-                          <div class="fw-bold text-dark">{{element.employeeName}}</div>
-                          <div class="small text-secondary">{{element.employeeEmail}}</div>
-                        </div>
+            <div class="card-body p-4">
+              <div class="employee-grid-premium" *ngIf="displayedEmployees.length > 0">
+                <div class="employee-item-card" *ngFor="let element of displayedEmployees; let i = index">
+                  <div class="employee-main">
+                    <div class="employee-avatar-wrapper">
+                      <div class="avatar-circle">
+                        {{getInitials(element.employeeName)}}
                       </div>
-                    </td>
-                    <td class="align-middle border-bottom-0 fw-medium text-dark">{{element.employeePhoneNo}}</td>
-                    <td class="align-middle border-bottom-0 fw-bold text-success">{{element.points || 0}} pts</td>
-                    <td class="align-middle border-bottom-0">
-                      <span class="badge rounded-pill fw-medium px-3 py-2" [ngClass]="getBadgeClass(element.cafeteriaName)">
-                        {{element.cafeteriaName ||'N/A'}}
-                      </span>
-                    </td>
-                    <td class="align-middle border-bottom-0 text-end pe-0">
-                      <div class="d-flex justify-content-end gap-2">
-                        <button mat-icon-button class="premium-icon-btn edit" (click)="editUser(element)" matTooltip="Edit Credits">
-                          <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-icon-button class="premium-icon-btn delete" (click)="deleteUser(element)" matTooltip="Remove">
-                          <mat-icon>delete</mat-icon>
-                        </button>
+                    </div>
+                    <div class="employee-details">
+                      <h4 class="employee-name">{{element.employeeName}}</h4>
+                      <div class="employee-meta-strip">
+                        <span class="meta-pill">
+                          <mat-icon>badge</mat-icon> {{element.employeeId}}
+                        </span>
+                        <span class="meta-pill">
+                          <mat-icon>phone</mat-icon> {{element.employeePhoneNo}}
+                        </span>
+                        <span class="meta-pill" [title]="element.employeeEmail">
+                          <mat-icon>email</mat-icon> {{element.employeeEmail}}
+                        </span>
+                        <span class="meta-pill points-pill">
+                          <mat-icon>payments</mat-icon> {{element.points || 0}} pts
+                        </span>
                       </div>
-                    </td>
-                  </tr>
-                  <tr *ngIf="displayedEmployees?.length === 0">
-                    <td colspan="6" class="text-center py-5">
-                      <div class="empty-state-simple">
-                        <mat-icon>person_off</mat-icon>
-                        <p>No employees found matching your search.</p>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+                    </div>
+                  </div>
+                  
+                  <div class="employee-footer">
+                    <div class="cafe-tag">
+                      <mat-icon>storefront</mat-icon>
+                      <span>{{element.cafeteriaName || 'N/A'}}</span>
+                    </div>
+                    <div class="action-buttons">
+                      <button mat-icon-button class="premium-icon-btn edit" (click)="editUser(element)" matTooltip="Edit Credits">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button class="premium-icon-btn delete" (click)="deleteUser(element)" matTooltip="Remove">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Empty State -->
+              <div class="empty-state-modern py-5" *ngIf="displayedEmployees?.length === 0">
+                <div class="empty-icon-wrap">
+                  <mat-icon>person_off</mat-icon>
+                </div>
+                <h4>No employees found</h4>
+                <p>No employees matching your search were found in the selected cafeteria.</p>
+              </div>
             </div>
 
             <!-- Pagination -->
@@ -137,65 +147,78 @@
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </ng-template>
-    </mat-tab>
-
-    <mat-tab label="Auto Rules">
-      <ng-template matTabContent>
-        <div class="pt-3">
-          <div class="d-flex justify-content-end mb-3">
-            <button mat-flat-button color="primary" class="btn-primary-action" (click)="addAutoRule()">
-              <mat-icon>add</mat-icon> Create Auto Rule
-            </button>
-          </div>
-
-          <div class="modern-card animate-fadeIn shadow-none border-0 rounded-4 overflow-hidden bg-white">
-            <div class="table-responsive px-4">
-              <table class="table mb-0">
-                <thead>
-                  <tr>
-                    <th class="text-secondary small fw-bold pb-3 border-bottom">Level</th>
-                    <th class="text-secondary small fw-bold pb-3 border-bottom">Target</th>
-                    <th class="text-secondary small fw-bold pb-3 border-bottom">Frequency</th>
-                    <th class="text-secondary small fw-bold pb-3 border-bottom">Points</th>
-                    <th class="text-secondary small fw-bold pb-3 border-bottom">Last Run</th>
-                    <th class="text-secondary small fw-bold text-end pb-3 border-bottom">Actions</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let rule of autoRules">
-                    <td class="align-middle fw-bold">{{rule.level}}</td>
-                    <td class="align-middle">
-                      <span *ngIf="rule.level ==='ORGANIZATION'">All Employees</span>
-                      <span *ngIf="rule.level ==='CAFETERIA'">{{getCafeteriaName(rule)}}</span>
-                      <span *ngIf="rule.level ==='EMPLOYEE'">{{rule.employeeEmail}}</span>
-                    </td>
-                    <td class="align-middle">{{rule.frequency}}</td>
-                    <td class="align-middle fw-bold text-success">{{rule.points}} pts</td>
-                    <td class="align-middle text-secondary">{{ (rule.lastRunAt | date:'mediumDate') ||'Never' }}</td>
-                    <td class="align-middle text-end">
-                      <div class="d-flex align-items-center justify-content-end gap-2">
-                        <mat-slide-toggle [checked]="rule.active" (change)="toggleRule(rule)" color="primary"></mat-slide-toggle>
-                        <button mat-icon-button class="premium-icon-btn edit" (click)="editRule(rule)">
-                          <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-icon-button class="premium-icon-btn delete" (click)="deleteRule(rule)">
-                          <mat-icon>delete</mat-icon>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr *ngIf="autoRules.length === 0">
-                    <td colspan="6" class="text-center py-5 text-muted">No Auto Rules found.</td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
-        </div>
-      </ng-template>
-    </mat-tab>
-  </mat-tab-group>
+        </ng-template>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <div class="tab-label-content">
+            <mat-icon class="tab-icon">bolt</mat-icon>
+            <span>Auto Rules</span>
+          </div>
+        </ng-template>
+        <ng-template matTabContent>
+          <div class="pt-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div class="d-flex align-items-center gap-3">
+                <div class="icon-box info d-flex align-items-center justify-content-center bg-primary-subtle text-primary rounded-3" style="width: 42px; height: 42px;">
+                  <mat-icon>bolt</mat-icon>
+                </div>
+                <h3 class="mb-0 fw-bold text-dark">Auto-Credit Rules</h3>
+              </div>
+              <button mat-flat-button color="primary" class="btn-primary-action" (click)="addAutoRule()">
+                <mat-icon>add</mat-icon> Create Auto Rule
+              </button>
+            </div>
+
+            <div class="animate-fadeIn">
+              <div class="table-responsive px-4">
+                <table class="table mb-0">
+                  <thead>
+                    <tr>
+                      <th class="text-secondary small fw-bold pb-3 border-bottom">Level</th>
+                      <th class="text-secondary small fw-bold pb-3 border-bottom">Target</th>
+                      <th class="text-secondary small fw-bold pb-3 border-bottom">Frequency</th>
+                      <th class="text-secondary small fw-bold pb-3 border-bottom">Points</th>
+                      <th class="text-secondary small fw-bold pb-3 border-bottom">Last Run</th>
+                      <th class="text-secondary small fw-bold text-end pb-3 border-bottom">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let rule of autoRules">
+                      <td class="align-middle fw-bold">{{rule.level}}</td>
+                      <td class="align-middle">
+                        <span *ngIf="rule.level ==='ORGANIZATION'">All Employees</span>
+                        <span *ngIf="rule.level ==='CAFETERIA'">{{getCafeteriaName(rule)}}</span>
+                        <span *ngIf="rule.level ==='EMPLOYEE'">{{rule.employeeEmail}}</span>
+                      </td>
+                      <td class="align-middle">{{rule.frequency}}</td>
+                      <td class="align-middle fw-bold text-success">{{rule.points}} pts</td>
+                      <td class="align-middle text-secondary">{{ (rule.lastRunAt | date:'mediumDate') ||'Never' }}</td>
+                      <td class="align-middle text-end">
+                        <div class="d-flex align-items-center justify-content-end gap-2">
+                          <mat-slide-toggle [checked]="rule.active" (change)="toggleRule(rule)" color="primary"></mat-slide-toggle>
+                          <button mat-icon-button class="premium-icon-btn edit" (click)="editRule(rule)">
+                            <mat-icon>edit</mat-icon>
+                          </button>
+                          <button mat-icon-button class="premium-icon-btn delete" (click)="deleteRule(rule)">
+                            <mat-icon>delete</mat-icon>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="autoRules.length === 0">
+                      <td colspan="6" class="text-center py-5 text-muted">No Auto Rules found.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
 </div>

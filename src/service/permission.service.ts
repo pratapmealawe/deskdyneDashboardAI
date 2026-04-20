@@ -10,7 +10,6 @@ import { ApiMainService } from './apiService/apiMain.service';
 export class PermissionsService {
   constructor(
     private localStorageService: LocalStorageService,
-    private toasterService: ToasterService,
     private apiMainService: ApiMainService,
     public router: Router
   ) {}
@@ -88,7 +87,7 @@ export class PermissionsService {
   }
 
   checkForPermission(url: string, keys: any): boolean {
-    if (!url || url === '' || url === 'home' || url === 'orgDashboard') return true;
+    if (!url || url === '' || url === 'home') return true;
     return keys[url] ? true : false;
   }
 }

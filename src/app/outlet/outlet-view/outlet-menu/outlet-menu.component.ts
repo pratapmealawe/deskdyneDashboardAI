@@ -23,11 +23,7 @@ import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dial
   imports: [
     CommonModule,
     MaterialModule,
-    DirectivesModule,
-    BulkMenuUploadDialogComponent,
-    AddOutletMenuComponent,
-    CopyOutletMenuComponent,
-    MasterMenuDialogComponent
+    DirectivesModule
   ]
 })
 export class OutletMenuComponent implements OnInit, OnChanges {
@@ -79,6 +75,7 @@ export class OutletMenuComponent implements OnInit, OnChanges {
 
   async fetchMenuItems() {
     try {
+      this.resetValues();
       const res = await this.apiMainService.getMenuItems(this.outletObj._id);
       this.menuItems = res || [];
       this.applyMenuFilters();
@@ -111,11 +108,18 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       );
     }
 
-    // if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
-    //   temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
-    // }
+    if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
+      temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
+    }
 
     this.filteredMenuList = temp;
+
+    if (this.outletObj?.isWeeklyMenu) {
+      this.groupedMenuList = this.buildDateGroupedMenu(temp);
+    } else {
+      this.groupedMenuList = this.buildGroupedMenu(temp);
+    }
+
     this.showCard = this.filteredMenuList.length > 0;
   }
 
