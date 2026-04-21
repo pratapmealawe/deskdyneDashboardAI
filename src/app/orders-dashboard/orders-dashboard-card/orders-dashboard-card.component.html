@@ -1,102 +1,75 @@
-<div class="order-card">
-    <div class="order-card-inner">
-        <!-- HEADER: Token & Status -->
-        <div class="card-top-header">
-            <div class="token-container">
-                <div class="token-main-badge" [class.no-token]="!order.tokenNo">
-                    <span class="token-label">TOKEN</span>
-                    <span class="token-number">#{{ order.tokenNo ||'---' }}</span>
+<div class="employee-item-card animate-fadeIn">
+    <div class="employee-main">
+        <div class="employee-avatar-wrapper">
+            <div class="avatar-circle" [ngClass]="order.orderstatus">
+                {{ order.customerName?.[0] || 'C' }}
+            </div>
+            <div class="status-indicator" [ngClass]="order.orderstatus"></div>
+        </div>
+        <div class="employee-details">
+            <div class="d-flex justify-content-between align-items-start">
+                <h4 class="employee-name">{{ order.customerName || 'Anonymous' }}</h4>
+                <div class="token-badge-premium" *ngIf="order.tokenNo">
+                    <span class="t-label">TOKEN</span>
+                    <span class="t-value">#{{ order.tokenNo }}</span>
                 </div>
             </div>
-            <div class="status-side">
-                <div class="status-badge-v2" [ngClass]="order.orderstatus">
-                    <mat-icon>
-                        <ng-container [ngSwitch]="order.orderstatus">
-                            <mat-icon *ngSwitchCase="'paymentInprogress'">hourglass_empty</mat-icon>
-                            <mat-icon *ngSwitchCase="'paymentFailed'">error_outline</mat-icon>
-                            <mat-icon *ngSwitchCase="'placed'">restaurant</mat-icon>
-                            <mat-icon *ngSwitchCase="'completed'">check_circle</mat-icon>
-                            <mat-icon *ngSwitchCase="'cancelled'">cancel</mat-icon>
-                            <mat-icon *ngSwitchCase="'readyOrder'">thumb_up</mat-icon>
-                            <mat-icon *ngSwitchDefault>receipt</mat-icon>
-                        </ng-container>
-                    </mat-icon>
-                    <span>{{ orderStatusMapper[order.orderstatus] || order.orderstatus }}</span>
+            <div class="employee-meta-strip">
+                <span class="meta-pill">
+                    <mat-icon>tag</mat-icon> {{ order.orderNo }}
+                </span>
+                <span class="meta-pill">
+                    <mat-icon>schedule</mat-icon> {{ order.SubmitedDate || order.orderDate | date:'h:mm a' }}
+                </span>
+                <span class="meta-pill" *ngIf="order.customerPhoneNo">
+                    <mat-icon>phone</mat-icon> {{ order.customerPhoneNo }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Items Section -->
+    <div class="items-display-modern">
+        <div class="items-count-badge">ITEMS ({{ (order.itemList || order.itemlist)?.length || 0 }})</div>
+        <div class="items-list-compact">
+            <div class="item-row" *ngFor="let i of (order.itemList || order.itemlist)">
+                <div class="item-info">
+                    <span class="qty">{{ i.count }}x</span>
+                    <span class="name">{{ i.itemName }}</span>
                 </div>
+                <span class="price">₹{{ i.price || 0 | number :'1.2-2' }}</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="employee-footer">
+        <div class="footer-left">
+            <div class="status-tag" [ngClass]="order.orderstatus">
+                <mat-icon>
+                    <ng-container [ngSwitch]="order.orderstatus">
+                        <mat-icon *ngSwitchCase="'paymentInprogress'">hourglass_empty</mat-icon>
+                        <mat-icon *ngSwitchCase="'paymentFailed'">error_outline</mat-icon>
+                        <mat-icon *ngSwitchCase="'placed'">restaurant</mat-icon>
+                        <mat-icon *ngSwitchCase="'completed'">check_circle</mat-icon>
+                        <mat-icon *ngSwitchCase="'cancelled'">cancel</mat-icon>
+                        <mat-icon *ngSwitchCase="'readyOrder'">thumb_up</mat-icon>
+                        <mat-icon *ngSwitchDefault>receipt</mat-icon>
+                    </ng-container>
+                </mat-icon>
+                <span>{{ orderStatusMapper[order.orderstatus] || order.orderstatus }}</span>
+            </div>
+            
+            <div class="amount-section">
+                <span class="a-label">Total Amount</span>
+                <span class="a-value">₹{{ order.amount || 0 | number :'1.2-2' }}</span>
             </div>
         </div>
 
-        <!-- META: Order ID & Time -->
-        <div class="order-meta-strip">
-            <div class="meta-item">
-                <span class="m-label">Order ID</span>
-                <span class="m-value">{{ order.orderNo }}</span>
-            </div>
-            <div class="meta-item text-end">
-                <span class="m-label">Submitted</span>
-                <span class="m-value">{{ order.SubmitedDate || order.orderDate | date:'h:mm a, MMM d' }}</span>
-            </div>
-        </div>
-
-        <div class="card-scroll-body">
-            <!-- CUSTOMER & CONTEXT -->
-            <div class="customer-section-v2">
-                <div class="customer-info-box">
-                    <div class="avatar-box">
-                        {{ order.customerName?.[0] ||'C' }}
-                    </div>
-                    <div class="info-text">
-                        <div class="c-name">{{ order.customerName ||'Anonymous' }}</div>
-                        <div class="c-phone">{{ order.customerPhoneNo ||'No phone' }}</div>
-                    </div>
-                </div>
-
-                <div class="context-pill-stack" *ngIf="order.isCabinOrder || order.organizationDetails?.organization_name">
-                    <div class="ctx-pill cabin" *ngIf="order.isCabinOrder">
-                        <mat-icon>chair_alt</mat-icon>
-                        <span>{{ order.cabinConfig?.cabinName }}</span>
-                    </div>
-                    <div class="ctx-pill org" *ngIf="order.organizationDetails?.organization_name">
-                        <mat-icon>business</mat-icon>
-                        <span>{{ order.organizationDetails?.organization_name }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- ITEMS -->
-            <div class="items-section-v2">
-                <div class="items-header-compact">
-                    <span class="h-text">ITEMS ({{ (order.itemList || order.itemlist)?.length || 0 }})</span>
-                </div>
-                <div class="items-minimal-list">
-                    <div class="minimal-row" *ngFor="let i of (order.itemList || order.itemlist)">
-                        <span class="qty">{{ i.count }}x</span>
-                        <span class="name">{{ i.itemName }}</span>
-                        <span class="price">₹{{ i.price | number :'1.0-0' }}</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- FOOTER: Totals & Actions -->
-        <div class="card-footer-v2">
-            <div class="pricing-summary">
-                <div class="price-row" *ngIf="order.moneyWalletPointsUsed">
-                    <span class="p-label">Wallet</span>
-                    <span class="p-value discount">-₹{{ order.moneyWalletPointsUsed | number :'1.0-0' }}</span>
-                </div>
-                <div class="price-row grand-total">
-                    <span class="p-label">Grand Total</span>
-                    <span class="p-value">₹{{ order.amount || 0 | number :'1.2-2' }}</span>
-                </div>
-            </div>
-
-            <div class="action-strip" *ngIf="isPaymentValidationVisible && order.orderstatus ==='paymentInprogress'">
-                <button mat-flat-button color="warn" class="btn-validate" (click)="onValidatePayment()">
-                    <mat-icon>verified_user</mat-icon>
-                    VALIDATE PAYMENT
-                </button>
-            </div>
+        <div class="action-section" *ngIf="isPaymentValidationVisible && order.orderstatus ==='paymentInprogress'">
+            <button mat-flat-button class="btn-validate-premium" (click)="onValidatePayment()">
+                <mat-icon>verified_user</mat-icon>
+                <span>VALIDATE</span>
+            </button>
         </div>
     </div>
 </div>

@@ -120,7 +120,8 @@ export class OrdersDashboardComponent implements OnInit {
     });
   }
 
-  bulkCompleteOrders(ordersList: any[]) {
+  bulkCompleteOrders(ordersList: any[], event?: MouseEvent) {
+    if (event) event.stopPropagation();
     if (!ordersList || ordersList.length === 0) {
       return;
     }
@@ -151,7 +152,8 @@ export class OrdersDashboardComponent implements OnInit {
     }
   }
 
-  bulkPaymentFailedOrders(ordersList: any[]) {
+  bulkPaymentFailedOrders(ordersList: any[], event?: MouseEvent) {
+    if (event) event.stopPropagation();
     if (!ordersList || ordersList.length === 0) {
       return;
     }
@@ -215,7 +217,8 @@ export class OrdersDashboardComponent implements OnInit {
     }
   }
 
-  bulkValidatePayments(ordersList: any[]) {
+  bulkValidatePayments(ordersList: any[], event?: MouseEvent) {
+    if (event) event.stopPropagation();
     if (!ordersList || ordersList.length === 0) {
       return;
     }
@@ -285,6 +288,22 @@ export class OrdersDashboardComponent implements OnInit {
     today.setHours(0, 0, 0, 0);
 
     return date.getTime() < today.getTime();
+  }
+
+  // Refactored Visibility Logic
+  showBulkActions(dateKey: string): boolean {
+    const orders = this.ordersByDate[dateKey];
+    if (!orders || orders.length === 0) return false;
+
+    const eligibleStatuses = ['placed', 'readyOrder', 'paymentInprogress'];
+    return eligibleStatuses.includes(this.selectedStatus) && this.isPastDate(dateKey);
+  }
+
+  showValidateAll(dateKey: string): boolean {
+    const orders = this.ordersByDate[dateKey];
+    if (!orders || orders.length === 0) return false;
+
+    return this.selectedStatus === 'paymentInprogress';
   }
 }
 

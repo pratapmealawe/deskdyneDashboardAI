@@ -69,22 +69,22 @@
                             <!-- Bulk Actions -->
                             <div class="bulk-actions">
                                 <button mat-flat-button class="bulk-btn success-btn"
-                                    *ngIf="(selectedStatus ==='placed' || selectedStatus ==='readyOrder' || selectedStatus ==='paymentInprogress') && isPastDate(dateKey)"
-                                    (click)="$event.stopPropagation(); bulkCompleteOrders(ordersByDate[dateKey])">
+                                    *ngIf="showBulkActions(dateKey)"
+                                    (click)="bulkCompleteOrders(ordersByDate[dateKey], $event)">
                                     <mat-icon>done_all</mat-icon>
                                     <span>Complete All</span>
                                 </button>
 
                                 <button mat-flat-button class="bulk-btn warn-btn"
-                                    *ngIf="selectedStatus ==='paymentInprogress' && isPastDate(dateKey)"
-                                    (click)="$event.stopPropagation(); bulkPaymentFailedOrders(ordersByDate[dateKey])">
+                                    *ngIf="showBulkActions(dateKey)"
+                                    (click)="bulkPaymentFailedOrders(ordersByDate[dateKey], $event)">
                                     <mat-icon>error_outline</mat-icon>
                                     <span>Payment Failed</span>
                                 </button>
 
                                 <button mat-flat-button class="bulk-btn primary-btn"
-                                    *ngIf="selectedStatus ==='paymentInprogress'"
-                                    (click)="$event.stopPropagation(); bulkValidatePayments(ordersByDate[dateKey])">
+                                    *ngIf="showValidateAll(dateKey)"
+                                    (click)="bulkValidatePayments(ordersByDate[dateKey], $event)">
                                     <mat-icon>verified_user</mat-icon>
                                     <span>Validate All</span>
                                 </button>

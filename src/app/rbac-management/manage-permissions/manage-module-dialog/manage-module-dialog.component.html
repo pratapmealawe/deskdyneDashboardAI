@@ -1,4 +1,4 @@
-<div class="edit-module-dialog premium-modal animate-fadeIn" [class.is-add-mode]="!isEditMode">
+<div class="edit-module-dialog premium-modal animate-fadeIn">
     <div class="modal-header">
         <div class="title-wrap">
             <div class="icon-box" [class.primary]="!isEditMode" [class.warning]="isEditMode">
@@ -6,7 +6,8 @@
             </div>
             <div class="text">
                 <h3>{{isEditMode ? 'Manage Module: ' + (data.resource | titlecase) : 'Add New Module'}}</h3>
-                <p>{{isEditMode ? 'Configure identification and operational permission keys' : 'Enter the details for the new system module'}}</p>
+                <p>{{isEditMode ? 'Configure identification and operational permission keys' : 'Enter the details for
+                    the new system module'}}</p>
             </div>
         </div>
         <button mat-icon-button (click)="onCancel()" class="close-btn">
@@ -15,7 +16,7 @@
     </div>
 
     <mat-dialog-content class="dialog-content">
-        <div class="manager-layout" [class.is-add-mode]="!isEditMode">
+        <div class="manager-layout">
             <!-- Details Column -->
             <div class="module-info-section">
                 <p class="section-label"><mat-icon>info</mat-icon> Module Identification</p>
@@ -25,14 +26,16 @@
                         <mat-icon matPrefix>extension</mat-icon>
                         <input matInput formControlName="newResourceName" placeholder="e.g. inventories" required>
                         <mat-hint>Lowercase, numbers, and hyphens only.</mat-hint>
-                        <mat-error *ngIf="permissionForm.get('newResourceName')?.hasError('required')">Required</mat-error>
-                        <mat-error *ngIf="permissionForm.get('newResourceName')?.hasError('pattern')">Invalid format</mat-error>
+                        <mat-error
+                            *ngIf="permissionForm.get('newResourceName')?.hasError('required')">Required</mat-error>
+                        <mat-error *ngIf="permissionForm.get('newResourceName')?.hasError('pattern')">Invalid
+                            format</mat-error>
                     </mat-form-field>
 
                     <mat-form-field appearance="outline" class="full-width mt-4">
                         <mat-label>Module Description</mat-label>
-                        <mat-icon matPrefix>description</mat-icon>
-                        <textarea matInput formControlName="description" placeholder="Short description of this module's purpose..." rows="4"></textarea>
+                        <textarea matInput formControlName="description"
+                            placeholder="Short description of this module's purpose..." rows="4"></textarea>
                     </mat-form-field>
                 </form>
 
@@ -42,19 +45,24 @@
                 </div>
             </div>
 
-            <!-- Keys Column (Only in Edit Mode) -->
-            <div class="keys-management-section" *ngIf="isEditMode">
+            <!-- Keys Column (Always Visible) -->
+            <div class="keys-management-section">
                 <p class="section-label"><mat-icon>vpn_key</mat-icon> Operational Permission Keys</p>
-                
+
                 <div class="add-key-inline mt-2">
-                    <input type="text" 
-                           [(ngModel)]="newKeyName" 
-                           placeholder="Enter custom key (e.g. approve)"
-                           (keyup.enter)="addKey()">
+                    <input type="text" [(ngModel)]="newKeyName" placeholder="Enter custom key (e.g. approve)"
+                        (keyup.enter)="addKey()">
                     <button (click)="addKey()" [disabled]="!newKeyName || isAddingKey" class="add-btn">
                         <mat-icon *ngIf="!isAddingKey">add</mat-icon>
                         <mat-spinner diameter="18" *ngIf="isAddingKey"></mat-spinner>
                     </button>
+                </div>
+                <!-- Live Preview -->
+                <div class="key-preview-wrap mt-2" *ngIf="newKeyName">
+                    <span class="preview-label">Live Preview:</span>
+                    <span class="preview-badge" [class.is-edit]="isEditMode">
+                        {{ (isEditMode ? data.resource : (permissionForm.get('newResourceName')?.value || 'module')) + ':' + newKeyName.toLowerCase() }}
+                    </span>
                 </div>
 
                 <div class="keys-list-container mt-3">
@@ -79,8 +87,8 @@
 
     <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
         <button mat-button class="btn-cancel me-2" (click)="onCancel()">Cancel</button>
-        <button mat-flat-button color="primary" (click)="onSave()" 
-                [disabled]="permissionForm.invalid || isSubmitting" class="btn-primary-action px-4">
+        <button mat-flat-button color="primary" (click)="onSave()" [disabled]="permissionForm.invalid || isSubmitting"
+            class="btn-primary-action px-4">
             <mat-icon *ngIf="!isSubmitting">{{isEditMode ? 'save' : 'add'}}</mat-icon>
             <mat-spinner diameter="20" *ngIf="isSubmitting" color="accent"></mat-spinner>
             <span>{{isSubmitting ? 'Saving...' : (isEditMode ? 'Update Module Info' : 'Create Module')}}</span>

@@ -259,9 +259,9 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  createResource(resourceName: string, description?: string) {
+  createResource(resourceName: string, description?: string, permissions?: any[]) {
     this.runtimeStorageService.resetCacheData('PERMISSIONS');
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createResource, { resourceName, description });
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createResource, { resourceName, description, permissions });
   }
 
   deleteResource(resourceName: string) {
@@ -270,19 +270,7 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${resourceName}`, method: urlObj.method });
   }
 
-  addPermissionKey(resource: string, action: string) {
-    this.runtimeStorageService.resetCacheData('PERMISSIONS');
-    const urlObj = this.apiConfigService.apiEndPointObj.addPermissionKey;
-    return this.apiHttpService.REQUEST(urlObj, { resource, action });
-  }
-
-  deletePermissionKey(id: string) {
-    this.runtimeStorageService.resetCacheData('PERMISSIONS');
-    const urlObj = this.apiConfigService.apiEndPointObj.deletePermissionKey;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  updateResource(resourceName: string, data: { newResourceName: string, description?: string }) {
+  updateResource(resourceName: string, data: { newResourceName: string, description?: string, permissions?: any[] }) {
     this.runtimeStorageService.resetCacheData('PERMISSIONS');
     const urlObj = this.apiConfigService.apiEndPointObj.updateResource;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${resourceName}`, method: urlObj.method }, data);

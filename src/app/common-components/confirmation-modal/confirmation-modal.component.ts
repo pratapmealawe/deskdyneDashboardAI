@@ -1,31 +1,54 @@
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-
-
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MaterialModule } from '../../material.module';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-confirmation-modal',
   templateUrl: 'confirmation-modal.component.html',
   styleUrls: ['confirmation-modal.component.scss'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule, MaterialModule]
 })
-export class ConfirmationModalComponent implements OnInit {
+export class ConfirmationModalComponent implements OnInit, OnDestroy {
   showDialog = false;
-
   modalObj: any = {};
+  private subscription: Subscription = new Subscription();
+
   constructor(private confimationModalService: ConfirmationModalService) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.subscription.add(
+      this.confimationModalService.confimationModalSubject.subscribe((res: any) => {
+        if (res && res.msg) {
+          this.modalObj = res;
+          this.showDialog = true;
+        }
+      })
+    );
+  }
+
   cancel() {
     if (this.modalObj.cancelCallback) {
       this.modalObj.cancelCallback.apply(this.modalObj.context);
     }
-    this.showDialog = false;
+    this.close();
   }
+
   confirm() {
-    this.modalObj.callback.apply(this.modalObj.context);
+    if (this.modalObj.callback) {
+      this.modalObj.callback.apply(this.modalObj.context);
+    }
+    this.close();
+  }
+
+  private close() {
     this.showDialog = false;
+    this.modalObj = {};
+  }
+
+  ngOnDestroy(): void {
+    this.subscription.unsubscribe();
   }
 }

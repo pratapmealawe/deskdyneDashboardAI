@@ -5,7 +5,7 @@ import { ApiMainService } from '@service/apiService/apiMain.service';
 import { FormControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
-import { EditPermissionDialogComponent } from './edit-permission-dialog/edit-permission-dialog.component';
+import { ManageModuleDialogComponent } from './manage-module-dialog/manage-module-dialog.component';
 import { ToasterService } from '@service/toaster.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 
@@ -67,8 +67,8 @@ export class ManagePermissionsComponent implements OnInit {
   }
 
   openAddModuleDialog() {
-    const dialogRef = this.dialog.open(EditPermissionDialogComponent, {
-      width: '550px',
+    const dialogRef = this.dialog.open(ManageModuleDialogComponent, {
+      width: '850px',
       data: {},
       disableClose: true
     });
@@ -97,7 +97,7 @@ export class ManagePermissionsComponent implements OnInit {
   }
 
   openEditDialog(group: any) {
-    const dialogRef = this.dialog.open(EditPermissionDialogComponent, {
+    const dialogRef = this.dialog.open(ManageModuleDialogComponent, {
       width: '850px',
       data: { 
         resource: group.name,

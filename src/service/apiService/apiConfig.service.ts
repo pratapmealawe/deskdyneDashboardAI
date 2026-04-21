@@ -58,8 +58,6 @@ export class ApiConfigService {
       getAllPermissions: p('/api/rbac/permissions', 'GET'),
       createResource: p('/api/rbac/resource', 'POST'),
       updateResource: p('/api/rbac/resource', 'PUT'),
-      addPermissionKey: p('/api/rbac/permission', 'POST'),
-      deletePermissionKey: p('/api/rbac/permission', 'DELETE'),
       deleteResource: p('/api/rbac/resource', 'DELETE'),
       getAllRoles: p('/api/rbac/roles', 'GET'),
       getRole: p('/api/rbac/role', 'GET'),
