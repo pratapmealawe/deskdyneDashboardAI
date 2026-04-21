@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { MaterialModule } from '../../material.module';
 // Manage-organization sub-components
 import { CompanyWalletComponent } from './company-wallet/company-wallet.component';
@@ -56,13 +56,12 @@ export class ManageOrganizationComponent implements OnInit {
     { name: 'Company Wallet', path: 'companyWallet', policyKey: 'companyWallet' },
     { name: 'QR Employee', path: 'qrEmployee', policyKey: 'qrEmployee' },
   ];
-  tabPolicy: any;
 
-  constructor(private policyService: PolicyService) { }
+  constructor(private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.orgViewList = this.policyService.filterTabsByPolicy(this.orgViewList);
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
+    this.orgViewList = this.permissionsService.filterTabsByPolicy(this.orgViewList);
   }
 
   goBack(): void {
@@ -125,3 +124,4 @@ export class ManageOrganizationComponent implements OnInit {
   }
 
 }
+

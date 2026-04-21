@@ -90,17 +90,17 @@
                 </mat-form-field>
               </div>
 
-              <!-- Policy -->
+              <!-- Roles -->
               <div class="col-12 col-md-6 mb-3">
                 <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>User Policy</mat-label>
-                  <mat-select formControlName="policy_name">
-                    <mat-option *ngFor="let p of policyArr" [value]="p.policy_name">
-                      {{ p.policy_name }}
+                  <mat-label>Assigned Roles</mat-label>
+                  <mat-select formControlName="roles" multiple>
+                    <mat-option *ngFor="let r of roleOptions" [value]="r._id">
+                      {{ r.name }}
                     </mat-option>
                   </mat-select>
-                  <mat-error *ngIf="form.controls.policy_name.touched && form.controls.policy_name.invalid">
-                    Policy is required.
+                  <mat-error *ngIf="form.controls.roles.touched && form.controls.roles.invalid">
+                    At least one role is required.
                   </mat-error>
                 </mat-form-field>
               </div>

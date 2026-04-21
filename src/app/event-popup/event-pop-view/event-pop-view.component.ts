@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { EventPopDetailsComponent } from './event-pop-details/event-pop-details.component';
@@ -34,13 +34,10 @@ export class EventPopViewComponent implements OnInit {
   ];
   selectedTab = 'event-details';
   updateval: any = false;
-  tabPolicy: any;
 
-  constructor(private policyService: PolicyService) { }
+  constructor(private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
-
     const eventTabMap: { [key: string]: string } = {
       'event-details': 'eventBasicDetails',
       'event-menu': 'eventMenu',
@@ -50,7 +47,7 @@ export class EventPopViewComponent implements OnInit {
 
     this.eventViewList = this.eventViewList.filter((item: any) => {
       const policyKey = eventTabMap[item.path];
-      if (policyKey && this.tabPolicy[policyKey] === false) {
+      if (policyKey && !this.permissionsService.hasPermission(policyKey)) {
         return false;
       }
       return true;
@@ -98,3 +95,4 @@ export class EventPopViewComponent implements OnInit {
     return icons[path] || 'tab';
   }
 }
+

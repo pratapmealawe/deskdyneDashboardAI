@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+﻿import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { orderStatusMapper } from 'src/config/order-status.config';
@@ -7,7 +7,7 @@ import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { DeliveryOrderService } from '@service/delivery-order.service';
 import { GoogleMapService } from '@service/google-map.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { ToasterService } from '@service/toaster.service';
 
@@ -104,10 +104,10 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
     private sendDataToComponent: SendDataToComponent,
     private deliveryOrderService: DeliveryOrderService,
     private modalService: NgbModal,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private confirmationModalService: ConfirmationModalService
   ) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
   ngOnInit(): void {
@@ -503,3 +503,4 @@ export class OrderSubscriptionPackageCardComponent implements OnInit {
 
   
 }
+

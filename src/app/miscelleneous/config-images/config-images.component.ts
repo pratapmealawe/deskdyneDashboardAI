@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { ToasterService } from '@service/toaster.service';
 
 @Component({
@@ -28,10 +28,10 @@ export class ConfigImagesComponent {
   constructor(
     private apiMainService: ApiMainService,
     private modalService: NgbModal,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private toasterService: ToasterService
   ) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
   ngOnInit(): void {
@@ -158,3 +158,4 @@ export class ConfigImagesComponent {
     }
   }
 }
+

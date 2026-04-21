@@ -57,8 +57,13 @@
                 <div class="labelData">{{ admin.name }}</div>
               </div>
               <div class="col-md-2">
-                <div class="labelText">Policy</div>
-                <div class="labelData">{{ admin.policy_name }}</div>
+                <div class="labelText">Assigned Roles</div>
+                <div class="labelData">
+                   <div *ngFor="let r of admin.roles" class="badge bg-secondary me-1" style="font-size: 0.75rem;">
+                     {{ r.name }}
+                   </div>
+                   <span *ngIf="!admin.roles || admin.roles.length === 0">N/A</span>
+                </div>
               </div>
               <div class="col-md-2">
                 <div class="labelText">Phone</div>

@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
@@ -8,7 +8,7 @@ import { ApiMainService } from '@service/apiService/apiMain.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { ToasterService } from '@service/toaster.service';
 import { DataFormatService } from '@service/data-format.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import * as XLSX from 'xlsx';
 
@@ -82,14 +82,14 @@ export class AddOutletComponent implements OnInit {
     private dialog: MatDialog,
     private confirmationModal: ConfirmationModalService,
     private dataFormatService: DataFormatService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private toasterService: ToasterService,
     public dialogRef: MatDialogRef<AddOutletComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.createForm();
     this.populateForEditIfNeeded();
 
@@ -841,3 +841,4 @@ export class AddOutletComponent implements OnInit {
     }
   }
 }
+

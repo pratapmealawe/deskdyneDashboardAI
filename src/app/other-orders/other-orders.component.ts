@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
 
 import { CommonModule } from '@angular/common';
@@ -33,16 +33,15 @@ export class OtherOrdersComponent implements OnInit {
     { name: 'Virtual Cafeteria', path: 'virtualCafeteria', icon: 'restaurant', policyKey: 'otherVirtualCafeteria' },
     { name: 'Consumption Order', path: 'consumptionOrder', icon: 'shopping_bag', policyKey: 'otherConsumptionOrder' }
   ];
-  tabPolicy: any;
   selectedTabIndex = 0;
 
   constructor(
     private sendDataToComponent: SendDataToComponent,
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) { }
 
   ngOnInit(): void {
-    this.orderTypeList = this.policyService.filterTabsByPolicy(this.orderTypeList);
+    this.orderTypeList = this.permissionsService.filterTabsByPolicy(this.orderTypeList);
   }
 
   onCustomTabChange(index: number): void {
@@ -64,3 +63,4 @@ export class OtherOrdersComponent implements OnInit {
     // Cross-component refresh logic can be added here if needed
   }
 }
+

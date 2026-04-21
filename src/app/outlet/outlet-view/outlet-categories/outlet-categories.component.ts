@@ -1,8 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+﻿import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { LocalStorageService } from '@service/local-storage.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -25,11 +25,11 @@ export class OutletCategoriesComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private apiMainService: ApiMainService,
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) {}
 
   ngOnInit() {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.categoryForm = this.formBuilder.group({
       categories: this.formBuilder.array([this.createCategory()]),
     });
@@ -88,3 +88,4 @@ export class OutletCategoriesComponent implements OnInit {
     }
   }
 }
+

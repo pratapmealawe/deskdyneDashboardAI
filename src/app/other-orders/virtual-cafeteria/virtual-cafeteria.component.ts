@@ -1,10 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+﻿import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { b2b_orders_mapper } from 'src/config/b2b_orders.mapping.config';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { LocalStorageService } from '@service/local-storage.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
 
 import { CommonModule } from '@angular/common';
@@ -69,9 +69,9 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
     private apiMainService: ApiMainService,
     private modalService: NgbModal,
     private localStorageService: LocalStorageService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private sendDataToComponent: SendDataToComponent) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
   ngOnInit(): void {
@@ -288,3 +288,4 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
   }
 
 }
+

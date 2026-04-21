@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { SuggestionsFeedbackService } from '@service/suggestions-feedback.service';
 import { SearchFilterService } from '@service/search-filter.service';
 import { LocalStorageService } from '@service/local-storage.service';
@@ -39,14 +39,14 @@ export class SuggessionsFeedbacksComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private suggestionsFeedbackService: SuggestionsFeedbackService,
     private searchService: SearchFilterService,
     private localStorageService: LocalStorageService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.admin = this.localStorageService.getCacheData("ADMIN_PROFILE");
 
     this.getFeedbackList();
@@ -106,7 +106,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
   }
 
   // =========================
-  // 🔎 Search with SearchService
+  // ðŸ”Ž Search with SearchService
   // =========================
 
   // called from (input)="searchFilter($event)"
@@ -133,7 +133,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
     const text = (this.searchText || '').trim();
 
     if (!text) {
-      // no search → full list
+      // no search â†’ full list
       this.filteredFeedback = temp;
     } else {
       // use your generic search service
@@ -159,7 +159,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
   }
 
   // =========================
-  // 📄 Paginator (frontend-side)
+  // ðŸ“„ Paginator (frontend-side)
   // =========================
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
@@ -174,7 +174,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
   }
 
   // =========================
-  // ✅ Acknowledge with comment + status
+  // âœ… Acknowledge with comment + status
   // =========================
 
   // Start editing acknowledge (show inline form)
@@ -182,7 +182,7 @@ export class SuggessionsFeedbacksComponent implements OnInit {
     feedback._isEditing = true;
     // default comment draft
     feedback._commentDraft = feedback._commentDraft || '';
-    // default status: if New → InProgress, else existing
+    // default status: if New â†’ InProgress, else existing
     feedback._statusDraft =
       feedback.acknowledgeStatus && feedback.acknowledgeStatus !== 'New'
         ? feedback.acknowledgeStatus
@@ -265,3 +265,4 @@ export class SuggessionsFeedbacksComponent implements OnInit {
     saveAs(blob, fileName);
   }
 }
+

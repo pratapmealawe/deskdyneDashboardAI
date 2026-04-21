@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+﻿import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
 import { NavigationEnd, Router } from '@angular/router';
@@ -8,7 +8,7 @@ import { ToasterService } from '@service/toaster.service';
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { GoogleMapService } from '@service/google-map.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
 import { CommonModule } from '@angular/common';
@@ -86,7 +86,7 @@ export class AddOrganizationComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private googleMapService: GoogleMapService,
     private chgDetRef: ChangeDetectorRef,
     private dialog: MatDialog,
@@ -131,7 +131,7 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     const cacheOrg = this.runtimeStorageService.getCacheData('VIEW_ORG');
     if (cacheOrg && cacheOrg._id) {
       this.viewOrg = cacheOrg;
@@ -717,3 +717,4 @@ export class AddOrganizationComponent implements OnInit {
     this.cafeteriaFormGroup.get('cafeteria_gstin')?.patchValue(gstinValue);
   }
 }
+

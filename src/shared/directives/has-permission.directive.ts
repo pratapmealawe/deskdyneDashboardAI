@@ -1,5 +1,5 @@
 import { Directive, Input, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 @Directive({
   selector: '[appHasPermission]',
@@ -16,7 +16,7 @@ export class HasPermissionDirective implements OnInit {
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) { }
 
   ngOnInit(): void {
@@ -24,7 +24,7 @@ export class HasPermissionDirective implements OnInit {
   }
 
   private _updateView(): void {
-    const allowed = this.policyService.hasPermission(this._permissionKey);
+    const allowed = this.permissionsService.hasPermission(this._permissionKey);
     if (allowed && !this._hasView) {
       this.viewContainerRef.createEmbeddedView(this.templateRef);
       this._hasView = true;

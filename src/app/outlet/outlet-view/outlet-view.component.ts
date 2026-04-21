@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { OutletDetailsComponent } from './outlet-details/outlet-details.component';
@@ -38,15 +38,14 @@ export class OutletViewComponent implements OnInit {
   ];
   selectedTab = 'outlet-details';
   updateval: any = false;
-  tabPolicy: any;
 
   constructor(
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) { }
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
-    this.outletViewList = this.policyService.filterTabsByPolicy(this.outletViewList);
+    this.outletViewList = this.permissionsService.filterTabsByPolicy(this.outletViewList);
     if (this.selectedTab) {
       const foundIndex = this.outletViewList.findIndex(x => x.path === this.selectedTab);
       if (foundIndex === -1 && this.outletViewList.length > 0) {
@@ -85,3 +84,4 @@ export class OutletViewComponent implements OnInit {
     return icons[path] || 'tab';
   }
 }
+

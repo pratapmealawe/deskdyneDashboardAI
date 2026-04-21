@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { MatTabChangeEvent } from '@angular/material/tabs';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 @Component({
   selector: 'app-billing',
@@ -20,17 +20,20 @@ export class BillingComponent implements OnInit {
   billingTypes: any = [];
   selectedTab: string = '';
   selectedTabIndex: number = 0;
-  tabPolicy: any;
 
-  constructor(private policyService: PolicyService) { }
+  constructor(private permissionsService: PermissionsService) { }
 
   ngOnInit(): void {
-    this.tabPolicy = this.policyService.getCurrentTabPolicy();
     this.filterBillingTabs();
   }
 
   filterBillingTabs() {
-    this.billingTypes = this.allBillingTypes.filter((tab: any) => !tab.policyKey || this.tabPolicy[tab.policyKey]);
+    this.billingTypes = this.allBillingTypes.filter((tab: any) => {
+      if (!tab.policyKey) return true;
+      // Convert legacy policy keys to granular RBAC keys, e.g. billingoutletWallet -> billing:outlet_wallet:read
+      // Or just check if the key exists directly as a permission
+      return this.permissionsService.hasPermission(tab.policyKey);
+    });
 
     if (this.billingTypes.length) {
       this.selectedTab = this.billingTypes[0].type;
@@ -43,3 +46,4 @@ export class BillingComponent implements OnInit {
     this.selectedTab = this.billingTypes[event.index].type;
   }
 }
+

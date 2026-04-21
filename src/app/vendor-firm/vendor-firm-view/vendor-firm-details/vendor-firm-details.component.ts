@@ -1,8 +1,8 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 
 @Component({
@@ -18,7 +18,7 @@ export class VendorFirmDetailsComponent implements OnInit {
   filteredOutletList: any;
   bankDetails: any;
 
-  constructor(private policyService: PolicyService, private runtimeStorageService: RuntimeStorageService, private router: Router) {
+  constructor(private permissionsService: PermissionsService, private runtimeStorageService: RuntimeStorageService, private router: Router) {
   }
 
   editOrg() {
@@ -27,7 +27,7 @@ export class VendorFirmDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.bankDetails = this.vendorObj.bank_details;
     this.filteredOutletList = this.filterOutletListByCafeteria(this.vendorObj.outletList);
 
@@ -67,3 +67,4 @@ export class VendorFirmDetailsComponent implements OnInit {
   }
 
 }
+

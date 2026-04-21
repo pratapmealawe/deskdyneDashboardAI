@@ -1,8 +1,8 @@
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+﻿import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoaderstatusService } from '@service/loaderstatus.service';
 import { environment } from '@environments/environment';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddOutletComponent } from '../../add-outlet/add-outlet.component';
@@ -32,14 +32,14 @@ export class OutletDetailsComponent implements OnInit {
     private router: Router,
     private runtimeStorageService: RuntimeStorageService,
     private loadingService: LoaderstatusService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private dialog: MatDialog,
     private apiMainService: ApiMainService
   ) {
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.normalizeHolidays();
   }
 
@@ -117,3 +117,4 @@ export class OutletDetailsComponent implements OnInit {
     return labels[type] || (type ? type.charAt(0).toUpperCase() + type.slice(1) : '-');
   }
 }
+

@@ -1,9 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
+﻿import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -28,7 +28,7 @@ export class OutletVendorComponent implements OnInit {
     private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) { }
 
 
@@ -83,3 +83,4 @@ export class OutletVendorComponent implements OnInit {
     }
   }
 }
+

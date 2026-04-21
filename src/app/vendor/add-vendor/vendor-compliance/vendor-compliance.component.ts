@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, Input, ViewChild } from '@angular/core';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { environment } from '@environments/environment';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { MatDialog } from '@angular/material/dialog';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -47,8 +47,8 @@ export class VendorComplianceComponent implements OnInit {
     file: undefined
   }
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private policyService: PolicyService) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private permissionsService: PermissionsService) {
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
 
@@ -334,3 +334,4 @@ export class VendorComplianceComponent implements OnInit {
     }
   }
 }
+

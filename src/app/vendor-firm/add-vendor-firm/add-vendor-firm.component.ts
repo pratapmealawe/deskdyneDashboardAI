@@ -1,10 +1,10 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+﻿import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
 import { SetGeolocationComponent } from '../../common-components/set-geolocation/set-geolocation.component';
@@ -80,7 +80,7 @@ export class AddVendorFirmComponent {
     private apiMainService: ApiMainService,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     @Optional() public dialogRef: MatDialogRef<AddVendorFirmComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -88,7 +88,7 @@ export class AddVendorFirmComponent {
   }
 
   ngOnInit() {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.createForm();
     this.updateVendorFirm();
     if (this.data && this.data._id) {

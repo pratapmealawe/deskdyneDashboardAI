@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+﻿import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
@@ -9,7 +9,7 @@ import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { DataFormatService } from '@service/data-format.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -57,13 +57,13 @@ export class AddEventPopComponent implements OnInit {
     private runtimeStorageService: RuntimeStorageService,
     private dataFormatService: DataFormatService,
     private modalService: NgbModal,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     public dialogRef: MatDialogRef<AddEventPopComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.createForm();
     this.setDate();
     this.populateForEditIfNeeded();
@@ -354,3 +354,4 @@ export class AddEventPopComponent implements OnInit {
     });
   }
 }
+

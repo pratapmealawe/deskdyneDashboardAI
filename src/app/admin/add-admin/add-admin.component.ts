@@ -2,11 +2,10 @@ import { Component, OnDestroy, OnInit, inject, Inject, Optional } from '@angular
 import { AbstractControl, FormControl, FormGroup, ValidatorFn, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Subject, startWith, takeUntil } from 'rxjs';
-
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 // OLD IMAGE METHOD (NgbModal)
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -30,7 +29,7 @@ interface AdminForm {
   phoneNo: FormControl<string>;
   email: FormControl<string | null>;
   role: FormControl<string>;
-  policy_name: FormControl<string>;
+  roles: FormControl<string[]>;       // New RBAC field
   orgId: FormControl<string>;        // required for ORGADMIN/HYPERPURE_ADMIN/HYPERPURE_POC
   cafeIds: FormControl<string[]>;    // required for HYPERPURE_POC
 }
@@ -74,7 +73,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
       validators: [Validators.email], // not required; empty is OK
     }),
     role: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    policy_name: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    roles: new FormControl<string[]>([], { nonNullable: true, validators: [Validators.required] }),
     orgId: new FormControl('', { nonNullable: true }),       // dynamic validators
     cafeIds: new FormControl<string[]>([], { nonNullable: true }), // dynamic validators
   });
@@ -102,7 +101,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     { text: 'Hyperpure POC', value: 'HYPERPURE_POC' },
   ];
 
-  policyArr: any[] = [];
+  roleOptions: any[] = [];
   orgList: Organization[] = [];
   cafeteriaOptions: Cafeteria[] = [];
 
@@ -113,15 +112,13 @@ export class AddAdminComponent implements OnInit, OnDestroy {
   private api = inject(ApiMainService);
   private router = inject(Router);
   private store = inject(RuntimeStorageService);
-  private policyService = inject(PolicyService);
+  private permissionsService = inject(PermissionsService);
   private dialog = inject(MatDialog);
   private dialogRef = inject(MatDialogRef<AddAdminComponent>, { optional: true });
   private data = inject(MAT_DIALOG_DATA, { optional: true });
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-
-    this.loadPolicies();
+    this.btnPolicy = { add: true, edit: true, delete: true }; // Temporary placeholder or implement granular check
     this.loadOrganizations();
 
     // edit mode (from cache or dialog data)
@@ -194,7 +191,9 @@ export class AddAdminComponent implements OnInit, OnDestroy {
       phoneNo: (admin?.phoneNo ?? '') as string,
       email: (admin?.email ?? null) as string | null,
       role: (admin?.role ?? '') as string,
-      policy_name: ((admin?.policy_name ?? admin?.policy) ?? '') as string,
+      roles: Array.isArray(admin?.roles) 
+        ? admin.roles.map((r: any) => r._id || r) 
+        : [],
       orgId: (admin?.orgDetails?._id ?? '') as string,
       cafeIds: Array.isArray(admin?.cafeDetails)
         ? admin.cafeDetails
@@ -208,10 +207,10 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     }
   }
 
-  private async loadPolicies() {
+  private async loadRoles() {
     try {
-      const arr: any = await this.api.getAllPolicy();
-      this.policyArr = Array.isArray(arr) ? arr : [];
+      const arr: any = await this.api.getAllRoles();
+      this.roleOptions = Array.isArray(arr) ? arr : [];
     } catch (e) {
     }
   }
@@ -299,7 +298,7 @@ export class AddAdminComponent implements OnInit, OnDestroy {
     formData.append('phoneNo', val.phoneNo);
     if (val.email) formData.append('email', val.email);
     formData.append('role', val.role);
-    formData.append('policy_name', val.policy_name);
+    formData.append('roles', JSON.stringify(val.roles));
 
     // OrgDetails / CafeDetails as per role
     const org = this.orgList.find((o) => o._id === val.orgId) || null;

@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { AddressItem, OutletItem, PopupItem, Vendor } from 'src/app/common/interfaces/vendor.interface';
 import { CommonModule } from '@angular/common';
@@ -58,13 +58,13 @@ export class AddVendorCommponent {
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private runtimeStorageService: RuntimeStorageService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private dialog: MatDialog,
     public dialogRef: MatDialogRef<AddVendorCommponent>
   ) { }
 
   ngOnInit() {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.getAllVendors();
     this.createForm();
     this.updateVendor();
@@ -313,3 +313,4 @@ export class AddVendorCommponent {
     }
   }
 }
+

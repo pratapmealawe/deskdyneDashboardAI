@@ -1,8 +1,8 @@
-import { Component, OnInit, Input, ViewChild, ElementRef, Inject, Optional } from '@angular/core';
+﻿import { Component, OnInit, Input, ViewChild, ElementRef, Inject, Optional } from '@angular/core';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { environment } from '@environments/environment';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { LocalStorageService } from '@service/local-storage.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
@@ -79,11 +79,11 @@ export class VendorComplianceComponent implements OnInit {
   @ViewChild('panFileRef') panFileRef!: ElementRef;
 
   constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private localStorageService: LocalStorageService, private matDialog: MatDialog,
     @Optional() public dialogRef: MatDialogRef<VendorComplianceComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+    this.access = this.permissionsService.getCurrentButtonPolicy();
     this.venderDetails = data || this.venderDetails || {};
   }
 
@@ -579,3 +579,4 @@ export class VendorComplianceComponent implements OnInit {
   }
 
 }
+

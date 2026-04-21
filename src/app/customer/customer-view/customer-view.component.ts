@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 @Component({
   selector: 'app-customer-view',
@@ -21,11 +21,15 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   selectedTab = 'userDetails';
   selectedTabIndex: number = 0;
 
-  tabPolicy: any;
 
-  constructor(private policyService: PolicyService) { }
+  constructor(private permissionsService: PermissionsService) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {
+    this.userViewList = this.userViewList.filter(tab => {
+      if (!tab.policyKey) return true;
+      return this.permissionsService.hasPermission(tab.policyKey);
+    });
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     // 
@@ -67,3 +71,4 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   }
 
 }
+

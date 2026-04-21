@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,7 +6,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { MaterialModule } from '../../../material.module';
 import { PdfuploadComponent } from '../../../common-components/pdfupload/pdfupload.component';
 
@@ -47,8 +47,8 @@ export class OrgComplianceComponent implements OnInit {
     file: undefined
   }
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private policyService: PolicyService) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private permissionsService: PermissionsService) {
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
 
@@ -334,3 +334,4 @@ export class OrgComplianceComponent implements OnInit {
     }
   }
 }
+

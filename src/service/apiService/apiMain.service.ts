@@ -229,29 +229,63 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.searchOutlet, searchObj);
   }
 
-  getAllPolicy() {
-    return this.runTimeCacheInterceptor('POLICIES', this.apiConfigService.apiEndPointObj.getAllPolicy);
+  getAllPermissions() {
+    return this.runTimeCacheInterceptor('PERMISSIONS', this.apiConfigService.apiEndPointObj.getAllPermissions);
   }
 
-  getPolicyByName(name: string) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getPolicyByName, { policy_name: name });
+  getAllRoles() {
+    return this.runTimeCacheInterceptor('ROLES', this.apiConfigService.apiEndPointObj.getAllRoles);
   }
 
-  addPolicy(policy: any) {
-    this.runtimeStorageService.resetCacheData('POLICIES');
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addPolicy, policy);
+  addRole(role: any) {
+    this.runtimeStorageService.resetCacheData('ROLES');
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addRole, role);
   }
 
-  updatePolicy(id: any, data: any) {
-    this.runtimeStorageService.resetCacheData('POLICIES');
-    const urlObj = this.apiConfigService.apiEndPointObj.updatePolicy;
+  updateRole(id: any, data: any) {
+    this.runtimeStorageService.resetCacheData('ROLES');
+    const urlObj = this.apiConfigService.apiEndPointObj.updateRole;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, data);
   }
 
-  deletePolicy(id: any) {
-    this.runtimeStorageService.resetCacheData('POLICIES');
-    const urlObj = this.apiConfigService.apiEndPointObj.deletePolicy;
+  deleteRole(id: any) {
+    this.runtimeStorageService.resetCacheData('ROLES');
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteRole;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  getRoleById(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getRole;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  createResource(resourceName: string, description?: string) {
+    this.runtimeStorageService.resetCacheData('PERMISSIONS');
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createResource, { resourceName, description });
+  }
+
+  deleteResource(resourceName: string) {
+    this.runtimeStorageService.resetCacheData('PERMISSIONS');
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteResource;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${resourceName}`, method: urlObj.method });
+  }
+
+  addPermissionKey(resource: string, action: string) {
+    this.runtimeStorageService.resetCacheData('PERMISSIONS');
+    const urlObj = this.apiConfigService.apiEndPointObj.addPermissionKey;
+    return this.apiHttpService.REQUEST(urlObj, { resource, action });
+  }
+
+  deletePermissionKey(id: string) {
+    this.runtimeStorageService.resetCacheData('PERMISSIONS');
+    const urlObj = this.apiConfigService.apiEndPointObj.deletePermissionKey;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
+  }
+
+  updateResource(resourceName: string, data: { newResourceName: string, description?: string }) {
+    this.runtimeStorageService.resetCacheData('PERMISSIONS');
+    const urlObj = this.apiConfigService.apiEndPointObj.updateResource;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${resourceName}`, method: urlObj.method }, data);
   }
 
   saveAdminProfile(data: any) {

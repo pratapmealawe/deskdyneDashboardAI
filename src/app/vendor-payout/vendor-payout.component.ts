@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { LocalStorageService } from '@service/local-storage.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { SearchFilterService } from '@service/search-filter.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
@@ -32,7 +32,7 @@ export class VendorPayoutComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private localStorageService: LocalStorageService,
     private confirmationModalService: ConfirmationModalService,
     private searchService: SearchFilterService,
@@ -123,3 +123,4 @@ export class VendorPayoutComponent implements OnInit {
     });
   }
 }
+

@@ -1,4 +1,4 @@
-import { RuntimeStorageService } from '@service/runtime-storage.service';
+﻿import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { environment } from '@environments/environment';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
@@ -9,7 +9,7 @@ import { GoogleMapService } from '@service/google-map.service';
 import { ToasterService } from '@service/toaster.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -48,3 +48,4 @@ export class OrderCardComponent implements OnInit {
 
 
 }
+

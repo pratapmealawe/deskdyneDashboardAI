@@ -38,7 +38,7 @@
   </div>
 
   <!-- Employee List Section -->
-  <div class="modern-card animate-fadeIn" *ngIf="getCafeteriaEmployees().length > 0">
+  <div class="modern-card animate-fadeIn">
     <div class="card-header with-actions">
       <div class="d-flex align-items-center gap-3">
         <div class="icon-box info">
@@ -99,15 +99,23 @@
       </div>
 
       <!-- Empty States -->
-      <div class="empty-state-modern py-5" *ngIf="searchTerm && getFilteredEmployees().length === 0">
+      <div class="empty-state-modern py-5" *ngIf="selectedCafeteriaIds.length === 0">
+        <div class="empty-icon-wrap">
+          <mat-icon>touch_app</mat-icon>
+        </div>
+        <h4>No Cafeteria Selected</h4>
+        <p>Please select at least one cafeteria from the header above to view its employees</p>
+      </div>
+
+      <div class="empty-state-modern py-5" *ngIf="selectedCafeteriaIds.length > 0 && searchTerm && getFilteredEmployees().length === 0">
         <div class="empty-icon-wrap">
           <mat-icon>search_off</mat-icon>
         </div>
-        <h4>No match for"{{ searchTerm }}"</h4>
+        <h4>No match for "{{ searchTerm }}"</h4>
         <p>Try refining your search terms or clearing filters</p>
       </div>
 
-      <div class="empty-state-modern py-5" *ngIf="!searchTerm && getFilteredEmployees().length === 0">
+      <div class="empty-state-modern py-5" *ngIf="selectedCafeteriaIds.length > 0 && !searchTerm && getFilteredEmployees().length === 0">
         <div class="empty-icon-wrap">
           <mat-icon>person_off</mat-icon>
         </div>

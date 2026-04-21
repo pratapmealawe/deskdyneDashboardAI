@@ -1,9 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { AddVendorCommponent } from '../add-vendor/add-vendor.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -44,7 +44,7 @@ export class VendorCardComponent implements OnInit {
     private router: Router,
     private runtimeStorageService: RuntimeStorageService,
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private confirmationModalService: ConfirmationModalService,
     private dialog: MatDialog
   ) { }
@@ -54,7 +54,7 @@ export class VendorCardComponent implements OnInit {
   }
   ngOnInit(): void {
 
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.updatePage();
   }
 
@@ -111,3 +111,4 @@ export class VendorCardComponent implements OnInit {
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 }
+

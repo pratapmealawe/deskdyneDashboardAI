@@ -38,8 +38,8 @@ const routes: Routes = [
       { path: 'customer', loadChildren: () => import('./customer/customer.module').then(m => m.CustomerModule) },
 
       { path: 'bulkMasterMenu', loadComponent: () => import('./bulk-master-menu/bulk-master-menu.component').then(m => m.BulkMasterMenuComponent) },
-      { path: 'policy', loadComponent: () => import('./policy/policy.component').then(m => m.PolicyComponent) },
       { path: 'admin', loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent) },
+      { path: 'rbac-management', loadComponent: () => import('./rbac-management/rbac-management.component').then(m => m.RbacManagementComponent) },
     
       { path: 'faq', loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => m.FaqModule) },
       { path: 'configVariable', loadChildren: () => import('./miscelleneous/config-variable/config-variable.module').then(m => m.ConfigVariableModule) },

@@ -1,10 +1,10 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+﻿import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { ToasterService } from '@service/toaster.service';
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { PolicyService } from '@service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -46,14 +46,14 @@ export class OutletCardComponent implements OnInit {
   outletUpdated: any[] = []
 
   constructor(
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private toaster: ToasterService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.outletUpdated = this.outlet;
   }
 
@@ -101,3 +101,4 @@ export class OutletCardComponent implements OnInit {
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 }
+
