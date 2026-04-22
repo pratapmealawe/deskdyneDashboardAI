@@ -1,0 +1,200 @@
+<!-- Vendor Details Modern Design -->
+<div class="vendor-details-container">
+
+  <!-- Hero Profile Section -->
+  <div class="profile-hero">
+    <div class="hero-content">
+      <div class="avatar-section">
+        <div class="avatar-circle">
+          {{ getInitials(vendorObj?.vendorFirmName) }}
+        </div>
+        <div class="avatar-status" [class.active]="bankDetails?.bankVerified"></div>
+      </div>
+      <div class="hero-info">
+        <h1 class="vendor-name">{{ vendorObj?.vendorFirmName }}</h1>
+        <div class="quick-badges">
+          <span class="quick-badge">
+            <mat-icon>phone</mat-icon>
+            {{ vendorObj?.vendorFirmPhoneNo }}
+          </span>
+          <span class="quick-badge">
+            <mat-icon>email</mat-icon>
+            {{ vendorObj?.vendorFirmEmail }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <button mat-raised-button class="edit-btn" (click)="editOrg()">
+      <mat-icon>edit</mat-icon>
+      Edit Vendor
+    </button>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Bank Details Card -->
+    <div class="info-card bank-card">
+      <div class="card-header">
+        <div class="header-icon bank">
+          <mat-icon>account_balance</mat-icon>
+        </div>
+        <h3>Bank Details</h3>
+        <div class="verification-badge" [ngClass]="bankDetails?.bankVerified ?'verified' :'pending'">
+          <mat-icon>{{ bankDetails?.bankVerified ?'verified' :'pending' }}</mat-icon>
+          {{ bankDetails?.bankVerified ?'Verified' :'Pending' }}
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>business</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Bank Name</span>
+              <span class="info-value">{{ bankDetails?.bank_name ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>credit_card</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Account Number</span>
+              <span class="info-value">{{ bankDetails?.accountNo ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>person</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Account Name</span>
+              <span class="info-value">{{ bankDetails?.accountName ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>tag</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">IFSC Code</span>
+              <span class="info-value">{{ bankDetails?.ifsc ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width" *ngIf="bankDetails?.upi">
+            <div class="info-icon"><mat-icon>qr_code_2</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">UPI ID</span>
+              <span class="info-value">{{ bankDetails?.upi }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Address Details Card -->
+    <div class="info-card address-card">
+      <div class="card-header">
+        <div class="header-icon address">
+          <mat-icon>location_on</mat-icon>
+        </div>
+        <h3>Addresses</h3>
+        <span class="count-badge">{{ vendorObj?.address?.length || 0 }}</span>
+      </div>
+      <div class="card-body">
+        <div class="address-timeline" *ngIf="vendorObj?.address?.length > 0; else noAddress">
+          <div class="timeline-item" *ngFor="let address of vendorObj.address; let last = last">
+            <div class="timeline-dot"></div>
+            <div class="timeline-content">
+              <div class="location-tag">{{ address.location }}</div>
+              <p class="address-text">{{ address.address1 }}<span *ngIf="address.address2">, {{ address.address2
+                  }}</span></p>
+              <p class="landmark" *ngIf="address.landmark">
+                <mat-icon>near_me</mat-icon> {{ address.landmark }}
+              </p>
+            </div>
+            <div class="timeline-line" *ngIf="!last"></div>
+          </div>
+        </div>
+        <ng-template #noAddress>
+          <div class="empty-state-mini">
+            <mat-icon>location_off</mat-icon>
+            <span>No addresses added</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- POC Details Card -->
+    <!-- <div class="info-card poc-card">
+      <div class="card-header">
+        <div class="header-icon poc">
+          <mat-icon>contacts</mat-icon>
+        </div>
+        <h3>Point of Contact</h3>
+        <span class="count-badge">{{ vendorObj?.poc_details?.length || 0 }}</span>
+      </div>
+      <div class="card-body">
+        <div class="poc-grid" *ngIf="vendorObj?.poc_details?.length > 0; else noPoc">
+          <div class="poc-item" *ngFor="let poc of vendorObj.poc_details">
+            <div class="poc-avatar">{{ getInitials(poc.poc_name) }}</div>
+            <div class="poc-info">
+              <span class="poc-name">{{ poc.poc_name }}</span>
+              <div class="poc-contact">
+                <a href="tel:{{ poc.poc_phoneNo }}" class="contact-link">
+                  <mat-icon>phone</mat-icon> {{ poc.poc_phoneNo }}
+                </a>
+                <a href="mailto:{{ poc.poc_email }}" class="contact-link" *ngIf="poc.poc_email">
+                  <mat-icon>email</mat-icon> {{ poc.poc_email }}
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noPoc>
+          <div class="empty-state-mini">
+            <mat-icon>person_off</mat-icon>
+            <span>No contacts added</span>
+          </div>
+        </ng-template>
+      </div>
+    </div> -->
+
+  </div>
+
+  <!-- Cafeterias & Outlets Section -->
+  <div class="cafeteria-section" *ngIf="filteredOutletList?.length > 0">
+    <div class="section-header">
+      <div class="header-icon cafe">
+        <mat-icon>storefront</mat-icon>
+      </div>
+      <h2>Cafeterias & Outlets</h2>
+      <span class="count-badge large">{{ filteredOutletList.length }}</span>
+    </div>
+
+    <div class="cafeteria-grid">
+      <div class="cafe-card" *ngFor="let cafe of filteredOutletList">
+        <div class="cafe-header">
+          <div class="cafe-icon">
+            <mat-icon>restaurant</mat-icon>
+          </div>
+          <div class="cafe-title">
+            <h4>{{ cafe?.cafeteria_name }}</h4>
+            <span class="cafe-location">
+              <mat-icon>place</mat-icon>
+              {{ cafe?.location }} • {{ cafe?.cafeteria_city }}
+            </span>
+          </div>
+        </div>
+        <div class="cafe-address">
+          <mat-icon>home</mat-icon>
+          <span>{{ cafe?.address1 }}<span *ngIf="cafe?.address2">, {{ cafe?.address2 }}</span></span>
+        </div>
+        <div class="outlets-section" *ngIf="cafe.outlets?.length > 0">
+          <span class="outlets-label">Linked Outlets</span>
+          <div class="outlet-chips">
+            <span class="outlet-chip" *ngFor="let outlet of cafe.outlets">
+              <mat-icon>store</mat-icon>
+              {{ outlet?.outletName }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,152 @@
+<!-- ── Outlet Detail Component ───────────────────────────────────────────── -->
+<div class="outlet-detail-root" *ngIf="outlet">
+
+  <!-- Hero Banner Card -->
+  <div class="outlet-hero-card">
+    <!-- Cover Image -->
+    <div class="hero-image-wrap">
+      <img class="hero-image"
+        [src]="outlet.imageUrl ? imageUrl + outlet.imageUrl :'assets/images/dummyUpload.png'"
+        [alt]="outlet?.outletName" />
+      <div class="hero-overlay"></div>
+    </div>
+
+    <!-- Hero Info Panel -->
+    <div class="hero-body">
+      <div class="hero-top-row">
+        <!-- Outlet Identity -->
+        <div class="hero-identity">
+          <div class="hero-icon-circle">
+            <mat-icon>storefront</mat-icon>
+          </div>
+          <div class="hero-text">
+            <h2 class="hero-name">{{ outlet?.outletName }}</h2>
+            <p class="hero-cafe" *ngIf="outlet?.cafeteriaDetails?.cafeteria_name">
+              <mat-icon>local_cafe</mat-icon>
+              {{ outlet.cafeteriaDetails.cafeteria_name }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="hero-stats">
+          <div class="stat-pill" *ngIf="outlet?.menuList?.length">
+            <div class="stat-pill-icon">
+              <mat-icon>restaurant_menu</mat-icon>
+            </div>
+            <div>
+              <span class="stat-pill-num">{{ outlet.menuList.length }}</span>
+              <span class="stat-pill-lbl">Menu Items</span>
+            </div>
+          </div>
+
+          <div class="stat-pill" *ngIf="outlet?.cafeteriaDetails?.cafeteria_city">
+            <div class="stat-pill-icon">
+              <mat-icon>location_on</mat-icon>
+            </div>
+            <div>
+              <span class="stat-pill-num">{{ outlet?.cafeteriaDetails?.cafeteria_city }}</span>
+              <span class="stat-pill-lbl">City</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Address Row -->
+      <div class="hero-address-row" *ngIf="outlet?.cafeteriaDetails?.address1">
+        <mat-icon>place</mat-icon>
+        <span>
+          {{ outlet?.cafeteriaDetails?.address1 }}<span *ngIf="outlet?.cafeteriaDetails?.address2">, {{ outlet?.cafeteriaDetails?.address2 }}</span>,
+          {{ outlet?.cafeteriaDetails?.location }},
+          {{ outlet?.cafeteriaDetails?.cafeteria_city }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu Items Section Card -->
+  <div class="menu-section-card">
+    <!-- Section Header -->
+    <div class="section-header">
+      <div class="section-header-left">
+        <div class="section-icon">
+          <mat-icon>restaurant_menu</mat-icon>
+        </div>
+        <div>
+          <h2 class="section-title">Menu Items</h2>
+          <p class="section-sub">All items available at this counter</p>
+        </div>
+      </div>
+
+      <div class="section-header-right">
+        <span class="item-count-badge">{{ filteredMenuList.length }} items</span>
+        <!-- Inline Search -->
+        <div class="menu-search-wrap">
+          <mat-icon>search</mat-icon>
+          <input
+            type="text"
+            placeholder="Search items..."
+            [value]="searchText"
+            (input)="onSearch($event)" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Menu Grid -->
+    <div class="menu-grid" *ngIf="filteredMenuList.length > 0; else emptyMenu">
+      <div class="menu-item-card" *ngFor="let menu of filteredMenuList">
+
+        <!-- Item Image -->
+        <div class="menu-item-image-wrap">
+          <img class="menu-item-image"
+            [src]="menu.imageUrl ? imageUrl + menu.imageUrl :'assets/images/dummyUpload.png'"
+            [alt]="menu?.itemName" />
+          <!-- Veg/NonVeg/Jain indicator -->
+          <div class="item-type-indicator" *ngIf="menu?.itemType"
+            [ngClass]="getItemTypeClass(menu.itemType)"
+            [matTooltip]="menu.itemType">
+            <span></span>
+          </div>
+          <!-- Category ribbons -->
+          <span class="category-ribbon" *ngIf="menu?.category">{{ menu.category }}</span>
+        </div>
+
+        <!-- Item Content -->
+        <div class="menu-item-body">
+          <div class="menu-item-header">
+            <h6 class="menu-item-name">{{ menu?.itemName }}</h6>
+          </div>
+
+          <p class="menu-item-desc" *ngIf="menu?.description">{{ menu.description }}</p>
+
+          <div class="menu-item-footer">
+            <span class="price-badge">₹{{ menu?.price }}</span>
+            <span class="serving-chip" *ngIf="menu?.itemServingType">{{ menu.itemServingType }}</span>
+          </div>
+
+          <!-- Contains Section -->
+          <div *ngIf="menu?.itemContains?.length > 0" class="contains-section">
+            <span class="contains-label">Contains:</span>
+            <div class="contains-chips">
+              <span class="contains-chip" *ngFor="let item of menu.itemContains">
+                {{ item?.name }}{{ item?.quantity ?' —' + item.quantity :'' }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <ng-template #emptyMenu>
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <mat-icon>no_meals</mat-icon>
+        </div>
+        <h3>No Items Found</h3>
+        <p>{{ searchText ?'Try a different search term.' :'No menu items available for this outlet.' }}</p>
+      </div>
+    </ng-template>
+  </div>
+
+</div>

@@ -1,0 +1,167 @@
+@use 'styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.admin-header {
+  @include mixin.responsive-header;
+  background-color: transparent;
+}
+
+.header-actions {
+  @include mixin.responsive-flex-wrapper(1rem);
+  flex-grow: 1;
+  justify-content: flex-end;
+
+  .input-wrapper {
+    min-width: 200px;
+
+    @media(max-width: 768px) {
+      width: 100%;
+      display: block !important;
+    }
+  }
+}
+
+.search-input {
+  @include mixin.mat-form-field-responsive();
+}
+
+mat-card {
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.incident-page {
+  .page-title {
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .search-field {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .incident-list {
+    .incident-card {
+      border-radius: 12px;
+      transition: box-shadow 0.2s ease, transform 0.1s ease;
+
+      &:hover {
+        transform: translateY(-1px);
+      }
+    }
+  }
+
+  .labelText {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6b7280;
+  }
+
+  .labelData {
+    font-size: 0.9rem;
+    color: #111827;
+  }
+
+  .statusBtn {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .mat-mdc-button-base {
+      font-size: 0.75rem !important;
+      line-height: 1.4;
+      padding-inline: 10px;
+    }
+  }
+
+
+  .status-chip {
+    font-size: 0.75rem;
+    text-transform: capitalize;
+
+    &.created {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    &.acknowledged {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    &.inReview {
+      background: #e0e7ff;
+      color: #3730a3;
+    }
+
+    &.blocked {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    &.resolved {
+      background: #dcfce7;
+      color: #166534;
+    }
+  }
+
+  .text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 768px) {
+    .incident-card {
+      padding: 8px;
+    }
+  }
+}
+
+/* OLD UTILITY STYLES (kept so other parts don't break) */
+
+.left_arrow {
+  background: #eeeeee;
+  border-radius: 8px;
+  padding: 4px 10px;
+}
+
+.action_btn {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  align-items: center;
+
+  i {
+    cursor: pointer;
+  }
+}
+
+/* You still use this class name from old code in some places */
+.statusBtn {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .btn {
+    font-size: 0.8rem !important;
+  }
+}
+
+.searchDiv {
+  position: relative;
+
+  i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translate(0px, -50%);
+  }
+
+  input {
+    padding-left: 35px;
+  }
+}

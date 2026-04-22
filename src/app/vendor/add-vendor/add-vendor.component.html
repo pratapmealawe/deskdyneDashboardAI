@@ -1,457 +1,391 @@
-<div class="bgpadding1">
-  <!-- <button class="btn btn-danger btn-sm" (click)="goBack()">Back</button> -->
-  <div class="d-flex mb-4 align-items-center gap-3">
-    <button mat-flat-button (click)="goBack()"><mat-icon>arrow_back</mat-icon>Back</button>
-    <div class="heading">{{title |titlecase}}</div>
-  </div>
-  <div [formGroup]="form" class="mt-2">
-    <div class="cardDesign m-1 mb-3 d-flex flex-wrap">
-
-      <!-- Vendor Firm -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="form-group">
-          <label class="field-label">Vendor Firm <span class="required-input"> * </span></label>
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-select placeholder="Select Vendor Firm" formControlName="vendorId"
-              (selectionChange)="changeVendorFirm($event)">
-              <mat-option value="" disabled>Select Vendor Firm</mat-option>
-              <mat-option *ngFor="let firm of vendorList" [value]="firm._id">
-                {{ firm.vendorFirmName }}
-              </mat-option>
-            </mat-select>
-            <mat-error *ngIf="hasError(form, 'vendorId', 'required')">
-              Vendor Firm is required
-            </mat-error>
-          </mat-form-field>
+<div class="add-vendor-container">
+  <form [formGroup]="form" autocomplete="off">
+    <!-- HEADER -->
+    <div class="page-header-card mb-4">
+      <div class="header-content">
+        <div class="d-flex align-items-center gap-3">
+          <button mat-icon-button (click)="goBack()" class="back-btn">
+            <mat-icon>arrow_back</mat-icon>
+          </button>
+          <div>
+            <h1 class="page-title">{{title | titlecase}}</h1>
+            <p class="page-subtitle">Configure vendor details, roles, and access.</p>
+          </div>
         </div>
-      </div>
 
-      <!-- Vendor Name -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="form-group">
-          <label class="field-label">Vendor Name <span class="required-input"> * </span></label>
-          <mat-form-field appearance="outline" class="w-100">
-            <input matInput placeholder="Vendor Name" formControlName="vendorName" />
-            <mat-error *ngIf="hasError(form, 'vendorName', 'required')">
-              Vendor Name is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
+        <div class="header-right">
+          <!-- Info Button -->
+          <button mat-icon-button [matMenuTriggerFor]="infoMenu" class="info-btn" matTooltip="Required Fields">
+            <mat-icon>info</mat-icon>
+          </button>
+          <mat-menu #infoMenu="matMenu">
+            <div class="info-menu-content" (click)="$event.stopPropagation()">
+              <div class="info-header">
+                <mat-icon>checklist</mat-icon>
+                <span>Required Fields</span>
+              </div>
+              <ul class="info-list required">
+                <li><mat-icon>check_circle</mat-icon> Vendor Firm</li>
+                <li><mat-icon>check_circle</mat-icon> Vendor Name</li>
+                <li><mat-icon>check_circle</mat-icon> Phone Number</li>
+                <li><mat-icon>check_circle</mat-icon> Email</li>
+                <li><mat-icon>check_circle</mat-icon> Role & Access Type</li>
+                <li><mat-icon>check_circle</mat-icon> At least 1 Address</li>
+              </ul>
+              <div class="info-header mt-2">
+                <mat-icon>stars</mat-icon>
+                <span>Recommended</span>
+              </div>
+              <ul class="info-list recommended">
+                <li><mat-icon>add_circle_outline</mat-icon> Linked Outlets/Popups</li>
+              </ul>
+            </div>
+          </mat-menu>
 
-      <!-- Vendor Phone -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="form-group">
-          <label class="field-label">Vendor Phone No <span class="required-input"> * </span></label>
-          <mat-form-field appearance="outline" class="w-100">
-            <input matInput placeholder="Vendor Phone No" formControlName="vendorPhoneNo" />
-            <mat-error *ngIf="hasError(form, 'vendorPhoneNo', 'required')">
-              Vendor Phone No is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <!-- Vendor Email -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="form-group">
-          <label class="field-label">Vendor Email <span class="required-input"> * </span></label>
-          <mat-form-field appearance="outline" class="w-100">
-            <input matInput placeholder="Vendor Email" formControlName="vendorEmail" />
-            <mat-error *ngIf="hasError(form, 'vendorEmail', 'required')">
-              Vendor Email is required
-            </mat-error>
-            <mat-error *ngIf="hasError(form, 'vendorEmail', 'pattern')">
-              Enter a valid email
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <!-- Vendor Role -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="form-group">
-          <label class="field-label">Vendor Role <span class="required-input"> * </span></label>
-          <mat-form-field appearance="outline" class="w-100">
-            <mat-select placeholder="Select Role" formControlName="vendorRole" [(value)]="defaultRole">
-              <mat-option *ngFor="let role of vendorRole" [value]="role">{{ role }}</mat-option>
-            </mat-select>
-            <mat-error *ngIf="hasError(form, 'vendorRole', 'required')">
-              Vendor Role is required
-            </mat-error>
-          </mat-form-field>
-        </div>
-      </div>
-
-      <!-- Vendor Access -->
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="form-group">
-          <label class="field-label">Vendor Access</label>
-          <mat-radio-group formControlName="accessType" class="d-flex gap-3">
-            <mat-radio-button value="outlet" color="primary">Outlet Access</mat-radio-button>
-            <mat-radio-button value="daily_bulk" color="primary">Daily And Bulk Access</mat-radio-button>
-          </mat-radio-group>
+          <!-- Validity Badge -->
+          <div class="status-pill" [ngClass]="isAddVendorValid() ?'valid' :'invalid'">
+            <mat-icon>{{ isAddVendorValid() ?'check_circle' :'info' }}</mat-icon>
+            <span>{{ isAddVendorValid() ?'Ready to Save' :'Incomplete' }}</span>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- Add Address Button -->
-    <!-- <div class="mt-3">
-      <button mat-raised-button color="primary" (click)="addAddress()" [disabled]="!this.form.get('vendorId').value">Add
-        Address</button>
-    </div> -->
-    <div class="cardDesign m-1 mb-3">
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <h5>Add Address</h5>
-        <button mat-raised-button color="primary" (click)="addAddress()" [disabled]="!this.form.get('vendorId').value">
-          Add Address </button>
+    <div class="row g-4 justify-content-center">
+      <!-- LEFT COLUMN: Configuration -->
+      <div class="col-12 col-xl-4">
+
+        <!-- VENDOR FIRM (Primary Driver) -->
+        <div class="modern-card mb-4">
+          <div class="card-header">
+            <div class="icon-box primary">
+              <mat-icon>business</mat-icon>
+            </div>
+            <h3>Vendor Firm</h3>
+          </div>
+          <div class="card-body">
+            <mat-form-field appearance="outline" class="w-100 custom-field">
+              <mat-label>Select Vendor Firm</mat-label>
+              <mat-select formControlName="vendorId" (selectionChange)="changeVendorFirm($event)">
+                <mat-option *ngFor="let firm of vendorList" [value]="firm._id">
+                  {{ firm.vendorFirmName }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="hasError(form,'vendorId','required')">
+                Vendor Firm is required
+              </mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- ROLE & ACCESS -->
+        <div class="modern-card mb-4">
+          <div class="card-header">
+            <div class="icon-box secondary">
+              <mat-icon>admin_panel_settings</mat-icon>
+            </div>
+            <h3>Role & Access</h3>
+          </div>
+          <div class="card-body">
+            <div class="mb-4">
+              <mat-form-field appearance="outline" class="w-100 custom-field">
+                <mat-label>Vendor Role</mat-label>
+                <mat-select formControlName="vendorRole" [(value)]="defaultRole">
+                  <mat-option *ngFor="let role of vendorRole" [value]="role">{{ role }}</mat-option>
+                </mat-select>
+                <mat-error *ngIf="hasError(form,'vendorRole','required')">Required</mat-error>
+              </mat-form-field>
+            </div>
+
+            <label class="section-label">Access Type</label>
+            <mat-radio-group formControlName="accessType" class="custom-radio-group">
+              <mat-radio-button value="outlet" color="primary">Outlet Access</mat-radio-button>
+              <mat-radio-button value="daily_bulk" color="primary">Daily & Bulk Access</mat-radio-button>
+              <mat-radio-button value="popup" color="primary">Popup Access</mat-radio-button>
+            </mat-radio-group>
+          </div>
+        </div>
+
+        <!-- POS & DASHBOARD -->
+        <div class="modern-card mb-4">
+          <div class="card-header">
+            <div class="icon-box purple">
+              <mat-icon>point_of_sale</mat-icon>
+            </div>
+            <h3>POS & Dashboard</h3>
+          </div>
+          <div class="card-body">
+
+            <!-- Toggles -->
+            <div class="toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-label">POS Enabled</span>
+                <span class="toggle-desc">Enable Point of Sale access</span>
+              </div>
+              <mat-slide-toggle formControlName="isPos" color="primary"></mat-slide-toggle>
+            </div>
+
+            <div class="toggle-row mt-3">
+              <div class="toggle-info">
+                <span class="toggle-label">Dashboard Enabled</span>
+                <span class="toggle-desc">Enable dashboard access</span>
+              </div>
+              <mat-slide-toggle formControlName="isDashboard" color="primary"></mat-slide-toggle>
+            </div>
+
+            <!-- POS Entry Type (top-level, shown when isPos is true) -->
+            <mat-form-field *ngIf="form.get('isPos')?.value" appearance="outline" class="w-100 custom-field mt-3">
+              <mat-label>POS Entry Type</mat-label>
+              <mat-select formControlName="posEntry">
+                <mat-option value="">None</mat-option>
+                <mat-option value="outlet">Outlet</mat-option>
+                <mat-option value="kiosk">Kiosk</mat-option>
+                <mat-option value="qr">QR</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <!-- POS Configuration (shown only when isPos is true) -->
+            <div *ngIf="form.get('isPos')?.value" formGroupName="posConfiguration" class="pos-config-section mt-3">
+              <div class="config-section-label">POS Configuration</div>
+              <div class="config-options">
+                <mat-checkbox formControlName="enablePrinter" color="primary">Enable Printer</mat-checkbox>
+                <mat-checkbox formControlName="enableScanner" color="primary">Enable Scanner</mat-checkbox>
+                <mat-checkbox formControlName="enableSecondDisplay" color="primary">Enable Second Display</mat-checkbox>
+                <mat-checkbox formControlName="enableManualPrint" color="primary">Enable Manual Print</mat-checkbox>
+                <mat-checkbox formControlName="kitchenKot" color="primary">Kitchen KOT</mat-checkbox>
+                <mat-checkbox formControlName="userKot" color="primary">User KOT</mat-checkbox>
+                <mat-checkbox formControlName="userKotOnlyForManual" color="primary">User KOT (Manual Only)</mat-checkbox>
+              </div>
+            </div>
+
+            <!-- Login Code (edit mode only) -->
+            <div *ngIf="showUpdate" class="login-code-section mt-3">
+              <div class="config-section-label">Login Code</div>
+              <div class="login-code-display" *ngIf="loginCode; else noLoginCode">
+                <span class="code-value">{{ loginCode }}</span>
+                <button mat-icon-button (click)="refreshLoginCode()" matTooltip="Refresh Login Code" class="refresh-btn">
+                  <mat-icon>refresh</mat-icon>
+                </button>
+              </div>
+              <ng-template #noLoginCode>
+                <button mat-stroked-button color="primary" class="generate-code-btn" (click)="createLoginCode()">
+                  <mat-icon>vpn_key</mat-icon> Generate Login Code
+                </button>
+              </ng-template>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-      <div class="no-address" *ngIf="selectedAddressList.length == 0 ">
-        <p>No Address added yet.</p>
-        <small>Click on <strong>"Add Address"</strong> to add a Address details.</small>
-      </div>
-      <div class="address-list" *ngIf="selectedAddressList.length > 0">
-         <div *ngFor="let address of selectedAddressList; let i = index" class="mt-2 p-3">
-        <div class="row">
-          <div class="col-lg-10">
+
+      <!-- RIGHT COLUMN: Details -->
+      <div class="col-12 col-xl-8">
+
+        <!-- BASIC DETAILS -->
+        <div class="modern-card mb-4">
+          <div class="card-header">
+            <div class="icon-box info">
+              <mat-icon>person</mat-icon>
+            </div>
+            <h3>Basic Details</h3>
+          </div>
+          <div class="card-body">
             <div class="row">
-              <div class="col-lg-3">
-                <div class="labelText">Address 1</div>
-                <div class="labelData">{{ address.address1 }}</div>
+              <div class="col-12 col-md-6 mb-3">
+                <mat-form-field appearance="outline" class="w-100 custom-field">
+                  <mat-label>Vendor Name</mat-label>
+                  <input matInput formControlName="vendorName" placeholder="e.g. John Doe" />
+                  <mat-icon matSuffix class="text-muted">badge</mat-icon>
+                  <mat-error *ngIf="hasError(form,'vendorName','required')">Name is required</mat-error>
+                </mat-form-field>
               </div>
-              <div class="col-lg-3">
-                <div class="labelText">Address 2</div>
-                <div class="labelData">{{ address.address2 }}</div>
+              <div class="col-12 col-md-6 mb-3">
+                <mat-form-field appearance="outline" class="w-100 custom-field">
+                  <mat-label>Phone No</mat-label>
+                  <input matInput formControlName="vendorPhoneNo" placeholder="e.g. 9876543210" />
+                  <mat-icon matSuffix class="text-muted">phone</mat-icon>
+                  <mat-error *ngIf="hasError(form,'vendorPhoneNo','required')">Phone is required</mat-error>
+                  <mat-error *ngIf="hasError(form,'vendorPhoneNo','pattern')">Enter valid 10 digit number</mat-error>
+                </mat-form-field>
               </div>
-              <div class="col-lg-3">
-                <div class="labelText">Landmark</div>
-                <div class="labelData">{{ address.landmark }}</div>
-              </div>
-              <div class="col-lg-3">
-                <div class="labelText">Location</div>
-                <div class="labelData">{{ address.location }}</div>
-              </div>
-              <div class="col-lg-3">
-                <div class="labelText">Latitude</div>
-                <div class="labelData">{{ address.geolocation.lat }}</div>
-              </div>
-              <div class="col-lg-3">
-                <div class="labelText">Longitude</div>
-                <div class="labelData">{{ address.geolocation.lng }}</div>
+              <div class="col-12 mb-3">
+                <mat-form-field appearance="outline" class="w-100 custom-field">
+                  <mat-label>Email</mat-label>
+                  <input matInput formControlName="vendorEmail" placeholder="e.g. john@example.com" />
+                  <mat-icon matSuffix class="text-muted">email</mat-icon>
+                  <mat-error *ngIf="hasError(form,'vendorEmail','required')">Email is required</mat-error>
+                  <mat-error *ngIf="hasError(form,'vendorEmail','pattern')">Invalid Email</mat-error>
+                </mat-form-field>
               </div>
             </div>
           </div>
-          <div class="col-lg-2 d-flex align-items-start justify-content-end">
-            <button mat-icon-button color="warn" (click)="deleteAddress(i)">
-              <mat-icon>delete</mat-icon>
+        </div>
+
+        <!-- ADDRESS SECTION -->
+        <div class="modern-card mb-4">
+          <div class="card-header with-actions">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box warning">
+                <mat-icon>location_on</mat-icon>
+              </div>
+              <h3>Addresses</h3>
+            </div>
+            <button mat-stroked-button color="primary" (click)="addAddress()"
+              [disabled]="!form.get('vendorId')?.value" class="action-btn">
+              <mat-icon>add</mat-icon> Add Address
             </button>
           </div>
-        </div>
-      </div>
-      </div>
-    </div>
-     
-    </div>
+          <div class="card-body">
+            <div class="empty-placeholder" *ngIf="selectedAddressList.length === 0">
+              <mat-icon>map</mat-icon>
+              <p>No addresses added yet.</p>
+            </div>
 
-  <!-- <div [formGroup]="form" class="mt-2">
-    <div class="row">
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="labelText form-label">Vendor Firm</div>
-        <select class="inline" class="selectStyle" [(ngModel)]="vendorId" formControlName="vendorId"
-          (change)="changeVendorFirm($event)">
-          <option value="" selected disabled>Select Vendor Firm</option>
-          <option *ngFor="let firm of vendorList" [value]="firm._id">
-            {{ firm?.vendorFirmName }}
-          </option>
-        </select>
-        <div class="error-text" *ngIf="form.controls.vendorId.errors?.required && showError">
-          *Vendor Firm is required
-        </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="labelText form-label">Vendor Name</div>
-        <input type="text" class="form-control" placeholder="Vendor Name" formControlName="vendorName" />
-        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
-          *Vendor name is required
-        </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="labelText form-label">Vendor Phone No</div>
-        <input type="text" class="form-control" placeholder="Vendor Phone No" formControlName="vendorPhoneNo" />
-        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
-          *Vendor phone no is required
-        </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="labelText form-label">Vendor email</div>
-        <input type="text" class="form-control" placeholder="Vendor Email" formControlName="vendorEmail" />
-        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
-          *Vendor email is required
-        </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="labelText form-label">Vendor Role</div>
-        <select class="inline" formControlName="vendorRole" class="selectStyle" [(ngModel)]="defaultRole">
-          <option *ngFor="let role of vendorRole" [value]="role">
-            {{ role }}
-          </option>
-        </select>
-        <div class="error-text" *ngIf="form.controls.vendorName.errors?.required && showError">
-          *Vendor role is required
-        </div>
-      </div>
-      <div class="col-12 col-md-6 col-lg-4">
-        <div class="labelText form-label">Vendor Access</div>
-        <mat-radio-group aria-labelledby="example-radio-group-label" class="example-radio-group"
-          formControlName="accessType">
-          <mat-radio-button class="example-radio-button" [value]="'outlet'">
-            Outlet Access
-          </mat-radio-button>
-          <mat-radio-button class="example-radio-button" [value]="'daily_bulk'">
-            Daily And Bulk Access
-          </mat-radio-button>
-        </mat-radio-group>
-      </div>
-    </div>
-
-    <div class="btn btn-warning btn-sm mt-2 text-white" (click)="addAddress()">
-      Add Address
-    </div>
-    <div class="cardDesign mt-1" *ngFor="let address of selectedAddressList; index as i">
-      <div class="row card-wrapper">
-        <div class="col-lg-10">
-          <div class="row">
-            <div class="col-12 col-md-4 col-lg-12">
-              <div class="row">
-                <div class="col-lg-3">
-                  <div class="labelText">Address 1</div>
-                  <div class="labelData">{{ address.address1 }}</div>
-                </div>
-                <div class="col-lg-3">
-                  <div class="labelText">Address 2</div>
-                  <div class="labelData">{{ address.address1 }}</div>
-                </div>
-                <div class="col-lg-3">
-                  <div class="labelText">Landmark</div>
-                  <div class="labelData">{{ address.landmark }}</div>
-                </div>
-                <div class="col-lg-3">
-                  <div class="labelText">Location</div>
-                  <div class="labelData">
-                    {{ address.location }}
+            <div *ngIf="selectedAddressList.length > 0" class="list-container">
+              <div *ngFor="let address of selectedAddressList; index as i" class="list-item">
+                <div class="item-content">
+                  <div class="item-main">
+                    <div class="d-flex align-items-center mb-1 gap-2">
+                      <h4 class="m-0">{{ address.address1 }}</h4>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 text-muted small">
+                      <span class="d-flex align-items-center gap-1">
+                        <mat-icon style="font-size: 14px; height: 14px; width: 14px;">place</mat-icon>
+                        {{ address.location ||'No Location' }}
+                      </span>
+                      <span class="d-flex align-items-center gap-1" *ngIf="address.landmark">
+                        <mat-icon style="font-size: 14px; height: 14px; width: 14px;">flag</mat-icon>
+                        {{ address.landmark }}
+                      </span>
+                    </div>
                   </div>
                 </div>
-                <div class="col-lg-3">
-                  <div class="labelText">
-                    Latitude
-                  </div>
-                  <div class="labelData">
-                    {{ address.geolocation.lat }}
-                  </div>
-                </div>
-                <div class="col-lg-3">
-                  <div class="labelText">Longitude</div>
-                  <div class="labelData">
-                    {{ address.geolocation.lat }}
-                  </div>
-                </div>
+                <button mat-icon-button color="warn" (click)="deleteAddress(i)" class="delete-btn">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
               </div>
             </div>
           </div>
         </div>
-        <div class="col-lg-2">
-          <i class="bi bi-trash" (click)="deleteAddress(i)"></i>
-        </div>
-      </div>
-    </div>
-  </div> -->
 
-  <!-- <div class="btn btn-success btn-sm mt-2" (click)="addOutlet()">
-    Add Outlet
-  </div> -->
-  <!-- <button mat-raised-button (click)="addOutlet()" [disabled]="!this.form.get('vendorId').value" color="primary">Add
-    Outlet</button> -->
-  <div class="cardDesign m-1 mb-3">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-      <h5>Add Outlet</h5>
-      <button mat-raised-button (click)="addOutlet()" [disabled]="!this.form.get('vendorId').value" color="primary">
-        Add Outlet </button>
-    </div>
-    <div class="no-address" *ngIf="selectedOutletsList.length == 0">
-      <p>No Outlet added yet.</p>
-      <small>Click on <strong>"Add Outlet"</strong> to add a Outlet details.</small>
-    </div>
-    <div class="outlet-list" *ngIf="selectedOutletsList.length > 0" class="mt-2 p-3">
-        <div class="mt-1" *ngFor="let outlet of selectedOutletsList; index as i">
-    <div class="row card-wrapper d-flex justify-content-between p-2">
-      <div class="col-lg-10">
-        <div class="row gap-2">
-          <div class="col-12 col-md-4 col-lg-12">
-            <div class="row">
-              <div class="col-lg-3">
-                <div class="labelText">Outlet Name</div>
-                <div class="labelData">{{ outlet.outletName }}</div>
+        <!-- OUTLET SECTION -->
+        <div class="modern-card mb-4" *ngIf="form.get('accessType')?.value ==='outlet'">
+          <div class="card-header with-actions">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box success">
+                <mat-icon>store</mat-icon>
               </div>
-              <div class="col-lg-3">
-                <div class="labelText">Outlet Type</div>
-                <div class="labelData">{{ outlet.outletType }}</div>
-              </div>
-              <div class="col-lg-3">
-                <div class="labelText">Description</div>
-                <div class="labelData">{{ outlet.outletDescription }}</div>
-              </div>
-              <div class="col-lg-3">
-                <div class="labelText">Organization</div>
-                <div class="labelData">
-                  {{ outlet.organizationDetails.organization_name }}
+              <h3>Outlets</h3>
+            </div>
+            <button mat-stroked-button color="primary" (click)="addOutlet()"
+              [disabled]="!form.get('vendorId')?.value" class="action-btn">
+              <mat-icon>add</mat-icon> Add Outlet
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="empty-placeholder" *ngIf="selectedOutletsList.length === 0">
+              <mat-icon>storefront</mat-icon>
+              <p>No outlets added yet.</p>
+            </div>
+
+            <div *ngIf="selectedOutletsList.length > 0" class="list-container">
+              <div *ngFor="let outlet of selectedOutletsList; index as i" class="list-item">
+                <div class="item-content">
+                  <div class="item-main">
+                    <div class="d-flex align-items-center mb-1 gap-2">
+                      <h4 class="m-0">{{ outlet.outletName }}</h4>
+                      <!-- <span class="badge-type">{{ outlet.outletType }}</span> -->
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 text-muted small">
+                      <span class="d-flex align-items-center gap-1">
+                        <mat-icon style="font-size: 14px; height: 14px; width: 14px;">business</mat-icon>
+                        {{ outlet.organizationDetails?.organization_name ||'-' }}
+                      </span>
+                      <span class="d-flex align-items-center gap-1">
+                        <mat-icon style="font-size: 14px; height: 14px; width: 14px;">restaurant</mat-icon>
+                        {{ outlet.cafeteriaDetails?.cafeteria_name ||'-' }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="col-lg-3">
-                <div class="labelText">Cafeteria Name</div>
-                <div class="labelData">
-                  {{ outlet.cafeteriaDetails.cafeteria_name }}
-                </div>
+                <button mat-icon-button color="warn" (click)="deleteOutlet(i)" class="delete-btn">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="col-lg-1 d-flex align-items-center">
-        <!-- <i class="bi bi-trash" (click)="deleteOutlet(i)"></i> -->
-        <mat-icon color="warn" (click)="deleteOutlet(i)">delete</mat-icon>
+
+        <!-- POPUP SECTION -->
+        <div class="modern-card mb-4" *ngIf="form.get('accessType')?.value ==='popup'">
+          <div class="card-header with-actions">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box purple">
+                <mat-icon>event</mat-icon>
+              </div>
+              <h3>Event Popups</h3>
+            </div>
+            <button mat-stroked-button color="primary" (click)="addPopup()"
+              [disabled]="!form.get('vendorId')?.value" class="action-btn">
+              <mat-icon>add</mat-icon> Add Popup
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="empty-placeholder" *ngIf="selectedPopupsList?.length == 0">
+              <mat-icon>event_busy</mat-icon>
+              <p>No popups added yet.</p>
+            </div>
+
+            <div *ngIf="selectedPopupsList.length > 0" class="list-container">
+              <div *ngFor="let popup of selectedPopupsList; index as i" class="list-item">
+                <div class="item-content">
+                  <div class="item-main">
+                    <div class="d-flex align-items-center mb-1 gap-2">
+                      <h4 class="m-0">{{ popup.popupName }}</h4>
+                      <span class="badge-type" [class.open]="popup.popupType">{{ popup.popupType ?'Opened' :'Closed'
+                        }}</span>
+                    </div>
+                    <div class="d-flex flex-wrap gap-3 text-muted small">
+                      <span class="d-flex align-items-center gap-1">
+                        <mat-icon style="font-size: 14px; height: 14px; width: 14px;">business</mat-icon>
+                        {{ popup.organizationDetails?.organization_name ||'-' }}
+                      </span>
+                      <span class="d-flex align-items-center gap-1">
+                        <mat-icon style="font-size: 14px; height: 14px; width: 14px;">restaurant</mat-icon>
+                        {{ popup.cafeteriaDetails?.cafeteria_name ||'-' }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <button mat-icon-button color="warn" (click)="deletePopup(i)" class="delete-btn">
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
-  </div>
+
+    <!-- STICKY ACTION BAR -->
+    <div class="action-bar-container">
+      <div class="action-bar">
+        <button class="btn-cancel" mat-button (click)="goBack()">Cancel</button>
+
+        <button class="btn-submit" mat-flat-button color="primary" (click)="submit('update')"
+          [disabled]="!isAddVendorValid()" *ngIf="showUpdate && (btnPolicy?.editVendor ?? true)">
+          <mat-icon>save</mat-icon> Save Changes
+        </button>
+
+        <button class="btn-submit" mat-flat-button color="primary" (click)="submit()" [disabled]="!isAddVendorValid()"
+          *ngIf="!showUpdate && (btnPolicy?.addVendor ?? true)">
+          <mat-icon>check</mat-icon> Create Vendor
+        </button>
+      </div>
     </div>
-  </div>
-
-  <button mat-raised-button (click)="submit('update')" [disabled]="!isAddVendorValid()"  color="primary" matTooltip="Update is enabled only when the form is fully filled"
-    *ngIf="showUpdate && true || btnPolicy?.editVendor">Update</button>
-  <!-- <div class="btn btn-primary btn-sm mt-1" (click)="submit('update')"
-    *ngIf="showUpdate && true || btnPolicy?.editVendor">
-    Update
-  </div> -->
-  <span matTooltip="Submit is enabled only when the form is fully filled">
-    <button mat-raised-button (click)="submit()" [disabled]="!isAddVendorValid()" color="primary"
-    *ngIf="!showUpdate && true || btnPolicy?.addVendor"  >Submit</button>
-  </span>
-
-  <!-- <button mat-raised-button (click)="submit()" [disabled]="!isAddVendorValid()" color="primary"  matTooltip="Submit is enabled only when the form is fully filled"
-    *ngIf="!showUpdate && true || btnPolicy?.addVendor"  >Submit</button> -->
-  <!-- <div class="btn btn-primary btn-sm mt-1" (click)="submit()" *ngIf="!showUpdate && true || btnPolicy?.addVendor">
-    Submit
-  </div> -->
+  </form>
 </div>
-<ng-template #outletModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Outlet List</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
 
-    <div class="mt-3">
-      <div *ngFor="let outlet of outletByCafeteriaList" class="cardDesign">
-        <div class="row card-wrapper">
-          <div class="col-12 col-md-4 col-lg-12">
-            <div class="row">
-              <div class="col-6 col-md-5 col-lg-2">
-                <input mdbCheckbox [(ngModel)]="outlet.isChecked" type="checkbox" />
-              </div>
-              <div class="col-6 col-md-5 col-lg-3">
-                <div class="labelText">outlet Name</div>
-                <div class="labelData">{{ outlet.outletName }}</div>
-              </div>
-              <div class="col-6 col-md-7 col-lg-3">
-                <div class="labelText">outlet type</div>
-                <div class="labelData">{{ outlet.outletType }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="btn btn-primary btn-sm mt-2" (click)="getSelectedOutlets()">
-      Add
-    </div>
-  </div>
-</ng-template>
-
-<ng-template #addressModal let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Select Address List</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <div class="mt-3">
-      <mat-radio-group>
-        <div *ngFor="let address of addressList" class="cardDesign"
-          [ngClass]="{'selected-card': selectedAddress === address}" (click)="selectAddress(address)">
-          <div class="row card-wrapper">
-            <div class="col-12 col-md-4 col-lg-12">
-              <div class="row">
-                <div class="col-6 col-md-5 col-lg-2 d-flex align-items-center">
-                  <mat-radio-button [checked]="selectedAddress === address" (change)="onRadioClick(address)"
-                    color="primary" (click)="$event.stopPropagation()">
-                  </mat-radio-button>
-                </div>
-                <div class="col-6 col-md-5 col-lg-2">
-                  <div class="labelText">Address 1</div>
-                  <div class="labelData">{{ address.address1 }}</div>
-                </div>
-                <div class="col-6 col-md-5 col-lg-2">
-                  <div class="labelText">Address 2</div>
-                  <div class="labelData">{{ address.address2 }}</div>
-                </div>
-                <div class="col-6 col-md-7 col-lg-2">
-                  <div class="labelText">Landmark</div>
-                  <div class="labelData">{{ address.landmark }}</div>
-                </div>
-                <div class="col-6 col-md-7 col-lg-2">
-                  <div class="labelText">Location</div>
-                  <div class="labelData">{{ address.location }}</div>
-                </div>
-              </div>
-              <div class="row mt-2">
-                <div class="col-6 col-md-7 col-lg-2"></div>
-                <div class="col-6 col-md-7 col-lg-2">
-                  <div class="labelText">Latitude</div>
-                  <div class="labelData">{{ address.geolocation.lat }}</div>
-                </div>
-                <div class="col-6 col-md-7 col-lg-2">
-                  <div class="labelText">Longitude</div>
-                  <div class="labelData">{{ address.geolocation.lng }}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </mat-radio-group>
-      <button class="btn btn-primary btn-sm mt-2" (click)="addSelectedAddress()">
-        Add
-      </button>
-    </div>
-  </div>
-</ng-template>
-
-<!-- <ng-template #geolocation let-modal>
-  <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Geolocation</h4>
-    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
-      <span aria-hidden="true">&times;</span>
-    </button>
-  </div>
-  <div class="modal-body">
-    <app-set-geolocation class="padding-bottom" (sendLocation)="updateLocation($event)"></app-set-geolocation>
-  </div>
-  <div class="modal-footer">
-    <div class="inline bgpadding1">
-      <button type="button" class="btn btn-primary" (click)="modal.close('add')">
-        Add
-      </button>
-    </div>
-  </div>
-</ng-template> -->
+

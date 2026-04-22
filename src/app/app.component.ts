@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import {
   NavigationEnd,
   NavigationError,
-  NavigationStart,
   Router,
 } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { WebNotificationService } from 'src/service/webNotification.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SuggestionsFeedbackService } from '@service/suggestions-feedback.service';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -15,28 +15,36 @@ import { WebNotificationService } from 'src/service/webNotification.service';
 })
 export class AppComponent {
   title = 'dashboard-admin';
-  currentRoute: any;
-  isShowHeader: boolean = false;
   private unsubscribe$ = new Subject<void>();
 
   constructor(
-    private webNotificationService: WebNotificationService,
     private router: Router,
-    private runtimeStorageService: RuntimeStorageService
+    private apiMainService: ApiMainService,
+    private suggestionsFeedbackService: SuggestionsFeedbackService
   ) {
-    this.webNotificationService.requestPermission();
     this.router.events
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe((event: any) => {
         if (event instanceof NavigationEnd) {
-          this.currentRoute = event.urlAfterRedirects || event.url;
-          this.isShowHeader =
-            this.currentRoute.startsWith('/login') ||
-            this.currentRoute.startsWith('/guest');
+          const currentRoute = event.urlAfterRedirects || event.url;
+          const isAuthRoute = !(currentRoute.startsWith('/login') || currentRoute.startsWith('/guest'));
+          
+          if (isAuthRoute) {
+            this.checkSession();
+            this.suggestionsFeedbackService.initializeCounts();
+          }
         } else if (event instanceof NavigationError) {
           console.error('Navigation Error:', event.error);
         }
       });
+  }
+
+  async checkSession() {
+    try {
+      await this.apiMainService.checkSession();
+    } catch (error) {
+      console.error('Session check failed:', error);
+    }
   }
 
   ngOnDestroy(): void {

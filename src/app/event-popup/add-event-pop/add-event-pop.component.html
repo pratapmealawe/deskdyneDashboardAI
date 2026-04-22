@@ -1,0 +1,243 @@
+<h2 mat-dialog-title class="dialog-header">
+    <div class="header-left">
+        <div class="title-group">
+            <h1 class="page-title">{{ showUpdate ?'Edit Event Popup' :'Add Event Popup' }}</h1>
+            <p class="page-subtitle">Configure promotion events, banners, and timing.</p>
+        </div>
+    </div>
+    <div class="header-right">
+        <button mat-icon-button class="info-btn" type="button">
+            <mat-icon>info</mat-icon>
+        </button>
+        <div class="status-pill" [class.active]="eventform.get('eventPopupOpened')?.value"
+            [class.inactive]="!eventform.get('eventPopupOpened')?.value">
+            <mat-icon>{{ eventform.get('eventPopupOpened')?.value ?'check_circle' :'pause_circle' }}</mat-icon>
+            {{ eventform.get('eventPopupOpened')?.value ?'Active' :'Paused' }}
+        </div>
+    </div>
+</h2>
+
+<mat-dialog-content class="dialog-content">
+    <form [formGroup]="eventform" id="addEventForm" (ngSubmit)="onSubmit(showUpdate ?'update' : undefined)">
+        <div class="row g-4 animate-fadeIn">
+            <!-- LEFT COLUMN: Appearance & Settings -->
+            <div class="col-12 col-lg-4">
+                <!-- CARD IMAGE -->
+                <div class="modern-card" style="animation-delay: 0.1s;">
+                    <div class="card-header">
+                        <div class="icon-box info">
+                            <mat-icon>image</mat-icon>
+                        </div>
+                        <h3>Event Image</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-wrapper">
+                            <input #fileInput type="file" class="uploadInput" accept="image/*"
+                                (change)="handleFileInput($event)" style="display: none;" />
+
+                            <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
+                                <img *ngIf="imageUrl" [src]="imageUrl" class="preview-image" />
+                                <div *ngIf="!imageUrl" class="placeholder-content">
+                                    <mat-icon>cloud_upload</mat-icon>
+                                    <span>Upload Image</span>
+                                </div>
+                                <div class="upload-overlay">
+                                    <span>Change Image</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMMERCIALS -->
+                <div class="modern-card" style="animation-delay: 0.2s;">
+                    <div class="card-header">
+                        <div class="icon-box warning">
+                            <mat-icon>payments</mat-icon>
+                        </div>
+                        <h3>Commercials</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <mat-form-field appearance="outline" class="w-100 custom-field">
+                                    <mat-label>Vendor Commission (%)</mat-label>
+                                    <input matInput type="number" formControlName="vendorCommissionPercentage" />
+                                    <span matSuffix>%</span>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12">
+                                <mat-form-field appearance="outline" class="w-100 custom-field">
+                                    <mat-label>MRP Commission (%)</mat-label>
+                                    <input matInput type="number" formControlName="MRPCommissionPercentage" />
+                                    <span matSuffix>%</span>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12">
+                                <mat-form-field appearance="outline" class="w-100 custom-field">
+                                    <mat-label>Subsidy (%)</mat-label>
+                                    <input matInput type="number" formControlName="subsidy" />
+                                    <span matSuffix>%</span>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONFIGURATION -->
+                <div class="modern-card" style="animation-delay: 0.3s;">
+                    <div class="card-header">
+                        <div class="icon-box secondary">
+                            <mat-icon>settings</mat-icon>
+                        </div>
+                        <h3>Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="switch-group">
+                            <mat-slide-toggle formControlName="eventPopupOpened" color="primary">Event Popup
+                                Opened</mat-slide-toggle>
+                        </div>
+                        <div class="mt-3">
+                            <mat-form-field appearance="outline" class="w-100 custom-field">
+                                <mat-label>Display Precedence</mat-label>
+                                <input matInput type="number" formControlName="precedence" />
+                                <mat-icon matSuffix>sort</mat-icon>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Details & Dates -->
+            <div class="col-12 col-lg-8">
+                <!-- BASIC INFO -->
+                <div class="modern-card" style="animation-delay: 0.4s;">
+                    <div class="card-header">
+                        <div class="icon-box primary">
+                            <mat-icon>campaign</mat-icon>
+                        </div>
+                        <h3>Event Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <mat-form-field appearance="outline" class="w-100 custom-field mb-3">
+                            <mat-label>Event Popup Name</mat-label>
+                            <input matInput placeholder="e.g. Summer Festival" formControlName="eventPopupName" />
+                            <mat-icon matSuffix>label</mat-icon>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline" class="w-100 custom-field">
+                            <mat-label>Description</mat-label>
+                            <textarea matInput rows="4" formControlName="eventPopupDescription"></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- DATE RANGE -->
+                <div class="modern-card" style="animation-delay: 0.5s;">
+                    <div class="card-header">
+                        <div class="icon-box success">
+                            <mat-icon>date_range</mat-icon>
+                        </div>
+                        <h3>Active Period</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <mat-form-field appearance="outline" class="w-100 custom-field">
+                                    <mat-label>Start Date</mat-label>
+                                    <input matInput [matDatepicker]="picker1" formControlName="eventPopupStartDate"
+                                        [min]="minDate">
+                                    <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker1></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <mat-form-field appearance="outline" class="w-100 custom-field">
+                                    <mat-label>End Date</mat-label>
+                                    <input matInput [matDatepicker]="picker2" formControlName="eventPopupEndDate"
+                                        [min]="eventform.get('eventPopupStartDate')?.value || minDate">
+                                    <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker2></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LOCATION -->
+                <div class="modern-card mb-0" style="animation-delay: 0.6s;">
+                    <div class="card-header with-actions">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="icon-box purple">
+                                <mat-icon>location_on</mat-icon>
+                            </div>
+                            <h3>Organization & Cafeteria</h3>
+                        </div>
+                        <button mat-icon-button color="primary" type="button" (click)="openOrgList()" class="action-btn">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="empty-placeholder py-3" *ngIf="!seletedCafetria">
+                            <mat-icon>business</mat-icon>
+                            <p>No organization selected yet.</p>
+                        </div>
+                        <div class="selected-cafe-info" *ngIf="seletedCafetria">
+                            <div class="info-item">
+                                <span class="label">Organization</span>
+                                <span class="value">{{ seletedCafetria.organizationDetails?.organization_name }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="label">Cafeteria</span>
+                                <span class="value">{{ seletedCafetria.cafeteriaDetails?.cafeteria_name }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BANNER IMAGES GALLERY -->
+        <div class="timing-section preorder-section mt-4" style="animation-delay: 0.7s;">
+            <div class="section-header with-actions">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon timing">
+                        <mat-icon>collections</mat-icon>
+                    </div>
+                    <h2>Promotion Banners</h2>
+                    <span class="count-badge" *ngIf="bannerPreviewUrls.length > 0">{{ bannerPreviewUrls.length }}</span>
+                </div>
+                <button mat-flat-button color="primary" type="button" (click)="bannerInput.click()">
+                    <mat-icon>add_photo_alternate</mat-icon> Add Banners
+                </button>
+                <input #bannerInput type="file" multiple accept="image/*" (change)="onBannerFilesSelected($event)"
+                    style="display: none;" />
+            </div>
+            <div class="card-body p-0">
+                <div class="banner-gallery-grid mt-3" *ngIf="bannerPreviewUrls.length > 0">
+                    <div class="banner-wrapper animate-popIn" *ngFor="let url of bannerPreviewUrls; let i = index">
+                        <img [src]="url" class="banner-img" />
+                        <button mat-icon-button class="remove-banner-btn" (click)="removeBannerImage(i)" type="button">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+                <div class="empty-placeholder py-5" *ngIf="bannerPreviewUrls.length === 0" (click)="bannerInput.click()"
+                    style="cursor: pointer;">
+                    <mat-icon>add_a_photo</mat-icon>
+                    <p>No promotion banners added yet. Click to upload.</p>
+                </div>
+            </div>
+        </div>
+    </form>
+</mat-dialog-content>
+
+<div mat-dialog-actions class="dialog-actions">
+    <div class="actions-pill">
+        <button class="btn-cancel" mat-button (click)="back()" type="button">Cancel</button>
+        <button class="btn-submit" [class.active]="eventform.valid && seletedCafetria" mat-flat-button type="submit"
+            form="addEventForm">
+            <mat-icon>check</mat-icon>
+            {{ showUpdate ?'Update Event' :'Create Event' }}
+        </button>
+    </div>
+</div>

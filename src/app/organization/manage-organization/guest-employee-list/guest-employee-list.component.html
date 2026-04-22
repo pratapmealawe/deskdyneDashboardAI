@@ -1,0 +1,275 @@
+<div class="employee-list-container animate-all">
+    <!-- Page Header Modern -->
+    <div class="bulk-dashboard-header" *ngIf="orgObj?.cafeteriaList?.length > 0">
+        <div class="header-card">
+            <div class="header-icon-box">
+                <mat-icon>person_add_alt</mat-icon>
+            </div>
+            <div class="header-text-content">
+                <h1 class="page-title">Guest Employees</h1>
+                <p class="page-subtitle">Manage temporary guest access and employee entries</p>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="premium-selector-label small fw-bold text-secondary mb-2">SELECT CAFETERIA</div>
+            <mat-radio-group color="primary" class="modern-radio-group" [(ngModel)]="selectedCafeteria" (change)="onCafeteriaChange($event)">
+                <div class="radio-item" *ngFor="let cafeteria of orgObj.cafeteriaList">
+                    <mat-radio-button [value]="cafeteria" [class.active]="selectedCafeteriaId === cafeteria.cafeteria_id">
+                        {{cafeteria.cafeteria_name}}
+                    </mat-radio-button>
+                </div>
+            </mat-radio-group>
+        </div>
+
+        <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+            <button mat-flat-button color="primary" class="btn-primary-action" (click)="addMultipleEmployee()" *ngIf="!showMultipleEmployeeForm">
+                <mat-icon>group_add</mat-icon>
+                Add Guest Employees
+            </button>
+        </div>
+    </div>
+
+    <!-- Bulk Add Form Section -->
+    <div class="modern-card animate-fadeIn mt-4" *ngIf="showMultipleEmployeeForm">
+        <div class="card-header with-actions bg-light-soft">
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-box info">
+                    <mat-icon>playlist_add</mat-icon>
+                </div>
+                <h3 class="mb-0">Bulk Entry: {{selectedCafeteriaName}}</h3>
+            </div>
+            <div class="header-actions">
+                <button mat-stroked-button class="btn-secondary-action me-2" (click)="addMoreEmployee()">
+                    <mat-icon>add</mat-icon> Add Row
+                </button>
+            </div>
+        </div>
+        <div class="card-body p-4">
+            <div class="table-responsive">
+                <table class="table premium-form-table">
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>ID</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Expiry</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let employee of addMultipleEmploeeList; index as i" class="animate-fadeIn">
+                            <td>
+                                <mat-form-field appearance="outline" class="compact-field">
+                                    <input matInput [(ngModel)]="employee.employeeName" placeholder="Name">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" class="compact-field">
+                                    <input matInput [(ngModel)]="employee.employeeId" placeholder="ID" appOnlyNumber>
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" class="compact-field">
+                                    <input matInput [(ngModel)]="employee.employeePhoneNo" placeholder="Phone" appOnlyNumber maxlength="10">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" class="compact-field">
+                                    <input matInput type="email" [(ngModel)]="employee.employeeEmail" placeholder="Email">
+                                </mat-form-field>
+                            </td>
+                            <td>
+                                <mat-form-field appearance="outline" class="compact-field">
+                                    <input matInput [matDatepicker]="picker" [(ngModel)]="employee.expiry" placeholder="Choose date">
+                                    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                    <mat-datepicker #picker></mat-datepicker>
+                                </mat-form-field>
+                            </td>
+                            <td class="text-end">
+                                <button mat-icon-button color="warn" (click)="removeEmployeeForm(i)" [disabled]="!showRemoveForm && i === 0">
+                                    <mat-icon>delete_outline</mat-icon>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer bg-white p-4 d-flex justify-content-end gap-3">
+            <button mat-button class="btn-cancel" (click)="cancelMultipleEmployee()">Cancel</button>
+            <button mat-flat-button color="primary" class="btn-primary-action px-5" [disabled]="disableSubmit" (click)="submitMultipleGuestEmployee()">
+                <mat-icon *ngIf="!disableSubmit">check_circle</mat-icon>
+                <mat-spinner diameter="20" *ngIf="disableSubmit" class="me-2 d-inline-block"></mat-spinner>
+                Save All
+            </button>
+        </div>
+    </div>
+
+    <!-- Listing Section -->
+    <div class="tabs-container mt-4" *ngIf="!showMultipleEmployeeForm">
+        <div class="modern-card animate-fadeIn">
+            <div class="card-header">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="icon-box info">
+                        <mat-icon>people</mat-icon>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <h3 class="mb-0">Guest List</h3>
+                        <span class="count-badge-premium" *ngIf="guestEmployeeList.length">{{ guestEmployeeList.length }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body p-4">
+                <div class="employee-grid-premium" *ngIf="guestEmployeeList.length > 0">
+                    <ng-container *ngFor="let employee of guestEmployeeList">
+                        <div class="employee-item-card" *ngIf="employee.cafeteria_id === selectedCafeteriaId">
+                            <div class="employee-main">
+                                <div class="employee-avatar-wrapper">
+                                    <div class="avatar-circle">
+                                        {{getInitials(employee.employeeName)}}
+                                    </div>
+                                    <div class="status-indicator" [class.online]="true"></div>
+                                </div>
+                                <div class="employee-details">
+                                    <h4 class="employee-name">{{employee.employeeName}}</h4>
+                                    <div class="employee-meta-strip mt-1">
+                                        <span class="meta-pill">
+                                            <mat-icon>badge</mat-icon> {{employee.employeeId}}
+                                        </span>
+                                        <span class="meta-pill">
+                                            <mat-icon>phone</mat-icon> {{employee.employeePhoneNo}}
+                                        </span>
+                                        <span class="meta-pill" [title]="employee.employeeEmail">
+                                            <mat-icon>email</mat-icon> {{employee.employeeEmail}}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="employee-footer">
+                                <div class="cafe-tag">
+                                    <mat-icon>event_busy</mat-icon>
+                                    <span>Expires: {{employee.expiry | date:'mediumDate'}}</span>
+                                </div>
+                                <div class="action-buttons">
+                                    <button mat-icon-button class="premium-icon-btn edit" (click)="editGuestEmployee(employee)" matTooltip="Edit Guest">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                    <button mat-icon-button class="premium-icon-btn delete" (click)="deleteGuestEmployee(employee)" matTooltip="Remove">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+
+                <!-- Empty State -->
+                <div class="empty-state-modern py-5" *ngIf="guestEmployeeList.length === 0">
+                    <div class="empty-icon-wrap">
+                        <mat-icon>person_off</mat-icon>
+                    </div>
+                    <h4>No guest employees found</h4>
+                    <p>No temporary employees have been added to this cafeteria yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal Template -->
+<ng-template #content let-modal>
+    <div class="premium-modal">
+        <div class="modal-header">
+            <div class="title-wrap">
+                <div class="icon-box warning">
+                    <mat-icon>edit</mat-icon>
+                </div>
+                <div class="text">
+                    <h3>Edit Guest Employee</h3>
+                    <p>Update temporary employee details</p>
+                </div>
+            </div>
+            <button mat-icon-button (click)="modal.dismiss('cancel')" class="close-btn">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        <div class="dialog-content p-4">
+            <form [formGroup]="form" class="modern-form">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Employee Name</mat-label>
+                            <mat-icon matPrefix>person</mat-icon>
+                            <input matInput formControlName="employeeName" placeholder="Full Name">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Employee ID</mat-label>
+                            <mat-icon matPrefix>badge</mat-icon>
+                            <input matInput formControlName="employeeId" placeholder="ID Number">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Phone Number</mat-label>
+                            <mat-icon matPrefix>phone</mat-icon>
+                            <input matInput formControlName="employeePhoneNo" placeholder="10-digit number">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Email Address</mat-label>
+                            <mat-icon matPrefix>email</mat-icon>
+                            <input matInput formControlName="employeeEmail" placeholder="email@example.com">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-12">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Expiry Date</mat-label>
+                            <mat-icon matPrefix>event_busy</mat-icon>
+                            <input matInput [matDatepicker]="editPicker" formControlName="expiry">
+                            <mat-datepicker-toggle matSuffix [for]="editPicker"></mat-datepicker-toggle>
+                            <mat-datepicker #editPicker></mat-datepicker>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="modal-footer px-4 py-3 bg-light-soft border-top">
+            <button mat-button class="btn-cancel me-2" (click)="modal.dismiss('cancel')">Cancel</button>
+            <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="updateGuestEmployee(guestEmpId, form.value)">
+                <mat-icon>save</mat-icon>
+                <span>Update Employee</span>
+            </button>
+        </div>
+    </div>
+</ng-template>
+
+<!-- Delete Confirmation -->
+<ng-template #delete let-modal>
+    <div class="premium-modal confirmation">
+        <div class="modal-header border-0 pb-0">
+            <button mat-icon-button (click)="modal.dismiss('cancel')" class="ms-auto">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+        <div class="modal-body text-center p-4 pt-0">
+            <div class="delete-icon-wrap mb-3">
+                <mat-icon>delete_forever</mat-icon>
+            </div>
+            <h3 class="fw-bold mb-2">Delete Guest?</h3>
+            <p class="text-secondary">Are you sure you want to remove <strong>{{deleteEmployeeName}}</strong> from the guest list? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer border-0 p-4 pt-0 justify-content-center gap-2">
+            <button mat-stroked-button class="btn-secondary-action px-4" (click)="modal.dismiss('cancel')">No, Keep it</button>
+            <button mat-flat-button color="warn" class="btn-danger-action px-4" (click)="deleteConfirmed(employeeDetail)">Yes, Delete</button>
+        </div>
+    </div>
+</ng-template>

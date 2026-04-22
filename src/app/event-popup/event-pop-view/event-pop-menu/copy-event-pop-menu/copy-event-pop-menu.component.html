@@ -1,0 +1,97 @@
+<h2 mat-dialog-title class="dialog-title">
+  <div class="title-left">
+    <mat-icon>content_copy</mat-icon>
+    <span>Copy Menu items</span>
+  </div>
+  <div class="selection-count header-count" *ngIf="transformedMenuItems.length > 0">
+    {{ transformedMenuItems.length }} item{{ transformedMenuItems.length > 1 ?'s' :'' }} selected
+  </div>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <!-- FILTERS SECTION -->
+  <div class="dialog-filters">
+    <mat-form-field appearance="outline" class="outlet-select">
+      <mat-label>Select Source Event</mat-label>
+      <mat-select [(ngModel)]="selectedEvent" (selectionChange)="onOutletChange()">
+        <mat-option [value]="null">Select Event Popup</mat-option>
+        <mat-option *ngFor="let event of eventPopupList" [value]="event">
+          {{ event.eventPopupName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filter-group search-group" *ngIf="selectedEvent">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" class="search-input" placeholder="Search items..." [(ngModel)]="searchTerm" (input)="applyFilter()" />
+    </div>
+  </div>
+
+  <!-- SELECTION LIST GRID -->
+  <div class="selection-list" *ngIf="selectedEvent">
+    <div class="menu-card-h selection-card" *ngFor="let item of eventMenuList"
+      [ngClass]="{'selected': isMenuSelected(item) }" (click)="onMenuItemToggle(item, $event)">
+      
+      <!-- Checkbox overlay for selection -->
+      <div class="selection-indicator" *ngIf="isMenuSelected(item)">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+
+      <!-- Square Image -->
+      <div class="card-image-h">
+        <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" onerror="this.src='assets/images/placeholder-food.png'"/>
+        <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
+          <span class="indicator-dot"></span>
+        </div>
+      </div>
+
+      <!-- Card Content -->
+      <div class="card-content-h">
+        <div class="content-top">
+          <h3 class="item-name">{{ item.itemName ||'Unnamed item' }}</h3>
+          <span class="category-tag">{{ item.category ||'General' }}</span>
+        </div>
+
+        <p class="item-description" *ngIf="item.description">
+          {{ item.description }}
+        </p>
+
+        <div class="card-footer">
+          <div class="price-display">
+            <span class="currency">₹</span>{{ item.price }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-list" *ngIf="eventMenuList.length === 0">
+      <div class="empty-icon">
+        <mat-icon>info</mat-icon>
+      </div>
+      <h3>No items found</h3>
+      <p>This event doesn't have any menu items to copy</p>
+    </div>
+  </div>
+
+  <!-- Empty State for No Event Selected -->
+  <div class="empty-list" *ngIf="!selectedEvent">
+    <div class="empty-icon">
+      <mat-icon>event_note</mat-icon>
+    </div>
+    <h3>Select an event</h3>
+    <p>Please select a source event popup to view its menu items</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button (click)="dismiss()" class="cancel-btn">Cancel</button>
+  <button mat-flat-button color="primary" class="submit-btn" (click)="addMenuItem()"
+    [disabled]="transformedMenuItems.length === 0">
+    <mat-icon>content_copy</mat-icon>
+    Copy {{ transformedMenuItems.length > 0 ? transformedMenuItems.length :'' }} Selected
+  </button>
+</mat-dialog-actions>

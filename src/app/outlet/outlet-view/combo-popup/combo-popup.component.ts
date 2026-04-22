@@ -1,10 +1,18 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { ToasterService } from '../../..//toaster/toaster.service';
+import { ToasterService } from '@service/toaster.service';
+
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
 
 @Component({
   selector: 'app-combo-popup',
   templateUrl: './combo-popup.component.html',
-  styleUrls: ['./combo-popup.component.scss']
+  styleUrls: ['./combo-popup.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class ComboPopupComponent {
   @Output() comboout: EventEmitter<any> = new EventEmitter<any>();
@@ -70,7 +78,6 @@ export class ComboPopupComponent {
             break;
           // Add cases for other types if needed
           default:
-            console.log(`Unknown item type: ${item.contentType}`);
             break;
         }
       });
@@ -78,7 +85,6 @@ export class ComboPopupComponent {
   }
 
   ngOnChanges() {
-    console.log(this.itemContains, "this.itemContains");
   }
 
   addCurry(curryList: any, index: any) {
@@ -98,7 +104,6 @@ export class ComboPopupComponent {
   }
 
   addCombo() {
-    console.log(this.comboItem);
     if (this.comboItem.vegCurry.selected && this.comboItem.vegCurry.curryList.length === 0) {
       this.toasterService.error(109);
       return;

@@ -1,104 +1,340 @@
-<!-- <span
-  class="right btn-danger btn-sm pointer right"
-  *ngIf="true || btnPolicy?.editOutlet"
-  (click)="editOrg()"
-  >EDIT</span
-> -->
-<div class="rows pt-3 pb-3">
-  <div class="card-header d-flex justify-content-between">
-    <div class="heading">{{ outletObj.outletName }}</div>
-    <button mat-raised-button color="primary" (click)="editOrg()"><mat-icon>edit</mat-icon>Edit</button>
-  </div>
-  <div class="col-12 col-md-4 col-lg-12 pt-4">
-    <div class="row pt-2">
-      <div class="col-1">
-        <img style="border-radius: 8px;"
-          [src]="
-            outletObj?.imageUrl
-              ? imageUrl + outletObj.imageUrl
-              : 'assets/images/dummyUpload.png'
-          "
-          class="uploadedImage"
-        />
+<!-- Outlet Details Modern Design -->
+<div class="outlet-details-container">
+
+  <!-- Hero Profile Section -->
+  <div class="profile-hero">
+    <div class="hero-content">
+      <div class="avatar-section">
+        <img *ngIf="outletObj?.imageUrl" [src]="imageUrl + outletObj.imageUrl" class="avatar-img" alt="Outlet Image">
+        <div *ngIf="!outletObj?.imageUrl" class="avatar-circle">
+          {{ getInitials(outletObj?.outletName) }}
+        </div>
+        <div class="avatar-status" [class.active]="outletObj?.outletOpened"></div>
       </div>
-       <div class="col-10">
-        <div class="labelText">Outlet Description</div>
-        <div class="labelData">{{ outletObj.outletDescription }}</div>
+      <div class="hero-info">
+        <h1 class="outlet-name">{{ outletObj?.outletName }}</h1>
+        <div class="quick-badges">
+          <span class="quick-badge" [class.success]="outletObj?.outletOpened" [class.danger]="!outletObj?.outletOpened">
+            <mat-icon>{{ outletObj?.outletOpened ?'storefront' :'store' }}</mat-icon>
+            {{ outletObj?.outletOpened ?'Open' :'Closed' }}
+          </span>
+          <span class="quick-badge" [class.info]="outletObj?.isPreOrder">
+            <mat-icon>schedule</mat-icon>
+            Pre-order {{ outletObj?.isPreOrder ?'Enabled' :'Disabled' }}
+          </span>
+          <span class="quick-badge" *ngIf="outletObj?.isSectionWiseMenu">
+            <mat-icon>view_module</mat-icon>
+            Section Menu
+          </span>
+        </div>
       </div>
     </div>
+    <button mat-raised-button class="edit-btn" (click)="editOrg()">
+      <mat-icon>edit</mat-icon>
+      Edit Outlet
+    </button>
   </div>
 
-  <!-- <div class="col-12 col-md-4 col-lg-12 mt-2">
-    <div class="row">
-      <div class="col-6 col-md-5 col-lg-12">
-        <div class="labelText">Outlet Description</div>
-        <div class="labelData">{{ outletObj.outletDescription }}</div>
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Overview Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon overview">
+          <mat-icon>info</mat-icon>
+        </div>
+        <h3>Overview</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>label</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Outlet Name</span>
+              <span class="info-value">{{ outletObj?.outletName }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>sort</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Precedence</span>
+              <span class="info-value">{{ outletObj?.precedence || 0 }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>description</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Description</span>
+              <span class="info-value">{{ outletObj?.outletDescription ||'No description' }}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </div> -->
-  <div class="col-12 col-md-4 col-lg-12">
-    <div class="row py-3 px-2">
-      <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Organization Name</div>
-        <div class="labelData">
-          {{ outletObj.organizationDetails.organization_name }}
+
+    <!-- Commercials Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon commercials">
+          <mat-icon>payments</mat-icon>
         </div>
+        <h3>Commercials</h3>
       </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">City</div>
-        <div class="labelData">{{ outletObj.organizationDetails.city }}</div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Location</div>
-        <div class="labelData">
-          {{ outletObj.organizationDetails.location }}
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>receipt</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Billing Type</span>
+              <span class="info-value">{{ outletObj?.billingType ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>savings</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Subsidy</span>
+              <span class="info-value">{{ outletObj?.subsidy || 0 }}%</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>percent</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Vendor Commission</span>
+              <span class="info-value">{{ outletObj?.vendorCommissionPercentage || 0 }}%</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>percent</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">MRP Commission</span>
+              <span class="info-value">{{ outletObj?.MRPCommissionPercentage || 0 }}%</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon" [class.text-success]="outletObj?.isFullAmountOrgPaid"><mat-icon>paid</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Org Paid Full</span>
+              <span class="info-value" [class.text-success]="outletObj?.isFullAmountOrgPaid">
+                {{ outletObj?.isFullAmountOrgPaid ?'Enabled' :'Disabled' }}
+              </span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>update</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Closing Time</span>
+              <span class="info-value">{{ outletObj?.closeTime ||'Not Set' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>inventory_2</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Packaging Amount</span>
+              <span class="info-value">₹{{ outletObj?.packagingAmount || 0 }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon" [class.text-primary]="outletObj?.isPreOrder"><mat-icon>schedule</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Pre-Order Status</span>
+              <span class="info-value" [class.text-primary]="outletObj?.isPreOrder">
+                {{ outletObj?.isPreOrder ?'Enabled' :'Disabled' }}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-12 col-md-4 col-lg-12">
-    <div class="row py-3 px-2">
-      <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Cafeteria Name</div>
-        <div class="labelData">
-          {{ outletObj.cafeteriaDetails.cafeteria_name }}
+
+    <!-- Organization Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon org">
+          <mat-icon>business</mat-icon>
         </div>
+        <h3>Organization</h3>
       </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Cafeteria City</div>
-        <div class="labelData">
-          {{ outletObj.cafeteriaDetails.cafeteria_city }}
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>corporate_fare</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ outletObj?.organizationDetails?.organization_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ outletObj?.organizationDetails?.city }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>place</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ outletObj?.organizationDetails?.location }}</span>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Landmark</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.landmark }}</div>
-      </div>
-      <div class="col-6 col-md-5 col-lg-4">
-        <div class="labelText">Cafeteria Name</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.location }}</div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Cafeteria City</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.address1 }}</div>
-      </div>
-      <div class="col-6 col-md-7 col-lg-4">
-        <div class="labelText">Location</div>
-        <div class="labelData">{{ outletObj.cafeteriaDetails.address2 }}</div>
       </div>
     </div>
+
+    <!-- Cafeteria Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon cafe">
+          <mat-icon>restaurant</mat-icon>
+        </div>
+        <h3>Cafeteria</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>storefront</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ outletObj?.cafeteriaDetails?.cafeteria_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ outletObj?.cafeteriaDetails?.cafeteria_city }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>home</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Address</span>
+              <span class="info-value">{{ outletObj?.cafeteriaDetails?.address1 }} {{
+                outletObj?.cafeteriaDetails?.address2 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="col-lg-12 pt-4">
-    <div class="row py-3 px-2">
-      <div *ngFor="let meal of outletObj?.mealTiming" class="col-lg-2 mb-2">
-        <div class="bg-light rounded p-2">
-          <span class="labelText"> {{ meal.mealType }}</span>
-          <div class="labelData">
-            {{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}
+  <!-- Meal Timings Section -->
+  <div class="timing-section" *ngIf="outletObj?.mealTiming?.length > 0 && !outletObj?.isPreOrder">
+    <div class="section-header">
+      <div class="header-icon timing">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <h2>Meal Timings</h2>
+      <span class="count-badge">{{ outletObj?.mealTiming?.length }}</span>
+    </div>
+    <div class="timing-grid">
+      <div class="timing-card-complex" *ngFor="let meal of outletObj?.mealTiming">
+        <div class="timing-main">
+          <div class="timing-icon">
+            <mat-icon>{{ getMealIcon(meal.mealType) }}</mat-icon>
+          </div>
+          <div class="timing-content">
+            <div class="d-flex align-items-center gap-2">
+              <span class="meal-type">{{ meal.mealType }}</span>
+              <span class="subsidy-badge" [ngClass]="meal.mealSubsidyType" *ngIf="outletObj?.isFullAmountOrgPaid">
+                {{ getSubsidyLabel(meal.mealSubsidyType) }}
+              </span>
+            </div>
+            <span class="meal-time">{{ meal.acceptOrderFrom }} - {{ meal.acceptOrderTill }}</span>
+          </div>
+        </div>
+        <div class="timing-footer">
+          <div class="footer-item" *ngIf="meal.slug">
+            <mat-icon>link</mat-icon>
+            <span>{{ meal.slug }}</span>
+          </div>
+          <div class="footer-item"
+            *ngIf="meal.mealSubsidyType !=='chargeable' && outletObj?.isFullAmountOrgPaid && meal.maxCountFree > 0">
+            <mat-icon>counter_{{ meal.maxCountFree }}</mat-icon>
+            <span>{{ meal.maxCountFree > 0 ? meal.maxCountFree +' Free/Day' :'' }}</span>
           </div>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Pre-order Settings Section -->
+  <div class="timing-section preorder-section" *ngIf="outletObj?.isPreOrder">
+    <div class="section-header">
+      <div class="header-icon preorder">
+        <mat-icon>schedule</mat-icon>
+      </div>
+      <h2>Pre-order Settings</h2>
+    </div>
+
+    <div class="preorder-content">
+      <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+          <div class="quick-info-box">
+            <span class="label">Pre-Order Type</span>
+            <span class="value badge">{{ outletObj?.preOrderConfig?.type ||'Normal' | titlecase }}</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="quick-info-box">
+            <span class="label">Meal Type</span>
+            <span class="value">{{ outletObj?.preOrderConfig?.mealType || outletObj?.preOrderMealType ||'Not Set' |
+              titlecase }}</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="quick-info-box">
+            <span class="label">Max Advance Days</span>
+            <span class="value">{{ outletObj?.preOrderConfig?.maxDays || outletObj?.maxDays || 7 }} Days</span>
+          </div>
+        </div>
+        <div class="col-6 col-md-3">
+          <div class="quick-info-box">
+            <span class="label">Order Window</span>
+            <span class="value small">{{ outletObj?.preOrderConfig?.startTime ||'00:00' }} - {{
+              outletObj?.preOrderConfig?.endTime ||'23:59' }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="days-display mb-4" *ngIf="outletObj?.preOrderConfig?.type !=='holiday'">
+        <h4 class="sub-label">Weekly Availability</h4>
+        <div class="days-badges">
+          <span class="day-badge"
+            [class.enabled]="(outletObj?.preOrderConfig?.availableDays?.monday ?? outletObj?.preOrderDays?.monday)">Mon</span>
+          <span class="day-badge"
+            [class.enabled]="(outletObj?.preOrderConfig?.availableDays?.tuesday ?? outletObj?.preOrderDays?.tuesday)">Tue</span>
+          <span class="day-badge"
+            [class.enabled]="(outletObj?.preOrderConfig?.availableDays?.wednesday ?? outletObj?.preOrderDays?.wednesday)">Wed</span>
+          <span class="day-badge"
+            [class.enabled]="(outletObj?.preOrderConfig?.availableDays?.thursday ?? outletObj?.preOrderDays?.thursday)">Thu</span>
+          <span class="day-badge"
+            [class.enabled]="(outletObj?.preOrderConfig?.availableDays?.friday ?? outletObj?.preOrderDays?.friday)">Fri</span>
+          <span class="day-badge"
+            [class.enabled]="(outletObj?.preOrderConfig?.availableDays?.saturday ?? outletObj?.preOrderDays?.saturday)">Sat</span>
+          <span class="day-badge"
+            [class.enabled]="(outletObj?.preOrderConfig?.availableDays?.sunday ?? outletObj?.preOrderDays?.sunday)">Sun</span>
+        </div>
+      </div>
+
+      <div class="holidays-display"
+        *ngIf="outletObj?.preOrderConfig?.type !=='normal' && (outletObj?.preOrderConfig?.holidays?.length > 0 || outletObj?.holidays?.length > 0)">
+        <h4 class="sub-label">Holidays ({{ outletObj?.preOrderConfig?.type ==='normal' ?'Pre-orders Disabled' :'Pre-orders Enabled' }})</h4>
+        <div class="holiday-chips">
+          <span class="holiday-chip d-flex align-items-center"
+            *ngFor="let h of (outletObj?.preOrderConfig?.holidays || outletObj.holidays)">
+            <div class="h-info py-1">
+              <div class="h-name fw-semibold" style="font-size: 0.85rem; color: #111827;">{{ h.name }}</div>
+              <div class="h-date text-primary fw-medium" style="font-size: 0.75rem;">
+                {{ h.date | date:'dd/MM/yyyy' }}
+              </div>
+            </div>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>

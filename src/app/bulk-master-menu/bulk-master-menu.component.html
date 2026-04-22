@@ -1,0 +1,48 @@
+<div class="vendor-header">
+  <div>
+    <h4 class="m-0 fw-semibold">Bulk Master Menu</h4>
+  </div>
+  <div class="header-actions">
+    <div class="input-wrapper">
+      <mat-form-field appearance="outline" class="w-100 search-input">
+        <input matInput type="text" placeholder="Search by item name" [(ngModel)]="searchText"
+          (ngModelChange)="onSearchChange($event)" />
+        <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+    </div>
+
+    <button class="btn-add" mat-raised-button color="primary" (click)="addMenuItem()" *appHasPermission="'FOOD_ITEM:ADD'">
+      <mat-icon>add</mat-icon>
+      <span class="d-none d-md-inline ms-2">Add Bulk Master Menu</span>
+    </button>
+  </div>
+</div>
+
+<div class="container-fluid bulk-master-menu-container mt-4">
+  <!-- GRID MODE -->
+  <div *ngIf="pagedMenuItems.length > 0; else noRecords">
+    <div class="row g-4">
+      <div *ngFor="let item of pagedMenuItems" class="col-12 col-sm-6 col-md-4 col-xl-3 animate-fade-in">
+        <app-bulk-master-menu-card [foodItem]="item" (deleteItem)="deleteMenuItem($event)"
+          (editItem)="editMenuItem($event)"></app-bulk-master-menu-card>
+      </div>
+    </div>
+
+    <!-- MATERIAL PAGINATOR -->
+    <div class="mt-4 d-flex justify-content-end pb-5">
+      <mat-paginator [length]="filteredLength" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <ng-template #noRecords>
+    <div class="empty-state center mt-5 text-muted">
+      <mat-icon class="large-icon mb-3">inventory_2</mat-icon>
+      <div class="h5">No records found for this filter</div>
+      <p>Try refining your search text or clear the filter.</p>
+    </div>
+  </ng-template>
+</div>

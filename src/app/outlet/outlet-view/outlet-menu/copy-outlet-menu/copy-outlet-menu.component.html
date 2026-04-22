@@ -1,0 +1,101 @@
+<h2 mat-dialog-title class="dialog-title">
+  <div class="title-left">
+    <mat-icon>content_copy</mat-icon>
+    <span>Copy Menu from Outlet</span>
+  </div>
+  <div class="selection-count header-count" *ngIf="selectedMenuItems.length > 0">
+    {{ selectedMenuItems.length }} item{{ selectedMenuItems.length > 1 ?'s' :'' }} selected
+  </div>
+  <button mat-icon-button mat-dialog-close class="close-btn">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="dialog-content">
+  <!-- FILTERS SECTION -->
+  <div class="dialog-filters">
+    <mat-form-field appearance="outline" class="outlet-select">
+      <mat-label>Select Source Outlet</mat-label>
+      <mat-select [(ngModel)]="selectedOutlet" (selectionChange)="onOutletChange()">
+        <mat-option [value]="null">Select Outlet</mat-option>
+        <mat-option *ngFor="let outlet of outletList" [value]="outlet">
+          {{ outlet.outletName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <div class="filter-group search-group" *ngIf="selectedOutlet">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text" class="search-input" placeholder="Search items..." [(ngModel)]="searchTerm"
+        (input)="applyFilter()" />
+    </div>
+  </div>
+
+  <!-- SELECTION LIST GRID -->
+  <div class="selection-list" *ngIf="selectedOutlet">
+    <div class="menu-card-h selection-card" *ngFor="let item of filteredOutletMenuList"
+      [ngClass]="{'selected': isSelected(item) }" (click)="onItemToggle(item)">
+      
+      <!-- Checkbox overlay for selection -->
+      <div class="selection-indicator" *ngIf="isSelected(item)">
+        <mat-icon>check_circle</mat-icon>
+      </div>
+
+      <!-- Square Image with padding -->
+      <div class="card-image-h">
+        <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" onerror="this.src='assets/images/placeholder.png'"/>
+        <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
+          <span class="indicator-dot"></span>
+        </div>
+      </div>
+
+      <!-- Card Content -->
+      <div class="card-content-h">
+        <!-- Row 1: Name + Category -->
+        <div class="content-top">
+          <h3 class="item-name">{{ item.itemName ||'Unnamed item' }}</h3>
+          <span class="category-tag">{{ item.category ||'General' }}</span>
+        </div>
+
+        <!-- Row 2: Description -->
+        <p class="item-description" *ngIf="item.description">
+          {{ item.description }}
+        </p>
+
+        <!-- Row 5: Price -->
+        <div class="card-footer">
+          <div class="price-display">
+            <span class="currency">₹</span>{{ item.price }}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty State for Selected Outlet -->
+    <div class="empty-list" *ngIf="outletMenuList.length === 0">
+      <div class="empty-icon">
+        <mat-icon>info</mat-icon>
+      </div>
+      <h3>No items found</h3>
+      <p>This outlet doesn't have any menu items to copy</p>
+    </div>
+  </div>
+
+  <!-- Empty State for No Outlet Selected -->
+  <div class="empty-list" *ngIf="!selectedOutlet">
+    <div class="empty-icon">
+      <mat-icon>storefront</mat-icon>
+    </div>
+    <h3>Select an outlet</h3>
+    <p>Please select a source outlet to view its menu items</p>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-button mat-dialog-close class="cancel-btn">Cancel</button>
+  <button mat-flat-button color="primary" class="submit-btn" (click)="submit()"
+    [disabled]="selectedMenuItems.length === 0">
+    <mat-icon>content_copy</mat-icon>
+    Copy Selected
+  </button>
+</mat-dialog-actions>

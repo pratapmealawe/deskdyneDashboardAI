@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-config-variable',
@@ -14,19 +13,14 @@ export class ConfigVariableComponent implements OnInit {
   editMode = false;
   addnewVariable = false;
   variableType = 'String';
-  btnPolicy: any;
-
   constructor(
     private apiMainService: ApiMainService,
-    private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private confirmationModalService: ConfirmationModalService
   ) {
     this.getAllVariables();
   }
 
-  ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-  }
+  ngOnInit(): void {}
 
   async getAllVariables() {
     try {
@@ -37,7 +31,6 @@ export class ConfigVariableComponent implements OnInit {
         this.allVariables = [];
       }
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -52,7 +45,6 @@ export class ConfigVariableComponent implements OnInit {
       this.getAllVariables();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -62,7 +54,6 @@ export class ConfigVariableComponent implements OnInit {
       this.getAllVariables();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -78,7 +69,6 @@ export class ConfigVariableComponent implements OnInit {
       this.getAllVariables();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -89,10 +79,10 @@ export class ConfigVariableComponent implements OnInit {
   }
 
   showPopup(variableObj: any) {
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${variableObj.configName}`,
-      () => this.deleteVariable(variableObj._id),
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${variableObj.configName} variable?`,
+      callback: () => this.deleteVariable(variableObj._id),
+      context: this
+    });
   }
 }

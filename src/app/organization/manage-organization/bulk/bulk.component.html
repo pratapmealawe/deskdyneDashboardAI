@@ -1,0 +1,69 @@
+<div class="bulk-dashboard-header">
+    <div class="header-card">
+        <div class="header-icon-box">
+            <mat-icon>restaurant_menu</mat-icon>
+        </div>
+        <div class="header-text-content">
+            <h1 class="page-title">Bulk Menu</h1>
+            <p class="page-subtitle">
+                Manage menus, packages, and settings
+            </p>
+        </div>
+    </div>
+
+
+
+    <!-- CAFETERIA SELECTION -->
+    <div class="header-action-row mb-4" *ngIf="orgObj?.cafeteriaList?.length > 0">
+        <div class="bulk-header-container w-100">
+            <!-- Cafeteria Selector Component -->
+            <app-cafeteria-selector [cafeteriaList]="orgObj?.cafeteriaList" [selectedCafeteria]="selectedCafeteria"
+                (cafeteriaChanged)="onCafeteriaChanged({value: $event})">
+            </app-cafeteria-selector>
+
+        </div>
+    </div>
+
+
+    <!-- LEVEL 1: Module Selection (Bulk vs Employee) -->
+    <div class="tabs-row level-1 mb-3">
+        <div class="main-tabs">
+            <button *ngFor="let tab of orgViewList; let i = index" class="pill-tab-btn main"
+                [class.active]="selectedMainInternalTabIndex === i" (click)="onMainInternalTabChange(i)">
+                <mat-icon>{{tab.icon}}</mat-icon>
+                <span>{{tab.name}}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LEVEL 2: Category Selection (Meals, Snacks, etc) -->
+    <div class="tabs-row level-1 mb-3" *ngIf="selectedMain?.subTabs?.length">
+        <div class="main-tabs">
+            <button *ngFor="let sub of selectedMain.subTabs; let i = index" class="pill-tab-btn main"
+                [class.active]="selectedSubTabIndex === i" (click)="onSubTabChange(i)">
+                <mat-icon *ngIf="sub.icon">{{ sub.icon }}</mat-icon>
+                <span>{{ sub.name }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- LEVEL 3: Menu Type Selection (Bulk vs Individual) -->
+    <div class="tabs-row level-1 mb-4" *ngIf="selectedSub?.childTabs?.length">
+        <div class="main-tabs">
+            <button *ngFor="let child of selectedSub.childTabs; let i = index" class="pill-tab-btn main"
+                [class.active]="selectedChildTabIndex === i" (click)="onChildTabChange(i)">
+                <mat-icon *ngIf="child.icon">{{ child.icon }}</mat-icon>
+                <span>{{ child.name }}</span>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+<!-- CONSOLIDATED MENU CONTENT -->
+<div class="menu-content-container">
+    <app-bulk-general-menu [orgObj]="orgObj" [selectedCafeteria]="selectedCafeteria"
+        [mainTabIndex]="selectedMainInternalTabIndex" [subTabIndex]="selectedSubTabIndex"
+        [childTabIndex]="selectedChildTabIndex">
+    </app-bulk-general-menu>
+</div>

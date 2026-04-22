@@ -1,0 +1,186 @@
+<div class="weekly-menu-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box" [class.primary]="!isEditMode || !selectedSource" [class.warning]="isEditMode && selectedSource">
+                <mat-icon>{{ isEditMode ? 'restaurant_menu' : 'add_task' }}</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Manage Weekly Menu</h3>
+                <p>{{ selectedSource ? ('Source: ' + (selectedSource | titlecase)) : 'Select a source to begin configuring the weekly menu' }}</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeDialog()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <!-- Initial Source Selection -->
+        <div *ngIf="selectedSource === '' && !weekMenuList.length" class="py-4">
+            <h5 class="text-center mb-4 fw-bold color-primary-2">How would you like to set up the menu?</h5>
+            <div class="source-selection-grid">
+                <div *ngFor="let source of menuSources" class="source-card" [class]="source.color" (click)="source.action(data)">
+                    <div class="card-icon-box">
+                        <mat-icon>{{ source.icon }}</mat-icon>
+                    </div>
+                    <div class="card-title">{{ source.label }}</div>
+                    <p class="card-desc">{{ source.desc }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Configuration Forms based on Source -->
+        <div *ngIf="selectedSource && !weekMenuList.length" class="mt-2">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h6 class="section-label m-0"><mat-icon>settings</mat-icon> Configure Import Source</h6>
+                <button mat-button color="warn" (click)="resetCreateType()" class="btn-reset">
+                    <mat-icon>refresh</mat-icon> Reset Source
+                </button>
+            </div>
+
+            <!-- Mealawe Form (if needed) -->
+            <div *ngIf="selectedSource === 'mealawe'" class="mt-2 animate__animated animate__fadeIn">
+                <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Select Cluster</mat-label>
+                    <mat-icon matPrefix>hub</mat-icon>
+                    <mat-select [(ngModel)]="selectedClusterId" (selectionChange)="onClusterChange(data)" required>
+                        <mat-option *ngFor="let cluster of availableClusters" [value]="cluster.clusterId">
+                            {{ cluster.clusterName | uppercase }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <!-- Organization/Cafeteria Selection -->
+            <div *ngIf="selectedSource === 'otherCafe' || selectedSource === 'otherOrgCafe'" class="animate__animated animate__fadeIn">
+                <div class="row g-3">
+                    <div class="col-md-6" *ngIf="selectedSource === 'otherOrgCafe'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Select Organization</mat-label>
+                            <mat-icon matPrefix>corporate_fare</mat-icon>
+                            <mat-select [(ngModel)]="selectedOrg" (ngModelChange)="getCafeteriaListByOrg()">
+                                <mat-option *ngFor="let org of orgList" [value]="org">
+                                    {{ org.organization_name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div [class.col-md-6]="selectedSource === 'otherOrgCafe'" [class.col-12]="selectedSource === 'otherCafe'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Select Cafeteria</mat-label>
+                            <mat-icon matPrefix>storefront</mat-icon>
+                            <mat-select [(ngModel)]="selectedCafeteria" (ngModelChange)="getVirtualCafeteriaByCafeteria()">
+                                <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe">
+                                    {{ cafe.cafeteria_name }}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div *ngIf="selectedCafeteria && weekMenuList.length === 0" class="alert alert-warning border-0 rounded-4 mt-3 d-flex align-items-center gap-3">
+                    <mat-icon>info_outline</mat-icon>
+                    <div class="flex-grow-1">
+                        <p class="m-0 fw-bold">No Menu Found</p>
+                        <p class="m-0 small opacity-75">This cafeteria has no weekly menu configured. Please select another source or cafeteria.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Weekly Menu Editor -->
+        <div *ngIf="weekMenuList.length || selectedSource === 'custom'" class="mt-2">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h6 class="section-label"><mat-icon>calendar_view_week</mat-icon> Menu Schedule</h6>
+                <button mat-flat-button color="primary" (click)="addNewWeek()" class="btn-primary-action" style="height: 36px !important;">
+                    <mat-icon>add</mat-icon> Add Week
+                </button>
+            </div>
+
+            <div class="tabs-container">
+                <mat-tab-group [selectedIndex]="activeWeekIndex" animationDuration="200ms">
+                    <mat-tab *ngFor="let week of weekMenuList; let i = index">
+                        <ng-template mat-tab-label>
+                            <div class="tab-label-content">
+                                <mat-icon class="tab-icon">date_range</mat-icon>
+                                <span>Week {{ week.weekNumber }}</span>
+                            </div>
+                        </ng-template>
+
+                    <div class="pt-3">
+                        <div class="d-flex align-items-center justify-content-between bg-light-soft rounded-4 px-3 py-2 mb-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <mat-checkbox [(ngModel)]="week.isSelected" (change)="selectWeek(i)" color="primary">
+                                    <span class="fw-bold">Set as Active Week</span>
+                                </mat-checkbox>
+                                <span class="badge bg-success rounded-pill px-3 py-2" *ngIf="week.isSelected">
+                                    <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;" class="me-1">check_circle</mat-icon> Currently Active
+                                </span>
+                            </div>
+                            <button mat-icon-button color="warn" (click)="deleteWeek(i)" matTooltip="Delete this week">
+                                <mat-icon>delete_outline</mat-icon>
+                            </button>
+                        </div>
+
+                        <div class="tabs-container mt-3">
+                            <mat-tab-group animationDuration="200ms">
+                                <mat-tab *ngFor="let type of ['veg','nonveg']">
+                                    <ng-template mat-tab-label>
+                                        <div class="tab-label-content">
+                                            <div [ngClass]="type === 'veg' ? 'vegIcon' : 'nonvegIcon'" class="me-2"></div>
+                                            <span>{{ type | titlecase }} Menu</span>
+                                        </div>
+                                    </ng-template>
+
+                                <div class="py-3">
+                                    <div *ngFor="let item of (type === 'veg' ? week.vegMenuList : week.nonvegMenuList)" class="menu-item-row">
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col-md-2">
+                                                <div class="day-badge">{{ item.day }}</div>
+                                            </div>
+                                            <div class="col" *ngIf="item.breakfast && categoryKey === 'breakfast'">
+                                                <mat-form-field appearance="outline" class="full-width mb-0">
+                                                    <mat-label>Breakfast Description</mat-label>
+                                                    <input matInput [(ngModel)]="item.breakfast.description" placeholder="e.g. Poha, Idli-Sambar" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col" *ngIf="item.lunch && categoryKey !== 'breakfast'">
+                                                <mat-form-field appearance="outline" class="full-width mb-0">
+                                                    <mat-label>Lunch Description</mat-label>
+                                                    <input matInput [(ngModel)]="item.lunch.description" placeholder="e.g. Paneer Butter Masala, Roti" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="col" *ngIf="item.dinner && categoryKey !== 'breakfast'">
+                                                <mat-form-field appearance="outline" class="full-width mb-0">
+                                                    <mat-label>Dinner Description</mat-label>
+                                                    <input matInput [(ngModel)]="item.dinner.description" placeholder="e.g. Light Sabzi, Rice" />
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-tab>
+                            </mat-tab-group>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button mat-flat-button color="primary" (click)="saveMenu()" 
+                [disabled]="isSubmitting" class="btn-primary-action px-4">
+            <ng-container *ngIf="!isSubmitting">
+                <mat-icon>save</mat-icon>
+                <span>Save Menu</span>
+            </ng-container>
+            <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+                <span>Saving...</span>
+            </div>
+        </button>
+    </mat-dialog-actions>
+</div>

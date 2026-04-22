@@ -1,95 +1,65 @@
-<div class="bgpadding1">
-  <div
-    class="right addBtn"
-    *ngIf="true || btnPolicy?.addAppVersion"
-    (click)="addVariable()"
-  >
-    +
+<div class="vendor-header">
+  <div>
+    <h4 class="m-0 fw-semibold">App Version Control</h4>
   </div>
-  <div class="labelText">App Version Control</div>
-
-  <div *ngIf="editMode" class="bgpadding3">
-    <div class="labelText" *ngIf="addnewVariable">Add New App Version</div>
-    <div class="labelText" *ngIf="!addnewVariable">Update App Version</div>
-    <div class="row">
-      <div class="col-sm-12 col-md-6 col-lg-3">
-        <label class="labelData" for="variableName">Application Name</label>
-        <input
-          type="text"
-          class="form-control"
-          id="variableName"
-          [(ngModel)]="variableObj.appName"
-          placeholder="name"
-        />
-      </div>
-      <div class="col-sm-12 col-md-6 col-lg-3">
-        <label class="labelData" for="variableValue">Version</label>
-        <div>
-          <div>
-            <input
-              class="form-control"
-              type="text"
-              [(ngModel)]="variableObj.appVersion"
-              name="addonType"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="mt-2">
-      <div
-        class="inline me-2"
-        *ngIf="addnewVariable && true || btnPolicy?.addAppVersion"
-      >
-        <button
-          type="button"
-          class="btn btn-primary btn-sm"
-          (click)="submitnewVariable(variableObj)"
-        >
-          Submit
-        </button>
-      </div>
-      <div
-        class="inline me-2"
-        *ngIf="!addnewVariable && true || btnPolicy?.editAppVersion"
-      >
-        <button
-          type="button"
-          class="btn btn-primary btn-sm"
-          (click)="updateVariable(variableObj)"
-        >
-          Update
-        </button>
-      </div>
-      <div class="inline me-2">
-        <button type="button" class="btn btn-danger btn-sm" (click)="cancel()">
-          Cancel
-        </button>
-      </div>
-    </div>
+  <div class="header-actions">
+    <button mat-raised-button color="primary" *appHasPermission="'APP_VERSION:ADD'" (click)="addVariable()">
+      <mat-icon>add</mat-icon> Add App Version
+    </button>
   </div>
+</div>
 
-  <div *ngIf="!editMode" class="bgpadding3">
+<div class="container-fluid pb-4">
+
+  <!-- List Section -->
+  <div>
+    <div *ngIf="allAppVersions && allAppVersions.length === 0" class="center">
+      No App Versions Found
+    </div>
+
     <div *ngFor="let variable of allAppVersions" class="cardDesign">
-      <div class="row">
-        <div class="col-6 col-md-6 col-lg-4 labelData">
-          {{ variable.appName }}
-        </div>
-        <div class="col-4 col-md-4 col-lg-4 labelData">
-          {{ variable.appVersion }}
-        </div>
-        <div class="col-2 col-md-2 col-lg-4 alignRight">
-          <i
-            *ngIf="true || btnPolicy?.editAppVersion"
-            class="bi bi-pencil-square bgsidepadding5"
-            (click)="editVariable(variable)"
-          ></i>
+      <div class="container-fluid">
+        <div class="row align-items-center">
+
+          <!-- App Name -->
+          <div class="col-md-5 mb-2 mb-md-0">
+            <div class="labelText">Application Name</div>
+            <div class="labelData">{{ variable.appName }}</div>
+          </div>
+
+          <!-- Version -->
+          <div class="col-md-3 mb-2 mb-md-0">
+            <div class="labelText">Version</div>
+            <div class="labelData">{{ variable.appVersion }}</div>
+          </div>
+
+          <!-- Update Type -->
+          <div class="col-md-2 mb-2 mb-md-0">
+            <div class="labelText">Type</div>
+            <div class="labelData">
+              <span class="badge" [ngClass]="variable.isForceUpdate ?'bg-danger text-white' :'bg-info text-white'">
+                {{ variable.isForceUpdate ?'Forceful' :'Negligible' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="col-md-2 d-flex align-items-center justify-content-end p-0">
+            <button mat-icon-button color="primary" class="edit" *appHasPermission="'APP_VERSION:EDIT'"
+              (click)="editVariable(variable)" matTooltip="Edit">
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+
+          <!-- Release Notes -->
+          <div class="col-md-12 mt-2" *ngIf="variable.releaseNotes">
+            <div class="labelText">Release Notes</div>
+            <div class="labelData text-muted small" style="white-space: pre-line;">{{ variable.releaseNotes }}</div>
+          </div>
+
         </div>
       </div>
     </div>
   </div>
 
-  <div class="center" *ngIf="!editMode && allAppVersions.length === 0">
-    No Records Found
-  </div>
 </div>

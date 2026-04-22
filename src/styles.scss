@@ -1,72 +1,10 @@
-@use './styles/theme/index' as *;
+// Force Rebuild
+@import './styles/theme/variable';
+@import './styles/theme/mixins';
+@import './styles/theme/utilities';
+@import './styles/components/chips';
 @import "bootstrap-icons/font/bootstrap-icons.css";
-
-
-/* Global application base styles */
-body {
-  background-color: #f3f3f3 !important;
-  color: var(--color-text);
-  font-family: Roboto, sans-serif;
-}
-$white :#ffffff;
-$black :#000;
-$textPrimary:#1a1a1a;
-$error-color:red;
-$success-color:green;
-$primary-color1: #e62841;
-$primary-color2: #b9041c;
-$primary-color3: #fe8e9c;
-$primary-offset-color1: #ffffff;
-$primary-offset-color2: #a4a4a4;
-$primary-offset-color3: #f3f3f3;
-$primary-offset-color4: #efefef;
-$primary-offset-color5:white;
-$secondary-color1: #88e5db;
-$secondary-color2: #60c8bc;
-$secondary-color3: #15a292;
-$secondary-offset-color1: #ffd674;
-$secondary-offset-color2: #ffc947;
-$secondary-offset-color3: #ffb300;
-$card-odd: #dee2e6;
-$background-color: #f3f3f3;
-
-html {
-  font-family: "Poppins-regular," "Lato" !important;
-  // --ion-font-family: 'Lato' !important;
-  background: var(--color-backgroundGrey);
-}
-
-@font-face {
-  font-family: "Poppins-regular";
-  src: url("assets/fonts/Poppins-Regular.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Poppins-bold";
-  src: url("assets/fonts/Poppins-Bold.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Poppins-semiBold";
-  src: url("assets/fonts/Poppins-SemiBold.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "PoetsenOne-Regular";
-  src: url("assets/fonts/PoetsenOne-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+@import './styles/base/base';
 
 .paddingAll-5 {
   padding: 5px;
@@ -165,26 +103,6 @@ html {
 
 .bold {
   font-weight: 500;
-}
-
-.header1 {
-  font-size: 23px;
-}
-
-.header2 {
-  font-size: 17px;
-}
-
-.header3 {
-  font-size: 14px;
-}
-
-.header4 {
-  font-size: 12px;
-}
-
-.header5 {
-  font-size: 10px;
 }
 
 .bgpadding {
@@ -319,21 +237,6 @@ html {
   display: inline-block;
 }
 
-.typeIcon {
-  height: 10px;
-  width: 10px;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-  margin-right: 2px;
-}
-
-.vegIcon {
-  background: url("~/src/assets/icon/veg.png");
-}
-
-.nonvegIcon {
-  background: url("~/src/assets/icon/nonveg.png");
-}
 
 .row {
   div {
@@ -341,12 +244,6 @@ html {
   }
 }
 
-html,
-body {
-  font-family: "Poppins-regular";
-  height: 100%;
-  margin: 0;
-}
 
 .customInput {
   border: 1px solid #dee2e6;
@@ -413,25 +310,37 @@ body {
 }
 
 .pac-container {
-  background-color: white;
-  border-radius: 2px;
-  z-index: 9999 !important;
-  // width:270px !important;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+  font-family: inherit;
+  z-index: 100001 !important; // Higher than cdk-overlay-container (9999)
+  position: fixed !important; // Ensure proper positioning
 
-  // .pac-item {
-  //     color: $primary-color3;
-  // }
+  .pac-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
 
-  // .pac-icon {
-  //     background-repeat: no-repeat;
-  //     background-size: 10px;
-  //     background-position: 1px 1px;
-  //     background-image: url('~/src/assets/icon/location_red.svg');
-  // }
+    &:hover,
+    &.pac-item-selected {
+      background-color: #f0f9ff;
+    }
 
-  // .pac-item-query {
-  //     color: $primary-color3;
-  // }
+    .pac-icon {
+      margin-right: 8px;
+    }
+
+    .pac-item-query {
+      font-weight: 500;
+      color: #1f2937;
+    }
+  }
+
+  .pac-matched {
+    font-weight: 600;
+  }
 }
 
 .tileSelected {
@@ -599,20 +508,19 @@ button.accordion-button:focus {
 }
 
 .bottomFixedBar {
-      position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: white;
-    padding: 10px 20px;
-    z-index: 1000;
-    display: flex;
-    justify-content: flex-start;
-    gap: 10px;
-    box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  padding: 10px 20px;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  box-shadow: 0 -2px 6px rgba(0, 0, 0, 0.1);
 }
 
-// form group designed input 
 .form-group {
   display: flex;
   flex-direction: column;
@@ -627,23 +535,240 @@ button.accordion-button:focus {
   margin-bottom: 4px;
 }
 
-.required-input{
-  color:red;
+.required-input {
+  color: red;
 
 }
-.heading{
-  font-size:23px;
-  font-weight:600;
+
+.heading {
+  font-size: 23px;
+  font-weight: 600;
 }
+
 .labelText {
-    font-size: 13px;
-    color: #6c757d;
+  font-size: 13px;
+  color: #6c757d;
 }
-.labelData{
-    font-size: 15px;
-    color: #212529;
+
+.labelData {
+  font-size: 15px;
+  color: #212529;
 }
 
 .no-address {
   @include no-address-style();
+}
+
+.mdc-label {
+  margin-bottom: 0px;
+}
+
+.responsive-btn {
+  font-size: clamp(0.75rem, 2vw, 1rem) !important;
+
+  mat-icon {
+    cursor: pointer;
+    font-size: clamp(16px, 3vw, 18px) !important;
+  }
+}
+
+mat-error {
+  font-size: clamp(0.75rem, 2vw, 0rem) !important;
+}
+
+mat-icon {
+  cursor: pointer;
+}
+
+mat-tab-header {
+  border-bottom: 1px solid #d0d0d0;
+}
+
+// Filter dialog panel style (used by panelClass)
+.filter-dialog-panel {
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 16px !important;
+    overflow: hidden;
+  }
+
+  .mat-mdc-dialog-container .mdc-dialog__content {
+    padding: 0 !important;
+  }
+}
+
+// Fix for dialog appearing behind header
+.cdk-overlay-container {
+  z-index: 9999 !important;
+}
+
+// --- STANDARD BUTTON STYLES ---
+
+// Mixin for icon spacing
+@mixin btn-icon-gap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    margin-right: 0; // Reset default margins if any
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+// 1. ADD / CREATE / CREDIT / UPDATE BUTTONS (Primary Blue)
+.btn-add,
+.btn-update,
+.btn-credit {
+  @include btn-icon-gap;
+  background-color: $primary-color1 !important; // Royal Blue
+  color: white !important;
+  border-radius: 8px !important;
+  padding: 0 16px !important;
+  height: 40px !important;
+  font-weight: 500 !important;
+}
+
+// 2. EDIT BUTTON (Stroked Blue)
+.btn-edit {
+  @include btn-icon-gap;
+  border: 1px solid $primary-color1 !important;
+  color: $primary-color1 !important;
+  background: white !important;
+  border-radius: 8px !important;
+
+  &:hover {
+    background-color: rgba($primary-color1, 0.05) !important;
+  }
+}
+
+// 3. VIEW BUTTON (Stroked Blue)
+.btn-view {
+  @include btn-icon-gap;
+  border: 1px solid $primary-color1 !important; // Blue
+  color: $primary-color1 !important;
+  background: white !important;
+  border-radius: 8px !important;
+
+  &:hover {
+    background-color: rgba($primary-color1, 0.05) !important;
+  }
+}
+
+// 4. DELETE / DEBIT BUTTONS (Warn Red)
+.btn-delete,
+.btn-debit {
+  @include btn-icon-gap;
+  border: 1px solid $secondary-color3 !important; // Red
+  color: $secondary-color3 !important;
+  background: white !important;
+  border-radius: 8px !important;
+
+  &:hover {
+    background-color: rgba($secondary-color3, 0.05) !important;
+  }
+}
+
+// Note: If you want filled delete/debit buttons, remove border/background lines and add background-color. 
+// Assuming stroked for Delete/Debit to avoid accidental clicks, but if filled is preferred for Debit:
+// .btn-debit { background-color: $secondary-color3 !important; color: white !important; }
+
+// 5. EXCEL EXPORT BUTTON (Green)
+.btn-export-excel {
+  @include btn-icon-gap;
+  border: 1px solid #16a34a !important; // Green-600
+  color: #16a34a !important;
+  background: white !important;
+  border-radius: 8px !important;
+
+  &:hover {
+    background-color: #dcfce7 !important; // Green-100
+  }
+}
+
+// 6. PDF EXPORT BUTTON (Red)
+.btn-export-pdf {
+  @include btn-icon-gap;
+  border: 1px solid $secondary-color3 !important; // Red
+  color: $secondary-color3 !important;
+  background: white !important;
+  border-radius: 8px !important;
+
+  &:hover {
+    background-color: rgba($secondary-color3, 0.05) !important;
+  }
+}
+
+// 7. IMPORT / COPY BUTTON (Blue)
+.btn-import {
+  @include btn-icon-gap;
+  border: 1px solid $primary-color1 !important; // Blue
+  color: $primary-color1 !important;
+  background: white !important;
+  border-radius: 8px !important;
+}
+
+// Table Action Icons (Icon Only)
+.action-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  margin: 0 4px;
+
+  &.edit {
+    color: $primary-color1; // Blue
+  }
+
+  &.delete {
+    color: $secondary-color3; // Red
+  }
+
+  &.view {
+    color: $primary-color1; // Blue
+  }
+}
+
+.vegIcon,
+.nonvegIcon,
+.veg-icon,
+.nonveg-icon {
+  width: 14px;
+  height: 14px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 8px;
+  background: var(--ion-content-color);
+  box-sizing: border-box;
+}
+
+.vegIcon,
+.veg-icon {
+  border-color: #0c8c4c;
+
+  &::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background-color: #0c8c4c;
+    border-radius: 50%;
+  }
+}
+
+.nonvegIcon,
+.nonveg-icon {
+  border-color: #a44c3c;
+
+  &::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 7.5px solid #a44c3c;
+  }
 }

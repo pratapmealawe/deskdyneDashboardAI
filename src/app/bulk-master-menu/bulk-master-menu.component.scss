@@ -1,0 +1,39 @@
+@use 'styles/theme/mixins' as mixin;
+@use '/src/styles.scss' as color;
+
+.vendor-header {
+    @include mixin.responsive-header;
+    background-color: transparent;
+}
+
+.tileSelected {
+    color: white !important;
+}
+
+.header-actions {
+    @include mixin.responsive-flex-wrapper(1rem);
+    flex-grow: 1;
+    justify-content: flex-end;
+
+    .input-wrapper {
+        min-width: 200px;
+
+        @media(max-width: 768px) {
+            width: 100%;
+            display: block !important;
+        }
+    }
+}
+
+.search-input {
+    @include mixin.mat-form-field-responsive();
+    background-color: white;
+    border-radius: 10px;
+}
+
+.mainFoodCard {
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+
+}

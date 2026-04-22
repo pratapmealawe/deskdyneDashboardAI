@@ -1,0 +1,86 @@
+<div class="add-wallet-employee-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!data.employee" [class.warning]="data.employee">
+        <mat-icon>{{ data.employee ? 'edit' : 'account_balance_wallet' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ data.employee ? 'Edit Wallet Staff' : 'Add Wallet Staff' }}</h3>
+        <p>{{ data.employee ? 'Update wallet-linked employee details' : 'Register a new employee with wallet access' }}</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" id="walletEmployeeForm" class="p-2">
+      <div class="form-grid-modern">
+        <!-- Name & ID Row -->
+        <div class="row g-3">
+          <div class="col-md-7">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee Name</mat-label>
+              <mat-icon matPrefix>person</mat-icon>
+              <input matInput formControlName="employeeName" placeholder="e.g. John Doe" />
+              <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">Name is required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee ID</mat-label>
+              <mat-icon matPrefix>badge</mat-icon>
+              <input matInput formControlName="employeeId" placeholder="e.g. EMP123" />
+              <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">ID is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Phone & Email Row -->
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Phone Number</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput formControlName="employeePhoneNo" placeholder="10-digit number" type="tel" />
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">Invalid phone number</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email Address</mat-label>
+              <mat-icon matPrefix>email</mat-icon>
+              <input matInput formControlName="employeeEmail" placeholder="e.g. john@company.com" type="email" />
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">Email is required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">Invalid email address</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Cafeteria Selection -->
+        <div class="selection-container mt-3">
+          <p class="section-label mb-2"><mat-icon>storefront</mat-icon> Primary Cafeteria</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="cafeteria" placeholder="Select assigned cafeteria">
+              <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe">
+                {{ cafe.cafeteria_name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="employeeForm.get('cafeteria')?.hasError('required')">Please select a cafeteria</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="walletEmployeeForm" 
+            [disabled]="employeeForm.invalid" class="btn-primary-action px-4">
+      <mat-icon>{{ data.employee ? 'save' : 'person_add' }}</mat-icon>
+      <span>{{ data.employee ? 'Update Employee' : 'Create Employee' }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

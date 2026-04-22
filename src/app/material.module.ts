@@ -1,10 +1,11 @@
 import { NgModule } from '@angular/core';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MAT_DATE_LOCALE, MatNativeDateModule, MatOptionModule } from '@angular/material/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -24,6 +25,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonToggleModule } from '@angular/material/button-toggle';
 
 const materialModules = [
   MatButtonModule,
@@ -44,8 +47,6 @@ const materialModules = [
   MatTooltipModule,
   MatExpansionModule,
   MatDialogModule,
-  MatIconModule,
-  MatPaginatorModule,
   MatTabsModule,
   MatCheckboxModule,
   MatSlideToggleModule,
@@ -54,12 +55,16 @@ const materialModules = [
   ReactiveFormsModule,
   MatSnackBarModule,
   MatDividerModule,
-  MatRadioModule
+  MatListModule,
+  MatOptionModule,
+  MatButtonToggleModule,
+  DirectivesModule,
 ];
 
 @NgModule({
   imports: [...materialModules],
-  exports: [...materialModules]
+  exports: [...materialModules],
+  providers: [{ provide: MAT_DATE_LOCALE, useValue: 'en-GB' }]
 })
 
 export class MaterialModule { }

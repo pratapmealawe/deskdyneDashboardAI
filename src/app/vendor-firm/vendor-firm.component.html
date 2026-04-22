@@ -1,85 +1,124 @@
-<div class="container-fluid mt-3 p-25" *ngIf="showSearchSection">
-  <div class="row align-items-center justify-content-between px-3" >
-    <div class="col-auto">
-      <h4 class="m-0 fw-semibold">Vendor Firm</h4>
-    </div>
-    <div class="col d-flex justify-content-end align-items-center gap-3">
-      <div class="input-group" class="text-nowrap d-none d-md-inline-flex">
-        <mat-form-field appearance="outline" class="search-input">
-          <input matInput type="text" placeholder="Search vendor firm..." [formControl]="searchControl" />
-          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-            <mat-icon>search</mat-icon> </button>
-        </mat-form-field>
+<div class="container-fluid py-2" *ngIf="showSearchSection">
+  <!-- Page Header -->
+  <!-- Page Header -->
+  <div class="vendor-header-card mb-4">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Vendor Firms</h1>
       </div>
-      <button mat-raised-button color="primary" class="text-nowrap d-none d-md-inline-flex" (click)="addVendor()">
-        Add Vendor Firm
-      </button>
-      <button mat-icon-button color="primary" class="d-inline-flex d-md-none" (click)="addVendor()"
-        matTooltip="Add Vendor Firm" aria-label="Add Vendor Firm">
-        <mat-icon>add_circle</mat-icon>
-      </button>
-    </div>
-    <div class="col d-inline-flex d-md-none">
-        <mat-form-field appearance="outline" class="search-input">
-          <input matInput type="text" placeholder="Search vendor firm..." [formControl]="searchControl" />
-          <button mat-icon-button matSuffix aria-label="Search" class="search-icon">
-            <mat-icon>search</mat-icon> </button>
-        </mat-form-field>
+
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search Vendor Firms..." [formControl]="searchControl">
+        </div>
+
+        <button mat-icon-button class="btn-filter-icon" matTooltip="Filter by Organization"
+          (click)="openFilterDialog()">
+          <mat-icon [matBadge]="selectedOrgs.length" [matBadgeHidden]="selectedOrgs.length === 0" matBadgeSize="small"
+            matBadgeColor="accent">filter_list</mat-icon>
+        </button>
+
+        <button mat-flat-button color="primary" class="btn-add-vendor" (click)="addVendor()"
+          *appHasPermission="'VENDOR_FIRM:ADD'">
+          <mat-icon>add_business</mat-icon> Add Vendor Firm
+        </button>
+      </div>
     </div>
   </div>
-</div> 
-<div  *ngIf="showSearchSection">
-    <div class="row">
-        <div *ngIf="vendorList && vendorList.length == 0" class="center mt-5">
-            No Vendor Firm Found
-        </div>
-        <div  style="padding: 15px 30px;" *ngIf="vendorList && vendorList.length > 0">
-            <div *ngFor="let vendor of  pagedVendorFirm" class="cardDesign">
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-md-11">
-                            <div class="row">
-                                <div class="col-md-3">
-                                    <div class="labelText">Vendor Firm Name</div>
-                                    <div class="labelData">{{ vendor.vendorFirmName }}</div>
-                                </div>
-                                <div class="col-md-3">
-                                  <div class="labelText">Vendor Firm Email</div>
-                                  <div class="labelData">{{vendor.vendorFirmEmail}}</div>
-                                </div>
-                                <div class="col-md-3">
-                                  <div class="labelText">Vendor Phone Number</div>
-                                  <div class="labelData">{{vendor.vendorFirmPhoneNo}}</div>
-                                </div>
-                            </div>
 
-                            <div class="cafeteriaCard">
-                                <div class="row">
-                                    <div class="col-md-3 p-0">
-                                        <div class="labelText">Outlet Name</div>
-                                        <div class="d-flex gap-2 flex-wrap w-100">
-                                           <div class="labelData" *ngFor="let cafeteria of vendor.outletList" ><mat-chip> {{cafeteria.outletName}}</mat-chip>
-                                        </div>
-                                        </div>
-                                       
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-1 d-flex align-items-center gap-3">
-                                <mat-icon *ngIf="true || btnPolicy?.editVendor" (click)="editVendor(vendor)" color="primary"> visibility </mat-icon>
-                                <mat-icon *ngIf="true || btnPolicy?.deleteVendor" (click)="showPopup(vendor)"  color="warn">delete</mat-icon>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="paginator">
-                <mat-paginator [length]="vendorList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[3,5,10,15]" (page)="onPageChange($event)" aria-label="Select page"></mat-paginator>
-            </div>
-        </div>
+  <!-- Active Filter Chips -->
+  <div class="active-filter-chips mb-4" *ngIf="selectedOrgs.length > 0">
+    <div class="chip-strip">
+      <div class="filter-chip" *ngFor="let org of selectedOrgs">
+        {{ org }}
+        <mat-icon (click)="removeOrg(org)">close</mat-icon>
+      </div>
+      <button mat-stroked-button class="btn-clear-all" (click)="clearOrgFilter()">
+        <mat-icon>filter_alt_off</mat-icon> Clear All
+      </button>
     </div>
+  </div>
+
+  <!-- Filter Dialog Template -->
+  <ng-template #filterDialog>
+    <div class="filter-dialog">
+      <!-- Header -->
+      <div class="dialog-header">
+        <div class="header-left">
+          <mat-icon class="header-icon">filter_list</mat-icon>
+          <div>
+            <h2 class="dialog-title">Filter by Organization</h2>
+            <span class="active-badge" *ngIf="tempSelectedOrgs.length > 0">{{ tempSelectedOrgs.length }} selected</span>
+          </div>
+        </div>
+        <button mat-icon-button class="close-btn" (click)="dialog.closeAll()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <!-- Body -->
+      <div class="dialog-body">
+        <div class="filter-group" *ngIf="organizationList.length > 0">
+          <label class="filter-label">
+            <mat-icon>business</mat-icon> Organizations
+          </label>
+          <div class="chip-selector">
+            <div class="chip-option" *ngFor="let org of organizationList" [class.active]="isOrgSelected(org)"
+              (click)="toggleOrgSelection(org)">
+              <mat-icon *ngIf="isOrgSelected(org)">check_circle</mat-icon>
+              {{ org }}
+            </div>
+          </div>
+        </div>
+        <div class="no-orgs" *ngIf="organizationList.length === 0">
+          <mat-icon>info_outline</mat-icon>
+          <span>No organizations found.</span>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="dialog-footer">
+        <button mat-stroked-button class="btn-clear" (click)="tempSelectedOrgs = []"
+          *ngIf="tempSelectedOrgs.length > 0">
+          <mat-icon>filter_alt_off</mat-icon> Clear All
+        </button>
+        <div class="footer-right">
+          <button mat-stroked-button class="btn-cancel" (click)="dialog.closeAll()">Cancel</button>
+          <button mat-flat-button class="btn-apply" (click)="applyFilterFromDialog()">
+            <mat-icon>check</mat-icon> Apply
+            <span class="apply-count" *ngIf="tempSelectedOrgs.length > 0">({{ tempSelectedOrgs.length }})</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Content Grid -->
+  <div *ngIf="vendorList && vendorList.length == 0" class="empty-state">
+    <mat-icon>domain_disabled</mat-icon>
+    <h3>No Vendor Firms Found</h3>
+    <p>Get started by adding a new vendor firm to the system.</p>
+  </div>
+
+  <div *ngIf="vendorList && vendorList.length > 0">
+    <div class="row g-4">
+      <div class="col-6" *ngFor="let vendor of pagedVendorFirm">
+        <app-vendor-firm-card [vendor]="vendor" (view)="editVendor(vendor)" (delete)="showPopup(vendor)">
+        </app-vendor-firm-card>
+      </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="d-flex justify-content-end mt-4">
+      <mat-paginator [length]="filteredList.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+        class="custom-paginator">
+      </mat-paginator>
+    </div>
+  </div>
 </div>
 
-<div class="bgpadding1" *ngIf="!showSearchSection">
-    <app-vendor-firm-view [vendor]="vendorInfo" (back)="toggleShowOrder($event)"></app-vendor-firm-view>
+<div *ngIf="!showSearchSection" class="container-fluid pb-4">
+  <app-vendor-firm-view [vendor]="vendorInfo" (back)="toggleShowOrder($event)"></app-vendor-firm-view>
 </div>

@@ -15,6 +15,8 @@ export interface DatewiseDialogData {
       vendorLedgerAmtBeforeTdsTcs: number;
       tcsAmount: number;
       tdsAmount: number;
+      revenueSharingTdsAmount: number;
+      vendorRevenueSharingLedgerAmt: number;
       count: number;
       orders: any[];
     };
@@ -23,6 +25,7 @@ export interface DatewiseDialogData {
   minDate?: Date;
   maxDate?: Date;
   initialKey?: string;
+  isEcommerce?: boolean;
 }
 
 export interface DatewiseDialogResult {
@@ -30,10 +33,16 @@ export interface DatewiseDialogResult {
   records: any[];
 }
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-datewise-orders-dialog',
   templateUrl: './datewise-orders-dialog.component.html',
-  styleUrls: ['./datewise-orders-dialog.component.scss']
+  styleUrls: ['./datewise-orders-dialog.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MaterialModule, FormsModule]
 })
 export class DatewiseOrdersDialogComponent implements OnInit {
   selectedDate: Date | null = null;
@@ -56,22 +65,22 @@ export class DatewiseOrdersDialogComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-  // If a valid initialKey exists, use it. Otherwise default to "today" (clamped).
-  const key = this.data.initialKey;
+    // If a valid initialKey exists, use it. Otherwise default to "today" (clamped).
+    const key = this.data.initialKey;
 
-  if (key && this.data.byDate[key]) {
-    this.dateKey = key;
-    this.snapshot = this.data.byDate[key];
-    this.records = this.snapshot?.orders || [];
-    this.selectedDate = new Date(key); // reflect in picker
-    this.resetPager();
-    return; // prevent double render
+    if (key && this.data.byDate[key]) {
+      this.dateKey = key;
+      this.snapshot = this.data.byDate[key];
+      this.records = this.snapshot?.orders || [];
+      this.selectedDate = new Date(key); // reflect in picker
+      this.resetPager();
+      return; // prevent double render
+    }
+
+    const picked = this.clampToRange(new Date(), this.data.minDate, this.data.maxDate);
+    this.selectedDate = picked;
+    this.onDateChange(picked); // sets dateKey/snapshot/records + resets pager
   }
-
-  const picked = this.clampToRange(new Date(), this.data.minDate, this.data.maxDate);
-  this.selectedDate = picked;
-  this.onDateChange(picked); // sets dateKey/snapshot/records + resets pager
-}
 
   private clampToRange(d: Date, min?: Date, max?: Date): Date {
     const t = d.getTime();

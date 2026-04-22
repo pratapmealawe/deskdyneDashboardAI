@@ -1,13 +1,21 @@
-import { Component, Input, OnInit } from '@angular/core';
+﻿import { Component, Input, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup } from '@angular/forms';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { PermissionsService } from '@service/permission.service';
+
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
 
 @Component({
   selector: 'app-outlet-categories',
   templateUrl: './outlet-categories.component.html',
   styleUrls: ['./outlet-categories.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule
+  ]
 })
 export class OutletCategoriesComponent implements OnInit {
   @Input() outletObj: any;
@@ -17,11 +25,11 @@ export class OutletCategoriesComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private apiMainService: ApiMainService,
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) {}
 
   ngOnInit() {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.categoryForm = this.formBuilder.group({
       categories: this.formBuilder.array([this.createCategory()]),
     });
@@ -77,7 +85,7 @@ export class OutletCategoriesComponent implements OnInit {
       const obj = { ...this.outletObj, ...this.categoryForm.value };
       await this.apiMainService.updateCategories(obj);
     } catch (error) {
-      console.log(error);
     }
   }
 }
+

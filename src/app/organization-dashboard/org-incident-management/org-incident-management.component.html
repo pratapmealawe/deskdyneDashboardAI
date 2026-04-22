@@ -1,0 +1,170 @@
+<div class="">
+  <!-- HEADER -->
+  <div class="admin-header">
+    <div class="">
+      <h2 class="page-title">Incident Management</h2>
+    </div>
+
+    <!-- Search -->
+    <div class="header-actions">
+      <mat-form-field appearance="outline" class="search-field search-input">
+        <input matInput (input)="searchFilter($event)" placeholder="Search incidents..." />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+
+  <div class="container-fluid">
+    <!-- FILTER CARD -->
+    <mat-card class="mb-3">
+      <app-common-outlet-cafe-select [config]="headerConfig"
+        (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+    </mat-card>
+
+    <!-- INCIDENT LIST -->
+    <div class="incident-page">
+      <div class="d-flex gap-2 mt-3 justify-content-end">
+        <button class="btn-add" mat-raised-button color="primary" *ngIf="
+            orgAdmin?.role ==='ORGADMIN' &&
+            isFilterApplied &&
+            filterObj?.cafeteria_id" (click)="addIncident()">
+          <mat-icon class="me-1">add</mat-icon>
+          Add Incident
+        </button>
+      </div>
+      <div class="incident-list mt-3" *ngIf="pagedIncidentList.length > 0; else noRecords">
+        <mat-card class="incident-card mb-2" *ngFor="let incident of pagedIncidentList">
+          <mat-card-content>
+            <div class="row g-2 align-items-center">
+              <div class="col-12 col-md-3">
+                <div class="labelText">Incident Type</div>
+                <div class="labelData fw-semibold">
+                  {{ incident?.incidentType ||'-' }}
+                </div>
+                <div class="labelText mt-1">Subject</div>
+                <div class="labelData">
+                  {{ incident?.incidentSubject ||'-' }}
+                </div>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <div class="labelText">Description</div>
+                <div class="labelData text-truncate-3">
+                  {{ incident?.incidentDescription ||'-' }}
+                </div>
+              </div>
+
+              <div class="col-6 col-md-2">
+                <div class="labelText">Date</div>
+                <div class="labelData">
+                  {{ incident?.createdAt | date :'MMM d, y, h:mm:ss a' }}
+                </div>
+                <div class="labelText mt-1">Status</div>
+                <mat-chip class="status-chip" [ngClass]="incident.status" selected>
+                  {{ incident?.status | titlecase }}
+                </mat-chip>
+              </div>
+
+              <div class="col-12 col-md-3">
+                <div class="labelText mb-1">Change Status</div>
+                <div class="statusBtn">
+                  <button class="btn-edit" mat-stroked-button color="primary" [disabled]="orgAdmin?.role ==='ORGADMIN'"
+                    *ngIf="incident.status !=='resolved'" (click)="
+                    openChangeStatus(
+                      incident,
+                      incident.status ==='created'
+                        ?'acknowledged'
+                        : incident.status ==='acknowledged'
+                        ?'inReview'
+                        :'resolved'
+                    )">
+                    {{
+                    (incident.status ==='created'
+                    ?'acknowledged'
+                    : incident.status ==='acknowledged'
+                    ?'inReview'
+                    :'resolved') | titlecase
+                    }}
+                  </button>
+
+                  <button class="btn-delete" mat-stroked-button color="warn" [disabled]="orgAdmin?.role ==='ORGADMIN'"
+                    *ngIf="incident.status ==='inReview' || incident.status ==='resolved'"
+                    (click)="openChangeStatus(incident,'blocked')">
+                    {{'blocked' | titlecase }}
+                  </button>
+                </div>
+              </div>
+
+              <div class="col-12 col-md-1 d-flex justify-content-md-end mt-2 mt-md-0">
+                <button mat-icon-button color="warn" *appHasPermission="'INCIDENT:DELETE'"
+                  (click)="deleteIncident(incident)" matTooltip="Delete Incident">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- PAGINATOR -->
+      <div class="d-flex justify-content-end mt-2">
+        <mat-paginator [length]="filteredIncidentList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+          [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </div>
+
+    <ng-template #noRecords>
+      <mat-card class="text-center py-4">
+        No Records Found
+      </mat-card>
+    </ng-template>
+  </div>
+</div>
+
+<!-- STATUS CHANGE MODAL (with Dropzone) -->
+<ng-template #statusChangeDiv let-modal>
+  <div class="modal-header">
+    <div class="header2 bold" id="modal-basic-title">Change Status</div>
+    <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('cancel')">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+
+  <div class="modal-body">
+    <div class="row">
+      <div class="mb-3 col-md-12">
+        <label class="labelText">User</label>
+        <select class="form-select" [disabled]="
+            orgAdmin.role ==='SITEEXE' ||
+            incidentObj.status ==='inReview' ||
+            incidentObj.status ==='blocked' ||
+            incidentObj.status ==='resolved'" [(ngModel)]="assignedToInfo.id">
+          <option selected disabled value="">Select User</option>
+          <option *ngFor="let admin of adminList" [value]="admin._id">
+            {{ admin.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="mb-3 col-md-12">
+        <label class="labelText">Remark</label>
+        <textarea type="text" class="form-control" [(ngModel)]="incidentObj.remark"
+          placeholder="Enter Remark"></textarea>
+      </div>
+
+      <!-- ATTACHMENTS WITH DROPZONE -->
+      <div class="mb-3 col-md-12">
+        <label class="labelText">Attachments</label>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button type="submit" (click)="updateIncidentStatus()" class="btn btn-primary" [disabled]="isSubmitting">
+      <span *ngIf="!isSubmitting">Update</span>
+      <span *ngIf="isSubmitting">Updating...</span>
+    </button>
+  </div>
+</ng-template>

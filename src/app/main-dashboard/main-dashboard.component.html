@@ -1,0 +1,170 @@
+<div class="dashboard-container">
+    <!-- Header Card -->
+    <div class="dashboard-header">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Dashboard</h1>
+                <p class="page-subtitle">Real-time overview of your business</p>
+            </div>
+            <div class="actions-section">
+                <!-- Date Range -->
+                <mat-form-field class="date-range-field" appearance="outline">
+                    <mat-label>Date Range</mat-label>
+                    <mat-date-range-input [formGroup]="dateGroup" [rangePicker]="picker" [max]="maxDate">
+                        <input matStartDate placeholder="Start" formControlName="start" />
+                        <input matEndDate placeholder="End" (dateChange)="changeDate()" formControlName="end" />
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                </mat-form-field>
+
+                <!-- Exports -->
+                <button mat-stroked-button class="action-btn" (click)="excelExport()"
+                    [disabled]="filteredOrders.length === 0">
+                    <mat-icon class="excel-icon">table_view</mat-icon> Excel
+                </button>
+                <button mat-stroked-button class="action-btn" (click)="downloadPdf()"
+                    [disabled]="filteredOrders.length === 0">
+                    <mat-icon class="pdf-icon">picture_as_pdf</mat-icon> PDF
+                </button>
+
+                <!-- Filter Button -->
+                <button mat-stroked-button class="filter-btn" (click)="openFilterDialog()"
+                    [class.active-filter]="activeFilterCount > 0">
+                    <mat-icon>filter_list</mat-icon> Filters
+                    <span class="filter-badge" *ngIf="activeFilterCount > 0">{{ activeFilterCount }}</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Filter Chips -->
+    <div class="active-filter-chips" *ngIf="activeFilterCount > 0">
+        <div class="chip-strip">
+            <div class="filter-chip" *ngIf="filterOrg">
+                Org: {{ filterOrg }}
+                <mat-icon (click)="removeFilter('org')">close</mat-icon>
+            </div>
+            <div class="filter-chip" *ngIf="filterCity">
+                City: {{ filterCity }}
+                <mat-icon (click)="removeFilter('city')">close</mat-icon>
+            </div>
+            <div class="filter-chip" *ngIf="filterLocation">
+                Location: {{ filterLocation }}
+                <mat-icon (click)="removeFilter('location')">close</mat-icon>
+            </div>
+            <div class="filter-chip" *ngIf="filterStatus">
+                Status: {{ orderStatusMapper[filterStatus] || filterStatus }}
+                <mat-icon (click)="removeFilter('status')">close</mat-icon>
+            </div>
+            <button mat-stroked-button class="btn-clear-all" (click)="clearFilters(); buildPieChart()">
+                <mat-icon>filter_alt_off</mat-icon> Clear All
+            </button>
+        </div>
+    </div>
+
+    <!-- Entity Stats Row -->
+    <div class="stats-row entity-stats">
+        <div class="stat-card stat-orgs">
+            <div class="stat-icon-wrap orgs-gradient">
+                <mat-icon>business</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Organizations</span>
+                <span class="stat-value">{{ orgList.length }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card stat-outlets">
+            <div class="stat-icon-wrap outlets-gradient">
+                <mat-icon>storefront</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Outlets</span>
+                <span class="stat-value">{{ outletList.length }}</span>
+            </div>
+        </div>
+
+        <div class="stat-card stat-vendors">
+            <div class="stat-icon-wrap vendors-gradient">
+                <mat-icon>people</mat-icon>
+            </div>
+            <div class="stat-info">
+                <span class="stat-label">Vendor Firms</span>
+                <span class="stat-value">{{ vendorList.length }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading-strip" *ngIf="isLoading">
+        <mat-icon class="spin">autorenew</mat-icon> Loading orders data...
+    </div>
+
+    <!-- Financial Stats Row -->
+    <div class="stats-row financial-stats" *ngIf="!isLoading">
+        <div class="fin-card" *ngIf="ordersCount > 0">
+            <div class="fin-icon orders-icon"><mat-icon>receipt_long</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Orders</span>
+                <span class="fin-value">{{ ordersCount }}</span>
+            </div>
+        </div>
+        <div class="fin-card" *ngIf="totalAmount > 0">
+            <div class="fin-icon amount-icon"><mat-icon>payments</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Total Amount</span>
+                <span class="fin-value">&#8377; {{ totalAmount | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card" *ngIf="totalAmountPaid > 0">
+            <div class="fin-icon paid-icon"><mat-icon>account_balance_wallet</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Amount Paid</span>
+                <span class="fin-value">&#8377; {{ totalAmountPaid | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card" *ngIf="totalWalletUsed > 0">
+            <div class="fin-icon wallet-icon"><mat-icon>savings</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Money Wallet</span>
+                <span class="fin-value">&#8377; {{ totalWalletUsed | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card" *ngIf="totalCompanyWallet > 0">
+            <div class="fin-icon company-icon"><mat-icon>corporate_fare</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Company Wallet</span>
+                <span class="fin-value">&#8377; {{ totalCompanyWallet | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card" *ngIf="totalSubsidy > 0">
+            <div class="fin-icon subsidy-icon"><mat-icon>volunteer_activism</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Subsidy</span>
+                <span class="fin-value">&#8377; {{ totalSubsidy | number:'1.0-0' }}</span>
+            </div>
+        </div>
+        <div class="fin-card" *ngIf="totalPackaging > 0">
+            <div class="fin-icon packaging-icon"><mat-icon>inventory_2</mat-icon></div>
+            <div class="fin-info">
+                <span class="fin-label">Packaging</span>
+                <span class="fin-value">&#8377; {{ totalPackaging | number:'1.0-0' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pie Chart -->
+    <div class="chart-section" *ngIf="!isLoading">
+        <div class="chart-card">
+            <highcharts-chart *ngIf="initialStatusData.length > 0" [Highcharts]="Highcharts" [options]="chartOptionsPie"
+                [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
+                style="width: 100%; height: 400px; display: block">
+            </highcharts-chart>
+            <div class="chart-empty" *ngIf="initialStatusData.length === 0">
+                <mat-icon>pie_chart</mat-icon>
+                <p>No order data for the selected period</p>
+            </div>
+        </div>
+    </div>
+</div>

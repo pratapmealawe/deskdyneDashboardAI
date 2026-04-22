@@ -1,0 +1,122 @@
+<div class="bulk-add-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box primary">
+        <mat-icon>account_balance_wallet</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Bulk Wallet Entry</h3>
+        <p>Add multiple employees to wallet and assign cafeteria in one go</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <!-- Global Cafeteria Assignment -->
+    <div class="global-selection-box p-4 border-bottom bg-light-soft">
+        <div class="selection-container">
+            <p class="section-label mb-2"><mat-icon>storefront</mat-icon> Global Cafeteria Assignment</p>
+            <mat-form-field appearance="outline" class="full-width premium-select-field">
+              <mat-select [(ngModel)]="globalCafeteriaIds" multiple [compareWith]="compareCafeteria" 
+                          (ngModelChange)="onGlobalCafeteriaChange()" placeholder="Select one or more cafeterias">
+                <mat-option *ngFor="let cafe of availableCafeterias" [value]="cafe.cafeteria_id">
+                  {{ cafe.cafeteria_name }}
+                </mat-option>
+              </mat-select>
+              <mat-hint>This selection will be applied to all employees in the list below</mat-hint>
+            </mat-form-field>
+        </div>
+    </div>
+
+    <!-- Entry Grid Header -->
+    <div class="grid-header-labels px-4 py-3 bg-light-soft border-bottom">
+        <div class="header-row d-flex align-items-center">
+            <div class="col-num">#</div>
+            <div class="col-id">Employee ID</div>
+            <div class="col-name">Full Name<span class="required">*</span></div>
+            <div class="col-phone">Phone Number<span class="required">*</span></div>
+            <div class="col-email">Email Address<span class="required">*</span></div>
+            <div class="col-actions"></div>
+        </div>
+    </div>
+
+    <div class="premium-grid-container px-4 py-2">
+      <div class="entry-row-modern py-3 border-bottom animate-fadeIn" 
+           *ngFor="let emp of employeeList; let i = index" 
+           [class.row-invalid]="!isRowValid(emp) && (emp.employeeName || emp.employeePhoneNo || emp.employeeEmail)">
+        
+        <div class="entry-fields-wrapper d-flex align-items-center gap-3">
+          <div class="col-num text-center fw-bold text-muted">{{ i + 1 }}</div>
+          
+          <div class="col-id">
+            <div class="premium-input-box">
+              <mat-icon>badge</mat-icon>
+              <input type="text" [(ngModel)]="emp.employeeId" placeholder="ID (Optional)" maxlength="15">
+            </div>
+          </div>
+          
+          <div class="col-name">
+            <div class="premium-input-box">
+              <mat-icon>person</mat-icon>
+              <input type="text" [(ngModel)]="emp.employeeName" placeholder="Full Name" required maxlength="50">
+            </div>
+          </div>
+          
+          <div class="col-phone">
+            <div class="premium-input-box">
+              <mat-icon>phone</mat-icon>
+              <input type="text" [(ngModel)]="emp.employeePhoneNo" placeholder="Phone Number" required maxlength="12">
+            </div>
+          </div>
+          
+          <div class="col-email">
+            <div class="premium-input-box">
+              <mat-icon>email</mat-icon>
+              <input type="email" [(ngModel)]="emp.employeeEmail" placeholder="Email Address" required>
+            </div>
+          </div>
+          
+          <div class="col-actions text-center">
+            <button mat-icon-button class="premium-icon-btn delete" (click)="removeRow(i)" 
+                    matTooltip="Remove Row" [disabled]="employeeList.length === 1 && !isRowValid(emp)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="add-row-zone py-4">
+          <button mat-stroked-button class="btn-premium-dashed w-100 py-3" (click)="addRow()">
+            <mat-icon>add_circle</mat-icon> <span>Add Another Row</span>
+          </button>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top justify-content-between">
+    <div class="draft-info d-flex align-items-center gap-2" *ngIf="employeeList.length > 0">
+      <div class="draft-badge">
+        <mat-icon>edit_note</mat-icon>
+        <span class="fw-700">{{ employeeList.length }}</span>
+      </div>
+      <span class="text-muted fw-500">Records in draft</span>
+    </div>
+    <div class="action-buttons d-flex gap-3">
+      <button mat-button class="btn-cancel" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+      <button mat-flat-button color="primary" class="btn-primary-action px-5" (click)="submitBulk()" 
+              [disabled]="isSubmitting">
+        <ng-container *ngIf="!isSubmitting">
+          <mat-icon>save</mat-icon>
+          <span>Save All Records</span>
+        </ng-container>
+        <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+          <mat-spinner diameter="20" color="accent"></mat-spinner>
+          <span>Processing...</span>
+        </div>
+      </button>
+    </div>
+  </mat-dialog-actions>
+</div>

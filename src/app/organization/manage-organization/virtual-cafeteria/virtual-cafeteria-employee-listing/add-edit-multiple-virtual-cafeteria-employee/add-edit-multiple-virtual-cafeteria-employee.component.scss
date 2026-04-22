@@ -1,0 +1,150 @@
+@use "styles/theme/variable" as var;
+
+.premium-modal {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  min-width: 900px;
+  max-width: 1200px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: white;
+}
+
+.modal-header {
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .icon-box {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      mat-icon { font-size: 22px; width: 22px; height: 22px; }
+      &.primary { background: #eff6ff; color: var.$primary-color1; }
+    }
+
+    .text {
+      h3 { font-size: 1.15rem; font-weight: 700; color: var.$primary-color2; margin: 0; }
+      p { font-size: 0.82rem; color: #64748b; margin: 0; }
+    }
+  }
+
+  .close-btn { color: #94a3b8; &:hover { background: #f1f5f9; color: #64748b; } }
+}
+
+.bg-light-soft { background-color: #f8fafc; }
+
+.dialog-content {
+  padding: 0 !important;
+  margin: 0;
+  overflow-y: auto;
+}
+
+.section-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #94a3b8; }
+}
+
+/* Grid Styles */
+.grid-header-labels {
+    .header-row {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        
+        .required { color: #ef4444; margin-left: 2px; }
+    }
+}
+
+.col-num { width: 40px; }
+.col-id { width: 150px; }
+.col-name { flex: 1; }
+.col-phone { width: 180px; }
+.col-email { flex: 1.2; }
+.col-actions { width: 60px; }
+
+.premium-input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0 12px;
+    transition: all 0.2s ease;
+    height: 44px;
+
+    mat-icon { font-size: 18px; width: 18px; height: 18px; color: #94a3b8; margin-right: 8px; }
+    input {
+        border: none;
+        outline: none;
+        width: 100%;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #1e293b;
+        background: transparent;
+        &::placeholder { color: #cbd5e1; font-weight: 400; }
+    }
+
+    &:focus-within {
+        border-color: var.$primary-color1;
+        box-shadow: 0 0 0 3px rgba(14, 73, 181, 0.08);
+        mat-icon { color: var.$primary-color1; }
+    }
+}
+
+.entry-row-modern {
+    transition: all 0.3s ease;
+    &.row-invalid {
+        .premium-input-box { border-color: #fca5a5; background: #fffcfc; }
+    }
+}
+
+.btn-premium-dashed {
+    border: 2px dashed #e2e8f0 !important;
+    border-radius: 14px !important;
+    color: #64748b !important;
+    font-weight: 600 !important;
+    transition: all 0.2s ease !important;
+    
+    mat-icon { color: var.$primary-color1; margin-right: 8px; }
+    &:hover { border-color: var.$primary-color1 !important; color: var.$primary-color1 !important; background: #eff6ff !important; }
+}
+
+.draft-badge {
+    background: #f0f9ff;
+    color: #0284c7;
+    padding: 6px 12px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 1px solid #e0f2fe;
+    mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+/* Buttons */
+.btn-cancel { border-radius: 99px; font-weight: 600; color: #64748b; &:hover { background: #f1f5f9; } }
+.btn-primary-action {
+  border-radius: 99px !important; font-weight: 700 !important; height: 46px !important; font-size: 0.9rem !important;
+  mat-icon { margin-right: 8px; font-size: 20px; width: 20px; height: 20px; }
+}
+
+.premium-icon-btn.delete {
+    color: #94a3b8;
+    &:hover:not([disabled]) { color: #ef4444; background: #fef2f2; }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container .mdc-dialog__surface { border-radius: 20px !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; }
+}

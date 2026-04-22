@@ -1,0 +1,284 @@
+@use "styles/theme/variable" as var;
+
+// ──────────────────────────────────────────────────────────────
+// Page Container
+// ──────────────────────────────────────────────────────────────
+.export-page-container {
+    padding: 1.5rem;
+    min-height: 100vh;
+}
+
+// ──────────────────────────────────────────────────────────────
+// Header Card
+// ──────────────────────────────────────────────────────────────
+.export-header-card {
+    background: #fff;
+    border-radius: var.$border-radius-xl;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2rem;
+    box-shadow: var.$box-shadow-card;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+
+        @media (max-width: 768px) {
+            flex-direction: column;
+            align-items: stretch;
+        }
+    }
+
+    .title-section {
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var.$primary-color2;
+            margin: 0 0 0.25rem 0;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            margin: 0;
+            font-size: 0.95rem;
+        }
+    }
+
+    .actions-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+
+        @media (max-width: 768px) {
+            width: 100%;
+            flex-direction: column;
+
+            .search-wrapper {
+                width: 100%;
+            }
+        }
+    }
+}
+
+// Search Wrapper
+.search-wrapper {
+    position: relative;
+    min-width: 280px;
+
+    @media (max-width: 768px) {
+        min-width: 100%;
+    }
+
+    .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9aa0a6;
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px 16px 10px 42px;
+        border: 1px solid #e0e0e0;
+        border-radius: var.$border-radius-pill;
+        font-size: 0.95rem;
+        background-color: #f8f9fa;
+        transition: all 0.3s ease;
+
+        &:focus {
+            outline: none;
+            background-color: #fff;
+            border-color: var.$primary-color1;
+            box-shadow: 0 0 0 3px rgba(14, 73, 181, 0.1);
+        }
+
+        &::placeholder {
+            color: #adb5bd;
+        }
+    }
+}
+
+// Export Buttons
+.export-btns {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.btn-export {
+    border-radius: var.$border-radius-pill !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    height: 40px !important;
+
+    mat-icon {
+        margin-right: 4px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+
+    &.excel {
+        background-color: var.$color-success !important;
+        color: white !important;
+    }
+
+    &.pdf {
+        background-color: var.$primary-color1 !important;
+        color: white !important;
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Content Body
+// ──────────────────────────────────────────────────────────────
+.content-body {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filter-wrapper {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 1rem 1.5rem;
+}
+
+// ──────────────────────────────────────────────────────────────
+// Totals Strip
+// ──────────────────────────────────────────────────────────────
+.totals-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.total-chip {
+    display: inline-flex;
+    flex-direction: column;
+    padding: 0.5rem 1rem;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    min-width: 120px;
+
+    .chip-label {
+        font-size: 0.7rem;
+        color: #718096;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+
+    .chip-value {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var.$primary-color2;
+    }
+
+    &.highlight {
+        background: linear-gradient(135deg, #eef2ff, #e0e7ff);
+        border-color: #c7d2fe;
+
+        .chip-label {
+            color: #3730a3;
+        }
+
+        .chip-value {
+            color: #312e81;
+            font-weight: 700;
+        }
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Loading & Empty States
+// ──────────────────────────────────────────────────────────────
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    gap: 1rem;
+
+    p {
+        color: #718096;
+        font-size: 0.95rem;
+    }
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 4rem 2rem;
+    text-align: center;
+    background: white;
+    border-radius: var.$border-radius-lg;
+    border: 1px dashed #ced4da;
+
+    .empty-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: #dee2e6;
+        margin-bottom: 1rem;
+    }
+
+    h3 {
+        color: var.$primary-color2;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: #6c757d;
+        margin-bottom: 1.5rem;
+    }
+}
+
+// Pagination
+.pagination-card {
+    background: white;
+    border-radius: var.$border-radius-xl;
+    padding: 1rem 1.5rem;
+    margin-top: 1.5rem;
+    box-shadow: var.$box-shadow-card;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+// Responsive
+@media (max-width: 768px) {
+    .export-page-container {
+        padding: 1rem;
+    }
+
+    .export-header-card {
+        padding: 1.25rem;
+    }
+}
+

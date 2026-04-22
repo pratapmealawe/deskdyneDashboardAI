@@ -1,40 +1,98 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatTabChangeEvent } from '@angular/material/tabs';
-import { Router } from '@angular/router';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter } from 'rxjs';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { PermissionsService } from '@service/permission.service';
+import { OutletViewService } from './outlet-view.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
 
 @Component({
   selector: 'app-outlet-view',
   templateUrl: './outlet-view.component.html',
   styleUrls: ['./outlet-view.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    RouterModule
+  ],
+  providers: [OutletViewService]
 })
 export class OutletViewComponent implements OnInit {
   @Input() outlet: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  selectedtab:number = 0 ; 
+  selectedtab: number = 0;
   outletViewList = [
-    { name: 'Basic Details', path: 'outlet-details' },
-    // { name: 'Categories', path: 'outlet-categories' },
-    { name: 'Menu', path: 'outlet-menu' },
-    { name: 'Past Orders', path: 'outlet-orders' },
-    { name: 'Reviews', path: 'outlet-feedback' },
-    { name: 'Vendor', path: 'outlet-vendor' },
-    // { name: 'Complience', path: 'outlet-compliance' },
+    { name: 'Basic Details', path: 'outlet-details', policyKey: 'outletBasicDetails' },
+    { name: 'Menu', path: 'outlet-menu', policyKey: 'outletMenu' },
+    { name: 'QR Menu', path: 'qr-menu', policyKey: 'outletQrMenu' },
+    { name: 'Outlet Orders', path: 'outlet-orders', policyKey: 'outletOrders' },
+    { name: 'Reviews', path: 'outlet-feedback', policyKey: 'outletReviews' },
   ];
   selectedTab = 'outlet-details';
   updateval: any = false;
 
-  constructor(private router: Router, private sendDataToComponent: SendDataToComponent) { }
+  constructor(
+    private permissionsService: PermissionsService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private outletViewService: OutletViewService,
+  ) { }
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
+
+    // Get outlet ID from route params
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.loadOutlet(id);
+      }
+    });
+
+    this.checkChildRoute();
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkChildRoute();
+    });
+
+    this.outletViewList = this.permissionsService.filterTabsByPolicy(this.outletViewList);
+  }
+
+  checkChildRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // /app/outlet/:id/:tab
+    if (urlParts.length >= 4) {
+      this.selectedTab = urlParts[3];
+      this.selectedtab = this.outletViewList.findIndex(x => x.path === this.selectedTab);
+      if (this.selectedtab === -1) this.selectedtab = 0;
+    } else {
+      this.selectedTab = 'details';
+      this.selectedtab = 0;
+    }
+  }
+
+  async loadOutlet(id: string) {
+    // Check if outlet is already in shared state
+    const currentOutlet = this.outletViewService.getOutlet();
+    if (currentOutlet && currentOutlet._id === id) {
+      this.outlet = currentOutlet;
+    } else {
+      // Fetch from API if not present or different
+      this.outlet = await this.outletViewService.refreshOutlet(id);
+    }
   }
 
   gotToTab(tab: string) {
     this.selectedTab = tab;
+    this.router.navigate([tab], { relativeTo: this.route });
   }
 
   goBack() {
-    this.back.emit({ val: true, updateval: this.updateval });
+    this.router.navigate(['/app/outlet']);
   }
 
   updateOutlet(val: any) {
@@ -43,10 +101,18 @@ export class OutletViewComponent implements OnInit {
 
   receiveData(event: any) {
     this.outlet = event;
+    this.outletViewService.setOutlet(event);
   }
 
-  onTabChange(event:MatTabChangeEvent){
-     const selectedIndex = this.outletViewList[event.index];
-     this.gotToTab(selectedIndex.path);
+  getTabIcon(path: string): string {
+    const icons: { [key: string]: string } = {
+      'outlet-details': 'info',
+      'outlet-menu': 'restaurant_menu',
+      'qr-menu': 'qr_code_2',
+      'outlet-orders': 'receipt_long',
+      'outlet-feedback': 'rate_review'
+    };
+    return icons[path] || 'tab';
   }
 }
+

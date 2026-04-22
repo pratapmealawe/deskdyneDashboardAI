@@ -1,58 +1,82 @@
-<div class="bgpadding1 status-wrapper">
-  <div class="bgpadding1">
- 
-    <div class="row mt-2">
-      <div class="bold">Order Status</div>
-      <div class="col-6 col-md-4 col-lg-3 mt-1" *ngFor="let status of statusList">
-        <input class="form-check-input pointer" type="checkbox" [id]="status.value" [(ngModel)]="status.selected"
-          name="itemType">
-        <label [for]="status.value">{{status.name}}</label>
+<div class="container-fluid pb-4">
+  <div class="cardDesign p-4 mb-4">
+    <div class="row g-3">
+      <!-- Order Status -->
+      <div class="col-12">
+        <label class="labelText mb-2 d-block">Order Status</label>
+        <div class="d-flex flex-wrap gap-3">
+          <mat-checkbox *ngFor="let status of statusList" [(ngModel)]="status.selected" color="primary">
+            {{status.name}}
+          </mat-checkbox>
+        </div>
       </div>
-    </div>
-    <div class="row mt-2">
-      <div class="col-sm-12 col-md-4 col-lg-3">
-        <div class="bold">Order No.</div>
-        <input type="text" class="form-control" placeholder="Order No" [(ngModel)]="searchObj.orderNo">
+
+      <!-- Filters -->
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 dense-field">
+          <mat-label>Order No.</mat-label>
+          <input matInput type="text" [(ngModel)]="searchObj.orderNo" placeholder="Order No">
+        </mat-form-field>
       </div>
-      <div class="col-sm-12 col-md-4 col-lg-3">
-        <div class="bold">Outlet Name</div>
-        <input type="text" class="form-control" placeholder="Order No" [(ngModel)]="searchObj.outletName">
+
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 dense-field">
+          <mat-label>Outlet Name</mat-label>
+          <input matInput type="text" [(ngModel)]="searchObj.outletName" placeholder="Outlet Name">
+        </mat-form-field>
       </div>
-      <div class="col-sm-12 col-md-4 col-lg-3">
-        <div class="bold">Customer PhoneNo</div>
-        <input type="text" class="form-control" placeholder="Order No" [(ngModel)]="searchObj.customerPhoneNo">
+
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 dense-field">
+          <mat-label>Customer Phone No</mat-label>
+          <input matInput type="text" [(ngModel)]="searchObj.customerPhoneNo" placeholder="Phone No">
+        </mat-form-field>
       </div>
-      <div class="col-sm-12 col-md-4 col-lg-3">
-        <div class="bold">Customer Name</div>
-        <input type="text" class="form-control" placeholder="Customer Name" [(ngModel)]="searchObj.customerName">
-      </div>      
-      <div class="col-sm-12 col-md-4 col-lg-3">
-        <div class="bold">Select From Date</div>
-        <input type="date" class="form-control searchDate" placeholder="From" [(ngModel)]="fromDate">
+
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <mat-form-field appearance="outline" class="w-100 dense-field">
+          <mat-label>Customer Name</mat-label>
+          <input matInput type="text" [(ngModel)]="searchObj.customerName" placeholder="Customer Name">
+        </mat-form-field>
       </div>
-      <div class="col-sm-12 col-md-4 col-lg-3">
-        <div class="bold">Select To Date</div>
-        <input type="date" class="form-control searchDate" placeholder="To" [(ngModel)]="toDate">
+
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="form-group">
+          <label class="labelText mb-1 d-block">From</label>
+          <input type="date" class="form-control" [(ngModel)]="fromDate" style="height: 50px;">
+        </div>
       </div>
-      <div class="col-sm-12 col-md-4 col-lg-3 mt-4">
-        <button type="button" class="btn btn-primary btn-sm me-2" (click)="searchOrder()">Search</button>
-        <button type="button" class="btn btn-success btn-sm" (click)="resetForm()">Reset</button>
+
+      <div class="col-sm-12 col-md-6 col-lg-3">
+        <div class="form-group">
+          <label class="labelText mb-1 d-block">To</label>
+          <input type="date" class="form-control" [(ngModel)]="toDate" style="height: 50px;">
+        </div>
+      </div>
+
+      <div class="col-sm-12 col-md-12 col-lg-6 d-flex align-items-end justify-content-end gap-2">
+        <button class="btn-add" mat-raised-button color="primary" (click)="searchOrder()">
+          <mat-icon>search</mat-icon> Search
+        </button>
+        <button class="btn-delete" mat-stroked-button color="warn" (click)="resetForm()">
+          <mat-icon>restart_alt</mat-icon> Reset
+        </button>
       </div>
     </div>
   </div>
 
+  <!-- Results -->
   <div *ngIf="orderList.length > 0">
-    <!-- <div *ngFor="let order of orderList" class="cardDesign"> -->
-    <ul *ngFor="let order of orderList" class="list-group">
-      <li class="list-group-item">
-       <app-order-card [order]="order"></app-order-card>
-      </li>
-    </ul>
-    <!-- </div>   -->
-    <button *ngIf="nextOn" type="button" class="btn btn-primary btn-sm mt-2" (click)="getMore()">Load
-      More</button>
+    <div *ngFor="let order of orderList" class="mb-3">
+      <app-order-card [order]="order"></app-order-card>
+    </div>
+
+    <div class="text-center mt-3" *ngIf="nextOn">
+      <button mat-stroked-button color="primary" (click)="getMore()">Load More</button>
+    </div>
   </div>
-  <div class="center mt-5" *ngIf="orderList.length === 0">
+
+  <div class="center mt-5 text-muted fw-medium" *ngIf="orderList.length === 0">
     No Records Found
   </div>
 </div>

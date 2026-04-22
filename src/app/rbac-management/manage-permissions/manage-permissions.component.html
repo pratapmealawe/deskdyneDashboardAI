@@ -1,0 +1,57 @@
+<div class="permission-container animate-fadeIn">
+  <div class="action-bar">
+    <div class="search-wrapper">
+      <mat-icon>search</mat-icon>
+      <input type="text" [formControl]="searchControl" placeholder="Search modules...">
+    </div>
+    
+    <div class="header-actions">
+      <button mat-flat-button color="primary" class="btn-primary-action" (click)="openAddModuleDialog()">
+        <mat-icon>extension</mat-icon> Add Module
+      </button>
+    </div>
+  </div>
+
+  <div class="grid-container" *ngIf="filteredGroups.length > 0">
+    <div class="resource-card" *ngFor="let group of filteredGroups">
+      <div class="card-header">
+        <div class="header-main">
+          <span class="resource-tag">Module</span>
+          <h3>{{group.name | titlecase}}</h3>
+        </div>
+        <div class="header-actions">
+          <button mat-icon-button class="premium-icon-btn edit" (click)="openEditDialog(group)" matTooltip="Manage Module & Keys">
+            <mat-icon>settings</mat-icon>
+          </button>
+          <button mat-icon-button class="premium-icon-btn delete" (click)="deleteResource(group.name)" matTooltip="Delete Module">
+            <mat-icon>delete_sweep</mat-icon>
+          </button>
+        </div>
+      </div>
+      
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <p class="description mb-0">Operational Permission Keys:</p>
+          <span class="count-badge-mini">{{group.permissions.length}} Keys</span>
+        </div>
+
+        <div class="keys-grid">
+          <div class="key-chip-readonly" *ngFor="let p of group.permissions">
+            {{p.action}}
+          </div>
+        </div>
+
+        <div class="module-footer-info mt-3" *ngIf="group.permissions.length === 0">
+          <p class="empty-hint"><mat-icon>info_outline</mat-icon> Click edit to add permission keys</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="filteredGroups.length === 0">
+    <mat-icon>extension_off</mat-icon>
+    <p>No module resources found matching your search.</p>
+    <button mat-button color="primary" (click)="searchControl.setValue('')" *ngIf="searchControl.value">Clear Search</button>
+  </div>
+</div>

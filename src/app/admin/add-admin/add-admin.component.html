@@ -1,0 +1,162 @@
+<h2 mat-dialog-title class="dialog-title">
+  <span>{{ editMode ?'Edit Admin' :'Add Admin' }}</span>
+  <button mat-icon-button (click)="onCancel()" class="close-button">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
+<mat-dialog-content class="mat-typography">
+  <form [formGroup]="form">
+    <div class="row g-4">
+      <!-- LEFT COLUMN: Image -->
+      <div class="col-12 col-lg-4">
+        <div class="modern-card mb-4">
+          <div class="card-header">
+            <h3><mat-icon>image</mat-icon> Profile Image</h3>
+          </div>
+          <div class="card-body">
+            <div class="upload-wrapper">
+              <input #fileInput type="file" class="uploadInput" accept="image/*" (change)="handleFileInput($event)"
+                style="display: none;" />
+
+              <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
+                <img *ngIf="imageUrl" [src]="imageUrl" class="preview-image" alt="Profile" />
+                <div *ngIf="!imageUrl" class="placeholder-content">
+                  <mat-icon>cloud_upload</mat-icon>
+                  <span>Upload Image</span>
+                </div>
+                <div class="upload-overlay">
+                  <span>Change Image</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Details -->
+      <div class="col-12 col-lg-8">
+        <div class="modern-card mb-4">
+          <div class="card-header">
+            <h3><mat-icon>person</mat-icon> Basic Details</h3>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <!-- Name -->
+              <div class="col-12 col-md-6 mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>User Name</mat-label>
+                  <input matInput formControlName="name" placeholder="Enter user name" />
+                  <mat-error *ngIf="form.controls.name.touched && form.controls.name.invalid">
+                    Name is required (2–60 chars).
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Phone -->
+              <div class="col-12 col-md-6 mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Phone No</mat-label>
+                  <input matInput formControlName="phoneNo" placeholder="10–15 digits or +91..." />
+                  <mat-error *ngIf="form.controls.phoneNo.touched && form.controls.phoneNo.invalid">
+                    Valid phone number is required.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Email -->
+              <div class="col-12 col-md-6 mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Email</mat-label>
+                  <input matInput formControlName="email" placeholder="Enter Email" />
+                  <mat-error *ngIf="form.controls.email.touched && form.controls.email.invalid">
+                    Please enter a valid email.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Role -->
+              <div class="col-12 col-md-6 mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>User Role</mat-label>
+                  <mat-select formControlName="role">
+                    <mat-option *ngFor="let item of roleArr" [value]="item.value">
+                      {{ item.text }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.controls.role.touched && form.controls.role.invalid">
+                    Role is required.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Roles -->
+              <div class="col-12 col-md-6 mb-3">
+                <mat-form-field appearance="outline" class="w-100">
+                  <mat-label>Assigned Roles</mat-label>
+                  <mat-select formControlName="roles" multiple>
+                    <mat-option *ngFor="let r of roleOptions" [value]="r._id">
+                      {{ r.name }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-error *ngIf="form.controls.roles.touched && form.controls.roles.invalid">
+                    At least one role is required.
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Conditional: Org Select -->
+              <ng-container *ngIf="
+                form.controls.role.value ==='ORGADMIN' ||
+                form.controls.role.value ==='HYPERPURE_ADMIN' ||
+                form.controls.role.value ==='HYPERPURE_POC' || 
+                form.controls.role.value ==='SITEEXE'">
+                <div class="col-12 col-md-6 mb-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Organization</mat-label>
+                    <mat-select formControlName="orgId">
+                      <mat-option *ngFor="let org of orgList" [value]="org._id">
+                        {{ org.organization_name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="form.controls.orgId.touched && form.controls.orgId.invalid">
+                      Organization is required.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </ng-container>
+
+              <!-- Conditional: Cafe Select -->
+              <ng-container
+                *ngIf="form.controls.role.value ==='HYPERPURE_POC' || form.controls.role.value ==='SITEEXE'">
+                <div class="col-12 col-lg-12 mb-3">
+                  <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Cafeterias</mat-label>
+                    <mat-select formControlName="cafeIds" multiple>
+                      <mat-option *ngFor="let cafe of cafeteriaOptions" [value]="cafe.cafeteria_id">
+                        {{ cafe.cafeteria_name }}
+                      </mat-option>
+                    </mat-select>
+                    <mat-hint *ngIf="(cafeteriaOptions.length || 0) === 0">No cafeterias under selected org</mat-hint>
+                    <mat-error *ngIf="form.controls.cafeIds.touched && form.controls.cafeIds.invalid">
+                      Select at least one cafeteria.
+                    </mat-error>
+                  </mat-form-field>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-stroked-button color="warn" (click)="onCancel()" class="btn-cancel">
+    <mat-icon>cancel</mat-icon> Cancel
+  </button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="form.invalid || submitting" class="btn-submit">
+    <mat-icon>check_circle</mat-icon> {{ editMode ?'Update Admin' :'Create Admin' }}
+  </button>
+</mat-dialog-actions>

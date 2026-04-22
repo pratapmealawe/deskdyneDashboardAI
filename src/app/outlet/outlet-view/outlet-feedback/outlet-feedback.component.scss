@@ -1,33 +1,114 @@
-@import "src/styles.scss";
+@use "styles/theme/variable" as var;
 
-.addOutlet{
-    position: absolute;
-    right: 5px;
-    top: 100px;
+// --- Animations ---
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
-.uploadedImage{
-    width: 150px;
-    height: 150px;
-    cursor: pointer;
+
+.feedback-container {
+    padding: 1rem 0;
+    animation: slideUpFade 0.5s ease-out forwards;
 }
-.uploadInput{
-    display: none;
-}
-.uploadIcon{
-    width: 84px;
-    background: $secondary-color3;
-    border-radius: 5px;
+
+// --- Empty State Styling ---
+.empty-feedback-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 1rem;
     text-align: center;
-    color: white;
-    position: relative;
-    top: -15px;
-    left: 34px;
-    font-size: 13px;
-    padding: 4px 0px;
-    cursor: pointer;
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    margin-top: 1.5rem;
+
+    .icon-box {
+        width: 100px;
+        height: 100px;
+        background: #f0f7ff;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 2rem;
+        position: relative;
+        transition: all 0.3s ease;
+
+        &::after {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            border: 2px dashed #e0f2fe;
+            border-radius: 35px;
+            opacity: 0.5;
+        }
+
+        mat-icon {
+            font-size: 48px;
+            width: 48px;
+            height: 48px;
+            color: #0284c7;
+        }
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #1e3a8a;
+        margin-bottom: 0.75rem;
+        letter-spacing: -0.5px;
+    }
+
+    .empty-subtitle {
+        font-size: 1rem;
+        color: #94a3b8;
+        max-width: 400px;
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    &:hover {
+        .icon-box {
+            transform: scale(1.05) rotate(5deg);
+            background: #e0f2fe;
+        }
+    }
 }
-.addBtn{
-    position:relative;
-    top:5px;
-    right:7px;
+
+// --- List Styling ---
+.feedback-item {
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    padding: 2rem 0;
+
+    .btn-load-more {
+        height: 44px;
+        padding: 0 2rem;
+        border-radius: 100px;
+        font-weight: 600;
+        background: white;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        transition: all 0.2s;
+
+        &:hover {
+            border-color: var.$primary-color1;
+            color: var.$primary-color1;
+            background: #f0f7ff;
+        }
+    }
 }

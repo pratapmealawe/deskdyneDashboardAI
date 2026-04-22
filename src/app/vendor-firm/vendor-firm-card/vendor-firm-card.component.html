@@ -1,0 +1,85 @@
+<div class="modern-card">
+  <div class="d-flex flex-column w-100 p-0">
+    <!-- Header Section -->
+    <div class="d-flex align-items-center justify-content-between p-3 border-bottom-light">
+      <div class="d-flex align-items-center gap-3">
+        <div class="firm-avatar">
+          {{ vendor?.vendorFirmName?.charAt(0) | uppercase }}
+        </div>
+        <div class="d-flex flex-column">
+          <div class="d-flex align-items-center gap-2">
+            <h3 class="firm-name mb-0" [title]="vendor?.vendorFirmName">{{ vendor?.vendorFirmName }}</h3>
+            <div class="verified-badge-pill" [ngClass]="vendor?.bank_details?.bankVerified ?'verified' :'pending'">
+              <mat-icon class="tiny-icon">{{ vendor?.bank_details?.bankVerified ?'verified' :'pending' }}</mat-icon>
+              <span>{{ vendor?.bank_details?.bankVerified ?'Verified' :'Pending' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="d-flex gap-1 align-items-center card-actions" *ngIf="!isViewMode">
+        <button mat-icon-button color="primary" (click)="onView()" *appHasPermission="'VENDOR_FIRM:EDIT'"
+          matTooltip="View Firm">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button color="warn" (click)="onDelete()" *appHasPermission="'VENDOR_FIRM:DELETE'"
+          matTooltip="Delete Firm">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Details Section -->
+    <div class="d-flex gap-4 px-3 py-2 bg-light-subtle">
+      <div class="info-item-horizontal">
+        <mat-icon class="text-muted" style="font-size: 16px; width: 16px; height: 16px;">email</mat-icon>
+        <span class="value text-truncate" [title]="vendor?.vendorFirmEmail">{{ vendor?.vendorFirmEmail }}</span>
+      </div>
+      <div class="info-item-horizontal">
+        <mat-icon class="text-muted" style="font-size: 16px; width: 16px; height: 16px;">phone</mat-icon>
+        <span class="value">{{ vendor?.vendorFirmPhoneNo }}</span>
+      </div>
+    </div>
+
+    <!-- Outlets Section -->
+    <div class="p-3">
+      <div class="text-muted small fw-bold text-uppercase mb-2">Outlets</div>
+      <div class="outlet-chips">
+        <div class="outlet-chip-detailed" *ngFor="let outlet of vendor?.outletList | slice:0:3">
+          <div class="chip-header">
+            <span class="name">{{ $any(outlet).outletName }}</span>
+          </div>
+          <div class="chip-details">
+            <span class="detail-item" *ngIf="$any(outlet).cafeteriaDetails?.cafeteria_name" title="Cafeteria Location">
+              <mat-icon>coffee</mat-icon>
+              {{ $any(outlet).cafeteriaDetails?.cafeteria_name }}
+            </span>
+            <span class="detail-separator"
+              *ngIf="$any(outlet).cafeteriaDetails?.cafeteria_name && $any(outlet).organizationDetails?.organization_name">•</span>
+            <span class="detail-item" *ngIf="$any(outlet).organizationDetails?.organization_name" title="Organization">
+              <mat-icon>business</mat-icon>
+              {{ $any(outlet).organizationDetails?.organization_name }}
+            </span>
+          </div>
+        </div>
+
+        <div class="more-indicator" *ngIf="vendor?.outletList?.length > 3">
+          +{{ vendor.outletList.length - 3 }} more
+        </div>
+        <span class="text-muted small fst-italic" *ngIf="!vendor?.outletList?.length">No outlets</span>
+      </div>
+    </div>
+
+    <!-- Footer Section -->
+    <div class="d-flex justify-content-between align-items-center px-3 py-2 border-top-light bg-light-subtle">
+      <div class="d-flex align-items-center gap-2" *ngIf="vendor?.retailShareTDSPct !== undefined">
+        <span class="text-muted small fw-bold">TDS:</span>
+        <span class="badge bg-secondary-subtle text-secondary">{{ vendor.retailShareTDSPct }}%</span>
+      </div>
+      <div class="d-flex align-items-center gap-2" *ngIf="vendor?.retailShareTDSPct === undefined">
+        <span class="text-muted small fst-italic">No TDS configured</span>
+      </div>
+    </div>
+  </div>
+</div>

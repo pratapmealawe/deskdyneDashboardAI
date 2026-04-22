@@ -1,0 +1,43 @@
+<div class="customer-view-container">
+  <!-- Header Section -->
+  <div class="customer-header-card">
+    <div class="header-left">
+      <button mat-icon-button class="back-btn" (click)="backBtn()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="title-section">
+        <h1 class="page-title">{{ userDetails?.userName ||'User Details' }}</h1>
+        <p class="page-subtitle">View and manage user account, wallet & orders</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tabs-container">
+    <div class="main-tabs">
+      <button *ngFor="let view of userViewList; let i = index" class="tab-btn" [class.active]="selectedTabIndex === i"
+        (click)="onMainTabChange(i)">
+        <mat-icon class="tab-icon">{{ getTabIcon(view.path) }}</mat-icon>
+        <span>{{ view.name }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <ng-container [ngSwitch]="selectedTab">
+      <div *ngSwitchCase="'userDetails'" class="fade-in">
+        <app-customer-details [userDetails]="userDetails"></app-customer-details>
+      </div>
+      <div *ngSwitchCase="'wallet'" class="fade-in">
+        <app-customer-wallet [userObj]="userDetails"></app-customer-wallet>
+      </div>
+      <div *ngSwitchCase="'companyWallet'" class="fade-in">
+        <app-customer-company-wallet [userObj]="userDetails"></app-customer-company-wallet>
+      </div>
+      <div *ngSwitchCase="'outletOrders'" class="fade-in">
+        <app-customer-outlet-orders [userDetails]="userDetails"></app-customer-outlet-orders>
+      </div>
+    </ng-container>
+  </div>
+</div>

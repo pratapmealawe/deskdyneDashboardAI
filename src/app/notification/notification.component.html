@@ -1,0 +1,154 @@
+<div class="notification-page-container">
+  <!-- Header Section -->
+  <div class="notification-header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Scheduled Notifications</h1>
+        <p class="page-subtitle">Manage push notifications for users</p>
+      </div>
+
+      <div class="actions-section">
+        <button mat-flat-button class="btn-create-notification" (click)="openCreateDialog()">
+          <mat-icon>add_alert</mat-icon>
+          <span>Create Notification</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="card p-3 mb-4 border-0 shadow-sm" style="border-radius: 12px;">
+    <div class="filters-section align-items-center mb-0">
+      <mat-form-field appearance="outline" class="dense-field">
+        <mat-label>Status</mat-label>
+        <mat-select [(ngModel)]="filterStatus">
+          <mat-option value="all">All</mat-option>
+          <mat-option value="pending">Pending</mat-option>
+          <mat-option value="sent">Sent</mat-option>
+          <mat-option value="failed">Failed</mat-option>
+          <mat-option value="cancelled">Cancelled</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="dense-field">
+        <mat-label>From Date</mat-label>
+        <input matInput [matDatepicker]="picker1" [(ngModel)]="fromDate">
+        <mat-datepicker-toggle matSuffix [for]="picker1"></mat-datepicker-toggle>
+        <mat-datepicker #picker1></mat-datepicker>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="dense-field">
+        <mat-label>To Date</mat-label>
+        <input matInput [matDatepicker]="picker2" [(ngModel)]="toDate">
+        <mat-datepicker-toggle matSuffix [for]="picker2"></mat-datepicker-toggle>
+        <mat-datepicker #picker2></mat-datepicker>
+      </mat-form-field>
+
+      <div class="ml-auto">
+        <button mat-stroked-button color="primary" (click)="applyFilter()" class="mr-2" style="border-radius: 20px;">
+          <mat-icon>filter_list</mat-icon> Apply
+        </button>
+        <button mat-button (click)="resetFilter()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Body -->
+  <div class="content-body position-relative">
+    <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <div *ngIf="!isLoading && pagedNotificationList.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">notifications_off</mat-icon>
+      <h3>No Notification Found</h3>
+      <p>Try adjusting your filters or create a new notification.</p>
+      <button mat-stroked-button color="primary" (click)="openCreateDialog()">Create Notification</button>
+    </div>
+
+    <div class="notification-grid" *ngIf="!isLoading && pagedNotificationList.length > 0">
+      <div class="notification-card" *ngFor="let notification of pagedNotificationList">
+        <!-- Card Top -->
+        <div class="card-top">
+          <div class="notification-icon">
+            <mat-icon>notifications</mat-icon>
+          </div>
+          <div class="notification-identity">
+            <h3 class="notification-title" [matTooltip]="notification.title">{{ notification.title }}</h3>
+            <div class="status-badge" [ngClass]="notification.status">
+              <mat-icon *ngIf="notification.status ==='sent'">check_circle</mat-icon>
+              <mat-icon *ngIf="notification.status ==='pending'">schedule</mat-icon>
+              <mat-icon *ngIf="notification.status ==='failed'">error</mat-icon>
+              <mat-icon *ngIf="notification.status ==='cancelled'">cancel</mat-icon>
+              {{ notification.status }}
+            </div>
+          </div>
+          <div class="card-actions">
+            <button mat-icon-button color="primary" (click)="resendNotification(notification)" matTooltip="Send Again">
+              <mat-icon>repeat</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" *ngIf="notification.status ==='pending'"
+              (click)="cancelNotification(notification)" matTooltip="Cancel">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+          <p class="body-text">
+            {{ notification.expanded ? notification.body : (notification.body | slice:0:100) }}
+            <span *ngIf="notification.body?.length > 100">
+              {{ notification.expanded ?'' :'...' }}
+              <a href="javascript:void(0)" (click)="notification.expanded = !notification.expanded" class="read-more-link">
+                {{ notification.expanded ?'Read Less' :'Read More' }}
+              </a>
+            </span>
+          </p>
+
+          <div class="body-content-split">
+            <div class="info-column">
+              <div class="info-row" *ngIf="notification.scheduledAt">
+                <mat-icon class="info-icon">event</mat-icon>
+                <div class="info-content">
+                  <span class="info-label">Scheduled For</span>
+                  <span class="info-value">{{ notification.scheduledAt | date:'medium' }}</span>
+                </div>
+              </div>
+
+              <div class="info-row" *ngIf="notification.sentAt">
+                <mat-icon class="info-icon">send</mat-icon>
+                <div class="info-content">
+                  <span class="info-label">Sent At</span>
+                  <span class="info-value">{{ notification.sentAt | date:'medium' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="image-div" *ngIf="notification.imageUrl">
+              <img [src]="imageUrl + notification.imageUrl" alt="Notification Image">
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Footer -->
+        <div class="card-footer">
+          <div class="target-chip">
+            <mat-icon>group</mat-icon>
+            {{ notification.targetType | titlecase }}
+          </div>
+          <div class="recipient-count"
+            *ngIf="notification.status ==='sent' || notification.status ==='partially_sent'">
+            {{ notification.recipientCount }} sent / {{ notification.failedCount }} failed
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginator -->
+    <mat-paginator [length]="notificationList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+      [pageSizeOptions]="[10, 25, 50, 100]" (page)="onPageChange($event)" showFirstLastButtons class="custom-paginator"
+      *ngIf="notificationList.length > 0">
+    </mat-paginator>
+  </div>
+</div>

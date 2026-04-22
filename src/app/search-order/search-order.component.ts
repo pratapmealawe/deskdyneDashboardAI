@@ -1,13 +1,32 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from '../toaster/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { OrderCardComponent } from '../outlet-orders/order-card/order-card.component';
 
 @Component({
   selector: 'app-search-order',
   templateUrl: './search-order.component.html',
-  styleUrls: ['./search-order.component.scss']
+  styleUrls: ['./search-order.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatIconModule,
+    OrderCardComponent
+  ]
 })
 export class SearchOrderComponent {  
   searchObj: any = {
@@ -87,7 +106,6 @@ export class SearchOrderComponent {
           this.nextOn = false;
       }
     } catch (error) {
-      console.log('error while searching orders ', error);
     }
   }
 
@@ -98,7 +116,7 @@ export class SearchOrderComponent {
   }
 
   goBack() {
-    this.router.navigate(['/home/orders']);
+    this.router.navigate(['/app/home/orders']);
   }
 
 }

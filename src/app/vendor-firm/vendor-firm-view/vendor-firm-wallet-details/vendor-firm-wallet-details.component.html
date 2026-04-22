@@ -1,0 +1,104 @@
+<div class="mt-3 pb-4">
+
+    <!-- Balance Cards Grid -->
+    <div class="cards-grid mb-4">
+
+        <!-- Wallet Card -->
+        <div class="balance-card wallet-card">
+            <div class="card-header-flex">
+                <div class="icon-badge wallet-bg">
+                    <mat-icon>account_balance_wallet</mat-icon>
+                </div>
+                <!-- <button mat-icon-button class="more-btn"><mat-icon>more_vert</mat-icon></button> -->
+            </div>
+
+            <div class="card-content">
+                <p class="label">Wallet Balance</p>
+                <h2 class="amount" [class.text-muted]="!walletBalance || walletBalance <= 0">
+                    {{ (walletBalance > 0 ? walletBalance : 0) | currency:'INR':'symbol':'1.2-4':'en-IN' }}
+                </h2>
+            </div>
+
+            <div class="card-actions">
+                <button mat-stroked-button class="action-btn" (click)="openTxnDialog('Transfer','wallet')"
+                    matTooltip="Transfer">
+                    <mat-icon>swap_horiz</mat-icon>
+                </button>
+                <button mat-flat-button color="primary" class="action-btn flex-grow-1"
+                    (click)="openTxnDialog('Credit')">
+                    <mat-icon>add</mat-icon> Credit
+                </button>
+                <button mat-stroked-button class="action-btn" [disabled]="!walletBalance || walletBalance <= 0"
+                    (click)="openTxnDialog('Debit')" matTooltip="Debit">
+                    <mat-icon>remove</mat-icon>
+                </button>
+            </div>
+        </div>
+
+        <!-- Subsidy Card -->
+        <div class="balance-card">
+            <div class="card-header-flex">
+                <div class="icon-badge subsidy-bg">
+                    <mat-icon>card_giftcard</mat-icon>
+                </div>
+                <button mat-icon-button matTooltip="Subsidy gets credited monthly." class="info-btn">
+                    <mat-icon>info_outline</mat-icon>
+                </button>
+            </div>
+
+            <div class="card-content">
+                <p class="label">Subsidy Balance</p>
+                <h2 class="amount" [class.text-muted]="!subsidyBalance || subsidyBalance <= 0">
+                    {{ (subsidyBalance > 0 ? subsidyBalance : 0) | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                </h2>
+            </div>
+
+            <div class="card-actions">
+                <button mat-stroked-button class="action-btn full-width" *ngIf="subsidyBalance > 0"
+                    (click)="openTxnDialog('Transfer','subsidy')">
+                    <mat-icon>swap_horiz</mat-icon> Transfer to Wallet
+                </button>
+                <span *ngIf="!subsidyBalance || subsidyBalance <= 0" class="empty-state-text">No actions
+                    available</span>
+            </div>
+        </div>
+
+        <!-- Daily Card -->
+        <div class="balance-card">
+            <div class="card-header-flex">
+                <div class="icon-badge daily-bg">
+                    <mat-icon>schedule</mat-icon>
+                </div>
+                <button mat-icon-button matTooltip="Daily balance gets credited monthly." class="info-btn">
+                    <mat-icon>info_outline</mat-icon>
+                </button>
+            </div>
+
+            <div class="card-content">
+                <p class="label">Daily Balance</p>
+                <h2 class="amount" [class.text-muted]="!dailyBalance || dailyBalance <= 0">
+                    {{ (dailyBalance > 0 ? dailyBalance : 0) | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                </h2>
+            </div>
+
+            <div class="card-actions">
+                <button mat-stroked-button class="action-btn full-width" *ngIf="dailyBalance > 0"
+                    (click)="openTxnDialog('Transfer','daily')">
+                    <mat-icon>swap_horiz</mat-icon> Transfer to Wallet
+                </button>
+                <span *ngIf="!dailyBalance || dailyBalance <= 0" class="empty-state-text">No actions available</span>
+            </div>
+        </div>
+
+        <!-- Future Card 1 Placeholder -->
+        <!-- <div class="balance-card placeholder-card"> ... </div> -->
+
+        <!-- Future Card 2 Placeholder -->
+        <!-- <div class="balance-card placeholder-card"> ... </div> -->
+
+    </div>
+
+    <!-- Reusable Transaction History Component -->
+    <app-wallet-transaction-history [vendorFirmInfo]="vendorFirmInfo"></app-wallet-transaction-history>
+
+</div>

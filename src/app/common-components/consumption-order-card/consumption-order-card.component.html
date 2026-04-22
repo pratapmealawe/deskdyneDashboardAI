@@ -1,0 +1,83 @@
+<div class="card shadow-sm border-0 mb-2">
+  <div class="card-header bg-light d-flex justify-content-between align-items-center flex-wrap">
+    <div class="d-flex align-items-center gap-3">
+      <div class="fw-bold fs-5">
+        {{ order.organization_name }} — {{ order.cafeteria_name }}
+      </div>
+      <div class="fw-bold fs-6 text-primary">
+        {{ order.orderDate | date:'MMM d, y' }}
+      </div>
+      <div class="text-md-center">
+        <small class="">{{ order.remark }}</small>
+      </div>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <button class="btn btn-outline-secondary btn-sm" (click)="downloadOrder(order)">
+        <i class="bi bi-download"></i>
+      </button>
+
+      <!-- Approve All -->
+      <button class="btn btn-primary btn-sm"
+        [disabled]="order.status ==='cancelled' || order.status ==='approved' || !checkAllMealStatus(order)"
+        (click)="showPopupForItemActivation(order,'approved')">
+        Approve All
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngFor="let meal of order.mealTypeList" class="card mb-3 shadow-sm border-0">
+  <div class="card-body row g-2 align-items-center">
+    <div class="col-md-3 col-sm-12">
+      <div class="fw-semibold fs-6">{{ meal.itemName }}</div>
+    </div>
+
+    <div class="col-md-2 col-sm-6 text-md-center">
+      <div class="text-muted small">Meal Price</div>
+      <div class="fw-bold">₹{{ meal.mealPrice | number }}</div>
+    </div>
+
+    <div class="col-md-1 col-sm-6 text-md-center">
+      <div class="text-muted small">Count</div>
+      <div class="fw-bold">{{ meal.count }}</div>
+    </div>
+
+    <div class="col-md-2 col-sm-6 text-md-center">
+      <div class="text-muted small">Total Amount (Incl. GST)</div>
+      <div class="fw-bold text-primary">₹{{ meal.totalPrice | number }}</div>
+    </div>
+
+    <div class="col-md-3 col-sm-6 text-md-end text-start">
+      <div class="d-flex flex-column">
+        <div>
+          <span class="me-2 small text-muted">Status:</span>
+          <span class="badge" [ngClass]="{'bg-success': meal.status ==='approved','bg-danger': meal.status ==='cancelled','bg-warning text-dark': meal.status ==='review'
+          }">
+            {{ meal.status | titlecase }}
+          </span>
+        </div>
+        <div class="small text-muted mt-1">
+          Created By: {{ order.userDetails.userName }}
+        </div>
+        <div class="small text-muted">Phone: {{ order.userDetails.phoneNo }}</div>
+      </div>
+    </div>
+
+    <div class="col-md-1 col-sm-12 d-flex justify-content-md-end justify-content-start gap-2">
+      <!-- Approve single -->
+      <button class="btn btn-sm btn-outline-success rounded-circle"
+        [disabled]="order.status ==='cancelled' || order.status ==='approved' || meal.status ==='cancelled' || meal.status ==='approved'"
+        title="Approve" (click)="showPopupForSinleItemActivation(order, meal,'approved')">
+        <i class="bi bi-check"></i>
+      </button>
+
+      <!-- Cancel single -->
+      <button class="btn btn-sm btn-outline-danger rounded-circle"
+        [disabled]="order.status ==='cancelled' || order.status ==='approved' || meal.status ==='cancelled' || meal.status ==='approved'"
+        title="Cancel" (click)="onCancelItem(order, meal)">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,279 @@
+<div class="add-package-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box" [class.primary]="!isEditMode" [class.warning]="isEditMode">
+                <mat-icon>{{ isEditMode ? 'edit' : 'shopping_bag' }}</mat-icon>
+            </div>
+            <div class="text">
+                <h3>{{ isEditMode ? 'Edit Package' : 'Add New Package' }}</h3>
+                <p>{{ isEditMode ? 'Update package details and pricing' : 'Create a new food package manually' }}</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeDialog()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <form [formGroup]="packageForm" (ngSubmit)="savePackage()" id="packageForm" class="p-2">
+            <div class="form-grid-modern">
+                <!-- Basic Info Row -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Package Name</mat-label>
+                            <mat-icon matPrefix>label</mat-icon>
+                            <input matInput formControlName="packageName" placeholder="e.g. Deluxe Lunch" />
+                            <mat-error *ngIf="packageForm.get('packageName')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Package Category</mat-label>
+                            <mat-icon matPrefix>category</mat-icon>
+                            <mat-select formControlName="packageCategory">
+                                <mat-option *ngFor="let cat of categories" [value]="cat.categoryName">
+                                    {{ cat.categoryDisplayName || cat.categoryName }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="packageForm.get('packageCategory')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Sub Category</mat-label>
+                            <mat-icon matPrefix>subtitles</mat-icon>
+                            <input matInput formControlName="packageSubCategory" placeholder="e.g. 3 Meals (Choice of Days)" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Package Type</mat-label>
+                            <mat-icon matPrefix>restaurant</mat-icon>
+                            <mat-select formControlName="packageType">
+                                <mat-option value="Veg">Veg</mat-option>
+                                <mat-option value="Non-Veg">Non-Veg</mat-option>
+                                <mat-option value="Both">Both</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Days Count</mat-label>
+                            <mat-icon matPrefix>date_range</mat-icon>
+                            <input matInput type="number" formControlName="days" />
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-1" *ngIf="packageForm.get('packageType')?.value !== 'Non-Veg'">
+                    <div class="col-12">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Veg Meal Description</mat-label>
+                            <mat-icon matPrefix>restaurant</mat-icon>
+                            <textarea matInput formControlName="vegMealDescription" rows="2" placeholder="Describe the veg components..."></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="row g-3 mt-1" *ngIf="packageForm.get('packageType')?.value !== 'Veg'">
+                    <div class="col-12">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Non-Veg Meal Description</mat-label>
+                            <mat-icon matPrefix>kebab_dining</mat-icon>
+                            <textarea matInput formControlName="nonVegMealDescription" rows="2" placeholder="Describe the non-veg components..."></textarea>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Pricing Row -->
+                <div class="row g-3 mt-1">
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Price (₹)</mat-label>
+                            <mat-icon matPrefix>payments</mat-icon>
+                            <input matInput type="number" formControlName="packagePrice" />
+                            <mat-error *ngIf="packageForm.get('packagePrice')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Pay to Kitchen (₹)</mat-label>
+                            <mat-icon matPrefix>account_balance_wallet</mat-icon>
+                            <input matInput type="number" formControlName="payToKitchenPerMeal" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Kitchen Pay 2 (₹)</mat-label>
+                            <mat-icon matPrefix>account_balance_wallet</mat-icon>
+                            <input matInput type="number" formControlName="payToKitchenPerMeal2" />
+                        </mat-form-field>
+                    </div>
+                </div>
+                
+                <div class="row g-3 mt-1">
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Priority Score</mat-label>
+                            <mat-icon matPrefix>sort</mat-icon>
+                            <input matInput type="number" formControlName="priority" placeholder="Higher = Top" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Offer Label</mat-label>
+                            <mat-icon matPrefix>local_offer</mat-icon>
+                            <input matInput formControlName="offerText" placeholder="e.g. 10% OFF" />
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Offer Color</mat-label>
+                            <mat-icon matPrefix>palette</mat-icon>
+                            <input matInput type="color" formControlName="offerColor" class="color-picker-input" />
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Description -->
+                <div class="row g-3 mt-1">
+                    <div class="col-12">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Package Info / Description</mat-label>
+                            <mat-icon matPrefix>description</mat-icon>
+                            <textarea matInput formControlName="packageInfo" rows="3"></textarea>
+                        </mat-form-field>
+                    </div>
+
+                <!-- Subsidy Management Section -->
+                <div class="subsidy-management-section mt-4 p-3 rounded bg-light-soft border">
+                    <p class="section-label mb-3"><mat-icon>account_balance</mat-icon> Subsidy Settings</p>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Subsidy Type</mat-label>
+                                <mat-select formControlName="subsidyType">
+                                    <mat-option value="flat">Flat Amount (₹)</mat-option>
+                                    <mat-option value="percentage">Percentage (%)</mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </div>
+                        <div class="col-md-6">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Subsidy Value</mat-label>
+                                <mat-icon matPrefix>{{ packageForm.get('subsidyType')?.value === 'flat' ? 'payments' : 'percent' }}</mat-icon>
+                                <input matInput type="number" formControlName="subsidyValue" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Addons Management Section -->
+                <div class="addons-management-section mt-4 p-3 rounded bg-light-soft border">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p class="section-label mb-0"><mat-icon>add_shopping_cart</mat-icon> Package Addons</p>
+                        <button type="button" mat-stroked-button color="primary" size="small" (click)="addAddon()">
+                            <mat-icon>add</mat-icon> Add Addon
+                        </button>
+                    </div>
+
+                    <div formArrayName="addonsList" class="addons-list">
+                        <div *ngFor="let addon of addonsArray.controls; let i = index" [formGroupName]="i" class="addon-item-row mb-2">
+                            <div class="row g-2 align-items-center">
+                                <div class="col-md-5">
+                                    <mat-form-field appearance="outline" class="full-width dense-field">
+                                        <mat-label>Addon Name</mat-label>
+                                        <input matInput formControlName="addonName" placeholder="e.g. Extra Roti" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-form-field appearance="outline" class="full-width dense-field">
+                                        <mat-label>Extra Price (₹)</mat-label>
+                                        <input matInput type="number" formControlName="extraPrice" />
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-3">
+                                    <mat-form-field appearance="outline" class="full-width dense-field">
+                                        <mat-label>Type</mat-label>
+                                        <mat-select formControlName="addOnType">
+                                            <mat-option value="Veg">Veg</mat-option>
+                                            <mat-option value="Non-Veg">Non-Veg</mat-option>
+                                            <mat-option value="Sweet">Sweet</mat-option>
+                                            <mat-option value="NA">NA</mat-option>
+                                        </mat-select>
+                                    </mat-form-field>
+                                </div>
+                                <div class="col-md-1 text-end">
+                                    <button type="button" mat-icon-button color="warn" (click)="removeAddon(i)">
+                                        <mat-icon>delete</mat-icon>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div *ngIf="addonsArray.length === 0" class="text-center py-3 text-muted border rounded-2 bg-white small italic">
+                            No addons configured for this package.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div class="selection-container mt-4">
+                    <p class="section-label mb-3"><mat-icon>image</mat-icon> Package Image</p>
+                    
+                    <div class="upload-area" (click)="packageInput.click()">
+                        <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                        <p>{{ packageForm.value.imageUrl ? 'Change Image' : 'Click to upload package image' }}</p>
+                        <input #packageInput type="file" (change)="onImageSelect($event)" accept="image/*" class="d-none">
+                    </div>
+
+                    <div *ngIf="packageForm.value.imageUrl" class="preview-img-box mt-3 text-center">
+                        <img [src]="packageForm.value.imageUrl" width="200" class="rounded shadow-sm" />
+                    </div>
+                </div>
+
+                <!-- Additional Options -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <div class="options-grid">
+                            <mat-checkbox formControlName="isBreakFast" color="primary">Breakfast Item</mat-checkbox>
+                            <mat-checkbox formControlName="isBestSeller" color="primary">Best Seller</mat-checkbox>
+                            <mat-checkbox formControlName="deliveryOnWeekends" color="primary">Delivery on Weekends</mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Status -->
+                <div class="row mt-4">
+                    <div class="col-12 d-flex align-items-center gap-3">
+                        <mat-icon [color]="packageForm.get('isActive')?.value ? 'primary' : ''">
+                            {{ packageForm.get('isActive')?.value ? 'check_circle' : 'cancel' }}
+                        </mat-icon>
+                        <mat-slide-toggle formControlName="isActive" color="primary">
+                            Active Status
+                        </mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" form="packageForm" 
+                [disabled]="packageForm.invalid || isSubmitting" class="btn-primary-action px-4">
+            <ng-container *ngIf="!isSubmitting">
+                <mat-icon>{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
+                <span>{{ isEditMode ? 'Update Package' : 'Create Package' }}</span>
+            </ng-container>
+            <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+                <span>Saving...</span>
+            </div>
+        </button>
+    </mat-dialog-actions>
+</div>

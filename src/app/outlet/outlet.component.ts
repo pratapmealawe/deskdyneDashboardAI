@@ -1,61 +1,98 @@
-import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { MatDialog } from '@angular/material/dialog';
+import { NavigationEnd, Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { DeletedOutletsDialogComponent } from './deleted-outlets-dialog/deleted-outlets-dialog.component';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { OutletCardComponent } from './outlet-card/outlet-card.component';
+import { RouterModule } from '@angular/router';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { AddOutletComponent } from './add-outlet/add-outlet.component';
 
 @Component({
   selector: 'app-outlet',
   templateUrl: './outlet.component.html',
   styleUrls: ['./outlet.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    OutletCardComponent,
+    DirectivesModule,
+    RouterModule
+  ]
 })
 export class OutletComponent implements OnInit {
+  outletList: any[] = [];
+  filteredOutletList: any[] = [];
+  pagedOutLet: any[] = [];
+  searchControl = new FormControl('');
   showSearchSection: boolean = true;
-  filteredOutletList: any;
-  searchObj: any = {
-    outletName: '',
-    emailID: '',
-    phoneNo: '',
-  };
-  page: any = 0;
-  outletList: any = [];
-  selectedOutlet: any;
-  btnPolicy: any;
-  searchControl = new FormControl();
-  pagedOutLet: any[] = []
+  isListingView: boolean = true;
 
   constructor(
     private apiMainService: ApiMainService,
-    private router: Router,
-    private policyService: PolicyService,
-    private runtimeStorageService: RuntimeStorageService,
-    private sendDataToComponent: SendDataToComponent,
-    private searchService: SearchFilterService
+    private dialog: MatDialog,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.checkRoute();
+
+    // Subscribe to router events to toggle view
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkRoute();
+    });
+
     this.searchOutlet();
-    this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(value => { this.applyFilter(value) })
+    this.applyFilter(this.searchControl.value ?? '');
+    this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(value => { this.applyFilter(value ?? '') })
   }
+
+  checkRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // /app/outlet is 2 parts
+    this.isListingView = urlParts.length === 2 && urlParts[1] === 'outlet';
+  }
+
   applyFilter(value: string) {
-    const config = { keys: ['organizationName'] };
-    const v = (value || '').trim();
-    this.pagedOutLet = v
-      ? [...this.searchService.searchData(this.filteredOutletList, config, v)]
-      : [...this.filteredOutletList];
-    console.log(this.pagedOutLet,"update value ");
+    const v = (value || '').trim().toLowerCase();
+    if (!v) {
+      this.pagedOutLet = [...this.filteredOutletList];
+    } else {
+      this.pagedOutLet = this.filteredOutletList
+        .map((org: any) => {
+          const orgMatches = org.organizationName?.toLowerCase().includes(v);
+          const matchingOutlets = org.outletList?.filter((outlet: any) =>
+            outlet.outletName?.toLowerCase().includes(v)
+          ) || [];
+
+          if (orgMatches) {
+            return { ...org };
+          } else if (matchingOutlets.length > 0) {
+            return { ...org, outletList: matchingOutlets };
+          }
+          return null;
+        })
+        .filter((org: any) => org !== null);
+    }
   }
-  
+
   async searchOutlet() {
     try {
-      this.outletList = await this.apiMainService.searchOutlet(this.searchObj);
-      console.log(this.outletList);
+      this.outletList = await this.apiMainService.searchOutlet({});
 
       if (this.outletList.length > 0) {
         const orgMap = new Map<string, {
@@ -80,24 +117,31 @@ export class OutletComponent implements OnInit {
         }
 
         this.filteredOutletList = Array.from(orgMap.values());
-        this.pagedOutLet = this.filteredOutletList 
+        this.pagedOutLet = this.filteredOutletList
       }
     } catch (error) {
-      console.log('seachOutlet', error);
     }
   }
 
-
   viewOutlet(val: any) {
-    this.selectedOutlet = val;
-    if (this.selectedOutlet) {
-      this.showSearchSection = false;
+    if (val) {
+      this.router.navigate(['/app/outlet', val._id]);
     }
   }
 
   addOutlet() {
-    this.runtimeStorageService.setCacheData('OUTLET_EDIT', {});
-    this.router.navigate(['/addOutlet']);
+    const dialogRef = this.dialog.open(AddOutletComponent, {
+      width: '90vw',
+      maxWidth: '90vw',
+      maxHeight: '100vh',
+      data: {}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.searchOutlet();
+      }
+    });
   }
 
   toggleShowOrder(val: any) {
@@ -110,5 +154,17 @@ export class OutletComponent implements OnInit {
     if (val.updateval) {
       this.searchOutlet();
     }
+  }
+
+  openDeletedOutletsDialog() {
+    this.dialog.open(DeletedOutletsDialogComponent, {
+      width: '850px',
+      maxHeight: '85vh',
+      panelClass: 'deleted-outlets-dialog-container'
+    });
+  }
+
+  onOutletDeleted() {
+    this.searchOutlet();
   }
 }

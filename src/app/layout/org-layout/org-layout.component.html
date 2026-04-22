@@ -1,0 +1,132 @@
+<div class="app-shell" [class.sidebar-collapsed]="isCollapsed" (click)="onShellClick($event)">
+
+  <!-- ===== SIDEBAR ===== -->
+  <aside class="sidebar" id="org-sidebar">
+
+    <!-- Sidebar Header: Organization Logo + Toggle -->
+    <div class="sidebar-header">
+      <div class="sidebar-logo-container">
+        <div class="logo-full-wrap" [class.hidden]="isCollapsed">
+          <img *ngIf="orgDetails.organizationLogoUrl" [src]="imageUrl + orgDetails.organizationLogoUrl" alt="Org Logo"  class="logo-full" />
+          <span *ngIf="!orgDetails.organizationLogoUrl" class="logo-text">{{ orgDetails.organization_name }}</span>
+        </div>
+        <div class="logo-icon-wrap" [class.visible]="isCollapsed">
+          <img *ngIf="orgDetails.organizationLogoUrl" [src]="imageUrl + orgDetails.organizationLogoUrl" alt="Org Icon" class="logo-icon" />
+          <mat-icon *ngIf="!orgDetails.organizationLogoUrl">business</mat-icon>
+        </div>
+      </div>
+      <button class="toggle-btn" (click)="toggleSidebar(); $event.stopPropagation()"
+        [matTooltip]="isCollapsed ?'Expand' :'Collapse'" matTooltipPosition="right">
+        <mat-icon>{{ isCollapsed ?'chevron_right' :'chevron_left' }}</mat-icon>
+      </button>
+    </div>
+
+    <!-- Nav Items -->
+    <nav class="sidebar-nav">
+      <div *ngFor="let link of finalNavOption; let i = index">
+        <div *ngIf="link.showParent">
+
+          <!-- Parent Nav Item -->
+          <div class="nav-item"
+            [class.active]="selectedIndex === i || openChildSectionIndex === i"
+            [class.flyout-open]="activeFlyoutIndex === i"
+            [matTooltip]="isCollapsed ? link.name :''"
+            matTooltipPosition="right"
+            (click)="onNavItemClick($event, link, i)">
+
+            <div class="nav-icon">
+              <!-- Using image if provided, fallback to circle -->
+              <mat-icon>{{ link.matIcon ||'circle' }}</mat-icon>
+            </div>
+
+            <span class="nav-label">{{ link.name }}</span>
+
+            <div class="nav-badge" *ngIf="link.showBadge && (link.count | async)">
+              {{ link.count | async }}
+            </div>
+
+            <mat-icon class="expand-icon" *ngIf="link.children">
+              chevron_right
+            </mat-icon>
+          </div>
+
+        </div>
+      </div>
+    </nav>
+
+    <!-- Sidebar Footer: User Profile -->
+    <div class="sidebar-footer">
+      <div class="user-card" [matMenuTriggerFor]="profileMenu" (click)="$event.stopPropagation()">
+        <div class="user-avatar" [style.background]="getAvatarColor(adminProfile.name)">
+          <img *ngIf="adminProfile.imageUrl" [src]="imageUrl + adminProfile.imageUrl" alt="Profile" />
+          <span *ngIf="!adminProfile.imageUrl">{{ getInitials(adminProfile.name) }}</span>
+        </div>
+        <div class="user-info">
+          <span class="user-name">{{ adminProfile.name }}</span>
+          <span class="user-role">{{ adminProfile.role ||'Admin' }}</span>
+        </div>
+        <mat-icon class="user-menu-icon" [class.hidden]="isCollapsed">more_vert</mat-icon>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ===== FLYOUT SUBMENU (outside sidebar) ===== -->
+  <div class="flyout-panel"
+    *ngIf="activeFlyoutIndex >= 0"
+    [style.top.px]="flyoutY"
+    [style.left.px]="sidebarWidth + 8"
+    (click)="$event.stopPropagation()">
+
+    <div class="flyout-header">
+      <mat-icon>{{ flyoutParent?.matIcon ||'folder' }}</mat-icon>
+      <span>{{ flyoutParent?.name }}</span>
+    </div>
+
+    <div class="flyout-items">
+      <div *ngFor="let child of flyoutChildren; let j = index"
+        class="flyout-item"
+        [class.active]="openChildSectionIndex === activeFlyoutIndex && childSelectedIndex === j"
+        (click)="selectChildLink(child.route, activeFlyoutIndex, j)">
+        <div class="flyout-item-icon">
+          <mat-icon>{{ child.matIcon ||'arrow_right' }}</mat-icon>
+        </div>
+        <span>{{ child.name }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== MAIN CONTENT ===== -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+</div>
+
+<!-- Profile Dropdown Menu -->
+<mat-menu #profileMenu="matMenu" xPosition="after">
+  <div class="profile-menu-header">
+    <div class="user-avatar large" [style.background]="getAvatarColor(adminProfile.name)">
+      <img *ngIf="adminProfile.imageUrl" [src]="imageUrl + adminProfile.imageUrl" alt="Profile" />
+      <span *ngIf="!adminProfile.imageUrl">{{ getInitials(adminProfile.name) }}</span>
+    </div>
+    <div>
+      <div class="pm-name">{{ adminProfile.name }}</div>
+      <div class="pm-meta text-muted small">{{ adminProfile.loginId }}</div>
+    </div>
+  </div>
+  <mat-divider></mat-divider>
+  <button mat-menu-item disabled>
+    <mat-icon>phone</mat-icon>
+    <span>{{ adminProfile.phoneNo ||'—' }}</span>
+  </button>
+  <button mat-menu-item disabled>
+    <mat-icon>email</mat-icon>
+    <span>{{ adminProfile.email ||'—' }}</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="logout()" class="logout-btn">
+    <mat-icon color="warn">logout</mat-icon>
+    <span>Logout</span>
+  </button>
+</mat-menu>

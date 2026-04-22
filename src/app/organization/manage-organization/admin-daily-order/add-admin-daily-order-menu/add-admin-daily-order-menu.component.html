@@ -1,0 +1,96 @@
+<div class="delivery-settings-modal premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>delivery_dining</mat-icon>
+            </div>
+            <div class="text">
+                <h3>{{data.mealType ?'Edit' :'Add'}} Delivery Settings</h3>
+                <p>Configure meal timing, MOQ, and delivery constraints</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeModal()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <form [formGroup]="deliveryForm" class="p-3">
+            <div class="form-grid-modern">
+                <div class="row g-4 mt-1">
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Meal Type</mat-label>
+                            <mat-select formControlName="selectedMealType">
+                                <mat-option *ngFor="let option of mealTypeOptions" [value]="option.value">
+                                    {{option.label}}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="deliveryForm.get('selectedMealType')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Min. Order Qty (MOQ)</mat-label>
+                            <mat-icon matPrefix>inventory_2</mat-icon>
+                            <input matInput type="text" formControlName="deliveryMOQ" placeholder="e.g. 10" appOnlyNumber>
+                            <mat-error *ngIf="deliveryForm.get('deliveryMOQ')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Price (Delivery Charge)</mat-label>
+                            <mat-icon matPrefix>payments</mat-icon>
+                            <input matInput type="text" formControlName="deliveryCharge" placeholder="0.00" appOnlyNumber>
+                            <mat-error *ngIf="deliveryForm.get('deliveryCharge')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <div class="section-divider my-4">
+                    <span class="divider-text">Timing Configuration</span>
+                </div>
+
+                <div class="row g-4 mt-1">
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Available From</mat-label>
+                            <mat-icon matPrefix>schedule</mat-icon>
+                            <input matInput type="time" formControlName="deliveryTimeFrom">
+                            <mat-hint align="end" class="time-hint">{{formatTime(deliveryForm.get('deliveryTimeFrom')?.value)}}</mat-hint>
+                            <mat-error *ngIf="deliveryForm.get('deliveryTimeFrom')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Available To</mat-label>
+                            <mat-icon matPrefix>event_busy</mat-icon>
+                            <input matInput type="time" formControlName="deliveryTimeTo">
+                            <mat-hint align="end" class="time-hint">{{formatTime(deliveryForm.get('deliveryTimeTo')?.value)}}</mat-hint>
+                            <mat-error *ngIf="deliveryForm.get('deliveryTimeTo')?.hasError('required')">Required</mat-error>
+                            <mat-error *ngIf="deliveryForm.get('deliveryTimeTo')?.hasError('invalidRange')">Invalid Range</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Order Cut-Off</mat-label>
+                            <mat-icon matPrefix>timer_off</mat-icon>
+                            <input matInput type="time" formControlName="cutOffTime">
+                            <mat-hint align="end" class="time-hint">{{formatTime(deliveryForm.get('cutOffTime')?.value)}}</mat-hint>
+                            <mat-error *ngIf="deliveryForm.get('cutOffTime')?.hasError('required')">Required</mat-error>
+                            <mat-error *ngIf="deliveryForm.get('cutOffTime')?.hasError('invalidCutOff')">Invalid Cut-Off</mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeModal()">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="saveChanges()">
+            <mat-icon>check_circle</mat-icon>
+            <span>Save Settings</span>
+        </button>
+    </mat-dialog-actions>
+</div>

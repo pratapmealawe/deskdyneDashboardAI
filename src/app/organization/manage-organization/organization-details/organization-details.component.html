@@ -1,0 +1,157 @@
+<div class="org-details-container">
+
+  <!-- Hero Profile Section -->
+  <div class="profile-hero">
+    <div class="hero-content">
+      <div class="avatar-section">
+        <div class="avatar-circle">
+          {{ getInitials(orgObj?.organization_name) }}
+        </div>
+      </div>
+      <div class="hero-info">
+        <h1 class="org-name">{{ orgObj?.organization_name }}</h1>
+        <div class="quick-badges">
+          <span class="quick-badge" *ngIf="orgObj?.location">
+            <mat-icon>location_on</mat-icon>
+            {{ orgObj?.location }}
+          </span>
+          <span class="quick-badge" *ngIf="orgObj?.domain">
+            <mat-icon>language</mat-icon>
+            {{ orgObj?.domain }}
+          </span>
+        </div>
+      </div>
+    </div>
+    <button mat-raised-button class="edit-btn" (click)="editOrg()" *appHasPermission="'ORGANIZATION:EDIT'">
+      <mat-icon>edit</mat-icon>
+      Edit Organization
+    </button>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Organization Details Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon org">
+          <mat-icon>business</mat-icon>
+        </div>
+        <h3>Organization Details</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>label</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ orgObj?.organization_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>place</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ orgObj?.location }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>language</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Domain</span>
+              <span class="info-value">{{ orgObj?.domain }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POC Details Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon poc">
+          <mat-icon>contacts</mat-icon>
+        </div>
+        <h3>Point of Contact</h3>
+        <span class="count-badge">{{ orgObj?.poc_details?.length || 0 }}</span>
+      </div>
+      <div class="card-body">
+        <div class="poc-list" *ngIf="orgObj?.poc_details?.length > 0; else noPoc">
+          <div class="poc-item" *ngFor="let poc of orgObj.poc_details; let last = last">
+            <div class="poc-avatar">
+              {{ getInitials(poc.poc_name) }}
+            </div>
+            <div class="poc-info">
+              <div class="poc-name">{{ poc.poc_name }}</div>
+              <div class="poc-contact">
+                <div class="contact-row" *ngIf="poc.poc_phoneNo">
+                  <mat-icon>phone</mat-icon> {{ poc.poc_phoneNo }}
+                </div>
+                <div class="contact-row" *ngIf="poc.poc_email">
+                  <mat-icon>email</mat-icon> {{ poc.poc_email }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <ng-template #noPoc>
+          <div class="empty-state-mini">
+            <mat-icon>person_off</mat-icon>
+            <span>No POCs added</span>
+          </div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Cafeteria Details Card -->
+    <div class="info-card full-span" *ngIf="filteredOutletList && filteredOutletList.length > 0">
+      <div class="card-header">
+        <div class="header-icon cafe">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <h3>Cafeterias & Outlets</h3>
+        <span class="count-badge large">{{ filteredOutletList.length }}</span>
+      </div>
+      <div class="card-body">
+        <div class="cafe-grid">
+          <div class="cafe-card" *ngFor="let cafe of filteredOutletList">
+            <div class="cafe-header">
+              <div class="cafe-icon">
+                <mat-icon>restaurant</mat-icon>
+              </div>
+              <div class="cafe-info">
+                <h4>{{ cafe.cafeteria_name }}</h4>
+                <div class="cafe-meta">
+                  <span><mat-icon>place</mat-icon> {{ cafe.location }} - {{ cafe.cafeteria_city }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="cafe-address">
+              <mat-icon>home</mat-icon>
+              <span>{{ cafe.address1 }}<span *ngIf="cafe.address2">, {{ cafe.address2 }}</span></span>
+            </div>
+
+            <div class="outlets-section" *ngIf="cafe.outlets?.length">
+              <div class="outlets-header">Linked Outlets</div>
+              <div class="outlets-list">
+                <div class="outlet-item" *ngFor="let outlet of cafe.outlets">
+                  <div class="outlet-header">
+                    <mat-icon>store</mat-icon>
+                    <span>{{ outlet.outletName }}</span>
+                  </div>
+                  <div class="vendors-list" *ngIf="outlet.vendors?.length">
+                    <span class="vendor-chip" *ngFor="let vendor of outlet.vendors">
+                      {{ vendor.vendorFirmName }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

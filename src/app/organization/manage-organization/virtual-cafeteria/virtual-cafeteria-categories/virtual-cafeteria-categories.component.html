@@ -1,0 +1,153 @@
+<div class="bulk-dashboard-header">
+    <div class="header-card">
+        <div class="header-icon-box">
+            <mat-icon>category</mat-icon>
+        </div>
+        <div class="header-text-content">
+            <h1 class="page-title">Package Categories</h1>
+            <p class="page-subtitle">
+                Manage and organize food categories for {{ selectedCafeteria?.cafeteria_name || 'the selected cafeteria' }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+        <button mat-flat-button color="primary" class="btn-primary-action" (click)="createCategory()">
+            <mat-icon>add</mat-icon> Add Category
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="addMultipleManual()">
+            <mat-icon>playlist_add</mat-icon> Bulk Add
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="importCategories()">
+            <mat-icon>file_upload</mat-icon> Import
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="exportToExcel()" [disabled]="categories.length === 0">
+            <mat-icon>download</mat-icon> Export
+        </button>
+    </div>
+</div>
+
+<div class="modern-card animate-fadeIn">
+    <div class="card-header with-actions">
+        <div class="d-flex align-items-center gap-3">
+            <div class="icon-box primary">
+                <mat-icon>category</mat-icon>
+            </div>
+            <div class="header-titles d-flex align-items-center gap-2">
+                <h3 class="mb-0">Categories Directory</h3>
+                <span class="count-badge-premium">{{ getFilteredCategories().length }}</span>
+            </div>
+        </div>
+
+        <div class="search-wrapper">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input type="text" placeholder="Search categories..." [(ngModel)]="searchTerm">
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="category-grid-premium" *ngIf="getFilteredCategories().length > 0">
+            <div class="category-item-card" *ngFor="let category of getFilteredCategories()">
+                <!-- Category Image & Status -->
+                <div class="category-image-container cursor-pointer" (click)="viewCategory(category)">
+                    <img [src]="category.categoryImg ? (category.categoryImg.startsWith('http') ? category.categoryImg : (serverDDUrl + category.categoryImg)) : 'assets/Imageunavailable.webp'" 
+                         onerror="this.src='assets/Imageunavailable.webp'"
+                         alt="Category Banner">
+                    
+                    <div class="status-badge" [title]="category.isActive ? 'Active' : 'Inactive'">
+                        <div class="status-dot" [class.active]="category.isActive" [class.inactive]="!category.isActive"></div>
+                        {{ category.isActive ? 'ACTIVE' : 'INACTIVE' }}
+                    </div>
+                </div>
+
+                <!-- Category Content -->
+                <div class="category-content">
+                    <div class="category-header">
+                        <div class="category-title-wrap">
+                            <h4 [matTooltip]="category.categoryDisplayName || category.categoryName">
+                                {{ category.categoryDisplayName || category.categoryName }}
+                            </h4>
+                            <div class="category-type">
+                                {{ category.categoryName }}
+                            </div>
+                        </div>
+                        <mat-slide-toggle [checked]="category.isActive" 
+                                        (change)="changeCategoryStatus($event.checked, category._id)" 
+                                        color="primary">
+                        </mat-slide-toggle>
+                    </div>
+
+                    <div class="category-footer">
+                        <div class="action-group">
+                            <button class="premium-icon-btn edit" (click)="openEditCategoryDialog(category)" matTooltip="Edit Category">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button class="premium-icon-btn delete" (click)="deleteCategoryVirtualCafeteria(category.categoryName)" matTooltip="Delete Category">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                            <button class="premium-icon-btn settings" (click)="setConfig(category)" matTooltip="Category Configuration">
+                                <mat-icon>settings</mat-icon>
+                            </button>
+                            <button class="premium-icon-btn weekly" (click)="openWeeklyMenu(category)" matTooltip="Weekly Menu">
+                                <mat-icon>calendar_view_week</mat-icon>
+                            </button>
+                            <button class="premium-icon-btn banners" (click)="viewCategory(category)" matTooltip="View Banners">
+                                <mat-icon>collections</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty States -->
+        <div class="empty-state-modern py-5" *ngIf="categories.length === 0">
+            <div class="empty-icon-wrap">
+                <mat-icon>category</mat-icon>
+            </div>
+            <h4>No Categories Found</h4>
+            <p>You haven't added any categories yet. Start by creating one or setting up defaults.</p>
+            <button mat-flat-button color="primary" class="setup-btn" *ngIf="defaultCategories" (click)="createDefaultCategories()">
+                <mat-icon>auto_awesome</mat-icon>
+                Setup Default Categories
+            </button>
+        </div>
+
+        <div class="empty-state-modern py-5" *ngIf="categories.length > 0 && searchTerm && getFilteredCategories().length === 0">
+            <div class="empty-icon-wrap">
+                <mat-icon>search_off</mat-icon>
+            </div>
+            <h4>No match for "{{ searchTerm }}"</h4>
+            <p>Try refining your search terms or clearing the filter.</p>
+        </div>
+    </div>
+</div>
+
+<!-- View Category Dialog Template -->
+<ng-template #viewCategoryDialog let-data>
+    <div class="modern-dialog">
+        <h2 mat-dialog-title class="dialog-header">
+            <div class="d-flex align-items-center gap-2">
+                <mat-icon color="primary">collections</mat-icon>
+                <span>Category Banners: {{ data.category.categoryDisplayName || data.category.categoryName }}</span>
+            </div>
+        </h2>
+        <mat-dialog-content class="dialog-content p-4">
+            <div class="banner-grid" *ngIf="data.category.categoryBanners?.length; else noBanners">
+                <div *ngFor="let banner of data.category.categoryBanners" class="banner-item mb-3">
+                    <img [src]="serverDDUrl + banner" class="img-fluid rounded shadow-sm w-100" />
+                </div>
+            </div>
+            <ng-template #noBanners>
+                <div class="text-center py-5 text-muted">
+                    <mat-icon style="font-size: 48px; width: 48px; height: 48px; opacity: 0.5;">hide_image</mat-icon>
+                    <p class="mt-2">No banners available for this category</p>
+                </div>
+            </ng-template>
+        </mat-dialog-content>
+        <mat-dialog-actions align="end" class="dialog-actions p-3">
+            <button mat-flat-button color="primary" mat-dialog-close class="btn-primary-action px-4">CLOSE</button>
+        </mat-dialog-actions>
+    </div>
+</ng-template>

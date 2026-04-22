@@ -1,744 +1,401 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from '@angular/core';
-import { FormArray, FormBuilder } from '@angular/forms';
-import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalService } from 'src/app/confirmation-modal/confirmation-modal.service';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
-import { categoryList } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { Component, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { BulkMenuUploadDialogComponent } from './bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
+import { AddOutletMenuComponent } from './add-outlet-menu/add-outlet-menu.component';
+import { CopyOutletMenuComponent } from './copy-outlet-menu/copy-outlet-menu.component';
+import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dialog.component';
+import { OutletViewService } from '../outlet-view.service';
 
 @Component({
   selector: 'app-outlet-menu',
   templateUrl: './outlet-menu.component.html',
   styleUrls: ['./outlet-menu.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    DirectivesModule
+  ]
 })
-export class OutletMenuComponent implements OnInit, OnChanges {
-  @Input() outletObj: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild('content') content: any;
-  @ViewChild('comboContent') comboContent: any;
-  @ViewChild('masterMenu') masterMenu: any;
-  @ViewChild('selectOutletModal') selectOutletModal: any;
-  @Output() dataToParent = new EventEmitter<string>();
-  categoryList = categoryList;
-  modalRef!: NgbModalRef;
-  categorySelected: boolean = false;
-  form: any;
-  selectedCategory: any;
-  uploadedImageFile: any;
-  imageUrl: any;
-  displayImgUrl = environment.imageUrl;
-  showCard: any = false;
-  menuList: any = [];
-  // menuIndex: any = 0;
-  selectedOutlet: any = null;
-  selectedMenuItems: any[] = [];
-  outletMenuList: any = []
-  transformedMenuItems: any[] = [];
+export class OutletMenuComponent implements OnInit {
+  outletObj: any;
 
-  menuId: any = 0;
-  showUpdateBtn: any = false;
-  imageReplaced: any = false;
-  uploadStatus: any = false;
-  noImages: boolean = false;
+  categoryList = categoryList;
+  nutritionListOptions = nutritionListOptions;
+  displayImgUrl = environment.imageUrl;
+  showCard: boolean = false;
+  selectedCategory: any;
+  menuItems: any[] = [];
   foodItem: any;
-  btnPolicy: any;
-  filteredMenuList: any[] = []
-  filteredMasterMenuList: any[] = []
-  outletList: any = [];
-  tempList: any;
-  selectedMasterItem: any = null;
-  selectedItems: any[] = [];
   menuInfo: any;
   eventInfo: any;
-  tempMenuList: any;
-  searchTerm: string = '';
-  groupedMenuList: any;
+  // main outlet menu lists
+  filteredMenuList: any[] = [];
+  groupedMenuList: any[] = [];
+  // filters
+  searchTermMenu: string = '';    // for outlet menu
+  selectedCategoryFilter: string = '';
+  selectedDateFilter: Date | null = null;
+  // weekly menu dates
+  selectedWeeklyDates: Date[] = [];
+  today = new Date();
+
   constructor(
-    private fb: FormBuilder,
-    private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService,
-    private sendDataToComponent: SendDataToComponent
+    private dialog: MatDialog,
+    private toastr: ToasterService,
+    private outletViewService: OutletViewService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.fetchOutletMasterMenus();
-    this.fetchAllOutlets();
-    this.init();
-    this.createForm();
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.fetchMenuItems();
+      }
+    });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.outletObj = changes['outletObj'].currentValue;
-    this.init();
+
+  async fetchMenuItems() {
+    try {
+      this.resetValues();
+      const res = await this.apiMainService.getMenuItems(this.outletObj._id);
+      this.menuItems = res || [];
+      this.applyMenuFilters();
+    } catch (e) {
+      this.menuItems = [];
+      this.applyMenuFilters();
+    }
   }
 
-  init() {
-    if (this.outletObj.menuList && this.outletObj.menuList.length > 0) {
-      this.filteredMenuList = this.outletObj.menuList.sort((a: any, b: any) => a.precedence - b.precedence)
-      this.showCard = true;
-    } else {
-      this.filteredMenuList = []
+  applyMenuFilters() {
+    if (!this.menuItems) {
+      this.filteredMenuList = [];
+      this.groupedMenuList = [];
+      this.showCard = false;
+      return;
     }
 
-    this.groupItemsByCategory();
+    let temp = this.menuItems.slice().sort((a: any, b: any) => a.precedence - b.precedence);
 
+    if (this.selectedCategoryFilter) {
+      temp = temp.filter((item: any) => item.category === this.selectedCategoryFilter);
+    }
+
+    if (this.searchTermMenu) {
+      const term = this.searchTermMenu.toLowerCase();
+      temp = temp.filter((item: any) =>
+        (item.itemName || '').toLowerCase().includes(term) ||
+        (item.description || '').toLowerCase().includes(term) ||
+        (item.outletName || '').toLowerCase().includes(term)
+      );
+    }
+
+    if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
+      temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
+    }
+
+    this.filteredMenuList = temp;
+
+    if (this.outletObj?.isWeeklyMenu) {
+      this.groupedMenuList = this.buildDateGroupedMenu(temp);
+    } else {
+      this.groupedMenuList = this.buildGroupedMenu(temp);
+    }
+
+    this.showCard = this.filteredMenuList.length > 0;
   }
 
-  async fetchAllOutlets() {
-
-    const res = await this.apiMainService.fetchAllOutlets();
-    console.log(res);
-    this.outletList = res;
-
-  }
-
-  groupItemsByCategory() {
-    const grouped = this.filteredMenuList.reduce((acc, item) => {
+  private buildGroupedMenu(list: any[]) {
+    const grouped = list.reduce((acc: any, item: any) => {
       const category = item.category || 'Uncategorized';
       if (!acc[category]) {
         acc[category] = [];
       }
       acc[category].push(item);
       return acc;
-    }, {} as Record<string, any[]>);
+    }, {});
 
-    this.groupedMenuList = Object.keys(grouped).map(category => ({
+    return Object.keys(grouped).map((category) => ({
       category,
-      items: grouped[category]
+      subGroups: [{ title: '', items: grouped[category] }]
+    }));
+  }
+
+  private innerGroupBy(list: any[], key: string) {
+    const grouped = list.reduce((acc: any, item: any) => {
+      const val = item[key] || 'Uncategorized';
+      if (!acc[val]) acc[val] = [];
+      acc[val].push(item);
+      return acc;
+    }, {});
+    return Object.keys(grouped).map(title => ({ title, items: grouped[title] }));
+  }
+
+  isSameDay(d1: Date, d2: Date): boolean {
+    return (
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
+    );
+  }
+
+  buildDateGroupedMenu(list: any[]) {
+    const dateGroups: any = {};
+    const unassigned: any[] = [];
+
+    list.forEach(item => {
+      if (!item.weeklyMenuDates || item.weeklyMenuDates.length === 0) {
+        unassigned.push(item);
+      } else {
+        item.weeklyMenuDates.forEach((d: any) => {
+          const dateStr = new Date(d.date).toLocaleDateString('en-IN', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          if (!dateGroups[dateStr]) {
+            dateGroups[dateStr] = [];
+          }
+          if (!dateGroups[dateStr].find((i: any) => i._id === item._id)) {
+            dateGroups[dateStr].push(item);
+          }
+        });
+      }
+    });
+
+    const result = Object.keys(dateGroups).map(date => ({
+      category: date,
+      subGroups: this.innerGroupBy(dateGroups[date], 'category')
     }));
 
-    console.log(this.groupedMenuList);
-
-  }
-
-  onOutletChange() {
-    console.log('Selected Outlet Object:', this.selectedOutlet.menuList);
-    this.outletMenuList = this.selectedOutlet.menuList;
-
-  }
-
-
-  preventInvalidNumber(e: KeyboardEvent) {
-    const invalidKeys = ['-', '+', 'e', 'E'];
-    if (invalidKeys.includes(e.key)) e.preventDefault();
-  }
-
-  preventInvalidPaste(e: ClipboardEvent, type: "integer" | "decimal" = "integer") {
-    const text = e.clipboardData?.getData('text') ?? '';
-    if (type === "integer") {
-      if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
-    } else {
-      if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
-    }
-  }
-
-  patchFormValue(item: any) {
-    console.log(item, "item");
-    this.form.patchValue({
-      itemName: item.itemName,
-      price: item.price,
-      subsidy: item.subsidy ? item.subsidy : 0,
-      category: item.category,
-      mealTimingInfo: item.mealTimingInfo
-        ? item.mealTimingInfo.map((a: any) => a.mealType)
-        : [],
-      itemType: item.itemType,
-      precedence: item.precedence,
-      isActive: item.isActive,
-      doNotChangeInFuture: item.doNotChangeInFuture,
-      description: item.description,
-      itemContains: item.itemContains,
-      energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
-      nutritionList: item.nutritionInfo ? [...item.nutritionInfo.nutritionList] : []
-    });
-    if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
-      this.nutrition_Lists.clear();
-      item.nutritionInfo.nutritionList.forEach((nutrition: any, index: number) => {
-        this.nutrition_Lists.push(this.fb.group(nutrition));
+    if (unassigned.length > 0) {
+      result.push({
+        category: 'Unassigned / All Days',
+        subGroups: this.innerGroupBy(unassigned, 'category')
       });
     }
-  }
 
-  createForm() {
-    this.form = this.fb.group({
-      itemName: [''],
-      price: [''],
-      subsidy: [0],
-      category: [''],
-      subCategory: [''],
-      mealTimingInfo: [[]],
-      itemType: ['Veg'],
-      precedence: [0],
-      isActive: [false],
-      description: [''],
-      doNotChangeInFuture: [false],
-      itemContains: [[]],
-      energyValue: [10],
-      nutritionList: this.fb.array([
-        this.fb.group({
-          nutritionName: [''],
-          nutritionValue: [''],
-          nutritionUnit: ['']
-        })
-      ])
-
-    });
+    return result;
   }
 
 
-  get nutrition_Lists(): FormArray {
-    return this.form.get('nutritionList') as FormArray;
-  }
-
-  addNutritionLists() {
-    this.nutrition_Lists.push(this.fb.group({
-      nutritionName: [''],
-      nutritionValue: [''],
-      nutritionUnit: ['']
-    }));
-  }
-
-  removenNutritionLists(index: number) {
-    this.nutrition_Lists.removeAt(index);
-  }
-
-  setCategory(event: any) {
-    this.selectedCategory = event.target.value;
-    this.categorySelected = true;
-  }
-
-  onItemSelected(item: any) {
-    this.selectedMasterItem = item;
-    console.log('Selected Master Menu Item:', item);
-  }
-
-  applyFilter() {
-    let tempList = [...this.tempList];
-
-    if (this.selectedCategory) {
-      tempList = tempList.filter(
-        (data) => data.category === this.selectedCategory
-      );
-    }
-
-    if (this.searchTerm) {
-      tempList = tempList.filter(
-        (data) =>
-          (data.itemName?.toLowerCase() || '').includes(this.searchTerm.toLowerCase())
-      );
-    }
-
-    this.filteredMasterMenuList = tempList;
-  }
-
-
-  async fetchOutletMasterMenus() {
-    try {
-      const res = await this.apiMainService.getAllOutletMasterMenus();
-      console.log(res);
-      if (res) {
-        this.filteredMasterMenuList = res;
-        this.tempList = this.filteredMasterMenuList;
-        console.log(this.filteredMasterMenuList);
-
-      }
-    }
-    catch (e) {
-      console.log('error while fetching outlet master menus')
-    }
-  }
-
-  handleFileInput($event: any) {
-    if ($event && $event.target && $event.target.files) {
-      const file: File = $event.target.files[0];
-      if (file) {
-        const fileName = file.name;
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async (_event) => {
-          const imageUrl = reader.result;
-          try {
-            const modalRef: NgbModalRef = this.modalService.open(
-              ImageCropperComponent,
-              {
-                ariaLabelledBy: 'modal-basic-title',
-                size: 'xl',
-                backdrop: 'static',
-                centered: true,
-              }
-            );
-            modalRef.result.then(
-              (result: any) => {
-                if (result && result.croppedImages) {
-                  this.uploadedImageFile = result.croppedImages.file;
-                  this.imageUrl = result.croppedImages.resizeDataUrl;
-                  // console.log(imageUrl);
-                  this.uploadStatus = true;
-                  this.imageReplaced = true;
-                }
-              },
-              (reason: any) => {
-                console.log(`Model Dismissed`);
-              }
-            );
-            modalRef.componentInstance.uploadedImageUrl = imageUrl;
-            modalRef.componentInstance.imageWidth = 150;
-            modalRef.componentInstance.imageHeight = 150;
-            modalRef.componentInstance.aspectRatio = 1;
-          } catch (e) {
-            console.log('error while changes kitchen opened status ', e);
-          }
-        };
-      }
-    }
-  }
-
-  async edit(item: any, index: any) {
-    this.imageUrl = item.imageUrl;
-    this.showUpdateBtn = true;
-    // this.menuIndex = index;
-    this.menuId = item._id;
-
-    this.patchFormValue(item);
-    this.open();
-  }
-
-  async addMasterMenu() {
-
-    if (this.modalRef) {
-      this.modalRef.close();
-    }
-
-    this.imageReplaced = true;
-    this.uploadStatus = false;
-    this.imageUrl = this.selectedMasterItem?.imageUrl;
-    try {
-      const res = await this.apiMainService.addOutletList(this.outletObj._id, { outletList: this.selectedItems })
-      this.selectedItems = [];
-      this.dataToParent.emit(res);
-    }
-    catch (err) {
-      console.log(err);
-
-    }
-    this.form.patchValue(this.selectedMasterItem);
-  }
-
-  async addMenuItem() {
-
-    if (this.modalRef) {
-      this.modalRef.close();
-    }
-
-    this.imageReplaced = true;
-    this.uploadStatus = false;
-    this.imageUrl = this.selectedMasterItem?.imageUrl;
-    try {
-      const res = await this.apiMainService.addOutletList(this.outletObj._id, { outletList: this.transformedMenuItems })
-      this.transformedMenuItems = [];
-      this.selectedMenuItems = [];
-      this.dataToParent.emit(res);
-    }
-    catch (err) {
-      console.log(err);
-    }
-    this.form.patchValue(this.selectedMasterItem);
-  }
-
-  async updateMenu(index: any) {
-    if ((typeof this.form.value.subsidy === "undefined") ||
-      this.form.value.subsidy === null ||
-      this.form.value.subsidy === ''
-    ) {
-      this.form.patchValue({ subsidy: 0 });
-    }
-    try {
-      // const menuId = this.outletObj.menuList[index]._id;
-      const outletId = this.outletObj._id;
-      const formData = new FormData();
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-      formData.append('imageUrl', this.form.value.imageUrl);
-      formData.append('description', this.form.value.description);
-      formData.append('isActive', this.form.value.isActive);
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append('quantityAvailable', this.form.value.quantityAvailable);
-      formData.append('setDailyQuantity', this.form.value.setDailyQuantity);
-      formData.append('subsidy', this.form.value.subsidy);
-      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture);
-      formData.append('itemContains', JSON.stringify(this.form.value.itemContains));
-      formData.append('category', this.form.value.category);
-      formData.append('subCategory', this.form.value.subCategory);
-      formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence);
-
-      let mealTypes = this.form.value.mealTimingInfo;
-
-      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
-        mealTypes.includes(meal.mealType)
-      );
-
-      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
-      const nutritionInfo = {
-        energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList
-      };
-      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
-      console.log(this.form.value, "formData");
-      const res = await this.apiMainService.updateOutletMenu(
-        outletId,
-        this.menuId,
-        formData
-      );
-
-      if (res && res._id) {
-        this.outletObj = res;
-        this.init()
-      }
-
-      this.resetValues();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  resetValues() {
-    this.form.reset();
-    // this.menuIndex = 0;
-    this.menuId = '';
-
-    this.imageUrl = '';
-    this.uploadedImageFile = '';
-    this.showUpdateBtn = false;
-    this.imageReplaced = false;
-    this.noImages = false;
-    this.nutrition_Lists.clear();
-    this.addNutritionLists();
-  }
-
-  async submit() {
-    console.log(this.form.value);
-
-    try {
-      const formData: any = new FormData();
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-      formData.append('imageUrl', this.imageUrl);
-      formData.append('description', this.form.value.description);
-      formData.append('isActive', this.form.value.isActive ? this.form.value.isActive : false);
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append('quantityAvailable', this.form.value.quantityAvailable ? this.form.value.quantityAvailable : 0);
-      formData.append('setDailyQuantity', this.form.value.setDailyQuantity ? this.form.value.setDailyQuantity : 0);
-      formData.append('subsidy', this.form.value.subsidy ? this.form.value.subsidy : 0);
-      formData.append('doNotChangeInFuture', this.form.value.doNotChangeInFuture ? this.form.value.doNotChangeInFuture : false);
-      formData.append('itemContains', JSON.stringify(this.form.value.itemContains));
-      formData.append('category', this.form.value.category);
-      formData.append('subCategory', this.form.value.subCategory);
-      formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence ? this.form.value.precedence : 0);
-
-      let mealTypes = this.form.value.mealTimingInfo;
-
-      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
-        mealTypes?.includes(meal.mealType)
-      );
-
-      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
-      const nutritionInfo = {
-        energyValue: this.form.value.energyValue,
-        nutritionList: this.form.value.nutritionList
-      };
-      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
-
-      const res = await this.apiMainService.addOutletMenu(
-        formData,
-        this.outletObj._id
-      );
-
-      if (res && res._id) {
-        this.outletObj = res;
-        this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-        this.init()
-      }
-      this.resetValues();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        let keyName = parentKey ? `${parentKey}[${key}]` : key;
-        if (
-          typeof obj[key] === 'object' &&
-          obj[key] !== null &&
-          !Array.isArray(obj[key])
-        ) {
-          this.objectToFormData(obj[key], formData, keyName);
-        } else if (Array.isArray(obj[key])) {
-          obj[key].forEach((item: any, index: any) => {
-            if (typeof item === 'object' && item !== null) {
-              this.objectToFormData(item, formData, `${keyName}[${index}]`);
-            } else {
-              formData.append(`${keyName}[${index}]`, item);
-            }
-          });
-        } else {
-          formData.append(keyName, obj[key]);
-        }
-      }
-    }
-    return formData;
-  }
-
-  open() {
-    this.selectedMasterItem = null;
-    this.modalService.open(this.content, { ariaLabelledBy: 'modal-basic-title', size: 'xl' })
-      .result.then(
-        (result) => {
-          if (result === 'add') {
-            this.submit();
-          } else if (result === 'update') {
-            this.updateMenu(this.menuId);
-          }
-        },
-        (reason) => {
-          console.log(`Model Dismissed`);
-        }
-      );
-  }
-
-  openMenu() {
-    this.modalRef = this.modalService.open(this.masterMenu, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl'
-    });
-
-    this.modalRef.result.then(
-      (result) => {
-      },
-      (reason) => {
-        this.selectedItems = [];
-        this.selectedMenuItems = [];
-        console.log('Modal dismissed with reason:', reason);
-      }
-    );
-  }
-
-  openOutlet() {
-
-    this.modalRef = this.modalService.open(this.selectOutletModal, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl'
-    });
-
-    this.modalRef.result.then(
-      (result) => {
-        this.transformedMenuItems = []
-      },
-      (reason) => {
-        this.transformedMenuItems = [];
-        this.selectedMenuItems = [];
-        console.log('Modal dismissed with reason:', reason);
-      }
-    );
-  }
-
-  showPopup(item: any, i: any) {
-    this.foodItem = item;
-    // this.menuIndex = i;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to delete ${item.itemName}`,
-      this.deleteFoodItem,
-      this
-    );
-  }
-
-
-  onItemToggle(item: any, event: Event) {
-    const checkbox = event.target as HTMLInputElement;
-    if (checkbox.checked) {
-      this.selectedItems.push(item);
+  toggleDate(date: Date) {
+    const index = this.selectedWeeklyDates.findIndex(d => this.isSameDay(d, date));
+    if (index === -1) {
+      this.selectedWeeklyDates.push(date);
     } else {
-      this.selectedItems = this.selectedItems.filter(i => i._id !== item._id);
+      this.selectedWeeklyDates.splice(index, 1);
     }
-    console.log(this.selectedItems);
   }
 
-  onMenuItemToggle(item: any, event: Event) {
-    const checkbox = event.target as HTMLInputElement;
+  isDateSelected(date: Date): boolean {
+    return this.selectedWeeklyDates.some(d => this.isSameDay(d, date));
+  }
 
-    if (checkbox.checked) {
-      this.selectedMenuItems.push(item);
-    } else {
-      this.selectedMenuItems = this.selectedMenuItems.filter(
-        (i: any) => i._id !== item._id
-      );
-    }
+  weeklyDateClass = (date: Date): string => {
+    return this.isDateSelected(date) ? 'selected-date' : '';
+  };
 
-    this.transformedMenuItems = this.selectedMenuItems.map(item => {
-      return {
-        ...item,
-        mealTimingInfo: item.mealTimingInfo.map((info: any) => info.mealType)
-      };
+  weeklyDateFilter = (date: Date | null): boolean => {
+    if (!date) return false;
+    return true;
+  };
+
+  async edit(item: any) {
+    this.open('update', item);
+  }
+
+  open(action: 'add' | 'update' = 'add', item?: any) {
+    const dialogRef = this.dialog.open(AddOutletMenuComponent, {
+      width: '85vw',
+      maxWidth: '1200px',
+      panelClass: 'modern-dialog',
+      disableClose: true,
+      data: { outletObj: this.outletObj, item: item }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchMenuItems();
+      }
     });
   }
 
-  isSelected(item: any): boolean {
-    return this.selectedItems.find(i => i._id === item._id) !== undefined;
-  }
-
-  isMenuSelected(item: any): boolean {
-    return this.transformedMenuItems.find(i => i._id === item._id) !== undefined;
+  compareSection(o1: any, o2: any): boolean {
+    if (!o1 || !o2) {
+      return o1 === o2;
+    }
+    if (o1._id && o2._id) return o1._id === o2._id;
+    if (o1.sectionId && o2._id) return o1.sectionId === o2._id;
+    if (o1._id && o2.sectionId) return o1._id === o2.sectionId;
+    if (o1.sectionId && o2.sectionId) return o1.sectionId === o2.sectionId;
+    return false;
   }
 
   async deleteFoodItem() {
-    const res: any = await this.apiMainService.deleteOutletMenu(
-      this.outletObj._id,
-      this.foodItem._id
-    );
-    if (res && res._id) {
-      console.log(res);
-      this.outletObj = res;
-      this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-
-      this.showCard = true;
-      this.init();
+    const res: any = await this.apiMainService.deleteOutletMenu(this.outletObj._id, this.foodItem._id);
+    if (res) {
+      this.fetchMenuItems();
+      this.toastr.success('Menu item deleted successfully');
     }
-    this.resetValues();
-    this.back.emit(true);
   }
 
   async changeMenuActivation() {
-    let menu = this.menuInfo;
-    let event = this.eventInfo;
-    menu.isActive = event.target.checked;
-
+    const menu = this.menuInfo;
+    const event = this.eventInfo;
+    menu.isActive = event.checked;
     const menuObj = {
-      isActive: event.target.checked,
+      isActive: event.checked,
     };
+    const res = await this.apiMainService.changeMenuActivation(this.outletObj._id, menu._id, menuObj);
+    if (res) {
+      this.toastr.success(`Item ${event.checked ? 'Enabled' : 'Disabled'} successfully`);
+    }
+  }
 
-    let outletmenu = await this.apiMainService.changeMenuActivation(
-      this.outletObj._id,
-      menu._id,
-      menuObj
-    );
+  showPopup(item: any) {
+    this.foodItem = item;
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to delete ${item.itemName}`,
+      callback: this.deleteFoodItem,
+      context: this
+    });
   }
 
   showPopupForItemActivation(menu: any, event: any) {
     this.menuInfo = menu;
     this.eventInfo = event;
-    this.confirmationModalService.modal(
-      `Are you sure, you want to ${event.target.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
-      this.changeMenuActivation,
-      this
-    );
+    this.confirmationModalService.modal({
+      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
+      callback: this.changeMenuActivation,
+      cancelCallback: this.revertMenuActivation,
+      context: this
+    });
   }
 
-  defineDescription() {
-    this.modalService
-      .open(this.comboContent, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'xl',
-      })
-      .result.then((result) => { });
-  }
-
-  comboout(event: any) {
-    if (event) {
-      this.createComboDescription(event);
+  revertMenuActivation() {
+    if (this.menuInfo && this.eventInfo) {
+      const originalState = !this.eventInfo.checked;
+      this.menuInfo.isActive = originalState;
+      if (this.eventInfo.source) {
+        this.eventInfo.source.checked = originalState;
+      }
     }
   }
 
-  createComboDescription(comboItem: any) {
-    let description = '';
-    let comboType = '';
-    let descriptionArr = [];
-    let itemContains = [];
-    if (comboItem.vegCurry.selected) {
-      comboItem.vegCurry.curryList.forEach((curry: any) => {
-        descriptionArr.push(`${curry.size} ${curry.curryName}`);
-        itemContains.push({
-          name: curry.curryName,
-          quantity: curry.size,
-          contentType: 'VegCurry',
-        });
-      });
+  resetValues() {
+    this.searchTermMenu = '';
+    this.selectedCategoryFilter = '';
+    this.selectedDateFilter = null;
+    this.applyMenuFilters();
+  }
+
+  openMenu() {
+    const dialogRef = this.dialog.open(MasterMenuDialogComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      disableClose: false,
+      data: { outletObj: this.outletObj }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        this.fetchMenuItems();
+      }
+    });
+  }
+
+  openOutlet() {
+    const dialogRef = this.dialog.open(CopyOutletMenuComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      disableClose: false,
+      data: { outletObj: this.outletObj }
+    });
+
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        this.fetchMenuItems();
+      }
+    });
+  }
+
+  async excelExport() {
+    if (!this.filteredMenuList || this.filteredMenuList.length === 0) {
+      return;
     }
-    if (comboItem.nonVegCurry.selected) {
-      comboItem.nonVegCurry.curryList.forEach((curry: any) => {
-        descriptionArr.push(`${curry.size} ${curry.curryName}`);
-        itemContains.push({
-          name: curry.curryName,
-          quantity: curry.size,
-          contentType: 'NonVegCurry',
-        });
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Outlet Menu');
+
+    worksheet.columns = [
+      { header: 'Item Name', key: 'itemName', width: 25 },
+      { header: 'Description', key: 'description', width: 30 },
+      { header: 'Category', key: 'category', width: 15 },
+      { header: 'Type', key: 'itemType', width: 10 },
+      { header: 'Price (₹)', key: 'price', width: 15 },
+      { header: 'Subsidy (₹)', key: 'subsidy', width: 15 }
+    ];
+
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+
+    this.filteredMenuList.forEach((item) => {
+      worksheet.addRow({
+        itemName: item.itemName,
+        description: item.description || '',
+        category: item.category,
+        itemType: item.itemType,
+        price: item.price || 0,
+        subsidy: item.subsidy || 0
       });
-    }
-    if (comboItem.rice.selected) {
-      descriptionArr.push(comboItem.rice.size + ' Rice');
-      itemContains.push({
-        name: 'Rice',
-        quantity: comboItem.rice.size,
-        contentType: 'Rice',
-      });
-    }
-    if (comboItem.chapati.selected) {
-      descriptionArr.push(
-        comboItem.chapati.count + ` ${comboItem.chapati.chapatiName}`
-      );
-      itemContains.push({
-        name: comboItem.chapati.chapatiName,
-        quantity: comboItem.chapati.count,
-        contentType: 'Chapati',
-      });
-    }
-    if (comboItem.dal.selected) {
-      descriptionArr.push(comboItem.dal.size + ' Dal');
-      itemContains.push({
-        name: 'Dal',
-        quantity: comboItem.dal.size,
-        contentType: 'Dal',
-      });
-    }
-    if (comboItem.sweet.selected) {
-      descriptionArr.push('Sweet');
-      itemContains.push({
-        name: 'Sweet',
-        quantity: undefined,
-        contentType: 'Sweet',
-      });
-    }
-    if (comboItem.salad.selected) {
-      descriptionArr.push('Salad');
-      itemContains.push({
-        name: 'Salad',
-        quantity: undefined,
-        contentType: 'Salad',
-      });
-    }
-    const finalDescription = descriptionArr.join(', ');
-    this.form.patchValue({ description: finalDescription });
-    this.form.patchValue({ itemContains: itemContains });
+    });
+
+    const fileName =
+      `outlet_menu_${this.outletObj?.outletName || 'outlet'}` +
+      `_${new Date().toISOString().slice(0, 10)}.xlsx`;
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], {
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    });
+    saveAs(blob, fileName);
+  }
+
+  compareNutrition(o1: any, o2: any): boolean {
+    if (!o1 || !o2) return o1 === o2;
+    return o1.id === o2.id;
+  }
+
+  openUploadExcelPopup() {
+    const dialogRef = this.dialog.open(BulkMenuUploadDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: {
+        outletId: this.outletObj._id,
+        outletObj: this.outletObj
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.fetchMenuItems();
+        this.toastr.success('Bulk upload successful');
+      }
+    });
   }
 }

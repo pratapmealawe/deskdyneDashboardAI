@@ -1,0 +1,94 @@
+<div class="admin-header">
+  <div>
+    <h4 class="m-0 fw-semibold">
+      CheckList History
+    </h4>
+  </div>
+</div>
+
+
+<div class="container-fluid">
+  <mat-card class="mb-3">
+    <app-common-outlet-cafe-select [config]="headerConfig" (submitted)="filterSubmitted($event)">
+    </app-common-outlet-cafe-select>
+  </mat-card>
+
+  <mat-card *ngIf="filteredReportHistory.length > 0" class="">
+    <div class="container-fluid p-0">
+
+      <!-- Search if needed can go here, reused existing searchFilter method -->
+      <div class="d-flex justify-content-end mb-2">
+        <mat-form-field appearance="outline" class="dense-input input" style="width: 250px;">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput (keyup)="searchFilter($event)" placeholder="Search User">
+        </mat-form-field>
+      </div>
+
+      <mat-accordion multi="true">
+        <mat-expansion-panel *ngFor="let report of filteredReportHistory" class="mb-2 report-panel" hideToggle>
+
+          <mat-expansion-panel-header>
+            <div class="d-flex align-items-center justify-content-between w-100 pe-3">
+              <div class="d-flex flex-wrap gap-4 align-items-center">
+                <div class="info-group">
+                  <span class="label">Submitted By:</span>
+                  <span class="value">{{ report.SubmitedBy }}</span>
+                </div>
+                <div class="info-group">
+                  <span class="label">Date:</span>
+                  <span class="value">{{ report.SubmitedDate | date :"dd/MM/yyyy" }}</span>
+                </div>
+              </div>
+
+              <div class="actions d-flex align-items-center gap-3">
+                <!-- <button mat-icon-button *ngIf="isToday(report.SubmitedDate)"
+                  (click)="$event.stopPropagation(); editChecklist(report)" matTooltip="Edit Checklist">
+                  <mat-icon color="primary">edit</mat-icon>
+                </button> -->
+                <!-- Custom toggle icon to mimic design if needed, or default -->
+                <mat-icon>expand_more</mat-icon>
+              </div>
+            </div>
+          </mat-expansion-panel-header>
+
+          <div class="pt-3">
+            <div *ngIf="!report.checklist_questions || report.checklist_questions.length === 0"
+              class="text-muted fst-italic">
+              No questions recorded.
+            </div>
+
+            <div class="question-grid">
+              <div *ngFor="let item of report.checklist_questions" class="question-card">
+                <div class="q-row">
+                  <span class="q-label">Question:</span>
+                  <span class="q-text">{{ item.checklistQuestion }}</span>
+                </div>
+                <div class="q-row">
+                  <span class="q-label">Selected:</span>
+                  <mat-icon *ngIf="item.selected" class="text-success small-icon">check_circle</mat-icon>
+                  <mat-icon *ngIf="!item.selected" class="text-secondary small-icon">cancel</mat-icon>
+                </div>
+                <div class="q-row" *ngIf="item.comment">
+                  <span class="q-label">Comment:</span>
+                  <span class="q-text text-muted">{{ item.comment }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </mat-expansion-panel>
+      </mat-accordion>
+
+      <mat-paginator [length]="totalLength" [pageSize]="pageSize" [pageSizeOptions]="[10, 50, 100, 200, 500]"
+        (page)="onPageChange($event)" showFirstLastButtons aria-label="Select page">
+      </mat-paginator>
+
+    </div>
+  </mat-card>
+
+  <div class="center labelText mt-2" *ngIf="filteredReportHistory.length == 0">
+    <mat-card class="p-4 text-center text-muted">
+      No History found
+    </mat-card>
+  </div>
+</div>

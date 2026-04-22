@@ -1,46 +1,109 @@
-<div class="row card-wrapper p-2">
-  <div class="outlet-card col-lg-12 col-md-10 col-9" *ngFor="let outlet of outletUpdated">
-    <div class="col-md-3">
-      <div class="labelText">Organization Name</div>
-      <div class="labelData">{{ outlet?.organizationName }}</div>
+<!-- Organization Wrapper -->
+<div class="org-wrapper" *ngFor="let outletGroup of outletUpdated">
+  <!-- Organization Header -->
+  <div class="org-header">
+    <div class="org-icon">
+      <mat-icon>business</mat-icon>
     </div>
-    <div class="rows col-md-12" *ngFor="let outlet of outlet.outletList">
-      <div class="row">
-        <div class="col-12 col-md-4 col-lg-12">
-          <div class="row p-3">
-            <div class="col-6 col-md-5 col-lg-2">
-              <div class="labelText">Outlet Name</div>
-              <div class="labelData" >{{ outlet.outletName }}</div>
+    <div class="org-info">
+      <div class="org-label">Organization</div>
+      <h2 class="org-name">{{ outletGroup?.organizationName ||'No Organization' }}</h2>
+    </div>
+    <div class="org-stats" *ngIf="outletGroup?.outletList?.length">
+      <span class="badge-count">{{ outletGroup.outletList.length }} Outlet{{ outletGroup.outletList.length > 1 ?'s' :'' }}</span>
+    </div>
+  </div>
+
+  <!-- Outlets Grid -->
+  <div class="outlet-grid" *ngIf="outletGroup?.outletList?.length > 0; else noOutlets">
+    <div class="outlet-item-card" *ngFor="let outlet of outletGroup.outletList">
+      <!-- Card Top -->
+      <div class="card-top">
+        <div class="outlet-avatar">
+          <img *ngIf="outlet.imageUrl; else initialsTemplate" [src]="imageUrl + outlet.imageUrl" [alt]="outlet.outletName"
+            class="profile-img">
+          <ng-template #initialsTemplate>
+            {{ getInitials(outlet.outletName) }}
+          </ng-template>
+        </div>
+        <div class="outlet-identity">
+          <h3 class="outlet-name">{{ outlet.outletName }}</h3>
+          <div class="status-badges-row">
+            <div class="status-badge" [ngClass]="outlet.outletOpened ?'open' :'closed'">
+              <mat-icon>{{ outlet.outletOpened ?'check_circle' :'cancel' }}</mat-icon>
+              {{ outlet.outletOpened ?'Open' :'Closed' }}
             </div>
-            <div class="col-6 col-md-2 col-lg-1">
-              <div class="labelText">Opened</div>
-              <div class="labelData"> <mat-chip [ngClass]="outlet.outletOpened ? 'green' : 'red'"> {{ (outlet.outletOpened ? 'true' : 'false') | titlecase }}</mat-chip></div>
-            </div>
-            <div class="col-6 col-md-2 col-lg-1">
-              <div class="labelText">Subsidy</div>
-              <div class="labelData">&#8377; {{ outlet?.subsidy }}</div>
-            </div>
-            <div class="col-6 col-md-2 col-lg-1">
-              <div class="labelText">Precedence</div>
-              <div class="labelData">{{ outlet?.precedence }}</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-5">
-              <div class="labelText ">Outlet Description</div>
-              <div class="labelData desc" [matTooltip]="outlet.outletDescription" [matTooltipPosition]="'below'">{{ outlet.outletDescription }}</div>
-            </div>
-            <div class="col-6 col-md-6 col-lg-1">
-              <div class="d-flex align-items-center gap-2">
-              <mat-icon *ngIf="true || btnPolicy?.viewOutlet" (click)="vieworg(outlet)" color="primary"> visibility </mat-icon>
-              <mat-icon (click)="showPopup(outlet)" color="warn"> delete </mat-icon>
-              </div>
+            <div class="status-badge preorder" *ngIf="outlet.isPreOrder">
+              <mat-icon>schedule</mat-icon>
+              Pre-order
             </div>
           </div>
+        </div>
+        <div class="card-actions">
+          <button mat-icon-button color="primary" (click)="vieworg(outlet)" matTooltip="View Outlet">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="onSoftDelete(outlet)" matTooltip="Delete Outlet">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="card-body">
+        <div class="info-row">
+          <mat-icon class="info-icon">payments</mat-icon>
+          <div class="info-content">
+            <span class="info-label">Subsidy</span>
+            <span class="info-value">{{ outlet?.subsidy || 0 }} %</span>
+          </div>
+        </div>
+        <div class="info-row">
+          <mat-icon class="info-icon">low_priority</mat-icon>
+          <div class="info-content">
+            <span class="info-label">Precedence</span>
+            <span class="info-value">{{ outlet?.precedence ||'-' }}</span>
+          </div>
+        </div>
+        <div class="info-row" *ngIf="outlet.outletDescription">
+          <mat-icon class="info-icon">description</mat-icon>
+          <div class="info-content">
+            <span class="info-label">Description</span>
+            <span class="info-value text-truncate" [matTooltip]="outlet.outletDescription">{{ outlet.outletDescription
+              }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Footer with Cafeteria Info -->
+      <div class="card-footer" *ngIf="outlet.cafeteriaDetails">
+        <div class="cafe-chip">
+          <mat-icon>restaurant</mat-icon>
+          {{ outlet.cafeteriaDetails?.cafeteria_name }} • {{ outlet.cafeteriaDetails?.cafeteria_city }}
         </div>
       </div>
     </div>
   </div>
-  <div class="empty-outlet d-flex justify-content-center mb-2 align-items-center" *ngIf="outlet.length == 0">
-    <h6>No data found</h6>
-  </div>
-   <mat-paginator [length]="outlet.length || 0"  [pageSize]="pageSize" [pageIndex]="pageIndex" [pageSizeOptions]="[1,5,10,15]" (page)="onPageChange($event)" ></mat-paginator>
+
+  <ng-template #noOutlets>
+    <div class="no-outlets-msg">
+      <mat-icon>store</mat-icon>
+      <span>No outlets in this organization.</span>
+    </div>
+  </ng-template>
 </div>
+
+<!-- Empty State -->
+<div class="empty-state-card" *ngIf="!outletUpdated || outletUpdated.length === 0">
+  <div class="empty-content">
+    <mat-icon>search_off</mat-icon>
+    <h3>No Outlets Found</h3>
+    <p>Try adjusting your search criteria.</p>
+  </div>
+</div>
+
+<!-- Paginator -->
+<mat-paginator [length]="outlet?.length || 0" [pageSize]="pageSize" [pageIndex]="pageIndex"
+  [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+  class="custom-paginator">
+</mat-paginator>

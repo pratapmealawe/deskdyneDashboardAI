@@ -2,10 +2,15 @@ import { KeyValue } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
+import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PageEvent } from '@angular/material/paginator';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
+
+import * as pdfMake from "pdfmake/build/pdfmake";
+import * as pdfFonts from "pdfmake/build/vfs_fonts";
+(pdfMake as any).vfs = (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 
 type DayGroup = {
   dateKey: string;       // "YYYY-MM-DD" in IST
@@ -73,7 +78,6 @@ export class OutletBillingComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private excelService: ExcelService,
     private dialog: MatDialog
   ) { }
 
@@ -124,11 +128,9 @@ export class OutletBillingComponent implements OnInit {
     try {
       const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
       this.orders = Array.isArray(res) ? res : [];
-      console.log(this.orders);
       this.buildDatewiseGroups();
       this.resetAllPagers();
     } catch (err) {
-      console.log('err', err);
       this.orders = [];
       this.dateGroups = [];
       this.resetAllPagers();
@@ -205,109 +207,173 @@ export class OutletBillingComponent implements OnInit {
   }
 
   // Totals across ALL dates
-get grandTotals() {
-  const init = { count: 0, item: 0, subsidy: 0, gross: 0 };
-  return this.dateGroups.reduce((acc, g) => {
-    acc.count   += g.totals.count;
-    acc.item    += g.totals.itemAmount;
-    acc.subsidy += g.totals.subsidy;
-    acc.gross   += g.totals.gross;
-    return acc;
-  }, init);
-}
-
-// Totals for CURRENT PAGE (optional: show/hide in UI)
-get pageTotals() {
-  const init = { count: 0, item: 0, subsidy: 0, gross: 0 };
-  return this.pagedDateGroups.reduce((acc, g) => {
-    acc.count   += g.totals.count;
-    acc.item    += g.totals.itemAmount;
-    acc.subsidy += g.totals.subsidy;
-    acc.gross   += g.totals.gross;
-    return acc;
-  }, init);
-}
-
-  // ---------- Excel Exports ----------
-  /** Export one row per date with totals */
-  exportDatewiseSummary(): void {
-    const rows: SummaryRow[] = this.dateGroups.map(g => ({
-      'Date (Label)': g.dateLabel,
-      'Orders Count': g.totals.count,
-      'Item Amount (₹)': this.round2(g.totals.itemAmount),
-      'Subsidy (₹)': this.round2(g.totals.subsidy),
-      'Gross (₹)': this.round2(g.totals.gross),
-    }));
-
-    const grand = this.dateGroups.reduce(
-      (acc, g) => ({
-        count: acc.count + g.totals.count,
-        item: acc.item + g.totals.itemAmount,
-        subsidy: acc.subsidy + g.totals.subsidy,
-        gross: acc.gross + g.totals.gross,
-      }),
-      { count: 0, item: 0, subsidy: 0, gross: 0 }
-    );
-
-    rows.push({
-      'Date (Label)': 'TOTAL',
-      'Orders Count': grand.count,
-      'Item Amount (₹)': this.round2(grand.item),
-      'Subsidy (₹)': this.round2(grand.subsidy),
-      'Gross (₹)': this.round2(grand.gross),
-    });
-
-    if ((this.excelService as any).download) {
-      (this.excelService as any).download(rows, 'Outlet_Billing_Datewise_Summary');
-    }
+  get grandTotals() {
+    const init = { count: 0, item: 0, subsidy: 0, gross: 0 };
+    return this.dateGroups.reduce((acc, g) => {
+      acc.count += g.totals.count;
+      acc.item += g.totals.itemAmount;
+      acc.subsidy += g.totals.subsidy;
+      acc.gross += g.totals.gross;
+      return acc;
+    }, init);
   }
 
-  /** Export order-level rows (with date attached) */
-  exportDatewiseDetailed(): void {
-    const rows: DetailedRow[] = [];
-    let totalOrders = 0, totalItem = 0, totalSubsidy = 0, totalGross = 0;
+  // Totals for CURRENT PAGE (optional: show/hide in UI)
+  get pageTotals() {
+    const init = { count: 0, item: 0, subsidy: 0, gross: 0 };
+    return this.pagedDateGroups.reduce((acc, g) => {
+      acc.count += g.totals.count;
+      acc.item += g.totals.itemAmount;
+      acc.subsidy += g.totals.subsidy;
+      acc.gross += g.totals.gross;
+      return acc;
+    }, init);
+  }
+
+  // ---------- Excel Exports ----------
+  private async createExcelWorkbook(): Promise<ExcelJS.Workbook> {
+    const workbook = new ExcelJS.Workbook();
+    workbook.creator = 'Deskdyne';
+    workbook.created = new Date();
+    return workbook;
+  }
+
+  private async saveExcelFile(workbook: ExcelJS.Workbook, fileName: string) {
+    const buffer = await workbook.xlsx.writeBuffer();
+    const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+    saveAs(blob, `${fileName}.xlsx`);
+  }
+
+  async exportDatewiseSummary() {
+    const workbook = await this.createExcelWorkbook();
+    const worksheet = workbook.addWorksheet('Datewise Summary');
+
+    // Headers
+    worksheet.columns = [
+      { header: 'Date', key: 'date', width: 25 },
+      { header: 'Orders Count', key: 'count', width: 15 },
+      { header: 'Item Amount (₹)', key: 'item', width: 20 },
+      { header: 'Subsidy (₹)', key: 'subsidy', width: 20 },
+      { header: 'Gross (₹)', key: 'gross', width: 20 },
+    ];
+
+    // Styling Header
+    worksheet.getRow(1).font = { bold: true };
+    worksheet.getRow(1).alignment = { horizontal: 'center' };
+
+    // Data
+    this.dateGroups.forEach(g => {
+      worksheet.addRow({
+        date: g.dateLabel,
+        count: g.totals.count,
+        item: this.round2(g.totals.itemAmount),
+        subsidy: this.round2(g.totals.subsidy),
+        gross: this.round2(g.totals.gross)
+      });
+    });
+
+    // Grand Total
+    const grand = this.grandTotals;
+    const totalRow = worksheet.addRow({
+      date: 'TOTAL',
+      count: grand.count,
+      item: this.round2(grand.item),
+      subsidy: this.round2(grand.subsidy),
+      gross: this.round2(grand.gross)
+    });
+    totalRow.font = { bold: true };
+
+    await this.saveExcelFile(workbook, `Outlet_Billing_Summary_${new Date().getTime()}`);
+  }
+
+  async exportDatewiseDetailed() {
+    const workbook = await this.createExcelWorkbook();
+    const worksheet = workbook.addWorksheet('Detailed Report');
+
+    worksheet.columns = [
+      { header: 'Date', key: 'date', width: 20 },
+      { header: 'Order No', key: 'orderNo', width: 25 },
+      { header: 'Customer', key: 'customer', width: 25 },
+      { header: 'Phone', key: 'phone', width: 15 },
+      { header: 'Item Amount (₹)', key: 'item', width: 15 },
+      { header: 'Subsidy (₹)', key: 'subsidy', width: 15 },
+      { header: 'Gross (₹)', key: 'gross', width: 15 },
+      { header: 'Status', key: 'status', width: 15 },
+    ];
+
+    worksheet.getRow(1).font = { bold: true };
 
     for (const g of this.dateGroups) {
       for (const o of g.orders) {
-        const itemAmt = this.getItemAmount(o);
-        const subsidy = this.getSubsidy(o);
-        const gross = itemAmt - subsidy;
-
-        rows.push({
-          'Date (Label)': g.dateLabel,
-          'Order No': String(o.orderNo || o._id || ''),
-          Customer: o.customerName || '',
-          Phone: o.customerPhoneNo || '',
-          'Item Amount (₹)': this.round2(itemAmt),
-          'Subsidy (₹)': this.round2(subsidy),
-          'Gross (₹)': this.round2(gross),
-          Status: o.orderstatus || o.status || '',
+        worksheet.addRow({
+          date: g.dateLabel,
+          orderNo: o.orderNo || o._id,
+          customer: o.customerName || '',
+          phone: o.customerPhoneNo || '',
+          item: this.round2(this.getItemAmount(o)),
+          subsidy: this.round2(this.getSubsidy(o)),
+          gross: this.round2(this.getGross(o)),
+          status: o.orderstatus || o.status || ''
         });
-
-        totalOrders += 1;
-        totalItem += itemAmt;
-        totalSubsidy += subsidy;
-        totalGross += gross;
       }
     }
 
-    rows.push({
-      'Date (Label)': 'TOTAL',
-      'Order No': `${totalOrders} orders`,
-      Customer: '',
-      Phone: '',
-      'Item Amount (₹)': this.round2(totalItem),
-      'Subsidy (₹)': this.round2(totalSubsidy),
-      'Gross (₹)': this.round2(totalGross),
-      Status: '',
-    });
+    await this.saveExcelFile(workbook, `Outlet_Billing_Detailed_${new Date().getTime()}`);
+  }
 
-    if ((this.excelService as any).download) {
-      (this.excelService as any).download(rows, 'Outlet_Billing_Datewise_Detailed');
-    }
+  // ---------- PDF Export ----------
+  exportPdf() {
+    const docDefinition: any = {
+      content: [
+        { text: 'Outlet Billing Report', style: 'header' },
+        { text: `Generated on: ${new Date().toLocaleString()}`, style: 'subheader' },
+        { text: '\n' },
+        {
+          table: {
+            headerRows: 1,
+            widths: ['*', 'auto', 'auto', 'auto', 'auto'],
+            body: [
+              // Header
+              [
+                { text: 'Date', style: 'tableHeader' },
+                { text: 'Orders', style: 'tableHeader', alignment: 'center' },
+                { text: 'Item Amt (₹)', style: 'tableHeader', alignment: 'right' },
+                { text: 'Subsidy (₹)', style: 'tableHeader', alignment: 'right' },
+                { text: 'Gross (₹)', style: 'tableHeader', alignment: 'right' }
+              ],
+              // Body
+              ...this.dateGroups.map(g => [
+                g.dateLabel,
+                { text: g.totals.count.toString(), alignment: 'center' },
+                { text: this.round2(g.totals.itemAmount).toFixed(2), alignment: 'right' },
+                { text: this.round2(g.totals.subsidy).toFixed(2), alignment: 'right' },
+                { text: this.round2(g.totals.gross).toFixed(2), alignment: 'right' }
+              ]),
+              // Footer (Grand Total)
+              [
+                { text: 'TOTAL', style: 'tableHeader', bold: true },
+                { text: this.grandTotals.count.toString(), alignment: 'center', bold: true },
+                { text: this.grandTotals.item.toFixed(2), alignment: 'right', bold: true },
+                { text: this.grandTotals.subsidy.toFixed(2), alignment: 'right', bold: true },
+                { text: this.grandTotals.gross.toFixed(2), alignment: 'right', bold: true }
+              ]
+            ]
+          },
+          layout: 'lightHorizontalLines'
+        }
+      ],
+      styles: {
+        header: { fontSize: 18, bold: true, margin: [0, 0, 0, 10] },
+        subheader: { fontSize: 10, italics: true, margin: [0, 0, 0, 10] },
+        tableHeader: { bold: true, fontSize: 12, color: 'black', fillColor: '#f0f0f0' }
+      }
+    };
+
+    pdfMake.createPdf(docDefinition).download(`Outlet_Billing_Report_${new Date().getTime()}.pdf`);
   }
 
   private round2(n: number): number {
     return Math.round((n + Number.EPSILON) * 100) / 100;
   }
 }
+

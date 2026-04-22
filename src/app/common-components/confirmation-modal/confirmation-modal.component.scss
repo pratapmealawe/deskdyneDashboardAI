@@ -1,0 +1,164 @@
+@use "styles/theme/variable" as var;
+
+.dialog-wrapper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.dialog-content {
+    position: relative;
+    width: 90%;
+    max-width: 400px;
+    background: rgba(255, 255, 255, 0.98);
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transform: scale(0.9);
+    animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    display: flex;
+    flex-direction: column;
+}
+
+.dialogHeader {
+    padding: 20px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+
+    &.danger {
+        background: #fff1f2;
+        border-bottom-color: #ffe4e6;
+
+        .header-title {
+            color: #be123c;
+        }
+
+        .status-icon {
+            color: #e11d48;
+        }
+    }
+
+    .header-title {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #1e293b;
+
+        .status-icon {
+            font-size: 24px;
+            width: 24px;
+            height: 24px;
+            color: #3b82f6;
+        }
+    }
+}
+
+.close-header-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: #94a3b8;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+
+    &:hover {
+        background: rgba(0, 0, 0, 0.05);
+        color: #64748b;
+    }
+}
+
+.dialogbody {
+    padding: 32px 24px;
+    text-align: center;
+
+    .modal-message {
+        font-size: 1rem;
+        color: #475569;
+        font-weight: 500;
+        line-height: 1.6;
+        margin: 0;
+    }
+}
+
+.dialogfooter {
+    padding: 0 24px 24px;
+    display: flex;
+    gap: 12px;
+
+    .modal-btn {
+        flex: 1;
+        height: 48px !important;
+        border-radius: 12px !important;
+        font-weight: 700 !important;
+        font-size: 0.9rem !important;
+        transition: all 0.2s ease !important;
+    }
+
+    .cancel-btn {
+        background: #f1f5f9 !important;
+        color: #64748b !important;
+
+        &:hover {
+            background: #e2e8f0 !important;
+        }
+    }
+
+    .confirm-btn {
+        background: #0E49B5 !important;
+        color: white !important;
+
+        &:hover {
+            background: #0E49B5 !important;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        &.danger-btn {
+            background: #e11d48 !important;
+
+            &:hover {
+                background: #be123c !important;
+                box-shadow: 0 4px 12px rgba(225, 29, 72, 0.3) !important;
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    to {
+        transform: scale(1);
+    }
+}

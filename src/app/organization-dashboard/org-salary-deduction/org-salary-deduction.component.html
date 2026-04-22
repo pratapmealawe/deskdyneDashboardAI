@@ -1,0 +1,130 @@
+<div class="salary-deduction-container">
+    <!-- Header Section -->
+    <header class="page-header glass-card">
+        <div class="header-content">
+            <div class="title-wrap">
+                <h1 class="page-title">Salary Deduction Report</h1>
+                <p class="page-subtitle">Manage and track employee payroll deductions</p>
+            </div>
+            
+            <div class="filter-actions">
+                <app-common-outlet-cafe-select [config]="headerConfig" (submitted)="filterSubmitted($event)">
+                </app-common-outlet-cafe-select>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading State -->
+    <div class="loading-overlay" *ngIf="loading">
+        <div class="spinner-wrap">
+            <mat-spinner diameter="40"></mat-spinner>
+            <span>Fetching deduction data...</span>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state glass-card" *ngIf="!loading && fullDeductionList.length === 0">
+        <div class="empty-content">
+            <div class="icon-circle">
+                <mat-icon>payments</mat-icon>
+            </div>
+            <h3>No Records Found</h3>
+            <p>Select organization and date range to view salary deduction details.</p>
+        </div>
+    </div>
+
+    <ng-container *ngIf="!loading && fullDeductionList.length > 0">
+        <!-- Stats Row -->
+        <div class="stats-grid">
+            <div class="stat-card glass-card purple">
+                <div class="stat-icon"><mat-icon>currency_rupee</mat-icon></div>
+                <div class="stat-meta">
+                    <span class="label">Total Deduction</span>
+                    <span class="value">₹{{ totalDeductionAmount | number:'1.2-2' }}</span>
+                </div>
+            </div>
+            <div class="stat-card glass-card blue">
+                <div class="stat-icon"><mat-icon>receipt_long</mat-icon></div>
+                <div class="stat-meta">
+                    <span class="label">Total Orders</span>
+                    <span class="value">{{ totalOrders }}</span>
+                </div>
+            </div>
+            <div class="stat-card glass-card green">
+                <div class="stat-icon"><mat-icon>groups</mat-icon></div>
+                <div class="stat-meta">
+                    <span class="label">Employees Affected</span>
+                    <span class="value">{{ totalEmployees }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-card glass-card">
+            <div class="card-header">
+                <div class="search-box">
+                    <mat-icon>search</mat-icon>
+                    <input type="text" placeholder="Search by name, phone or order #" (input)="onSearchChange($event)" [(ngModel)]="searchText">
+                </div>
+                
+                <div class="export-actions">
+                    <button mat-flat-button color="primary" class="export-btn excel" (click)="excelExport()">
+                        <mat-icon>description</mat-icon> Excel
+                    </button>
+                    <button mat-flat-button color="warn" class="export-btn pdf" (click)="downloadPdf()">
+                        <mat-icon>picture_as_pdf</mat-icon> PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table class="premium-table">
+                    <thead>
+                        <tr>
+                            <th>Employee Details</th>
+                            <th class="text-center">Order Info</th>
+                            <th class="text-center">Subsidy Mode</th>
+                            <th class="text-right">Total Amount</th>
+                            <th class="text-right">Subsidy Paid</th>
+                            <th class="text-right">Deduction</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let order of paginatedList" class="table-row">
+                            <td>
+                                <div class="emp-info">
+                                    <div class="avatar">{{ order.customerName?.charAt(0) ||'E' }}</div>
+                                    <div class="details">
+                                        <span class="name">{{ order.customerName }}</span>
+                                        <span class="phone">{{ order.customerPhoneNo }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="order-no">#{{ order.orderNo }}</span>
+                                <span class="order-date">{{ order.orderDate | date:'dd MMM yyyy' }}</span>
+                            </td>
+                            <td class="text-center">
+                                <span class="subsidy-badge" [ngClass]="order.mealSubsidyType">
+                                    {{ order.mealSubsidyType | titlecase }}
+                                </span>
+                            </td>
+                            <td class="text-right amount">₹{{ order.itemAmount | number:'1.2-2' }}</td>
+                            <td class="text-right subsidy">₹{{ (order.subsidyAmount || 0) | number:'1.2-2' }}</td>
+                            <td class="text-right deduction">₹{{ order.deductionAmount | number:'1.2-2' }}</td>
+                        </tr>
+                        <tr *ngIf="deductionList.length === 0" class="no-results">
+                            <td colspan="6">No employees match your search criteria.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card-footer">
+                <mat-paginator [length]="deductionList.length" [pageSize]="pageSize" [pageSizeOptions]="[5, 10, 25, 100]"
+                    (page)="onPageChange($event)">
+                </mat-paginator>
+            </div>
+        </div>
+    </ng-container>
+</div>

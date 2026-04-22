@@ -1,0 +1,46 @@
+<div class="outlet-view-container">
+    <!-- Header Section -->
+    <div class="outlet-header-card">
+        <div class="header-left">
+            <button mat-icon-button class="back-btn" (click)="goBack()">
+                <mat-icon>arrow_back</mat-icon>
+            </button>
+            <div class="title-section">
+                <h1 class="page-title">{{ event?.eventPopupName ||'Event Details' }}</h1>
+                <p class="page-subtitle">{{ event?.organizationDetails?.organization_name ||'Organization' }} • {{
+                    event?.cafeteriaDetails?.cafeteria_name ||'Cafeteria' }}</p>
+            </div>
+        </div>
+        <div class="header-right">
+            <span class="status-badge" [class.open]="event?.eventPopupOpened" [class.closed]="!event?.eventPopupOpened">
+                <mat-icon>{{ event?.eventPopupOpened ?'event_available' :'event_busy' }}</mat-icon>
+                {{ event?.eventPopupOpened ?'Active' :'Stopped' }}
+            </span>
+        </div>
+    </div>
+
+    <!-- Tab Navigation -->
+    <div class="tabs-container">
+        <div class="main-tabs">
+            <button *ngFor="let view of eventViewList; let i = index" class="tab-btn"
+                [class.active]="selectedTab === view.path" (click)="selectedtab = i; gotToTab(view.path)">
+                <mat-icon class="tab-icon">{{ getTabIcon(view.path) }}</mat-icon>
+                <span>{{ view.name }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+        <ng-container [ngSwitch]="selectedTab">
+            <app-event-pop-details *ngSwitchCase="'event-details'" [eventObj]="event"></app-event-pop-details>
+            <app-event-pop-menu *ngSwitchCase="'event-menu'" [eventObj]="event"></app-event-pop-menu>
+            <app-event-pop-orders *ngSwitchCase="'event-orders'" [eventObj]="event"></app-event-pop-orders>
+            <app-event-pop-feedback *ngSwitchCase="'event-feedback'" [eventObj]="event"></app-event-pop-feedback>
+            <div *ngSwitchDefault class="empty-state">
+                <mat-icon>error_outline</mat-icon>
+                <p>Component not found</p>
+            </div>
+        </ng-container>
+    </div>
+</div>

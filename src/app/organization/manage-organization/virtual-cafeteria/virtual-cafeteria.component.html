@@ -1,0 +1,69 @@
+<div class="page-content">
+    <div class="page-header-card mb-4">
+        <div class="header-content">
+            <div class="title-section">
+                <h2 class="page-title">Virtual Cafeteria</h2>
+                <p class="page-subtitle">Manage menu, packages and settings for {{ selectedCafeteria?.cafeteria_name ||'Select Cafeteria' }}</p>
+            </div>
+            <app-cafeteria-selector 
+                [cafeteriaList]="cafeteriaList" 
+                [selectedCafeteria]="selectedCafeteria"
+                (cafeteriaChanged)="onCafeteriaSelection($event)">
+            </app-cafeteria-selector>
+        </div>
+    </div>
+    <div class="tabs-container">
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" animationDuration="200ms">
+            <!-- Categories Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <div class="tab-label-content">
+                        <mat-icon class="tab-icon">category</mat-icon>
+                        <span>Categories</span>
+                    </div>
+                </ng-template>
+
+                <ng-template matTabContent>
+                    <div class="tab-body-content py-4">
+                        <app-virtual-cafeteria-categories
+                            [orgObj]="orgObj"
+                            [selectedCafeteria]="selectedCafeteria">
+                        </app-virtual-cafeteria-categories>
+                    </div>
+                </ng-template>
+            </mat-tab>
+            <!-- Packages Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <div class="tab-label-content">
+                        <mat-icon class="tab-icon">inventory_2</mat-icon>
+                        <span>Packages</span>
+                    </div>
+                </ng-template>
+
+                <ng-template matTabContent>
+                    <div class="tab-body-content py-4">
+                        <app-virtual-cafeteria-package
+                            [orgObj]="orgObj"
+                            [selectedCafeteria]="selectedCafeteria">
+                        </app-virtual-cafeteria-package>
+                    </div>
+                </ng-template>
+            </mat-tab>
+            <!-- Employee Listing Tab -->
+            <mat-tab>
+                <ng-template mat-tab-label>
+                    <div class="tab-label-content">
+                        <mat-icon class="tab-icon">people</mat-icon>
+                        <span>Employees</span>
+                    </div>
+                </ng-template>
+                <ng-template matTabContent>
+                    <div class="tab-body-content py-4">
+                        <app-virtual-cafeteria-employee-listing [orgObj]="orgObj" [selectedCafeteria]="selectedCafeteria"></app-virtual-cafeteria-employee-listing>
+                    </div>
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+</div>

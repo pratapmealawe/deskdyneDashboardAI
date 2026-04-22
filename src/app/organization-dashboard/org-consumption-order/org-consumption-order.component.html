@@ -1,0 +1,78 @@
+<div class="export-page-container">
+    <!-- Header Card -->
+    <div class="export-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Consumption Orders</h1>
+                <p class="page-subtitle">View and export inventory consumption reports</p>
+            </div>
+            <div class="actions-section">
+                <div class="search-wrapper" *ngIf="allOrderList.length > 0 || searchText">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search item, status, user..." [(ngModel)]="searchText"
+                        (input)="applySearchFilter()" />
+                </div>
+                <div class="export-btns" *ngIf="filteredOrderList.length > 0">
+                    <button mat-flat-button class="btn-export excel" matTooltip="Excel Export" (click)="excelExport()">
+                        <mat-icon>table_chart</mat-icon> Excel
+                    </button>
+                    <button mat-flat-button class="btn-export pdf" matTooltip="Download PDF" (click)="downloadPdf()">
+                        <mat-icon>picture_as_pdf</mat-icon> PDF
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-body">
+        <!-- Filter Section -->
+        <div class="filter-wrapper mb-4">
+            <app-common-outlet-cafe-select [config]="headerConfig" (submitted)="filterSubmitted($event)">
+            </app-common-outlet-cafe-select>
+        </div>
+
+        <!-- Totals Strip -->
+        <div class="totals-strip" *ngIf="filteredOrderList.length > 0 && !isLoading">
+            <div class="total-chip">
+                <span class="chip-label">Total Orders</span>
+                <span class="chip-value">{{ totalOrdersCount }}</span>
+            </div>
+            <div class="total-chip highlight">
+                <span class="chip-label">Consumption Amount</span>
+                <span class="chip-value">₹{{ totalItemAmount | number :'1.2-2' }}</span>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoading">
+            <mat-spinner diameter="44"></mat-spinner>
+            <p>Loading consumption orders...</p>
+        </div>
+
+        <!-- Orders List -->
+        <div class="orders-container pb-4" *ngIf="!isLoading">
+            <div *ngIf="filteredOrderList.length > 0; else noRecord">
+                <div *ngFor="let order of pagedOrderList; trackBy: trackByOrderId" class="mb-4">
+                    <app-consumption-order-card [order]="order" [orgAdmin]="orgAdmin" (orderUpdated)="filterOrders()">
+                    </app-consumption-order-card>
+                </div>
+
+                <!-- Paginator -->
+                <div class="pagination-card mt-3">
+                    <mat-paginator [length]="filteredOrderList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+                        [pageSizeOptions]="pageSizeOptions" (page)="onPage($event)" showFirstLastButtons>
+                    </mat-paginator>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State -->
+        <ng-template #noRecord>
+            <div class="empty-state">
+                <mat-icon class="empty-icon">receipt_long</mat-icon>
+                <h3>No Orders Found</h3>
+                <p>Adjust your filters or search query to find consumption orders.</p>
+            </div>
+        </ng-template>
+    </div>
+</div>

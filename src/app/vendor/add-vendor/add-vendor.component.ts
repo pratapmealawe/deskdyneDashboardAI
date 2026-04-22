@@ -1,146 +1,133 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSelectChange } from '@angular/material/select';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
-import {
-  NgbModal,
-  NgbModalRef,
-  NgbActiveModal,
-} from '@ng-bootstrap/ng-bootstrap';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { DataFormatService } from 'src/service/data-format.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PermissionsService } from '@service/permission.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { ToasterService } from '@service/toaster.service';
+import { AddressItem, OutletItem, PopupItem, Vendor } from 'src/app/common/interfaces/vendor.interface';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
+import { SetGeolocationComponent } from 'src/app/common-components/set-geolocation/set-geolocation.component';
+import { VendorOutletModalComponent } from './vendor-outlet-modal/vendor-outlet-modal.component';
+import { VendorAddressModalComponent } from './vendor-address-modal/vendor-address-modal.component';
+import { VendorPopupModalComponent } from './vendor-popup-modal/vendor-popup-modal.component';
 
 @Component({
   selector: 'app-add-vendor',
   templateUrl: 'add-vendor.component.html',
   styleUrls: ['add-vendor.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule
+  ]
 })
 export class AddVendorCommponent {
   form: any;
   showError = false;
   showUpdate = false;
-  outletByCafeteriaList: any;
-  showModalOutletList = false;
-  selectedOutletsList: any = [];
-  defaultRole: any = 'Cashier';
+  outletByCafeteriaList: OutletItem[] = [];
+  popupsByVendorFirm: PopupItem[] = [];
+  selectedOutletsList: OutletItem[] = [];
+  selectedPopupsList: PopupItem[] = [];
+  selectedAddressList: AddressItem[] = [];
+  addressList: AddressItem[] = [];
 
-  showAddbutton: any = false;
+  defaultRole: string = 'Cashier';
   vendorRole = ['Owner', 'Manager', 'Cashier', 'Kitchen Manager'];
-  showCafeteria = false;
-  showSelectCafeteriaOption = true;
-  selectedVendor: any;
-  addressList: any = [];
-  showEditModalOutletList = false;
-  vendorId: number = 0
-  title:string = ' Add Vendor '
+  selectedVendor: Vendor | null = null;
+  vendorId: any = 0;
 
-  @ViewChild('outletModal') outlet: any;
-  @ViewChild('addressModal') address: any;
-  selectedAddressList: any = [];
-  selectedAddress: any = null;  // holds the selected address object
-
+  loginCode: string | null = null;
   btnPolicy: any;
-  vendorList: any;
-  vendorLocation: any
-  @ViewChild('geolocation') geolocation: any;
+  vendorList: any[] = [];
+  vendorLocation: any;
+  title: string = 'Add Vendor';
 
   constructor(
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
-    public modalService: NgbModal,
     private runtimeStorageService: RuntimeStorageService,
-    private router: Router,
-    private policyService: PolicyService
-  ) {
-  }
+    private permissionsService: PermissionsService,
+    private dialog: MatDialog,
+    private toaster: ToasterService,
+    public dialogRef: MatDialogRef<AddVendorCommponent>
+  ) { }
 
   ngOnInit() {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.getAllVendors()
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
+    this.getAllVendors();
     this.createForm();
     this.updateVendor();
   }
 
   createForm() {
     this.form = this.fb.group({
-      vendorName: ['',[Validators.required]],
-      vendorPhoneNo: ['',[Validators.required]],
-      vendorEmail: ['',[Validators.required]],
-      vendorRole: ['',[Validators.required]],
-      vendorId: ['',[Validators.required]],
-      accessType: ['',[Validators.required]],
-      // address: this.fb.group({
-      //   address1: [''],
-      //   address2: [''],
-      //   landmark: [''],
-      //   location: [''],
-      //   city: [''],
-      // }),
-      // geolocation: this.fb.group({
-      //   lat: [''],
-      //   lng: [''],
-      // }),
+      vendorName: ['', [Validators.required]],
+      vendorPhoneNo: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
+      vendorEmail: ['', [Validators.required]],
+      vendorRole: ['', [Validators.required]],
+      vendorId: ['', [Validators.required]],
+      accessType: ['outlet', [Validators.required]],
+      isPos: [false],
+      isDashboard: [false],
+      posEntry: [''],
+      posConfiguration: this.fb.group({
+        enablePrinter: [false],
+        enableScanner: [false],
+        enableSecondDisplay: [false],
+        enableManualPrint: [false],
+        kitchenKot: [false],
+        userKot: [false],
+        userKotOnlyForManual: [false],
+      }),
+      geolocation: this.fb.group({
+        lat: [null],
+        lng: [null]
+      })
     });
   }
 
   async getAllVendors() {
     try {
       this.vendorList = await this.apiMainService.getAllVendorFirms();
-      this.vendorId && this.changeVendorFirm(this.vendorId)
-    } catch (error) {
-    }
-  }
-
-  objectToFormData(obj: any, formData = new FormData(), parentKey = '') {
-    for (let key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        let keyName = parentKey ? `${parentKey}[${key}]` : key;
-        if (
-          typeof obj[key] === 'object' &&
-          obj[key] !== null &&
-          !Array.isArray(obj[key])
-        ) {
-          this.objectToFormData(obj[key], formData, keyName);
-        } else if (Array.isArray(obj[key])) {
-          obj[key].forEach((item: any, index: any) => {
-            if (typeof item === 'object' && item !== null) {
-              this.objectToFormData(item, formData, `${keyName}[${index}]`);
-            } else {
-              formData.append(`${keyName}[${index}]`, item);
-            }
-          });
-        } else {
-          formData.append(keyName, obj[key]);
-        }
+      if (this.vendorId) {
+        this.changeVendorFirm(this.vendorId, true);
       }
-    }
-    return formData;
-  }
-
-  async changeVendorFirm(e: MatSelectChange | number) {
-    let id: number | string;
-
-    if (e instanceof Object && 'value' in e) {
-      id = e.value;              // MatSelectChange
-    } else {
-      id = e;                    // number
-    }
-    this.getVendorFirmById(id);
-    const vendorFirm = this.vendorList.find((item: any) => item?._id === id)
-    if (vendorFirm?.outletList.length > 0) {
-      this.outletByCafeteriaList = vendorFirm?.outletList
-    } else {
-      this.outletByCafeteriaList = []
+    } catch (error) {
+      console.error(error);
     }
   }
 
-  async getVendorFirmById(event: any) {
-    const vendorFirmId = event;
-    const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
-    this.addressList = res.address;
+  async changeVendorFirm(e: any, isInitial: boolean = false) {
+    try {
+      this.vendorId = isInitial ? e : e.value;
+      await this.getVendorFirmById(this.vendorId);
+      if (this.vendorId) {
+        const vendorFirm = this.vendorList.find((item: any) => item?._id === this.vendorId);
+        this.outletByCafeteriaList = vendorFirm?.outletList || [];
+      }
+    } catch (error) {
+      console.error('Error changing vendor firm:', error);
+    }
+  }
+
+  async getVendorFirmById(vendorFirmId: any) {
+    try {
+      const res = await this.apiMainService.getVendorFirmById(vendorFirmId);
+      this.addressList = res?.address || [];
+      this.popupsByVendorFirm = res?.popup_details || [];
+    } catch (error) {
+      console.error('Error getting vendor firm by id:', error);
+      this.addressList = [];
+      this.popupsByVendorFirm = [];
+    }
   }
 
   updateVendor() {
@@ -148,180 +135,179 @@ export class AddVendorCommponent {
     if (vendor && vendor._id) {
       this.selectedVendor = vendor;
       this.showUpdate = true;
+      this.title = 'Edit Vendor';
       this.defaultRole = vendor.vendorRole;
-      this.selectedOutletsList = vendor.outletList;
-      this.selectedAddressList = vendor.addressList;
+      this.selectedOutletsList = vendor.outletList || [];
+      this.selectedAddressList = vendor.addressList || [];
+      this.selectedPopupsList = vendor.popup_Details || [];
+      this.loginCode = vendor.loginCode || null;
+
+      let accessType = 'outlet';
+      if (vendor.isDailyAndBulkAccess) accessType = 'daily_bulk';
+      else if (vendor.isPopupAccess) accessType = 'popup';
+
       this.form.patchValue({
         vendorName: vendor.vendorName,
         vendorPhoneNo: vendor.vendorPhoneNo,
         vendorEmail: vendor.vendorEmail,
         vendorRole: vendor.vendorRole,
-        address: vendor.address,
-        geolocation: vendor.geolocation,
-        accessType: vendor.isOutletAccess ? 'outlet' : 'daily_bulk',
-        vendorId: vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : "",
+        accessType: accessType,
+        vendorId: vendor.vendorFirmDetails?.vendorFirmId || '',
+        isPos: vendor.isPos || false,
+        isDashboard: vendor.isDashboard || false,
+        posEntry: vendor.posEntry || '',
+        posConfiguration: {
+          enablePrinter: vendor.posConfiguration?.enablePrinter || false,
+          enableScanner: vendor.posConfiguration?.enableScanner || false,
+          enableSecondDisplay: vendor.posConfiguration?.enableSecondDisplay || false,
+          enableManualPrint: vendor.posConfiguration?.enableManualPrint || false,
+          kitchenKot: vendor.posConfiguration?.kitchenKot || false,
+          userKot: vendor.posConfiguration?.userKot || false,
+          userKotOnlyForManual: vendor.posConfiguration?.userKotOnlyForManual || false,
+        },
+        geolocation: vendor.geolocation || { lat: null, lng: null }
       });
-      this.vendorId = vendor.vendorFirmDetails ? vendor.vendorFirmDetails.vendorFirmId : ""
+      this.vendorId = vendor.vendorFirmDetails?.vendorFirmId || '';
+      this.getAllVendors();
     }
   }
 
   async submit(type?: any) {
     try {
+      if (!this.isAddVendorValid()) return;
+
+      const vendorFirm = this.vendorList.find((item: any) => item._id === this.vendorId);
       const vendorFirmDetails = {
         vendorFirmId: this.vendorId,
-        vendorFirmName: this.vendorList.find((item: any) => item._id === this.vendorId)?.vendorFirmName
-      }
-      const finalObj = {
-        ...this.form.value,
-        isOutletAccess: this.form.value.accessType === 'outlet' ? true : false,
-        isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk' ? true : false,
-        outletList: this.selectedOutletsList,
-        vendorFirmDetails: vendorFirmDetails,
-        addressList: this.selectedAddressList
+        vendorFirmName: vendorFirm?.vendorFirmName
       };
 
-      const formData = this.objectToFormData(finalObj);
+      const finalObj = {
+        ...this.form.value,
+        isOutletAccess: this.form.value.accessType === 'outlet',
+        isDailyAndBulkAccess: this.form.value.accessType === 'daily_bulk',
+        isPopupAccess: this.form.value.accessType === 'popup',
+        outletList: this.selectedOutletsList,
+        vendorFirmDetails: vendorFirmDetails,
+        addressList: this.selectedAddressList,
+        popup_Details: this.selectedPopupsList,
+        geolocation: this.form.get('geolocation')?.value
+      };
 
-      if (type == 'update') {
-        let updated = await this.apiMainService.updateVendor(
-          this.selectedVendor._id,
-          finalObj
-        );
+      const trimmedObj = this.trimStringValues(finalObj);
+
+      if (type === 'update') {
+        await this.apiMainService.updateVendor(this.selectedVendor?._id, trimmedObj);
       } else {
-        await this.apiMainService.saveVendor(finalObj);
+        await this.apiMainService.saveVendor(trimmedObj);
       }
-      this.router.navigate(['/searchVendor']);
+      this.dialogRef.close(true);
     } catch (error) {
+      console.error('Error submitting vendor:', error);
     }
   }
 
   addOutlet() {
-    this.modalService.open(this.outlet, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
+    this.dialog.open(VendorOutletModalComponent, {
+      width: '800px',
+      data: { outlets: this.outletByCafeteriaList }
+    }).afterClosed().subscribe(result => {
+      if (result) this.selectedOutletsList = result;
     });
   }
 
   addAddress() {
-    this.modalService.open(this.address, {
-      ariaLabelledBy: 'modal-basic-title',
-      size: 'xl',
-    });
-  }
-
-  getSelectedOutlets() {
-    this.selectedOutletsList = []
-    this.outletByCafeteriaList.forEach((elm: any) => {
-      if (elm.isChecked) {
-        let outletPresent = false;
-        this.selectedOutletsList.forEach((savedOutlet: any) => {
-          if (savedOutlet.outletId === elm.outletId) {
-            outletPresent = true;
-          }
-        });
-        if (!outletPresent) {
-          this.selectedOutletsList.push({
-            outletId: elm.outletId,
-            outletName: elm.outletName,
-            outletType: elm.outletType,
-            outletOpened: elm.outletOpened,
-            cafeteriaDetails: elm.cafeteriaDetails,
-            organizationDetails: elm.organizationDetails,
-          });
-        }
+    this.dialog.open(VendorAddressModalComponent, {
+      width: '800px',
+      data: { addressList: this.addressList }
+    }).afterClosed().subscribe(result => {
+      if (result) {
+        const exists = this.selectedAddressList.some(a => a.address1 === result.address1 && a.location === result.location);
+        if (!exists) this.selectedAddressList.push(result);
       }
     });
-    this.modalService.dismissAll();
   }
 
-  selectAddress(address: any) {
-    this.selectedAddress = address;
-
-    this.selectedAddressList = [{
-      address1: address.address1,
-      address2: address.address2,
-      landmark: address.landmark,
-      location: address.location,
-      geolocation: address.geolocation
-    }];
-
-    // } else {
-    //   // user unchecked → clear selection
-    //   this.selectedAddress = null;
-    //   this.selectedAddressList = [];
-    // }
+  addPopup() {
+    this.dialog.open(VendorPopupModalComponent, {
+      width: '1000px',
+      data: { popups: this.popupsByVendorFirm }
+    }).afterClosed().subscribe(result => {
+      if (result) this.selectedPopupsList = result;
+    });
   }
 
-  addSelectedAddress() {
-    this.modalService.dismissAll();
-
+  deleteOutlet(index: number) {
+    this.selectedOutletsList.splice(index, 1);
   }
 
-  deleteOutlet(index: any) {
-    try {
-      this.selectedOutletsList.splice(index, 1);
-    } catch (error) {
-
-    }
+  deleteAddress(index: number) {
+    this.selectedAddressList.splice(index, 1);
   }
 
-  deleteAddress(index: any) {
-    try {
-      this.selectedAddressList.splice(index, 1);
-    } catch (error) {
-    }
+  deletePopup(index: number) {
+    this.selectedPopupsList.splice(index, 1);
   }
 
   toggleMap() {
-    this.modalService
-      .open(this.geolocation, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'lg',
-        windowClass: 'mapModel',
-      })
-      .result.then(
-        (result) => {
-          if (result === 'add') {
-            this.patchVendorLocation();
-          }
-        },
-        (reason) => {
-        }
-      );
-  }
-
-  async patchVendorLocation() {
-    const vendorLocationControl = this.form.get('geolocation');
-    if (vendorLocationControl && this.vendorLocation?.latlng) {
-      vendorLocationControl.patchValue({
-        lat: this.vendorLocation.latlng.lat,
-        lng: this.vendorLocation.latlng.lng,
-      });
-    }
-  }
-
-  updateLocation(event: any) {
-    this.vendorLocation = event;
+    this.dialog.open(SetGeolocationComponent, {
+      width: '800px',
+      panelClass: 'mapModel',
+      data: { selectedCenter: this.form.get('geolocation')?.value }
+    }).afterClosed().subscribe(result => {
+      if (result?.latlng) {
+        this.form.get('geolocation')?.patchValue({
+          lat: result.latlng.lat,
+          lng: result.latlng.lng
+        });
+      }
+    });
   }
 
   goBack() {
-    this.form.reset();
-    this.router.navigate(['/searchVendor']);
+    this.dialogRef.close();
   }
 
   hasError(form: FormGroup, control: string, error: string) {
     return form.get(control)?.hasError(error);
   }
 
-onRadioClick(address: any) {
-  this.selectedAddress = address;
-}
-isAddVendorValid(): boolean {
-  return (
-    this.form.valid &&
-    this.selectedOutletsList.length > 0 &&
-    this.selectedAddressList.length > 0
-  );
+  isAddVendorValid(): boolean {
+    const accessType = this.form.get('accessType')?.value;
+    if (!this.form.valid || this.selectedAddressList.length === 0) return false;
+    if (accessType === 'outlet' && this.selectedOutletsList.length === 0) return false;
+    if (accessType === 'popup' && this.selectedPopupsList.length === 0) return false;
+    return true;
+  }
+
+  trimStringValues(obj: any): any {
+    if (obj instanceof File || obj instanceof Blob) return obj;
+    if (typeof obj === 'string') return obj.trim();
+    if (Array.isArray(obj)) return obj.map((v: any) => this.trimStringValues(v));
+    if (typeof obj === 'object' && obj !== null) {
+      Object.keys(obj).forEach(key => {
+        obj[key] = this.trimStringValues(obj[key]);
+      });
+    }
+    return obj;
+  }
+
+  async createLoginCode() {
+    try {
+      const res: any = await this.apiMainService.createLoginCode(this.selectedVendor?._id!);
+      this.loginCode = res?.loginCode || null;
+    } catch (error) {
+      console.error('Error creating login code:', error);
+    }
+  }
+
+  async refreshLoginCode() {
+    try {
+      const res: any = await this.apiMainService.refreshLoginCode(this.selectedVendor?._id!);
+      this.loginCode = res?.loginCode || null;
+    } catch (error) {
+      console.error('Error refreshing login code:', error);
+    }
+  }
 }
 
-}

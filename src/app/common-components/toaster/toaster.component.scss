@@ -1,0 +1,228 @@
+@import 'src/styles.scss';
+
+.toasterPosition {
+    position: fixed;
+    z-index: 30001;
+    top: 24px;
+    right: 24px;
+    width: auto;
+    max-width: 420px;
+    min-width: 320px;
+    // Remove filter here if it causes issues with stacked items, or keep it
+    // filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.1)); 
+    display: flex;
+    flex-direction: column;
+    gap: 12px; // Space between stacked toasts
+    pointer-events: none; // Allow clicking through the container
+}
+
+.toasterCard {
+    pointer-events: auto; // Re-enable pointer events for the cards
+    position: relative;
+    // ... rest of styles
+    margin-bottom: 0; // Handled by gap
+
+    padding: 16px 20px;
+    border-radius: 12px;
+    color: $white;
+    // Glassmorphism base
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06),
+        inset 0 1px 1px rgba(255, 255, 255, 0.8);
+
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: "Poppins-regular", "Lato", sans-serif;
+    cursor: default;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+}
+
+.toast-content {
+    display: flex;
+    align-items: flex-start;
+    width: 100%;
+    z-index: 2;
+}
+
+.icon-container {
+    margin-right: 16px;
+    font-size: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-top: 2px;
+}
+
+.message-container {
+    flex: 1;
+    margin-right: 16px;
+}
+
+.message-text {
+    font-size: 14px;
+    line-height: 1.5;
+    font-weight: 500;
+    color: #333; // Default text color for glassmorphism
+}
+
+.close-container {
+    cursor: pointer;
+    font-size: 22px;
+    color: #666;
+    opacity: 0.6;
+    transition: all 0.2s;
+
+    &:hover {
+        opacity: 1;
+        transform: scale(1.1);
+        color: #333;
+    }
+}
+
+// Progress Bar
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 4px;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+
+    .progress-fill {
+        height: 100%;
+        width: 100%;
+        transform-origin: left;
+        // Animation duration should match the TS timeout (e.g., 3s or 5s)
+        animation: progress-linear linear forwards;
+    }
+}
+
+/* Modifiers based on Type */
+.success {
+    border-left: 6px solid $color-success;
+
+    .icon-container {
+        color: $color-success;
+    }
+
+    .progress-fill {
+        background-color: $color-success;
+    }
+
+    // Optional: Subtle gradient background tint
+    background: linear-gradient(135deg, rgba($color-success, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.error,
+.alarm {
+    border-left: 6px solid $color-error;
+
+    .icon-container {
+        color: $color-error;
+    }
+
+    .progress-fill {
+        background-color: $color-error;
+    }
+
+    background: linear-gradient(135deg, rgba($color-error, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.warning {
+    border-left: 6px solid $color-warning;
+
+    .icon-container {
+        color: $color-warning;
+    }
+
+    .progress-fill {
+        background-color: $color-warning;
+    }
+
+    background: linear-gradient(135deg, rgba($color-warning, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+.info {
+    border-left: 6px solid $info-color;
+
+    .icon-container {
+        color: $info-color;
+    }
+
+    .progress-fill {
+        background-color: $info-color;
+    }
+
+    background: linear-gradient(135deg, rgba($info-color, 0.1) 0%, rgba(255, 255, 255, 0.9) 100%);
+}
+
+
+/* Animations */
+.animated-toast {
+    animation: slideInBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes slideInBounce {
+    0% {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    70% {
+        transform: translateX(-10px);
+    }
+
+    100% {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes progress-linear {
+    from {
+        transform: scaleX(1);
+    }
+
+    to {
+        transform: scaleX(0);
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    .toasterPosition {
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        right: auto;
+        width: 90%;
+        /* Responsive width */
+        max-width: 400px;
+        min-width: 280px;
+    }
+
+    .toasterCard {
+        padding: 12px 16px;
+        /* Slightly less padding on mobile */
+    }
+
+    .icon-container {
+        font-size: 20px;
+        margin-right: 12px;
+    }
+
+    .close-container {
+        font-size: 20px;
+    }
+}

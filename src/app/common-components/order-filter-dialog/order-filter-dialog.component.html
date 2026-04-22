@@ -1,0 +1,117 @@
+<div class="filter-dialog">
+    <!-- Header -->
+    <div class="dialog-header">
+        <div class="header-left">
+            <mat-icon class="header-icon">filter_list</mat-icon>
+            <div>
+                <h2 class="dialog-title">Filters</h2>
+                <span class="active-badge" *ngIf="activeCount > 0">{{ activeCount }} active</span>
+            </div>
+        </div>
+        <button mat-icon-button class="close-btn" (click)="cancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Filter Body -->
+    <div class="dialog-body">
+
+        <!-- Order Status -->
+        <div class="filter-group" *ngIf="showStatusFilter && data.uniqueOrderStatuses.length > 0">
+            <label class="filter-label">
+                <mat-icon>receipt_long</mat-icon> Order Status
+            </label>
+            <div class="chip-selector">
+                <div class="chip-option" [class.active]="filterOrderStatus ===''" (click)="filterOrderStatus =''">
+                    All
+                </div>
+                <div class="chip-option" *ngFor="let s of data.uniqueOrderStatuses"
+                    [class.active]="filterOrderStatus === s" (click)="filterOrderStatus = s">
+                    {{ orderStatusMapper[s] || s }}
+                </div>
+            </div>
+        </div>
+
+        <!-- PG Name -->
+        <div class="filter-group" *ngIf="data.uniquePgNames.length > 0">
+            <label class="filter-label">
+                <mat-icon>payment</mat-icon> Payment Gateway
+            </label>
+            <div class="chip-selector">
+                <div class="chip-option" [class.active]="filterPgName ===''" (click)="filterPgName =''">
+                    All
+                </div>
+                <div class="chip-option" *ngFor="let pg of data.uniquePgNames" [class.active]="filterPgName === pg"
+                    (click)="filterPgName = pg">
+                    {{ pg }}
+                </div>
+            </div>
+        </div>
+
+        <!-- App Version -->
+        <div class="filter-group" *ngIf="data.uniqueAppVersions.length > 0">
+            <label class="filter-label">
+                <mat-icon>smartphone</mat-icon> App Version
+            </label>
+            <div class="chip-selector">
+                <div class="chip-option" [class.active]="filterAppVersion ===''" (click)="filterAppVersion =''">
+                    All
+                </div>
+                <div class="chip-option" *ngFor="let v of data.uniqueAppVersions"
+                    [class.active]="filterAppVersion === v" (click)="filterAppVersion = v">
+                    v{{ v }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Platform -->
+        <div class="filter-group" *ngIf="data.uniquePlatforms.length > 0">
+            <label class="filter-label">
+                <mat-icon>devices</mat-icon> Platform
+            </label>
+            <div class="chip-selector">
+                <div class="chip-option" [class.active]="filterPlatform ===''" (click)="filterPlatform =''">
+                    All
+                </div>
+                <div class="chip-option" *ngFor="let p of data.uniquePlatforms" [class.active]="filterPlatform === p"
+                    (click)="filterPlatform = p">
+                    {{ p }}
+                </div>
+            </div>
+        </div>
+
+        <!-- POS Order -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <mat-icon>point_of_sale</mat-icon> POS Order
+            </label>
+            <div class="chip-selector">
+                <div class="chip-option" [class.active]="filterIsPosOrder ===''" (click)="filterIsPosOrder =''">
+                    All
+                </div>
+                <div class="chip-option" [class.active]="filterIsPosOrder ==='true'"
+                    (click)="filterIsPosOrder ='true'">
+                    <mat-icon>check_circle</mat-icon> Yes
+                </div>
+                <div class="chip-option" [class.active]="filterIsPosOrder ==='false'"
+                    (click)="filterIsPosOrder ='false'">
+                    <mat-icon>cancel</mat-icon> No
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dialog-footer">
+        <button mat-stroked-button class="btn-clear" (click)="clearAll()" *ngIf="activeCount > 0">
+            <mat-icon>filter_alt_off</mat-icon> Clear All
+        </button>
+        <div class="footer-right">
+            <button mat-stroked-button class="btn-cancel" (click)="cancel()">Cancel</button>
+            <button mat-flat-button class="btn-apply" (click)="apply()">
+                <mat-icon>check</mat-icon> Apply Filters
+                <span class="apply-count" *ngIf="activeCount > 0">({{ activeCount }})</span>
+            </button>
+        </div>
+    </div>
+</div>

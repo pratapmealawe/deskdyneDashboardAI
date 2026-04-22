@@ -1,0 +1,106 @@
+@import '/src/styles.scss';
+
+.summary {
+    color: $primary-offset-color2;
+}
+
+.outletDetails {
+    background: $white;
+    border-radius: 12px;
+    padding: 12px;
+    margin-bottom: 6px;
+}
+
+.flexDiv {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h6 {
+        margin: 0;
+    }
+}
+
+.totalDiv {
+    background: $primary-color;
+    color: $white;
+    padding: 10px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .verticalHr {
+        width: 1px;
+        height: auto;
+        background: $white;
+        margin: 0 12px;
+        align-self: stretch;
+    }
+}
+
+.exportDiv {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+}
+
+
+/* compact, readable stat grid */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+}
+
+.stat {
+    background: var(--bs-body-bg);
+    border: 1px solid $border-color;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .label {
+        font-size: 12px;
+        color: $primary-offset-color2;
+        /* muted */
+    }
+
+    .value {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    &.highlight {
+        border-color: rgba($primary-color, .25);
+        /* your preferred brand tint */
+        box-shadow: 0 1px 6px rgba($primary-color, .08);
+    }
+}
+
+/* table wrapper with sticky header */
+.table-wrap {
+    max-height: 60vh;
+    /* keeps paginator visible */
+    overflow: auto;
+}
+
+.table thead th {
+    // position: sticky;
+    // top: 0;
+    //   z-index: 2;
+    background: inherit;
+    text-align: start !important;
+}
+
+.table tbody td {
+    text-align: start !important;
+
+}
+
+/* small fix when mixing Bootstrap + Mat */
+mat-paginator {
+    margin-top: 8px;
+}
