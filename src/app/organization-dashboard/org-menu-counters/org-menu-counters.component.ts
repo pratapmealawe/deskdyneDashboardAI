@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 
 interface filter {
   orgId: string;
@@ -14,6 +14,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
 import { A11yModule } from "@angular/cdk/a11y";
+import { OutletDetailComponent } from './outlet-detail/outlet-detail.component';
 
 @Component({
   selector: 'app-org-menu-counters',
@@ -26,7 +27,8 @@ import { A11yModule } from "@angular/cdk/a11y";
     FormsModule,
     MaterialModule,
     CommonOutletCafeSelectComponent,
-    A11yModule
+    A11yModule,
+    OutletDetailComponent
   ]
 })
 export class OrgMenuCountersComponent implements OnInit, OnChanges {
@@ -95,7 +97,6 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
         this.cafeList = res?.cafeteriaList;
       }
     } catch (err: any) {
-      console.log(err);
     }
   }
 
@@ -109,7 +110,6 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
 
     if (this.filteredCafeList.length > 0) {
       this.filteredOutletList = this.filteredCafeList.find((item: any) => item?.cafeteria_id === this.cafeteria_id)?.outlets
-      console.log(this.filteredOutletList, "filteredOutletList");
     }
   }
 

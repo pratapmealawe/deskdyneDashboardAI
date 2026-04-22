@@ -1,11 +1,11 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 
 // General Container
 .add-vendor-container {
   padding: 1.5rem;
   min-height: 100vh;
-  padding-bottom: 80px; // Space for sticky footer
+  padding-bottom: 40px; // Space for sticky footer
 }
 
 // Page Header Card
@@ -352,7 +352,7 @@
 
 // Sticky Action Bar
 .action-bar-container {
-  position: fixed;
+  position: sticky;
   bottom: 0;
   left: 0; // Adjust if you have a sidebar
   right: 0;

@@ -15,22 +15,22 @@
           <h3 class="org-name">{{ org?.organization_name }}</h3>
           <span class="location-badge">
             <mat-icon>location_city</mat-icon>
-            {{ org?.city || 'N/A' }}
+            {{ org?.city ||'N/A' }}
           </span>
         </div>
 
         <div class="org-details">
           <div class="detail-item">
             <mat-icon>place</mat-icon>
-            <span class="text-truncate" [matTooltip]="org?.location">{{ org?.location || 'No location' }}</span>
+            <span class="text-truncate" [matTooltip]="org?.location">{{ org?.location ||'No location' }}</span>
           </div>
 
           <div class="chip-group">
-            <span class="chip cafeteria-chip" (click)="dataView(org?.cafeteriaList, 'cafeteria')">
+            <span class="chip cafeteria-chip" (click)="dataView(org?.cafeteriaList,'cafeteria')">
               <mat-icon>storefront</mat-icon>
               {{ org?.cafeteriaList?.length || 0 }} Cafeterias
             </span>
-            <span class="chip poc-chip" (click)="dataView(org.poc_details, 'poc')">
+            <span class="chip poc-chip" (click)="dataView(org.poc_details,'poc')">
               <mat-icon>people</mat-icon>
               {{ org.poc_details?.length || 0 }} POCs
             </span>

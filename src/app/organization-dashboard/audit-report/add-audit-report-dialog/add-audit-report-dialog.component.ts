@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';

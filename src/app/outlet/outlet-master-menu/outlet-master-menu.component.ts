@@ -2,9 +2,9 @@ import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angu
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from '../../../service/confirmation-modal.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { ImageCropperComponent } from '../../common-components/image-cropper/image-cropper.component';
 import { AddOutletMasterMenuComponent } from './add-outlet-master-menu/add-outlet-master-menu.component';
 import { CommonModule } from '@angular/common';
@@ -144,18 +144,7 @@ Nutrient Conversion Factors:
       }
     }
     catch (e) {
-      console.log('error while fetching outlet master menus')
-    }
-  }
-
-  normalizeMealTiming(mealTimingInfo: any[]) {
-    // Check if it's already an array of strings
-    if (Array.isArray(mealTimingInfo) && typeof mealTimingInfo[0] === 'string') {
-      return mealTimingInfo;
-    }
-    // Check if it's an array of objects
-    if (Array.isArray(mealTimingInfo) && typeof mealTimingInfo[0] === 'object') {
-      return mealTimingInfo.map(m => m.mealType);
+      
     }
     return [];
   }
@@ -232,9 +221,7 @@ Nutrient Conversion Factors:
         menu._id,
         menuObj
       );
-      console.log(outletMastermenu);
     } catch (error) {
-      console.log(error);
       // Revert if API fails
       menu.isActive = !event.checked;
       event.source.checked = !event.checked;
@@ -260,5 +247,12 @@ Nutrient Conversion Factors:
   compareNutrition(o1: any, o2: any): boolean {
     if (!o1 || !o2) return o1 === o2;
     return o1.id === o2.id;
+  }
+
+  normalizeMealTiming(mealTimingInfo: any): string[] {
+    if (!mealTimingInfo) return [];
+    if (Array.isArray(mealTimingInfo)) return mealTimingInfo.map((m: any) => m?.mealType || m);
+    if (typeof mealTimingInfo === 'string') return [mealTimingInfo];
+    return [];
   }
 }

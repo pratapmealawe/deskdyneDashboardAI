@@ -1,8 +1,8 @@
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormControl, FormGroup, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import * as Highcharts from 'highcharts';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
 
 type ApiOrder = {
   orderDate: string | Date;
@@ -276,7 +276,6 @@ export class HyperpureDashboardComponent {
 
       this.rebuildMenuTable();  // ensure sync after fetch
     } catch (err: any) {
-      console.log(err);
       this.consumptionMenu = [];
       this.rebuildMenuTable();
     }
@@ -372,7 +371,6 @@ export class HyperpureDashboardComponent {
     this.loading = true;
     try {
       const apiOrders: ApiOrder[] = await this.apiMainService.getConsumptionOrderByDateForDashboard(payload);
-      console.log(apiOrders);
 
       this.orders = apiOrders;
 

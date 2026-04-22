@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { categoryList } from 'src/config/food-category.config';

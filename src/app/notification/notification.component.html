@@ -76,10 +76,10 @@
           <div class="notification-identity">
             <h3 class="notification-title" [matTooltip]="notification.title">{{ notification.title }}</h3>
             <div class="status-badge" [ngClass]="notification.status">
-              <mat-icon *ngIf="notification.status === 'sent'">check_circle</mat-icon>
-              <mat-icon *ngIf="notification.status === 'pending'">schedule</mat-icon>
-              <mat-icon *ngIf="notification.status === 'failed'">error</mat-icon>
-              <mat-icon *ngIf="notification.status === 'cancelled'">cancel</mat-icon>
+              <mat-icon *ngIf="notification.status ==='sent'">check_circle</mat-icon>
+              <mat-icon *ngIf="notification.status ==='pending'">schedule</mat-icon>
+              <mat-icon *ngIf="notification.status ==='failed'">error</mat-icon>
+              <mat-icon *ngIf="notification.status ==='cancelled'">cancel</mat-icon>
               {{ notification.status }}
             </div>
           </div>
@@ -87,7 +87,7 @@
             <button mat-icon-button color="primary" (click)="resendNotification(notification)" matTooltip="Send Again">
               <mat-icon>repeat</mat-icon>
             </button>
-            <button mat-icon-button color="warn" *ngIf="notification.status === 'pending'"
+            <button mat-icon-button color="warn" *ngIf="notification.status ==='pending'"
               (click)="cancelNotification(notification)" matTooltip="Cancel">
               <mat-icon>cancel</mat-icon>
             </button>
@@ -99,9 +99,9 @@
           <p class="body-text">
             {{ notification.expanded ? notification.body : (notification.body | slice:0:100) }}
             <span *ngIf="notification.body?.length > 100">
-              {{ notification.expanded ? '' : '...' }}
+              {{ notification.expanded ?'' :'...' }}
               <a href="javascript:void(0)" (click)="notification.expanded = !notification.expanded" class="read-more-link">
-                {{ notification.expanded ? 'Read Less' : 'Read More' }}
+                {{ notification.expanded ?'Read Less' :'Read More' }}
               </a>
             </span>
           </p>
@@ -138,7 +138,7 @@
             {{ notification.targetType | titlecase }}
           </div>
           <div class="recipient-count"
-            *ngIf="notification.status === 'sent' || notification.status === 'partially_sent'">
+            *ngIf="notification.status ==='sent' || notification.status ==='partially_sent'">
             {{ notification.recipientCount }} sent / {{ notification.failedCount }} failed
           </div>
         </div>

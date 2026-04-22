@@ -1,0 +1,91 @@
+<div class="meal-config-modal premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>restaurant</mat-icon>
+            </div>
+            <div class="text">
+                <h3>{{data.mealConfigData ?'Edit' :'Add'}} Weekly Menu</h3>
+                <p>Configure pricing and daily item descriptions</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeModal()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content custom-scrollbar bg-light-soft">
+        <form [formGroup]="menuForm" (ngSubmit)="onSubmit()" class="px-2 py-3">
+            <!-- Global Config Section -->
+            <div class="modern-form-section mb-4">
+                <div class="section-title-badge mb-3">
+                    <mat-icon>settings</mat-icon> Global Menu Details
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Service Name</mat-label>
+                            <input matInput formControlName="itemName" placeholder="e.g. Standard Tiffin">
+                            <mat-error *ngIf="menuForm.get('itemName')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Customer Price</mat-label>
+                            <mat-icon matPrefix>currency_rupee</mat-icon>
+                            <input matInput type="number" formControlName="mealPrice" placeholder="0.00">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Kitchen Payout</mat-label>
+                            <mat-icon matPrefix>payments</mat-icon>
+                            <input matInput type="number" formControlName="payAmtToKitchen" placeholder="0.00">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-center">
+                        <mat-checkbox color="primary" formControlName="isSameDay" class="premium-checkbox">
+                            <span class="chk-label">Same Day</span>
+                        </mat-checkbox>
+                    </div>
+                </div>
+                <div class="row" *ngIf="menuForm.hasError('priceInvalid') && (menuForm.get('mealPrice')?.touched || menuForm.get('payAmtToKitchen')?.touched)">
+                    <div class="col-12 mt-2">
+                        <mat-error class="small fw-bold">Note: Payout must be less than Customer Price</mat-error>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Daily Items Section -->
+            <div class="section-title-badge mb-3">
+                <mat-icon>calendar_view_week</mat-icon> Daily Schedule Items
+            </div>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-3" formArrayName="days">
+                <div class="col" *ngFor="let day of days.controls; let dIndex = index" [formGroupName]="dIndex">
+                    <div class="premium-day-card" [class.active-day]="day.get('notApplicable')?.value">
+                        <div class="card-topping">
+                            <mat-checkbox color="primary" formControlName="notApplicable" [id]="'check-'+dIndex"></mat-checkbox>
+                            <label [for]="'check-'+dIndex" class="day-name">{{ day.get('itemDay')?.value }}</label>
+                        </div>
+                        <div class="card-main" [class.disabled-area]="!day.get('notApplicable')?.value">
+                            <mat-form-field appearance="outline" class="w-100 compact-field" subscriptSizing="dynamic">
+                                <input matInput formControlName="itemName" placeholder="Menu Item (e.g. Paneer Thali)">
+                            </mat-form-field>
+                            <mat-form-field appearance="outline" class="w-100 compact-field mt-2" subscriptSizing="dynamic">
+                                <textarea matInput formControlName="itemDescription" placeholder="Description / Ingredients" rows="2"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-white border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeModal()">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="onSubmit()">
+            <mat-icon>verified</mat-icon>
+            <span>Save Configuration</span>
+        </button>
+    </mat-dialog-actions>
+</div>

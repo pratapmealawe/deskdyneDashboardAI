@@ -5,10 +5,10 @@
             <h1>Server Logs</h1>
         </div>
         <div class="log-type-tabs">
-            <button class="tab-btn" [class.active]="selectedStatus === 'AuditLogs'" (click)="getAuditLogs()">
+            <button class="tab-btn" [class.active]="selectedStatus ==='AuditLogs'" (click)="getAuditLogs()">
                 Audit Logs
             </button>
-            <button class="tab-btn" [class.active]="selectedStatus === 'DBLogs'" (click)="getMLDBLogs()"
+            <button class="tab-btn" [class.active]="selectedStatus ==='DBLogs'" (click)="getMLDBLogs()"
                 *ngIf="access.serverLogs">
                 DB Logs
             </button>
@@ -22,16 +22,16 @@
             <div class="filter-group">
                 <label>Lines</label>
                 <div class="btn-group">
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '100'"
-                        (click)="selectedStatus === 'AuditLogs' ? getLineBasedAuditLogs('100') : getLineBasedLogs('100')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='100'"
+                        (click)="selectedStatus ==='AuditLogs' ? getLineBasedAuditLogs('100') : getLineBasedLogs('100')">
                         100
                     </button>
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '500'"
-                        (click)="selectedStatus === 'AuditLogs' ? getLineBasedAuditLogs('500') : getLineBasedLogs('500')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='500'"
+                        (click)="selectedStatus ==='AuditLogs' ? getLineBasedAuditLogs('500') : getLineBasedLogs('500')">
                         500
                     </button>
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '1000'"
-                        (click)="selectedStatus === 'AuditLogs' ? getLineBasedAuditLogs('1000') : getLineBasedLogs('1000')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='1000'"
+                        (click)="selectedStatus ==='AuditLogs' ? getLineBasedAuditLogs('1000') : getLineBasedLogs('1000')">
                         1000
                     </button>
                 </div>
@@ -41,14 +41,14 @@
             <div class="filter-group">
                 <label>Level</label>
                 <div class="btn-group">
-                    <button class="btn-filter" [class.active]="selectedLevel === 'All'" (click)="filterByLevel('All')">
+                    <button class="btn-filter" [class.active]="selectedLevel ==='All'" (click)="filterByLevel('All')">
                         All
                     </button>
-                    <button class="btn-filter" [class.active]="selectedLevel === 'ProLogs'"
+                    <button class="btn-filter" [class.active]="selectedLevel ==='ProLogs'"
                         (click)="filterByLevel('ProLogs')">
                         Info
                     </button>
-                    <button class="btn-filter" [class.active]="selectedLevel === 'ErrorLogs'"
+                    <button class="btn-filter" [class.active]="selectedLevel ==='ErrorLogs'"
                         (click)="filterByLevel('ErrorLogs')">
                         Error
                     </button>
@@ -59,24 +59,24 @@
             <div class="filter-group">
                 <label>Time Range</label>
                 <div class="btn-group">
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '1hr'"
-                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('1hr') : getTimeBasedLogs('1hr')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='1hr'"
+                        (click)="selectedStatus ==='AuditLogs' ? getTimeBasedAuditLogs('1hr') : getTimeBasedLogs('1hr')">
                         1 Hr
                     </button>
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '2hr'"
-                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('2hr') : getTimeBasedLogs('2hr')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='2hr'"
+                        (click)="selectedStatus ==='AuditLogs' ? getTimeBasedAuditLogs('2hr') : getTimeBasedLogs('2hr')">
                         2 Hr
                     </button>
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '5hr'"
-                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('5hr') : getTimeBasedLogs('5hr')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='5hr'"
+                        (click)="selectedStatus ==='AuditLogs' ? getTimeBasedAuditLogs('5hr') : getTimeBasedLogs('5hr')">
                         5 Hr
                     </button>
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '1Day'"
-                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('1Day') : getTimeBasedLogs('1Day')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='1Day'"
+                        (click)="selectedStatus ==='AuditLogs' ? getTimeBasedAuditLogs('1Day') : getTimeBasedLogs('1Day')">
                         24 Hr
                     </button>
-                    <button class="btn-filter" [class.active]="selectedDBStatus === '2Day'"
-                        (click)="selectedStatus === 'AuditLogs' ? getTimeBasedAuditLogs('2Day') : getTimeBasedLogs('2Day')">
+                    <button class="btn-filter" [class.active]="selectedDBStatus ==='2Day'"
+                        (click)="selectedStatus ==='AuditLogs' ? getTimeBasedAuditLogs('2Day') : getTimeBasedLogs('2Day')">
                         48 Hr
                     </button>
                 </div>
@@ -90,7 +90,7 @@
                     <span class="text-muted">-</span>
                     <input type="date" [(ngModel)]="endDate" [min]="startDate" [max]="maxDate" placeholder="End Date">
                     <button class="btn-fetch"
-                        (click)="selectedStatus === 'AuditLogs' ? getDayRangeBasedAuditLogs(startDate,endDate) : getDayRangeBasedLogs(startDate,endDate)">
+                        (click)="selectedStatus ==='AuditLogs' ? getDayRangeBasedAuditLogs(startDate,endDate) : getDayRangeBasedLogs(startDate,endDate)">
                         Fetch
                     </button>
                 </div>
@@ -138,10 +138,10 @@
         <!-- Log Items -->
         <ng-container *ngIf="!isLoading && filteredLogsList.length > 0">
             <div class="log-card" *ngFor="let log of filteredLogsList"
-                [ngClass]="{'type-error': log.type === 'ERROR' || log.urlMethod === 'DELETE', 'type-info': log.type === 'INFO' || log.urlMethod === 'GET', 'type-success': log.urlMethod === 'POST' || log.urlMethod === 'PUT'}">
+                [ngClass]="{'type-error': log.type ==='ERROR' || log.urlMethod ==='DELETE','type-info': log.type ==='INFO' || log.urlMethod ==='GET','type-success': log.urlMethod ==='POST' || log.urlMethod ==='PUT'}">
 
                 <!-- Audit Log Layout -->
-                <ng-container *ngIf="selectedStatus === 'AuditLogs'">
+                <ng-container *ngIf="selectedStatus ==='AuditLogs'">
                     <div class="log-header">
                         <div class="meta-info">
                             <span class="method-badge">{{log.urlMethod}}</span>
@@ -176,7 +176,7 @@
                 </ng-container>
 
                 <!-- DB Log Layout -->
-                <ng-container *ngIf="selectedStatus === 'DBLogs'">
+                <ng-container *ngIf="selectedStatus ==='DBLogs'">
                     <div class="log-header">
                         <div class="meta-info">
                             <span class="method-badge">{{log.type}}</span>

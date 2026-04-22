@@ -5,9 +5,9 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MaterialModule } from 'src/app/material.module';
 import { MatChipsModule } from '@angular/material/chips';
 import { ImageCropperComponent } from '../../../common-components/image-cropper/image-cropper.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-add-outlet-master-menu',
@@ -212,7 +212,6 @@ export class AddOutletMasterMenuComponent implements OnInit {
         this.dialogRef.close(true);
       }
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -229,7 +228,6 @@ export class AddOutletMasterMenuComponent implements OnInit {
         this.dialogRef.close(true);
       }
     } catch (error) {
-      console.log(error);
     }
   }
 

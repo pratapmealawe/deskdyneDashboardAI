@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { DataFormatService } from 'src/service/data-format.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { DataFormatService } from '@service/data-format.service';
 
 @Component({
   selector: 'app-select-org-cafeteria-dialog',

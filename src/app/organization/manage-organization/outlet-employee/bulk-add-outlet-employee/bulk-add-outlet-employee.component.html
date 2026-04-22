@@ -1,14 +1,12 @@
-<div class="bulk-add-dialog">
-  <div class="dialog-header">
-    <div class="header-main">
-      <div class="header-icon">
+<div class="bulk-add-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box primary">
         <mat-icon>group_add</mat-icon>
       </div>
-      <div class="header-text">
-        <h2 mat-dialog-title>Bulk Outlet Employee Entry</h2>
-        <p class="subtitle">Assigning to: 
-          <span class="cafe-tag">{{ selectedCafeteria?.cafeteria_name }}</span>
-        </p>
+      <div class="text">
+        <h3>Bulk Outlet Entry</h3>
+        <p>Assigning to: <strong>{{ selectedCafeteria?.cafeteria_name }}</strong></p>
       </div>
     </div>
     <button mat-icon-button (click)="close()" class="close-btn">
@@ -17,72 +15,91 @@
   </div>
 
   <mat-dialog-content class="dialog-content">
-    <div class="entry-table-container">
-      <table class="entry-table">
-        <thead>
-          <tr>
-            <th class="col-num">#</th>
-            <th class="col-id">Employee ID</th>
-            <th class="col-name">Full Name<span class="required">*</span></th>
-            <th class="col-phone">Phone Number<span class="required">*</span></th>
-            <th class="col-email">Email Address<span class="required">*</span></th>
-            <th class="col-actions"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let emp of employeeList; let i = index" [class.row-invalid]="!isRowValid(emp) && (emp.employeeName || emp.employeePhoneNo || emp.employeeEmail)">
-            <td class="col-num">{{ i + 1 }}</td>
-            <td class="col-id">
-              <div class="input-wrapper">
-                <mat-icon>badge</mat-icon>
-                <input type="text" [(ngModel)]="emp.employeeId" placeholder="EMP123" maxlength="10">
-              </div>
-            </td>
-            <td class="col-name">
-              <div class="input-wrapper">
-                <mat-icon>person</mat-icon>
-                <input type="text" [(ngModel)]="emp.employeeName" placeholder="Full Name" required maxlength="40">
-              </div>
-            </td>
-            <td class="col-phone">
-              <div class="input-wrapper">
-                <mat-icon>phone</mat-icon>
-                <input type="text" [(ngModel)]="emp.employeePhoneNo" placeholder="10-digit #" required maxlength="10">
-              </div>
-            </td>
-            <td class="col-email">
-              <div class="input-wrapper">
-                <mat-icon>email</mat-icon>
-                <input type="email" [(ngModel)]="emp.employeeEmail" placeholder="email@company.com" required>
-              </div>
-            </td>
-            <td class="col-actions">
-              <button mat-icon-button color="warn" (click)="removeRow(i)" matTooltip="Remove row" [disabled]="employeeList.length === 1 && !isRowValid(emp)">
-                <mat-icon>delete_outline</mat-icon>
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Entry Grid Header Labels -->
+    <div class="grid-header-labels px-4 py-3 bg-light-soft border-bottom">
+        <div class="header-row d-flex align-items-center">
+            <div class="col-num text-center">#</div>
+            <div class="col-id">Employee ID</div>
+            <div class="col-name">Full Name<span class="required">*</span></div>
+            <div class="col-phone">Phone Number<span class="required">*</span></div>
+            <div class="col-email">Email Address<span class="required">*</span></div>
+            <div class="col-actions"></div>
+        </div>
     </div>
 
-    <button mat-button color="primary" class="add-row-btn" (click)="addRow()">
-      <mat-icon>add</mat-icon>
-      Add Another Row
-    </button>
+    <div class="premium-grid-container px-4 py-2">
+      <div class="entry-row-modern py-3 border-bottom animate-fadeIn" 
+           *ngFor="let emp of employeeList; let i = index" 
+           [class.row-invalid]="!isRowValid(emp) && (emp.employeeName || emp.employeePhoneNo || emp.employeeEmail)">
+        
+        <div class="entry-fields-wrapper d-flex align-items-center gap-3">
+          <div class="col-num text-center fw-bold text-muted">{{ i + 1 }}</div>
+          
+          <div class="col-id">
+            <div class="premium-input-box">
+              <mat-icon>badge</mat-icon>
+              <input type="text" [(ngModel)]="emp.employeeId" placeholder="EMP ID" maxlength="15">
+            </div>
+          </div>
+          
+          <div class="col-name">
+            <div class="premium-input-box">
+              <mat-icon>person</mat-icon>
+              <input type="text" [(ngModel)]="emp.employeeName" placeholder="Full Name" required maxlength="50">
+            </div>
+          </div>
+          
+          <div class="col-phone">
+            <div class="premium-input-box">
+              <mat-icon>phone</mat-icon>
+              <input type="text" [(ngModel)]="emp.employeePhoneNo" placeholder="Phone Number" required maxlength="12">
+            </div>
+          </div>
+          
+          <div class="col-email">
+            <div class="premium-input-box">
+              <mat-icon>email</mat-icon>
+              <input type="email" [(ngModel)]="emp.employeeEmail" placeholder="Email Address" required>
+            </div>
+          </div>
+          
+          <div class="col-actions text-center">
+            <button mat-icon-button class="premium-icon-btn delete" (click)="removeRow(i)" 
+                    matTooltip="Remove Row" [disabled]="employeeList.length === 1 && !isRowValid(emp)">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="add-row-zone py-4">
+          <button mat-stroked-button class="btn-premium-dashed w-100 py-3" (click)="addRow()">
+            <mat-icon>add_circle</mat-icon> <span>Add Another Employee Row</span>
+          </button>
+      </div>
+    </div>
   </mat-dialog-content>
 
-  <mat-dialog-actions align="end" class="dialog-actions">
-    <div class="summary-info" *ngIf="employeeList.length > 0">
-      <span>{{ employeeList.length }} row(s) in draft</span>
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top justify-content-between">
+    <div class="draft-info d-flex align-items-center gap-2" *ngIf="employeeList.length > 0">
+      <div class="draft-badge">
+        <mat-icon>edit_note</mat-icon>
+        <span class="fw-700">{{ employeeList.length }}</span>
+      </div>
+      <span class="text-muted fw-500">Outlet records in draft</span>
     </div>
-    <div class="action-buttons">
-      <button mat-button (click)="close()" [disabled]="isSubmitting">Cancel</button>
-      <button mat-raised-button color="primary" (click)="submitBulk()" 
-              [disabled]="isSubmitting" class="submit-btn" [class.loading]="isSubmitting">
-        <mat-icon *ngIf="!isSubmitting">save</mat-icon>
-        <mat-spinner diameter="20" *ngIf="isSubmitting"></mat-spinner>
-        <span>{{ isSubmitting ? 'Saving Employees...' : 'Save All' }}</span>
+    <div class="action-buttons d-flex gap-3">
+      <button mat-button class="btn-cancel" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+      <button mat-flat-button color="primary" class="btn-primary-action px-5" (click)="submitBulk()" 
+              [disabled]="isSubmitting">
+        <ng-container *ngIf="!isSubmitting">
+          <mat-icon>save</mat-icon>
+          <span>Save All Records</span>
+        </ng-container>
+        <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+          <mat-spinner diameter="20" color="accent"></mat-spinner>
+          <span>Processing...</span>
+        </div>
       </button>
     </div>
   </mat-dialog-actions>

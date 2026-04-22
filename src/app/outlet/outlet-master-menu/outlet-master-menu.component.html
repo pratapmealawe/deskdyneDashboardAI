@@ -63,7 +63,7 @@
           </div>
           <span class="category-name">{{ group.category }}</span>
         </div>
-        <span class="category-count">{{ group.items.length }} item{{ group.items.length > 1 ? 's' : '' }}</span>
+        <span class="category-count">{{ group.items.length }} item{{ group.items.length > 1 ?'s' :'' }}</span>
       </div>
 
       <!-- Menu Items List -->
@@ -73,7 +73,7 @@
           <div class="card-image-h">
             <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}"
               onerror="this.src='assets/images/dummyUpload.png'" />
-            <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
+            <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
               <span class="indicator-dot"></span>
             </div>
           </div>
@@ -82,7 +82,7 @@
           <div class="card-content-h">
             <!-- Row 1: Name + Actions -->
             <div class="content-top">
-              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h3>
+              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName ||'Unnamed item' }}</h3>
               <div class="item-actions">
                 <button mat-icon-button class="edit-btn" *appHasPermission="'MENU:EDIT'" (click)="edit(item, i)"
                   matTooltip="Edit">

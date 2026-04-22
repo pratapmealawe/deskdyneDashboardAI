@@ -1,5 +1,5 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 
 .dashboard-main-container {
   min-height: calc(100vh - 80px);
@@ -177,3 +177,4 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+

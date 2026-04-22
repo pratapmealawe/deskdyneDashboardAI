@@ -93,7 +93,7 @@
                         <tr *ngFor="let order of paginatedList" class="table-row">
                             <td>
                                 <div class="emp-info">
-                                    <div class="avatar">{{ order.customerName?.charAt(0) || 'E' }}</div>
+                                    <div class="avatar">{{ order.customerName?.charAt(0) ||'E' }}</div>
                                     <div class="details">
                                         <span class="name">{{ order.customerName }}</span>
                                         <span class="phone">{{ order.customerPhoneNo }}</span>

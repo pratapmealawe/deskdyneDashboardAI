@@ -1,22 +1,27 @@
-<div *ngIf="showDialog" class="dialog-wrapper" role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+<div *ngIf="showDialog" class="dialog-wrapper" role="dialog" aria-modal="true">
   <div class="dialog-content">
-    <div class="dialogHeader">
-      <div class="header-title" id="dialog-title">
-        <span>Confirmation</span>
+    <div class="dialogHeader" [class.danger]="modalObj.data?.isDanger">
+      <div class="header-title">
+        <mat-icon class="status-icon" *ngIf="!modalObj.data?.isDanger">help_outline</mat-icon>
+        <mat-icon class="status-icon danger" *ngIf="modalObj.data?.isDanger">warning_amber</mat-icon>
+        <span>{{ modalObj.data?.title || 'Confirmation' }}</span>
       </div>
-      <button class="close-btn" (click)="cancel()" aria-label="Close">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 16 16">
-          <path
-            d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z" />
-        </svg>
+      <button class="close-header-btn" (click)="cancel()">
+        <mat-icon>close</mat-icon>
       </button>
     </div>
+
     <div class="dialogbody">
-      <p>{{modalObj.msg}}</p>
+      <p class="modal-message">{{ modalObj.msg }}</p>
     </div>
+
     <div class="dialogfooter">
-      <button class="btn-cancel" (click)="cancel()" *ngIf="!modalObj.data?.onlyConfirm">Cancel</button>
-      <button class="btn-confirm" (click)="confirm()">Confirm</button>
+      <button mat-button class="modal-btn cancel-btn" (click)="cancel()" *ngIf="!modalObj.data?.onlyConfirm">
+        {{ modalObj.data?.cancelText || 'Cancel' }}
+      </button>
+      <button mat-flat-button class="modal-btn confirm-btn" [class.danger-btn]="modalObj.data?.isDanger" (click)="confirm()">
+        {{ modalObj.data?.confirmText || 'Confirm' }}
+      </button>
     </div>
   </div>
 </div>

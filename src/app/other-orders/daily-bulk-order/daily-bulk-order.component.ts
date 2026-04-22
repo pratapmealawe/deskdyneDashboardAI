@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { orderStatusMapper } from 'src/config/order-status.config';

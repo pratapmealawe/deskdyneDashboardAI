@@ -2,8 +2,10 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { PermissionsService } from '@service/permission.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { MatDialog } from '@angular/material/dialog';
+import { AddVendorFirmComponent } from '../../add-vendor-firm/add-vendor-firm.component';
 
 @Component({
   selector: 'app-vendor-firm-details',
@@ -18,19 +20,30 @@ export class VendorFirmDetailsComponent implements OnInit {
   filteredOutletList: any;
   bankDetails: any;
 
-  constructor(private policyService: PolicyService, private runtimeStorageService: RuntimeStorageService, private router: Router) {
-  }
+  constructor(
+    private permissionsService: PermissionsService,
+    private dialog: MatDialog
+  ) { }
 
   editOrg() {
-    this.runtimeStorageService.setCacheData('VENDOR_FIRM_EDIT', this.vendorObj);
-    this.router.navigate(['/app/addVendorFirm']);
+    const dialogRef = this.dialog.open(AddVendorFirmComponent, {
+      width: '90vw',
+      maxHeight: '90vh',
+      disableClose: true,
+      data: { vendorFirm: this.vendorObj }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Handle result if needed
+      }
+    });
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.bankDetails = this.vendorObj.bank_details;
     this.filteredOutletList = this.filterOutletListByCafeteria(this.vendorObj.outletList);
-    console.log(this.filteredOutletList);
 
   }
 
@@ -68,3 +81,4 @@ export class VendorFirmDetailsComponent implements OnInit {
   }
 
 }
+

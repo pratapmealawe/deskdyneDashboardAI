@@ -1,25 +1,25 @@
 <div>
   <h2 mat-dialog-title>
-    {{ data.kind === 'Credit' ? 'Credit Amount'
-    : data.kind === 'Debit' ? 'Debit Amount'
-    : data.transferSource === 'wallet'
-    ? 'Transfer Wallet Balance'
-    : data.transferSource === 'daily'
-    ? 'Transfer Daily Balance to Wallet'
-    : 'Transfer Subsidy to Wallet' }}
+    {{ data.kind ==='Credit' ?'Credit Amount'
+    : data.kind ==='Debit' ?'Debit Amount'
+    : data.transferSource ==='wallet'
+    ?'Transfer Wallet Balance'
+    : data.transferSource ==='daily'
+    ?'Transfer Daily Balance to Wallet'
+    :'Transfer Subsidy to Wallet' }}
   </h2>
 
   <div mat-dialog-content [formGroup]="form" class="d-flex flex-column gap-3 pt-3">
     <mat-form-field appearance="outline">
       <mat-label>Amount</mat-label>
       <input matInput formControlName="amount" type="number" step="0.01" min="0.01"
-        [attr.max]="data.kind === 'Transfer' ? (data.transferSource === 'daily' ? data.dailyBalance : data.subsidyBalance) : null"
+        [attr.max]="data.kind ==='Transfer' ? (data.transferSource ==='daily' ? data.dailyBalance : data.subsidyBalance) : null"
         placeholder="0.00" (keydown.enter)="onSubmit()" />
 
-      <mat-hint *ngIf="data.kind === 'Transfer'">
-        Available {{ data.transferSource === 'wallet' ? 'wallet balance' : data.transferSource === 'daily' ? 'daily
-        balance' : 'subsidy' }}:
-        {{ (data.transferSource === 'wallet' ? (data.walletBalance || 0) : data.transferSource === 'daily' ?
+      <mat-hint *ngIf="data.kind ==='Transfer'">
+        Available {{ data.transferSource ==='wallet' ?'wallet balance' : data.transferSource ==='daily' ?'daily
+        balance' :'subsidy' }}:
+        {{ (data.transferSource ==='wallet' ? (data.walletBalance || 0) : data.transferSource ==='daily' ?
         (data.dailyBalance || 0) : (data.subsidyBalance || 0)) |
         currency:'INR':'symbol':'1.2-2':'en-IN' }}
       </mat-hint>
@@ -31,8 +31,8 @@
         Minimum ₹0.01
       </mat-error>
       <mat-error *ngIf="form.get('amount')?.hasError('max')">
-        Cannot exceed available {{ data.transferSource === 'wallet' ? 'wallet balance' : data.transferSource === 'daily'
-        ? 'daily balance' : 'subsidy' }}
+        Cannot exceed available {{ data.transferSource ==='wallet' ?'wallet balance' : data.transferSource ==='daily'
+        ?'daily balance' :'subsidy' }}
       </mat-error>
     </mat-form-field>
 
@@ -51,7 +51,7 @@
   <div mat-dialog-actions class="justify-content-end gap-2">
     <button mat-button (click)="onClose()" [disabled]="loading">Cancel</button>
     <button class="btn-add" mat-flat-button (click)="onSubmit()" [disabled]="form.invalid || loading">
-      <mat-icon>save</mat-icon> {{ loading ? 'Saving...' : 'Save' }}
+      <mat-icon>save</mat-icon> {{ loading ?'Saving...' :'Save' }}
     </button>
   </div>
 </div>

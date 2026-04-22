@@ -1,19 +1,19 @@
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { environment } from 'src/environments/environment';
+﻿import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { environment } from '@environments/environment';
 import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from '../../../service/confirmation-modal.service';
-import { GoogleMapService } from 'src/service/google-map.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { GoogleMapService } from '@service/google-map.service';
+import { ToasterService } from '@service/toaster.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { PolicyService } from 'src/service/policy.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { PermissionsService } from '@service/permission.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CustomPipeModule } from 'src/pipes/pipe.module';
+import { CustomPipeModule } from '@pipes/pipe.module';
 
 @Component({
   selector: 'app-order-card',
@@ -48,3 +48,4 @@ export class OrderCardComponent implements OnInit {
 
 
 }
+

@@ -1,10 +1,10 @@
 import { Component, Input, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { AddAuditReportDialogComponent } from './add-audit-report-dialog/add-audit-report-dialog.component';
 import { PdfPreviewDialogComponent } from './pdf-preview-dialog/pdf-preview-dialog.component';
-import { environment } from 'src/environments/environment';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { environment } from '@environments/environment';
+import { LocalStorageService } from '@service/local-storage.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
@@ -96,10 +96,8 @@ export class AuditReportComponent implements OnInit {
   onOrgChange(orgId: string) {
     this.selectedOrgId = orgId;
     this.selectedCafeId = '';
-    console.log(this.orglist);
 
     const org = this.orglist.find((o: any) => o._id === orgId);
-    console.log(org);
     this.cafeList = org?.cafeteriaList || [];
   }
 
@@ -122,7 +120,6 @@ export class AuditReportComponent implements OnInit {
         date: this.selectedDate
       };
       const data = await this.api.getByOrgIdAndCafeteriaIdAndDate(payload);
-      console.log(data);
       this.auditReports = Array.isArray(data) ? data : (data ? [data] : []);
     } catch (err) {
       console.error('Error fetching reports:', err);

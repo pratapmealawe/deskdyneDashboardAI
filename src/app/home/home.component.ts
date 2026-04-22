@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -61,7 +61,6 @@ export class HomeComponent implements OnInit {
   async fetchCarouselImages() {
     try {
       const res: any = await this.apiMainService.getImageGroupConfigByName("dashoard_home");
-      console.log(res);
 
       if (res && res.imageData) {
         this.carouselImages = res.imageData;

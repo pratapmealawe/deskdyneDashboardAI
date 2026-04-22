@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
+﻿import { Component } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PermissionsService } from '@service/permission.service';
+import { ToasterService } from '@service/toaster.service';
 
 @Component({
   selector: 'app-config-images',
@@ -28,10 +28,10 @@ export class ConfigImagesComponent {
   constructor(
     private apiMainService: ApiMainService,
     private modalService: NgbModal,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private toasterService: ToasterService
   ) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
   ngOnInit(): void {
@@ -158,3 +158,4 @@ export class ConfigImagesComponent {
     }
   }
 }
+

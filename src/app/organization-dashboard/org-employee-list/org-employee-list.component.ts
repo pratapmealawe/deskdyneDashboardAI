@@ -2,10 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 import { CommonOutletCafeSelectComponent, CommonSelectConfig, SubmitPayload } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 
 interface Employee {
@@ -87,13 +86,8 @@ export class OrgEmployeeListComponent implements OnInit, OnChanges {
 
     try {
       this.isLoading = true;
-      let data = await this.apiMainService.getEmployeeListByOrgId(this.currentFilter.org_id);
-      
-      // Filter by cafeteria if one is selected globally
-      if (this.currentFilter.cafeteria_id) {
-          data = data.filter((emp: any) => emp.cafeteria_id === this.currentFilter.cafeteria_id);
-      }
-      
+      let data = await this.apiMainService.getEmployeeListByOrgId(this.currentFilter.org_id, this.currentFilter.cafeteria_id);
+      console.log(data);
       this.employeeList = data || [];
       this.applySearchFilter();
     } catch (err) {

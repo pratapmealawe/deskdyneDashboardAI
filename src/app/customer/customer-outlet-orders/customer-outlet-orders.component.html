@@ -94,7 +94,7 @@
 
                 <mat-chip-listbox class="status-filter-chips" [(ngModel)]="selectedStatus"
                     (ngModelChange)="applyFilters()" [multiple]="false">
-                    <mat-chip-option [value]="'all'" [ngClass]="['status-chip-filter', 'all']">
+                    <mat-chip-option [value]="'all'" [ngClass]="['status-chip-filter','all']">
                         All
                     </mat-chip-option>
 
@@ -109,10 +109,10 @@
                 <div class="d-flex flex-wrap gap-2">
                     <mat-chip-listbox>
                         <mat-chip> Total Orders: {{ filteredList.length }} </mat-chip>
-                        <mat-chip> Wallet Used: ₹{{ totalWalletUsed | number : '1.2-2' }} </mat-chip>
-                        <mat-chip> Amount Paid: ₹{{ totalAmountPaid | number : '1.2-2' }} </mat-chip>
+                        <mat-chip> Wallet Used: ₹{{ totalWalletUsed | number :'1.2-2' }} </mat-chip>
+                        <mat-chip> Amount Paid: ₹{{ totalAmountPaid | number :'1.2-2' }} </mat-chip>
                         <mat-chip color="primary" selected>
-                            Total Paid (Wallet + Amount): ₹{{ totalAmount | number : '1.2-2' }}
+                            Total Paid (Wallet + Amount): ₹{{ totalAmount | number :'1.2-2' }}
                         </mat-chip>
                     </mat-chip-listbox>
                 </div>
@@ -133,19 +133,19 @@
         <div class="chip-strip">
             <div class="filter-chip" *ngIf="filterPgName">
                 {{ filterPgName }}
-                <mat-icon (click)="filterPgName = ''; applyFilters()">close</mat-icon>
+                <mat-icon (click)="filterPgName =''; applyFilters()">close</mat-icon>
             </div>
             <div class="filter-chip" *ngIf="filterAppVersion">
                 v{{ filterAppVersion }}
-                <mat-icon (click)="filterAppVersion = ''; applyFilters()">close</mat-icon>
+                <mat-icon (click)="filterAppVersion =''; applyFilters()">close</mat-icon>
             </div>
             <div class="filter-chip" *ngIf="filterPlatform">
                 {{ filterPlatform }}
-                <mat-icon (click)="filterPlatform = ''; applyFilters()">close</mat-icon>
+                <mat-icon (click)="filterPlatform =''; applyFilters()">close</mat-icon>
             </div>
             <div class="filter-chip" *ngIf="filterIsPosOrder">
-                POS: {{ filterIsPosOrder === 'true' ? 'Yes' : 'No' }}
-                <mat-icon (click)="filterIsPosOrder = ''; applyFilters()">close</mat-icon>
+                POS: {{ filterIsPosOrder ==='true' ?'Yes' :'No' }}
+                <mat-icon (click)="filterIsPosOrder =''; applyFilters()">close</mat-icon>
             </div>
             <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
                 <mat-icon>filter_alt_off</mat-icon> Clear All
@@ -162,7 +162,7 @@
                     <!-- Card Top (matches orders.component card-top) -->
                     <div class="card-top">
                         <div class="order-avatar">
-                            {{ row.customerName?.[0] || 'O' }}
+                            {{ row.customerName?.[0] ||'O' }}
                         </div>
                         <div class="order-identity">
                             <h3 class="order-title">#{{ row.orderNo }}</h3>
@@ -171,17 +171,17 @@
                                     <mat-icon>confirmation_number</mat-icon> Token {{ row.tokenNo }}
                                 </span>
                                 <span class="date-text">
-                                    {{ row.SubmitedDate || row.orderDate | date: 'MMM d, y, h:mm a' }}
+                                    {{ row.SubmitedDate || row.orderDate | date:'MMM d, y, h:mm a' }}
                                 </span>
                             </div>
                         </div>
                         <div class="card-top-right">
                             <div class="status-badge" [ngClass]="row.orderstatus">
-                                <mat-icon>{{ row.orderstatus === 'completed' ? 'check_circle' :
-                                    row.orderstatus === 'placed' ? 'restaurant' :
-                                    row.orderstatus === 'readyOrder' ? 'room_service' :
-                                    row.orderstatus === 'paymentFailed' ? 'error' :
-                                    row.orderstatus === 'paymentInprogress' ? 'hourglass_empty' : 'info' }}</mat-icon>
+                                <mat-icon>{{ row.orderstatus ==='completed' ?'check_circle' :
+                                    row.orderstatus ==='placed' ?'restaurant' :
+                                    row.orderstatus ==='readyOrder' ?'room_service' :
+                                    row.orderstatus ==='paymentFailed' ?'error' :
+                                    row.orderstatus ==='paymentInprogress' ?'hourglass_empty' :'info' }}</mat-icon>
                                 {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
                             </div>
                         </div>
@@ -252,12 +252,12 @@
                             <div class="items-scroll">
                                 <div class="item-row" *ngFor="let i of (row.itemList || row.itemlist)">
                                     <div class="item-left">
-                                        <span class="type-dot" [ngClass]="i.itemType === 'Veg' ? 'veg' : 'nonveg'"
+                                        <span class="type-dot" [ngClass]="i.itemType ==='Veg' ?'veg' :'nonveg'"
                                             [title]="i.itemType"></span>
                                         <span class="item-qty" *ngIf="i.count > 0">{{ i.count }}x</span>
                                         <span class="item-name">{{ i.itemName }}</span>
                                     </div>
-                                    <span class="item-price">₹{{ i.price * (i.count || 1) | number : '1.2-2' }}</span>
+                                    <span class="item-price">₹{{ i.price * (i.count || 1) | number :'1.2-2' }}</span>
                                 </div>
                             </div>
                         </div>
@@ -269,35 +269,35 @@
                         <div class="fin-strip">
                             <div class="fin-cell">
                                 <span class="fin-label">Item Total</span>
-                                <span class="fin-value">₹{{ row.itemAmount | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.itemAmount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell" *ngIf="row.taxes">
                                 <span class="fin-label">Taxes</span>
-                                <span class="fin-value">₹{{ row.taxes | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.taxes | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell" *ngIf="row.packagingAmount">
                                 <span class="fin-label">Packaging</span>
-                                <span class="fin-value">₹{{ row.packagingAmount | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.packagingAmount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.subsidyAmount">
                                 <span class="fin-label">Subsidy</span>
-                                <span class="fin-value">- ₹{{ row.subsidyAmount | number : '1.2-2' }}</span>
+                                <span class="fin-value">- ₹{{ row.subsidyAmount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.moneyWalletPointsUsed">
                                 <span class="fin-label">Wallet</span>
-                                <span class="fin-value">- ₹{{ row.moneyWalletPointsUsed | number : '1.2-2' }}</span>
+                                <span class="fin-value">- ₹{{ row.moneyWalletPointsUsed | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.companyWalletPointUsed">
                                 <span class="fin-label">Company</span>
-                                <span class="fin-value">- ₹{{ row.companyWalletPointUsed | number : '1.2-2' }}</span>
+                                <span class="fin-value">- ₹{{ row.companyWalletPointUsed | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell paid">
                                 <span class="fin-label">Paid (PG)</span>
-                                <span class="fin-value">₹{{ row.amount | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.amount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell grand">
                                 <span class="fin-label">Grand Total</span>
-                                <span class="fin-value">₹{{ getGrandTotal(row) | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ getGrandTotal(row) | number :'1.2-2' }}</span>
                             </div>
                         </div>
 

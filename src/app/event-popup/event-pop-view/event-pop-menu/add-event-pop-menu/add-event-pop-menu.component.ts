@@ -4,8 +4,8 @@ import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/materia
 import { NgbModal, NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { categoryList } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 
@@ -131,7 +131,6 @@ export class AddEventPopMenuComponent implements OnInit {
                 }
               },
               () => {
-                console.log('Image cropper dismissed');
               }
             );
             modalRef.componentInstance.uploadedImageUrl = imageUrl;
@@ -139,7 +138,6 @@ export class AddEventPopMenuComponent implements OnInit {
             modalRef.componentInstance.imageHeight = 150;
             modalRef.componentInstance.aspectRatio = 1;
           } catch (e) {
-            console.log('error while opening image cropper', e);
           }
         };
       }
@@ -172,7 +170,6 @@ export class AddEventPopMenuComponent implements OnInit {
         this.dialogRef.close(res);
       }
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -203,7 +200,6 @@ export class AddEventPopMenuComponent implements OnInit {
         this.dialogRef.close(res);
       }
     } catch (error) {
-      console.log(error);
     }
   }
 

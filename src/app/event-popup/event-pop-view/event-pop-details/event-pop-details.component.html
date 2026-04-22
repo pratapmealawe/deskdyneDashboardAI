@@ -14,8 +14,8 @@
         <h1 class="outlet-name">{{ eventObj?.eventPopupName }}</h1>
         <div class="quick-badges">
           <span class="quick-badge" [class.success]="eventObj?.eventPopupOpened" [class.danger]="!eventObj?.eventPopupOpened">
-            <mat-icon>{{ eventObj?.eventPopupOpened ? 'check_circle' : 'pause_circle' }}</mat-icon>
-            {{ eventObj?.eventPopupOpened ? 'Active' : 'Paused' }}
+            <mat-icon>{{ eventObj?.eventPopupOpened ?'check_circle' :'pause_circle' }}</mat-icon>
+            {{ eventObj?.eventPopupOpened ?'Active' :'Paused' }}
           </span>
           <span class="quick-badge info">
             <mat-icon>calendar_today</mat-icon>
@@ -72,7 +72,7 @@
             <div class="info-icon"><mat-icon>description</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Description</span>
-              <span class="info-value">{{ eventObj?.eventPopupDescription || 'No description provided' }}</span>
+              <span class="info-value">{{ eventObj?.eventPopupDescription ||'No description provided' }}</span>
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@
     </div>
     <div class="banner-gallery-grid">
       <div class="banner-wrapper animate-popIn" *ngFor="let banner of eventObj?.bannerImages; let idx = index"
-        [style.animation-delay]="0.2 + (idx * 0.1) + 's'">
+        [style.animation-delay]="0.2 + (idx * 0.1) +'s'">
         <img [src]="imageUrl + banner" class="banner-img" alt="Banner Image">
       </div>
     </div>

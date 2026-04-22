@@ -45,7 +45,7 @@
                 <mat-icon>receipt_long</mat-icon> Order Status
             </label>
             <div class="chip-selector">
-                <div class="chip-option" [class.active]="selectedStatus === ''" (click)="selectedStatus = ''">
+                <div class="chip-option" [class.active]="selectedStatus ===''" (click)="selectedStatus =''">
                     All
                 </div>
                 <div class="chip-option" *ngFor="let s of data.uniqueOrderStatuses"

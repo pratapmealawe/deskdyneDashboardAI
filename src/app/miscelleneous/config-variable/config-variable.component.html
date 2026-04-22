@@ -19,9 +19,9 @@
   <div *ngIf="editMode" class="modern-card mb-4">
     <div class="card-header">
       <div class="icon-box primary">
-        <mat-icon>{{ addnewVariable ? 'add_circle' : 'edit' }}</mat-icon>
+        <mat-icon>{{ addnewVariable ?'add_circle' :'edit' }}</mat-icon>
       </div>
-      <h3>{{ addnewVariable ? 'Add New Config Variable' : 'Update Config Variable' }}</h3>
+      <h3>{{ addnewVariable ?'Add New Config Variable' :'Update Config Variable' }}</h3>
     </div>
 
     <div class="card-body">
@@ -53,12 +53,12 @@
         <div class="col-12 col-md-6 col-lg-3">
           <mat-form-field appearance="outline" class="w-100 custom-field">
             <mat-label>Variable Value</mat-label>
-            <input *ngIf="variableType === 'String'" matInput type="text" [(ngModel)]="variableObj.configData"
+            <input *ngIf="variableType ==='String'" matInput type="text" [(ngModel)]="variableObj.configData"
               placeholder="Enter text value" />
-            <input *ngIf="variableType === 'Number'" matInput type="number" [(ngModel)]="variableObj.configData"
+            <input *ngIf="variableType ==='Number'" matInput type="number" [(ngModel)]="variableObj.configData"
               placeholder="Enter number" />
-            <input *ngIf="variableType === 'Time'" matInput type="time" [(ngModel)]="variableObj.configData" />
-            <input *ngIf="variableType === 'Date'" matInput type="date" [(ngModel)]="variableObj.configData" />
+            <input *ngIf="variableType ==='Time'" matInput type="time" [(ngModel)]="variableObj.configData" />
+            <input *ngIf="variableType ==='Date'" matInput type="date" [(ngModel)]="variableObj.configData" />
             <mat-icon matSuffix class="text-muted">data_object</mat-icon>
           </mat-form-field>
         </div>
@@ -84,7 +84,7 @@
         <div class="empty-placeholder">
           <mat-icon>tune</mat-icon>
           <p>No Config Variables Found</p>
-          <span>Click "Add Config" to create your first variable.</span>
+          <span>Click"Add Config" to create your first variable.</span>
         </div>
       </div>
     </div>

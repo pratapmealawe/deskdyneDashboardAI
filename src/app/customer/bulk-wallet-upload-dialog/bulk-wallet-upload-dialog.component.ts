@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
     selector: 'app-bulk-wallet-upload-dialog',
@@ -27,7 +27,6 @@ export class BulkWalletUploadDialogComponent {
     ) {
         this.orgId = this.data.orgId;
         this.customerList = this.data.customerList;
-        console.log("customerList", this.customerList);
 
     }
 

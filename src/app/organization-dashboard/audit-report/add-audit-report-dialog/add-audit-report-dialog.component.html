@@ -1,5 +1,5 @@
 <div class="header d-flex justify-content-between align-items-center mb-3">
-    <h2 mat-dialog-title class="m-0">{{ mode === 'create' ? 'Add New' : 'Edit' }} Audit Report</h2>
+    <h2 mat-dialog-title class="m-0">{{ mode ==='create' ?'Add New' :'Edit' }} Audit Report</h2>
     <button mat-icon-button (click)="close()">
         <mat-icon>close</mat-icon>
     </button>
@@ -38,13 +38,13 @@
         <div class="file-upload-container d-flex align-items-center gap-2">
             <button mat-stroked-button color="primary" (click)="fileInput.click()" [disabled]="loading">
                 <mat-icon>upload_file</mat-icon>
-                {{ selectedFileName || 'Choose PDF File' }}
+                {{ selectedFileName ||'Choose PDF File' }}
             </button>
             <input #fileInput type="file" accept="application/pdf" (change)="onFileSelected($event)"
                 style="display: none;">
             <span *ngIf="selectedFileName" class="text-muted small">{{ selectedFileName }}</span>
         </div>
-        <div *ngIf="mode === 'create' && !selectedFileName" class="text-danger small">
+        <div *ngIf="mode ==='create' && !selectedFileName" class="text-danger small">
             File is required.
         </div>
     </form>

@@ -1,10 +1,10 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
 import { CreateNotificationComponent } from './create-notification/create-notification.component';
-import { environment } from 'src/environments/environment';
+import { environment } from '@environments/environment';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 
@@ -47,9 +47,7 @@ export class NotificationComponent implements OnInit {
         if (this.toDate) params.toDate = this.toDate.toISOString();
 
         try {
-            console.log(params);
             const res: any = await this.apiMainService.getScheduledNotifications(params);
-            console.log(res);
             this.isLoading = false;
 
             if (res && res.length > 0) {

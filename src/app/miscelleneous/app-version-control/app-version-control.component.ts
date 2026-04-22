@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { AddEditAppVersionControlComponent } from './add-edit-app-version-control/add-edit-app-version-control.component';
 
 @Component({
@@ -29,7 +29,6 @@ export class AppVersionControlComponent implements OnInit {
         this.allAppVersions = [];
       }
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
 
@@ -67,7 +66,6 @@ export class AppVersionControlComponent implements OnInit {
       await this.apiMainService.saveAppVersion(variableObj);
       this.getAllAppVersions();
     } catch (e) {
-      console.log('Error while saving app version ', e);
     }
   }
 
@@ -76,7 +74,6 @@ export class AppVersionControlComponent implements OnInit {
       await this.apiMainService.updateAppVersion(variableObj);
       this.getAllAppVersions();
     } catch (e) {
-      console.log('Error while updating app version ', e);
     }
   }
 }

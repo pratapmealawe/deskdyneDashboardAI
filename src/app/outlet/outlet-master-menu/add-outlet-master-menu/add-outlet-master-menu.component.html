@@ -1,7 +1,7 @@
 <div mat-dialog-title class="dialog-title">
   <div class="title-left">
-    <mat-icon>{{ showUpdateBtn ? 'edit' : 'add_circle' }}</mat-icon>
-    {{ showUpdateBtn ? 'Edit Menu Item' : 'Add New Item' }}
+    <mat-icon>{{ showUpdateBtn ?'edit' :'add_circle' }}</mat-icon>
+    {{ showUpdateBtn ?'Edit Menu Item' :'Add New Item' }}
   </div>
   <button mat-icon-button [matMenuTriggerFor]="infoMenu" class="info-btn" matTooltip="Required Fields">
     <mat-icon>info</mat-icon>
@@ -63,20 +63,20 @@
           <span>Item Type</span>
         </div>
         <mat-radio-group formControlName="itemType" class="type-radio-group">
-          <div class="type-option veg" [class.selected]="form.get('itemType')?.value === 'Veg'">
+          <div class="type-option veg" [class.selected]="form.get('itemType')?.value ==='Veg'">
             <mat-radio-button value="Veg">
               <span class="type-indicator veg-dot"></span>
               <span>Veg</span>
             </mat-radio-button>
           </div>
-          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value === 'NonVeg'">
+          <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value ==='NonVeg'">
             <mat-radio-button value="NonVeg">
               <span class="type-indicator nonveg-dot"></span>
               <span>Non-Veg</span>
             </mat-radio-button>
           </div>
         </mat-radio-group>
-        <mat-error *ngIf="hasError('itemType', 'required')" class="d-block mt-1 small">Required</mat-error>
+        <mat-error *ngIf="hasError('itemType','required')" class="d-block mt-1 small">Required</mat-error>
       </div>
 
       <!-- Quick Settings -->
@@ -103,7 +103,7 @@
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Item Name</mat-label>
               <input matInput formControlName="itemName" placeholder="Enter item name" />
-              <mat-error *ngIf="hasError('itemName', 'required')">Item Name is required</mat-error>
+              <mat-error *ngIf="hasError('itemName','required')">Item Name is required</mat-error>
             </mat-form-field>
           </div>
           <div class="col-12">
@@ -111,8 +111,8 @@
               <mat-label>Description</mat-label>
               <textarea matInput rows="2" formControlName="description" placeholder="Short description"></textarea>
               <mat-hint align="end">{{ form.get('description')?.value?.length || 0 }}/250</mat-hint>
-              <mat-error *ngIf="hasError('description', 'maxlength')">Max 250 characters</mat-error>
-              <mat-error *ngIf="hasError('description', 'required')">Description is required</mat-error>
+              <mat-error *ngIf="hasError('description','maxlength')">Max 250 characters</mat-error>
+              <mat-error *ngIf="hasError('description','required')">Description is required</mat-error>
             </mat-form-field>
           </div>
         </div>
@@ -131,7 +131,7 @@
               <input matInput type="number" formControlName="price" placeholder="0.00"
                 (keydown)="preventInvalidNumber($event)" />
               <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
-              <mat-error *ngIf="hasError('price', 'required')">Required</mat-error>
+              <mat-error *ngIf="hasError('price','required')">Required</mat-error>
             </mat-form-field>
           </div>
           <div class="col-6 col-md-4">
@@ -162,7 +162,7 @@
             {{ chip?.mealType }} ({{ chip.acceptOrderFrom }} - {{ chip.acceptOrderTill }})
           </mat-chip-option>
         </mat-chip-listbox>
-        <mat-error *ngIf="hasError('mealTimingInfo', 'required')" class="d-block mt-1 small">Meal timing is required</mat-error>
+        <mat-error *ngIf="hasError('mealTimingInfo','required')" class="d-block mt-1 small">Meal timing is required</mat-error>
       </div>
 
       <!-- Category -->
@@ -176,7 +176,7 @@
             {{ cat.title }}
           </mat-chip-option>
         </mat-chip-listbox>
-        <mat-error *ngIf="hasError('category', 'required')" class="d-block mt-1 small">Category is required</mat-error>
+        <mat-error *ngIf="hasError('category','required')" class="d-block mt-1 small">Category is required</mat-error>
       </div>
 
       <!-- Nutrition -->

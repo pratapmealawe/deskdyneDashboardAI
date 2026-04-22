@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import * as Highcharts from 'highcharts';
 import { MatDialog } from '@angular/material/dialog';
 import { MainDashboardFilterDialogComponent } from './main-dashboard-filter-dialog/main-dashboard-filter-dialog.component';
@@ -122,7 +122,6 @@ export class MainDashboardComponent implements OnInit {
         this.apiMainService.searchOutlet({}),
         this.apiMainService.getAllVendorFirms(),
       ]);
-      console.log(orgs, "dd");
       this.orgList = orgs || [];
       this.outletList = outlets || [];
       this.vendorList = vendors || [];

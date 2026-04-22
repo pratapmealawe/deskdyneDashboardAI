@@ -1,84 +1,147 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Edit' : 'Create' }} Auto Rule</h2>
-<mat-dialog-content>
-    <form [formGroup]="ruleForm" class="d-flex flex-column gap-2 pt-2">
-        <mat-form-field appearance="outline">
-            <mat-label>Level</mat-label>
-            <mat-select formControlName="level">
-                <mat-option *ngFor="let l of levels" [value]="l.value">{{l.label}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" *ngIf="ruleForm.get('level')?.value !== 'ORGANIZATION'">
-            <mat-label>Cafeteria</mat-label>
-            <mat-select formControlName="cafeteria_id">
-                <mat-option *ngFor="let c of cafeteriaList" [value]="c.cafeteria_id">{{c.cafeteria_name}}</mat-option>
-            </mat-select>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline" *ngIf="ruleForm.get('level')?.value === 'EMPLOYEE'">
-            <mat-label>Employee</mat-label>
-            <input type="text" matInput formControlName="employeeSearch" [matAutocomplete]="auto">
-            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectEmployee($event.option.value)"
-                [displayWith]="displayFn">
-                <mat-option *ngFor="let emp of filteredEmployees" [value]="emp">
-                    {{emp.employeeName}} ({{emp.employeeId}})
-                </mat-option>
-            </mat-autocomplete>
-        </mat-form-field>
-
-        <div *ngIf="selectedEmployee" class="mb-3 p-3 bg-light rounded border">
-            <div class="fw-bold text-primary">{{selectedEmployee.employeeName}}</div>
-            <div class="small text-secondary">
-                <div>ID: {{selectedEmployee.employeeId}}</div>
-                <div>Email: {{selectedEmployee.employeeEmail}}</div>
-                <div>Phone: {{selectedEmployee.employeePhoneNo}}</div>
+<div class="add-auto-rule-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box" [class.primary]="!isEdit" [class.warning]="isEdit">
+                <mat-icon>{{ isEdit ? 'edit' : 'bolt' }}</mat-icon>
+            </div>
+            <div class="text">
+                <h3>{{ isEdit ? 'Edit Auto Rule' : 'Create Auto Rule' }}</h3>
+                <p>{{ isEdit ? 'Update existing automation settings' : 'Configure new automatic credit distribution' }}</p>
             </div>
         </div>
+        <button mat-icon-button (click)="onCancel()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Points</mat-label>
-                    <input type="number" matInput formControlName="points">
-                </mat-form-field>
-            </div>
-            <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Frequency</mat-label>
-                    <mat-select formControlName="frequency">
-                        <mat-option *ngFor="let f of frequencies" [value]="f.value">{{f.label}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-        </div>
+    <mat-dialog-content class="dialog-content">
+        <form [formGroup]="ruleForm" class="p-2" id="autoRuleForm">
+            <div class="form-grid-modern">
+                <!-- Level Selection -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Assignment Level</mat-label>
+                            <mat-icon matPrefix>layers</mat-icon>
+                            <mat-select formControlName="level">
+                                <mat-option *ngFor="let l of levels" [value]="l.value">{{l.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
 
-        <div class="row">
-            <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Wallet Type</mat-label>
-                    <mat-select formControlName="walletType">
-                        <mat-option *ngFor="let w of walletTypes" [value]="w.value">{{w.label}}</mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Expiry Days</mat-label>
-                    <input type="number" matInput formControlName="expiryDays">
-                </mat-form-field>
-            </div>
-        </div>
+                    <!-- Cafeteria Selection (If not ORG) -->
+                    <div class="col-md-6" *ngIf="ruleForm.get('level')?.value !== 'ORGANIZATION'">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Target Cafeteria</mat-label>
+                            <mat-icon matPrefix>storefront</mat-icon>
+                            <mat-select formControlName="cafeteria_id">
+                                <mat-option *ngFor="let c of cafeteriaList" [value]="c.cafeteria_id">{{c.cafeteria_name}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
 
-        <mat-form-field appearance="outline">
-            <mat-label>Allowed Order Types</mat-label>
-            <mat-select formControlName="allowedOrderTypes" multiple>
-                <mat-option *ngFor="let type of allowedOrderTypesList" [value]="type.value">{{type.label}}</mat-option>
-            </mat-select>
-        </mat-form-field>
+                <!-- Employee Selection (If level is EMPLOYEE) -->
+                <div class="row mt-1" *ngIf="ruleForm.get('level')?.value === 'EMPLOYEE'">
+                    <div class="col-12">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Search Employee</mat-label>
+                            <mat-icon matPrefix>search</mat-icon>
+                            <input type="text" matInput formControlName="employeeSearch" [matAutocomplete]="auto" placeholder="Type name or ID...">
+                            <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectEmployee($event.option.value)" [displayWith]="displayFn">
+                                <mat-option *ngFor="let emp of filteredEmployees" [value]="emp">
+                                    {{emp.employeeName}} ({{emp.employeeId}})
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
+                    </div>
+                </div>
 
-    </form>
-</mat-dialog-content>
-<mat-dialog-actions align="end">
-    <button mat-button (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" (click)="onSubmit()">{{ isEdit ? 'Update' : 'Create' }}</button>
-</mat-dialog-actions>
+                <!-- Selected Employee Display -->
+                <div *ngIf="selectedEmployee && ruleForm.get('level')?.value === 'EMPLOYEE'" class="selected-entity-box mb-3 animate-fadeIn">
+                    <div class="entity-icon">
+                        <mat-icon>person</mat-icon>
+                    </div>
+                    <div class="entity-info">
+                        <div class="name">{{selectedEmployee.employeeName}}</div>
+                        <div class="sub">ID: {{selectedEmployee.employeeId}} • {{selectedEmployee.employeeEmail}}</div>
+                    </div>
+                </div>
+
+                <div class="divider-modern my-3"></div>
+
+                <!-- Points & Frequency -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Credits (Pts)</mat-label>
+                            <mat-icon matPrefix>payments</mat-icon>
+                            <input type="number" matInput formControlName="points" placeholder="0">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Execution Frequency</mat-label>
+                            <mat-icon matPrefix>schedule</mat-icon>
+                            <mat-select formControlName="frequency">
+                                <mat-option *ngFor="let f of frequencies" [value]="f.value">{{f.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Wallet Type & Expiry -->
+                <div class="row g-3 mt-1">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Wallet Type</mat-label>
+                            <mat-icon matPrefix>account_balance</mat-icon>
+                            <mat-select formControlName="walletType">
+                                <mat-option *ngFor="let w of walletTypes" [value]="w.value">{{w.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Expiry (Days)</mat-label>
+                            <mat-icon matPrefix>event_busy</mat-icon>
+                            <input type="number" matInput formControlName="expiryDays" placeholder="0 for no expiry">
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Order Types -->
+                <div class="row mt-1">
+                    <div class="col-12">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Allowed Order Types</mat-label>
+                            <mat-icon matPrefix>restaurant</mat-icon>
+                            <mat-select formControlName="allowedOrderTypes" multiple>
+                                <mat-option *ngFor="let type of allowedOrderTypesList" [value]="type.value">{{type.label}}</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Run Now Checkbox -->
+                <div class="row mt-2" *ngIf="!isEdit">
+                    <div class="col-12">
+                        <div class="premium-checkbox-wrapper p-3 rounded-3 bg-light border">
+                            <mat-checkbox formControlName="runNow" color="primary">
+                                <span class="fw-bold">Start Today</span> — Execute this distribution rule immediately after saving.
+                            </mat-checkbox>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="onSubmit()" [disabled]="ruleForm.invalid">
+            <mat-icon>{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
+            <span>{{ isEdit ? 'Update Rule' : 'Create Rule' }}</span>
+        </button>
+    </mat-dialog-actions>
+</div>

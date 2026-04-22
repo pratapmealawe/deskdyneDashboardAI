@@ -58,7 +58,7 @@
         </div>
 
         <!-- Section: Organization Selection (Standard) -->
-        <div class="row" *ngIf="form.get('targetType')?.value === 'organization'">
+        <div class="row" *ngIf="form.get('targetType')?.value ==='organization'">
             <div class="col-md-12">
                 <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Select Organization(s)</mat-label>
@@ -72,7 +72,7 @@
         </div>
 
         <!-- Section: Cafeteria Selection (Standard) -->
-        <div *ngIf="form.get('targetType')?.value === 'cafeteria'">
+        <div *ngIf="form.get('targetType')?.value ==='cafeteria'">
             <div class="row">
                 <div class="col-md-12">
                     <mat-form-field appearance="outline" class="w-100">
@@ -108,7 +108,7 @@
         </div>
 
         <!-- Section: Individual User Selection (Customer-Style Flow) -->
-        <div *ngIf="form.get('targetType')?.value === 'individual'" class="individual-selection-section">
+        <div *ngIf="form.get('targetType')?.value ==='individual'" class="individual-selection-section">
 
             <!-- Filter Bar (like Customer component) -->
             <div class="individual-filter-bar">
@@ -165,7 +165,7 @@
                         <!-- User Info -->
                         <div class="user-info">
                             <div class="user-primary">
-                                <h3 class="user-name" matTooltip="{{user.userName}}">{{ user?.userName || 'Unknown' }}
+                                <h3 class="user-name" matTooltip="{{user.userName}}">{{ user?.userName ||'Unknown' }}
                                 </h3>
                                 <span class="user-org-badge" *ngIf="user?.organization">
                                     {{ user?.organization }}
@@ -175,7 +175,7 @@
     
                                 <div class="detail-item">
                                     <mat-icon>email</mat-icon>
-                                    <span matTooltip="{{user.email}}">{{ user?.email || '-' }}</span>
+                                    <span matTooltip="{{user.email}}">{{ user?.email ||'-' }}</span>
                                 </div>
                                 <div class="detail-item" *ngIf="user?.phoneNo">
                                     <mat-icon>phone</mat-icon>
@@ -209,7 +209,7 @@
                 <mat-chip-grid #chipGrid aria-label="Selected users" class="selected-users-chips">
                     <mat-chip-row *ngFor="let user of selectedUsers" (removed)="removeUser(user)">
                         {{user.userName}}
-                        <button matChipRemove [attr.aria-label]="'remove ' + user.userName">
+                        <button matChipRemove [attr.aria-label]="'remove' + user.userName">
                             <mat-icon>cancel</mat-icon>
                         </button>
                     </mat-chip-row>
@@ -235,7 +235,7 @@
             </div>
         </div>
 
-        <div class="row mt-2" *ngIf="form.get('deliveryMode')?.value === 'schedule'">
+        <div class="row mt-2" *ngIf="form.get('deliveryMode')?.value ==='schedule'">
             <div class="col-md-6">
                 <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Date</mat-label>
@@ -259,6 +259,6 @@
     <button mat-button (click)="close()">Cancel</button>
     <button mat-raised-button color="primary" [disabled]="form.invalid || isLoading" (click)="submit()">
         <mat-spinner *ngIf="isLoading" diameter="20" class="mr-2 d-inline-block"></mat-spinner>
-        {{ form.get('deliveryMode')?.value === 'now' ? 'Send Now' : 'Schedule' }}
+        {{ form.get('deliveryMode')?.value ==='now' ?'Send Now' :'Schedule' }}
     </button>
 </div>

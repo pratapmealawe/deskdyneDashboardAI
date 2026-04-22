@@ -1,11 +1,11 @@
 <div class="modal-header">
     <div class="modal-title-row">
         <div class="icon-box info">
-            <mat-icon>{{ isEdit ? 'edit' : 'add_photo_alternate' }}</mat-icon>
+            <mat-icon>{{ isEdit ?'edit' :'add_photo_alternate' }}</mat-icon>
         </div>
         <div>
-            <h2 class="modal-title m-0">{{ isEdit ? 'Update' : 'Create' }} Image Group</h2>
-            <p class="modal-subtitle m-0">{{ isEdit ? 'Modify group name and image selection.' : 'Name your group and
+            <h2 class="modal-title m-0">{{ isEdit ?'Update' :'Create' }} Image Group</h2>
+            <p class="modal-subtitle m-0">{{ isEdit ?'Modify group name and image selection.' :'Name your group and
                 select images.' }}</p>
         </div>
     </div>
@@ -75,7 +75,7 @@
     <button mat-stroked-button (click)="closeModal()" class="cancel-btn">Cancel</button>
     <button mat-flat-button color="primary" [disabled]="isSaveDisabled" (click)="saveConfig()" class="save-btn">
         <mat-spinner *ngIf="saving" diameter="18" class="spinner-inline"></mat-spinner>
-        <mat-icon *ngIf="!saving">{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
-        {{ saving ? 'Saving...' : (isEdit ? 'Update' : 'Create') }}
+        <mat-icon *ngIf="!saving">{{ isEdit ?'save' :'add_circle' }}</mat-icon>
+        {{ saving ?'Saving...' : (isEdit ?'Update' :'Create') }}
     </button>
 </div>

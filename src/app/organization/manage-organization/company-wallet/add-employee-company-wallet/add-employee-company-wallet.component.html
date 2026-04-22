@@ -1,71 +1,86 @@
-<div class="modal-header d-flex justify-content-between align-items-center p-3 border-bottom">
-    <h2 mat-dialog-title class="m-0 fs-5 fw-bold">{{data.employee ? 'Edit' : 'Add'}} Employee</h2>
+<div class="add-wallet-employee-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!data.employee" [class.warning]="data.employee">
+        <mat-icon>{{ data.employee ? 'edit' : 'account_balance_wallet' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ data.employee ? 'Edit Wallet Staff' : 'Add Wallet Staff' }}</h3>
+        <p>{{ data.employee ? 'Update wallet-linked employee details' : 'Register a new employee with wallet access' }}</p>
+      </div>
+    </div>
     <button mat-icon-button (click)="onCancel()" class="close-btn">
-        <span class="material-icons">close</span>
+      <mat-icon>close</mat-icon>
     </button>
-</div>
+  </div>
 
-<form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
-    <mat-dialog-content class="mat-typography p-4">
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" id="walletEmployeeForm" class="p-2">
+      <div class="form-grid-modern">
+        <!-- Name & ID Row -->
         <div class="row g-3">
-            <!-- Employee Name -->
-            <div class="col-12">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Employee Name</mat-label>
-                    <input matInput formControlName="employeeName" placeholder="Ex. John Doe">
-                    <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">
-                        Name is required
-                    </mat-error>
-                </mat-form-field>
-            </div>
-
-            <!-- Employee ID -->
-            <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Employee ID</mat-label>
-                    <input matInput formControlName="employeeId" placeholder="Ex. EMP123">
-                    <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">
-                        ID is required
-                    </mat-error>
-                </mat-form-field>
-            </div>
-
-            <!-- Phone Number -->
-            <div class="col-md-6">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Phone Number</mat-label>
-                    <input matInput type="number" formControlName="employeePhoneNo" placeholder="Ex. 9876543210">
-                    <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">
-                        Phone number is required
-                    </mat-error>
-                    <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">
-                        Invalid phone number
-                    </mat-error>
-                </mat-form-field>
-            </div>
-
-            <!-- Email -->
-            <div class="col-12">
-                <mat-form-field appearance="outline" class="w-100">
-                    <mat-label>Email Address</mat-label>
-                    <input matInput formControlName="employeeEmail" placeholder="Ex. john@example.com">
-                    <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">
-                        Email is required
-                    </mat-error>
-                    <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">
-                        Invalid email address
-                    </mat-error>
-                </mat-form-field>
-            </div>
-
-
+          <div class="col-md-7">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee Name</mat-label>
+              <mat-icon matPrefix>person</mat-icon>
+              <input matInput formControlName="employeeName" placeholder="e.g. John Doe" />
+              <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">Name is required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee ID</mat-label>
+              <mat-icon matPrefix>badge</mat-icon>
+              <input matInput formControlName="employeeId" placeholder="e.g. EMP123" />
+              <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">ID is required</mat-error>
+            </mat-form-field>
+          </div>
         </div>
-    </mat-dialog-content>
 
-    <mat-dialog-actions align="end" class="p-3 border-top gap-2">
-        <button mat-button type="button" (click)="onCancel()" class="text-secondary">Cancel</button>
-        <button mat-raised-button color="primary" type="submit" [disabled]="employeeForm.invalid">
-            {{data.employee ? 'Update' : 'Save'}} Employee
-        </button>
-    </mat-dialog-actions>
-</form>
+        <!-- Phone & Email Row -->
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Phone Number</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput formControlName="employeePhoneNo" placeholder="10-digit number" type="tel" />
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">Invalid phone number</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email Address</mat-label>
+              <mat-icon matPrefix>email</mat-icon>
+              <input matInput formControlName="employeeEmail" placeholder="e.g. john@company.com" type="email" />
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">Email is required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">Invalid email address</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Cafeteria Selection -->
+        <div class="selection-container mt-3">
+          <p class="section-label mb-2"><mat-icon>storefront</mat-icon> Primary Cafeteria</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-select formControlName="cafeteria" placeholder="Select assigned cafeteria">
+              <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe">
+                {{ cafe.cafeteria_name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="employeeForm.get('cafeteria')?.hasError('required')">Please select a cafeteria</mat-error>
+          </mat-form-field>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="walletEmployeeForm" 
+            [disabled]="employeeForm.invalid" class="btn-primary-action px-4">
+      <mat-icon>{{ data.employee ? 'save' : 'person_add' }}</mat-icon>
+      <span>{{ data.employee ? 'Update Employee' : 'Create Employee' }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

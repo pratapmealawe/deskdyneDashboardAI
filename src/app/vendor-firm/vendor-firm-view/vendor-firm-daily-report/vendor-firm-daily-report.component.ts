@@ -2,9 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -62,7 +61,6 @@ export class VendorFirmDailyReportComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private http: HttpClient,
-    private excelService: ExcelService,
     private dialog: MatDialog,
     private fb: FormBuilder,
     private localStorageService: LocalStorageService
@@ -138,11 +136,9 @@ export class VendorFirmDailyReportComponent implements OnInit {
   async fetchDailyBulkOrders(body: any) {
     try {
       const res = await this.apiMainService.fetchDailyBulkOrdersbysearchObj(body);
-      console.log(res);
       this.orders = Array.isArray(res) ? res : [];
       this.buildSummaries();
     } catch (err: any) {
-      console.log('err', err);
       this.orders = [];
       this.orderWise = [];
       this.vendorTotals = { count: 0, orderAmount: 0, totalVendorAmt: 0 };

@@ -3,10 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ToasterService } from 'src/service/toaster.service';
-import { environment } from 'src/environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
 
 @Component({
   selector: 'app-consumption-order-card',

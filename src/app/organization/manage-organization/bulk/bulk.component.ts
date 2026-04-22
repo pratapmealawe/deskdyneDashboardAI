@@ -1,113 +1,105 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
-import { CakeMenuComponent } from "./cake-menu/cake-menu.component";
-import { SweetMenuComponent } from "./sweet-menu/sweet-menu.component";
-import { LuxMenuComponent } from "./lux-menu/lux-menu.component";
-import { PantryMenuComponent } from "./pantry-menu/pantry-menu.component";
-import { EmployeeCakeMenuComponent } from "./employee-cake-menu/employee-cake-menu.component";
-import { EmployeeSelectCafeteriaComponent } from "./employee-select-cafeteria/employee-select-cafeteria.component";
-import { EmployeeSweetMenuComponent } from "./employee-sweet-menu/employee-sweet-menu.component";
-import { EmployeeLuxMenuComponent } from "./employee-lux-menu/employee-lux-menu.component";
-import { EmployeePantryMenuComponent } from "./employee-pantry-menu/employee-pantry-menu.component";
-import { OrgBulkMenuComponent } from "./org-bulk-menu/org-bulk-menu.component";
-import { OrgIndividualMenuComponent } from "./org-individual-menu/org-individual-menu.component";
-import { OrgBulkSnackboxMenuComponent } from "./org-bulk-snackbox-menu/org-bulk-snackbox-menu.component";
-import { OrgIndividualSnackboxMenuComponent } from "./org-individual-snackbox-menu/org-individual-snackbox-menu.component";
-import { OrgPredefinedSnackboxMenuComponent } from "./org-predefined-snackbox-menu/org-predefined-snackbox-menu.component";
-import { OrgCustomizedSnackboxMenuComponent } from "./org-customized-snackbox-menu/org-customized-snackbox-menu.component";
-import { EmployeeBulkMealMenuComponent } from "./employee-bulk-meal-menu/employee-bulk-meal-menu.component";
-import { EmployeeIndividualMealMenuComponent } from "./employee-individual-meal-menu/employee-individual-meal-menu.component";
-import { EmployeeBulkSnackMenuComponent } from "./employee-bulk-snack-menu/employee-bulk-snack-menu.component";
-import { EmployeeIndividualSnackMenuComponent } from "./employee-individual-snack-menu/employee-individual-snack-menu.component";
-import { EmployeePredefinedFoodboxMenuComponent } from "./employee-predefined-foodbox-menu/employee-predefined-foodbox-menu.component";
-import { EmployeeCustomizedFoodboxMenuComponent } from "./employee-customized-foodbox-menu/employee-customized-foodbox-menu.component";
+import { BulkGeneralMenuComponent } from "./bulk-general-menu/bulk-general-menu.component";
+import { MaterialModule } from "src/app/material.module";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CafeteriaSelectorComponent } from "../cafeteria-selector/cafeteria-selector.component";
 
 @Component({
   selector: 'app-bulk',
   standalone: true,
-  imports: [CommonModule, CakeMenuComponent, SweetMenuComponent, LuxMenuComponent, PantryMenuComponent, EmployeeCakeMenuComponent, EmployeeSelectCafeteriaComponent, EmployeeSweetMenuComponent, EmployeeLuxMenuComponent, EmployeePantryMenuComponent, OrgBulkMenuComponent, OrgIndividualMenuComponent, OrgBulkSnackboxMenuComponent, OrgIndividualSnackboxMenuComponent, OrgPredefinedSnackboxMenuComponent, OrgCustomizedSnackboxMenuComponent, EmployeeBulkMealMenuComponent, EmployeeIndividualMealMenuComponent, EmployeeBulkSnackMenuComponent, EmployeeIndividualSnackMenuComponent, EmployeePredefinedFoodboxMenuComponent, EmployeeCustomizedFoodboxMenuComponent],
+  imports: [CommonModule, BulkGeneralMenuComponent, MaterialModule, FormsModule, ReactiveFormsModule, CafeteriaSelectorComponent],
   templateUrl: './bulk.component.html',
   styleUrls: ['./bulk.component.scss']
 })
-export class BulkComponent {
-  @Input() orgObj: any;
-  @Input() selectedMainPath: any;
-  @Input() selectedMainTabIndex: any;
+export class BulkComponent implements OnInit, OnDestroy {
+  @ViewChild(BulkGeneralMenuComponent) bulkGeneralMenuComponent!: BulkGeneralMenuComponent;
+  
+  orgObj: any;
+  private orgSub: Subscription | undefined;
+  selectedCafeteria: any;
+
   selectedSubTabIndex = 0;
   selectedChildTabIndex = 0;
-  isCategoryActive = true;
-  selectedCafeteria: any;
-  isVendorAssigned: boolean = false;
-  showBulkMenuHeader = false;
-  isMenuAvailable = false;
+  selectedMainInternalTabIndex = 0;
 
   orgViewList = [
     {
       name: 'Bulk Menu Section',
       path: 'bulkMenuSection',
+      icon: 'restaurant_menu',
       subTabs: [
         {
           name: 'Meals',
+          icon: 'restaurant',
           childTabs: [
-            { name: 'Bulk Meals Menu', path: 'bulkMealsMenu' },
-            { name: 'Individual Meals Menu', path: 'individualMealsMenu' },
+            { name: 'Bulk Meals Menu', path: 'bulkMealsMenu', icon: 'groups' },
+            { name: 'Individual Meals Menu', path: 'individualMealsMenu', icon: 'person' },
           ],
         },
         {
           name: 'Snacks',
+          icon: 'cookie',
           childTabs: [
-            { name: 'Bulk Snacks Menu', path: 'bulkSnacksMenu' },
-            { name: 'Individual Snacks Menu', path: 'individualSnacksMenu' },
+            { name: 'Bulk Snacks Menu', path: 'bulkSnacksMenu', icon: 'groups' },
+            { name: 'Individual Snacks Menu', path: 'individualSnacksMenu', icon: 'person' },
           ],
         },
         {
           name: 'Foodbox',
+          icon: 'inventory_2',
           childTabs: [
-            { name: 'Pre-Defined Snack Box', path: 'predefinedSnackBoxMenu' },
-            { name: 'Customized Snack Box', path: 'customizedSnackBoxMenu' },
+            { name: 'Pre-Defined Snack Box', path: 'predefinedSnackBoxMenu', icon: 'view_module' },
+            { name: 'Customized Snack Box', path: 'customizedSnackBoxMenu', icon: 'tune' },
           ],
         },
-        { name: 'Cake', path: 'cakeMenu' },
-        { name: 'Sweet', path: 'sweetMenu' },
-        { name: 'Lux', path: 'luxMenu' },
-        { name: 'Pantry', path: 'pantryMenu' },
+        { name: 'Cake', path: 'cakeMenu', icon: 'cake' },
+        { name: 'Sweet', path: 'sweetMenu', icon: 'icecream' },
+        { name: 'Lux', path: 'luxMenu', icon: 'star' },
+        { name: 'Pantry', path: 'pantryMenu', icon: 'kitchen' },
       ],
     },
     {
       name: 'Employee Bulk Menu',
       path: 'employeebulkmenu',
+      icon: 'badge',
       subTabs: [
         {
           name: 'Meals',
+          icon: 'restaurant',
           childTabs: [
-            { name: 'Bulk Meals Menu', path: 'employeebulkMealsMenu' },
-            { name: 'Individual Meals Menu', path: 'employeeindividualMealsMenu' },
+            { name: 'Bulk Meals Menu', path: 'employeebulkMealsMenu', icon: 'groups' },
+            { name: 'Individual Meals Menu', path: 'employeeindividualMealsMenu', icon: 'person' },
           ],
         },
         {
           name: 'Snacks',
+          icon: 'cookie',
           childTabs: [
-            { name: 'Bulk Snacks Menu', path: 'employeebulkSnacksMenu' },
-            { name: 'Individual Snacks Menu', path: 'employeeindividualSnacksMenu' },
+            { name: 'Bulk Snacks Menu', path: 'employeebulkSnacksMenu', icon: 'groups' },
+            { name: 'Individual Snacks Menu', path: 'employeeindividualSnacksMenu', icon: 'person' },
           ],
         },
         {
           name: 'Foodbox',
+          icon: 'inventory_2',
           childTabs: [
-            { name: 'Pre-Defined Snack Box', path: 'employeepredefinedSnackBoxMenu' },
-            { name: 'Customized Snack Box', path: 'employeecustomizedSnackBoxMenu' },
+            { name: 'Pre-Defined Snack Box', path: 'employeepredefinedSnackBoxMenu', icon: 'view_module' },
+            { name: 'Customized Snack Box', path: 'employeecustomizedSnackBoxMenu', icon: 'tune' },
           ],
         },
-        { name: 'Cake', path: 'employeecakeMenu' },
-        { name: 'Sweet', path: 'employeesweetMenu' },
-        { name: 'Lux', path: 'employeeluxMenu' },
-        { name: 'Pantry', path: 'employeepantryMenu' },
+        { name: 'Cake', path: 'employeecakeMenu', icon: 'cake' },
+        { name: 'Sweet', path: 'employeesweetMenu', icon: 'icecream' },
+        { name: 'Lux', path: 'employeeluxMenu', icon: 'star' },
+        { name: 'Pantry', path: 'employeepantryMenu', icon: 'kitchen' },
       ],
     },
   ];
 
   get selectedMain(): any {
-    return this.orgViewList.find(main => main.path === this.selectedMainPath);
+    return this.orgViewList[this.selectedMainInternalTabIndex];
   }
 
   get selectedSub(): any {
@@ -118,27 +110,32 @@ export class BulkComponent {
     return this.selectedSub?.childTabs?.[this.selectedChildTabIndex];
   }
 
-  // get selectedBulkMenuPath() {
-    // // const mainView = this.orgViewList.find(v => v.path === mainPath);
-    // // const sub = mainView?.subTabs?.[this.selectedSubTabIndex];
-    // let child = sub?.childTabs?.[this.selectedChildTabIndex];
+  constructor(
+    private orgSharedService: OrganizationSharedService
+  ) { }
 
-    // if (child?.path === 'predefinedSnackBoxMenu') {
-    //   child = { ...child, path: 'predefinedFoodBoxMenu' };
-    // } else if (child?.path === 'customizedSnackBoxMenu') {
-    //   child = { ...child, path: 'customizedFoodBoxMenu' };
-    // }
+  ngOnInit(): void {
+    if (this.orgObj) {
+      this.initializeComponent();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.initializeComponent();
+        }
+      });
+    }
+  }
 
-    // const childPath = child?.path ?? sub?.path;
+  initializeComponent() {
+    this.initializeCafeteria();
+  }
 
-    // return {
-    //   main: mainPath,
-    //   sub: sub?.name?.toLowerCase(),
-    //   subPath: sub?.path,
-    //   child: child?.name,
-    //   childPath
-    // };
-  // }
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
+    }
+  }
 
   private initializeCafeteria(): void {
     if (this.orgObj?.cafeteriaList?.length > 0) {
@@ -146,33 +143,22 @@ export class BulkComponent {
     }
   }
 
-
   onCafeteriaChanged(event: any): void {
-    this.selectedCafeteria = event.selectedCafeteria;
+    this.selectedCafeteria = event.value;
   }
 
-  onCategoryActiveChanged(event: boolean): void {
-    this.isCategoryActive = event;
-  }
   onSubTabChange(index: number): void {
     this.selectedSubTabIndex = index;
     this.selectedChildTabIndex = 0;
+  }
 
+  onMainInternalTabChange(index: number): void {
+    this.selectedMainInternalTabIndex = index;
+    this.selectedSubTabIndex = 0;
+    this.selectedChildTabIndex = 0;
   }
 
   onChildTabChange(index: number): void {
     this.selectedChildTabIndex = index;
   }
-
-
-  checkVendorAssigned(event: any): void {
-    this.isVendorAssigned = event;
-  }
-
-  onMenuAvailabilityChange(hasMenu: boolean): void {
-    setTimeout(() => {
-      this.isMenuAvailable = hasMenu;
-    });
-  }
-
 }

@@ -1,5 +1,5 @@
 <h2 mat-dialog-title class="dialog-header">
-  {{ editType === 'edit' ? 'Edit Bulk Master Menu' : 'Add Bulk Master Menu' }}
+  {{ editType ==='edit' ?'Edit Bulk Master Menu' :'Add Bulk Master Menu' }}
 </h2>
 
 <mat-dialog-content class="mat-typography">
@@ -10,14 +10,14 @@
         <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
           (change)="handleFileInput($event)" />
         <div class="image-preview-container" (click)="fileInput.click()">
-          <img [src]="imageUrl ? imageUrl : 'assets/images/dummyUpload.png'" class="uploadedImage" />
+          <img [src]="imageUrl ? imageUrl :'assets/images/dummyUpload.png'" class="uploadedImage" />
           <div class="image-overlay">
             <mat-icon>camera_alt</mat-icon>
           </div>
         </div>
         <button class="mt-2" type="button" mat-stroked-button color="primary" (click)="fileInput.click()">
           <mat-icon class="me-1">file_upload</mat-icon>
-          {{ uploadedImageFile ? 'Change Image' : 'Upload Image' }}
+          {{ uploadedImageFile ?'Change Image' :'Upload Image' }}
         </button>
       </div>
 
@@ -40,11 +40,11 @@
             <label class="labelText d-block mb-1">Item Type</label>
             <div class="d-flex gap-2 flex-wrap">
               <button type="button" mat-raised-button class="type-btn"
-                [color]="f['itemType'].value === 'Veg' ? 'primary' : ''" (click)="setItemType('Veg')">Veg</button>
+                [color]="f['itemType'].value ==='Veg' ?'primary' :''" (click)="setItemType('Veg')">Veg</button>
               <button type="button" mat-raised-button class="type-btn"
-                [color]="f['itemType'].value === 'NonVeg' ? 'primary' : ''" (click)="setItemType('NonVeg')">NonVeg</button>
+                [color]="f['itemType'].value ==='NonVeg' ?'primary' :''" (click)="setItemType('NonVeg')">NonVeg</button>
               <button type="button" mat-raised-button class="type-btn"
-                [color]="f['itemType'].value === 'Jain' ? 'primary' : ''" (click)="setItemType('Jain')">Jain</button>
+                [color]="f['itemType'].value ==='Jain' ?'primary' :''" (click)="setItemType('Jain')">Jain</button>
             </div>
           </div>
 
@@ -52,13 +52,13 @@
             <label class="labelText d-block mb-1">Serving Type</label>
             <div class="d-flex gap-2 flex-wrap">
               <button type="button" mat-raised-button class="serving-btn"
-                [color]="f['itemServingType'].value === 'perPerson' ? 'accent' : ''"
+                [color]="f['itemServingType'].value ==='perPerson' ?'accent' :''"
                 (click)="setServingType('perPerson')">perPerson</button>
               <button type="button" mat-raised-button class="serving-btn"
-                [color]="f['itemServingType'].value === 'perUnit' ? 'accent' : ''"
+                [color]="f['itemServingType'].value ==='perUnit' ?'accent' :''"
                 (click)="setServingType('perUnit')">perUnit</button>
               <button type="button" mat-raised-button class="serving-btn"
-                [color]="f['itemServingType'].value === 'perQuantity' ? 'accent' : ''"
+                [color]="f['itemServingType'].value ==='perQuantity' ?'accent' :''"
                 (click)="setServingType('perQuantity')">perQuantity</button>
             </div>
           </div>
@@ -117,11 +117,11 @@
     <mat-icon>cancel</mat-icon> Cancel
   </button>
   
-  <button *ngIf="editType === 'new'" mat-raised-button color="primary" [disabled]="foodItemForm.invalid" (click)="onSubmit()">
+  <button *ngIf="editType ==='new'" mat-raised-button color="primary" [disabled]="foodItemForm.invalid" (click)="onSubmit()">
     <mat-icon>check_circle</mat-icon> Submit
   </button>
 
-  <button *ngIf="editType === 'edit'" mat-raised-button color="primary" [disabled]="foodItemForm.invalid" (click)="onSubmit()">
+  <button *ngIf="editType ==='edit'" mat-raised-button color="primary" [disabled]="foodItemForm.invalid" (click)="onSubmit()">
     <mat-icon>update</mat-icon> Update
   </button>
 </div>

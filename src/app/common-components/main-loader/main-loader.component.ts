@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { LoaderstatusService } from '../../../service/loaderstatus.service';
+import { LoaderstatusService } from '@service/loaderstatus.service';
 
 import { CommonModule } from '@angular/common';
 

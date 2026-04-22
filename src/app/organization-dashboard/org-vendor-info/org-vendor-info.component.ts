@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 import { VendorComplianceComponent } from 'src/app/vendor-firm/add-vendor-firm/vendor-firm-compliance/vendor-compliance.component';
 
 interface data {

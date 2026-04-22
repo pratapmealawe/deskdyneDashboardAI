@@ -1,18 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { NavigationEnd, Router } from '@angular/router';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { DeletedOutletsDialogComponent } from './deleted-outlets-dialog/deleted-outlets-dialog.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { OutletCardComponent } from './outlet-card/outlet-card.component';
-import { OutletViewComponent } from './outlet-view/outlet-view.component';
+import { RouterModule } from '@angular/router';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { AddOutletComponent } from './add-outlet/add-outlet.component';
 
@@ -27,32 +27,44 @@ import { AddOutletComponent } from './add-outlet/add-outlet.component';
     FormsModule,
     ReactiveFormsModule,
     OutletCardComponent,
-    OutletViewComponent,
-    DeletedOutletsDialogComponent,
-    DirectivesModule
+    DirectivesModule,
+    RouterModule
   ]
 })
 export class OutletComponent implements OnInit {
+  outletList: any[] = [];
+  filteredOutletList: any[] = [];
+  pagedOutLet: any[] = [];
+  searchControl = new FormControl('');
   showSearchSection: boolean = true;
-  filteredOutletList: any;
-  page: any = 0;
-  outletList: any = [];
-  selectedOutlet: any;
-  searchControl = new FormControl();
-  pagedOutLet: any[] = []
+  isListingView: boolean = true;
 
   constructor(
     private apiMainService: ApiMainService,
-    private router: Router,
-    private runtimeStorageService: RuntimeStorageService,
-    private sendDataToComponent: SendDataToComponent,
-    private searchService: SearchFilterService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) { }
 
   ngOnInit(): void {
+    this.checkRoute();
+
+    // Subscribe to router events to toggle view
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkRoute();
+    });
+
     this.searchOutlet();
-    this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(value => { this.applyFilter(value) })
+    this.applyFilter(this.searchControl.value ?? '');
+    this.searchControl.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(value => { this.applyFilter(value ?? '') })
+  }
+
+  checkRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // /app/outlet is 2 parts
+    this.isListingView = urlParts.length === 2 && urlParts[1] === 'outlet';
   }
 
   applyFilter(value: string) {
@@ -76,7 +88,6 @@ export class OutletComponent implements OnInit {
         })
         .filter((org: any) => org !== null);
     }
-    console.log(this.pagedOutLet, "update value ");
   }
 
   async searchOutlet() {
@@ -109,14 +120,12 @@ export class OutletComponent implements OnInit {
         this.pagedOutLet = this.filteredOutletList
       }
     } catch (error) {
-      console.log('seachOutlet', error);
     }
   }
 
   viewOutlet(val: any) {
-    this.selectedOutlet = val;
-    if (this.selectedOutlet) {
-      this.showSearchSection = false;
+    if (val) {
+      this.router.navigate(['/app/outlet', val._id]);
     }
   }
 

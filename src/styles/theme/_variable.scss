@@ -73,8 +73,47 @@ $color-info-border: #91d5ff;
 
 // CSS Variables for Runtime Theming
 :root {
+  // Primary Brand
   --color-primary: #{$primary-color1};
+  --color-primary2: #{$primary-color2};
+  --color-primary3: #{$primary-color3};
+
+  // Secondary Brand
   --color-secondary: #{$secondary-color3};
-  --color-backgroundGrey: #{$background-color};
+  --color-secondary1: #{$secondary-color1};
+  --color-secondary2: #{$secondary-color2};
+
+  // Offset / Neutral
+  --color-white: #{$primary-offset-color1};
+  --color-grey: #{$primary-offset-color2};
+  --color-light-bg: #{$primary-offset-color3};
+  --color-card-bg: #{$primary-offset-color4};
+  --color-border: #{$border-color};
+  --color-background: #{$background-color};
   --color-text: #{$textPrimary};
+  --color-text-dark: #{$text-dark};
+
+  // Accent
+  --color-accent1: #{$secondary-offset-color1};
+  --color-accent2: #{$secondary-offset-color2};
+  --color-accent3: #{$secondary-offset-color3};
+
+  // Semantic
+  --color-success: #{$color-success};
+  --color-success-bg: #{$color-success-bg};
+  --color-warning: #{$color-warning};
+  --color-error: #{$color-error};
+  --color-info: #{$color-info};
+
+  // Design tokens
+  --radius-sm: #{$border-radius-sm};
+  --radius-md: #{$border-radius-md};
+  --radius-lg: #{$border-radius-lg};
+  --radius-xl: #{$border-radius-xl};
+  --radius-pill: #{$border-radius-pill};
+  --shadow-sm: #{$box-shadow-sm};
+  --shadow-md: #{$box-shadow-md};
+  --shadow-lg: #{$box-shadow-lg};
+  --shadow-card: #{$box-shadow-card};
+  --shadow-card-hover: #{$box-shadow-card-hover};
 }

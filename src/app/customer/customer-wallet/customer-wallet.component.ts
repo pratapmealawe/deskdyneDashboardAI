@@ -1,6 +1,6 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
+﻿import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PermissionsService } from '@service/permission.service';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -42,7 +42,7 @@ export class CustomerWalletComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar
   ) { }
@@ -212,7 +212,7 @@ export class CustomerWalletComponent implements OnInit {
       ];
 
       // Data
-      const curFmt = '₹#,##0.00';
+      const curFmt = 'â‚¹#,##0.00';
       const dateFmt = 'dd-mmm-yyyy hh:mm AM/PM';
       let totalAmount = 0;
       let creditTotal = 0;
@@ -351,3 +351,4 @@ export class CustomerWalletComponent implements OnInit {
     return t.includes('credit') || t.includes('deposite') || t.includes('add');
   }
 }
+

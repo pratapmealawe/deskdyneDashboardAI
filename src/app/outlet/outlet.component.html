@@ -1,6 +1,6 @@
 <div class="outlet-page-container">
   <!-- Header Section -->
-  <div class="outlet-header-card" *ngIf="showSearchSection">
+  <div class="outlet-header-card" *ngIf="isListingView">
     <div class="header-content">
       <div class="title-section">
         <h1 class="page-title">Outlet Management</h1>
@@ -24,7 +24,7 @@
   </div>
 
   <!-- Content Body -->
-  <div class="content-body" *ngIf="showSearchSection">
+  <div class="content-body" *ngIf="isListingView">
     <div *ngIf="outletList && outletList.length === 0; else outletListTmp" class="empty-state">
       <mat-icon class="empty-icon">storefront</mat-icon>
       <h3>No Outlets Found</h3>
@@ -41,7 +41,7 @@
   </div>
 
   <!-- Outlet View Section -->
-  <div class="outlet-view-section" *ngIf="!showSearchSection && outletList.length > 0">
-    <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
+  <div class="outlet-view-section" [hidden]="isListingView">
+    <router-outlet></router-outlet>
   </div>
 </div>

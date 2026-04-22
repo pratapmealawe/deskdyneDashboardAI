@@ -1,208 +1,154 @@
-<div class="container-fluid qr-employee-wrapper pt-3 pb-3">
-
-    <!-- HEADER CARD -->
-    <mat-card class="mb-3 p-2">
-        <mat-card-content>
-            <!-- Cafeteria selection -->
-            <div class="mb-2 labelText">Select Cafeteria</div>
-
-            <mat-radio-group class="d-flex flex-wrap cafeteria-radio-group" [(ngModel)]="selectedCafeteria"
-                (change)="onCafeteriaChange()">
-                <mat-radio-button *ngFor="let cafeteria of orgObj?.cafeteriaList" [value]="cafeteria" class="me-3 mb-2">
-                    {{ cafeteria.cafeteria_name }}
-                </mat-radio-button>
-            </mat-radio-group>
-
-            <!-- Actions row -->
-            <div class="d-flex flex-wrap gap-2 mt-3">
-                <button mat-flat-button color="primary" (click)="openAddDialog()">
-                    <mat-icon>person_add</mat-icon>
-                    <span class="ms-1">Add Employee</span>
-                </button>
-
-
-                <button mat-stroked-button color="primary" (click)="showBulkForm()" *ngIf="!showMultipleEmployeeForm">
-                    <mat-icon>group_add</mat-icon>
-                    <span class="ms-1">Add Multiple Employees</span>
-                </button>
-
-                <button mat-stroked-button color="warn" (click)="hideBulkForm()" *ngIf="showMultipleEmployeeForm">
-                    <mat-icon>close</mat-icon>
-                    <span class="ms-1">Cancel Multiple</span>
-                </button>
-
-                <button mat-stroked-button color="primary" (click)="downloadAllEmployeesPdf()"
-                    *ngIf="filteredEmployees.length > 0">
-                    <mat-icon>file_download</mat-icon>
-                    <span class="ms-1">Download All QR</span>
-                </button>
-
-
+<div class="employee-list-container">
+    <!-- Page Header -->
+    <div class="bulk-dashboard-header">
+        <div class="header-card">
+            <div class="header-icon-box">
+                <mat-icon>qr_code_2</mat-icon>
             </div>
-        </mat-card-content>
-    </mat-card>
-
-    <!-- BULK FORM -->
-    <mat-card *ngIf="showMultipleEmployeeForm" class="mb-3 p-2">
-        <mat-card-title class="p-2 d-flex justify-content-between align-items-center flex-wrap">
-            <span>Multiple Employees</span>
-
-            <div class="d-flex flex-wrap gap-2">
-                <button mat-stroked-button color="primary" type="button" (click)="downloadExcelTemplate()">
-                    <mat-icon>download</mat-icon>
-                    <span class="ms-1">Download Template</span>
-                </button>
-
-                <!-- Hidden file input -->
-                <input #excelInput type="file" accept=".xlsx,.xls" style="display: none"
-                    (change)="onExcelUpload($event)" />
-
-                <button mat-stroked-button color="accent" type="button" (click)="excelInput.click()">
-                    <mat-icon>upload</mat-icon>
-                    <span class="ms-1">Import from Excel</span>
-                </button>
+            <div class="header-text-content">
+                <h1 class="page-title">QR Employee Management</h1>
+                <p class="page-subtitle">Manage employees and generate branded QR identification cards</p>
             </div>
-        </mat-card-title>
-        <mat-card-content>
-            <form [formGroup]="bulkForm" class="bulk-form">
-                <div formArrayName="employees">
-                    <div class="row align-items-end mb-2" *ngFor="let group of employeesFA.controls; index as i"
-                        [formGroupName]="i">
-                        <div class="col-12 col-md-2 mt-2">
-                            <mat-form-field appearance="outline" class="w-100">
-                                <mat-label>Employee ID</mat-label>
-                                <input matInput formControlName="employeeId" />
-                                <mat-error *ngIf="group.get('employeeId')?.hasError('required')">
-                                    Employee ID is required
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
+        </div>
 
-                        <div class="col-12 col-md-3 mt-2">
-                            <mat-form-field appearance="outline" class="w-100">
-                                <mat-label>Employee Name</mat-label>
-                                <input matInput formControlName="employeeName" />
-                                <mat-error *ngIf="group.get('employeeName')?.hasError('required')">
-                                    Employee name is required
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
+        <!-- Cafeteria Selection Area -->
+        <div class="mb-4">
+            <app-cafeteria-selector 
+                [cafeteriaList]="orgObj?.cafeteriaList"
+                [selectedCafeteria]="selectedCafeteria"
+                [config]="{ multiple: false, label: 'SELECT CAFETERIA' }"
+                (cafeteriaChanged)="onCafeteriaChange({value: $event})">
+            </app-cafeteria-selector>
+        </div>
 
-                        <div class="col-12 col-md-3 mt-2">
-                            <mat-form-field appearance="outline" class="w-100">
-                                <mat-label>Phone No</mat-label>
-                                <input matInput type="tel" formControlName="employeePhoneNo" />
-                                <mat-error *ngIf="group.get('employeePhoneNo')?.hasError('required')">
-                                    Phone number is required
-                                </mat-error>
-                                <mat-error *ngIf="group.get('employeePhoneNo')?.hasError('pattern')">
-                                    Enter valid 10 digit phone
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
+        <!-- Header Actions -->
+        <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+            <button mat-flat-button color="primary" class="btn-primary-action" (click)="openAddDialog()">
+                <mat-icon>person_add</mat-icon>
+                Add Employee
+            </button>
+            <button mat-stroked-button class="btn-secondary-action" (click)="openBulkAddDialog()">
+                <mat-icon>playlist_add</mat-icon>
+                Bulk Add Employee
+            </button>
+            <button mat-stroked-button class="btn-secondary-action" (click)="openImportDialog()">
+                <mat-icon>file_upload</mat-icon>
+                Import
+            </button>
+            <button mat-stroked-button class="btn-secondary-action" (click)="downloadAllEmployeesPdf()" [disabled]="filteredEmployees.length === 0">
+                <mat-icon>picture_as_pdf</mat-icon>
+                Download All QR
+            </button>
+        </div>
+    </div>
 
-                        <div class="col-12 col-md-3 mt-2">
-                            <mat-form-field appearance="outline" class="w-100">
-                                <mat-label>Email</mat-label>
-                                <input matInput type="email" formControlName="employeeEmail" />
-                                <mat-error *ngIf="group.get('employeeEmail')?.hasError('required')">
-                                    Email is required
-                                </mat-error>
-                                <mat-error *ngIf="group.get('employeeEmail')?.hasError('email')">
-                                    Enter a valid email
-                                </mat-error>
-                            </mat-form-field>
-                        </div>
+    <!-- Employee List Section -->
+    <div class="modern-card animate-fadeIn">
+        <div class="card-header with-actions">
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-box info">
+                    <mat-icon>groups</mat-icon>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <h3 class="mb-0">Employee Directory</h3>
+                    <span class="count-badge-premium" *ngIf="filteredEmployees.length">{{ filteredEmployees.length }}</span>
+                </div>
+            </div>
+            <div class="search-wrapper">
+                <mat-icon class="search-icon">search</mat-icon>
+                <input type="text" placeholder="Search employees by name, ID, or email..." [(ngModel)]="searchTerm">
+            </div>
+        </div>
 
-                        <div class="col-12 col-md-1 mt-2 d-flex justify-content-center">
-                            <button mat-icon-button color="primary" type="button" (click)="addBulkRow()"
-                                *ngIf="i === employeesFA.length - 1" matTooltip="Add row">
-                                <mat-icon>add</mat-icon>
+        <div class="card-body p-4">
+            <div *ngIf="loading" class="text-center py-5">
+                <mat-spinner diameter="40" class="mx-auto"></mat-spinner>
+                <p class="text-secondary mt-3">Fetching employees...</p>
+            </div>
+
+            <div class="employee-grid-premium" *ngIf="!loading && filteredEmployees.length > 0">
+                <div class="employee-item-card" *ngFor="let employee of pagedEmployees">
+                    <div class="employee-main">
+                        <div class="employee-avatar-wrapper">
+                            <div class="avatar-circle" *ngIf="!employee.qrCode">
+                                {{ getInitials(employee.employeeName) }}
+                            </div>
+                            <div class="qr-preview-box" *ngIf="employee.qrCode" (click)="downloadEmployeeCardPdf(employee)" matTooltip="Download PDF Card">
+                                <img [src]="employee.qrCode" alt="QR">
+                                <div class="qr-overlay">
+                                    <mat-icon>download</mat-icon>
+                                </div>
+                            </div>
+                            <div class="status-indicator online"></div>
+                        </div>
+                        <div class="employee-details">
+                            <h4 class="employee-name">{{ employee.employeeName }}</h4>
+                            <div class="employee-meta-strip">
+                                <span class="meta-pill">
+                                    <mat-icon>badge</mat-icon> {{ employee.employeeId || 'N/A' }}
+                                </span>
+                                <span class="meta-pill">
+                                    <mat-icon>phone</mat-icon> {{ employee.employeePhoneNo }}
+                                </span>
+                                <span class="meta-pill email-pill" [title]="employee.employeeEmail">
+                                    <mat-icon>email</mat-icon> <span>{{ employee.employeeEmail }}</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="employee-footer">
+                        <div class="cafe-tag">
+                            <mat-icon>storefront</mat-icon>
+                            <span>{{ employee.cafeteria_name }}</span>
+                        </div>
+                        <div class="action-buttons">
+                            <button mat-icon-button class="premium-icon-btn pdf" (click)="downloadEmployeeCardPdf(employee)" matTooltip="Download PDF Card">
+                                <mat-icon>picture_as_pdf</mat-icon>
                             </button>
-
-                            <button mat-icon-button color="warn" type="button" (click)="removeBulkRow(i)"
-                                *ngIf="employeesFA.length > 1" matTooltip="Remove row">
-                                <mat-icon>remove</mat-icon>
+                            <button mat-icon-button class="premium-icon-btn edit" (click)="openEditDialog(employee)" matTooltip="Edit Employee">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button mat-icon-button class="premium-icon-btn delete" (click)="deleteEmployee(employee)" matTooltip="Remove Employee">
+                                <mat-icon>delete</mat-icon>
                             </button>
                         </div>
                     </div>
                 </div>
-
-                <div class="mt-3 d-flex flex-wrap gap-2 align-items-center">
-                    <button mat-flat-button color="primary" type="button" (click)="submitMultipleEmployee()">
-                        Submit
-                    </button>
-                    <span class="error-text" *ngIf="disableSubmit">
-                        *Please fill all fields correctly
-                    </span>
-                </div>
-            </form>
-        </mat-card-content>
-    </mat-card>
-
-    <!-- EMPLOYEE LIST -->
-    <mat-card class="w-100 p-2">
-        <mat-card-title class="d-flex justify-content-between align-items-center p-2">
-            <span>Employees</span>
-            <span class="text-muted small">
-                {{ filteredEmployees.length }} employee(s)
-                <ng-container *ngIf="selectedCafeteriaName"> in {{ selectedCafeteriaName }}</ng-container>
-            </span>
-        </mat-card-title>
-
-        <mat-card-content>
-            <div *ngIf="loading" class="text-muted py-3">Loading...</div>
-
-            <div *ngIf="!loading && filteredEmployees.length === 0" class="text-muted py-3">
-                No employees found for selected cafeteria.
             </div>
 
-            <div class="cardDesign mat-elevation-z1 employee-card mb-2 p-2" *ngFor="let employee of pagedEmployees">
-
-
-                <div class="row">
-                    <div class="col-6 col-md-2 d-flex justify-content-start">
-                        <ng-container *ngIf="employee.qrCode">
-                            <img *ngIf="employee.qrCode" [src]="employee.qrCode" alt="Employee QR" class="qr-thumb" />
-                        </ng-container>
-                    </div>
-                    <div class="col-6 col-md-2">
-                        <div class="labelText">Employee ID</div>
-                        <div class="labelData">{{ employee.employeeId }}</div>
-                    </div>
-                    <div class="col-6 col-md-2">
-                        <div class="labelText">Employee Name</div>
-                        <div class="labelData">{{ employee.employeeName }}</div>
-                    </div>
-                    <div class="col-6 col-md-2">
-                        <div class="labelText">Phone</div>
-                        <div class="labelData">{{ employee.employeePhoneNo }}</div>
-                    </div>
-                    <div class="col-6 col-md-2">
-                        <div class="labelText">Email</div>
-                        <div class="labelData">{{ employee.employeeEmail }}</div>
-                    </div>
-                    <div class="col-6 col-md-1 d-flex justify-content-end mb-1">
-                        <button mat-icon-button color="primary" (click)="downloadEmployeeCardPdf(employee)"
-                            matTooltip="Download Card PDF">
-                            <mat-icon>picture_as_pdf</mat-icon>
-                        </button>
-                    </div>
-                    <div class="col-6 col-md-1 d-flex flex-column justify-content-end mb-1">
-                        <button mat-icon-button color="primary" (click)="openEditDialog(employee)" matTooltip="Edit">
-                            <mat-icon>edit</mat-icon>
-                        </button>
-                        <button mat-icon-button color="warn" (click)="deleteEmployee(employee)" matTooltip="Delete">
-                            <mat-icon>delete</mat-icon>
-                        </button>
-                    </div>
+            <!-- Empty States -->
+            <div class="empty-state-modern py-5" *ngIf="!loading && !selectedCafeteriaId">
+                <div class="empty-icon-wrap">
+                    <mat-icon>touch_app</mat-icon>
                 </div>
+                <h4>No Cafeteria Selected</h4>
+                <p>Please select a cafeteria from the header above to view its employees</p>
             </div>
 
-            <mat-paginator [length]="filteredEmployees.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
-                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
+            <div class="empty-state-modern py-5" *ngIf="!loading && selectedCafeteriaId && searchTerm && filteredEmployees.length === 0">
+                <div class="empty-icon-wrap">
+                    <mat-icon>search_off</mat-icon>
+                </div>
+                <h4>No match for "{{ searchTerm }}"</h4>
+                <p>Try refining your search terms or clearing filters</p>
+            </div>
+
+            <div class="empty-state-modern py-5" *ngIf="!loading && selectedCafeteriaId && !searchTerm && filteredEmployees.length === 0">
+                <div class="empty-icon-wrap">
+                    <mat-icon>person_off</mat-icon>
+                </div>
+                <h4>No employees found</h4>
+                <p>Start by adding individual employees or using the bulk import tool</p>
+            </div>
+
+            <mat-paginator *ngIf="filteredEmployees.length > pageSize"
+                [length]="filteredEmployees.length" 
+                [pageSize]="pageSize" 
+                [pageSizeOptions]="pageSizeOptions" 
+                (page)="onPageChange($event)" 
+                class="mt-4">
             </mat-paginator>
-
-        </mat-card-content>
-    </mat-card>
+        </div>
+    </div>
 </div>

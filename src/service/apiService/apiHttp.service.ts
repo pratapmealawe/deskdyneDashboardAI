@@ -1,10 +1,10 @@
 import { SessionTimeoutService } from '../session-timeout.service';
 import { LoaderstatusService } from '../loaderstatus.service';
-import { environment } from './../../environments/environment';
+import { environment } from '@environments/environment';
 import { HttpClient, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { RuntimeStorageService } from '../runtime-storage.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ToasterService } from '@service/toaster.service';
 import { LocalStorageService } from '../local-storage.service';
 import { Router } from '@angular/router';
 

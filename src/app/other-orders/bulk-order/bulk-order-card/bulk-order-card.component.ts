@@ -1,14 +1,14 @@
 import { Component, Input, ViewChild, OnInit, Output, EventEmitter, TemplateRef } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ToasterService } from 'src/service/toaster.service';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { DeliveryOrderService } from 'src/service/delivery-order.service';
-import { GoogleMapService } from 'src/service/google-map.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { DeliveryOrderService } from '@service/delivery-order.service';
+import { GoogleMapService } from '@service/google-map.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { LocalStorageService } from '@service/local-storage.service';
 
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
@@ -147,7 +147,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.statusChange.emit(true);
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while changing status', error);
     }
   }
 
@@ -167,7 +166,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.order.deliveryVendor = 'Porter';
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while creating delivery task', error);
     }
   }
 
@@ -183,7 +181,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.order.deliveryVendor = 'ShadowFax';
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while creating delivery task', error);
     }
   }
 
@@ -199,7 +196,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.order.deliveryVendor = 'Pidge';
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while creating delivery task', error);
     }
   }
 
@@ -208,7 +204,6 @@ export class BulkOrderCardComponent implements OnInit {
       await this.apiMainService.cancelPorterTask(this.order.deliveryTaskId);
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while cancelling Porter task', error);
     }
   }
 
@@ -217,7 +212,6 @@ export class BulkOrderCardComponent implements OnInit {
       await this.apiMainService.cancelShadowFaxDelivery(this.order.deliveryTaskId);
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while cancelling ShadowFax task', error);
     }
   }
 
@@ -226,7 +220,6 @@ export class BulkOrderCardComponent implements OnInit {
       await this.apiMainService.cancelPidge3PLOrder(this.order.deliveryTaskId);
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while cancelling Pidge order', error);
     }
   }
 
@@ -242,7 +235,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.order.deliveryVendor = deliveryOrder.deliveryVendor;
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while creating delivery task', error);
     }
   }
 
@@ -254,7 +246,6 @@ export class BulkOrderCardComponent implements OnInit {
         this.checkOrderCondition();
       }
     } catch (error) {
-      console.log('error while setManualDelivery order ', error);
       this.toasterService.error(112);
     }
   }
@@ -299,7 +290,6 @@ export class BulkOrderCardComponent implements OnInit {
           this.order.deliveryVendor
         );
       } catch (error) {
-        console.log('error while tracking delivery task', error);
       }
     }
     // Summary view, we still want live status
@@ -310,7 +300,6 @@ export class BulkOrderCardComponent implements OnInit {
           this.orderInput.deliveryVendor
         );
       } catch (error) {
-        console.log('error while tracking delivery task', error);
       }
     }
   }
@@ -335,7 +324,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.itemPriceEdit = false;
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while confirmEditItemPrice ', error);
     }
   }
 
@@ -346,7 +334,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.packagingPriceEdit = false;
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while confirmEditPackagingPrice ', error);
     }
   }
 
@@ -357,7 +344,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.addDeliveryCost = false;
       this.checkOrderCondition();
     } catch (error) {
-      console.log('error while confirmDeliveryCost ', error);
     }
   }
 
@@ -377,7 +363,6 @@ export class BulkOrderCardComponent implements OnInit {
         this.toasterService.error(113);
       }
     } catch (error) {
-      console.log('searchKitchen error', error);
       this.toasterService.error(112);
     }
   }
@@ -395,7 +380,6 @@ export class BulkOrderCardComponent implements OnInit {
       const quaotObj: any = {};
       this.transferDeliveryCharges = quaotObj.estimated_price;
     } catch (error) {
-      console.log('error while fetching dunzo quote ', error);
     }
   }
 
@@ -425,15 +409,7 @@ export class BulkOrderCardComponent implements OnInit {
       orderObj.deliveryByMealaweBoy = this.searchedVendor.deliveryByMealaweBoy;
       orderObj.skipWalletPayment = this.searchedVendor.skipWalletPayment;
 
-      // if (this.searchedVendor.distance) {
-      //   orderObj.distance = this.searchedVendor.distance;
-      // } else {
-      //   const kitchenObj: any = await this.googleMapService.getKitchenDistance(
-      //     this.searchedVendor,
-      //     this.order.customerLocation.geolocation
-      //   );
-      //   orderObj.distance = kitchenObj.distance;
-      // }
+
 
       orderObj.orderTransferred = true;
       orderObj.transferHistory = orderObj.transferHistory ? orderObj.transferHistory : [];
@@ -450,7 +426,6 @@ export class BulkOrderCardComponent implements OnInit {
 
       this.cancelTransfer();
     } catch (error) {
-      console.log('error while tranferring order ', error);
     }
   }
 
@@ -464,7 +439,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.nearKitchenFullList = kitchenList;
       this.openKitchen(kitchenList);
     } catch (error) {
-      console.log('searchNearKitchen error ', error);
     }
   }
 
@@ -481,7 +455,6 @@ export class BulkOrderCardComponent implements OnInit {
 
     this.kitchenmodal.result.then(
       (result: any) => {
-        console.log(`Closed with: ${result}`, kitchenList);
         if (result === 'add') {
           let selectedKitchen: any = {};
           this.nearVendorList.forEach((kitchen: any) => {
@@ -497,7 +470,6 @@ export class BulkOrderCardComponent implements OnInit {
         this.nearestVendor = '';
       },
       (reason: any) => {
-        console.log(`Modal Dismissed`);
         this.showLoadMoreKitchen = true;
         this.nearestVendor = '';
       }
@@ -510,29 +482,24 @@ export class BulkOrderCardComponent implements OnInit {
         if (index === kitchenList.length) {
           resolve(kitchenList);
         } else {
-          const response = await Promise.all([
-            this.googleMapService.getKitchenDistance(
-              kitchenList[index],
-              this.order.customerLocation.geolocation
-            ),
-            this.getDunzoDeliveryDistance(
-              kitchenList[index],
-              this.order.customerLocation.geolocation
-            )
-          ]);
+          const kitchenObj: any = { ...kitchenList[index] };
 
-          const kitchenObj: any = response[0];
-          if (response[1]) {
-            kitchenObj.dunzoDistance = response[1].distance;
-            kitchenObj.estimated_price = response[1].estimated_price;
+          const dunzoRes = await this.getDunzoDeliveryDistance(
+            kitchenList[index],
+            this.order.customerLocation.geolocation
+          );
+
+          if (dunzoRes) {
+            kitchenObj.dunzoDistance = dunzoRes.distance;
+            kitchenObj.estimated_price = dunzoRes.estimated_price;
           }
+
           kitchenList[index] = kitchenObj;
           index++;
           const res = await this.calculateDistance(kitchenList, index);
           resolve(res);
         }
       } catch (error) {
-        console.log('error while calculate Distance');
         reject(error);
       }
     });
@@ -550,7 +517,6 @@ export class BulkOrderCardComponent implements OnInit {
       const quaotObj: any = {};
       return quaotObj;
     } catch (error) {
-      console.log('error while fetching dunzo quote ', error);
     }
   }
 
@@ -576,7 +542,6 @@ export class BulkOrderCardComponent implements OnInit {
       this.order.orderstatus = 'completed';
       const response = await this.apiMainService.updateb2bFoodOrder(this.order);
       // await this.apiMainService.payServerFoodOrderAmtToKitchenDirect({ ids: [this.order.orderNo], server:'DDBulk' });
-      console.log('payment to kitchen successful', response);
       this.checkOrderCondition();
       this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', {
         reload: true,
@@ -584,7 +549,6 @@ export class BulkOrderCardComponent implements OnInit {
       });
       this.statusChange.emit(true);
     } catch (error) {
-      console.log('error while changing status', error);
     }
   }
 
@@ -625,32 +589,7 @@ export class BulkOrderCardComponent implements OnInit {
   }
 
   checkdistance() {
-    const selectedKitchen = this.nearVendorList.find((kitchen: any) => {
-      return kitchen._id === this.nearestVendor;
-    });
-
-    if (selectedKitchen && selectedKitchen.distance > 6) {
-      const modalRef = this.modalService.open(this.selectKitchenModal, {
-        ariaLabelledBy: 'modal-basic-title',
-        size: 'md',
-        windowClass: 'kitchenModel'
-      });
-      modalRef.result.then(
-        (result: any) => {
-          if (result === 'add') {
-            this.selectKitchen();
-          }
-          this.nearestVendor = '';
-        },
-        (reason: any) => {
-          console.log(`Modal Dismissed`);
-          this.showLoadMoreKitchen = true;
-          this.nearestVendor = '';
-        }
-      );
-    } else {
-      this.selectKitchen();
-    }
+    this.selectKitchen();
   }
 
   selectKitchen() {
@@ -689,7 +628,7 @@ export class BulkOrderCardComponent implements OnInit {
       ...this.vendorForm.value
     };
     try {
-      const result = await this.apiMainService.B2B_changeVendor(payload);
+      const result = await this.apiMainService.assignVendorForBulkMenu(payload);
       if (result) {
         this.statusChange.emit(true);
         this.vendorForm.reset();

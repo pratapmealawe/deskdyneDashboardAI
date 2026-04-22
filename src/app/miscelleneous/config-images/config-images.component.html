@@ -15,7 +15,7 @@
             <div class="header-right">
                 <div class="count-pill" *ngIf="!isLoading && !hasError && !editMode">
                     <mat-icon>photo_library</mat-icon>
-                    <span>{{ allImages.length }} Image{{ allImages.length !== 1 ? 's' : '' }}</span>
+                    <span>{{ allImages.length }} Image{{ allImages.length !== 1 ?'s' :'' }}</span>
                 </div>
                 <button mat-flat-button color="primary" *ngIf="!editMode" (click)="addImage()" class="add-btn">
                     <mat-icon>add_photo_alternate</mat-icon> Add Image
@@ -27,10 +27,10 @@
     <!-- EDIT / ADD FORM -->
     <div *ngIf="editMode" class="modern-card mb-4">
         <div class="card-header">
-            <div class="icon-box" [ngClass]="addnewImage ? 'success' : 'warning'">
-                <mat-icon>{{ addnewImage ? 'add_photo_alternate' : 'edit' }}</mat-icon>
+            <div class="icon-box" [ngClass]="addnewImage ?'success' :'warning'">
+                <mat-icon>{{ addnewImage ?'add_photo_alternate' :'edit' }}</mat-icon>
             </div>
-            <h3>{{ addnewImage ? 'Add New Image' : 'Update Image' }}</h3>
+            <h3>{{ addnewImage ?'Add New Image' :'Update Image' }}</h3>
         </div>
         <div class="card-body">
             <div class="row g-4">
@@ -41,7 +41,7 @@
                         <input matInput type="text" [(ngModel)]="imageObj.imageName"
                             placeholder="e.g. Main Banner Logo" />
                         <mat-icon matSuffix class="text-muted">label</mat-icon>
-                        <button *ngIf="imageObj.imageName" matSuffix mat-icon-button (click)="imageObj.imageName = ''">
+                        <button *ngIf="imageObj.imageName" matSuffix mat-icon-button (click)="imageObj.imageName =''">
                             <mat-icon>close</mat-icon>
                         </button>
                     </mat-form-field>
@@ -72,13 +72,13 @@
                     [disabled]="saving" class="action-btn-form">
                     <mat-spinner *ngIf="saving" diameter="18" class="spinner-inline"></mat-spinner>
                     <mat-icon *ngIf="!saving">check</mat-icon>
-                    {{ saving ? 'Saving...' : 'Submit' }}
+                    {{ saving ?'Saving...' :'Submit' }}
                 </button>
                 <button *ngIf="!addnewImage" mat-flat-button color="primary" (click)="updateConfigImage(imageObj)"
                     [disabled]="saving" class="action-btn-form">
                     <mat-spinner *ngIf="saving" diameter="18" class="spinner-inline"></mat-spinner>
                     <mat-icon *ngIf="!saving">save</mat-icon>
-                    {{ saving ? 'Saving...' : 'Update' }}
+                    {{ saving ?'Saving...' :'Update' }}
                 </button>
                 <button mat-stroked-button (click)="cancel()" class="cancel-btn-form">
                     Cancel
@@ -130,7 +130,7 @@
             class="state-container empty">
             <mat-icon class="state-icon">search_off</mat-icon>
             <h4>No Results</h4>
-            <p class="state-text">No images match "{{ searchTerm }}".</p>
+            <p class="state-text">No images match"{{ searchTerm }}".</p>
             <button mat-stroked-button color="primary" (click)="clearSearch()">
                 <mat-icon>clear</mat-icon> Clear Search
             </button>

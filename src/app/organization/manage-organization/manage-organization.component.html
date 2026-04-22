@@ -8,7 +8,7 @@
       </button>
       <div class="title-section">
         <h1 class="page-title">
-          {{ organization?.organization_name || 'Organization Details' }}
+          {{ organization?.organization_name ||'Organization Details' }}
         </h1>
         <p class="page-subtitle">
           Manage organization menus, employees & settings
@@ -32,19 +32,6 @@
   </div>
   <!-- Tab Content -->
   <div class="tab-content">
-    <!-- MAIN TABS WITHOUT SUB TABS -->
-    <ng-container *ngIf="!selectedMain?.subTabs?.length" [ngSwitch]="selectedMain?.path">
-      <app-org-details *ngSwitchCase="'orgDetails'" [orgObj]="organization"></app-org-details>
-      <app-organization-compliance *ngSwitchCase="'organizationCompliance'"
-        [orgObj]="organization"></app-organization-compliance>
-      <app-virtual-cafeteria *ngSwitchCase="'virtualCafeteriaOutlet'" [orgObj]="organization"></app-virtual-cafeteria>
-      <app-admin-daily-order *ngSwitchCase="'adminDailyOrder'" [orgObj]="organization"></app-admin-daily-order>
-      <app-consumption-order *ngSwitchCase="'consumptionOrder'" [orgObj]="organization"></app-consumption-order>
-      <app-outlet-employee *ngSwitchCase="'outletEmployee'" [orgObj]="organization"></app-outlet-employee>
-      <app-company-wallet *ngSwitchCase="'companyWallet'" [orgObj]="organization"> </app-company-wallet>
-      <app-qr-employee *ngSwitchCase="'qrEmployee'" [orgObj]="organization"></app-qr-employee>
-      <app-bulk *ngSwitchCase="'bulkMenuSection'" [selectedMainPath]="selectedMainPath" [selectedMainTabIndex]="selectedMainTabIndex"[orgObj]="organization"></app-bulk>
-      <app-bulk *ngSwitchCase="'employeebulkmenu'" [selectedMainPath]="selectedMainPath" [selectedMainTabIndex]="selectedMainTabIndex"[orgObj]="organization"></app-bulk>
-    </ng-container>
+    <router-outlet></router-outlet>
   </div>
 </div>

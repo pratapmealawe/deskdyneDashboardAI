@@ -1,0 +1,86 @@
+<div class="bulk-dashboard-header">
+    <div class="header-card">
+        <div class="header-icon-box">
+            <mat-icon>shopping_bag</mat-icon>
+        </div>
+        <div class="header-text-content">
+            <h1 class="page-title">Virtual Packages</h1>
+            <p class="page-subtitle">
+                Manage food packages and pricing for {{ selectedCafeteria?.cafeteria_name || 'the selected cafeteria' }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+        <button mat-flat-button color="primary" class="btn-primary-action" (click)="createManualPackage()">
+            <mat-icon>add_circle</mat-icon> Add Package
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="importMealawePackages()">
+            <mat-icon>cloud_download</mat-icon> Import from Mealawe
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="manageBanners()">
+            <mat-icon>collections</mat-icon> Banners
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="exportToExcel()" [disabled]="packages.length === 0">
+            <mat-icon>download</mat-icon> Export
+        </button>
+    </div>
+</div>
+
+<div class="modern-card">
+    <div class="card-header with-actions">
+        <div class="d-flex align-items-center gap-3">
+            <div class="icon-box info">
+                <mat-icon>shopping_bag</mat-icon>
+            </div>
+            <div class="header-titles">
+                <h3>Package Directory</h3>
+                <p class="text-muted small mb-0">View and manage all available food packages</p>
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row" *ngIf="packages && packages.length > 0; else noPackages">
+            <div class="col-6 col-md-4 col-lg-3 mb-3" *ngFor="let p of packages">
+                <div class="item-card package-item p-0 overflow-hidden">
+                    <div class="package-image-wrap position-relative">
+                        <img [src]="p.imageUrl ? (p.imageUrl.startsWith('http') ? p.imageUrl : (serverUrl + p.imageUrl)) :'assets/Imageunavailable.webp'" 
+                             onerror="this.src='assets/Imageunavailable.webp'"
+                             class="w-100" style="height: 140px; object-fit: cover;" alt="Package Image">
+                        <div class="price-badge">₹{{ p.packagePrice }}</div>
+                    </div>
+                    
+                    <div class="p-3">
+                        <div class="item-header d-flex justify-content-between align-items-start gap-2">
+                            <div class="package-name text-truncate flex-grow-1" [matTooltip]="p.packageName">
+                                {{ p.packageName }}
+                            </div>
+                            <mat-slide-toggle class="flex-shrink-0" [checked]="p.isActive" (change)="changePackageStatus($event.checked, p.masterMenuId)" color="primary"></mat-slide-toggle>
+                        </div>
+                        
+                        <div class="package-meta mt-1">
+                            <span class="section-badge">{{ p.packageCategory }}</span>
+                        </div>
+
+                        <div class="item-actions d-flex justify-content-end align-items-center mt-3 gap-2">
+                            <button class="custom-icon-btn edit-btn" matTooltip="Edit" (click)="editPackage(p)">
+                                <mat-icon>edit</mat-icon>
+                            </button>
+                            <button class="custom-icon-btn delete-btn" matTooltip="Delete" (click)="deletePackage(p)">
+                                <mat-icon>delete</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #noPackages>
+            <div class="empty-state">
+                <mat-icon>inventory_2</mat-icon>
+                <h3>No Packages Added</h3>
+                <p>Add food packages to this cafeteria to enable ordering.</p>
+            </div>
+        </ng-template>
+    </div>
+</div>

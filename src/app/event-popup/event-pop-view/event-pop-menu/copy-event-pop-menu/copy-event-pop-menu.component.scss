@@ -1,5 +1,5 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 
 .dialog-title {
   display: flex;
@@ -232,3 +232,4 @@
   border-top: 1px solid #e2e8f0;
   gap: 12px;
 }
+

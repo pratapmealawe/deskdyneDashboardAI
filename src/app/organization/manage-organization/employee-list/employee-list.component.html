@@ -1,0 +1,136 @@
+<div class="employee-list-container">
+  <!-- Cafeteria Selector -->
+  <!-- Page Header -->
+  <div class="bulk-dashboard-header">
+    <div class="header-card">
+      <div class="header-icon-box">
+        <mat-icon>people</mat-icon>
+      </div>
+      <div class="header-text-content">
+        <h1 class="page-title">Employee Listing</h1>
+        <p class="page-subtitle">
+          View and manage employee profiles for the selected cafeterias
+        </p>
+      </div>
+    </div>
+
+    <!-- Cafeteria Selection Area -->
+    <div class="mb-4">
+      <app-cafeteria-selector 
+        [cafeteriaList]="orgObj?.cafeteriaList"
+        [selectedCafeteriaIds]="selectedCafeteriaIds"
+        [config]="{ multiple: true, label: 'SELECT CAFETERIA' }"
+        (cafeteriaChanged)="selectCafeteria($event)">
+      </app-cafeteria-selector>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+      <button mat-flat-button color="primary" class="btn-primary-action" (click)="addIndividualEmployee()">
+        <mat-icon>person_add</mat-icon>
+        Add Employee
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="addMultipleEmployee()">
+        <mat-icon>playlist_add</mat-icon>
+        Bulk Add Employee
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="openImportDialog()">
+        <mat-icon>file_upload</mat-icon>
+        Import
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="exportEmployees()" [disabled]="getFilteredEmployees().length === 0">
+        <mat-icon>download</mat-icon>
+        Export
+      </button>
+    </div>
+  </div>
+
+
+  <!-- Employee List Section -->
+  <div class="modern-card animate-fadeIn">
+    <div class="card-header with-actions">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box info">
+          <mat-icon>groups</mat-icon>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <h3 class="mb-0">Employee Directory</h3>
+          <span class="count-badge-premium">{{ getFilteredEmployees().length }}</span>
+        </div>
+      </div>
+      <div class="search-wrapper">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" placeholder="Search employees by name, ID, or email..." [(ngModel)]="searchTerm">
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="employee-grid-premium" *ngIf="getFilteredEmployees().length > 0">
+        <div class="employee-item-card" *ngFor="let employee of getFilteredEmployees()">
+          <div class="employee-main">
+            <div class="employee-avatar-wrapper">
+              <div class="avatar-circle">
+                {{ getInitials(employee.employeeName) }}
+              </div>
+              <div class="status-indicator online"></div>
+            </div>
+            <div class="employee-details">
+              <h4 class="employee-name">{{ employee.employeeName }}</h4>
+              <div class="employee-meta-strip">
+                <span class="meta-pill">
+                  <mat-icon>badge</mat-icon> {{ employee.employeeId ||'N/A' }}
+                </span>
+                <span class="meta-pill">
+                  <mat-icon>phone</mat-icon> {{ employee.employeePhoneNo }}
+                </span>
+                <span class="meta-pill email-pill" [title]="employee.employeeEmail">
+                  <mat-icon>email</mat-icon> {{ employee.employeeEmail }}
+                </span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="employee-footer">
+            <div class="cafe-tag">
+              <mat-icon>storefront</mat-icon>
+              <span>{{ getEmployeeCafeteriaNames(employee) }}</span>
+            </div>
+            <div class="action-buttons">
+              <button mat-icon-button class="premium-icon-btn edit" (click)="editEmployee(employee)" matTooltip="Edit Employee">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button class="premium-icon-btn delete" (click)="deleteEmployee(employee)" matTooltip="Remove Employee">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty States -->
+      <div class="empty-state-modern py-5" *ngIf="selectedCafeteriaIds.length === 0">
+        <div class="empty-icon-wrap">
+          <mat-icon>touch_app</mat-icon>
+        </div>
+        <h4>No Cafeteria Selected</h4>
+        <p>Please select at least one cafeteria from the header above to view its employees</p>
+      </div>
+
+      <div class="empty-state-modern py-5" *ngIf="selectedCafeteriaIds.length > 0 && searchTerm && getFilteredEmployees().length === 0">
+        <div class="empty-icon-wrap">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h4>No match for "{{ searchTerm }}"</h4>
+        <p>Try refining your search terms or clearing filters</p>
+      </div>
+
+      <div class="empty-state-modern py-5" *ngIf="selectedCafeteriaIds.length > 0 && !searchTerm && getFilteredEmployees().length === 0">
+        <div class="empty-icon-wrap">
+          <mat-icon>person_off</mat-icon>
+        </div>
+        <h4>No employees found</h4>
+        <p>Start by adding individual employees or using the bulk import tool</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -22,7 +22,7 @@
             <div class="filter-left">
                 <mat-form-field appearance="outline" class="org-select">
                     <mat-label>Organization</mat-label>
-                    <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role === 'ORGADMIN' || isDisabled"
+                    <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role ==='ORGADMIN' || isDisabled"
                         (selectionChange)="submitFilter()">
                         <mat-option [value]="''">All Organizations</mat-option>
                         <mat-option *ngFor="let option of orglist" [value]="option._id">
@@ -58,7 +58,7 @@
                         </div>
                         <div class="user-info">
                             <div class="user-primary">
-                                <h3 class="user-name">{{ user?.userName || '-' }}</h3>
+                                <h3 class="user-name">{{ user?.userName ||'-' }}</h3>
                                 <span class="user-org-badge" *ngIf="user?.employeeInfo?.org_name">
                                     {{ user?.employeeInfo?.org_name }}
                                 </span>
@@ -66,11 +66,11 @@
                             <div class="user-details">
                                 <div class="detail-item">
                                     <mat-icon>phone</mat-icon>
-                                    <span>{{ user?.phoneNo || '-' }}</span>
+                                    <span>{{ user?.phoneNo ||'-' }}</span>
                                 </div>
                                 <div class="detail-item">
                                     <mat-icon>email</mat-icon>
-                                    <span class="text-truncate">{{ user?.email || '-' }}</span>
+                                    <span class="text-truncate">{{ user?.email ||'-' }}</span>
                                 </div>
                                 <div class="detail-item" *ngIf="user?.employeeInfo?.empId">
                                     <mat-icon>badge</mat-icon>

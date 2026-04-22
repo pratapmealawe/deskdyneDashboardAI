@@ -41,9 +41,9 @@
                         <small class="text-muted">{{ tx.createdAt | date:'MMM d, y, h:mm a' }}</small>
                     </div>
 
-                    <div [ngClass]="{'text-success': getTxnTypeColorClass(tx.transactionType) === 'green', 'text-danger': getTxnTypeColorClass(tx.transactionType) === 'red'}"
+                    <div [ngClass]="{'text-success': getTxnTypeColorClass(tx.transactionType) ==='green','text-danger': getTxnTypeColorClass(tx.transactionType) ==='red'}"
                         class="fw-bold fs-5">
-                        {{ (tx.transactionType === 'CREDIT' ? tx.cashbackPoints : tx.usedAmount) | currency:'INR' }}
+                        {{ (tx.transactionType ==='CREDIT' ? tx.cashbackPoints : tx.usedAmount) | currency:'INR' }}
                     </div>
                 </div>
 

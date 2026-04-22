@@ -8,7 +8,7 @@
                         <mat-icon>arrow_back</mat-icon>
                     </button>
                     <div>
-                        <h1 class="page-title">{{ showUpdate ? 'Edit Vendor Firm' : 'Add Vendor Firm' }}</h1>
+                        <h1 class="page-title">{{ showUpdate ?'Edit Vendor Firm' :'Add Vendor Firm' }}</h1>
                         <p class="page-subtitle">Configure vendor firm details, bank info, and linked outlets.</p>
                     </div>
                 </div>
@@ -43,9 +43,9 @@
                     </mat-menu>
 
                     <!-- Validity Badge -->
-                    <div class="status-pill" [ngClass]="isFormValid ? 'valid' : 'invalid'">
-                        <mat-icon>{{ isFormValid ? 'check_circle' : 'info' }}</mat-icon>
-                        <span>{{ isFormValid ? 'Ready to Save' : 'Incomplete' }}</span>
+                    <div class="status-pill" [ngClass]="isFormValid ?'valid' :'invalid'">
+                        <mat-icon>{{ isFormValid ?'check_circle' :'info' }}</mat-icon>
+                        <span>{{ isFormValid ?'Ready to Save' :'Incomplete' }}</span>
                     </div>
                 </div>
             </div>
@@ -137,7 +137,7 @@
                                     <mat-label>Bank Name</mat-label>
                                     <input matInput formControlName="bank_name" placeholder="e.g. HDFC Bank" />
                                     <mat-error
-                                        *ngIf="hasSubError(['bank_details', 'bank_name'],'required')">Required</mat-error>
+                                        *ngIf="hasSubError(['bank_details','bank_name'],'required')">Required</mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-12 col-md-6">
@@ -146,7 +146,7 @@
                                     <input matInput formControlName="accountName"
                                         placeholder="e.g. ABC Foods Pvt Ltd" />
                                     <mat-error
-                                        *ngIf="hasSubError(['bank_details', 'accountName'],'required')">Required</mat-error>
+                                        *ngIf="hasSubError(['bank_details','accountName'],'required')">Required</mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-12 col-md-6">
@@ -155,7 +155,7 @@
                                     <input matInput formControlName="accountNo" appOnlyNumber
                                         placeholder="e.g. 1234567890" />
                                     <mat-error
-                                        *ngIf="hasSubError(['bank_details', 'accountNo'],'required')">Required</mat-error>
+                                        *ngIf="hasSubError(['bank_details','accountNo'],'required')">Required</mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-12 col-md-6">
@@ -163,7 +163,7 @@
                                     <mat-label>IFSC Code</mat-label>
                                     <input matInput formControlName="ifsc" placeholder="e.g. HDFC0001234" />
                                     <mat-error
-                                        *ngIf="hasSubError(['bank_details', 'ifsc'],'required')">Required</mat-error>
+                                        *ngIf="hasSubError(['bank_details','ifsc'],'required')">Required</mat-error>
                                 </mat-form-field>
                             </div>
                             <div class="col-12">
@@ -212,7 +212,7 @@
                                             <span class="d-flex align-items-center gap-1">
                                                 <mat-icon
                                                     style="font-size: 14px; height: 14px; width: 14px;">place</mat-icon>
-                                                {{ addr.location || 'No Location' }}
+                                                {{ addr.location ||'No Location' }}
                                             </span>
                                             <span class="d-flex align-items-center gap-1" *ngIf="addr.landmark">
                                                 <mat-icon
@@ -267,7 +267,7 @@
                                             <span class="d-flex align-items-center gap-1">
                                                 <mat-icon
                                                     style="font-size: 14px; height: 14px; width: 14px;">restaurant</mat-icon>
-                                                {{ outlet.cafeteriaDetails?.cafeteria_name || '-' }}
+                                                {{ outlet.cafeteriaDetails?.cafeteria_name ||'-' }}
                                             </span>
                                         </div>
                                     </div>
@@ -307,19 +307,18 @@
                                     <div class="item-main">
                                         <div class="d-flex align-items-center mb-1 gap-2">
                                             <h4 class="m-0">{{ popup?.popupName }}</h4>
-                                            <span class="badge-type" [class.open]="popup.popupType">{{ popup.popupType ?
-                                                'Opened' : 'Closed' }}</span>
+                                            <span class="badge-type" [class.open]="popup.popupType">{{ popup.popupType ?'Opened' :'Closed' }}</span>
                                         </div>
                                         <div class="d-flex flex-wrap gap-3 text-muted small">
                                             <span class="d-flex align-items-center gap-1">
                                                 <mat-icon
                                                     style="font-size: 14px; height: 14px; width: 14px;">business</mat-icon>
-                                                {{ popup?.organizationDetails?.organization_name || '-' }}
+                                                {{ popup?.organizationDetails?.organization_name ||'-' }}
                                             </span>
                                             <span class="d-flex align-items-center gap-1">
                                                 <mat-icon
                                                     style="font-size: 14px; height: 14px; width: 14px;">restaurant</mat-icon>
-                                                {{ popup?.cafeteriaDetails?.cafeteria_name || '-' }}
+                                                {{ popup?.cafeteriaDetails?.cafeteria_name ||'-' }}
                                             </span>
                                         </div>
                                     </div>
@@ -422,11 +421,11 @@
                             </div>
                             <div class="col-md-3 mb-1 mb-md-0">
                                 <div class="labelText">Type</div>
-                                <div class="labelData text-truncate">{{ outlet.outletType || '-' }}</div>
+                                <div class="labelData text-truncate">{{ outlet.outletType ||'-' }}</div>
                             </div>
                             <div class="col-md-4">
                                 <div class="labelText">Description</div>
-                                <div class="labelData text-truncate">{{ outlet.outletDescription || '-' }}</div>
+                                <div class="labelData text-truncate">{{ outlet.outletDescription ||'-' }}</div>
                             </div>
                         </div>
                     </div>
@@ -557,7 +556,7 @@
     </div>
     <div class="dialog-footer p-3 border-top d-flex justify-content-end">
         <button mat-flat-button color="primary" [disabled]="!pocForm.valid" (click)="submitPocDetails()">
-            {{ pocBtn || 'Save' }}
+            {{ pocBtn ||'Save' }}
         </button>
     </div>
 </ng-template>
@@ -610,11 +609,11 @@
                             </div>
                             <div class="col-md-3 mb-1 mb-md-0">
                                 <div class="labelText">Status</div>
-                                <div class="labelData">{{ event.eventPopupOpened ? 'Opened' : 'Closed' }}</div>
+                                <div class="labelData">{{ event.eventPopupOpened ?'Opened' :'Closed' }}</div>
                             </div>
                             <div class="col-md-5">
                                 <div class="labelText">Description</div>
-                                <div class="labelData text-truncate">{{ event.eventPopupDescription || '-' }}</div>
+                                <div class="labelData text-truncate">{{ event.eventPopupDescription ||'-' }}</div>
                             </div>
                         </div>
                     </div>

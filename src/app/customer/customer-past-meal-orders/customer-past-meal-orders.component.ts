@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-customer-past-meal-orders',
@@ -27,7 +27,6 @@ export class CustomerPastMealOrdersComponent {
                 this.nextOn = false;
             }      
         }catch(error){
-          console.log('error while searching orders ',error);
         }
     }
 

@@ -38,7 +38,7 @@
         <div class="row">
             <div class="col-6 col-md-5 col-lg-2">
                 <div class="labelText">Order Date</div>
-                <div class="labelData">{{order.orderDate | date: 'MMM d, y'}}</div>
+                <div class="labelData">{{order.orderDate | date:'MMM d, y'}}</div>
             </div>
             <div class="col-6 col-md-5 col-lg-3">
                 <div class="labelText">Total Amount</div>
@@ -66,8 +66,8 @@
         <i class="bi bi-pencil-square" *ngIf="!editMode && access?.editPenIcon"></i>
         <i class="bi bi bi-x" *ngIf="editMode && access?.editPenIcon"></i>
     </div> -->
-    <div class="header3 bold">Order No. {{order.orderNo}} Information</div>
-    <div class="header3 order-sub-header" (click)="showOrderDetails = ! showOrderDetails">Order Details
+    <div class="bold">Order No. {{order.orderNo}} Information</div>
+    <div class="order-sub-header" (click)="showOrderDetails = ! showOrderDetails">Order Details
         <span class="right">
             <i class="bi bi-chevron-down" *ngIf="!showOrderDetails"></i>
             <i class="bi bi-chevron-up" *ngIf="showOrderDetails"></i>
@@ -85,11 +85,11 @@
         </div>
         <div class="col-6 col-md-4 col-lg-2">
             <div class="labelText">Order CreatedBy</div>
-            <div class="labelData" [ngClass]="{orange:order.orderCreatedBy === 'DDUser'}">{{order.orderCreatedBy}}</div>
+            <div class="labelData" [ngClass]="{orange:order.orderCreatedBy ==='DDUser'}">{{order.orderCreatedBy}}</div>
         </div>
         <div class="col-6 col-md-4 col-lg-2">
             <div class="labelText">Order Date</div>
-            <div class="labelData">{{order.orderDate | date: 'MMM d, y'}}</div>
+            <div class="labelData">{{order.orderDate | date:'MMM d, y'}}</div>
         </div>
         <div class="col-6 col-md-4 col-lg-2">
             <div class="labelText">Receipt No</div>
@@ -104,7 +104,7 @@
             <span class="labelData">
                 <div *ngFor="let item of order.itemList; index as i">
                     {{item.itemName}} - QTY :
-                    <span *ngIf="item.itemServingType !== 'perQuantity' ">
+                    <span *ngIf="item.itemServingType !=='perQuantity'">
                         {{item.count}}
                     </span>
                     - Price: &#8377; {{item.price*item.count}}
@@ -117,7 +117,7 @@
         </div>
     </div>
 
-    <div class="header3 order-sub-header" (click)="showOrgDetails = ! showOrgDetails">Kitchen Details
+    <div class="order-sub-header" (click)="showOrgDetails = ! showOrgDetails">Kitchen Details
         <span class="right">
             <i class="bi bi-chevron-down" *ngIf="!showOrgDetails"></i>
             <i class="bi bi-chevron-up" *ngIf="showOrgDetails"></i>
@@ -142,7 +142,7 @@
         </div>
     </div>
 
-    <div class="header3 order-sub-header" (click)="showCustomerDetails = ! showCustomerDetails">Customer Details
+    <div class="order-sub-header" (click)="showCustomerDetails = ! showCustomerDetails">Customer Details
         <span class="right">
             <i class="bi bi-chevron-down" *ngIf="!showCustomerDetails"></i>
             <i class="bi bi-chevron-up" *ngIf="showCustomerDetails"></i>
@@ -159,7 +159,7 @@
         </div>
     </div>
 
-    <div class="header3 order-sub-header" (click)="showPaymentDetails = ! showPaymentDetails">Payment Details
+    <div class="order-sub-header" (click)="showPaymentDetails = ! showPaymentDetails">Payment Details
         <span class="right">
             <i class="bi bi-chevron-down" *ngIf="!showPaymentDetails"></i>
             <i class="bi bi-chevron-up" *ngIf="showPaymentDetails"></i>
@@ -172,27 +172,27 @@
                     <div class="receiptText">
                         <div size="12">Receipt:</div>
                     </div>
-                    <div class="header5 receipt3 receipt-parent">
+                    <div class="receipt3 receipt-parent">
                         <div class="left-div">Item Amount</div>
                         <div class="right-div dark">&#8377;
                             <span>{{order.itemAmount}}</span>
                         </div>
                     </div>
-                    <!-- <div class="header5 receipt-parent">
+                    <!-- <div class="receipt-parent">
                         <div class="left-div">Taxes</div>
                         <div class="right-div">&#8377; {{order.taxes}}</div>
                     </div>                    -->
-                    <div class="header5 discount receipt-parent">
+                    <div class="discount receipt-parent">
                         <div class="left-div">Money Wallet Points Used</div>
                         <div class="right-div">(-)&#8377; {{order.moneyWalletPointsUsed}}</div>
                     </div>
                     <ng-container *ngIf="order.subsidyAmount">
-                    <div class="header5 discount receipt-parent">
+                    <div class="discount receipt-parent">
                         <div class="left-div">Subsidy Total</div>
                         <div class="right-div">(-)&#8377; {{order.subsidyAmount}}</div>
                     </div>
                 </ng-container>
-                    <div class="header5 discount receipt-parent totalAmtdiv">
+                    <div class="discount receipt-parent totalAmtdiv">
                         <div class="left-div bold">Order Total Amount</div>
                         <div class="right-div bold">&#8377; {{order.amount}}</div>
                     </div>

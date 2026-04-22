@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
-import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { PermissionsService } from '@service/permission.service';
+import { SearchFilterService } from '@service/search-filter.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
 import { PageEvent } from '@angular/material/paginator';
@@ -32,7 +32,7 @@ export class VendorPayoutComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private localStorageService: LocalStorageService,
     private confirmationModalService: ConfirmationModalService,
     private searchService: SearchFilterService,
@@ -68,7 +68,6 @@ export class VendorPayoutComponent implements OnInit {
       this.pageIndex = 0; // Reset page on refresh
       this.updateCard();
     } catch (error) {
-      console.log('getAllVendorWallets', error);
     }
   }
 
@@ -124,3 +123,4 @@ export class VendorPayoutComponent implements OnInit {
     });
   }
 }
+

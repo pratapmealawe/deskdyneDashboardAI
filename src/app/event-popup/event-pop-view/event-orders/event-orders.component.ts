@@ -5,7 +5,7 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as Highcharts from 'highcharts';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
