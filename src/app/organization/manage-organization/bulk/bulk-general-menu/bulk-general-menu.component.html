@@ -1,37 +1,56 @@
-<div class="bulk-menu-container animate-fade-in">
-    <div class="modern-card board-card">
-        <!-- HEADER: Brand Elevation -->
-        <div class="card-header with-actions bg-white">
-            <div class="title-wrap">
-                <div class="icon-box primary">
-                    <mat-icon>restaurant_menu</mat-icon>
-                </div>
-                <div class="text">
-                    <h3>Bulk Menu Management</h3>
-                    <p>Manage cafeteria items and tiered volume-based pricing</p>
-                </div>
-            </div>
-            
-            <div class="header-actions">
-                <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="openAddItemDialog()">
-                    <mat-icon>add_circle</mat-icon>
-                    <span>Add Menu Items</span>
-                </button>
-            </div>
+<div class="modern-card board-card animate-fade-in">
+    <!-- HEADER: Brand Elevation -->
+    <div class="card-header with-actions bg-white">
+        <div class="header-actions d-flex justify-content-end gap-2">
+            <button mat-flat-button color="primary" class="btn-primary-action" (click)="addItem()">
+                <mat-icon>add</mat-icon>
+                Add Menu Item
+            </button>
+            <button mat-flat-button [color]="isCategoryActiveFlag ? 'warn' : 'primary'" class="btn-primary-action"
+                [class.warn]="isCategoryActiveFlag" (click)="openCategoryModal()" [disabled]="!isMenuAvailableFlag">
+                <mat-icon>{{ isCategoryActiveFlag ? 'block' : 'check_circle' }}</mat-icon>
+                {{ isCategoryActiveFlag ? 'De-Activate Menu' : 'Activate Menu' }}
+            </button>
+            <button mat-flat-button color="primary" class="btn-primary-action"
+                (click)="isVendorAssignedFlag ? changeVendor() : assignVendor()" [disabled]="!isMenuAvailableFlag">
+                <mat-icon>{{ isVendorAssignedFlag ? 'sync_alt' : 'person_add' }}</mat-icon>
+                {{ isVendorAssignedFlag ? 'Change Vendor' : 'Assign Vendor' }}
+            </button>
+            <button mat-stroked-button class="btn-secondary-action" (click)="copyMenu()">
+                <mat-icon>content_copy</mat-icon>
+                Copy Menu
+            </button>
+            <button mat-stroked-button class="btn-secondary-action" (click)="exportMenu()"
+                [disabled]="!isMenuAvailableFlag">
+                <mat-icon>cloud_download</mat-icon>
+                Export
+            </button>
+            <button mat-stroked-button class="btn-secondary-action" (click)="importMenu()">
+                <mat-icon>cloud_upload</mat-icon>
+                Import
+            </button>
+            <button mat-stroked-button class="btn-secondary-action" (click)="openAddItemDialog()">
+                <mat-icon>add_circle</mat-icon>
+                Import Master
+            </button>
         </div>
+    </div>
 
-        <div class="card-body p-4 bg-light-soft">
+    <div class="card-body p-4 bg-light-soft">
+        <div class="bulk-menu-container animate-fade-in">
             <!-- SECTION 1: Delivery Slabs Configuration -->
             <div class="config-strip-wrapper mb-4">
                 <div class="section-badge-modern mb-3">
                     <mat-icon>analytics</mat-icon>
                     <span>Delivery Pricing Configuration</span>
                 </div>
-                
+
                 <div class="premium-slab-strip">
                     <!-- MOQ Indicator -->
                     <div class="slab-card highlight">
-                        <div class="slab-icon"><mat-icon>shopping_cart</mat-icon></div>
+                        <div class="slab-icon">
+                            <mat-icon>shopping_cart</mat-icon>
+                        </div>
                         <div class="slab-info">
                             <span class="label">Min. Order (MOQ)</span>
                             <span class="value">{{bulkMenuFetched.moq ||'0'}} <small>Units</small></span>
@@ -43,8 +62,10 @@
                         <div class="slab-info">
                             <span class="label">Slab {{s}} Range</span>
                             <span class="range" *ngIf="s === 1">0 - {{bulkMenuFetched.slabLimit1}}</span>
-                            <span class="range" *ngIf="s === 2">{{(bulkMenuFetched.slabLimit1 || 0) + 1}} - {{bulkMenuFetched.slabLimit2}}</span>
-                            <span class="range" *ngIf="s === 3">{{(bulkMenuFetched.slabLimit2 || 0) + 1}} - {{bulkMenuFetched.slabLimit3}}</span>
+                            <span class="range" *ngIf="s === 2">{{(bulkMenuFetched.slabLimit1 || 0) + 1}} -
+                                {{bulkMenuFetched.slabLimit2}}</span>
+                            <span class="range" *ngIf="s === 3">{{(bulkMenuFetched.slabLimit2 || 0) + 1}} -
+                                {{bulkMenuFetched.slabLimit3}}</span>
                             <span class="range" *ngIf="s === 4">> {{bulkMenuFetched.slabLimit3}}</span>
                         </div>
                         <div class="slab-price">
@@ -54,10 +75,13 @@
                     </div>
 
                     <!-- Config Action -->
-                    <button mat-mini-fab color="primary" class="btn-slab-config shadow-sm" (click)="openSlabDialog()" matTooltip="Edit Slabs">
+                    <button mat-mini-fab color="primary" class="btn-slab-config shadow-sm" (click)="openSlabDialog()"
+                        matTooltip="Edit Slabs">
                         <mat-icon>tune</mat-icon>
                     </button>
                 </div>
+                <!-- SLEEK SCROLL INDICATOR -->
+                <div class="scroll-indicator-divider"></div>
             </div>
 
             <mat-divider class="mb-4 opacity-50"></mat-divider>
@@ -68,7 +92,7 @@
                     <mat-icon>search</mat-icon>
                     <input type="text" placeholder="Search menu items by name..." [(ngModel)]="menuSearchText">
                 </div>
-                
+
                 <div class="listing-summary" *ngIf="bulkMenuList.length > 0">
                     <span class="badge-pill">
                         <strong>{{ (bulkMenuList | filter: menuSearchText:'itemName').length }}</strong> Items
@@ -78,12 +102,12 @@
 
             <!-- SECTION 3: Detailed Menu Grid -->
             <div class="premium-menu-grid" *ngIf="bulkMenuList.length > 0">
-                <div class="item-card-modern" *ngFor="let item of (bulkMenuList | filter: menuSearchText:'itemName'); let i = index">
+                <div class="item-card-modern"
+                    *ngFor="let item of (bulkMenuList | filter: menuSearchText:'itemName'); let i = index">
                     <div class="card-image-region">
-                        <img [src]="imageUrl + item.imageUrl" 
-                             onerror="this.src='assets/Imageunavailable.webp'"
-                             alt="Item Photo">
-                        
+                        <img [src]="imageUrl + item.imageUrl" onerror="this.src='assets/Imageunavailable.webp'"
+                            alt="Item Photo">
+
                         <div class="top-overlay">
                             <span class="badge-type" [ngClass]="item.itemType?.toLowerCase()">
                                 <mat-icon>{{ item.itemType ==='Veg' ?'eco' :'restaurant' }}</mat-icon>
@@ -114,10 +138,12 @@
                     </div>
 
                     <div class="card-footer-actions">
-                        <button mat-icon-button class="tool-btn edit" (click)="editFoodItem(item, i)" matTooltip="Edit Item">
+                        <button mat-icon-button class="tool-btn edit" (click)="editFoodItem(item, i)"
+                            matTooltip="Edit Item">
                             <mat-icon>edit_note</mat-icon>
                         </button>
-                        <button mat-icon-button class="tool-btn delete" (click)="onDeleteItem(i, item)" matTooltip="Remove">
+                        <button mat-icon-button class="tool-btn delete" (click)="onDeleteItem(i, item)"
+                            matTooltip="Remove">
                             <mat-icon>delete_sweep</mat-icon>
                         </button>
                     </div>
@@ -132,8 +158,9 @@
                     </div>
                 </div>
                 <h3>No Menu Items Found</h3>
-                <p>This cafeteria doesn't have any bulk menu items configured yet. Start by adding items from the global menu.</p>
-                <button mat-flat-button color="primary" class="btn-primary-action mt-3" (click)="openAddItemDialog()">
+                <p>This cafeteria doesn't have any bulk menu items configured yet. Start by adding items from the global
+                    menu.</p>
+                <button mat-flat-button color="primary" class="btn-action mt-3" (click)="openAddItemDialog()">
                     <mat-icon>add</mat-icon> Add Menu Items
                 </button>
             </div>

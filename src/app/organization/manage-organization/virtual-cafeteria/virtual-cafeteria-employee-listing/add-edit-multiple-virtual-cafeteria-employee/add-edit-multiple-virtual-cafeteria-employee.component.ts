@@ -15,7 +15,7 @@ import { MaterialModule } from '../../../../../material.module';
 })
 export class AddEditMultipleVirtualCafeteriaEmployeeComponent implements OnInit {
   employeeList: any[] = [];
-  isLoading = false;
+  isSubmitting: boolean = false;
 
   constructor(
     private api: ApiMainService,
@@ -26,11 +26,11 @@ export class AddEditMultipleVirtualCafeteriaEmployeeComponent implements OnInit 
 
   ngOnInit(): void {
     // Start with 2 empty rows
-    this.addMoreEmployee();
-    this.addMoreEmployee();
+    this.addRow();
+    this.addRow();
   }
 
-  addMoreEmployee() {
+  addRow() {
     this.employeeList.push({
       employeeName: '',
       employeeId: '',
@@ -43,51 +43,39 @@ export class AddEditMultipleVirtualCafeteriaEmployeeComponent implements OnInit 
     });
   }
 
-  removeEmployee(index: number) {
-    this.employeeList.splice(index, 1);
-    if (this.employeeList.length === 0) {
-      this.addMoreEmployee();
+  removeRow(index: number) {
+    if (this.employeeList.length > 1) {
+      this.employeeList.splice(index, 1);
     }
   }
 
-  async onSubmit() {
-    const validEmployees = this.employeeList.filter(emp =>
-      emp.employeeName.trim() || emp.employeeId.trim() || emp.employeePhoneNo.trim() || emp.employeeEmail.trim()
-    );
+  isRowValid(emp: any): boolean {
+    return !!(emp.employeeName && emp.employeePhoneNo && emp.employeeEmail);
+  }
+
+  async submitBulk() {
+    const validEmployees = this.employeeList.filter(emp => this.isRowValid(emp));
 
     if (validEmployees.length === 0) {
-      this.toaster.warning('Please enter at least one employee record.');
+      this.toaster.warning('Please enter details for at least one employee');
       return;
     }
 
-    const incomplete = validEmployees.some(emp =>
-      !emp.employeeName.trim() || !emp.employeeId.trim() || !emp.employeePhoneNo.trim() || !emp.employeeEmail.trim()
-    );
-
-    if (incomplete) {
-      this.toaster.error('Please complete all fields for the added records.');
-      return;
-    }
-
-    this.isLoading = true;
+    this.isSubmitting = true;
     try {
-      await this.api.addVcEmployeeList(validEmployees);
-      this.toaster.success('Bulk employee addition successful.');
+      await this.api.addVirtualCafeteriaEmployeeList(validEmployees);
+      this.toaster.success(`Successfully registered ${validEmployees.length} employees`);
       this.dialogRef.close(true);
     } catch (error: any) {
-      console.error('Bulk save error:', error);
-      const errorArr = error?.error?.msg?.skippedEmployees;
-      if (Array.isArray(errorArr) && errorArr.length > 0) {
-        this.toaster.error(`Failed to save ${errorArr.length} records. Possible duplicates found.`);
-      } else {
-        this.toaster.error('Failed to save employee list.');
-      }
+      console.error('Error saving employees:', error);
+      const errorMsg = error?.error?.msg || 'Failed to save employees';
+      this.toaster.error(errorMsg);
     } finally {
-      this.isLoading = false;
+      this.isSubmitting = false;
     }
   }
 
-  closeModal() {
+  close() {
     this.dialogRef.close();
   }
 }

@@ -1,28 +1,29 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { BulkGeneralMenuComponent } from "./bulk-general-menu/bulk-general-menu.component";
-import { BulkSelectCafeteriaComponent } from "./bulk-select-cafeteria/bulk-select-cafeteria.component";
 import { MaterialModule } from "src/app/material.module";
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CafeteriaSelectorComponent } from "../cafeteria-selector/cafeteria-selector.component";
 
 @Component({
   selector: 'app-bulk',
   standalone: true,
-  imports: [CommonModule, BulkGeneralMenuComponent, BulkSelectCafeteriaComponent, MaterialModule],
+  imports: [CommonModule, BulkGeneralMenuComponent, MaterialModule, FormsModule, ReactiveFormsModule, CafeteriaSelectorComponent],
   templateUrl: './bulk.component.html',
   styleUrls: ['./bulk.component.scss']
 })
-export class BulkComponent {
-  @Input() orgObj: any;
-  @Input() selectedMainPath: any;
-  @Input() selectedMainTabIndex: any;
+export class BulkComponent implements OnInit, OnDestroy {
+  @ViewChild(BulkGeneralMenuComponent) bulkGeneralMenuComponent!: BulkGeneralMenuComponent;
+  
+  orgObj: any;
+  private orgSub: Subscription | undefined;
+  selectedCafeteria: any;
+
   selectedSubTabIndex = 0;
   selectedChildTabIndex = 0;
   selectedMainInternalTabIndex = 0;
-  isCategoryActive = true;
-  selectedCafeteria: any;
-  isVendorAssigned: boolean = false;
-  showBulkMenuHeader = false;
-  isMenuAvailable = false;
 
   orgViewList = [
     {
@@ -109,27 +110,32 @@ export class BulkComponent {
     return this.selectedSub?.childTabs?.[this.selectedChildTabIndex];
   }
 
-  // get selectedBulkMenuPath() {
-    // // const mainView = this.orgViewList.find(v => v.path === mainPath);
-    // // const sub = mainView?.subTabs?.[this.selectedSubTabIndex];
-    // let child = sub?.childTabs?.[this.selectedChildTabIndex];
+  constructor(
+    private orgSharedService: OrganizationSharedService
+  ) { }
 
-    // if (child?.path === 'predefinedSnackBoxMenu') {
-    //   child = { ...child, path: 'predefinedFoodBoxMenu' };
-    // } else if (child?.path === 'customizedSnackBoxMenu') {
-    //   child = { ...child, path: 'customizedFoodBoxMenu' };
-    // }
+  ngOnInit(): void {
+    if (this.orgObj) {
+      this.initializeComponent();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.initializeComponent();
+        }
+      });
+    }
+  }
 
-    // const childPath = child?.path ?? sub?.path;
+  initializeComponent() {
+    this.initializeCafeteria();
+  }
 
-    // return {
-    //   main: mainPath,
-    //   sub: sub?.name?.toLowerCase(),
-    //   subPath: sub?.path,
-    //   child: child?.name,
-    //   childPath
-    // };
-  // }
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
+    }
+  }
 
   private initializeCafeteria(): void {
     if (this.orgObj?.cafeteriaList?.length > 0) {
@@ -137,18 +143,13 @@ export class BulkComponent {
     }
   }
 
-
   onCafeteriaChanged(event: any): void {
-    this.selectedCafeteria = event.selectedCafeteria;
+    this.selectedCafeteria = event.value;
   }
 
-  onCategoryActiveChanged(event: boolean): void {
-    this.isCategoryActive = event;
-  }
   onSubTabChange(index: number): void {
     this.selectedSubTabIndex = index;
     this.selectedChildTabIndex = 0;
-
   }
 
   onMainInternalTabChange(index: number): void {
@@ -160,52 +161,4 @@ export class BulkComponent {
   onChildTabChange(index: number): void {
     this.selectedChildTabIndex = index;
   }
-
-
-  get isEmployeeMode(): boolean {
-    return this.selectedMain?.path === 'employeebulkmenu';
-  }
-
-  getCurrentMenuType(): 'cake' | 'sweet' | 'lux' | 'pantry' | 'bulkMeals' | 'individualMeals' | 'bulkSnacks' | 'individualSnacks' | 'predefinedFoodbox' | 'customizedFoodbox' | '' {
-    const path = this.selectedChild?.path || this.selectedSub?.path;
-    if (!path) return '';
-
-    // Map path to menuType
-    const mapping: Record<string, any> = {
-      cakeMenu: 'cake',
-      sweetMenu: 'sweet',
-      luxMenu: 'lux',
-      pantryMenu: 'pantry',
-      bulkMealsMenu: 'bulkMeals',
-      individualMealsMenu: 'individualMeals',
-      bulkSnacksMenu: 'bulkSnacks',
-      individualSnacksMenu: 'individualSnacks',
-      predefinedSnackBoxMenu: 'predefinedFoodbox',
-      customizedSnackBoxMenu: 'customizedFoodbox',
-      // Employee specific paths
-      employeecakeMenu: 'cake',
-      employeesweetMenu: 'sweet',
-      employeeluxMenu: 'lux',
-      employeepantryMenu: 'pantry',
-      employeebulkMealsMenu: 'bulkMeals',
-      employeeindividualMealsMenu: 'individualMeals',
-      employeebulkSnacksMenu: 'bulkSnacks',
-      employeeindividualSnacksMenu: 'individualSnacks',
-      employeepredefinedSnackBoxMenu: 'predefinedFoodbox',
-      employeecustomizedSnackBoxMenu: 'customizedFoodbox'
-    };
-
-    return mapping[path] || '';
-  }
-
-  checkVendorAssigned(event: any): void {
-    this.isVendorAssigned = event;
-  }
-
-  onMenuAvailabilityChange(hasMenu: boolean): void {
-    setTimeout(() => {
-      this.isMenuAvailable = hasMenu;
-    });
-  }
-
 }

@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { OrganizationSharedService } from '../../organization-shared.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../material.module';
@@ -15,18 +16,28 @@ import { DirectivesModule } from 'src/shared/directives/common-directives.direct
   styleUrls: ['./organization-details.component.scss'],
 })
 export class OrganizationDetailsComponent implements OnInit {
-  @Input() orgObj: any;
+  orgObj: any;
   outltList: any[] = []
   filteredOutletList: any[] = []
   vendorList: any[] = []
   constructor(
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private apiMainService: ApiMainService
+    private apiMainService: ApiMainService,
+    private orgSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
-    this.getOutlets()
+    if (this.orgObj) {
+      this.getOutlets();
+    } else {
+      this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.getOutlets();
+        }
+      });
+    }
   }
 
   async getOutlets() {

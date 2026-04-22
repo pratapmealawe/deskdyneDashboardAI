@@ -1,0 +1,77 @@
+<div class="premium-modal bulk-add-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>group_add</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Bulk Add QR Employees</h3>
+                <p>Adding to <strong>{{cafeteria?.cafeteria_name}}</strong></p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="close()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="dialog-content">
+        <div class="table-responsive premium-table-wrapper">
+            <table class="table premium-form-table">
+                <thead>
+                    <tr>
+                        <th style="width: 150px;">Employee ID</th>
+                        <th>Employee Name</th>
+                        <th style="width: 180px;">Phone Number</th>
+                        <th>Email Address</th>
+                        <th class="text-end" style="width: 80px;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let emp of employeeList; let i = index" class="animate-fadeIn">
+                        <td>
+                            <mat-form-field appearance="outline" class="compact-field">
+                                <input matInput [(ngModel)]="emp.employeeId" placeholder="ID">
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline" class="compact-field">
+                                <input matInput [(ngModel)]="emp.employeeName" placeholder="Full Name">
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline" class="compact-field">
+                                <input matInput [(ngModel)]="emp.employeePhoneNo" placeholder="10 digits" maxlength="10">
+                            </mat-form-field>
+                        </td>
+                        <td>
+                            <mat-form-field appearance="outline" class="compact-field">
+                                <input matInput [(ngModel)]="emp.employeeEmail" placeholder="email@example.com">
+                            </mat-form-field>
+                        </td>
+                        <td class="text-end">
+                            <button mat-icon-button color="warn" (click)="removeRow(i)" [disabled]="employeeList.length === 1">
+                                <mat-icon>delete_outline</mat-icon>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="p-3 d-flex justify-content-start">
+            <button mat-stroked-button color="primary" class="btn-add-row" (click)="addRow()">
+                <mat-icon>add</mat-icon> Add Another Row
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="close()">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-5" 
+                [disabled]="isSubmitting" (click)="submitBulk()">
+            <mat-icon *ngIf="!isSubmitting">check_circle</mat-icon>
+            <mat-spinner diameter="20" *ngIf="isSubmitting" class="me-2 d-inline-block"></mat-spinner>
+            Save All Employees
+        </button>
+    </div>
+</div>

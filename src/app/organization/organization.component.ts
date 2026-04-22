@@ -1,16 +1,16 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormControl } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
-import { OrganizationCardComponent } from './organization-card/organization-card.component';
-import { ManageOrganizationComponent } from './manage-organization/manage-organization.component';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 import { MaterialModule } from '../material.module';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DeletedOrganizationListingComponent } from './deleted-organization-listing/deleted-organization-listing.component';
+import { OrganizationCardComponent } from './organization-card/organization-card.component';
+import { OrganizationSharedService } from './organization-shared.service';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 
 @Component({
   selector: 'app-organization',
@@ -18,10 +18,11 @@ import { DeletedOrganizationListingComponent } from './deleted-organization-list
   imports: [
     CommonModule,
     OrganizationCardComponent,
-    ManageOrganizationComponent,
     FormsModule,
     MaterialModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    RouterModule,
+    DirectivesModule
   ],
   templateUrl: './organization.component.html',
   styleUrls: ['./organization.component.scss']
@@ -30,27 +31,44 @@ export class OrganizationComponent implements OnInit {
   pageIndex: number = 0;
   pageSize: number = 5;
   orgList: any = [];
-  showSearchSection: boolean = true;
-  showSearchFilter: boolean = true;
-  selectedOrg: any = {};
   searchControl = new FormControl('');
   originalOrgList: any = [];
+  isListingView: boolean = true;
 
   constructor(
     private apiMainService: ApiMainService,
     private router: Router,
     private confirmationModalService: ConfirmationModalService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private orgSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit() {
+    this.checkRoute();
+    
+    // Subscribe to router events to toggle view
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkRoute();
+    });
+
     this.searchOrg();
     this.searchControl.valueChanges.pipe(
       debounceTime(400),
       distinctUntilChanged()
     ).subscribe(value => {
       this.applyLocalFilter(value);
-    })
+    });
+  }
+
+  checkRoute() {
+    // Get the base URL without query parameters or fragments
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    
+    // Expected parts for /app/organization is 2
+    this.isListingView = urlParts.length === 2 && urlParts[1] === 'organization';
   }
 
   applyLocalFilter(value: any) {
@@ -91,13 +109,8 @@ export class OrganizationComponent implements OnInit {
   }
 
   viewOrg(org: any) {
-    this.selectedOrg = org;
-    this.showSearchSection = false;
-  }
-
-  toggleShowOrder(val: any) {
-    this.showSearchSection = true;
-    this.selectedOrg = {};
+    this.orgSharedService.setOrganization(org);
+    this.router.navigate(['/app/organization', org._id]);
   }
 
   paginationConfig(config: any) {
@@ -106,7 +119,7 @@ export class OrganizationComponent implements OnInit {
   }
 
   addOrg() {
-    this.router.navigate(['/app/add-organization'])
+    this.router.navigate(['/app/add-organization']);
   }
 
   openDeletedOrganizationListing() {

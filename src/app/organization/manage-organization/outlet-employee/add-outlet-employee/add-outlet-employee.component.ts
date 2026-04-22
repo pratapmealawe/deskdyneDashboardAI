@@ -66,19 +66,47 @@ export class AddOutletEmployeeComponent implements OnInit {
 
     try {
       if (this.isEditMode) {
-        await this.apiMainService.updateOutletEmployee(this.data.employee._id, payload);
+        const res: any = await this.apiMainService.updateOutletEmployee(this.data.employee._id, payload);
+        if (res?.skippedEmployees?.length > 0) {
+          this.handleSkipError(res.skippedEmployees[0]);
+          return;
+        }
         this.toasterService.success('Employee updated successfully');
       } else {
-        // Multi-add API is used for single add for consistency
-        await this.apiMainService.addOutletEmployeeList([payload]);
-        this.toasterService.success('Employee added successfully');
+        const res: any = await this.apiMainService.addOutletEmployeeList([payload]);
+        // Handle potential success with skips (some APIs return success even if some are skipped)
+        if (res?.insertedCount > 0) {
+          this.toasterService.success('Employee added successfully');
+        } else if (res?.skippedEmployees?.length > 0) {
+          this.handleSkipError(res.skippedEmployees[0]);
+          return; // Don't close dialog on skip
+        } else {
+          this.toasterService.success('Employee added successfully');
+        }
       }
       this.dialogRef.close(true);
     } catch (error: any) {
-      console.error(error);
-      this.toasterService.error(error?.error?.msg || 'Failed to save employee');
+      console.error('Save error:', error);
+      const skippedEmployees = error?.error?.skippedEmployees || error?.error?.msg?.skippedEmployees;
+      
+      if (Array.isArray(skippedEmployees) && skippedEmployees.length > 0) {
+        this.handleSkipError(skippedEmployees[0]);
+      } else {
+        this.toasterService.error(error?.error?.msg || error?.error?.message || 'Failed to save employee');
+      }
     } finally {
       this.isSubmitting = false;
+    }
+  }
+
+  private handleSkipError(skip: any): void {
+    if (skip.skipCode === 'DUPLICATE_CAFETERIA') {
+      this.toasterService.warning('This staff is already registered in this outlet');
+    } else if (skip.skipCode === 'DIFFERENT_ORG') {
+      const orgName = skip.existingOrgName || 'another organization';
+      this.toasterService.error(`This staff is already registered with ${orgName}`);
+    } else {
+      this.toasterService.error(skip.message || 'Staff record already exists or is invalid');
     }
   }
 

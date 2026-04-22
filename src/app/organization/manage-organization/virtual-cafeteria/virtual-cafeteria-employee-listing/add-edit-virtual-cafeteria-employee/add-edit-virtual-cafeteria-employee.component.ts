@@ -16,7 +16,7 @@ import { MaterialModule } from '../../../../../material.module';
 export class AddEditVirtualCafeteriaEmployeeComponent implements OnInit {
   employeeForm: FormGroup;
   isEditMode: boolean = false;
-  isLoading: boolean = false;
+  isSubmitting: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -59,16 +59,16 @@ export class AddEditVirtualCafeteriaEmployeeComponent implements OnInit {
       return;
     }
 
-    this.isLoading = true;
+    this.isSubmitting = true;
     try {
       const payload = this.employeeForm.value;
       let response;
 
       if (this.isEditMode) {
-        response = await this.api.updateVcEmployee(this.data.employee._id, payload);
+        response = await this.api.updateVirtualCafeteriaEmployee(this.data.employee._id, payload);
         this.toaster.success('Employee updated successfully');
       } else {
-        response = await this.api.vcEmployeeAdd(payload);
+        response = await this.api.addVirtualCafeteriaEmployee(payload);
         this.toaster.success('Employee added successfully');
       }
 
@@ -78,11 +78,11 @@ export class AddEditVirtualCafeteriaEmployeeComponent implements OnInit {
       const errorMsg = error?.error?.msg || 'Failed to save employee';
       this.toaster.error(errorMsg);
     } finally {
-      this.isLoading = false;
+      this.isSubmitting = false;
     }
   }
 
-  closeModal() {
+  close() {
     this.dialogRef.close();
   }
 }

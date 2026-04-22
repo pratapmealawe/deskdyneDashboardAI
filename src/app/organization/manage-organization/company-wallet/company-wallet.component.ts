@@ -1,27 +1,30 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEmployeeCompanyWalletComponent } from './add-employee-company-wallet/add-employee-company-wallet.component';
+import { ImportWalletEmployeeComponent } from './import-wallet-employee/import-wallet-employee.component';
 import { AddMultipleEmployeeCompanyWalletComponent } from './add-multiple-employee-company-wallet/add-multiple-employee-company-wallet.component';
 import { AddAutoRuleComponent } from './add-auto-rule/add-auto-rule.component';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../material.module';
 
+import { CafeteriaSelectorComponent } from '../cafeteria-selector/cafeteria-selector.component';
+
 @Component({
   selector: 'app-company-wallet',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, CafeteriaSelectorComponent],
   templateUrl: './company-wallet.component.html',
   styleUrls: ['./company-wallet.component.scss']
 })
 export class CompanyWalletComponent implements OnInit {
-  @Input() orgObj: any;
+  orgObj: any;
   selectedCafeteria: any;
   selectedCafeteriaName: any;
   selectedCafeteriaId: any;
@@ -30,24 +33,30 @@ export class CompanyWalletComponent implements OnInit {
   currentPage: number = 1;
   itemsPerPage: number = 10;
   totalPages: number = 0;
+  totalEmployeesCount: number = 0;
   autoRules: any[] = [];
   searchSubject = new Subject<string>();
   activeTabIndex: number = 0;
+  private orgSub: Subscription | undefined;
 
   constructor(
     private apiMainService: ApiMainService,
     private dialog: MatDialog,
-    private confirmationModalService: ConfirmationModalService
+    private confirmationModalService: ConfirmationModalService,
+    private orgSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
-    if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
-      this.selectedCafeteria = this.orgObj.cafeteriaList[0];
-      this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
-      this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+    if (this.orgObj) {
+      this.initializeComponent();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.initializeComponent();
+        }
+      });
     }
-    this.fetchEmployees();
-    this.fetchAutoRules();
 
     this.searchSubject.pipe(
       debounceTime(500),
@@ -57,6 +66,22 @@ export class CompanyWalletComponent implements OnInit {
       this.currentPage = 1;
       this.fetchEmployees();
     });
+  }
+
+  initializeComponent() {
+    if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
+      this.selectedCafeteria = this.orgObj.cafeteriaList[0];
+      this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
+      this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
+    }
+    this.fetchEmployees();
+    this.fetchAutoRules();
+  }
+
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
+    }
   }
 
   onCafeteriaChange(event: any) {
@@ -78,9 +103,11 @@ export class CompanyWalletComponent implements OnInit {
     this.apiMainService.getCompanyWalletCafeteriaDetails(payload).then((res: any) => {
       if (res && res.data) {
         this.displayedEmployees = res.data;
-        this.totalPages = Math.ceil((res.count || 0) / this.itemsPerPage);
+        this.totalEmployeesCount = res.count || 0;
+        this.totalPages = Math.ceil(this.totalEmployeesCount / this.itemsPerPage);
       } else {
         this.displayedEmployees = [];
+        this.totalEmployeesCount = 0;
         this.totalPages = 0;
       }
     }, (error) => {
@@ -152,7 +179,23 @@ export class CompanyWalletComponent implements OnInit {
 
   addMultipleEmployee() {
     const dialogRef = this.dialog.open(AddMultipleEmployeeCompanyWalletComponent, {
-      width: '600px',
+      width: '1100px',
+      data: {
+        orgObj: this.orgObj,
+        selectedCafeteria: this.selectedCafeteria
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchEmployees();
+      }
+    });
+  }
+
+  importWallet() {
+    const dialogRef = this.dialog.open(ImportWalletEmployeeComponent, {
+      width: '850px',
       data: {
         orgObj: this.orgObj,
         selectedCafeteria: this.selectedCafeteria

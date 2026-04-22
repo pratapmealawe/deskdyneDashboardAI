@@ -1,12 +1,12 @@
-<div class="import-container premium-modal">
+<div class="import-employee-modal premium-modal">
     <div class="modal-header">
         <div class="title-wrap">
             <div class="icon-box primary">
                 <mat-icon>group_add</mat-icon>
             </div>
             <div class="text">
-                <h3>Bulk Employee Import</h3>
-                <p>Upload Excel file to add employees in bulk</p>
+                <h3>Bulk Import Employees</h3>
+                <p>Upload Excel file to quickly add multiple employees to {{ data.orgObj?.organization_name }}</p>
             </div>
         </div>
         <button mat-icon-button (click)="closeModal()" class="close-btn">
@@ -14,92 +14,87 @@
         </button>
     </div>
 
-    <div class="modal-body p-4">
-        <!-- STEP 1: SELECT FILE -->
-        <div *ngIf="currentStep ==='select'" class="selection-step animate-fadeIn">
-            <div class="upload-area-premium" [class.drag-over]="dragOver" (dragover)="onDragOver($event)"
-                (dragleave)="onDragLeave($event)" (drop)="onDrop($event)" (click)="fileInput.click()">
-
-                <input #fileInput type="file" (change)="onFileChange($event)" accept=".xlsx, .xls" hidden>
-
-                <div class="upload-content">
-                    <div class="icon-circle-premium">
-                        <mat-icon>upload_file</mat-icon>
-                    </div>
-                    <h4>Click or drag Excel file here</h4>
-                    <p class="format-text">Format supported: <strong>.xlsx, .xls</strong></p>
-                    <div class="browse-btn-wrap mt-3">
-                        <span class="browse-link">Browse files</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="template-section-modern mt-4">
-                <div class="info-banner">
-                    <mat-icon>info</mat-icon>
-                    <p>For a smooth experience, please use the official template and ensure all required fields are filled.</p>
-                </div>
-                <button mat-stroked-button class="btn-secondary-action w-100 mt-2" (click)="downloadTemplate()">
-                    <mat-icon>download</mat-icon> Download Official Template
-                </button>
-            </div>
-        </div>
-
-        <!-- STEP 2: PREVIEW -->
-        <div *ngIf="currentStep ==='preview'" class="preview-step animate-fadeIn">
-            <div class="preview-header-modern mb-3">
-                <div class="file-info-box">
-                    <div class="icon-square">
-                        <mat-icon>description</mat-icon>
-                    </div>
-                    <div class="details">
-                        <span class="file-name">{{ fileName }}</span>
-                        <div class="badge-row">
-                            <span class="record-badge">{{ employeeList.length }} Records Found</span>
-                            <span class="status-badge ready">Ready to Import</span>
+    <mat-dialog-content class="dialog-content custom-scrollbar bg-light-soft">
+        <div class="p-4">
+            <!-- Step Selection -->
+            <div class="row g-4" *ngIf="currentStep === 'select'">
+                <div class="col-md-6">
+                    <div class="action-card-modern template-card" (click)="downloadTemplate()">
+                        <div class="card-icon-box">
+                            <mat-icon>description</mat-icon>
+                        </div>
+                        <div class="card-details">
+                            <h5>1. Get Template</h5>
+                            <p>Download the standard Excel format</p>
+                            <span class="action-link">Download Template <mat-icon>arrow_forward</mat-icon></span>
                         </div>
                     </div>
                 </div>
-                <button mat-button class="reset-btn" (click)="resetImport()">
-                    <mat-icon>restart_alt</mat-icon> Reset
-                </button>
+
+                <div class="col-md-6">
+                    <div class="action-card-modern upload-card" [class.file-selected]="fileName" (click)="fileInput.click()">
+                        <div class="card-icon-box">
+                            <mat-icon>publish</mat-icon>
+                        </div>
+                        <div class="card-details">
+                            <h5>2. Upload File</h5>
+                            <p>{{ fileName || 'Select the filled Excel file' }}</p>
+                            <span class="action-link">{{ fileName ? 'Change File' : 'Browse Files' }}</span>
+                        </div>
+                        <input type="file" #fileInput hidden (change)="onFileChange($event)" accept=".xlsx, .xls">
+                    </div>
+                </div>
             </div>
 
-            <div class="premium-table-container shadow-sm">
-                <table class="premium-preview-table">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Emp ID</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let emp of employeeList">
-                            <td class="fw-bold">{{ emp.employeeName }}</td>
-                            <td><span class="id-tag">{{ emp.employeeId ||'N/A' }}</span></td>
-                            <td>{{ emp.employeePhoneNo }}</td>
-                            <td class="text-muted small">{{ emp.employeeEmail }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+            <!-- Loader State -->
+            <div *ngIf="isLoading" class="loader-overlay-modern mt-4">
+                <div class="loader-content">
+                    <mat-spinner diameter="40"></mat-spinner>
+                    <p>Processing employee data... Please wait.</p>
+                </div>
+            </div>
+
+            <!-- Preview Table -->
+            <div *ngIf="currentStep === 'preview' && employeeList.length > 0" class="mt-2 preview-wrapper-modern animate-fadeIn">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="section-badge">
+                        <mat-icon>preview</mat-icon> Import Preview ({{employeeList.length}} records)
+                    </div>
+                    <button mat-button color="warn" class="btn-reset" (click)="resetImport()" [disabled]="isLoading">
+                        <mat-icon>restart_alt</mat-icon> Start Over
+                    </button>
+                </div>
+                
+                <div class="premium-table-container">
+                    <table class="premium-preview-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Employee ID</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let emp of employeeList">
+                                <td class="fw-600 color-dark">{{ emp.employeeName }}</td>
+                                <td><span class="type-pill">{{ emp.employeeId || 'N/A' }}</span></td>
+                                <td class="fw-500">{{ emp.employeePhoneNo }}</td>
+                                <td class="text-muted small">{{ emp.employeeEmail }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
+    </mat-dialog-content>
 
-    <div class="modal-footer p-3 border-top bg-light-soft">
-        <button mat-button class="btn-cancel" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
-        <button mat-flat-button color="primary" class="btn-primary-action px-4" [disabled]="currentStep !=='preview' || isLoading"
-            (click)="onSubmit()">
-            <ng-container *ngIf="!isLoading">
-                <mat-icon>check_circle</mat-icon>
-                <span>Confirm & Import</span>
-            </ng-container>
-            <div class="d-flex align-items-center gap-2" *ngIf="isLoading">
-                <mat-spinner diameter="20" color="accent"></mat-spinner>
-                <span>Importing...</span>
-            </div>
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-white border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeModal()" [disabled]="isLoading">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="onSubmit()"
+            [disabled]="isLoading || employeeList.length === 0">
+            <mat-icon>check_circle</mat-icon>
+            <span>Confirm & Import</span>
         </button>
-    </div>
+    </mat-dialog-actions>
 </div>

@@ -1,3 +1,33 @@
+<div class="bulk-dashboard-header">
+    <div class="header-card">
+        <div class="header-icon-box">
+            <mat-icon>shopping_bag</mat-icon>
+        </div>
+        <div class="header-text-content">
+            <h1 class="page-title">Virtual Packages</h1>
+            <p class="page-subtitle">
+                Manage food packages and pricing for {{ selectedCafeteria?.cafeteria_name || 'the selected cafeteria' }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+        <button mat-flat-button color="primary" class="btn-primary-action" (click)="createManualPackage()">
+            <mat-icon>add_circle</mat-icon> Add Package
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="importMealawePackages()">
+            <mat-icon>cloud_download</mat-icon> Import from Mealawe
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="manageBanners()">
+            <mat-icon>collections</mat-icon> Banners
+        </button>
+        <button mat-stroked-button class="btn-secondary-action" (click)="exportToExcel()" [disabled]="packages.length === 0">
+            <mat-icon>download</mat-icon> Export
+        </button>
+    </div>
+</div>
+
 <div class="modern-card">
     <div class="card-header with-actions">
         <div class="d-flex align-items-center gap-3">
@@ -5,13 +35,10 @@
                 <mat-icon>shopping_bag</mat-icon>
             </div>
             <div class="header-titles">
-                <h3>Virtual Packages</h3>
-                <p class="text-muted small mb-0">Manage food packages and pricing</p>
+                <h3>Package Directory</h3>
+                <p class="text-muted small mb-0">View and manage all available food packages</p>
             </div>
         </div>
-        <button mat-flat-button color="primary" class="btn-primary-action" (click)="createPackages()">
-            <mat-icon>add</mat-icon> Add Package
-        </button>
     </div>
     <div class="card-body">
         <div class="row" *ngIf="packages && packages.length > 0; else noPackages">

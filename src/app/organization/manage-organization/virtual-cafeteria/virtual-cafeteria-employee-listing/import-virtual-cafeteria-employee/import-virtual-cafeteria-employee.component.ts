@@ -147,7 +147,7 @@ export class ImportVirtualCafeteriaEmployeeComponent implements OnInit {
 
     this.isLoading = true;
     try {
-      const res = await this.api.addVcEmployeeList(this.employeeList);
+      const res = await this.api.addVirtualCafeteriaEmployeeList(this.employeeList);
       this.toaster.success('Employees imported successful.');
       this.dialogRef.close(true);
     } catch (error: any) {
@@ -163,7 +163,7 @@ export class ImportVirtualCafeteriaEmployeeComponent implements OnInit {
     }
   }
 
-  closeModal() {
+  close() {
     this.dialogRef.close();
   }
 

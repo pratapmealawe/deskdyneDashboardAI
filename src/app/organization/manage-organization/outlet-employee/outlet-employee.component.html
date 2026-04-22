@@ -7,30 +7,26 @@
         <p class="page-subtitle">Manage staff profiles and permissions for specific cafeteria outlets</p>
       </div>
 
-      <div class="cafeteria-chip-selection mt-4">
-        <p class="selection-label">Select Cafeteria</p>
-        <div class="chip-list-wrapper mt-2">
-          <button class="cafe-chip" 
-                  *ngFor="let cafe of orgObj.cafeteriaList"
-                  [class.active]="selectedCafeteriaId === cafe.cafeteria_id"
-                  (click)="selectCafeteria(cafe)">
-            <mat-icon>storefront</mat-icon>
-            <span class="chip-text">{{ cafe.cafeteria_name }}</span>
-          </button>
-        </div>
-      </div>
-
+      <app-cafeteria-selector 
+        class="w-100"
+        [cafeteriaList]="orgObj.cafeteriaList"
+        [selectedCafeteria]="selectedCafeteria"
+        (cafeteriaSelected)="selectCafeteria($event)">
+      </app-cafeteria-selector>
+      
       <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
         <button mat-flat-button color="primary" class="btn-primary-action" (click)="addManualEmployee()">
           <mat-icon>person_add</mat-icon> Add Employee
         </button>
         <button mat-stroked-button class="btn-secondary-action" (click)="addMultipleEmployee()">
-          <mat-icon>playlist_add</mat-icon> Bulk Add
+          <mat-icon>playlist_add</mat-icon> Bulk Add Employee
         </button>
         <button mat-stroked-button class="btn-secondary-action" (click)="openImportDialog()">
           <mat-icon>file_upload</mat-icon> Import
         </button>
-        <button mat-stroked-button class="btn-secondary-action" (click)="exportEmployees()">
+        <button mat-stroked-button class="btn-secondary-action" 
+                (click)="exportEmployees()"
+                [disabled]="filteredEmployees.length === 0">
           <mat-icon>download</mat-icon> Export
         </button>
       </div>
@@ -38,7 +34,7 @@
   </div>
 
   <!-- Main Content Card -->
-  <div class="modern-card animate-fadeIn" *ngIf="filteredEmployees.length > 0 || searchTerm">
+  <div class="modern-card animate-fadeIn" *ngIf="selectedCafeteriaId">
     <div class="card-header with-actions">
       <div class="d-flex align-items-center gap-3">
         <div class="icon-box info">
@@ -118,13 +114,30 @@
       </div>
 
       <!-- Empty States -->
-      <div class="empty-state-modern py-5 animate-fadeIn" *ngIf="!loading && filteredEmployees.length === 0">
+      <div class="empty-state-modern py-5 animate-fadeIn" *ngIf="!loading && searchTerm && filteredEmployees.length === 0">
         <div class="empty-icon-wrap">
-          <mat-icon>{{ searchTerm ? 'search_off' : 'person_off' }}</mat-icon>
+          <mat-icon>search_off</mat-icon>
         </div>
-        <h4>{{ searchTerm ? 'No matching staff found' : 'No staff registered' }}</h4>
-        <p>{{ searchTerm ? 'Try adjusting your search criteria' : 'Start by importing or adding employees manually' }}</p>
+        <h4>No match for "{{ searchTerm }}"</h4>
+        <p>Try adjusting your search criteria or clearing the filter</p>
+      </div>
+
+      <div class="empty-state-modern py-5 animate-fadeIn" *ngIf="!loading && !searchTerm && filteredEmployees.length === 0">
+        <div class="empty-icon-wrap">
+          <mat-icon>person_off</mat-icon>
+        </div>
+        <h4>No staff registered</h4>
+        <p>Start by adding staff manually or importing them for this outlet</p>
       </div>
     </div>
+  </div>
+
+  <!-- No Cafeteria State -->
+  <div class="empty-state-modern py-5 animate-fadeIn" *ngIf="!selectedCafeteriaId && !loading">
+    <div class="empty-icon-wrap">
+      <mat-icon>storefront</mat-icon>
+    </div>
+    <h4>No Outlet Selected</h4>
+    <p>Please select an outlet from the list above to manage its staff</p>
   </div>
 </div>

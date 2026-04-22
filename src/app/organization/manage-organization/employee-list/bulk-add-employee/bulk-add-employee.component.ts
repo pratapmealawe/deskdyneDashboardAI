@@ -129,12 +129,24 @@ export class BulkAddEmployeeComponent implements OnInit {
     if (result?.skippedEmployees?.length > 0) {
       const dups = result.skippedEmployees.filter((e: any) => e.skipCode === 'DUPLICATE_CAFETERIA').length;
       if (dups > 0) {
-        this.toasterService.warning(`${dups} records skipped as they already exist in selected cafeterias`);
+        this.toasterService.warning(`${dups} records skipped: already exist in selected cafeterias`);
       }
 
-      const others = result.skippedEmployees.filter((e: any) => e.skipCode !== 'DUPLICATE_CAFETERIA');
+      const diffOrgEmployees = result.skippedEmployees.filter((e: any) => e.skipCode === 'DIFFERENT_ORG');
+      if (diffOrgEmployees.length > 0) {
+        const orgNames = [...new Set(diffOrgEmployees.map((e: any) => e.existingOrgName))].filter(Boolean);
+        if (orgNames.length === 1) {
+          this.toasterService.error(`${diffOrgEmployees.length} records skipped: already registered with ${orgNames[0]}`);
+        } else {
+          this.toasterService.error(`${diffOrgEmployees.length} records skipped: already registered with other organizations`);
+        }
+      }
+
+      const others = result.skippedEmployees.filter((e: any) => 
+        e.skipCode !== 'DUPLICATE_CAFETERIA' && e.skipCode !== 'DIFFERENT_ORG'
+      );
       if (others.length > 0) {
-        this.toasterService.error(`${others.length} records skipped due to errors (e.g. different organization)`);
+        this.toasterService.error(`${others.length} records skipped due to other errors`);
       }
     }
   }

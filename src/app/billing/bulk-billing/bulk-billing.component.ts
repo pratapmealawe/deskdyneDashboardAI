@@ -84,7 +84,7 @@ export class BulkBillingComponent {
         fromDate: this.filteredData.date_from,
         toDate: this.filteredData.date_to,
       };
-      this.billingList = await this.apiMainService.B2B_fetchBulkOrdersbyFilter(payload) || [];
+      this.billingList = await this.apiMainService.fetchBulkOrdersByFilter(payload) || [];
       this.buildDateGroups();
     } catch (err) {
       this.billingList = [];

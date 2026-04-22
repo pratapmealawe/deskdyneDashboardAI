@@ -56,7 +56,7 @@ export class BulkMasterMenuComponent implements OnInit {
 
   async getMenuItemsList(): Promise<void> {
     try {
-      const menuItems: any = await this.apiMainService.getAllB2BFooditems();
+      const menuItems: any = await this.apiMainService.getAllBulkMasterMenus();
       this.allMenuItems = menuItems || [];
       this.applySearchAndPagination();
     } catch (error) {
@@ -100,7 +100,7 @@ export class BulkMasterMenuComponent implements OnInit {
 
   async deleteMenuItem(item: any): Promise<void> {
     try {
-      await this.apiMainService.deleteB2BFoodItem(item._id);
+      await this.apiMainService.deleteBulkMasterMenu(item._id);
       this.getMenuItemsList();
     } catch (error) {
     }

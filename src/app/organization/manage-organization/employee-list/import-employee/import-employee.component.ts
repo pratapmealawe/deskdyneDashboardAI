@@ -151,14 +151,47 @@ export class ImportEmployeeComponent implements OnInit {
     this.isLoading = true;
     try {
       const res = await this.api.addEmployeeList(this.employeeList);
-      this.toaster.success('Employees imported successful.');
+      this.handleImportResult(res);
       this.dialogRef.close(true);
 
     } catch (error: any) {
       console.error('Import error:', error);
-      this.toaster.error('Failed to import employee list.');
+      const result = error?.error?.result || error?.result;
+      if (result) {
+        this.handleImportResult(result);
+        this.dialogRef.close(true);
+      } else {
+        this.toaster.error('Failed to import employee list.');
+      }
     } finally {
       this.isLoading = false;
+    }
+  }
+
+  handleImportResult(result: any) {
+    if (result?.insertedEmployees?.length > 0) {
+      this.toaster.success(`${result.insertedEmployees.length} employees imported successfully.`);
+    }
+
+    if (result?.cafeteriaUpdated?.length > 0) {
+      this.toaster.info(`${result.cafeteriaUpdated.length} employees updated with new cafeterias.`);
+    }
+
+    if (result?.skippedEmployees?.length > 0) {
+      const dups = result.skippedEmployees.filter((e: any) => e.skipCode === 'DUPLICATE_CAFETERIA').length;
+      if (dups > 0) {
+        this.toaster.warning(`${dups} records skipped: already exist in selected cafeterias.`);
+      }
+
+      const diffOrgEmployees = result.skippedEmployees.filter((e: any) => e.skipCode === 'DIFFERENT_ORG');
+      if (diffOrgEmployees.length > 0) {
+        const orgNames = [...new Set(diffOrgEmployees.map((e: any) => e.existingOrgName))].filter(Boolean);
+        if (orgNames.length === 1) {
+          this.toaster.error(`${diffOrgEmployees.length} records skipped: already registered with ${orgNames[0]}.`);
+        } else {
+          this.toaster.error(`${diffOrgEmployees.length} records skipped: already registered with other organizations.`);
+        }
+      }
     }
   }
 

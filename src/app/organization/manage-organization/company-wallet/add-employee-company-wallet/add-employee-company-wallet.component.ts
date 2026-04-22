@@ -8,6 +8,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MatIconModule } from '@angular/material/icon';
+import { ToasterService } from '@service/toaster.service';
 
 @Component({
   selector: 'app-add-employee-company-wallet',
@@ -32,6 +33,7 @@ export class AddEmployeeCompanyWalletComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private apiMainService: ApiMainService,
+    private toasterService: ToasterService,
     public dialogRef: MatDialogRef<AddEmployeeCompanyWalletComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -85,14 +87,34 @@ export class AddEmployeeCompanyWalletComponent implements OnInit {
 
       // Assuming a generic API call structure, adjust endpoint as needed
       this.apiMainService.updateCompanyWalletCafeteriaDetails(payload).then((res: any) => {
-        if (res) {
-          this.dialogRef.close(true); // Return success
+        if (res?.skippedEmployees?.length > 0) {
+          this.handleSkipError(res.skippedEmployees[0]);
+          return;
         }
+        this.toasterService.success('Wallet details updated successfully');
+        this.dialogRef.close(true);
       }).catch((err: any) => {
         console.error('Error updating wallet:', err);
+        const skipped = err?.error?.skippedEmployees || err?.error?.msg?.skippedEmployees;
+        if (Array.isArray(skipped) && skipped.length > 0) {
+          this.handleSkipError(skipped[0]);
+        } else {
+          this.toasterService.error(err?.error?.message || 'Failed to update wallet details');
+        }
       });
     } else {
       this.employeeForm.markAllAsTouched();
+    }
+  }
+
+  private handleSkipError(skip: any): void {
+    if (skip.skipCode === 'DUPLICATE_CAFETERIA') {
+      this.toasterService.warning('Employee already exists in selected cafeterias');
+    } else if (skip.skipCode === 'DIFFERENT_ORG') {
+      const orgName = skip.existingOrgName || 'another organization';
+      this.toasterService.error(`Employee is already registered with ${orgName}`);
+    } else {
+      this.toasterService.error(skip.message || 'Failed to save employee: ' + (skip.skipCode || 'Unknown error'));
     }
   }
 

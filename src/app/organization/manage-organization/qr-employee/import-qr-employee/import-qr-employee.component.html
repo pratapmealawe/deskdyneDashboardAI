@@ -1,0 +1,90 @@
+<div class="premium-modal import-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box info">
+                <mat-icon>file_upload</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Import QR Employees</h3>
+                <p>Upload Excel file to bulk add employees</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="close()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="dialog-content p-4">
+        <!-- Download Template Section -->
+        <div class="template-section mb-4 p-3 bg-light-soft rounded-3 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <mat-icon color="primary">description</mat-icon>
+                <div>
+                    <div class="fw-bold">Need a template?</div>
+                    <div class="text-secondary small">Download our Excel template to ensure correct formatting.</div>
+                </div>
+            </div>
+            <button mat-stroked-button color="primary" (click)="downloadTemplate()">
+                <mat-icon>download</mat-icon> Download
+            </button>
+        </div>
+
+        <!-- Drag & Drop Area -->
+        <div class="upload-zone" 
+             [class.dragging]="isDragging"
+             (dragover)="onDragOver($event)"
+             (dragleave)="onDragLeave($event)"
+             (drop)="onDrop($event)"
+             (click)="fileInput.click()">
+            
+            <input #fileInput type="file" accept=".xlsx,.xls" style="display: none" (change)="onFileSelected($event)">
+            
+            <div class="upload-content text-center py-4">
+                <div class="upload-icon-wrap mb-3">
+                    <mat-icon>{{ fileName ? 'task' : 'cloud_upload' }}</mat-icon>
+                </div>
+                <h4 class="mb-1">{{ fileName || 'Click or Drag & Drop Excel File' }}</h4>
+                <p class="text-secondary mb-0" *ngIf="!fileName">Supports .xlsx and .xls formats</p>
+                <div class="badge bg-success-soft text-success mt-2" *ngIf="parsedEmployees.length > 0">
+                    {{ parsedEmployees.length }} records ready for import
+                </div>
+            </div>
+        </div>
+
+        <!-- Preview Info -->
+        <div class="mt-4 animate-fadeIn" *ngIf="parsedEmployees.length > 0">
+            <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                <mat-icon class="small-icon" color="primary">visibility</mat-icon>
+                Data Preview (First 5 records)
+            </h6>
+            <div class="table-responsive mini-preview">
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let emp of parsedEmployees.slice(0, 5)">
+                            <td>{{ emp.employeeId }}</td>
+                            <td>{{ emp.employeeName }}</td>
+                            <td>{{ emp.employeePhoneNo }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="close()">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-5" 
+                [disabled]="parsedEmployees.length === 0 || isProcessing" (click)="import()">
+            <mat-icon *ngIf="!isProcessing">input</mat-icon>
+            <mat-spinner diameter="20" *ngIf="isProcessing" class="me-2 d-inline-block"></mat-spinner>
+            Complete Import
+        </button>
+    </div>
+</div>

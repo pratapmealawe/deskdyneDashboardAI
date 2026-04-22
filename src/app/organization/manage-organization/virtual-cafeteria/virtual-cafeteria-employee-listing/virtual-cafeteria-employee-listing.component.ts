@@ -7,6 +7,7 @@ import { MaterialModule } from '../../../../material.module';
 import { AddEditVirtualCafeteriaEmployeeComponent } from './add-edit-virtual-cafeteria-employee/add-edit-virtual-cafeteria-employee.component';
 import { ImportVirtualCafeteriaEmployeeComponent } from './import-virtual-cafeteria-employee/import-virtual-cafeteria-employee.component';
 import { AddEditMultipleVirtualCafeteriaEmployeeComponent } from './add-edit-multiple-virtual-cafeteria-employee/add-edit-multiple-virtual-cafeteria-employee.component';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -29,11 +30,13 @@ export class VirtualCafeteriaEmployeeListingComponent implements OnInit, OnChang
   employeeList: any[] = [];
   filteredEmployeeList: any[] = [];
   isLoading = false;
+  searchTerm: string = '';
 
   constructor(
     private api: ApiMainService,
     private dialog: MatDialog,
-    private toaster: ToasterService
+    private toaster: ToasterService,
+    private confirmationModalService: ConfirmationModalService,
   ) { }
 
   ngOnInit(): void {
@@ -42,29 +45,42 @@ export class VirtualCafeteriaEmployeeListingComponent implements OnInit, OnChang
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['selectedCafeteria']) {
-      this.filterEmployees();
-    }
-  }
-
-  filterEmployees() {
-    if (!this.selectedCafeteria || !this.selectedCafeteria.cafeteria_id) {
-      this.filteredEmployeeList = this.employeeList;
-    } else {
-      this.filteredEmployeeList = this.employeeList.filter(emp => emp.cafeteria_id === this.selectedCafeteria.cafeteria_id);
+      this.getEmployeeListByOrgId();
     }
   }
 
   async getEmployeeListByOrgId() {
     this.isLoading = true;
     try {
-      this.employeeList = await this.api.vcEmployeeByOrgId(this.orgObj._id);
-      this.filterEmployees();
+      const cafeteriaId = this.selectedCafeteria?.cafeteria_id;
+      this.employeeList = await this.api.getVirtualCafeteriaEmployeeByOrgId(this.orgObj._id, cafeteriaId);
+      this.filteredEmployeeList = this.employeeList;
     } catch (error) {
       console.error('Error fetching employee list:', error);
       this.toaster.error('Failed to load employee list');
     } finally {
       this.isLoading = false;
     }
+  }
+
+  getFilteredEmployees(): any[] {
+    if (!this.employeeList) return [];
+    if (!this.searchTerm) return this.employeeList;
+
+    const term = this.searchTerm.toLowerCase();
+    return this.employeeList.filter(emp =>
+      emp.employeeName?.toLowerCase().includes(term) ||
+      emp.employeeId?.toLowerCase().includes(term) ||
+      emp.employeeEmail?.toLowerCase().includes(term) ||
+      emp.employeePhoneNo?.toString().includes(term)
+    );
+  }
+
+  getInitials(name: string | undefined): string {
+    if (!name) return '?';
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 
   addSingleEmployee() {
@@ -111,16 +127,22 @@ export class VirtualCafeteriaEmployeeListingComponent implements OnInit, OnChang
     });
   }
 
-  async deleteEmployee(employee: any) {
-    if (confirm(`Are you sure you want to delete employee: ${employee.employeeName}?`)) {
-      try {
-        await this.api.deleteVcEmployee(employee._id);
-        this.toaster.success('Employee deleted successfully');
-        this.getEmployeeListByOrgId();
-      } catch (error) {
-        console.error('Error deleting employee:', error);
-        this.toaster.error('Failed to delete employee');
-      }
+  deleteEmployee(employee: any) {
+    this.confirmationModalService.modal({
+      msg: `Are you sure you want to delete employee: ${employee.employeeName}?`,
+      callback: () => this.confirmDeleteEmployee(employee),
+      context: this
+    });
+  }
+
+  async confirmDeleteEmployee(employee: any) {
+    try {
+      await this.api.deleteVirtualCafeteriaEmployee(employee._id);
+      this.toaster.success('Employee deleted successfully');
+      this.getEmployeeListByOrgId();
+    } catch (error) {
+      console.error('Error deleting employee:', error);
+      this.toaster.error('Failed to delete employee');
     }
   }
 

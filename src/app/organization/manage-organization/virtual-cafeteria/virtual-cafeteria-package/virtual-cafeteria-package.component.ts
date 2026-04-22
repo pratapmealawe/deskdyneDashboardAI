@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../../../material.module';
 import { MatDialog } from '@angular/material/dialog';
@@ -6,12 +6,16 @@ import { ToasterService } from '@service/toaster.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { environment } from '@environments/environment';
-import { AddEditPackageVirtualCafeteriaComponent } from './add-edit-package-virtual-cafeteria/add-edit-package-virtual-cafeteria.component';
+import { CopyMealaweVirtualCafeteriaPackageComponent } from './copy-mealawe-virtual-cafeteria-package/copy-mealawe-virtual-cafeteria-package.component';
+import { AddEditVirtualCafeteriaPackageComponent } from './add-edit-virtual-cafeteria-package/add-edit-virtual-cafeteria-package.component';
+import { VirtualCafeteriaBannersComponent } from '../virtual-cafeteria-banners/virtual-cafeteria-banners.component';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-virtual-cafeteria-package',
   standalone: true,
-  imports: [CommonModule, MaterialModule],
+  imports: [CommonModule, MaterialModule, VirtualCafeteriaBannersComponent],
   templateUrl: './virtual-cafeteria-package.component.html',
   styleUrls: ['./virtual-cafeteria-package.component.scss']
 })
@@ -19,9 +23,8 @@ export class VirtualCafeteriaPackageComponent {
   @Input() packages: any[] = [];
   @Input() orgObj: any;
   @Input() selectedCafeteria: any;
-  @Input() addNew: boolean = false;
+  @Input() categories: any[] = [];
   
-  @Output() refreshData = new EventEmitter<void>();
 
   serverUrl = environment.mlImageUrl;
 
@@ -36,44 +39,83 @@ export class VirtualCafeteriaPackageComponent {
     return this.selectedCafeteria?.cafeteria_id;
   }
 
-  createPackages() {
-    const dialogRef = this.modalService.open(AddEditPackageVirtualCafeteriaComponent, {
+  manageBanners() {
+    const dialogRef = this.modalService.open(VirtualCafeteriaBannersComponent, {
+      width: '700px',
+      maxWidth: '90vw',
+      data: {
+        cafeteriaId: this.cafeteriaId,
+        banners: this.selectedCafeteria?.bannerImages || []
+      },
+      autoFocus: false
+    });
+
+    dialogRef.afterClosed().subscribe(updatedBanners => {
+      if (updatedBanners) {
+        this.selectedCafeteria.bannerImages = updatedBanners;
+      }
+    });
+  }
+
+  async importMealawePackages() {
+    try {
+      const meals = await this.apiMainService.getMLMealPackageList();
+
+      const dialogRef = this.modalService.open(CopyMealaweVirtualCafeteriaPackageComponent, {
+        width: '800px',
+        data: {
+          orgObj: this.orgObj,
+          selectedCafeteria: this.selectedCafeteria,
+          meals: meals,
+          alreadyPackages: this.packages.map((e: any) => e.masterMenuId)
+        },
+        autoFocus: true,
+        disableClose: false
+      });
+      dialogRef.afterClosed().subscribe();
+    } catch (error) {
+      console.error('Error importing Mealawe packages:', error);
+      this.toaster.error('Failed to load Mealawe data');
+    }
+  }
+
+  createManualPackage() {
+    const dialogRef = this.modalService.open(AddEditVirtualCafeteriaPackageComponent, {
       width: '800px',
       data: {
         orgObj: this.orgObj,
-        addNew: true,
         selectedCafeteria: this.selectedCafeteria,
-        alreadyPackages: this.packages.map((e: any) => e.masterMenuId)
+        categories: this.categories
       },
       autoFocus: true,
       disableClose: false
     });
-    dialogRef.afterClosed().subscribe(() => this.refreshData.emit());
+    dialogRef.afterClosed().subscribe((res) => {
+      // if (res) this.refreshData.emit();
+    });
   }
 
   editPackage(p: any) {
-    const dialogRef = this.modalService.open(AddEditPackageVirtualCafeteriaComponent, {
+    const dialogRef = this.modalService.open(AddEditVirtualCafeteriaPackageComponent, {
       width: '800px',
       data: {
         orgObj: this.orgObj,
-        addNew: false,
+        package: p,
         selectedCafeteria: this.selectedCafeteria,
-        alreadyPackages: this.packages
-          .filter((e: any) => e.masterMenuId !== p.masterMenuId)
-          .map((e: any) => e.masterMenuId),
-        editPackage: p
+        categories: this.categories
       },
       autoFocus: true,
       disableClose: false
     });
-    dialogRef.afterClosed().subscribe(() => this.refreshData.emit());
+    dialogRef.afterClosed().subscribe((res) => {
+      // if (res) this.refreshData.emit();
+    });
   }
 
   async changePackageStatus(status: boolean, masterMenuId: string) {
     try {
-      await this.apiMainService.changePackageStatus({ status, mealId: masterMenuId, cafeteriaId: this.cafeteriaId });
+      await this.apiMainService.changeVirtualCafeteriaPackageStatus({ status, mealId: masterMenuId, cafeteriaId: this.cafeteriaId });
       this.toaster.success("Status updated");
-      this.refreshData.emit();
     } catch (error) {
       console.error("❌ Status update failed", error);
       this.toaster.error("Status update failed");
@@ -85,9 +127,8 @@ export class VirtualCafeteriaPackageComponent {
       msg: `Are you sure you want to delete ${item.packageName}?`,
       callback: async () => {
         try {
-          await this.apiMainService.deleteMealItem({ cafeteriaId: this.cafeteriaId, masterMenuId: item.masterMenuId });
+          await this.apiMainService.deleteVirtualCafeteriaPackageItem({ cafeteriaId: this.cafeteriaId, masterMenuId: item.masterMenuId });
           this.toaster.success(`Package deleted`);
-          this.refreshData.emit();
         } catch (err) {
           console.error(`❌ Delete error:`, err);
           this.toaster.error(`Delete failed. No changes applied.`);
@@ -95,5 +136,53 @@ export class VirtualCafeteriaPackageComponent {
       },
       context: this
     });
+  }
+
+  async exportToExcel() {
+    if (this.packages.length === 0) {
+      this.toaster.warning('No packages to export');
+      return;
+    }
+
+    try {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('Package List');
+
+      worksheet.columns = [
+        { header: 'Package Name', key: 'name', width: 30 },
+        { header: 'Price', key: 'price', width: 15 },
+        { header: 'Category', key: 'category', width: 20 },
+        { header: 'Status', key: 'status', width: 15 },
+        { header: 'Cafeteria', key: 'cafe', width: 25 },
+        { header: 'Organization', key: 'org', width: 30 }
+      ];
+
+      worksheet.getRow(1).font = { bold: true };
+      worksheet.getRow(1).fill = {
+        type: 'pattern',
+        pattern: 'solid',
+        fgColor: { argb: 'FFE0E0E0' }
+      };
+
+      this.packages.forEach(p => {
+        worksheet.addRow({
+          name: p.packageName,
+          price: `₹${p.packagePrice}`,
+          category: p.packageCategory,
+          status: p.isActive ? 'Active' : 'Inactive',
+          cafe: this.selectedCafeteria?.cafeteria_name || 'Default',
+          org: this.orgObj.organization_name
+        });
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `Packages_${this.selectedCafeteria?.cafeteria_name || 'VC'}_${new Date().toLocaleDateString()}.xlsx`);
+
+      this.toaster.success('Excel file exported successfully');
+    } catch (error) {
+      console.error('Export error:', error);
+      this.toaster.error('Failed to export Excel file');
+    }
   }
 }

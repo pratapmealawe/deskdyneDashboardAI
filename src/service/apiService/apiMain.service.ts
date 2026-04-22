@@ -741,17 +741,17 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveCustomSnackBoxMenu, data, null, false, true);
   }
 
-  updateB2BfoodItem(item: any, id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateB2BfoodItem;
+  updateBulkMasterMenu(item: any, id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.updateBulkMasterMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, item, null, false, true);
   }
 
-  getAllB2BFooditems() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllB2BFooditems, null, null, false, true);
+  getAllBulkMasterMenus() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAllBulkMasterMenus, null, null, false, true);
   }
 
-  deleteB2BFoodItem(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.deleteB2BFoodItem;
+  deleteBulkMasterMenu(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.deleteBulkMasterMenu;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, false, true);
   }
 
@@ -868,8 +868,8 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAdminPastOrders, payload);
   }
 
-  B2B_fooditemAdd(payload: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_fooditem, payload, null, false, true);
+  saveBulkMasterMenu(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMasterMenu, payload, null, false, true);
   }
 
   getb2bBulkOrderList(status: any, page: any, limit: number) {
@@ -1045,32 +1045,46 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
   }
 
-  vcEmployeeAdd(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.vcEmployeeAdd, body);
+  addVirtualCafeteriaEmployee(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.virtualCafeteriaEmployeeAdd, body);
   }
 
-  addVcEmployeeList(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addVcEmployeeList, body);
+  addVirtualCafeteriaEmployeeList(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.virtualCafeteriaEmployeeAddList, body);
   }
 
-  vcEmployeeByOrgId(orgId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.vcEmployeeByOrgId;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
+  getVirtualCafeteriaEmployeeByOrgId(orgId: any, cafeteriaId?: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaEmployeeByOrgId;
+    let url = urlObj.url + `/${orgId}`;
+    if (cafeteriaId) {
+      url += `?cafeteriaId=${cafeteriaId}`;
+    }
+    return this.apiHttpService.REQUEST({ url, method: urlObj.method });
   }
 
-  deleteVcEmployee(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.deleteVcEmployee;
+  deleteVirtualCafeteriaEmployee(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaEmployeeDelete;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  getVcEmployeeByPhoneNo(phoneNo: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getVcEmployeeByPhoneNo;
+  getVirtualCafeteriaEmployeeByPhoneNo(phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getVirtualCafeteriaEmployeeByPhoneNo;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
   }
 
-  updateVcEmployee(id: any, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateVcEmployee;
+  updateVirtualCafeteriaEmployee(id: any, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaEmployeeUpdate;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, body);
+  }
+
+  verifyVirtualCafeteriaEmployeeByPhoneNo(orgName: any, phoneNo: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaEmployeeVerifyByPhoneNo;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgName}/${phoneNo}`, method: urlObj.method });
+  }
+
+  verifyVirtualCafeteriaEmployeeByEmail(orgName: any, email: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaEmployeeVerifyByEmail;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgName}/${email}`, method: urlObj.method });
   }
 
   fetchOutletOrdersByOrgAndDateRange(payload: any) {
@@ -1454,12 +1468,20 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getConsumptionOrderByDateForDashboard, data);
   }
 
-  updateMealItemList(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateMealItemList, data);
+  saveVirtualCafeteriaPackageList(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.virtualCafeteriaPackageSaveList, data);
   }
 
-  deleteMealItem(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteMealItem, data);
+  deleteVirtualCafeteriaPackageItem(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteVirtualCafeteriaPackageItem, data);
+  }
+
+  addVirtualCafeteriaPackageItem(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addVirtualCafeteriaPackageItem, data);
+  }
+
+  updateVirtualCafeteriaPackageItem(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVirtualCafeteriaPackageItem, data);
   }
 
   getQrMenuList(filter: any) {
@@ -1508,59 +1530,64 @@ export class ApiMainService {
   }
 
 
-  addCategoryMealAweOutlet(body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.addCategoryMealAweOutlet
+  addVirtualCafeteriaCategory(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaCategoryAdd
     return this.apiHttpService.REQUEST(urlObj, body);
   }
 
-  deleteCategoryMealAweOutlet(cafeeteriaId: string, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.deleteCategoryMealAweOutlet
+  addVirtualCafeteriaCategoryList(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.virtualCafeteriaCategoryAddList, body);
+  }
+
+  deleteVirtualCafeteriaCategory(cafeeteriaId: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaCategoryDelete
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method }, body);
   }
 
-  updateCategoryMealAweOutlet(cafeeteriaId: string, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateCategoryMealAweOutlet
+  updateVirtualCafeteriaCategory(cafeeteriaId: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaCategoryUpdate
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method }, body);
   }
 
-  getDefaultCategories() {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getDefaultCategories);
-  }
-
-  updateWeeklyMenuCategory(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateWeeklyMenuCategory, body);
-  }
-
-  updateVirtualCafeteriaWeeklyMenu(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateWeeklyMenuCategory, body);
-  }
-
-  saveMealAweOutlet(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealAweOutlet, body);
-  }
-
-  updateMealAweOutlet(cafeeteriaId: string, body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.updateMealAweOutlet
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method }, body);
-  }
-
-  getMealAweOutletByCafeteria(cafeeteriaId: string) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletByCafeteria
+  getVirtualCafeteriaCategories(cafeeteriaId: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaCategoriesByCafeteria
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method });
   }
 
-  getMealAweOutletById(id: string) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getMealAweOutletById
+  getVirtualCafeteriaDefaultCategories() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getVirtualCafeteriaDefaultCategories);
+  }
+
+  updateVirtualCafeteriaWeeklyMenu(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVirtualCafeteriaWeeklyMenu, body);
+  }
+
+  updateVirtualCafeteriaCategoryConfig(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVirtualCafeteriaCategoryConfig, body);
+  }
+
+  saveVirtualCafeteriaPackage(body: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.virtualCafeteriaPackageSave, body);
+  }
+
+  updateVirtualCafeteriaPackage(cafeeteriaId: string, body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaPackageUpdate
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method }, body);
+  }
+
+  getVirtualCafeteriaPackageByCafeteria(cafeeteriaId: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaPackageByCafeteria
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeeteriaId}`, method: urlObj.method });
+  }
+
+  getVirtualCafeteriaPackageById(id: string) {
+    const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaPackageById
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
-  changePackageStatus(body: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.changePackageStatus
+  changeVirtualCafeteriaPackageStatus(body: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.changeVirtualCafeteriaPackageStatus
     return this.apiHttpService.REQUEST(urlObj, body);
-  }
-
-  saveMealAweOutletCategoryConfig(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveMealAweOutletCategoryConfig, data);
   }
 
   addCategoryConfig(data: FormData) {
@@ -1571,12 +1598,24 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteCategoryConfig, data);
   }
 
-  changeCategoryStatus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.changeCategoryStatus, data);
+  changeVirtualCafeteriaCategoryStatus(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.changeVirtualCafeteriaCategoryStatus, data);
   }
 
-  createDefaultCategories(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDefaultCategories, data);
+  addVirtualCafeteriaBannerImage(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.addVirtualCafeteriaBannerImage, data);
+  }
+
+  updateVirtualCafeteriaBannerImages(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVirtualCafeteriaBannerImages, data);
+  }
+
+  deleteVirtualCafeteriaBannerImage(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.deleteVirtualCafeteriaBannerImage, data);
+  }
+
+  uploadImage(fd: FormData) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createImage, fd);
   }
 
   dailyOrderMenuAdd(data: any) {
@@ -1706,238 +1745,60 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
   }
 
-  getAllB2bBulkMenus(): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.getAllB2bBulkMenus;
-    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
+  // --- Unified Bulk Menu CRUD ---
+  getCategoryBulkMenu(payload: { cafeId: any, mainCategory: string, subCategory: string }) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMenu_getCategoryMenu, payload);
   }
 
-  copyB2bBulkMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyB2bBulkMenu, data);
+  saveCategoryBulkMenu(payload: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMenu_saveCategoryMenu, payload);
   }
 
-  getB2bBulkMenuByCategory(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getB2bBulkMenuByCategory, data);
+  getBulkMenuById(cafeteriaId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.bulkMenu_fetchByCafe;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method });
   }
 
-  toggleCategoryStatus(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.toggleCategoryStatus, data);
+  updateBulkMenu(cafeteriaId: any, payload: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.bulkMenu_update;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeteriaId}`, method: urlObj.method }, payload);
   }
 
-  B2B_assignVendorForBulkMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_assignVendorForBulkMenu, data);
+  deleteBulkMenu(menuId: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.bulkMenu_delete;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${menuId}`, method: urlObj.method });
   }
 
-  B2B_fetchBulkMealMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkMealMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  getAllBulkMenus() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMenu_fetchAll);
   }
 
-  B2B_saveBulkMealMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveBulkMealMenu, data);
+  copyBulkMenu(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMenu_copy, data);
   }
 
-  B2B_fetchIndividualMealMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndividualMealMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  getBulkMenuByCategory(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMenu_fetchByCategory, data);
   }
 
-  B2B_saveIndividualMealMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveIndividualMealMenu, data);
+  toggleBulkMenuCategoryStatus(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMenu_toggleStatus, data);
   }
 
-  B2B_fetchBulkSnackMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkSnackMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  assignVendorForBulkMenu(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.bulkMenu_updateVendor, data);
   }
 
-  B2B_saveBulkSnacksMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveBulkSnacksMenu, data);
+  fetchBulkOrdersByFilter(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.fetchBulkOrdersByFilter, data);
   }
 
-  B2B_fetchIndividualSnacksMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndividualSnacksMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
+  getMLAllGeoFencingList() {
+    return this.runTimeCacheInterceptor('GEO_FENCING_LIST_ALL', this.apiConfigService.apiEndPointObj.ml_getAllGeoFencingList);
   }
 
-  B2B_saveIndividualSnacksMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveIndividualSnacksMenu, data);
-  }
-
-  B2B_fetchPredefinedFoodBoxMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchPredefinedFoodBoxMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  B2B_savePredefinedFoodBoxMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_savePredefinedFoodBoxMenu, data);
-  }
-
-  B2B_fetchCustomizedFoodBoxMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchCustomizedFoodBoxMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  B2B_saveCustomizedFoodBoxMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveCustomizedFoodBoxMenu, data);
-  }
-
-  B2B_fetchCakeMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchCakeMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  B2B_saveCakeMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveCakeMenu, data);
-  }
-
-  B2B_fetchSweetMenu(cafeId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchSweetMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  B2B_saveSweetMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveSweetMenu, data);
-  }
-
-  B2B_fetchLuxMenu(orgId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchLuxMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
-  }
-
-  B2B_saveLuxMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveLuxMenu, data);
-  }
-
-  B2B_fetchPantryMenu(orgId: any): Promise<any> {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchPantryMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${orgId}`, method: urlObj.method });
-  }
-
-  B2B_savePantryMenu(data: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_savePantryMenu, data);
-  }
-
-  B2B_changeVendor(payload: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_changeVendor, payload);
-  }
-  
-  B2B_fetchBulkOrdersbyFilter(payload: any): Promise<any> {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_fetchBulkOrdersbyFilter, payload);
-  }
-
-  getAllEmployeeBulkMenus() {
-    const urlObj = this.apiConfigService.apiEndPointObj.getAllEmployeeBulkMenus;
-    return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method });
-  }
-
-  updateVendorForEmployeeBulkMenus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.updateVendorForEmployeeBulkMenu, data);
-  }
-
-  copyEmployeeBulkMenus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.copyEmployeeBulkMenu, data);
-  }
-
-  getEmployeeMenuByCategory(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getEmployeeMenuByCategory, data);
-  }
-
-  toggleEmployeeMenuCategoryStatus(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.toggleEmployeeMenuCategoryStatus, data);
-  }
-
-  getEmployeeMenuVendorDetailsByFilter(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getEmployeeMenuVendorDetailsByFilter, data);
-  }
-
-  getEmployeeBulkMealMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeBulkMealMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeBulkMealMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeBulkMealMenu, data);
-  }
-
-  getEmployeeIndividualMealMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeIndividualMealMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeIndividualMealMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeIndividualMealMenu, data);
-  }
-
-  getEmployeeBulkSnackMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeBulkSnackMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeBulkSnackMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeBulkSnackMenu, data);
-  }
-
-  getEmployeeIndividualSnackMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeIndividualSnackMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeIndividualSnackMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeIndividualSnackMenu, data);
-  }
-
-  getEmployeePredefinedFoodBoxMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeePredefinedFoodBoxMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeePredefinedFoodBoxMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeePredefinedFoodBoxMenu, data);
-  }
-
-  getEmployeeCustomizedFoodBoxMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeCustomizedFoodBoxMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeCustomizedFoodBoxMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeCustomizedFoodBoxMenu, data);
-  }
-
-  getEmployeeCakeMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeCakeMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeCakeMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeCakeMenu, data);
-  }
-
-  getEmployeeSweetMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeSweetMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeSweetMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeSweetMenu, data);
-  }
-
-  getEmployeeLuxMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeeLuxMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeeLuxMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeeLuxMenu, data);
-  }
-
-  getEmployeePantryMenu(cafeId: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getEmployeePantryMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${cafeId}`, method: urlObj.method });
-  }
-
-  saveEmployeePantryMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveEmployeePantryMenu, data);
+  getMLMealPackageList() {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.ml_getMealPackageList);
   }
 
   deleteCompanyWalletCafeteriaDetails(id: any): Promise<any> {

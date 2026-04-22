@@ -34,6 +34,7 @@ import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.
 })
 export class OrgOutletOrdersComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
+  
   Highcharts: typeof Highcharts = Highcharts;
   orgDetails: any = {};
   headerConfig: CommonSelectConfig = {

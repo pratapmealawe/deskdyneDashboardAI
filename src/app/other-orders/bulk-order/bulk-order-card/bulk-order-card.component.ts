@@ -628,7 +628,7 @@ export class BulkOrderCardComponent implements OnInit {
       ...this.vendorForm.value
     };
     try {
-      const result = await this.apiMainService.B2B_changeVendor(payload);
+      const result = await this.apiMainService.assignVendorForBulkMenu(payload);
       if (result) {
         this.statusChange.emit(true);
         this.vendorForm.reset();

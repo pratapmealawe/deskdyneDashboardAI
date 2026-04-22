@@ -1,0 +1,139 @@
+<div class="bulk-item-edit-modal premium-modal">
+    <!-- Header with Dynamic Icon Box -->
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box" [ngClass]="item.itemType?.toLowerCase()">
+                <mat-icon>{{ item.itemType === 'Veg' ? 'eco' : 'restaurant' }}</mat-icon>
+            </div>
+            <div class="text">
+                <h3>{{ isEdit ? 'Edit Menu Configuration' : 'Add New Menu Item' }}</h3>
+                <p *ngIf="isEdit">{{item.itemName}} • <span class="group-text">{{item.group}}</span></p>
+                <p *ngIf="!isEdit">Configure the details for your new menu entry</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="onCancel()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content custom-scrollbar bg-light-soft">
+        <div class="p-4">
+            <!-- Section 0: Primary Details (Only for Add Mode) -->
+            <div class="modern-form-section mb-4 animate-fade-in" *ngIf="!isEdit">
+                <div class="section-title-badge mb-3">
+                    <mat-icon>info</mat-icon> Primary Information
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-5">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Item Name*</mat-label>
+                            <input matInput [(ngModel)]="item.itemName" placeholder="e.g. Paneer Tikka">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-4">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Category / Group*</mat-label>
+                            <input matInput [(ngModel)]="item.group" placeholder="e.g. Starters">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-3">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Type*</mat-label>
+                            <mat-select [(ngModel)]="item.itemType">
+                                <mat-option value="Veg">Veg</mat-option>
+                                <mat-option value="NonVeg">NonVeg</mat-option>
+                                <mat-option value="Jain">Jain</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 1: Visual Identity -->
+            <div class="item-identity-banner mb-4">
+                <div class="preview-wrap shadow-sm" *ngIf="isEdit || item.imageUrl">
+                    <img [src]="imageUrl + item.imageUrl" 
+                         onerror="this.src='assets/Imageunavailable.webp'" 
+                         alt="item">
+                </div>
+                <div class="preview-wrap shadow-sm empty-preview" *ngIf="!isEdit && !item.imageUrl">
+                    <mat-icon>image_not_supported</mat-icon>
+                </div>
+                <div class="identity-details">
+                    <mat-form-field appearance="outline" class="w-100 mt-2" subscriptSizing="dynamic">
+                        <mat-label>Description / Menu Details</mat-label>
+                        <textarea matInput [(ngModel)]="item.itemDescription" rows="2" placeholder="Describe the contents of this item..."></textarea>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Section 2: Volume-Based Pricing -->
+            <div class="modern-form-section mb-4">
+                <div class="section-title-badge mb-3">
+                    <mat-icon>payments</mat-icon> Tiered Pricing Slabs
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-3" *ngFor="let s of [1,2,3,4]">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Slab {{s}} Price (₹)</mat-label>
+                            <input matInput type="number" [(ngModel)]="item['slab' + s + 'Price']" placeholder="0.00">
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Section 3: Logistics & Packaging -->
+            <div class="modern-form-section">
+                <div class="section-title-badge mb-3">
+                    <mat-icon>inventory_2</mat-icon> Logistics & Serving Rules
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Serving Configuration</mat-label>
+                            <mat-select [(ngModel)]="item.itemServingType">
+                                <mat-option value="perUnit">Per Unit</mat-option>
+                                <mat-option value="perPerson">Per Person</mat-option>
+                                <mat-option value="perQuantity">Per Quantity</mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </div>
+
+                    <div class="col-md-6" *ngIf="item.itemServingType === 'perQuantity'">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                                    <mat-label>Qty</mat-label>
+                                    <input matInput type="number" [(ngModel)]="item.servingQuantity">
+                                </mat-form-field>
+                            </div>
+                            <div class="col-6">
+                                <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                                    <mat-label>Unit</mat-label>
+                                    <input matInput [(ngModel)]="item.servingQuantityUnit">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="w-100" subscriptSizing="dynamic">
+                            <mat-label>Packaging Fee (₹)</mat-label>
+                            <input matInput type="number" [(ngModel)]="item.packagingCost" placeholder="0.00">
+                            <mat-icon matPrefix color="primary" class="me-1">toll</mat-icon>
+                        </mat-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <!-- Modal Actions -->
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-white border-top">
+        <button mat-button class="btn-cancel me-2" (click)="onCancel()">Discard Changes</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="onSave()" [disabled]="!isValid()">
+            <mat-icon>{{ isEdit ? 'verified' : 'add_circle' }}</mat-icon>
+            <span>{{ isEdit ? 'Apply Updates' : 'Add Item' }}</span>
+        </button>
+    </mat-dialog-actions>
+</div>

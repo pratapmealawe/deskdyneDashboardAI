@@ -79,59 +79,6 @@
         }
     }
 
-    .cafeteria-chip-selection {
-        width: 100%;
-
-        .selection-label {
-            font-size: 0.95rem;
-            font-weight: 500;
-            color: #475569;
-            margin: 0;
-        }
-
-        .chip-list-wrapper {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 12px;
-
-            .cafe-chip {
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                padding: 6px 16px;
-                border: none;
-                border-radius: 99px;
-                background-color: #f1f5f9;
-                color: #475569;
-                font-size: 0.85rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: all 0.2s ease;
-
-                mat-icon {
-                    font-size: 16px;
-                    width: 16px;
-                    height: 16px;
-                    color: inherit;
-                }
-
-                &:hover {
-                    background-color: #e2e8f0;
-                }
-
-                &.active {
-                    background-color: var.$primary-color1;
-                    color: white;
-                    font-weight: 700;
-                    box-shadow: 0 4px 10px rgba(14, 73, 181, 0.3);
-
-                    mat-icon {
-                        color: white;
-                    }
-                }
-            }
-        }
-    }
 }
 
 /* Modern Card Pattern */
@@ -548,9 +495,17 @@
         height: 18px;
     }
 
-    &:hover {
+    &:hover:not([disabled]) {
         transform: translateY(-1px);
         box-shadow: 0 6px 15px rgba(14, 73, 181, 0.3) !important;
+    }
+
+    &[disabled] {
+        opacity: 0.6;
+        background: #f1f5f9 !important;
+        color: #94a3b8 !important;
+        box-shadow: none !important;
+        cursor: not-allowed !important;
     }
 }
 
@@ -570,10 +525,18 @@
         height: 18px;
     }
 
-    &:hover {
+    &:hover:not([disabled]) {
         background: #f8fafc !important;
         border-color: #cbd5e1 !important;
         color: var.$primary-color1 !important;
     }
-}
 
+    &[disabled] {
+        opacity: 0.6;
+        background: #f1f5f9 !important;
+        color: #94a3b8 !important;
+        border-color: #e2e8f0 !important;
+        box-shadow: none !important;
+        cursor: not-allowed !important;
+    }
+}

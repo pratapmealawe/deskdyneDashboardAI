@@ -1,12 +1,13 @@
 <div class="org-page-container">
   <div class="content-body">
-    <ng-container *ngIf="showSearchSection; else viewSection">
+    <!-- Organization List View -->
+    <ng-container *ngIf="isListingView">
       <div class="org-header-card">
         <div class="header-content">
           <div class="title-section">
             <h1 class="page-title">Organization Management</h1>
           </div>
-          <div class="actions-section" *ngIf="showSearchSection">
+          <div class="actions-section">
             <div class="search-wrapper">
               <mat-icon class="search-icon">search</mat-icon>
               <input type="text" placeholder="Search organization..." [formControl]="searchControl" />
@@ -29,23 +30,19 @@
           (paginationConfig)="paginationConfig($event)" (softDelete)="onSoftDelete($event)">
         </app-organization-card>
       </div>
+
+      <ng-template #noRecords>
+        <div class="empty-state">
+          <mat-icon class="empty-icon">business</mat-icon>
+          <h3>No Organizations Found</h3>
+          <p>Get started by adding your first organization.</p>
+          <button mat-stroked-button color="primary" (click)="addOrg()" *appHasPermission="'ORGANIZATION:ADD'">Add
+            Organization</button>
+        </div>
+      </ng-template>
     </ng-container>
-
-    <ng-template #viewSection>
-      <div *ngIf="selectedOrg; else noRecords">
-        <app-manage-organization [organization]="selectedOrg" (back)="toggleShowOrder($event)">
-        </app-manage-organization>
-      </div>
-    </ng-template>
-
-    <ng-template #noRecords>
-      <div class="empty-state">
-        <mat-icon class="empty-icon">business</mat-icon>
-        <h3>No Organizations Found</h3>
-        <p>Get started by adding your first organization.</p>
-        <button mat-stroked-button color="primary" (click)="addOrg()" *appHasPermission="'ORGANIZATION:ADD'">Add
-          Organization</button>
-      </div>
-    </ng-template>
+    <div [hidden]="isListingView">
+      <router-outlet></router-outlet>
+    </div>
   </div>
 </div>

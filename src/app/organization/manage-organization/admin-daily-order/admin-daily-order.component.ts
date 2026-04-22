@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import * as ExcelJS from 'exceljs';
@@ -8,6 +10,7 @@ import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { ToasterService } from '@service/toaster.service';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MaterialModule } from '../../../material.module';
+import { CafeteriaSelectorComponent } from '../cafeteria-selector/cafeteria-selector.component';
 import { AddAdminDailyOrderMenuComponent } from './add-admin-daily-order-menu/add-admin-daily-order-menu.component';
 import { AddAdminSubTypeDailyOrderMenuComponent } from './add-admin-sub-type-daily-order-menu/add-admin-sub-type-daily-order-menu.component';
 import { AddAdminVendorDailyOrderMenuComponent } from './add-admin-vendor-daily-order-menu/add-admin-vendor-daily-order-menu.component';
@@ -17,7 +20,7 @@ import { ImportAdminDailyOrderMenuComponent } from './import-admin-daily-order-m
 @Component({
   selector: 'app-admin-daily-order',
   standalone: true,
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [CommonModule, FormsModule, MaterialModule, CafeteriaSelectorComponent],
   templateUrl: './admin-daily-order.component.html',
   styleUrls: ['./admin-daily-order.component.scss']
 })
@@ -27,6 +30,7 @@ export class AdminDailyOrderComponent implements OnInit {
   selectedCafeteriaName: any;
   selectedCafeteriaId: any;
   mealFilter: string = 'All Meal Types';
+  private orgSub: Subscription | undefined;
 
   displayedColumns: string[] = ['mealType', 'moq', 'charge', 'timeWindow', 'cutOff', 'sameDay', 'actions'];
   deliverySettings: any[] = [];
@@ -37,15 +41,35 @@ export class AdminDailyOrderComponent implements OnInit {
     private modalService: MatDialog,
     private confirmationModalService: ConfirmationModalService,
     private toaster: ToasterService,
+    private orgSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
+    if (this.orgObj) {
+      this.initializeComponent();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.initializeComponent();
+        }
+      });
+    }
+  }
+
+  initializeComponent() {
     if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
       this.selectedCafeteria = this.orgObj.cafeteriaList[0];
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     }
     this.getDailyOrderMenuByCafeteriaId();
+  }
+
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
+    }
   }
 
   getDailyOrderMenuByCafeteriaId() {

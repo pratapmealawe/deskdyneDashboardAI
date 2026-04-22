@@ -1,0 +1,57 @@
+@use "styles/theme/variable" as var;
+
+.premium-modal {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  min-width: 600px;
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .icon-box {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      mat-icon { font-size: 22px; width: 22px; height: 22px; }
+      &.primary { background: #eff6ff; color: var.$primary-color1; }
+    }
+
+    .text {
+      h3 { font-size: 1.15rem; font-weight: 700; color: var.$primary-color2; margin: 0; }
+      p { font-size: 0.82rem; color: #64748b; margin: 0; }
+    }
+  }
+
+  .close-btn { color: #94a3b8; &:hover { background: #f1f5f9; color: #64748b; } }
+}
+
+.bg-light-soft { background-color: #f8fafc; }
+
+.dialog-content {
+  padding: 1rem 2rem !important;
+  margin: 0;
+}
+
+/* Buttons */
+.btn-cancel { border-radius: 99px; font-weight: 600; color: #64748b; &:hover { background: #f1f5f9; } }
+.btn-primary-action {
+  border-radius: 99px !important; font-weight: 700 !important; height: 44px !important; font-size: 0.85rem !important;
+  mat-icon { margin-right: 6px; font-size: 18px; width: 18px; height: 18px; }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container .mdc-dialog__surface { border-radius: 20px !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; }
+}

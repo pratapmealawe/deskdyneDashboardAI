@@ -1,80 +1,91 @@
-<div class="modern-dialog add-employee-dialog">
-    <!-- Header -->
-    <div class="dialog-header modern-header">
-        <div class="header-content">
-            <div class="icon-box" [class.edit]="isEditMode">
-                <mat-icon ripple>{{ isEditMode ?'edit' :'person_add' }}</mat-icon>
-            </div>
-            <div class="title-section">
-                <h2>{{ isEditMode ?'Edit Employee' :'Add New Employee' }}</h2>
-                <span class="section-badge">{{ isEditMode ?'Update existing record' :'Register a new employee' }}</span>
+<div class="add-employee-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!isEditMode" [class.warning]="isEditMode">
+        <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ isEditMode ? 'Edit Employee' : 'Add New Employee' }}</h3>
+        <p>{{ isEditMode ? 'Update employee details and assignments' : 'Enter details for the new employee record' }}</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()" id="addEmployeeForm" class="p-2">
+      <div class="form-grid-modern">
+        <!-- Name & ID Row -->
+        <div class="row g-3">
+          <div class="col-md-7">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee Name</mat-label>
+              <mat-icon matPrefix>person</mat-icon>
+              <input matInput formControlName="employeeName" placeholder="e.g. John Doe" />
+              <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">Name is required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-5">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Employee ID</mat-label>
+              <mat-icon matPrefix>badge</mat-icon>
+              <input matInput formControlName="employeeId" placeholder="e.g. EMP123" />
+              <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">ID is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Phone & Email Row -->
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Phone Number</mat-label>
+              <mat-icon matPrefix>phone</mat-icon>
+              <input matInput formControlName="employeePhoneNo" placeholder="10-digit number" type="tel" />
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">Invalid number</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Email Address</mat-label>
+              <mat-icon matPrefix>email</mat-icon>
+              <input matInput formControlName="employeeEmail" placeholder="e.g. john@company.com" type="email" />
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">Required</mat-error>
+              <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">Invalid email</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Organization Info (Hidden or Readonly) -->
+        <div class="selection-container mt-3 bg-light-soft p-3 rounded-4 border">
+            <p class="section-label mb-2"><mat-icon>corporate_fare</mat-icon> Organization Details</p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <p class="fw-bold m-0" style="color: #1e293b;">{{ data.orgObj.organization_name }}</p>
+                    <p class="small text-muted m-0">Cafeteria: {{ data.selectedCafeteria?.cafeteria_name || 'N/A' }}</p>
+                </div>
+                <div class="status-pill info">ACTIVE</div>
             </div>
         </div>
-        <button mat-icon-button (click)="closeModal()" class="close-btn">
-            <mat-icon ripple>close</mat-icon>
-        </button>
-    </div>
+      </div>
+    </form>
+  </mat-dialog-content>
 
-    <!-- Content -->
-    <mat-dialog-content class="dialog-content custom-scrollbar">
-        <form [formGroup]="employeeForm" class="employee-form">
-            <div class="form-grid row g-3">
-                <!-- Name -->
-                <div class="col-12 mb-2">
-                    <label class="form-label-modern">Full Name</label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput formControlName="employeeName" placeholder="e.g. Alexander Pierce">
-                        <mat-icon matPrefix>person_outline</mat-icon>
-                        <mat-hint>Enter the employee's full legal name</mat-hint>
-                        <mat-error *ngIf="employeeForm.get('employeeName')?.hasError('required')">Name is required</mat-error>
-                    </mat-form-field>
-                </div>
-
-                <!-- ID -->
-                <div class="col-md-6 mb-2">
-                    <label class="form-label-modern">Employee ID</label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput formControlName="employeeId" placeholder="e.g. EMP001">
-                        <mat-icon matPrefix>fingerprint</mat-icon>
-                        <mat-error *ngIf="employeeForm.get('employeeId')?.hasError('required')">ID is required</mat-error>
-                    </mat-form-field>
-                </div>
-
-                <!-- Phone -->
-                <div class="col-md-6 mb-2">
-                    <label class="form-label-modern">Phone Number</label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput type="tel" formControlName="employeePhoneNo" placeholder="10-digit number">
-                        <mat-icon matPrefix>smartphone</mat-icon>
-                        <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('required')">Phone is required</mat-error>
-                        <mat-error *ngIf="employeeForm.get('employeePhoneNo')?.hasError('pattern')">Invalid 10-digit number</mat-error>
-                    </mat-form-field>
-                </div>
-
-                <!-- Email -->
-                <div class="col-12 mt-2">
-                    <label class="form-label-modern">Email Address</label>
-                    <mat-form-field appearance="outline" class="w-100">
-                        <input matInput type="email" formControlName="employeeEmail" placeholder="name@company.com">
-                        <mat-icon matPrefix>mail_outline</mat-icon>
-                        <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('required')">Email is required</mat-error>
-                        <mat-error *ngIf="employeeForm.get('employeeEmail')?.hasError('email')">Invalid email address</mat-error>
-                    </mat-form-field>
-                </div>
-            </div>
-        </form>
-    </mat-dialog-content>
-
-    <!-- Footer -->
-    <mat-dialog-actions align="end" class="dialog-footer">
-        <button mat-button (click)="closeModal()" class="btn-cancel">Cancel</button>
-        <button mat-flat-button color="primary" 
-                [class.spinner]="isLoading" 
-                [disabled]="isLoading || employeeForm.invalid" 
-                (click)="onSubmit()" 
-                class="btn-submit">
-            <mat-icon *ngIf="!isLoading">check_circle</mat-icon>
-            {{ isEditMode ?'Update' :'Register' }}
-        </button>
-    </mat-dialog-actions>
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="addEmployeeForm" 
+            [disabled]="employeeForm.invalid || isSubmitting" class="btn-primary-action px-4">
+      <ng-container *ngIf="!isSubmitting">
+        <mat-icon>{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+        <span>{{ isEditMode ? 'Update Employee' : 'Create Employee' }}</span>
+      </ng-container>
+      <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+        <mat-spinner diameter="20" color="accent"></mat-spinner>
+        <span>Saving...</span>
+      </div>
+    </button>
+  </mat-dialog-actions>
 </div>

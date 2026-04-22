@@ -1,41 +1,50 @@
 <div class="employee-list-container">
   <!-- Cafeteria Selector -->
-  <div class="page-header-card mb-4 mt-2">
-    <div class="header-content">
-      <div class="title-section">
-        <h2 class="page-title">Employee Listing</h2>
-        <p class="page-subtitle">View and manage employee profiles for the selected cafeterias</p>
+  <!-- Page Header -->
+  <div class="bulk-dashboard-header">
+    <div class="header-card">
+      <div class="header-icon-box">
+        <mat-icon>people</mat-icon>
       </div>
-      
-      <div class="cafeteria-chip-selection mt-4">
-        <p class="selection-label">Select Cafeteria</p>
-        <div class="chip-list-wrapper mt-2">
-          <button class="cafe-chip" 
-                  *ngFor="let cafe of orgObj.cafeteriaList"
-                  [class.active]="isCafeteriaSelected(cafe.cafeteria_id)"
-                  (click)="selectCafeteria(cafe)">
-            <mat-icon>storefront</mat-icon>
-            <span class="chip-text">{{ cafe.cafeteria_name }}</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
-        <button mat-flat-button color="primary" class="btn-primary-action" (click)="addIndividualEmployee()">
-          <mat-icon>person_add</mat-icon> Add Employee
-        </button>
-        <button mat-stroked-button class="btn-secondary-action" (click)="addMultipleEmployee()">
-          <mat-icon>playlist_add</mat-icon> Bulk Add
-        </button>
-        <button mat-stroked-button class="btn-secondary-action" (click)="openImportDialog()">
-          <mat-icon>file_upload</mat-icon> Import
-        </button>
-        <button mat-stroked-button class="btn-secondary-action" (click)="exportEmployees()">
-          <mat-icon>download</mat-icon> Export
-        </button>
+      <div class="header-text-content">
+        <h1 class="page-title">Employee Listing</h1>
+        <p class="page-subtitle">
+          View and manage employee profiles for the selected cafeterias
+        </p>
       </div>
     </div>
+
+    <!-- Cafeteria Selection Area -->
+    <div class="mb-4">
+      <app-cafeteria-selector 
+        [cafeteriaList]="orgObj?.cafeteriaList"
+        [selectedCafeteriaIds]="selectedCafeteriaIds"
+        [config]="{ multiple: true, label: 'SELECT CAFETERIA' }"
+        (cafeteriaChanged)="selectCafeteria($event)">
+      </app-cafeteria-selector>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+      <button mat-flat-button color="primary" class="btn-primary-action" (click)="addIndividualEmployee()">
+        <mat-icon>person_add</mat-icon>
+        Add Employee
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="addMultipleEmployee()">
+        <mat-icon>playlist_add</mat-icon>
+        Bulk Add Employee
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="openImportDialog()">
+        <mat-icon>file_upload</mat-icon>
+        Import
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="exportEmployees()" [disabled]="getFilteredEmployees().length === 0">
+        <mat-icon>download</mat-icon>
+        Export
+      </button>
+    </div>
   </div>
+
 
   <!-- Employee List Section -->
   <div class="modern-card animate-fadeIn">

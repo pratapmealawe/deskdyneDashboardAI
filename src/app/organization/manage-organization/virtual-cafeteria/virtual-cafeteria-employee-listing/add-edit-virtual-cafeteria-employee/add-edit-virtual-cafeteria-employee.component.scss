@@ -1,127 +1,77 @@
 @use "styles/theme/variable" as var;
 
-.add-employee-dialog {
-    display: flex;
-    flex-direction: column;
-    max-height: 90vh;
-    width: 600px;
-    background: #fff;
-    border-radius: 12px;
-    overflow: hidden;
-
-    .dialog-header {
-        padding: 20px 24px;
-        border-bottom: 1px solid #edf2f7;
-        background: #fff;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-
-        .header-content {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-
-            .icon-box {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                background: rgba(var.$primary-color, 0.1);
-                color: var.$primary-color;
-
-                &.edit {
-                    background: rgba(#3182ce, 0.1);
-                    color: #3182ce;
-                }
-
-                mat-icon {
-                    font-size: 24px;
-                }
-            }
-
-            .title-section {
-                h2 {
-                    margin: 0;
-                    font-size: 1.25rem;
-                    font-weight: 700;
-                    color: #1a202c;
-                    letter-spacing: -0.5px;
-                }
-
-                .section-badge {
-                    font-size: 0.75rem;
-                    color: #718096;
-                    font-weight: 500;
-                    text-transform: uppercase;
-                    letter-spacing: 0.5px;
-                }
-            }
-        }
-    }
-
-    .dialog-content {
-        padding: 24px;
-        background: #f8fafc;
-
-        .form-label-modern {
-            display: block;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #4a5568;
-            letter-spacing: 0.2px;
-        }
-
-        ::ng-deep .mat-form-field-appearance-outline {
-            .mat-form-field-wrapper {
-                margin: 0;
-            }
-            .mat-form-field-outline {
-                background: #fff;
-                border-radius: 8px;
-            }
-            .mat-form-field-infix {
-                padding: 12px 0;
-            }
-            &.mat-focused .mat-form-field-outline-thick {
-                color: var.$primary-color;
-            }
-            .mat-form-field-prefix {
-                top: 4px;
-                margin-right: 8px;
-                color: #a0aec0;
-            }
-        }
-    }
-
-    .dialog-footer {
-        padding: 16px 24px;
-        border-top: 1px solid #edf2f7;
-        background: #fff;
-        display: flex;
-        gap: 12px;
-
-        button {
-            height: 44px;
-            border-radius: 8px;
-            font-weight: 600;
-            padding: 0 24px;
-        }
-
-        .btn-cancel {
-            color: #718096;
-        }
-
-        .btn-submit {
-            box-shadow: 0 4px 6px -1px rgba(var.$primary-color, 0.2);
-            mat-icon {
-                margin-right: 8px;
-            }
-        }
-    }
+.premium-modal {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  min-width: 480px;
+  max-width: 600px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: white;
 }
 
+.modal-header {
+  padding: 1.25rem 1.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .icon-box {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      mat-icon { font-size: 22px; width: 22px; height: 22px; }
+      &.primary { background: #eff6ff; color: var.$primary-color1; }
+      &.warning { background: #fffbeb; color: #d97706; }
+    }
+
+    .text {
+      h3 { font-size: 1.15rem; font-weight: 700; color: var.$primary-color2; margin: 0; }
+      p { font-size: 0.82rem; color: #64748b; margin: 0; }
+    }
+  }
+
+  .close-btn { color: #94a3b8; &:hover { background: #f1f5f9; color: #64748b; } }
+}
+
+.bg-light-soft { background-color: #f8fafc; }
+
+.dialog-content {
+  padding: 1.5rem 2rem !important;
+  margin: 0;
+}
+
+.section-label {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;
+  mat-icon { font-size: 18px; width: 18px; height: 18px; color: #94a3b8; }
+}
+
+.full-width { width: 100%; }
+
+/* Buttons */
+.btn-cancel { border-radius: 99px; font-weight: 600; color: #64748b; &:hover { background: #f1f5f9; } }
+.btn-primary-action {
+  border-radius: 99px !important; font-weight: 700 !important; height: 44px !important; font-size: 0.85rem !important;
+  mat-icon { margin-right: 6px; font-size: 18px; width: 18px; height: 18px; }
+}
+
+.status-pill {
+    padding: 4px 12px;
+    border-radius: 99px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    &.info { background: #f0f9ff; color: #0284c7; border: 1px solid #e0f2fe; }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container .mdc-dialog__surface { border-radius: 20px !important; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; }
+  .mat-mdc-form-field-subscript-wrapper { font-size: 0.75rem !important; }
+}

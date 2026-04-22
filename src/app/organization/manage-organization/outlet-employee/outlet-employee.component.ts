@@ -1,4 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { ApiMainService } from '@service/apiService/apiMain.service';
@@ -12,6 +14,7 @@ import { saveAs } from 'file-saver';
 import { AddOutletEmployeeComponent } from './add-outlet-employee/add-outlet-employee.component';
 import { BulkAddOutletEmployeeComponent } from './bulk-add-outlet-employee/bulk-add-outlet-employee.component';
 import { ImportOutletEmployeeComponent } from './import-outlet-employee/import-outlet-employee.component';
+import { CafeteriaSelectorComponent } from '../cafeteria-selector/cafeteria-selector.component';
 
 @Component({
   selector: 'app-outlet-employee',
@@ -20,15 +23,13 @@ import { ImportOutletEmployeeComponent } from './import-outlet-employee/import-o
     CommonModule,
     FormsModule,
     MaterialModule,
-    AddOutletEmployeeComponent,
-    BulkAddOutletEmployeeComponent,
-    ImportOutletEmployeeComponent
+    CafeteriaSelectorComponent
   ],
   templateUrl: './outlet-employee.component.html',
   styleUrls: ['./outlet-employee.component.scss']
 })
 export class OutletEmployeeComponent implements OnInit {
-  @Input() orgObj: any;
+  orgObj: any;
   employeeList: any[] = [];
   selectedCafeteria: any = null;
   selectedCafeteriaId: string | null = null;
@@ -37,17 +38,37 @@ export class OutletEmployeeComponent implements OnInit {
   pageIndex = 0;
   pageSizeOptions = [10, 25, 50, 100];
   searchTerm: string = '';
-
+  private orgSub: Subscription | undefined;
   constructor(
     private api: ApiMainService,
     private dialog: MatDialog,
     private confirmationModal: ConfirmationModalService,
-    private toaster: ToasterService
+    private toaster: ToasterService,
+    private orgSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
+    if (this.orgObj) {
+      this.initializeComponent();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.initializeComponent();
+        }
+      });
+    }
+  }
+
+  initializeComponent(): void {
     if (this.orgObj?.cafeteriaList?.length > 0) {
       this.selectCafeteria(this.orgObj.cafeteriaList[0]);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
     }
   }
 

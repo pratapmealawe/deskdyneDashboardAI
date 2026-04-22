@@ -19,7 +19,29 @@ const routes: Routes = [
       { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent) },
       { path: 'organization-dashboard', loadComponent: () => import('./main-dashboard/main-dashboard.component').then(m => m.MainDashboardComponent) },
       { path: 'orders-dashboard', loadComponent: () => import('./orders-dashboard/orders-dashboard.component').then(m => m.OrdersDashboardComponent) },
-      { path: 'organization', loadComponent: () => import('./organization/organization.component').then(m => m.OrganizationComponent) },
+      {
+        path: 'organization',
+        loadComponent: () => import('./organization/organization.component').then(m => m.OrganizationComponent),
+        children: [
+          {
+            path: ':id', loadComponent: () => import('./organization/manage-organization/manage-organization.component').then(m => m.ManageOrganizationComponent),
+            children: [
+              { path: 'details', loadComponent: () => import('./organization/manage-organization/organization-details/organization-details.component').then(m => m.OrganizationDetailsComponent) },
+              { path: 'compliance', loadComponent: () => import('./organization/manage-organization/organization-compliance/organization-compliance.component').then(m => m.OrgComplianceComponent) },
+              { path: 'bulk-menu', loadComponent: () => import('./organization/manage-organization/bulk/bulk.component').then(m => m.BulkComponent) },
+              { path: 'virtual-cafeteria', loadComponent: () => import('./organization/manage-organization/virtual-cafeteria/virtual-cafeteria.component').then(m => m.VirtualCafeteriaComponent) },
+              { path: 'admin-daily-order', loadComponent: () => import('./organization/manage-organization/admin-daily-order/admin-daily-order.component').then(m => m.AdminDailyOrderComponent) },
+              { path: 'employees', loadComponent: () => import('./organization/manage-organization/employee-list/employee-list.component').then(m => m.EmployeeListComponent) },
+              { path: 'consumption-order', loadComponent: () => import('./organization/manage-organization/consumption-order/consumption-order.component').then(m => m.ConsumptionOrderComponent) },
+              { path: 'outlet-employees', loadComponent: () => import('./organization/manage-organization/outlet-employee/outlet-employee.component').then(m => m.OutletEmployeeComponent) },
+              { path: 'company-wallet', loadComponent: () => import('./organization/manage-organization/company-wallet/company-wallet.component').then(m => m.CompanyWalletComponent) },
+              // { path: 'qr-employees', loadComponent: () => import('./organization/manage-organization/qr-employee/qr-employee.component').then(m => m.QrEmployeeComponent) },
+              // { path: 'guest-employees', loadComponent: () => import('./organization/manage-organization/guest-employee-list/guest-employee-list.component').then(m => m.GuestEmployeeListComponent) },
+              { path: '', redirectTo: 'details', pathMatch: 'full' }
+            ]
+          }
+        ]
+      },
       { path: 'add-organization', loadComponent: () => import('./organization/add-organization/add-organization.component').then(m => m.AddOrganizationComponent) },
       { path: 'outlet', loadComponent: () => import('./outlet/outlet.component').then(m => m.OutletComponent) },
       { path: 'outlet-master-menu', loadComponent: () => import('./outlet/outlet-master-menu/outlet-master-menu.component').then(m => m.OutletMasterMenuComponent) },
@@ -40,7 +62,7 @@ const routes: Routes = [
       { path: 'bulkMasterMenu', loadComponent: () => import('./bulk-master-menu/bulk-master-menu.component').then(m => m.BulkMasterMenuComponent) },
       { path: 'admin', loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent) },
       { path: 'rbac-management', loadComponent: () => import('./rbac-management/rbac-management.component').then(m => m.RbacManagementComponent) },
-    
+
       { path: 'faq', loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => m.FaqModule) },
       { path: 'configVariable', loadChildren: () => import('./miscelleneous/config-variable/config-variable.module').then(m => m.ConfigVariableModule) },
       { path: 'appVersionControl', loadChildren: () => import('./miscelleneous/app-version-control/app-version-control.module').then(m => m.AppVersionControlModule) },

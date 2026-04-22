@@ -19,11 +19,11 @@ export class PermissionsService {
     // Keep legacy check for compatibility during transition
     const orgRolesLegacy = ['ORGADMIN', 'SITEEXE', 'HYPERPURE_ADMIN', 'HYPERPURE_POC'];
     if (orgRolesLegacy.includes(profile.role)) return true;
-
+    console.log(profile,'isOrgUser');
     // New RBAC check: check if any assigned role name indicates an org user
     if (profile.roles && profile.roles.length > 0) {
        return profile.roles.some((role: any) => 
-         ['org_admin', 'ORGADMIN', 'site_executive'].includes(role.name.toLowerCase())
+         role.name && ['org_admin', 'ORGADMIN', 'site_executive'].includes(role.name.toLowerCase())
        );
     }
     return false;

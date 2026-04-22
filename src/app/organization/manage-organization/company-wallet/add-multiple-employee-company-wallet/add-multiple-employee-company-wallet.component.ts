@@ -1,211 +1,114 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import * as ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
 import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
+import { MaterialModule } from '../../../../material.module';
 
 @Component({
-    selector: 'app-add-multiple-employee-company-wallet',
-    standalone: true,
-    imports: [
-        CommonModule,
-        MatDialogModule,
-        MatButtonModule,
-        MatIconModule,
-        MatSnackBarModule
-    ],
-    templateUrl: './add-multiple-employee-company-wallet.component.html',
-    styleUrls: ['./add-multiple-employee-company-wallet.component.scss']
+  selector: 'app-add-multiple-employee-company-wallet',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, MatDialogModule],
+  templateUrl: './add-multiple-employee-company-wallet.component.html',
+  styleUrls: ['./add-multiple-employee-company-wallet.component.scss']
 })
-export class AddMultipleEmployeeCompanyWalletComponent {
-    orgObj: any;
-    selectedCafeteria: any;
-    isUploading = false;
-    fileName: string = '';
-    parsedData: any[] = [];
-    isValidFile = false;
-    errorMessage: string = '';
+export class AddMultipleEmployeeCompanyWalletComponent implements OnInit {
+  employeeList: any[] = [];
+  orgObj: any;
+  availableCafeterias: any[] = [];
+  globalCafeteriaIds: string[] = [];
+  isSubmitting: boolean = false;
 
-    constructor(
-        public dialogRef: MatDialogRef<AddMultipleEmployeeCompanyWalletComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: { orgObj: any, selectedCafeteria: any },
-        private snackBar: MatSnackBar,
-        private apiMainService: ApiMainService
-    ) {
-        this.orgObj = this.data.orgObj;
-        this.selectedCafeteria = this.data.selectedCafeteria;
+  constructor(
+    private apiMainService: ApiMainService,
+    private toasterService: ToasterService,
+    public dialogRef: MatDialogRef<AddMultipleEmployeeCompanyWalletComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.orgObj = data.orgObj;
+    this.availableCafeterias = data.orgObj?.cafeteriaList || [];
+    // Initialize global selection from passed data if any
+    if (data.selectedCafeteria) {
+      this.globalCafeteriaIds = [data.selectedCafeteria.cafeteria_id || data.selectedCafeteria._id];
+    }
+  }
+
+  ngOnInit(): void {
+    if (this.data.employees && this.data.employees.length > 0) {
+      this.employeeList = JSON.parse(JSON.stringify(this.data.employees));
+    } else {
+      this.addRow();
+    }
+  }
+
+  compareCafeteria(c1: any, c2: any): boolean {
+    return c1 && c2 ? c1 === c2 : c1 === c2;
+  }
+
+  onGlobalCafeteriaChange(): void {
+    // Update all existing rows with the new global selection
+    const selectedCafeteriaObjects = this.availableCafeterias
+      .filter(c => this.globalCafeteriaIds.includes(c.cafeteria_id))
+      .map(c => ({
+        cafeteria_id: c.cafeteria_id,
+        cafeteria_name: c.cafeteria_name
+      }));
+
+    this.employeeList.forEach(emp => {
+      emp.cafeteria_list = [...selectedCafeteriaObjects];
+    });
+  }
+
+  addRow(): void {
+    const selectedCafeteriaObjects = this.availableCafeterias
+      .filter(c => this.globalCafeteriaIds.includes(c.cafeteria_id))
+      .map(c => ({
+        cafeteria_id: c.cafeteria_id,
+        cafeteria_name: c.cafeteria_name
+      }));
+
+    this.employeeList.push({
+      organization_name: this.orgObj.organization_name,
+      organization_id: this.orgObj._id,
+      employeeId: '',
+      employeeName: '',
+      employeePhoneNo: '',
+      employeeEmail: '',
+      cafeteria_list: selectedCafeteriaObjects
+    });
+  }
+
+  removeRow(index: number): void {
+    this.employeeList.splice(index, 1);
+    if (this.employeeList.length === 0) {
+      this.addRow();
+    }
+  }
+
+  isRowValid(emp: any): boolean {
+    return !!emp.employeeName && !!emp.employeePhoneNo && !!emp.employeeEmail;
+  }
+
+  async submitBulk(): Promise<void> {
+    const validEmployees = this.employeeList.filter(emp => this.isRowValid(emp));
+
+    if (validEmployees.length === 0) {
+      this.toasterService.warning('Please fill at least one complete employee record');
+      return;
     }
 
-    downloadTemplate() {
-        const workbook = new ExcelJS.Workbook();
-        const worksheet = workbook.addWorksheet('Employee Template');
-
-        // Headers
-        worksheet.columns = [
-            { header: 'Employee Name', key: 'employeeName', width: 25 },
-            { header: 'Employee ID', key: 'employeeId', width: 15 },
-            { header: 'Email', key: 'employeeEmail', width: 30 },
-            { header: 'Phone Number', key: 'employeePhoneNo', width: 20 },
-        ];
-
-        // Example Row
-        worksheet.addRow({
-            employeeName: 'John Doe',
-            employeeId: 'EMP001',
-            employeeEmail: 'john.doe@example.com',
-            employeePhoneNo: '9876543210'
-        });
-
-        // Styling
-        worksheet.getRow(1).font = { bold: true };
-
-        workbook.xlsx.writeBuffer().then((buffer) => {
-            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-            saveAs(blob, 'Employee_Upload_Template.xlsx');
-        });
-    }
-
-    onFileChange(event: any) {
-        const file = event.target.files[0];
-        if (!file) {
-            this.resetFile();
-            return;
-        }
-
-        // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-            this.setError('File size exceeds 5MB limit.');
-            return;
-        }
-
-        this.fileName = file.name;
-        const fileExtension = file.name.split('.').pop()?.toLowerCase();
-
-        if (fileExtension === 'csv') {
-            const reader = new FileReader();
-            reader.onload = (e: any) => {
-                const text = e.target.result;
-                this.processCSV(text);
-            };
-            reader.onerror = () => this.setError('Error reading CSV file.');
-            reader.readAsText(file);
-        } else {
-            const reader = new FileReader();
-            reader.onload = async (e: any) => {
-                try {
-                    const buffer = e.target.result;
-                    const workbook = new ExcelJS.Workbook();
-                    await workbook.xlsx.load(buffer);
-                    const worksheet = workbook.getWorksheet(1);
-                    if (!worksheet) {
-                        this.setError('Invalid Excel file: No worksheet found.');
-                        return;
-                    }
-                    this.processWorksheet(worksheet);
-                } catch (err) {
-                    console.error('File parsing error:', err);
-                    this.setError('Failed to parse Excel file.');
-                }
-            };
-            reader.onerror = () => this.setError('Error reading file.');
-            reader.readAsArrayBuffer(file);
-        }
-    }
-
-    processCSV(text: string) {
-        try {
-            const rows = text.split(/\r\n|\n/);
-            const dataRows = rows.filter(row => row.trim().length > 0);
-
-            // Assuming first row is header
-            if (dataRows.length < 2) {
-                this.setError('No data found in CSV file.');
-                return;
-            }
-
-            this.parsedData = [];
-            const errors: string[] = [];
-            const seenIds = new Set();
-            const seenEmails = new Set();
-
-            // Start from index 1 to skip header
-            for (let i = 1; i < dataRows.length; i++) {
-                const row = dataRows[i];
-                // Simple CSV split, handling simple comma separation. 
-                // For robust detailed CSV (quoted fields etc), a lib is better, but simple split matches standard template.
-                const cols = row.split(',').map(c => c.trim());
-
-                // Map columns based on template order: Name, ID, Email, Phone
-                // If template columns change, this needs update.
-                // Creating a virtual row object to reuse validation logic would offer best reuse, 
-                // but for now I'll just map manually to avoid complex refactor.
-
-                const employeeName = cols[0];
-                const employeeId = cols[1];
-                const employeeEmail = cols[2]?.toLowerCase();
-                const rawPhone = cols[3];
-                const employeePhoneNo = rawPhone ? rawPhone.replace(/[^0-9]/g, '') : '';
-
-                this.validateAndAddRow(i + 1, employeeName, employeeId, employeeEmail, employeePhoneNo, errors, seenIds, seenEmails);
-            }
-            this.finalizeProcessing(errors);
-
-        } catch (err) {
-            console.error('CSV Parsing Error', err);
-            this.setError('Failed to parse CSV file.');
-        }
-    }
-
-    processWorksheet(worksheet: ExcelJS.Worksheet) {
-        this.parsedData = [];
-        const errors: string[] = [];
-        const seenIds = new Set();
-        const seenEmails = new Set();
-
-        worksheet.eachRow((row, rowNumber) => {
-            if (rowNumber === 1) return; // Skip header
-
-            const employeeName = row.getCell(1).value?.toString()?.trim();
-            const employeeId = row.getCell(2).value?.toString()?.trim();
-            const employeeEmail = row.getCell(3).value?.toString()?.trim()?.toLowerCase();
-            const rawPhone = row.getCell(4).value;
-            const employeePhoneNo = rawPhone ? rawPhone.toString().replace(/[^0-9]/g, '') : '';
-
-            this.validateAndAddRow(rowNumber, employeeName, employeeId, employeeEmail, employeePhoneNo, errors, seenIds, seenEmails);
-        });
-
-        this.finalizeProcessing(errors);
-    }
-
-    validateAndAddRow(rowNumber: number, employeeName: any, employeeId: any, employeeEmail: any, employeePhoneNo: any, errors: string[], seenIds: Set<any>, seenEmails: Set<any>) {
-        if (!employeeName) errors.push(`Row ${rowNumber}: Missing Employee Name.`);
-        if (!employeeId) errors.push(`Row ${rowNumber}: Missing Employee ID.`);
-
-        if (!employeeEmail) {
-            errors.push(`Row ${rowNumber}: Missing Email.`);
-        } else if (!this.isValidEmail(employeeEmail)) {
-            errors.push(`Row ${rowNumber}: Invalid Email '${employeeEmail}'.`);
-        }
-
-        if (!employeePhoneNo || employeePhoneNo.length !== 10) {
-            errors.push(`Row ${rowNumber}: Invalid Phone '${employeePhoneNo}'. Must be 10 digits.`);
-        }
-
-        if (employeeId && seenIds.has(employeeId)) {
-            errors.push(`Row ${rowNumber}: Duplicate Employee ID '${employeeId}' in file.`);
-        }
-        if (employeeId) seenIds.add(employeeId);
-
-        if (employeeEmail && seenEmails.has(employeeEmail)) {
-            errors.push(`Row ${rowNumber}: Duplicate Email '${employeeEmail}' in file.`);
-        }
-        if (employeeEmail) seenEmails.add(employeeEmail);
-
-        if (errors.length === 0) {
+    this.isSubmitting = true;
+    try {
+      // Map to the format expected by wallet API if necessary
+      const payload = validEmployees.map(emp => {
+          // The wallet API usually expects a single cafeteria per entry if it's bulkUpdateCompanyWalletCafeteriaDetails
+          // But here we have cafeteria_list. Let's see how the previous logic handled it.
+          // Actually, the previous logic mapped to a single cafeteria.
+          // Let's check what bulkUpdateCompanyWalletCafeteriaDetails expects.
+          
+          // Based on previous code:
+          /*
             this.parsedData.push({
                 organization_id: this.orgObj._id,
                 organization_name: this.orgObj.organization_name,
@@ -218,73 +121,61 @@ export class AddMultipleEmployeeCompanyWalletComponent {
                 employeeEmail,
                 employeePhoneNo: Number(employeePhoneNo)
             });
-        }
+          */
+          
+          // If we allow multiple cafeteria selection in the grid, we might need to send multiple entries or a different API.
+          // However, for "parity", let's follow the BulkAddEmployeeComponent structure which allows multiple.
+          
+          return {
+              ...emp,
+              employeePhoneNo: Number(emp.employeePhoneNo)
+          };
+      });
+
+      const res: any = await this.apiMainService.bulkUpdateCompanyWalletCafeteriaDetails(payload);
+      if (res) {
+          if (res.skippedEmployees?.length > 0) {
+              const skipCount = res.skippedEmployees.length;
+              const insertCount = (res.insertedEmployees?.length || 0) + (res.cafeteriaUpdated?.length || 0);
+              
+              if (insertCount > 0) {
+                  this.toasterService.info(`${insertCount} records processed, ${skipCount} skipped.`);
+              } else {
+                  this.handleSkipError(res.skippedEmployees[0], skipCount);
+              }
+          } else {
+              this.toasterService.success(`${payload.length} employees request processed.`);
+          }
+          this.dialogRef.close(true);
+      }
+    } catch (error: any) {
+      console.error(error);
+      const errorArr = error?.error?.msg?.skippedEmployees || error?.error?.skippedEmployees;
+      if (Array.isArray(errorArr) && errorArr.length > 0) {
+        this.handleSkipError(errorArr[0], errorArr.length);
+      } else {
+        this.toasterService.error('Failed to process bulk request');
+      }
+    } finally {
+      this.isSubmitting = false;
     }
+  }
 
-    finalizeProcessing(errors: string[]) {
-        if (errors.length > 0) {
-            const showErrors = errors.slice(0, 5).join('\n');
-            const moreErrors = errors.length > 5 ? `\n...and ${errors.length - 5} more errors.` : '';
-            this.setError(`Validation Failed:\n${showErrors}${moreErrors}`);
-        } else if (this.parsedData.length === 0) {
-            this.setError('No valid data found in file.');
-        } else {
-            this.isValidFile = true;
-            this.errorMessage = '';
-        }
-    }
+  private handleSkipError(skip: any, totalSkips: number): void {
+      let message = '';
+      if (skip.skipCode === 'DUPLICATE_CAFETERIA') {
+          message = totalSkips > 1 ? `${totalSkips} records already exist in selected cafeterias` : 'Employee already exists in selected cafeterias';
+          this.toasterService.warning(message);
+      } else if (skip.skipCode === 'DIFFERENT_ORG') {
+          const orgName = skip.existingOrgName || 'another organization';
+          message = totalSkips > 1 ? `${totalSkips} records are already registered with other organizations` : `Employee is already registered with ${orgName}`;
+          this.toasterService.error(message);
+      } else {
+          this.toasterService.error(skip.message || `Failed to process ${totalSkips} records`);
+      }
+  }
 
-    isValidEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
-
-    resetFile() {
-        this.fileName = '';
-        this.parsedData = [];
-        this.isValidFile = false;
-        this.errorMessage = '';
-    }
-
-    setError(msg: string) {
-        this.errorMessage = msg;
-        this.isValidFile = false;
-        this.parsedData = [];
-    }
-
-    async upload() {
-        if (!this.isValidFile || this.parsedData.length === 0) return;
-
-        this.isUploading = true;
-        try {
-            // Use bulkUpdateCompanyWalletCafeteriaDetails as requested
-            const res: any = await this.apiMainService.bulkUpdateCompanyWalletCafeteriaDetails(this.parsedData);
-
-            if (res) {
-                this.snackBar.open(`${this.parsedData.length} employees request processed.`, 'OK', { duration: 3000 });
-                this.dialogRef.close(true);
-            } else {
-                this.snackBar.open('Upload completed with potential warnings.', 'OK', { duration: 3000 });
-                this.dialogRef.close(true);
-            }
-
-        } catch (error: any) {
-            console.error('Bulk upload error', error);
-            const errorArr = error?.error?.msg?.skippedEmployees;
-
-            if (Array.isArray(errorArr) && errorArr.length > 0) {
-                const failedCount = errorArr.length;
-                this.setError(`Upload failed for ${failedCount} employees (Duplicates or Errors).\nCheck console or try again with corrected data.`);
-                // Optionally show specifics
-            } else {
-                this.snackBar.open('An error occurred during upload', 'OK', { duration: 3000 });
-            }
-        } finally {
-            this.isUploading = false;
-        }
-    }
-
-    close() {
-        this.dialogRef.close();
-    }
+  close(): void {
+    this.dialogRef.close();
+  }
 }

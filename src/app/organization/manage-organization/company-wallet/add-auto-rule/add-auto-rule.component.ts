@@ -10,11 +10,12 @@ import { MatSelectModule } from '@angular/material/select';
 import { debounceTime } from 'rxjs/operators';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ToasterService } from '@service/toaster.service';
+import { MaterialModule } from "src/app/material.module";
 
 @Component({
     selector: 'app-add-auto-rule',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatAutocompleteModule],
+    imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInputModule, MatSelectModule, MatAutocompleteModule, MaterialModule],
     templateUrl: './add-auto-rule.component.html',
     styleUrls: ['./add-auto-rule.component.scss']
 })
@@ -30,7 +31,8 @@ export class AddAutoRuleComponent implements OnInit {
         points: new FormControl(500, [Validators.required, Validators.min(1)]),
         walletType: new FormControl('billing', Validators.required),
         expiryDays: new FormControl(30, [Validators.required, Validators.min(1)]),
-        allowedOrderTypes: new FormControl([], Validators.required)
+        allowedOrderTypes: new FormControl([], Validators.required),
+        runNow: new FormControl(false)
     });
     levels = [
         { label: 'Cafeteria', value: 'CAFETERIA' },
@@ -166,7 +168,8 @@ export class AddAutoRuleComponent implements OnInit {
                 points: formValue.points,
                 walletType: formValue.walletType,
                 allowedOrderTypes: Array.isArray(formValue.allowedOrderTypes) ? formValue.allowedOrderTypes : [formValue.allowedOrderTypes],
-                expiryDays: formValue.expiryDays
+                expiryDays: formValue.expiryDays,
+                runNow: formValue.runNow
             };
 
             if (formValue.level === 'CAFETERIA') {

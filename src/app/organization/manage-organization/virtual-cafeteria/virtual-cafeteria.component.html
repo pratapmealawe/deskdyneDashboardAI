@@ -5,22 +5,15 @@
                 <h2 class="page-title">Virtual Cafeteria</h2>
                 <p class="page-subtitle">Manage menu, packages and settings for {{ selectedCafeteria?.cafeteria_name ||'Select Cafeteria' }}</p>
             </div>
-            <div class="cafeteria-chip-selection mt-3">
-                <p class="selection-label">Select Cafeteria</p>
-                <div class="chip-list-wrapper mt-2">
-                    <button class="cafe-chip" 
-                            *ngFor="let cafe of cafeteriaList"
-                            [class.active]="selectedCafeteria?.cafeteria_id === cafe.cafeteria_id"
-                            (click)="selectedCafeteria = cafe; getVirtualCafeteriaByCafeteria()">
-                        <mat-icon>storefront</mat-icon>
-                        <span class="chip-text">{{ cafe.cafeteria_name }}</span>
-                    </button>
-                </div>
-            </div>
+            <app-cafeteria-selector 
+                [cafeteriaList]="cafeteriaList" 
+                [selectedCafeteria]="selectedCafeteria"
+                (cafeteriaChanged)="onCafeteriaSelection($event)">
+            </app-cafeteria-selector>
         </div>
     </div>
     <div class="tabs-container">
-        <mat-tab-group animationDuration="200ms">
+        <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedIndexChange)="onTabChange($event)" animationDuration="200ms">
             <!-- Categories Tab -->
             <mat-tab>
                 <ng-template mat-tab-label>
@@ -30,16 +23,14 @@
                     </div>
                 </ng-template>
 
-                <div class="tab-body-content py-4">
-                    <app-virtual-cafeteria-categories
-                        [orgObj]="orgObj"
-                        [categories]="categories"
-                        [selectedCafeteria]="selectedCafeteria"
-                        [defaultCategories]="defaultCategories"
-                        [cafeteriaList]="cafeteriaList"
-                        (refreshData)="getVirtualCafeteriaByCafeteria()">
-                    </app-virtual-cafeteria-categories>
-                </div>
+                <ng-template matTabContent>
+                    <div class="tab-body-content py-4">
+                        <app-virtual-cafeteria-categories
+                            [orgObj]="orgObj"
+                            [selectedCafeteria]="selectedCafeteria">
+                        </app-virtual-cafeteria-categories>
+                    </div>
+                </ng-template>
             </mat-tab>
             <!-- Packages Tab -->
             <mat-tab>
@@ -50,67 +41,15 @@
                     </div>
                 </ng-template>
 
-                <div class="tab-body-content py-4">
-                    <app-virtual-cafeteria-package
-                        [orgObj]="orgObj"
-                        [packages]="packages"
-                        [selectedCafeteria]="selectedCafeteria"
-                        [addNew]="addNew"
-                        (refreshData)="getVirtualCafeteriaByCafeteria()">
-                    </app-virtual-cafeteria-package>
-                </div>
-            </mat-tab>
-            <!-- Configuration Tab -->
-            <mat-tab>
-                <ng-template mat-tab-label>
-                    <div class="tab-label-content">
-                        <mat-icon class="tab-icon">settings</mat-icon>
-                        <span>Config</span>
+                <ng-template matTabContent>
+                    <div class="tab-body-content py-4">
+                        <app-virtual-cafeteria-package
+                            [orgObj]="orgObj"
+                            [selectedCafeteria]="selectedCafeteria">
+                        </app-virtual-cafeteria-package>
                     </div>
                 </ng-template>
-
-                <div class="tab-body-content py-4">
-                    <div class="modern-card">
-                        <div class="card-header">
-                            <div class="icon-box warning">
-                                <mat-icon>tune</mat-icon>
-                            </div>
-                            <div class="header-titles">
-                                <h3>Configuration Settings</h3>
-                                <p class="text-muted small mb-0">Adjust taxes, delivery charges and discounts</p>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="mb-4">
-                                <mat-checkbox class="employee-checkbox" [(ngModel)]="mealOutlet.showOnlyToEmployees"
-                                    (ngModelChange)="updateVirtualCafeteria()" color="primary">
-                                    <span matTooltip="Enable this to restrict visibility only to virtual cafeteria employees."
-                                        matTooltipPosition="right" class="checkbox-label">
-                                        Show only to virtual cafeteria employees
-                                        <mat-icon class="info-icon" style="font-size: 16px; width: 16px; height: 16px;">info</mat-icon>
-                                    </span>
-                                </mat-checkbox>
-                            </div>
-                            <div class="row">
-                                <div class="col-12 col-md-6 mb-3" *ngFor="let item of config">
-                                    <mat-form-field appearance="outline" class="w-100">
-                                        <mat-label>{{ item.label }}</mat-label>
-                                        <input matInput type="number" [(ngModel)]="item.value">
-                                        <span matSuffix *ngIf="item.name.includes('PERCENTAGE') || item.name.includes('GST')">%</span>
-                                        <span matPrefix *ngIf="!item.name.includes('PERCENTAGE') && !item.name.includes('GST')">₹</span>
-                                    </mat-form-field>
-                                </div>
-                            </div>
-                            <div class="d-flex justify-content-end mt-4">
-                                <button mat-flat-button color="primary" class="btn-primary-action" (click)="updateVirtualCafeteria()">
-                                    <mat-icon>save</mat-icon> Save Changes
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </mat-tab>
-
             <!-- Employee Listing Tab -->
             <mat-tab>
                 <ng-template mat-tab-label>
@@ -119,34 +58,12 @@
                         <span>Employees</span>
                     </div>
                 </ng-template>
-                <div class="tab-body-content py-4">
-                    <app-virtual-cafeteria-employee-listing [orgObj]="orgObj" [selectedCafeteria]="selectedCafeteria"></app-virtual-cafeteria-employee-listing>
-                </div>
+                <ng-template matTabContent>
+                    <div class="tab-body-content py-4">
+                        <app-virtual-cafeteria-employee-listing [orgObj]="orgObj" [selectedCafeteria]="selectedCafeteria"></app-virtual-cafeteria-employee-listing>
+                    </div>
+                </ng-template>
             </mat-tab>
         </mat-tab-group>
     </div>
 </div>
-<ng-template #categoryDialog let-data>
-    <h2 mat-dialog-title>View Category</h2>
-    <mat-dialog-content *ngIf="data?.category">
-        <mat-tab-group animationDuration="300ms">
-            <mat-tab label="Banners">
-                <div class="p-3 d-flex flex-wrap gap-3">
-                    <div *ngFor="let banner of data.category.categoryBanners" class="position-relative">
-                        <img [src]="data.serverDDUrl + banner" width="120" height="90" class="rounded shadow-sm" />
-                    </div>
-                    <div *ngIf="!data.category.categoryBanners?.length" class="text-muted">
-                        No banners available
-                    </div>
-                </div>
-            </mat-tab>
-
-            <mat-tab label="Category Image">
-                <div class="p-3">
-                    <img [src]="data.serverDDUrl + data.category.categoryImg" width="150" height="120"
-                        class="rounded shadow bg-light mb-3" />
-                </div>
-            </mat-tab>
-        </mat-tab-group>
-    </mat-dialog-content>
-</ng-template>

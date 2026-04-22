@@ -1,4 +1,4 @@
-﻿import {
+import {
   Component,
   EventEmitter,
   Input,
@@ -160,7 +160,7 @@ export class AddBulkMasterMenuComponent implements OnInit {
   private async addNewItem(item: any): Promise<void> {
     const formData = this.buildFormData(item);
     try {
-      await this.apiMainService.B2B_fooditemAdd(formData);
+      await this.apiMainService.saveBulkMasterMenu(formData);
       this.goToPreviousPage('new');
     } catch (error) {
     }
@@ -169,7 +169,7 @@ export class AddBulkMasterMenuComponent implements OnInit {
   private async updateFoodItem(item: any): Promise<void> {
     const formData = this.buildFormData(item);
     try {
-      await this.apiMainService.updateB2BfoodItem(
+      await this.apiMainService.updateBulkMasterMenu(
         formData,
         this.editfoodItemObj._id
       );

@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Component, Input, OnInit, ViewChild, ElementRef, OnDestroy } from "@angular/core";
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MaterialModule } from "src/app/material.module";
@@ -10,34 +12,55 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { AddEmployeeComponent } from './add-employee/add-employee.component';
 import { BulkAddEmployeeComponent } from './bulk-add-employee/bulk-add-employee.component';
-
 import { ImportEmployeeComponent } from './import-employee/import-employee.component';
+import { CafeteriaSelectorComponent } from '../cafeteria-selector/cafeteria-selector.component';
 
 @Component({
     selector: 'app-employee-list',
     standalone: true,
-    imports: [CommonModule, FormsModule, MaterialModule, AddEmployeeComponent, BulkAddEmployeeComponent, ImportEmployeeComponent],
+    imports: [CommonModule, FormsModule, MaterialModule, CafeteriaSelectorComponent],
     templateUrl: 'employee-list.component.html',
     styleUrls: ['employee-list.component.scss']
 })
 export class EmployeeListComponent implements OnInit {
     employeeList: any[] = [];
-    @Input() orgObj: any;
+    orgObj: any;
     selectedCafeterias: { cafeteria_id: string; cafeteria_name: string }[] = [];
     selectedCafeteriaIds: string[] = [];
     cafeObj: { cafeteria_id: string; cafeteria_name: string }[] = [];
     searchTerm: string = '';
+    private orgSub: Subscription | undefined;
 
     constructor(
         private apiMainService: ApiMainService,
         private dialog: MatDialog,
         private toaster: ToasterService,
-        private confirmationModalService: ConfirmationModalService
+        private confirmationModalService: ConfirmationModalService,
+        private orgSharedService: OrganizationSharedService
     ) { }
 
     ngOnInit() {
+        if (this.orgObj) {
+            this.initializeComponent();
+        } else {
+            this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+                if (org) {
+                    this.orgObj = org;
+                    this.initializeComponent();
+                }
+            });
+        }
+    }
+
+    initializeComponent() {
         if (this.orgObj?.cafeteriaList?.length > 0) {
             this.selectCafeteria(this.orgObj.cafeteriaList[0]);
+        }
+    }
+
+    ngOnDestroy() {
+        if (this.orgSub) {
+            this.orgSub.unsubscribe();
         }
     }
 
@@ -123,8 +146,7 @@ export class EmployeeListComponent implements OnInit {
     // UPDATED IMPORT LOGIC
     openImportDialog() {
         const dialogRef = this.dialog.open(ImportEmployeeComponent, {
-            width: '700px',
-            maxWidth: '95vw',
+            width: '800px',
             data: {
                 orgObj: this.orgObj,
                 selectedCafeterias: this.cafeObj

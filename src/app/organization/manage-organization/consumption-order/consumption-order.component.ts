@@ -1,23 +1,26 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { MaterialModule } from '../../../material.module';
 import { AddConsumptionOrderComponent } from './add-consumption-order/add-consumption-order.component';
 import { ImportConsumptionMenuComponent } from './import-consumption-menu/import-consumption-menu.component';
+import { CafeteriaSelectorComponent } from '../cafeteria-selector/cafeteria-selector.component';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
 @Component({
   selector: 'app-consumption-order', 
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, AddConsumptionOrderComponent, ImportConsumptionMenuComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, MaterialModule, AddConsumptionOrderComponent, ImportConsumptionMenuComponent, CafeteriaSelectorComponent],
   templateUrl: './consumption-order.component.html',
   styleUrls: ['./consumption-order.component.scss']
 })
 export class ConsumptionOrderComponent implements OnChanges, OnInit {
-  @Input() orgObj: any;
+  orgObj: any;
   selectedCafeteria: any;
   selectedCafeteriaName: any;
   selectedCafeteriaId: any;
@@ -25,22 +28,46 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
   consumptionList: any = [];
   searchTerm = '';
   @ViewChild("content") content: any;
+  private orgSub: Subscription | undefined;
 
   constructor(
     private apiMainService: ApiMainService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private orgSharedService: OrganizationSharedService
   ) { }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnInit(): void {
+    if (this.orgObj) {
+      this.initializeComponent();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.initializeComponent();
+        }
+      });
+    }
   }
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['orgObj'] && changes['orgObj'].currentValue) {
+      this.initializeComponent();
+    }
+  }
+
+  initializeComponent() {
     if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
       this.selectedCafeteria = this.orgObj.cafeteriaList[0];
       this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
       this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
     }
     this.fetchOrgMeals();
+  }
+
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
+    }
   }
 
   selectCafeteria(cafeteria: any) {
@@ -112,7 +139,7 @@ export class ConsumptionOrderComponent implements OnChanges, OnInit {
     }
 
     const dialogRef = this.dialog.open(ImportConsumptionMenuComponent, {
-      width: '700px',
+      width: '800px',
       data: {
         orgObj: this.orgObj,
         selectedCafeteria: this.selectedCafeteria

@@ -8,17 +8,13 @@
                     <p class="page-subtitle">Manage additional meal items and consumption-based orders for your organization</p>
                 </div>
 
-                <div class="cafeteria-chip-selection mt-4" *ngIf="orgObj?.cafeteriaList?.length > 1">
-                    <p class="selection-label">Select Cafeteria</p>
-                    <div class="chip-list-wrapper mt-2">
-                        <button class="cafe-chip" 
-                                *ngFor="let cafe of orgObj.cafeteriaList"
-                                [class.active]="selectedCafeteriaId === cafe.cafeteria_id"
-                                (click)="selectCafeteria(cafe)">
-                            <mat-icon>storefront</mat-icon>
-                            <span class="chip-text">{{ cafe.cafeteria_name }}</span>
-                        </button>
-                    </div>
+                <div class="cafeteria-selection-wrapper mt-4">
+                    <app-cafeteria-selector 
+                        [cafeteriaList]="orgObj?.cafeteriaList"
+                        [selectedCafeteria]="selectedCafeteria"
+                        [config]="{ multiple: false, label: 'SELECT CAFETERIA' }"
+                        (cafeteriaChanged)="selectCafeteria($event)">
+                    </app-cafeteria-selector>
                 </div>
             </div>
 
@@ -31,7 +27,7 @@
                     <mat-icon>file_upload</mat-icon>
                     <span>Import</span>
                 </button>
-                <button mat-stroked-button class="btn-secondary-action" (click)="exportMenu()">
+                <button mat-stroked-button class="btn-secondary-action" (click)="exportMenu()" [disabled]="getFilteredItems().length === 0">
                     <mat-icon>download</mat-icon>
                     <span>Export</span>
                 </button>
@@ -86,7 +82,7 @@
                             <button mat-icon-button class="premium-icon-btn edit"
                                 (click)="editConsumption(mealTypeItem, mealTypeItem.cafeteria_orignal_id)"
                                 matTooltip="Edit Item">
-                                <mat-icon>edit_note</mat-icon>
+                                <mat-icon>edit</mat-icon>
                             </button>
                         </div>
                     </div>

@@ -97,6 +97,10 @@ export class AddEmployeeComponent implements OnInit {
       let res;
       if (this.isEditMode) {
         res = await this.apiMainService.updateEmployee(this.employee._id, payload);
+        if (res?.skippedEmployees?.length > 0) {
+          this.handleSkipError(res.skippedEmployees[0]);
+          return;
+        }
         this.toasterService.success('Employee updated successfully');
       } else {
         res = await this.apiMainService.addEmployeeList([payload]);
@@ -104,22 +108,34 @@ export class AddEmployeeComponent implements OnInit {
         if (res?.insertedEmployees?.length > 0) {
           this.toasterService.success('Employee added successfully');
         } else if (res?.skippedEmployees?.length > 0) {
-          const skipReason = res.skippedEmployees[0].skipCode;
-          if (skipReason === 'DUPLICATE_CAFETERIA') {
-            this.toasterService.warning('Employee already exists in selected cafeterias');
-          } else {
-            this.toasterService.error('Failed to add employee: ' + skipReason);
-          }
+          this.handleSkipError(res.skippedEmployees[0]);
+          return;
         }
       }
 
       this.dialogRef.close(true);
     } catch (error: any) {
       console.error(error);
-      const message = error?.error?.message || error?.message || 'Failed to save employee';
-      this.toasterService.error(message);
+      const skippedEmployees = error?.error?.skippedEmployees || error?.error?.msg?.skippedEmployees;
+      if (Array.isArray(skippedEmployees) && skippedEmployees.length > 0) {
+        this.handleSkipError(skippedEmployees[0]);
+      } else {
+        const message = error?.error?.message || error?.error?.msg || error?.message || 'Failed to save employee';
+        this.toasterService.error(message);
+      }
     } finally {
       this.isSubmitting = false;
+    }
+  }
+
+  private handleSkipError(skip: any): void {
+    if (skip.skipCode === 'DUPLICATE_CAFETERIA') {
+      this.toasterService.warning('Employee already exists in selected cafeterias');
+    } else if (skip.skipCode === 'DIFFERENT_ORG') {
+      const orgName = skip.existingOrgName || 'another organization';
+      this.toasterService.error(`Employee is already registered with ${orgName}`);
+    } else {
+      this.toasterService.error(skip.message || 'Failed to save employee: ' + (skip.skipCode || 'Unknown error'));
     }
   }
 

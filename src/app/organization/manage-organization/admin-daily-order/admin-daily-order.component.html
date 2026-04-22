@@ -6,18 +6,11 @@
                 <p class="page-subtitle">Manage menu configurations and delivery settings for {{ selectedCafeteriaName }}</p>
             </div>
             
-            <div class="cafeteria-chip-selection mt-4">
-                <p class="selection-label">Select Cafeteria</p>
-                <div class="chip-list-wrapper mt-2">
-                    <button class="cafe-chip" 
-                            *ngFor="let cafe of orgObj.cafeteriaList"
-                            [class.active]="selectedCafeteria?.cafeteria_id === cafe.cafeteria_id"
-                            (click)="onCafeteriaChange({value: cafe})">
-                        <mat-icon>storefront</mat-icon>
-                        <span class="chip-text">{{ cafe.cafeteria_name }}</span>
-                    </button>
-                </div>
-            </div>
+            <app-cafeteria-selector 
+                [cafeteriaList]="orgObj?.cafeteriaList" 
+                [selectedCafeteria]="selectedCafeteria"
+                (cafeteriaChanged)="onCafeteriaChange({value: $event})">
+            </app-cafeteria-selector>
 
             <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
                 <button mat-flat-button color="primary" class="btn-primary-action" *ngIf="!vendorDetails" (click)="assignVendor()">
@@ -32,7 +25,7 @@
                 <button mat-stroked-button class="btn-secondary-action" (click)="importMenu()">
                     <mat-icon>upload</mat-icon> Import
                 </button>
-                <button mat-stroked-button class="btn-secondary-action" (click)="exportMenu()">
+                <button mat-stroked-button class="btn-secondary-action" (click)="exportMenu()" [disabled]="deliverySettings.length === 0">
                     <mat-icon>download</mat-icon>Export
                 </button>
             </div>

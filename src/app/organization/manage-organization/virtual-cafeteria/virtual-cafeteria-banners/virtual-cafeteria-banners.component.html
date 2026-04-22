@@ -1,0 +1,75 @@
+<div class="banners-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>collections</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Cafeteria Banners</h3>
+                <p>Upload and manage display banners for the cafeteria app</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="close()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="info-text">
+                <mat-icon>info</mat-icon>
+                <span>Drag and drop to reorder banners</span>
+            </div>
+            <button mat-flat-button color="primary" (click)="bannerInput.click()" [disabled]="isLoading" class="btn-primary-action">
+                <mat-icon>add_photo_alternate</mat-icon>
+                Upload New Banner
+            </button>
+            <input #bannerInput type="file" (change)="onImageSelect($event)" accept="image/*" class="d-none">
+        </div>
+
+        <div class="loading-overlay" *ngIf="isLoading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p>Processing image...</p>
+        </div>
+
+        <div cdkDropList class="banner-list" (cdkDropListDropped)="drop($event)" *ngIf="banners.length > 0; else noBanners">
+            <div class="banner-item-card" *ngFor="let banner of banners; let i = index" cdkDrag>
+                <div class="drag-handle" cdkDragHandle>
+                    <mat-icon>drag_indicator</mat-icon>
+                </div>
+                
+                <div class="banner-preview">
+                    <img [src]="banner.startsWith('http') ? banner : (serverUrl + banner)" 
+                         onerror="this.src='assets/Imageunavailable.webp'"
+                         alt="Banner">
+                </div>
+
+                <div class="banner-actions">
+                    <button mat-icon-button color="warn" (click)="deleteBanner(banner, i)" matTooltip="Delete Banner">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+
+                <!-- Drag Preview -->
+                <div class="banner-placeholder" *cdkDragPlaceholder></div>
+            </div>
+        </div>
+
+        <ng-template #noBanners>
+            <div class="empty-state-modern py-5 border rounded-3 bg-light-soft">
+                <div class="empty-icon-wrap">
+                    <mat-icon>auto_awesome_motion</mat-icon>
+                </div>
+                <h4>No Banners Configured</h4>
+                <p>Upload high-quality banners (3:1 aspect ratio recommended) to enhance the cafeteria experience.</p>
+                <button mat-stroked-button color="primary" class="mt-3" (click)="bannerInput.click()">
+                    <mat-icon>upload</mat-icon> Start Uploading
+                </button>
+            </div>
+        </ng-template>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 border-top bg-light-soft">
+        <button mat-flat-button color="primary" (click)="close()" class="btn-primary-action px-5">DONE</button>
+    </mat-dialog-actions>
+</div>

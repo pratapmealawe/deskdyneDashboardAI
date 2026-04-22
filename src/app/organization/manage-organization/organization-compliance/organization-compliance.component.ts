@@ -1,4 +1,4 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,6 +9,8 @@ import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PermissionsService } from '@service/permission.service';
 import { MaterialModule } from '../../../material.module';
 import { PdfuploadComponent } from '../../../common-components/pdfupload/pdfupload.component';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-organization-compliance',
@@ -18,7 +20,7 @@ import { PdfuploadComponent } from '../../../common-components/pdfupload/pdfuplo
   styleUrls: ['./organization-compliance.component.scss']
 })
 export class OrgComplianceComponent implements OnInit {
-  @Input() orgObj: any;
+  orgObj: any;
   profileApproval: any;
   compliance: any = {};
   imageUrl = environment.imageUrl;
@@ -47,18 +49,38 @@ export class OrgComplianceComponent implements OnInit {
     file: undefined
   }
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private permissionsService: PermissionsService) {
+  private orgSub: Subscription | undefined;
+
+  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private permissionsService: PermissionsService, private orgSharedService: OrganizationSharedService) {
     this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
 
   ngOnInit() {
+    if (this.orgObj && this.orgObj.compliance) {
+      this.initializeCompliance();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          if (this.orgObj.compliance) {
+            this.initializeCompliance();
+          }
+        }
+      });
+    }
+  }
 
+  initializeCompliance() {
     this.profileApproval = this.orgObj.profileApproval;
-    if (this.orgObj.compliance) {
-      this.compliance = this.orgObj.compliance;
-      this.originalCompliance = { ...this.orgObj.compliance };
-      this.prepareForEdit();
+    this.compliance = this.orgObj.compliance;
+    this.originalCompliance = { ...this.orgObj.compliance };
+    this.prepareForEdit();
+  }
+
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
     }
   }
 
@@ -129,7 +151,10 @@ export class OrgComplianceComponent implements OnInit {
 
   async updateProfileApproval(status: string) {
     try {
-      await this.apiMainService.updateProfileApproval(this.orgObj._id, status, { comment: this.comment });
+      await this.apiMainService.updateProfileApproval(this.orgObj._id, status, { 
+        comment: this.comment,
+        panNumber: this.compliance.panNumber 
+      });
       this.profileApproval = status;
     } catch (error) {
     }
@@ -303,7 +328,7 @@ export class OrgComplianceComponent implements OnInit {
       this.compliance.GSTFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }
     else if (event.documentname == "PanCardFile") {
-      this.originalCompliance.PanCardFileOld = event.url;
+      this.originalCompliance.PanCardFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
       this.compliance.PanCardFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
     }

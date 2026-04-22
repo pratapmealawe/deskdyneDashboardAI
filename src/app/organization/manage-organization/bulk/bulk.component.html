@@ -11,30 +11,35 @@
         </div>
     </div>
 
-    <!-- Level 1: Main Mode Tabs (Bulk vs Employee) -->
+
+
+    <!-- CAFETERIA SELECTION -->
+    <div class="header-action-row mb-4" *ngIf="orgObj?.cafeteriaList?.length > 0">
+        <div class="bulk-header-container w-100">
+            <!-- Cafeteria Selector Component -->
+            <app-cafeteria-selector [cafeteriaList]="orgObj?.cafeteriaList" [selectedCafeteria]="selectedCafeteria"
+                (cafeteriaChanged)="onCafeteriaChanged({value: $event})">
+            </app-cafeteria-selector>
+
+        </div>
+    </div>
+
+
+    <!-- LEVEL 1: Module Selection (Bulk vs Employee) -->
     <div class="tabs-row level-1 mb-3">
         <div class="main-tabs">
-            <button *ngFor="let main of orgViewList; let i = index" class="pill-tab-btn main"
+            <button *ngFor="let tab of orgViewList; let i = index" class="pill-tab-btn main"
                 [class.active]="selectedMainInternalTabIndex === i" (click)="onMainInternalTabChange(i)">
-                <mat-icon>{{ main.icon }}</mat-icon>
-                <span>{{ main.name }}</span>
+                <mat-icon>{{tab.icon}}</mat-icon>
+                <span>{{tab.name}}</span>
             </button>
         </div>
     </div>
 
-    <!-- Level 2: Virtual Cafeteria & Action Card -->
-    <div class="header-action-row mb-4">
-        <app-bulk-select-cafeteria class="w-100" [organization]="orgObj" [selectedMainTabIndex]="selectedMainTabIndex"
-            [selectedSubTabIndex]="selectedSubTabIndex" [selectedChildTabIndex]="selectedChildTabIndex"
-            [isMenuAvailable]="isMenuAvailable" (cafeteriaChanged)="onCafeteriaChanged($event)"
-            (isVendorAssigned)="checkVendorAssigned($event)" (isCategoryActive)="onCategoryActiveChanged($event)">
-        </app-bulk-select-cafeteria>
-    </div>
-
-    <!-- Level 3: Category Selection (Meals, Snacks, etc) -->
-    <div class="tabs-row level-2 mb-3" *ngIf="selectedMain?.subTabs?.length">
-        <div class="sub-tabs">
-            <button *ngFor="let sub of selectedMain.subTabs; let i = index" class="pill-tab-btn sub"
+    <!-- LEVEL 2: Category Selection (Meals, Snacks, etc) -->
+    <div class="tabs-row level-1 mb-3" *ngIf="selectedMain?.subTabs?.length">
+        <div class="main-tabs">
+            <button *ngFor="let sub of selectedMain.subTabs; let i = index" class="pill-tab-btn main"
                 [class.active]="selectedSubTabIndex === i" (click)="onSubTabChange(i)">
                 <mat-icon *ngIf="sub.icon">{{ sub.icon }}</mat-icon>
                 <span>{{ sub.name }}</span>
@@ -42,24 +47,23 @@
         </div>
     </div>
 
-    <!-- Level 4: Type Selection (Bulk vs Individual) -->
-    <div class="tabs-row level-3 mb-4" *ngIf="selectedSub?.childTabs?.length">
-        <div class="child-tabs">
-            <button *ngFor="let child of selectedSub.childTabs; let i = index" class="pill-tab-btn child"
+    <!-- LEVEL 3: Menu Type Selection (Bulk vs Individual) -->
+    <div class="tabs-row level-1 mb-4" *ngIf="selectedSub?.childTabs?.length">
+        <div class="main-tabs">
+            <button *ngFor="let child of selectedSub.childTabs; let i = index" class="pill-tab-btn main"
                 [class.active]="selectedChildTabIndex === i" (click)="onChildTabChange(i)">
                 <mat-icon *ngIf="child.icon">{{ child.icon }}</mat-icon>
                 <span>{{ child.name }}</span>
             </button>
         </div>
     </div>
+
 </div>
 
 <!-- CONSOLIDATED MENU CONTENT -->
 <div class="menu-content-container">
-    <ng-container *ngIf="getCurrentMenuType() as activeMenuType">
-        <app-bulk-general-menu [orgObj]="orgObj" [selectedCafeteria]="selectedCafeteria" [menuType]="activeMenuType"
-            [isEmployeeMode]="isEmployeeMode" (hasMenu)="onMenuAvailabilityChange($event)"
-            (isVendorAssigned)="checkVendorAssigned($event)">
-        </app-bulk-general-menu>
-    </ng-container>
+    <app-bulk-general-menu [orgObj]="orgObj" [selectedCafeteria]="selectedCafeteria"
+        [mainTabIndex]="selectedMainInternalTabIndex" [subTabIndex]="selectedSubTabIndex"
+        [childTabIndex]="selectedChildTabIndex">
+    </app-bulk-general-menu>
 </div>

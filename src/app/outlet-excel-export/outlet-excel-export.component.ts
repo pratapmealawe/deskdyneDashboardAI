@@ -21,7 +21,7 @@ import { FormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.component';
 import { CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { OrgOutletOrdersComponent } from 'src/app/organization/manage-organization/bulk/org-outlet-orders/org-outlet-orders.component';
+import { OrgOutletOrdersComponent } from '../organization-dashboard/org-outlet-orders/org-outlet-orders.component';
 
 @Component({
   selector: 'app-outlet-excel-export',
