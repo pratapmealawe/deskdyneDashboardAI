@@ -36,7 +36,6 @@ export class OtherOrdersComponent implements OnInit {
   selectedTabIndex = 0;
 
   constructor(
-    private sendDataToComponent: SendDataToComponent,
     private permissionsService: PermissionsService
   ) { }
 
@@ -46,21 +45,6 @@ export class OtherOrdersComponent implements OnInit {
 
   onCustomTabChange(index: number): void {
     this.selectedTabIndex = index;
-  }
-
-  refreshOrderList() {
-    if (this.selectedTabIndex == 0) {
-      this.sendDataToComponent.publish('UPDATE_DAILY_BULK_ORDER_PAGE', { reload: true });
-    } else if (this.selectedTabIndex == 1) {
-      this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true });
-    } else if (this.selectedTabIndex == 2) {
-      this.sendDataToComponent.publish('UPDATE_EMPLOYEE_POLL_PAGE', { reload: true });
-    } else if (this.selectedTabIndex == 3) {
-      this.sendDataToComponent.publish('UPDATE_VIRTUAL_CAFETERIA_PAGE', { reload: true });
-    } else if (this.selectedTabIndex == 4) {
-      this.sendDataToComponent.publish('UPDATE_CONSUMPTION_ORDER_PAGE', { reload: true });
-    }
-    // Cross-component refresh logic can be added here if needed
   }
 }
 

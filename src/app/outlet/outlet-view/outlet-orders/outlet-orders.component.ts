@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
@@ -7,13 +7,10 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import {
-  OrderFilterDialogComponent,
-  OrderFilterDialogData,
-} from 'src/app/common-components/order-filter-dialog/order-filter-dialog.component';
+import {OrderFilterDialogComponent,OrderFilterDialogData} from 'src/app/common-components/order-filter-dialog/order-filter-dialog.component';
+import { OutletViewService } from '../outlet-view.service';
 
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
@@ -40,7 +37,7 @@ import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.
   ]
 })
 export class OutletOrdersComponent implements OnInit {
-  @Input() outletObj: any;
+  outletObj: any;
 
   Highcharts: typeof Highcharts = Highcharts;
   orderStatusMapper: any = orderStatusMapper;
@@ -91,7 +88,8 @@ export class OutletOrdersComponent implements OnInit {
   constructor(
     private apiMainService: ApiMainService,
     private fb: FormBuilder,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private outletViewService: OutletViewService
   ) {
     this.dateForm = this.fb.group({
       dateFrom: new FormControl<Date | null>(null),
@@ -102,9 +100,12 @@ export class OutletOrdersComponent implements OnInit {
   ngOnInit(): void {
     const today = new Date();
     this.dateForm.patchValue({ dateFrom: today, dateTo: today });
-    if (this.outletObj) {
-      this.onSubmit();
-    }
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.onSubmit();
+      }
+    });
   }
 
   // ── Load ────────────────────────────────────────────────────

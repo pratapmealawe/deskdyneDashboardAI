@@ -1,4 +1,4 @@
-﻿import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { LoaderstatusService } from '@service/loaderstatus.service';
 import { environment } from '@environments/environment';
@@ -9,6 +9,7 @@ import { AddOutletComponent } from '../../add-outlet/add-outlet.component';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from '@service/apiService/apiMain.service';
+import { OutletViewService } from '../outlet-view.service';
 
 @Component({
   selector: 'app-outlet-details',
@@ -21,8 +22,7 @@ import { ApiMainService } from '@service/apiService/apiMain.service';
   ]
 })
 export class OutletDetailsComponent implements OnInit {
-  @Input() outletObj: any;
-  @Output() dataToParent = new EventEmitter<any>();
+  outletObj: any;
   
   imageUrl: any = environment.imageUrl;
   btnPolicy: any;
@@ -34,13 +34,19 @@ export class OutletDetailsComponent implements OnInit {
     private loadingService: LoaderstatusService,
     private permissionsService: PermissionsService,
     private dialog: MatDialog,
-    private apiMainService: ApiMainService
+    private apiMainService: ApiMainService,
+    private outletViewService: OutletViewService
   ) {
   }
 
   ngOnInit(): void {
     this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
-    this.normalizeHolidays();
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.normalizeHolidays();
+      }
+    });
   }
 
   private normalizeHolidays(): void {
@@ -75,9 +81,7 @@ export class OutletDetailsComponent implements OnInit {
         try {
           const res: any = await this.apiMainService.getOutletById(this.outletObj._id);
           if (res) {
-            this.outletObj = res;
-            this.normalizeHolidays();
-            this.dataToParent.emit(this.outletObj);
+            this.outletViewService.setOutlet(res);
           }
         } catch (error) {
           console.error("Error refreshing outlet details:", error);

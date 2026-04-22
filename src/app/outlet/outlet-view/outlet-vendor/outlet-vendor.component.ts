@@ -1,9 +1,10 @@
-﻿import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PermissionsService } from '@service/permission.service';
+import { OutletViewService } from '../outlet-view.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -19,7 +20,7 @@ import { MaterialModule } from 'src/app/material.module';
   ]
 })
 export class OutletVendorComponent implements OnInit {
-  @Input() outlet: any
+  outlet: any;
   vendorList: any[] = []
   selectedVendorId?: string;
 
@@ -28,18 +29,22 @@ export class OutletVendorComponent implements OnInit {
     private modalService: NgbModal,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private permissionsService: PermissionsService
+    private permissionsService: PermissionsService,
+    private outletViewService: OutletViewService
   ) { }
 
 
   ngOnInit(): void {
-    if (this.outlet) {
-      const vd = this.outlet.vendorDetails;
-      if (vd && (vd._id || vd.vendorId)) {
-        this.selectedVendorId = vd._id ?? vd.vendorId;
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outlet = outlet;
+        const vd = this.outlet.vendorDetails;
+        if (vd && (vd._id || vd.vendorId)) {
+          this.selectedVendorId = vd._id ?? vd.vendorId;
+        }
+        this.getVendorList();
       }
-      this.getVendorList()
-    }
+    });
   }
 
   onSelectVendor(vendorId: string) {

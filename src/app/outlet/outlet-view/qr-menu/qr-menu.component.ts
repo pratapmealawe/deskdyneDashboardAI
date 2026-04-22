@@ -1,11 +1,6 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
   OnInit,
-  Output,
-  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -20,6 +15,7 @@ import { categoryList } from 'src/config/food-category.config';
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { OutletViewService } from '../outlet-view.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -39,10 +35,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     NgbModule,
   ]
 })
-export class QrMenuComponent implements OnInit, OnChanges {
-  @Input() outletObj: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @Output() dataToParent = new EventEmitter<string>();
+export class QrMenuComponent implements OnInit {
+  outletObj: any;
 
   @ViewChild('content') content!: TemplateRef<any>;
   @ViewChild(MatPaginator) menuPaginator!: MatPaginator;
@@ -88,21 +82,21 @@ export class QrMenuComponent implements OnInit, OnChanges {
     private confirmationModalService: ConfirmationModalService,
     private sendDataToComponent: SendDataToComponent,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private outletViewService: OutletViewService
   ) { }
 
   ngOnInit(): void {
     this.createForm();
     this.setupMealTypeAutoTime();
-    this.init();
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.init();
+      }
+    });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['outletObj']) {
-      this.outletObj = changes['outletObj'].currentValue;
-      this.init();
-    }
-  }
 
   // ===== INIT: fetch QrMenu docs (already mealType-wise) =====
   async init() {
@@ -504,7 +498,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         await this.init();
       }
       this.resetValues();
-      this.back.emit(true);
     } catch (err) {
     }
   }

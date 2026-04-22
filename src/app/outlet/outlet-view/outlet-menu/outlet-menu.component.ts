@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -14,6 +14,7 @@ import { BulkMenuUploadDialogComponent } from './bulk-menu-upload-dialog/bulk-me
 import { AddOutletMenuComponent } from './add-outlet-menu/add-outlet-menu.component';
 import { CopyOutletMenuComponent } from './copy-outlet-menu/copy-outlet-menu.component';
 import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dialog.component';
+import { OutletViewService } from '../outlet-view.service';
 
 @Component({
   selector: 'app-outlet-menu',
@@ -26,10 +27,8 @@ import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dial
     DirectivesModule
   ]
 })
-export class OutletMenuComponent implements OnInit, OnChanges {
-  @Input() outletObj: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @Output() dataToParent = new EventEmitter<string>();
+export class OutletMenuComponent implements OnInit {
+  outletObj: any;
 
   categoryList = categoryList;
   nutritionListOptions = nutritionListOptions;
@@ -55,23 +54,19 @@ export class OutletMenuComponent implements OnInit, OnChanges {
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
     private dialog: MatDialog,
-    private toastr: ToasterService
+    private toastr: ToasterService,
+    private outletViewService: OutletViewService
   ) { }
 
   ngOnInit(): void {
-    if (this.outletObj?._id) {
-      this.fetchMenuItems();
-    }
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['outletObj']) {
-      this.outletObj = changes['outletObj'].currentValue;
-      if (this.outletObj?._id) {
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
         this.fetchMenuItems();
       }
-    }
+    });
   }
+
 
   async fetchMenuItems() {
     try {
@@ -257,7 +252,6 @@ export class OutletMenuComponent implements OnInit, OnChanges {
       this.fetchMenuItems();
       this.toastr.success('Menu item deleted successfully');
     }
-    this.back.emit(true);
   }
 
   async changeMenuActivation() {

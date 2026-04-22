@@ -1,14 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Input, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { filter } from 'rxjs';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { PermissionsService } from '@service/permission.service';
+import { OutletViewService } from './outlet-view.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { OutletDetailsComponent } from './outlet-details/outlet-details.component';
-import { OutletMenuComponent } from './outlet-menu/outlet-menu.component';
-import { QrMenuComponent } from './qr-menu/qr-menu.component';
-import { OutletOrdersComponent } from './outlet-orders/outlet-orders.component';
-import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.component';
 
 @Component({
   selector: 'app-outlet-view',
@@ -18,16 +16,12 @@ import { OutletFeedbackComponent } from './outlet-feedback/outlet-feedback.compo
   imports: [
     CommonModule,
     MaterialModule,
-    OutletDetailsComponent,
-    OutletMenuComponent,
-    QrMenuComponent,
-    OutletOrdersComponent,
-    OutletFeedbackComponent
-  ]
+    RouterModule
+  ],
+  providers: [OutletViewService]
 })
 export class OutletViewComponent implements OnInit {
   @Input() outlet: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
   selectedtab: number = 0;
   outletViewList = [
     { name: 'Basic Details', path: 'outlet-details', policyKey: 'outletBasicDetails' },
@@ -40,29 +34,65 @@ export class OutletViewComponent implements OnInit {
   updateval: any = false;
 
   constructor(
-    private permissionsService: PermissionsService
+    private permissionsService: PermissionsService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private outletViewService: OutletViewService,
   ) { }
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
-    this.outletViewList = this.permissionsService.filterTabsByPolicy(this.outletViewList);
-    if (this.selectedTab) {
-      const foundIndex = this.outletViewList.findIndex(x => x.path === this.selectedTab);
-      if (foundIndex === -1 && this.outletViewList.length > 0) {
-        this.selectedTab = this.outletViewList[0].path;
-        this.selectedtab = 0;
-      } else {
-        this.selectedtab = foundIndex >= 0 ? foundIndex : 0;
+
+    // Get outlet ID from route params
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.loadOutlet(id);
       }
+    });
+
+    this.checkChildRoute();
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkChildRoute();
+    });
+
+    this.outletViewList = this.permissionsService.filterTabsByPolicy(this.outletViewList);
+  }
+
+  checkChildRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // /app/outlet/:id/:tab
+    if (urlParts.length >= 4) {
+      this.selectedTab = urlParts[3];
+      this.selectedtab = this.outletViewList.findIndex(x => x.path === this.selectedTab);
+      if (this.selectedtab === -1) this.selectedtab = 0;
+    } else {
+      this.selectedTab = 'details';
+      this.selectedtab = 0;
+    }
+  }
+
+  async loadOutlet(id: string) {
+    // Check if outlet is already in shared state
+    const currentOutlet = this.outletViewService.getOutlet();
+    if (currentOutlet && currentOutlet._id === id) {
+      this.outlet = currentOutlet;
+    } else {
+      // Fetch from API if not present or different
+      this.outlet = await this.outletViewService.refreshOutlet(id);
     }
   }
 
   gotToTab(tab: string) {
     this.selectedTab = tab;
+    this.router.navigate([tab], { relativeTo: this.route });
   }
 
   goBack() {
-    this.back.emit({ val: true, updateval: this.updateval });
+    this.router.navigate(['/app/outlet']);
   }
 
   updateOutlet(val: any) {
@@ -71,6 +101,7 @@ export class OutletViewComponent implements OnInit {
 
   receiveData(event: any) {
     this.outlet = event;
+    this.outletViewService.setOutlet(event);
   }
 
   getTabIcon(path: string): string {

@@ -1,9 +1,10 @@
-﻿import { Component, OnInit, Input, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { environment } from '@environments/environment';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { MatDialog } from '@angular/material/dialog';
 import { PermissionsService } from '@service/permission.service';
+import { OutletViewService } from '../outlet-view.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -21,7 +22,7 @@ import { FormsModule } from '@angular/forms';
   ]
 })
 export class OutletComplianceComponent implements OnInit {
-  @Input() outletObj: any;
+  outletObj: any;
   profileApproval: any;
   compliance: any = {};
   imageUrl = environment.imageUrl;
@@ -44,18 +45,29 @@ export class OutletComplianceComponent implements OnInit {
     file: undefined
   }
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private permissionsService: PermissionsService) {
+  constructor(
+    private apiMainService: ApiMainService,
+    private sanitizer: DomSanitizer,
+    private dialog: MatDialog,
+    private permissionsService: PermissionsService,
+    private outletViewService: OutletViewService
+  ) {
     this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
 
   ngOnInit() {
-    this.profileApproval = this.outletObj.profileApproval;
-    if (this.outletObj.compliance) {
-      this.compliance = this.outletObj.compliance;
-      this.originalCompliance = { ...this.outletObj.compliance };
-      this.prepareForEdit();
-    }
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.profileApproval = this.outletObj.profileApproval;
+        if (this.outletObj.compliance) {
+          this.compliance = this.outletObj.compliance;
+          this.originalCompliance = { ...this.outletObj.compliance };
+          this.prepareForEdit();
+        }
+      }
+    });
   }
 
   prepareForEdit() {

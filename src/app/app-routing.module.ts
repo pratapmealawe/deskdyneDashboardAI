@@ -43,7 +43,24 @@ const routes: Routes = [
         ]
       },
       { path: 'add-organization', loadComponent: () => import('./organization/add-organization/add-organization.component').then(m => m.AddOrganizationComponent) },
-      { path: 'outlet', loadComponent: () => import('./outlet/outlet.component').then(m => m.OutletComponent) },
+      {
+        path: 'outlet',
+        loadComponent: () => import('./outlet/outlet.component').then(m => m.OutletComponent),
+        children: [
+          {
+            path: ':id',
+            loadComponent: () => import('./outlet/outlet-view/outlet-view.component').then(m => m.OutletViewComponent),
+            children: [
+              { path: 'outlet-details', loadComponent: () => import('./outlet/outlet-view/outlet-details/outlet-details.component').then(m => m.OutletDetailsComponent) },
+              { path: 'outlet-menu', loadComponent: () => import('./outlet/outlet-view/outlet-menu/outlet-menu.component').then(m => m.OutletMenuComponent) },
+              { path: 'qr-menu', loadComponent: () => import('./outlet/outlet-view/qr-menu/qr-menu.component').then(m => m.QrMenuComponent) },
+              { path: 'outlet-orders', loadComponent: () => import('./outlet/outlet-view/outlet-orders/outlet-orders.component').then(m => m.OutletOrdersComponent) },
+              { path: 'outlet-feedback', loadComponent: () => import('./outlet/outlet-view/outlet-feedback/outlet-feedback.component').then(m => m.OutletFeedbackComponent) },
+              { path: '', redirectTo: 'outlet-details', pathMatch: 'full' }
+            ]
+          }
+        ]
+      },
       { path: 'outlet-master-menu', loadComponent: () => import('./outlet/outlet-master-menu/outlet-master-menu.component').then(m => m.OutletMasterMenuComponent) },
       { path: 'event-popup', loadComponent: () => import('./event-popup/event-popup.component').then(m => m.EventPopupComponent) },
       { path: 'vendor-firm', loadComponent: () => import('./vendor-firm/vendor-firm.component').then(m => m.VendorFirmComponent) },
