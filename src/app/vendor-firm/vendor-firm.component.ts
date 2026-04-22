@@ -197,7 +197,6 @@ export class VendorFirmComponent {
     this.resetForm();
     const dialogRef = this.dialog.open(AddVendorFirmComponent, {
       width: '90vw',
-      maxWidth: '1000px',
       maxHeight: '90vh',
       disableClose: true,
       data: {}

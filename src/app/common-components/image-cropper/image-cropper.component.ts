@@ -42,15 +42,16 @@ export class ImageCropperComponent implements OnInit {
 
   cropImage() {
     const croperObj: any = { returnMode: 'real' };
+    if (this.aspectRatio) {
+      croperObj.aspectRatio = this.aspectRatio;
+    }
+    
     if (this.imageWidth && this.imageHeight) {
-      croperObj.minSize = [this.imageWidth, this.imageHeight, 'px'];
-      croperObj.startSize = [this.imageWidth, this.imageHeight, 'px'];
+      // Don't force pixels for startSize as it might exceed container width
+      croperObj.startSize = [80, 80, '%'];
     } else {
       croperObj.minSize = [10, 10, '%'];
       croperObj.startSize = [80, 80, '%'];
-    }
-    if (this.aspectRatio) {
-      croperObj.aspectRatio = this.aspectRatio;
     }
     this.croppr = new Croppr('#cropper', croperObj);
   }

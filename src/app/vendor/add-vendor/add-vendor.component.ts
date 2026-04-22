@@ -1,10 +1,11 @@
-﻿import { Component } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { ToasterService } from '@service/toaster.service';
 import { AddressItem, OutletItem, PopupItem, Vendor } from 'src/app/common/interfaces/vendor.interface';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -24,12 +25,7 @@ import { VendorPopupModalComponent } from './vendor-popup-modal/vendor-popup-mod
     CommonModule,
     MaterialModule,
     FormsModule,
-    ReactiveFormsModule,
-    VendorComplianceComponent,
-    SetGeolocationComponent,
-    VendorOutletModalComponent,
-    VendorAddressModalComponent,
-    VendorPopupModalComponent
+    ReactiveFormsModule
   ]
 })
 export class AddVendorCommponent {
@@ -60,6 +56,7 @@ export class AddVendorCommponent {
     private runtimeStorageService: RuntimeStorageService,
     private permissionsService: PermissionsService,
     private dialog: MatDialog,
+    private toaster: ToasterService,
     public dialogRef: MatDialogRef<AddVendorCommponent>
   ) { }
 

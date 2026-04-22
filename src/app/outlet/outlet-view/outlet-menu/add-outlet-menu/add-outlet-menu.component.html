@@ -341,7 +341,7 @@
 
       <!-- Addons Section -->
       <div class="form-section">
-        <div class="section-header">
+        <div class="section-header justify-content-between">
           <div class="header-main">
             <mat-icon>add_shopping_cart</mat-icon>
             <span>Add Ons</span>
@@ -410,7 +410,7 @@
                 </mat-form-field>
 
                 <div class="nutrition-actions">
-                  <button mat-icon-button color="warn" *ngIf="!first" (click)="removeAddon(i)" type="button"
+                  <button mat-icon-button color="warn" (click)="removeAddon(i)" type="button"
                     matTooltip="Remove">
                     <mat-icon>remove_circle</mat-icon>
                   </button>
@@ -423,7 +423,7 @@
 
       <!-- Nutrition Section -->
       <div class="form-section">
-        <div class="section-header">
+        <div class="section-header justify-content-between">
           <div class="header-main">
             <mat-icon>local_fire_department</mat-icon>
             <span>Nutrition Information</span>

@@ -41,8 +41,8 @@ export class VirtualCafeteriaPackageComponent {
 
   manageBanners() {
     const dialogRef = this.modalService.open(VirtualCafeteriaBannersComponent, {
-      width: '700px',
-      maxWidth: '90vw',
+      width: '800px',
+      maxWidth: '95vw',
       data: {
         cafeteriaId: this.cafeteriaId,
         banners: this.selectedCafeteria?.bannerImages || []

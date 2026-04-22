@@ -7,7 +7,6 @@ import { VendorFirmLedgerDetailsComponent } from './vendor-firm-ledger-details/v
 import { VendorFirmBulkOrderReportComponent } from './vendor-firm-bulk-order-report/vendor-firm-bulk-order-report.component';
 import { VendorFirmReportComponent } from './vendor-firm-report/vendor-firm-report.component';
 import { VendorFirmDailyReportComponent } from './vendor-firm-daily-report/vendor-firm-daily-report.component';
-import { VendorFirmCardComponent } from '../vendor-firm-card/vendor-firm-card.component';
 import { VendorFirmDetailsComponent } from './vendor-firm-details/vendor-firm-details.component';
 
 @Component({
