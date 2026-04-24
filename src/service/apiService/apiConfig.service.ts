@@ -409,6 +409,7 @@ export class ApiConfigService {
       forceLogout: p('/api/forceLogout', 'POST'),
       getActiveSessions: p('/api/activeSessions', 'POST'),
       getAllVendorFirms: p('/api/getAllVendorFirms', 'GET'),
+      saveDailyOrder: p('/api/saveDailyOrder', 'POST'),
     }
   }
 }

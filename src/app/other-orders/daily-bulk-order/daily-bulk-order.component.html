@@ -1,6 +1,6 @@
 <div class="filter-card">
-    <div class="filter-row">
-        <div class="filter-item">
+    <div class="date-row">
+        <div>
             <span class="filter-label">Order Date</span>
             <mat-form-field appearance="outline" class="filter-field">
                 <mat-icon matPrefix>calendar_today</mat-icon>
@@ -10,6 +10,13 @@
                 <mat-datepicker #adminDatePicker></mat-datepicker>
             </mat-form-field>
         </div>
+        <div>
+            <button class="add-btn" mat-stroked-button (click)="createManualOrder()">
+                <mat-icon>add</mat-icon> Create Manual Order
+            </button>
+        </div>
+    </div>
+    <div class="filter-row">
         <div class="filter-item flex-grow-1">
             <span class="filter-label">Status</span>
             <div class="status-chips">

@@ -22,6 +22,37 @@
     border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.filter-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.add-btn {
+    border-radius: 9999px !important;
+    padding: 0.5rem 1.5rem !important;
+    font-weight: 600 !important;
+    height: 48px !important;
+    box-shadow: 0 4px 12px rgba(14, 73, 181, 0.2);
+    background-color: #0E49B5 !important;
+    color: white !important;
+}
+
+.date-row>div:first-child {
+    display: flex;
+    flex-direction: column;
+}
+
 .filter-row {
     display: flex;
     flex-wrap: wrap;

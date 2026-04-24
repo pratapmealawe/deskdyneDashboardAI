@@ -9,6 +9,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { DailyBulkCardComponent } from './daily-bulk-card/daily-bulk-card.component';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { AddManualAdminOrderComponent } from './add-manual-admin-order/add-manual-admin-order.component';
 
 @Component({
     selector: 'app-daily-bulk-order',
@@ -53,6 +55,7 @@ export class DailyBulkOrderComponent implements OnInit {
     constructor(
         private apiMainService: ApiMainService,
         private sendDataToComponent: SendDataToComponent,
+        private modalService: NgbModal,
     ) { }
 
     ngOnInit(): void {
@@ -302,5 +305,26 @@ export class DailyBulkOrderComponent implements OnInit {
         const mm = String(date.getMonth() + 1).padStart(2, '0');
         const yyyy = date.getFullYear();
         return `${dd}/${mm}/${yyyy}`;
+    }
+
+    createManualOrder() {
+        try {
+            const modalRef: NgbModalRef = this.modalService.open(AddManualAdminOrderComponent, {
+                ariaLabelledBy: 'modal-basic-title',
+                size: 'lg',
+                backdrop: 'static',
+                centered: true,
+            });
+            modalRef.result.then(
+                (result: any) => {
+                    if (result?.success) {
+                        this.getBulkDailyOrderList();
+                    }
+                },
+                () => { }
+            );
+        } catch (error) {
+            console.error('Error to opening modal:', error);
+        }
     }
 }

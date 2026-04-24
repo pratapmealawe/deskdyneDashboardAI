@@ -1923,5 +1923,9 @@ export class ApiMainService {
     const urlObj = this.apiConfigService.apiEndPointObj.getAllVendorFirms;
     return this.apiHttpService.REQUEST(urlObj);
   }
+
+  saveDailyOrder(data: any) {
+    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.saveDailyOrder, data);
+  }
 }
 
