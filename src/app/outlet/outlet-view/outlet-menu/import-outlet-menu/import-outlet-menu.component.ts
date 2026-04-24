@@ -10,16 +10,16 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 
 @Component({
-  selector: 'app-bulk-menu-upload-dialog',
-  templateUrl: './bulk-menu-upload-dialog.component.html',
-  styleUrls: ['./bulk-menu-upload-dialog.component.scss'],
+  selector: 'app-import-outlet-menu',
+  templateUrl: './import-outlet-menu.component.html',
+  styleUrls: ['./import-outlet-menu.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
     MaterialModule
   ]
 })
-export class BulkMenuUploadDialogComponent implements OnInit {
+export class ImportOutletMenuComponent implements OnInit {
   outletId = '';
   outletObj: any;
   isUploading = false;
@@ -28,9 +28,10 @@ export class BulkMenuUploadDialogComponent implements OnInit {
   isValidFile = false;
   errorMessage = '';
   categoryList = categoryList;
+  currentStep: 'select' | 'preview' = 'select';
 
   constructor(
-    public dialogRef: MatDialogRef<BulkMenuUploadDialogComponent>,
+    public dialogRef: MatDialogRef<ImportOutletMenuComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { outletId: string, outletObj: any },
     private snackBar: MatSnackBar,
     private apiMainService: ApiMainService
@@ -225,6 +226,7 @@ export class BulkMenuUploadDialogComponent implements OnInit {
         }
         this.isValidFile = true;
         this.errorMessage = '';
+        this.currentStep = 'preview';
       } catch (err) {
         console.error(err);
         this.setError('Invalid Excel format');
@@ -271,8 +273,15 @@ export class BulkMenuUploadDialogComponent implements OnInit {
 
   }
 
+  resetImport() {
+    this.currentStep = 'select';
+    this.fileName = '';
+    this.parsedData = [];
+    this.isValidFile = false;
+    this.errorMessage = '';
+  }
+
   close(result?: any) {
     this.dialogRef.close(result);
   }
-
 }

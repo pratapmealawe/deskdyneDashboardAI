@@ -1,51 +1,63 @@
-﻿import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { environment } from '@environments/environment';
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from '@service/apiService/apiMain.service';
-import { ConfirmationModalService } from '@service/confirmation-modal.service';
-import { GoogleMapService } from '@service/google-map.service';
-import { ToasterService } from '@service/toaster.service';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { SendDataToComponent } from '@service/sendDataToComponent.service';
-import { PermissionsService } from '@service/permission.service';
-
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CustomPipeModule } from '@pipes/pipe.module';
+import { MaterialModule } from '../../material.module';
 
 @Component({
   selector: 'app-order-card',
   templateUrl: './order-card.component.html',
   styleUrls: ['./order-card.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule, CustomPipeModule]
+  imports: [CommonModule, FormsModule, CustomPipeModule, MaterialModule]
 })
 export class OrderCardComponent implements OnInit {
   @Input() order: any;
+  @Input() showActions: boolean = true;
+  
+  @Output() action = new EventEmitter<{ type: 'ready' | 'complete' | 'cancel' | 'validate', order: any }>();
+
   imageUrl = environment.imageUrl;
   orderStatusMapper: any = orderStatusMapper;
-
-  showless = true;
-  editMode: boolean = false;
-  showOrderDetails: boolean = true;
-  showOrgDetails: boolean = false;
-  showCustomerDetails: boolean = false;
-  showPaymentDetails: boolean = false;
-  showStatusHistory: boolean = false;
-
 
   constructor() { }
   ngOnInit(): void { }
 
-  viewOrder(order: any) {
-    this.showless = false;
-  }
-  showLess() {
-    this.showless = true;
+  emitAction(type: 'ready' | 'complete' | 'cancel' | 'validate') {
+    this.action.emit({ type, order: this.order });
   }
 
+  getItemAddOnTotal(item: any): number {
+    if (!item?.addOnsList?.length) return 0;
+    const count = item.count || 1;
+    return item.addOnsList.reduce((sum: number, a: any) => {
+      if (a.totalPrice != null) {
+        return sum + a.totalPrice;
+      }
+      const price = a.addOnPrice ?? a.addonPrice ?? 0;
+      return sum + (price * count);
+    }, 0);
+  }
 
+  getGrandTotal(order: any): number {
+    return (Number(order.itemAmount) || 0)
+      + (Number(order.taxes) || 0)
+      + (Number(order.packagingAmount) || 0) 
+      + (Number(order.addOnCharges) || 0);
+  }
+
+  isPaymentValidationVisible(order: any): boolean {
+    if (!order) return false;
+    const orderDateStr = order.orderDate;
+    if (!orderDateStr) return false;
+
+    const orderTime = new Date(orderDateStr).getTime();
+    const currentTime = Date.now();
+    const diffInMinutes = (currentTime - orderTime) / (1000 * 60);
+
+    return diffInMinutes > 20;
+  }
 }
 

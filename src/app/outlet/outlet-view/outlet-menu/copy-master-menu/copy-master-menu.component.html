@@ -1,4 +1,4 @@
-<div class="copy-outlet-menu-modal premium-modal">
+<div class="copy-master-menu-modal premium-modal">
   <!-- HEADER -->
   <div class="modal-header">
     <div class="title-wrap">
@@ -6,14 +6,14 @@
         <mat-icon>content_copy</mat-icon>
       </div>
       <div class="text">
-        <h3>Copy Menu from Outlet</h3>
-        <p>Select a source outlet to copy its menu items to {{ outletObj?.outletName }}</p>
+        <h3>Copy Menu from Master</h3>
+        <p>Browse the global master menu and copy items to {{ outletObj?.outletName }}</p>
       </div>
     </div>
     <div class="header-actions">
-      <div class="selection-badge me-2" *ngIf="selectedMenuItems.length > 0">
+      <div class="selection-badge me-2" *ngIf="selectedItems.length > 0">
         <mat-icon>check_circle</mat-icon>
-        {{ selectedMenuItems.length }} Selected
+        {{ selectedItems.length }} Selected
       </div>
       <button mat-icon-button (click)="close()" class="close-btn">
         <mat-icon>close</mat-icon>
@@ -25,28 +25,28 @@
     <!-- FILTERS SECTION -->
     <div class="sticky-filters">
       <div class="filter-card">
-        <mat-form-field appearance="outline" class="outlet-select">
-          <mat-label>Source Outlet</mat-label>
-          <mat-select [(ngModel)]="selectedOutlet" (selectionChange)="onOutletChange()">
-            <mat-option [value]="null">Select Outlet</mat-option>
-            <mat-option *ngFor="let outlet of outletList" [value]="outlet">
-              {{ outlet.outletName }}
+        <div class="search-box-wrapper">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search master menu..." [(ngModel)]="searchTerm" (input)="applyMasterFilter()" />
+        </div>
+
+        <mat-form-field appearance="outline" class="category-select">
+          <mat-label>Category Filter</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyMasterFilter()">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let category of categoryList" [value]="category.value">
+              {{ category.title }}
             </mat-option>
           </mat-select>
-          <mat-icon matPrefix class="field-icon">storefront</mat-icon>
+          <mat-icon matPrefix class="field-icon">filter_list</mat-icon>
         </mat-form-field>
-
-        <div class="search-box-wrapper" *ngIf="selectedOutlet">
-          <mat-icon>search</mat-icon>
-          <input type="text" placeholder="Search menu items..." [(ngModel)]="searchTerm" (input)="applyFilter()" />
-        </div>
       </div>
     </div>
 
     <div class="content-padding">
       <!-- SELECTION LIST GRID -->
-      <div class="selection-grid" *ngIf="selectedOutlet && filteredOutletMenuList.length > 0">
-        <div class="menu-item-card selection-mode" *ngFor="let item of filteredOutletMenuList"
+      <div class="selection-grid" *ngIf="filteredMasterMenuList.length > 0">
+        <div class="menu-item-card selection-mode" *ngFor="let item of filteredMasterMenuList"
           [ngClass]="{'is-selected': isSelected(item) }" (click)="onItemToggle(item)">
           
           <div class="selection-check" *ngIf="isSelected(item)">
@@ -66,10 +66,11 @@
                 {{ item.description }}
               </p>
 
+
               <!-- Chips Row -->
-              <div class="chips-row-modern" *ngIf="(item.mealTimingInfo?.length || selectedOutlet?.mealTiming?.length)">
+              <div class="chips-row-modern" *ngIf="(item.mealTimingInfo?.length || outletObj?.mealTiming?.length)">
                 <span class="meal-chip-modern"
-                  *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (selectedOutlet?.mealTiming || []))"
+                  *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (outletObj?.mealTiming || []))"
                   [ngClass]="meal.mealSubsidyType || 'default'">
                   {{ meal.mealType || meal }}
                 </span>
@@ -108,22 +109,13 @@
         </div>
       </div>
 
-      <!-- Empty State for Selected Outlet -->
-      <div class="empty-state-modern" *ngIf="selectedOutlet && filteredOutletMenuList.length === 0">
+      <!-- Empty State -->
+      <div class="empty-state-modern" *ngIf="filteredMasterMenuList.length === 0">
         <div class="icon-box">
           <mat-icon>search_off</mat-icon>
         </div>
-        <h4>No results found</h4>
-        <p>No items match your search criteria in this outlet.</p>
-      </div>
-
-      <!-- Empty State for No Outlet Selected -->
-      <div class="empty-state-modern" *ngIf="!selectedOutlet">
-        <div class="icon-box">
-          <mat-icon>storefront</mat-icon>
-        </div>
-        <h4>Choose a Source</h4>
-        <p>Please select an outlet from the dropdown above to browse its menu.</p>
+        <h4>No items found</h4>
+        <p>We couldn't find any items matching your current filters. Try adjusting your search.</p>
       </div>
     </div>
   </mat-dialog-content>
@@ -132,7 +124,7 @@
   <mat-dialog-actions align="end" class="modal-footer">
     <button mat-button class="btn-cancel" (click)="close()">Cancel</button>
     <button mat-flat-button color="primary" class="btn-primary-action" (click)="submit()"
-      [disabled]="selectedMenuItems.length === 0">
+      [disabled]="selectedItems.length === 0">
       <mat-icon>content_copy</mat-icon>
       <span>Copy Items</span>
     </button>

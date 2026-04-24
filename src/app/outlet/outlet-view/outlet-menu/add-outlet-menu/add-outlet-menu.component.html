@@ -1,28 +1,40 @@
-<div class="dialog-title" mat-dialog-title>
-  <div class="title-left">
-    <mat-icon>{{ data.item ?'edit' :'add_circle' }}</mat-icon>
-    <span>{{ data.item ?'Edit Item' :'Add New Item' }}</span>
-  </div>
-  <button mat-icon-button class="info-btn" [matMenuTriggerFor]="infoMenu">
-    <mat-icon>info</mat-icon>
-  </button>
-  <mat-menu #infoMenu="matMenu" class="info-menu-panel">
-    <div class="info-menu-content">
-      <div class="info-header">
-        <mat-icon>lightbulb</mat-icon>
-        <span>Quick Tips</span>
+<div class="add-outlet-menu-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!data.item" [class.warning]="data.item">
+        <mat-icon>{{ data.item ? 'edit' : 'add_circle' }}</mat-icon>
       </div>
-      <ul class="info-list required">
-        <li><mat-icon>check_circle</mat-icon> Name and Price are mandatory</li>
-        <li><mat-icon>check_circle</mat-icon> Select at least one category</li>
-      </ul>
-      <ul class="info-list recommended">
-        <li><mat-icon>stars</mat-icon> Add an image for better visibility</li>
-        <li><mat-icon>stars</mat-icon> Include nutrition facts if available</li>
-      </ul>
+      <div class="text">
+        <h3>{{ data.item ? 'Edit Item' : 'Add New Item' }}</h3>
+        <p>{{ data.item ? 'Update menu item details and assignments' : 'Enter details for the new menu record' }}</p>
+      </div>
     </div>
-  </mat-menu>
-</div>
+    <div class="header-actions">
+      <button mat-icon-button class="info-btn" [matMenuTriggerFor]="infoMenu" matTooltip="Quick Tips">
+        <mat-icon>info</mat-icon>
+      </button>
+      <button mat-icon-button (click)="close()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <mat-menu #infoMenu="matMenu" class="info-menu-panel">
+      <div class="info-menu-content">
+        <div class="info-header">
+          <mat-icon>lightbulb</mat-icon>
+          <span>Quick Tips</span>
+        </div>
+        <ul class="info-list required">
+          <li><mat-icon>check_circle</mat-icon> Name and Price are mandatory</li>
+          <li><mat-icon>check_circle</mat-icon> Select at least one category</li>
+        </ul>
+        <ul class="info-list recommended">
+          <li><mat-icon>stars</mat-icon> Add an image for better visibility</li>
+          <li><mat-icon>stars</mat-icon> Include nutrition facts if available</li>
+        </ul>
+      </div>
+    </mat-menu>
+  </div>
 
 <mat-dialog-content class="dialog-content">
   <div [formGroup]="form" class="dialog-form-layout" *ngIf="form">
@@ -87,6 +99,12 @@
             Lock Subsidy
           </mat-slide-toggle>
         </div>
+        <div class="settings-toggle">
+          <mat-slide-toggle formControlName="discountEnabled" color="primary"
+            [disabled]="!form.get('price')?.value || (form.get('price')?.value - (form.get('subsidy')?.value || 0)) <= 0">
+            Discount
+          </mat-slide-toggle>
+        </div>
       </div>
     </div>
 
@@ -102,6 +120,7 @@
           <div class="col-12">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Item Name</mat-label>
+              <mat-icon matPrefix class="field-icon">title</mat-icon>
               <input matInput type="text" formControlName="itemName" placeholder="e.g. Masala Dosa" />
               <mat-error *ngIf="f['itemName'].hasError('required')">Item name is required</mat-error>
             </mat-form-field>
@@ -109,6 +128,7 @@
           <div class="col-12">
             <mat-form-field appearance="outline" class="w-100">
               <mat-label>Description</mat-label>
+              <mat-icon matPrefix class="field-icon">notes</mat-icon>
               <textarea matInput formControlName="description" rows="2"
                 placeholder="Brief description of the item..."></textarea>
             </mat-form-field>
@@ -152,79 +172,63 @@
       </div>
 
       <!-- Discount Section -->
-      <div class="form-section">
+      <div class="form-section" *ngIf="form.get('discountEnabled')?.value">
         <div class="section-header">
           <mat-icon>discount</mat-icon>
           <span>Discount</span>
         </div>
 
-        <div class="row g-3 mb-3">
-          <div class="col-12">
-            <mat-slide-toggle formControlName="discountEnabled" color="primary"
-              [disabled]="!form.get('price')?.value || (form.get('price')?.value - (form.get('subsidy')?.value || 0)) <= 0">
-              Enable Discount
-            </mat-slide-toggle>
-            <div class="text-muted small mt-2" *ngIf="!form.get('price')?.value">
-              <mat-icon class="info-icon">info</mat-icon>
-              Add a price before enabling discount
+        <div class="row g-3">
+          <div class="col-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Discount Type</mat-label>
+              <mat-select formControlName="discountType">
+                <mat-option value="percentage">Percentage (%)</mat-option>
+                <mat-option value="flat">Flat (₹)</mat-option>
+              </mat-select>
+              <mat-error *ngIf="f['discountType'].hasError('required')">Required</mat-error>
+            </mat-form-field>
+          </div>
+
+          <div class="col-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>
+                Discount Value
+                <span *ngIf="form.get('discountType')?.value ==='flat'">
+                  (max: ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value || 0) - 1 }})
+                </span>
+                <span *ngIf="form.get('discountType')?.value ==='percentage'">(1–100%)</span>
+              </mat-label>
+              <input matInput type="number" formControlName="discountValue" [min]="1" [max]="form.get('discountType')?.value ==='percentage' ? 100 :
+             (form.get('price')?.value - (form.get('subsidy')?.value || 0) - 1)" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">
+                {{ form.get('discountType')?.value ==='percentage' ?'percent' :'currency_rupee' }}
+              </mat-icon>
+              <mat-error *ngIf="f['discountValue'].hasError('required')">Required</mat-error>
+              <mat-error *ngIf="f['discountValue'].hasError('min')">Must be at least 1</mat-error>
+            </mat-form-field>
+
+            <!-- Form-level errors info -->
+            <div class="text-danger small mt-1">
+              <span *ngIf="form.hasError('priceMissing')">
+                Please enter price first
+              </span>
+              <span *ngIf="form.hasError('invalidEffectivePrice')">
+                Price after subsidy must be greater than 0
+              </span>
+              <span *ngIf="form.hasError('percentInvalid')">
+                Percentage must be between 1 and 100
+              </span>
+              <span *ngIf="form.hasError('flatNegative')">
+                Discount must be greater than 0
+              </span>
+              <span *ngIf="form.hasError('flatInvalid')">
+                Flat discount must be less than ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value
+                || 0) }}
+              </span>
             </div>
           </div>
         </div>
-
-        <ng-container *ngIf="form.get('discountEnabled')?.value">
-          <div class="row g-3">
-            <div class="col-6">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>Discount Type</mat-label>
-                <mat-select formControlName="discountType">
-                  <mat-option value="percentage">Percentage (%)</mat-option>
-                  <mat-option value="flat">Flat (₹)</mat-option>
-                </mat-select>
-                <mat-error *ngIf="f['discountType'].hasError('required')">Required</mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="col-6">
-              <mat-form-field appearance="outline" class="w-100">
-                <mat-label>
-                  Discount Value
-                  <span *ngIf="form.get('discountType')?.value ==='flat'">
-                    (max: ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value || 0) - 1 }})
-                  </span>
-                  <span *ngIf="form.get('discountType')?.value ==='percentage'">(1–100%)</span>
-                </mat-label>
-                <input matInput type="number" formControlName="discountValue" [min]="1" [max]="form.get('discountType')?.value ==='percentage' ? 100 :
-               (form.get('price')?.value - (form.get('subsidy')?.value || 0) - 1)"
-                  (keydown)="preventInvalidNumber($event)" />
-                <mat-icon matPrefix class="field-icon">
-                  {{ form.get('discountType')?.value ==='percentage' ?'percent' :'currency_rupee' }}
-                </mat-icon>
-                <mat-error *ngIf="f['discountValue'].hasError('required')">Required</mat-error>
-                <mat-error *ngIf="f['discountValue'].hasError('min')">Must be at least 1</mat-error>
-              </mat-form-field>
-
-              <!-- Form-level errors info -->
-              <div class="text-danger small mt-1">
-                <span *ngIf="form.hasError('priceMissing')">
-                  Please enter price first
-                </span>
-                <span *ngIf="form.hasError('invalidEffectivePrice')">
-                  Price after subsidy must be greater than 0
-                </span>
-                <span *ngIf="form.hasError('percentInvalid')">
-                  Percentage must be between 1 and 100
-                </span>
-                <span *ngIf="form.hasError('flatNegative')">
-                  Discount must be greater than 0
-                </span>
-                <span *ngIf="form.hasError('flatInvalid')">
-                  Flat discount must be less than ₹{{ (form.get('price')?.value || 0) - (form.get('subsidy')?.value
-                  || 0) }}
-                </span>
-              </div>
-            </div>
-          </div>
-        </ng-container>
       </div>
 
       <!-- Meal Timings Section -->
@@ -384,6 +388,7 @@
               <div class="addon-row-top">
                 <mat-form-field appearance="outline" class="addon-name-field">
                   <mat-label>Add-On Name</mat-label>
+                  <mat-icon matPrefix class="field-icon">label</mat-icon>
                   <input matInput type="text" formControlName="addOnName" placeholder="e.g. Extra Cheese" />
                 </mat-form-field>
               </div>
@@ -450,6 +455,7 @@
             [formGroupName]="i">
             <mat-form-field appearance="outline" class="nutrition-field">
               <mat-label>Nutrient</mat-label>
+              <mat-icon matPrefix class="field-icon">restaurant_menu</mat-icon>
               <mat-select formControlName="nutritionName">
                 <mat-option value="Protein">Protein</mat-option>
                 <mat-option value="Fat">Fat</mat-option>
@@ -459,6 +465,7 @@
             </mat-form-field>
             <mat-form-field appearance="outline" class="nutrition-field">
               <mat-label>Value</mat-label>
+              <mat-icon matPrefix class="field-icon">analytics</mat-icon>
               <input matInput type="number" formControlName="nutritionValue" />
             </mat-form-field>
             <mat-form-field appearance="outline" class="nutrition-field small">
@@ -480,14 +487,18 @@
   </div>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="dialog-actions">
-  <button mat-button mat-dialog-close>Cancel</button>
-  <button mat-raised-button color="primary" *ngIf="!data.item" [disabled]="form.invalid"
-    (click)="submit()">
-    <mat-icon>add</mat-icon> Add Item
-  </button>
-  <button mat-raised-button color="accent" *ngIf="data.item" [disabled]="form.invalid"
-    (click)="submit()">
-    <mat-icon>save</mat-icon> Update Item
+<mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+  <button mat-button class="btn-cancel me-2" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+  <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid || isSubmitting" (click)="submit()"
+    class="btn-primary-action px-4">
+    <ng-container *ngIf="!isSubmitting">
+      <mat-icon>{{ data.item ? 'save' : 'add' }}</mat-icon>
+      <span>{{ data.item ? 'Update Item' : 'Create Item' }}</span>
+    </ng-container>
+    <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+      <mat-spinner diameter="20" color="accent"></mat-spinner>
+      <span>Saving...</span>
+    </div>
   </button>
 </mat-dialog-actions>
+</div>

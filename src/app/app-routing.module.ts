@@ -53,7 +53,7 @@ const routes: Routes = [
             children: [
               { path: 'outlet-details', loadComponent: () => import('./outlet/outlet-view/outlet-details/outlet-details.component').then(m => m.OutletDetailsComponent) },
               { path: 'outlet-menu', loadComponent: () => import('./outlet/outlet-view/outlet-menu/outlet-menu.component').then(m => m.OutletMenuComponent) },
-              { path: 'qr-menu', loadComponent: () => import('./outlet/outlet-view/qr-menu/qr-menu.component').then(m => m.QrMenuComponent) },
+              { path: 'outlet-qr-menu', loadComponent: () => import('./outlet/outlet-view/outlet-qr-menu/outlet-qr-menu.component').then(m => m.OutletQrMenuComponent) },
               { path: 'outlet-orders', loadComponent: () => import('./outlet/outlet-view/outlet-orders/outlet-orders.component').then(m => m.OutletOrdersComponent) },
               { path: 'outlet-feedback', loadComponent: () => import('./outlet/outlet-view/outlet-feedback/outlet-feedback.component').then(m => m.OutletFeedbackComponent) },
               { path: '', redirectTo: 'outlet-details', pathMatch: 'full' }

@@ -10,10 +10,10 @@ import { ToasterService } from '@service/toaster.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
-import { BulkMenuUploadDialogComponent } from './bulk-menu-upload-dialog/bulk-menu-upload-dialog.component';
+import { ImportOutletMenuComponent } from './import-outlet-menu/import-outlet-menu.component';
 import { AddOutletMenuComponent } from './add-outlet-menu/add-outlet-menu.component';
 import { CopyOutletMenuComponent } from './copy-outlet-menu/copy-outlet-menu.component';
-import { MasterMenuDialogComponent } from './master-menu-dialog/master-menu-dialog.component';
+import { CopyMasterMenuComponent } from './copy-master-menu/copy-master-menu.component';
 import { OutletViewService } from '../outlet-view.service';
 
 @Component({
@@ -29,7 +29,6 @@ import { OutletViewService } from '../outlet-view.service';
 })
 export class OutletMenuComponent implements OnInit {
   outletObj: any;
-
   categoryList = categoryList;
   nutritionListOptions = nutritionListOptions;
   displayImgUrl = environment.imageUrl;
@@ -45,10 +44,12 @@ export class OutletMenuComponent implements OnInit {
   // filters
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
+  currentMenuView: 'normal' | 'weekly' = 'normal';
   selectedDateFilter: Date | null = null;
   // weekly menu dates
   selectedWeeklyDates: Date[] = [];
   today = new Date();
+  fallbackImage = 'assets/Imageunavailable.webp';
 
   constructor(
     private apiMainService: ApiMainService,
@@ -62,6 +63,7 @@ export class OutletMenuComponent implements OnInit {
     this.outletViewService.outlet$.subscribe(outlet => {
       if (outlet) {
         this.outletObj = outlet;
+        this.currentMenuView = outlet.isWeeklyMenu ? 'weekly' : 'normal';
         this.fetchMenuItems();
       }
     });
@@ -103,19 +105,29 @@ export class OutletMenuComponent implements OnInit {
       );
     }
 
-    if (this.outletObj?.isWeeklyMenu && this.selectedDateFilter) {
+    if (this.currentMenuView === 'weekly' && this.selectedDateFilter) {
       temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
     }
 
     this.filteredMenuList = temp;
 
-    if (this.outletObj?.isWeeklyMenu) {
+    if (this.currentMenuView === 'weekly') {
       this.groupedMenuList = this.buildDateGroupedMenu(temp);
     } else {
       this.groupedMenuList = this.buildGroupedMenu(temp);
     }
 
     this.showCard = this.filteredMenuList.length > 0;
+  }
+
+  onViewChange(view: 'normal' | 'weekly') {
+    this.currentMenuView = view;
+    this.applyMenuFilters();
+  }
+  
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = this.fallbackImage;
   }
 
   private buildGroupedMenu(list: any[]) {
@@ -184,7 +196,7 @@ export class OutletMenuComponent implements OnInit {
 
     if (unassigned.length > 0) {
       result.push({
-        category: 'Unassigned / All Days',
+        category: 'All Days',
         subGroups: this.innerGroupBy(unassigned, 'category')
       });
     }
@@ -305,10 +317,11 @@ export class OutletMenuComponent implements OnInit {
   }
 
   openMenu() {
-    const dialogRef = this.dialog.open(MasterMenuDialogComponent, {
+    const dialogRef = this.dialog.open(CopyMasterMenuComponent, {
       width: '90vw',
       maxWidth: '1200px',
-      disableClose: false,
+      panelClass: 'modern-dialog',
+      disableClose: true,
       data: { outletObj: this.outletObj }
     });
 
@@ -323,7 +336,8 @@ export class OutletMenuComponent implements OnInit {
     const dialogRef = this.dialog.open(CopyOutletMenuComponent, {
       width: '90vw',
       maxWidth: '1200px',
-      disableClose: false,
+      panelClass: 'modern-dialog',
+      disableClose: true,
       data: { outletObj: this.outletObj }
     });
 
@@ -382,8 +396,10 @@ export class OutletMenuComponent implements OnInit {
   }
 
   openUploadExcelPopup() {
-    const dialogRef = this.dialog.open(BulkMenuUploadDialogComponent, {
-      width: '500px',
+    const dialogRef = this.dialog.open(ImportOutletMenuComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      panelClass: 'modern-dialog',
       disableClose: true,
       data: {
         outletId: this.outletObj._id,

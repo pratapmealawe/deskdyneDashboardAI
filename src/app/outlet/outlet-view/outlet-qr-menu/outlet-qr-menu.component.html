@@ -1,0 +1,189 @@
+<div class="qr-menu-container animate-fadeIn">
+  <!-- Page Header -->
+  <div class="bulk-dashboard-header">
+    <div class="header-card">
+      <div class="header-icon-box">
+        <mat-icon>qr_code_2</mat-icon>
+      </div>
+      <div class="header-text-content">
+        <h1 class="page-title">QR Menu Management</h1>
+        <p class="page-subtitle">
+          Manage QR-based menu items, pricing and availability
+        </p>
+      </div>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+      <button mat-flat-button color="primary" class="btn-primary-action" (click)="open()">
+        <mat-icon>add</mat-icon>
+        Add Item
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="modern-card">
+    <div class="card-header with-actions">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box info">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <h3 class="mb-0">Item Directory</h3>
+          <span class="count-badge-premium">{{ allGroups?.length || 0 }} Group{{ (allGroups?.length || 0) !== 1 ? 's' : '' }}</span>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search menu items..." [(ngModel)]="searchTermMenu" (input)="applyMenuFilters()">
+        </div>
+
+        <mat-form-field appearance="outline" class="category-filter">
+          <mat-label>Meal Type</mat-label>
+          <mat-select [(value)]="selectedMealTypeFilter" (selectionChange)="applyMenuFilters()">
+            <mat-option value="">All Meal Types</mat-option>
+            <mat-option *ngFor="let mt of mealTypeOptions" [value]="mt">{{ mt }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <!-- MENU LIST -->
+      <div class="menu-content-area" *ngIf="showCard">
+        <div *ngFor="let group of groupedMenuList" class="category-section">
+          <!-- Premium Category Header with QR Controls -->
+          <div class="category-header">
+            <div class="category-info">
+              <div class="category-icon-circle">
+                <mat-icon>restaurant</mat-icon>
+              </div>
+              <div class="category-name-wrapper">
+                <span class="category-name">{{ group.mealType }}</span>
+                <span class="category-time">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px; vertical-align: middle;">schedule</mat-icon>
+                  {{ group.acceptOrderFrom }} – {{ group.acceptOrderTill }}
+                </span>
+              </div>
+            </div>
+
+            <div class="category-controls-premium">
+              <!-- Menu Mode -->
+              <div class="control-block-premium">
+                <div class="control-label">Menu Mode</div>
+                <mat-radio-group class="pill-radio-group" [value]="group.categoryMenuType" (change)="ToggleCategoryMenuType(group, $event)">
+                  <mat-radio-button value="dynamic">Dynamic</mat-radio-button>
+                  <mat-radio-button value="fixed">Fixed</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <!-- Paid By -->
+              <div class="control-block-premium">
+                <div class="control-label">Paid By</div>
+                <mat-radio-group class="pill-radio-group" [value]="group.paidType" (change)="TogglePaidType(group, $event)">
+                  <mat-radio-button value="company">Company</mat-radio-button>
+                  <mat-radio-button value="partial">Partial</mat-radio-button>
+                  <mat-radio-button value="user">User</mat-radio-button>
+                </mat-radio-group>
+              </div>
+
+              <!-- Status -->
+              <div class="control-block-premium">
+                <div class="control-label">Status</div>
+                <mat-checkbox class="premium-toggle-checkbox" [checked]="group.isMealTypeActive" (change)="onMealTypeActivationToggle(group, $event)">
+                  Enable
+                </mat-checkbox>
+              </div>
+            </div>
+
+            <span class="category-badge">{{ group.items.length }} Item{{ group.items.length !== 1 ? 's' : '' }}</span>
+          </div>
+
+          <!-- Menu Items Grid -->
+          <div class="menu-grid-premium">
+            <div class="menu-item-card" *ngFor="let item of group.items; let i = index">
+              <div class="card-content-wrapper">
+                <div class="menu-details">
+                  <div class="menu-header-row">
+                    <img src="assets/icon/veg.png" *ngIf="item.itemType === 'Veg'" class="item-type-icon" alt="Veg">
+                    <img src="assets/icon/nonveg.png" *ngIf="item.itemType === 'NonVeg'" class="item-type-icon" alt="Non-Veg">
+                    <h4 class="menu-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h4>
+                  </div>
+
+                  <p class="description-text" *ngIf="item.description" [matTooltip]="item.description">
+                    {{ item.description }}
+                  </p>
+
+                  <!-- Meta Info Pills -->
+                  <div class="meta-pills-row">
+                    <div class="meta-pill subsidy" *ngIf="item.subsidy">
+                      <mat-icon>sell</mat-icon>
+                      <span>₹{{ item.subsidy }} Subsidy</span>
+                    </div>
+                    <div class="meta-pill qty">
+                      <mat-icon>shopping_basket</mat-icon>
+                      <span>Max Qty: {{ item.maxQuantity || 1 }}</span>
+                    </div>
+                    <div class="meta-pill precedence">
+                      <mat-icon>sort</mat-icon>
+                      <span>Order: {{ item.precedence || 0 }}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="menu-footer">
+                <div class="price-tag">
+                  <span class="currency">₹</span>
+                  <span class="value">{{ item.price }}</span>
+                </div>
+
+                <div class="footer-actions">
+                  <button mat-icon-button class="premium-icon-btn copy" (click)="copyMenu(group, item)" matTooltip="Copy item">
+                    <mat-icon>content_copy</mat-icon>
+                  </button>
+                  <button mat-icon-button class="premium-icon-btn edit" (click)="edit(group, item, i)" matTooltip="Edit">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button class="premium-icon-btn delete" (click)="showPopup(group, item, i)" matTooltip="Delete">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                  <mat-checkbox color="primary" [checked]="item.isActive" (change)="onItemActiveToggle(group, item, $event)" class="status-checkbox">
+                    Active
+                  </mat-checkbox>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginator -->
+      <div class="paginator-wrap" *ngIf="showCard">
+        <mat-paginator [length]="allGroups.length" [pageSize]="menuPageSize" [pageIndex]="menuPageIndex"
+          [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onMenuPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+
+      <!-- Empty States -->
+      <div class="empty-state-modern py-5" *ngIf="!showCard && !searchTermMenu">
+        <div class="empty-icon-wrap">
+          <mat-icon>restaurant</mat-icon>
+        </div>
+        <h4>No QR menu items found</h4>
+        <p>Start by adding new items to your QR menu directory</p>
+      </div>
+
+      <div class="empty-state-modern py-5" *ngIf="!showCard && searchTermMenu">
+        <div class="empty-icon-wrap">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h4>No match for "{{ searchTermMenu }}"</h4>
+        <p>Try refining your search terms or clearing filters</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -4,21 +4,20 @@ import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ToasterService } from '@service/toaster.service';
 import { environment } from '@environments/environment';
 import { categoryList } from 'src/config/food-category.config';
-
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 
 @Component({
-  selector: 'app-master-menu-dialog',
-  templateUrl: './master-menu-dialog.component.html',
-  styleUrls: ['./master-menu-dialog.component.scss'],
+  selector: 'app-copy-master-menu',
+  templateUrl: './copy-master-menu.component.html',
+  styleUrls: ['./copy-master-menu.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
     MaterialModule
   ]
 })
-export class MasterMenuDialogComponent implements OnInit {
+export class CopyMasterMenuComponent implements OnInit {
   displayImgUrl = environment.imageUrl;
   categoryList = categoryList;
 
@@ -28,16 +27,23 @@ export class MasterMenuDialogComponent implements OnInit {
 
   searchTerm: string = '';
   selectedCategory: string = '';
+  outletObj: any;
 
   constructor(
     private apiMainService: ApiMainService,
     private toastr: ToasterService,
-    public dialogRef: MatDialogRef<MasterMenuDialogComponent>,
+    public dialogRef: MatDialogRef<CopyMasterMenuComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { outletObj: any }
-  ) { }
+  ) {
+    this.outletObj = data.outletObj;
+  }
 
   ngOnInit(): void {
     this.fetchOutletMasterMenus();
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 
   async fetchOutletMasterMenus() {

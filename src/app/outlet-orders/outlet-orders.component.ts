@@ -96,6 +96,15 @@ export class OutletOrdersComponent implements OnInit, OnDestroy {
   }
 
 
+  handleOrderAction(event: { type: 'ready' | 'complete' | 'cancel' | 'validate', order: any }) {
+    switch (event.type) {
+      case 'ready': this.readyOrder(event.order); break;
+      case 'complete': this.completeOrder(event.order); break;
+      case 'cancel': this.cancelOrder(event.order); break;
+      case 'validate': this.validatePayment(event.order); break;
+    }
+  }
+
   goBack() {
     this.router.navigate(['/app/home/orders']);
   }

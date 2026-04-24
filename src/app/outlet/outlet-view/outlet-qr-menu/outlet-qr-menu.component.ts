@@ -21,11 +21,12 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { AddOutletQrMenuComponent } from './add-outlet-qr-menu/add-outlet-qr-menu.component';
 
 @Component({
-  selector: 'app-qr-menu',
-  templateUrl: './qr-menu.component.html',
-  styleUrls: ['./qr-menu.component.scss'],
+  selector: 'app-outlet-qr-menu',
+  templateUrl: './outlet-qr-menu.component.html',
+  styleUrls: ['./outlet-qr-menu.component.scss'],
   standalone: true,
   imports: [
     CommonModule,
@@ -33,17 +34,16 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     ReactiveFormsModule,
     NgbModule,
+    AddOutletQrMenuComponent
   ]
 })
-export class QrMenuComponent implements OnInit {
+export class OutletQrMenuComponent implements OnInit {
   outletObj: any;
 
   @ViewChild('content') content!: TemplateRef<any>;
   @ViewChild(MatPaginator) menuPaginator!: MatPaginator;
 
   categoryList = categoryList;
-
-  form!: FormGroup;
 
   showCard: boolean = false;
 
@@ -87,8 +87,6 @@ export class QrMenuComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.createForm();
-    this.setupMealTypeAutoTime();
     this.outletViewService.outlet$.subscribe(outlet => {
       if (outlet) {
         this.outletObj = outlet;
@@ -289,167 +287,12 @@ export class QrMenuComponent implements OnInit {
     }
   }
 
-  // ===== FORM =====
-  createForm() {
-    this.form = this.fb.group({
-      itemName: ['', [Validators.required, Validators.maxLength(80)]],
-      mealType: ['', [Validators.required]],
-      acceptOrderFrom: ['', [Validators.required]],
-      acceptOrderTill: ['', [Validators.required]],
-      price: [null, [Validators.required, Validators.min(1)]],
-      subsidy: [0, [Validators.min(0)]],
-      maxQuantity: [1, [Validators.min(1)]],
-      category: ['', Validators.required],
-      itemType: ['Veg', Validators.required],
-      precedence: [0, [Validators.min(0)]],
-      isActive: [false],
-      description: ['', [Validators.maxLength(200)]],
-    });
-  }
-
-  get f() {
-    return this.form.controls;
-  }
-
-  setupMealTypeAutoTime() {
-    this.form.get('mealType')?.valueChanges.subscribe((mealType) => {
-      const mealConfig = this.outletObj?.mealTiming?.find(
-        (m: any) => m.mealType === mealType
-      );
-
-      if (mealConfig) {
-        this.form.patchValue(
-          {
-            acceptOrderFrom: mealConfig.acceptOrderFrom || '',
-            acceptOrderTill: mealConfig.acceptOrderTill || '',
-          },
-          { emitEvent: false }
-        );
-      } else {
-        this.form.patchValue(
-          {
-            acceptOrderFrom: '',
-            acceptOrderTill: '',
-          },
-          { emitEvent: false }
-        );
-      }
-    });
-  }
-
-  patchFormValue(group: any, item: any) {
-  }
-
-
-
   // EDIT / ADD
   async edit(group: any, item: any, index: any) {
-    this.showUpdateBtn = true;
-    this.menuId = item._id;
-    this.editGroupItem = group
-    this.patchFormValue(group, item);
-    this.open();
+    this.open(item, group);
   }
 
-  async updateMenu(index: any) {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    if (
-      typeof this.form.value.subsidy === 'undefined' ||
-      this.form.value.subsidy === null ||
-      this.form.value.subsidy === ''
-    ) {
-      this.form.patchValue({ subsidy: 0 });
-    }
-
-
-    try {
-      const data = {
-        description: this.form.value.description || '',
-        isActive: this.form.value.isActive,
-        itemName: this.form.value.itemName,
-        price: this.form.value.price,
-        subsidy: this.form.value.subsidy ?? 0,
-        maxQuantity: this.form.value.maxQuantity ?? 1,
-        category: this.form.value.category,
-        mealType: this.form.value.mealType || '',
-        acceptOrderFrom: this.form.value.acceptOrderFrom || '',
-        acceptOrderTill: this.form.value.acceptOrderTill || '',
-        itemType: this.form.value.itemType,
-        precedence: this.form.value.precedence ?? 0,
-        outletId: this.outletObj._id,
-        outletName: this.outletObj.outletName,
-        menuId: this.menuId
-      };
-
-      const res = await this.apiMainService.createQrMenu(
-        data,
-        this.outletObj._id
-      );
-
-      if (res && res._id) {
-        await this.init();
-      }
-
-      this.resetValues();
-    } catch (error) {
-    }
-  }
-
-  resetValues() {
-    this.form.reset();
-    this.menuId = '';
-    this.showUpdateBtn = false;
-
-    // restore some sensible defaults
-    this.form.patchValue({
-      itemType: 'Veg',
-      subsidy: 0,
-      maxQuantity: 1,
-      precedence: 0,
-      isActive: false,
-    });
-  }
-
-  async submit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-
-    try {
-      const data = {
-        description: this.form.value.description || '',
-        isActive: this.form.value.isActive ? this.form.value.isActive : false,
-        itemName: this.form.value.itemName,
-        price: this.form.value.price,
-        subsidy: this.form.value.subsidy ? this.form.value.subsidy : 0,
-        maxQuantity: this.form.value.maxQuantity ? this.form.value.maxQuantity : 0,
-        category: this.form.value.category,
-        mealType: this.form.value.mealType || '',
-        acceptOrderFrom: this.form.value.acceptOrderFrom || '',
-        acceptOrderTill: this.form.value.acceptOrderTill || '',
-        itemType: this.form.value.itemType,
-        precedence: this.form.value.precedence ? this.form.value.precedence : 0,
-        outletId: this.outletObj._id,
-        outletName: this.outletObj.outletName,
-      };
-
-      const res = await this.apiMainService.createQrMenu(
-        data,
-        this.outletObj._id
-      );
-
-      if (res && res._id) {
-        this.sendDataToComponent.publish('SAVE_OUTLET_QR_MENU', res);
-        await this.init();
-      }
-      this.resetValues();
-    } catch (error) {
-    }
-  }
+  // Implementation logic for save/update is now handled in the dialog close subscription
 
   // COPY MENU (creates a new identical menu item)
   async copyMenu(group: any, item: any) {
@@ -497,7 +340,6 @@ export class QrMenuComponent implements OnInit {
         this.showCard = true;
         await this.init();
       }
-      this.resetValues();
     } catch (err) {
     }
   }
@@ -598,18 +440,33 @@ export class QrMenuComponent implements OnInit {
 
 
   // MAT DIALOG OPENERS
-  open() {
-    const dialogRef = this.dialog.open(this.content, {
+  open(item?: any, group?: any) {
+    const dialogRef = this.dialog.open(AddOutletQrMenuComponent, {
       width: '950px',
       maxWidth: '95vw',
       disableClose: true,
+      data: {
+        outletObj: this.outletObj,
+        item: item,
+        group: group
+      }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'add') {
-        this.submit();
-      } else if (result === 'update') {
-        this.updateMenu(this.menuId);
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        try {
+          const res = await this.apiMainService.createQrMenu(
+            result,
+            this.outletObj._id
+          );
+
+          if (res && res._id) {
+            this.sendDataToComponent.publish('SAVE_OUTLET_QR_MENU', res);
+            await this.init();
+          }
+        } catch (error) {
+          console.error('Error saving QR menu item:', error);
+        }
       }
     });
   }

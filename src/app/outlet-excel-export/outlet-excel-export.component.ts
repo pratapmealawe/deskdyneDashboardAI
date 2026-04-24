@@ -22,6 +22,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.component';
 import { CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { OrgOutletOrdersComponent } from '../organization-dashboard/org-outlet-orders/org-outlet-orders.component';
+import { OutletCardComponent } from 'src/app/outlet/outlet-card/outlet-card.component';
 
 @Component({
   selector: 'app-outlet-excel-export',
@@ -29,14 +30,15 @@ import { OrgOutletOrdersComponent } from '../organization-dashboard/org-outlet-o
   styleUrls: ['./outlet-excel-export.component.scss'],
   standalone: true,
   imports: [
-    CommonModule, 
-    MaterialModule, 
-    FormsModule, 
-    HighchartsChartModule, 
-    OrderCardComponent, 
-    CommonOutletCafeSelectComponent, 
+    CommonModule,
+    MaterialModule,
+    FormsModule,
+    HighchartsChartModule,
+    OrderCardComponent,
+    CommonOutletCafeSelectComponent,
     OrderFilterDialogComponent,
-    OrgOutletOrdersComponent
+    OrgOutletOrdersComponent,
+    OutletCardComponent
   ],
   providers: [DatePipe]
 })
@@ -84,6 +86,9 @@ export class OutletExcelExportComponent implements OnInit {
   pageIndex = 0;
   estimatedTotal = 0;
   paginatedList: any[] = [];
+
+  // Selected outlet card
+  selectedOutletCard: any[] = [];
 
   // Search & Filters
   searchText = '';
