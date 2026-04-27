@@ -16,7 +16,7 @@ import { OrgMenuCountersComponent } from 'src/app/organization-dashboard/org-men
 import { AuditReportComponent } from 'src/app/organization-dashboard/audit-report/audit-report.component';
 import { OrgEmpPollComponent } from 'src/app/organization-dashboard/org-emp-poll/org-emp-poll.component';
 // Other Components / Modules
-import { OtherOrdersComponent } from 'src/app/other-orders/other-orders.component';
+import { OtherOrdersComponent } from 'src/app/orders/other-orders/other-orders.component';
 import { CustomerModule } from 'src/app/customer/customer.module';
 import { BillingModule } from 'src/app/billing/billing.module';
 

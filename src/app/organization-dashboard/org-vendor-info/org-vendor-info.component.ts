@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { LocalStorageService } from '@service/local-storage.service';
 import { SearchFilterService } from '@service/search-filter.service';
-import { VendorComplianceComponent } from 'src/app/vendor-firm/add-vendor-firm/vendor-firm-compliance/vendor-compliance.component';
+import { VendorComplianceComponent } from 'src/app/vendor-firm/vendor-firm-view/vendor-firm-compliance/vendor-compliance.component';
 
 interface data {
   orgId: string;

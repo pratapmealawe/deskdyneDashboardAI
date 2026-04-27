@@ -1,0 +1,322 @@
+<div class="vendor-report-container animate-fade-in">
+  <!-- ═══ Page Header ═══ -->
+  <div class="bulk-dashboard-header mb-4">
+    <div class="header-card">
+      <div class="header-icon-box">
+        <mat-icon>assessment</mat-icon>
+      </div>
+      <div class="header-text-content">
+        <h1 class="page-title">Outlet Report</h1>
+        <p class="page-subtitle">View financial summaries and order-wise breakdowns</p>
+      </div>
+    </div>
+
+    <div class="header-action-row">
+      <div class="actions-group">
+        <form [formGroup]="dateForm" class="date-range-wrapper">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Date range</mat-label>
+            <mat-date-range-input [rangePicker]="picker">
+              <input matStartDate placeholder="From" formControlName="dateFrom" />
+              <input matEndDate placeholder="To" formControlName="dateTo" />
+            </mat-date-range-input>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+          </mat-form-field>
+        </form>
+
+        <button class="btn-primary-action" mat-flat-button (click)="onSubmit()" [disabled]="!canSubmit">
+          <mat-icon>visibility</mat-icon> View Report
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Outlet Selection Card ═══ -->
+  <div class="modern-card board-card mb-4 animate-fade-in" *ngIf="outletList.length > 0; else noOutletsContainer">
+    <div class="card-header bg-white border-0 pb-0">
+      <div class="header-left-box">
+        <div class="icon-circle-small primary">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <h3 class="m-0 font-weight-bold">Select Outlet</h3>
+        <span class="count-badge-modern ms-2">{{ outletList.length }}</span>
+      </div>
+    </div>
+    
+    <div class="card-body p-4">
+      <div class="premium-slab-strip" *ngIf="outletList.length > 0">
+        <div class="slab-card clickable" *ngFor="let o of outletList" [class.highlight]="selected.outletId === o.outletId"
+          (click)="onOutletCardClick(o)">
+          <div class="slab-icon">
+            <mat-icon>storefront</mat-icon>
+          </div>
+          <div class="slab-info">
+            <span class="label">Outlet</span>
+            <span class="range">{{ o.outletName }}</span>
+            <span class="value" *ngIf="o.cafeteriaDetails?.cafeteria_name">
+              <small>{{ o.cafeteriaDetails?.cafeteria_name }}</small>
+            </span>
+          </div>
+          <div class="card-check-box" *ngIf="selected.outletId === o.outletId">
+            <mat-icon>check_circle</mat-icon>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #noOutletsContainer>
+    <div class="premium-empty-state mb-4" *ngIf="!loadingOutlets">
+      <div class="icon-circle">
+        <mat-icon>storefront</mat-icon>
+      </div>
+      <h3>No Outlets Available</h3>
+      <p>No outlets are currently linked to this vendor profile.</p>
+    </div>
+  </ng-template>
+
+  <!-- Loading state -->
+  <div class="premium-empty-state mb-4" *ngIf="loadingOutlets">
+    <div class="icon-circle rotate">
+      <mat-icon>hourglass_empty</mat-icon>
+    </div>
+    <p>Fetching outlets...</p>
+  </div>
+
+  <!-- ═══ Summary Stats Strip ═══ -->
+  <div class="modern-card board-card mb-4 animate-fade-in" *ngIf="hasData">
+    <div class="card-header with-actions bg-white">
+      <div class="header-left-box">
+        <div class="icon-circle-small primary">
+          <mat-icon>bar_chart</mat-icon>
+        </div>
+        <h3 class="m-0 font-weight-bold">Financial Summary</h3>
+      </div>
+      <div class="header-actions">
+        <button class="btn-secondary-action" mat-stroked-button (click)="exportDatewiseSummaryExcel()">
+          <mat-icon>file_download</mat-icon> Excel
+        </button>
+        <button class="btn-secondary-action" mat-stroked-button (click)="openDatewiseModal()">
+          <mat-icon>calendar_today</mat-icon> Date-wise
+        </button>
+        <button class="btn-secondary-action" mat-stroked-button (click)="openItemBreakdownModal()">
+          <mat-icon>list_alt</mat-icon> Breakdown
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="premium-slab-strip">
+        <!-- Shared Stats -->
+        <div class="slab-card stat-item">
+          <div class="slab-icon orders"><mat-icon>receipt_long</mat-icon></div>
+          <div class="slab-info">
+            <span class="label">Total Orders</span>
+            <span class="range">{{ vendorTotals.count }}</span>
+          </div>
+        </div>
+
+        <div class="slab-card stat-item">
+          <div class="slab-icon amount"><mat-icon>payments</mat-icon></div>
+          <div class="slab-info">
+            <span class="label">Item Amount</span>
+            <span class="range">₹{{ vendorTotals.totalItemAmount | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="slab-card stat-item">
+          <div class="slab-icon subsidy"><mat-icon>savings</mat-icon></div>
+          <div class="slab-info">
+            <span class="label">Subsidy</span>
+            <span class="range">₹{{ vendorTotals.totalSubsidy | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="slab-card stat-item">
+          <div class="slab-icon gst"><mat-icon>receipt</mat-icon></div>
+          <div class="slab-info">
+            <span class="label">After GST (Items)</span>
+            <span class="range">₹{{ vendorTotals.totalItemAmountAfterGst | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <div class="slab-card stat-item">
+          <div class="slab-icon commission"><mat-icon>percent</mat-icon></div>
+          <div class="slab-info">
+            <span class="label">Commission</span>
+            <span class="range">₹{{ vendorTotals.vendorCommissionAmount | number:'1.2-2' }}</span>
+          </div>
+        </div>
+
+        <!-- Ecommerce Only Stats -->
+        <ng-container *ngIf="isEcommerce">
+          <div class="slab-card stat-item">
+            <div class="slab-icon gst"><mat-icon>description</mat-icon></div>
+            <div class="slab-info">
+              <span class="label">Comm GST</span>
+              <span class="range">₹{{ vendorTotals.vendorCommissionGstAmount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="slab-card stat-item">
+            <div class="slab-icon amount"><mat-icon>account_balance</mat-icon></div>
+            <div class="slab-info">
+              <span class="label">Before Comm GST</span>
+              <span class="range">₹{{ vendorTotals.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="slab-card stat-item">
+            <div class="slab-icon amount"><mat-icon>account_balance_wallet</mat-icon></div>
+            <div class="slab-info">
+              <span class="label">Before TDS/TCS</span>
+              <span class="range">₹{{ vendorTotals.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="slab-card stat-item">
+            <div class="slab-icon tcs"><mat-icon>local_offer</mat-icon></div>
+            <div class="slab-info">
+              <span class="label">TCS</span>
+              <span class="range">₹{{ vendorTotals.tcsAmount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+          <div class="slab-card stat-item">
+            <div class="slab-icon tds"><mat-icon>price_check</mat-icon></div>
+            <div class="slab-info">
+              <span class="label">TDS</span>
+              <span class="range">₹{{ vendorTotals.tdsAmount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- Non-Ecommerce Stats -->
+        <ng-container *ngIf="!isEcommerce">
+          <div class="slab-card stat-item">
+            <div class="slab-icon tds"><mat-icon>price_check</mat-icon></div>
+            <div class="slab-info">
+              <span class="label">TDS (Rev Share)</span>
+              <span class="range">₹{{ vendorTotals.revenueSharingTdsAmount | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <div class="slab-card stat-item highlight">
+          <div class="slab-icon"><mat-icon>account_balance</mat-icon></div>
+          <div class="slab-info">
+            <span class="label">Vendor Total</span>
+            <span class="range">₹{{ vendorTotals.totalVendorAmt | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State: Please Select Outlet -->
+  <div class="premium-empty-state" *ngIf="!selected.outletId && !hasData">
+    <div class="icon-circle">
+      <mat-icon>touch_app</mat-icon>
+    </div>
+    <h3>Select an Outlet</h3>
+    <p>Choose an outlet from the strip above and click "View Report" to see the details.</p>
+  </div>
+
+  <!-- ═══ Order-wise Table ═══ -->
+  <div class="modern-card board-card mt-4 animate-fade-in" *ngIf="hasData && selected.outletId">
+    <div class="card-header bg-white">
+      <div class="header-left-box">
+        <div class="icon-circle-small info">
+          <mat-icon>table_chart</mat-icon>
+        </div>
+        <h3 class="m-0 font-weight-bold">Order-wise Breakdown</h3>
+      </div>
+      <div class="badge-pill">
+        Showing <strong>{{ pagedOrderWise.length ? (mainPageIndex * mainPageSize + 1) : 0 }} –
+          {{ Math.min((mainPageIndex + 1) * mainPageSize, orderWise.length) }}</strong>
+        of <strong>{{ orderWise.length }}</strong>
+      </div>
+    </div>
+
+    <div class="card-body p-0">
+      <div class="table-responsive">
+        <table class="premium-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Order No</th>
+              <th>Token</th>
+              <th>Customer</th>
+              <th class="text-end">Item</th>
+              <th class="text-end">Subsidy</th>
+              <th class="text-end">After GST</th>
+
+              <ng-container *ngIf="isEcommerce">
+                <th class="text-end">Comm</th>
+                <th class="text-end">Comm GST</th>
+                <th class="text-end">Before Comm GST</th>
+                <th class="text-end">Before TDS/TCS</th>
+                <th class="text-end">TCS</th>
+                <th class="text-end">TDS</th>
+                <th class="text-end">Vendor Amt</th>
+                <th class="text-end">Vendor Payout</th>
+              </ng-container>
+
+              <ng-container *ngIf="!isEcommerce">
+                <th class="text-end">Rev. Share</th>
+                <th class="text-end">Rev. Share TDS</th>
+                <th class="text-center">TDS Rate</th>
+                <th class="text-end">Vendor Amt</th>
+                <th class="text-end">Vendor Payout</th>
+              </ng-container>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of pagedOrderWise; trackBy: trackByOrder">
+              <td>{{ r.orderDateIST }}</td>
+              <td class="font-weight-bold">{{ r.orderNo }}</td>
+              <td><span class="token-badge">{{ r.tokenNo }}</span></td>
+              <td>{{ r.customerName }}</td>
+              <td class="text-end">₹{{ r.itemAmount | number:'1.2-2' }}</td>
+              <td class="text-end">₹{{ r.subsidyAmount | number:'1.2-2' }}</td>
+              <td class="text-end">₹{{ r.totalItemAmountAfterGst | number:'1.2-2' }}</td>
+
+              <ng-container *ngIf="isEcommerce">
+                <td class="text-end">₹{{ r.vendorCommissionAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.vendorCommissionGstAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.vendorLedgerAmtBeforeCommissionGst | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.vendorLedgerAmtBeforeTdsTcs | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.tcsAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.tdsAmount | number:'1.2-2' }}</td>
+                <td class="text-end font-weight-bold">₹{{ r.vendorLedgerAmt | number:'1.2-2' }}</td>
+                <td class="text-end payout-value">₹{{ (r.vendorLedgerAmt > 0 ? r.vendorLedgerAmt - r.subsidyAmount :
+                  r.vendorLedgerAmt) | number:'1.2-2' }}</td>
+              </ng-container>
+
+              <ng-container *ngIf="!isEcommerce">
+                <td class="text-end">₹{{ r.vendorCommissionAmount | number:'1.2-2' }}</td>
+                <td class="text-end">₹{{ r.revenueSharingTdsAmount | number:'1.2-2' }}</td>
+                <td class="text-center">{{ r.revenueSharingTdsRatePct }}%</td>
+                <td class="text-end font-weight-bold">₹{{ r.vendorRevenueSharingLedgerAmt | number:'1.2-2' }}</td>
+                <td class="text-end payout-value">₹{{ (r.vendorRevenueSharingLedgerAmt > 0 ?
+                  r.vendorRevenueSharingLedgerAmt - r.subsidyAmount : r.vendorRevenueSharingLedgerAmt)
+                  | number:'1.2-2' }}</td>
+              </ng-container>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="px-3 pb-2 bg-light-soft border-top">
+        <mat-paginator [length]="orderWise.length" [pageIndex]="mainPageIndex" [pageSize]="mainPageSize"
+          [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onMainPage($event)" showFirstLastButtons></mat-paginator>
+      </div>
+    </div>
+  </div>
+
+  <!-- No data found -->
+  <div class="premium-empty-state mt-4" *ngIf="!hasData && selected.outletId">
+    <div class="icon-circle">
+      <mat-icon>search_off</mat-icon>
+    </div>
+    <h3>No Data Found</h3>
+    <p>No orders found for the selected date range. Try adjusting your filters.</p>
+  </div>
+</div>

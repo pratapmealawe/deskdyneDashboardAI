@@ -1,4 +1,74 @@
+@use "styles/theme/variable" as var;
 @import '/src/styles.scss';
+
+.wallet-details-wrapper {
+  padding-bottom: 2rem;
+}
+
+/* Dashboard Style Header (Matches Reports UI) */
+.bulk-dashboard-header {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  margin: 0.5rem 0 1.5rem 0;
+
+  .header-card {
+    background: transparent;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: none;
+    border: none;
+
+    .header-icon-box {
+      width: 44px;
+      height: 44px;
+      background: #eff6ff;
+      color: var.$primary-color1;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    .header-text-content {
+      .page-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var.$primary-color2;
+        margin: 0;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      .page-subtitle {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 2px 0 0 0;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+// Animation
+.animate-all {
+  animation: fadeIn 0.4s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 
 // Grid Layout
 .cards-grid {
@@ -12,13 +82,13 @@
 .balance-card {
   background: #ffffff;
   border-radius: 20px;
-  padding: 24px;
+  padding: 18px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 260px;
+  min-height: 220px;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
@@ -89,7 +159,7 @@
     }
 
     .amount {
-      font-size: 2.5rem;
+      font-size: 2rem;
       font-weight: 700;
       color: #111827; // Dark text
       margin: 0;
@@ -104,7 +174,7 @@
 
   // Actions Footer
   .card-actions {
-    margin-top: 28px;
+    margin-top: 20px;
     display: flex;
     gap: 12px;
     align-items: center;

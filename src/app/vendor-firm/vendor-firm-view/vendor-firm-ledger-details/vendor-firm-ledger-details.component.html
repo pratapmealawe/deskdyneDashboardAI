@@ -1,17 +1,25 @@
-<div class="header-card">
-  <div class="header-content">
-    <div class="title-section">
-      <h1 class="page-title">Ledger Details</h1>
-      <div class="balance-badge">
-        <span class="label">Balance:</span>
+<div class="ledger-details-wrapper animate-all">
+  <!-- Page Header Modern -->
+  <div class="bulk-dashboard-header">
+    <div class="header-card">
+      <div class="header-icon-box">
+        <mat-icon>account_balance</mat-icon>
+      </div>
+      <div class="header-text-content">
+        <h1 class="page-title">Ledger Details</h1>
+        <p class="page-subtitle">Track payments, order balances, and historical ledger entries</p>
+      </div>
+      <div class="ms-auto balance-badge-premium d-none d-md-flex">
+        <span class="label">Current Balance</span>
         <span class="value">{{ totalVendorLegersBalance | currency:'INR' }}</span>
       </div>
     </div>
-    <div class="actions-section">
 
+    <!-- Filter & Search Integrated -->
+    <div class="header-filters mt-4 d-flex flex-wrap align-items-center gap-3">
       <!-- Status Filter -->
-      <mat-form-field appearance="outline" class="w-100 w-md-auto status-select">
-        <mat-label>Status</mat-label>
+      <mat-form-field appearance="outline" class="compact-field status-select">
+        <mat-label>Filter Status</mat-label>
         <mat-select multiple [(ngModel)]="selectedStatuses" (selectionChange)="onStatusChanged()">
           <mat-option [value]="'New'">New</mat-option>
           <mat-option [value]="'InProgress'">InProgress</mat-option>
@@ -20,7 +28,7 @@
       </mat-form-field>
 
       <!-- Search -->
-      <div class="search-wrapper">
+      <div class="search-wrapper-premium">
         <mat-icon class="search-icon">search</mat-icon>
         <input type="text" [(ngModel)]="searchOrderNo" (keyup.enter)="onSearch()" placeholder="Search Order No..." />
         <button *ngIf="searchOrderNo" mat-icon-button class="clear-btn" (click)="searchOrderNo=''; onSearch()">
@@ -28,12 +36,18 @@
         </button>
       </div>
 
-      <button mat-stroked-button color="primary" (click)="onSearch()">
-        Apply
+      <button mat-flat-button color="primary" class="btn-primary-action" (click)="onSearch()">
+        <mat-icon>filter_list</mat-icon> Apply Filters
       </button>
+
+      <div class="w-100 d-md-none mt-2">
+        <div class="balance-badge-premium w-100 justify-content-between">
+          <span class="label">Current Balance</span>
+          <span class="value">{{ totalVendorLegersBalance | currency:'INR' }}</span>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 
 <div class="content-body">
   <ng-container *ngIf="isLoading; else listTpl">
@@ -128,4 +142,5 @@
       </div>
     </ng-template>
   </ng-template>
+</div>
 </div>

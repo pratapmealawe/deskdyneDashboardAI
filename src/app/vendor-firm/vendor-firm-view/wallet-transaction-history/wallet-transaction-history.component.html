@@ -1,12 +1,20 @@
-<div class="header-card">
-    <div class="header-content">
-        <div class="title-section">
-            <h1 class="page-title">Wallet Transaction History</h1>
+<div class="transaction-history-wrapper animate-all">
+    <!-- Page Header Modern -->
+    <div class="bulk-dashboard-header">
+        <div class="header-card">
+            <div class="header-icon-box">
+                <mat-icon>history</mat-icon>
+            </div>
+            <div class="header-text-content">
+                <h1 class="page-title">Transaction History</h1>
+                <p class="page-subtitle">Track and export all wallet transaction activities</p>
+            </div>
         </div>
-        <div class="actions-section">
 
-            <!-- Date range -->
-            <mat-form-field appearance="outline" class="w-100 w-md-auto date-range-picker">
+        <!-- Filter Actions Integrated into Header -->
+        <div class="header-filters mt-4 d-flex flex-wrap align-items-center gap-3">
+             <!-- Date range -->
+            <mat-form-field appearance="outline" class="compact-field date-range-picker">
                 <mat-label>Date range</mat-label>
                 <mat-date-range-input [rangePicker]="picker" (dateChange)="onDateRangeChange()">
                     <input matStartDate placeholder="From" [(ngModel)]="dateRange.start" name="fromDate">
@@ -16,20 +24,23 @@
                 <mat-date-range-picker #picker></mat-date-range-picker>
             </mat-form-field>
 
-            <button mat-stroked-button color="primary" (click)="applyFilters(true)">
-                Apply
-            </button>
-            <button mat-button color="warn" (click)="clearFilters()">
-                Clear
-            </button>
+            <div class="filter-btns d-flex gap-2">
+                <button mat-flat-button color="primary" class="btn-primary-action" (click)="applyFilters(true)">
+                    <mat-icon>filter_list</mat-icon> Apply Filters
+                </button>
+                <button mat-button class="btn-cancel" (click)="clearFilters()">
+                    Clear
+                </button>
+            </div>
 
-            <!-- Export Button -->
-            <button class="btn-export" mat-flat-button (click)="exportWalletStatement()">
-                <mat-icon>file_download</mat-icon> Export to Excel
-            </button>
+            <div class="ms-md-auto w-100 w-md-auto text-end">
+                <!-- Export Button -->
+                <button class="btn-export-premium" mat-flat-button (click)="exportWalletStatement()">
+                    <mat-icon>file_download</mat-icon> Export Statement
+                </button>
+            </div>
         </div>
     </div>
-</div>
 
 <div class="content-body">
     <ng-container *ngIf="loading; else listTpl">
@@ -161,4 +172,5 @@
             </div>
         </ng-template>
     </ng-template>
+</div>
 </div>

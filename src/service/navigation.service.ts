@@ -22,21 +22,16 @@ export class NavigationService {
         { name: 'Outlet Master Menu', route: 'outlet-master-menu', showChild: true, matIcon: 'menu_book' }
       ]
     },
-    { name: 'Event Popup', showParent: true, route: 'event-popup', matIcon: 'campaign', permissionKey: 'reports:read' },
-    { name: 'Vendor Firm', showParent: true, route: 'vendor-firm', matIcon: 'business', permissionKey: 'vendor:read' },
-    { name: 'Vendor', showParent: true, route: 'vendor', matIcon: 'person_search', permissionKey: 'vendor:read' },
     {
-      name: 'Outlet Orders', showParent: true, matIcon: 'receipt_long', permissionKey: 'order:read', children: [
-        { name: 'Outlet Current Order', route: 'currentOrder', showChild: true, matIcon: 'pending_actions' },
-        { name: 'Outlet Export Order', route: 'outletExcelExport', showChild: true, matIcon: 'file_download' }
-      ]
-    },
-    {
-      name: 'Other Orders', showParent: true, matIcon: 'list_alt', permissionKey: 'order:read', children: [
-        { name: 'Current Order', route: 'otherOrder', showChild: true, matIcon: 'pending_actions' },
+      name: 'Orders', showParent: true, matIcon: 'receipt_long', permissionKey: 'order:read', children: [
+        { name: 'Outlet Orders', route: 'currentOutletOrder', showChild: true, matIcon: 'pending_actions' },
+        { name: 'Other Orders', route: 'otherOrder', showChild: true, matIcon: 'list_alt' },
         { name: 'Search Order', route: 'searchOrder', showChild: true, matIcon: 'manage_search' },
       ]
     },
+    { name: 'Event Popup', showParent: true, route: 'event-popup', matIcon: 'campaign', permissionKey: 'reports:read' },
+    { name: 'Vendor Firm', showParent: true, route: 'vendor-firm', matIcon: 'business', permissionKey: 'vendor:read' },
+    { name: 'Vendor', showParent: true, route: 'vendor', matIcon: 'person_search', permissionKey: 'vendor:read' },
     { name: 'Session Management', showParent: true, route: 'sessionManagement', matIcon: 'manage_accounts', permissionKey: 'session:read' },
     { name: 'Notifications', showParent: true, route: 'notifications', matIcon: 'notifications', permissionKey: 'notification:read' },
     { name: 'Vendor Wallet Dashboard', showParent: true, route: 'vendorWalletDashboard', matIcon: 'account_balance_wallet', permissionKey: 'wallet:read' },
@@ -76,7 +71,7 @@ export class NavigationService {
     { name: 'Dashboard', showParent: true, route: 'orgDashboard', matIcon: 'dashboard', permissionKey: 'dashboard:read' },
     { name: 'Consumption Orders', showParent: true, route: 'consumptionOrders', matIcon: 'shopping_bag', permissionKey: 'order:read' },
     { name: 'Menu Items', showParent: true, route: 'orgMenuItems', matIcon: 'restaurant_menu', permissionKey: 'menu:read' },
-    { name: 'Outlet Orders', showParent: true, route: 'outletExcelExport', matIcon: 'receipt_long', permissionKey: 'order:read' },
+    { name: 'Outlet Orders', showParent: true, route: 'currentoutletOrder', matIcon: 'receipt_long', permissionKey: 'order:read' },
     { name: 'Admin Orders', showParent: true, route: 'orgAdminDailyOrder', matIcon: 'list_alt', permissionKey: 'order:read' },
     { name: 'Reviews', showParent: true, route: 'orgReviews', matIcon: 'star_rate', permissionKey: 'reports:read' },
     { name: 'Users', showParent: true, route: 'customer', matIcon: 'people', permissionKey: 'users:read' },

@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PageEvent } from '@angular/material/paginator';
+import { VendorFirmViewService } from '../vendor-firm-view.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -18,7 +19,7 @@ import { MaterialModule } from 'src/app/material.module';
   ]
 })
 export class VendorFirmLedgerDetailsComponent implements OnInit {
-  @Input() vendorFirmInfo: any;
+  vendorFirmInfo: any;
 
   fromDate: string | null = null;
   toDate: string | null = null;
@@ -49,14 +50,23 @@ export class VendorFirmLedgerDetailsComponent implements OnInit {
 
   searchOrderNo = '';
 
-  constructor(private apiMainService: ApiMainService) { }
+  constructor(
+    private apiMainService: ApiMainService,
+    private vendorFirmViewService: VendorFirmViewService
+  ) { }
 
   ngOnInit(): void {
     const todayISO = new Date().toISOString();
     this.fromDate = todayISO;
     this.toDate = todayISO;
-    this.fetchData();
-    this.getVendorLedgerBalance();
+
+    this.vendorFirmViewService.vendorFirm$.subscribe(vendor => {
+      if (vendor) {
+        this.vendorFirmInfo = vendor;
+        this.fetchData();
+        this.getVendorLedgerBalance();
+      }
+    });
   }
 
   async getVendorLedgerBalance() {

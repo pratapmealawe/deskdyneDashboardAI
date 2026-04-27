@@ -1,16 +1,14 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter } from 'rxjs';
-import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { PermissionsService } from '@service/permission.service';
-import { OutletViewService } from './outlet-view.service';
-import { ApiMainService } from '@service/apiService/apiMain.service';
-import { CommonModule } from '@angular/common';
+import { filter } from 'rxjs';
 import { MaterialModule } from 'src/app/material.module';
+import { OutletViewService } from './outlet-view.service';
 
 @Component({
   selector: 'app-outlet-view',
-  templateUrl: './outlet-view.component.html',
+  templateUrl: './outlet-view.component.html', 
   styleUrls: ['./outlet-view.component.scss'],
   standalone: true,
   imports: [

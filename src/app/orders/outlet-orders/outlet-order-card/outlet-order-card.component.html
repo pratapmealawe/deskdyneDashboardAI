@@ -1,0 +1,221 @@
+<div class="order-item-card">
+    <!-- Card Top (matches outlet-card card-top) -->
+    <div class="card-top">
+        <div class="order-avatar">
+            {{ order.customerName?.[0] || 'O' }}
+        </div>
+        <div class="order-identity">
+            <h3 class="order-title">#{{ order.orderNo }}</h3>
+            <div class="order-sub-info">
+                <span class="token-chip" *ngIf="order.tokenNo">
+                    <mat-icon>confirmation_number</mat-icon> Token {{ order.tokenNo }}
+                </span>
+                <span class="token-chip pg-chip" *ngIf="order.pgName">
+                    <mat-icon>payment</mat-icon> {{ order.pgName }}
+                </span>
+                <span class="token-chip version-chip" *ngIf="order.appVersion">
+                    <mat-icon>smartphone</mat-icon> v{{ order.appVersion }}
+                </span>
+                <span class="date-text">
+                    {{ order.SubmitedDate || order.orderDate | date:'MMM d, y, h:mm a' }}
+                </span>
+            </div>
+        </div>
+        <div class="card-top-right">
+            <div class="status-badge" [ngClass]="order.orderstatus">
+                <mat-icon>{{ (order.orderstatus === 'completed' || order.orderstatus === 'autocompleted' || order.orderstatus === 'autoCompleted') ? 'check_circle' :
+                    order.orderstatus === 'placed' ? 'restaurant' :
+                    order.orderstatus === 'readyOrder' ? 'room_service' :
+                    order.orderstatus === 'paymentFailed' ? 'error' :
+                    order.orderstatus === 'paymentInprogress' ? 'hourglass_empty' : 'info' }}</mat-icon>
+                {{ orderStatusMapper[order.orderstatus] || order.orderstatus }}
+            </div>
+            <div class="card-actions" *ngIf="showActions">
+                <button mat-icon-button color="primary" *ngIf="order.orderstatus === 'placed'"
+                    (click)="emitAction('ready')" matTooltip="Mark Ready">
+                    <mat-icon>check</mat-icon>
+                </button>
+                <button mat-icon-button class="complete-btn"
+                    *ngIf="order.orderstatus === 'placed' || order.orderstatus === 'readyOrder'"
+                    (click)="emitAction('complete')" matTooltip="Complete Order">
+                    <mat-icon>done_all</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" *ngIf="order.orderstatus === 'placed'"
+                    (click)="emitAction('cancel')" matTooltip="Cancel Order">
+                    <mat-icon>cancel</mat-icon>
+                </button>
+                <button mat-icon-button color="accent"
+                    *ngIf="order.orderstatus === 'paymentInprogress' && isPaymentValidationVisible(order)"
+                    (click)="emitAction('validate')" matTooltip="Validate Payment">
+                    <mat-icon>verified</mat-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Body (matches outlet-card card-body with info-rows) -->
+    <div class="card-body-grid">
+        <!-- Left: Customer + Org + Flags -->
+        <div class="card-body-left">
+            <div class="info-row">
+                <mat-icon class="info-icon">person</mat-icon>
+                <div class="info-content">
+                    <span class="info-label">Customer</span>
+                    <span class="info-value">{{ order.customerName }}</span>
+                </div>
+            </div>
+            <div class="info-row">
+                <mat-icon class="info-icon">phone</mat-icon>
+                <div class="info-content">
+                    <span class="info-label">Phone</span>
+                    <span class="info-value">{{ order.customerPhoneNo }}</span>
+                </div>
+            </div>
+            <div class="info-row" *ngIf="order.customerEmail">
+                <mat-icon class="info-icon">email</mat-icon>
+                <div class="info-content">
+                    <span class="info-label">Email</span>
+                    <span class="info-value text-truncate" [matTooltip]="order.customerEmail">{{
+                        order.customerEmail }}</span>
+                </div>
+            </div>
+
+            <!-- Org / Cafe Badges -->
+            <div class="badge-row">
+                <div class="org-badge" *ngIf="order.organizationDetails?.organization_name">
+                    <mat-icon>business</mat-icon>
+                    {{ order.organizationDetails?.organization_name }}
+                </div>
+                <div class="cafe-badge" *ngIf="order.cafeteriaDetails?.cafeteria_name">
+                    <mat-icon>restaurant</mat-icon>
+                    {{ order.cafeteriaDetails?.cafeteria_name }}
+                </div>
+            </div>
+
+            <!-- Order Flags -->
+            <div class="badge-row" *ngIf="order.isPreOrder || order.isCabinOrder">
+                <div class="flag-badge preorder" *ngIf="order.isPreOrder">
+                    <mat-icon>schedule</mat-icon> Pre-Order
+                    <span *ngIf="order.preOrderMealType"> · {{ order.preOrderMealType }}</span>
+                </div>
+                <div class="flag-badge cabin" *ngIf="order.isCabinOrder">
+                    <mat-icon>meeting_room</mat-icon> Cabin
+                    <span *ngIf="order.cabinConfig?.cabinName"> · {{ order.cabinConfig?.cabinName }}</span>
+                </div>
+            </div>
+
+            <!-- Special Request -->
+            <div class="special-note" *ngIf="order.specialRequest">
+                <mat-icon>notes</mat-icon>
+                <span>{{ order.specialRequest }}</span>
+            </div>
+        </div>
+
+        <!-- Right: Items -->
+        <div class="card-body-right">
+            <div class="section-label">Order Items ({{ (order.itemList || order.itemlist)?.length || 0
+                }})</div>
+            <div class="items-scroll">
+                <div class="item-row" *ngFor="let i of (order.itemList || order.itemlist)">
+                    <div class="item-main">
+                        <div class="item-left">
+                            <span class="type-dot"
+                                [ngClass]="i.itemType === 'Veg' ? 'veg' : 'nonveg'"></span>
+                            <span class="item-qty" *ngIf="i.count > 0">
+                                {{ i.count }}x
+                            </span>
+                            <span class="item-name">{{ i.itemName }}</span>
+                            <span class="item-cat" *ngIf="i.category">
+                                {{ i.category }}
+                            </span>
+                        </div>
+                        <span class="item-price">
+                            ₹{{ i.price * (i.count || 1) | number : '1.2-2' }}
+                        </span>
+                    </div>
+                    <div class="addOn-row" *ngIf="i.addOnsList?.length > 0">
+                        <div class="addon-chip">
+                            <span class="addon-label">ADD-ONS :</span>
+                            <span class="addon-text">
+                                <ng-container *ngFor="let addon of i.addOnsList; let last = last">
+                                    {{ addon.addOnName }}{{ !last ? ',' : '' }}
+                                </ng-container>
+                            </span>
+                        </div>
+                        <span class="addOn-price">
+                            ₹{{ getItemAddOnTotal(i) | number: '1.2-2' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Footer (matches outlet-card card-footer) -->
+    <div class="card-footer">
+        <!-- Financials -->
+        <div class="fin-strip">
+            <div class="fin-cell">
+                <span class="fin-label">Item Total</span>
+                <span class="fin-value">₹{{ order.itemAmount | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell" *ngIf="order.addOnCharges > 0">
+                <span class="fin-label">Add-on Charges</span>
+                <span class="fin-value">₹{{ order.addOnCharges | number: '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell" *ngIf="order.taxes">
+                <span class="fin-label">Taxes</span>
+                <span class="fin-value">₹{{ order.taxes | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell" *ngIf="order.packagingAmount">
+                <span class="fin-label">Packaging</span>
+                <span class="fin-value">₹{{ order.packagingAmount | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell discount" *ngIf="order.subsidyAmount">
+                <span class="fin-label">Subsidy</span>
+                <span class="fin-value">- ₹{{ order.subsidyAmount | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell discount" *ngIf="order.totalDiscountAmount">
+                <span class="fin-label">Item Discount</span>
+                <span class="fin-value">- ₹{{ order.totalDiscountAmount | number: '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell discount coupon-cell" *ngIf="order.appliedCoupon?.discountAmount">
+                <span class="fin-label">
+                    Coupon
+                    <span class="coupon-code-inline">{{ order.appliedCoupon?.couponCode }}</span>
+                </span>
+                <span class="fin-value">- ₹{{ order.appliedCoupon?.discountAmount | number: '1.2-2'
+                    }}</span>
+            </div>
+            <div class="fin-cell discount" *ngIf="order.moneyWalletPointsUsed">
+                <span class="fin-label">Wallet</span>
+                <span class="fin-value">- ₹{{ order.moneyWalletPointsUsed | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell discount" *ngIf="order.companyWalletPointUsed">
+                <span class="fin-label">Company</span>
+                <span class="fin-value">- ₹{{ order.companyWalletPointUsed | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell paid">
+                <span class="fin-label">Paid (PG)</span>
+                <span class="fin-value">₹{{ order.amount | number : '1.2-2' }}</span>
+            </div>
+            <div class="fin-cell grand">
+                <span class="fin-label">Grand Total</span>
+                <span class="fin-value">₹{{ getGrandTotal(order) | number : '1.2-2' }}</span>
+            </div>
+        </div>
+
+        <!-- Meta -->
+        <div class="meta-row">
+            <div class="meta-chip" *ngIf="order.deviceInfo?.model">
+                <mat-icon>devices</mat-icon> {{ order.deviceInfo?.model }}
+            </div>
+            <div class="meta-chip" *ngIf="order.deviceInfo?.platform">
+                <mat-icon>language</mat-icon> {{ order.deviceInfo?.platform }}
+            </div>
+            <div class="meta-chip" *ngIf="order.isPosOrder">
+                <mat-icon>point_of_sale</mat-icon> POS
+            </div>
+        </div>
+    </div>
+</div>

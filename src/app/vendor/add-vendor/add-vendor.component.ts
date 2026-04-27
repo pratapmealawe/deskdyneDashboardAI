@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
@@ -10,7 +9,6 @@ import { AddressItem, OutletItem, PopupItem, Vendor } from 'src/app/common/inter
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { VendorComplianceComponent } from './vendor-compliance/vendor-compliance.component';
 import { SetGeolocationComponent } from 'src/app/common-components/set-geolocation/set-geolocation.component';
 import { VendorOutletModalComponent } from './vendor-outlet-modal/vendor-outlet-modal.component';
 import { VendorAddressModalComponent } from './vendor-address-modal/vendor-address-modal.component';

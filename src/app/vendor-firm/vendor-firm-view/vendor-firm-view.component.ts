@@ -1,15 +1,11 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { PermissionsService } from '@service/permission.service';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { PermissionsService } from '@service/permission.service';
+import { filter } from 'rxjs';
 import { MaterialModule } from 'src/app/material.module';
-import { VendorFirmWalletDetailsComponent } from './vendor-firm-wallet-details/vendor-firm-wallet-details.component';
-import { VendorFirmLedgerDetailsComponent } from './vendor-firm-ledger-details/vendor-firm-ledger-details.component';
-import { VendorFirmBulkOrderReportComponent } from './vendor-firm-bulk-order-report/vendor-firm-bulk-order-report.component';
-import { VendorFirmReportComponent } from './vendor-firm-report/vendor-firm-report.component';
-import { VendorFirmDailyReportComponent } from './vendor-firm-daily-report/vendor-firm-daily-report.component';
-import { VendorFirmDetailsComponent } from './vendor-firm-details/vendor-firm-details.component';
-
-@Component({
+import { VendorFirmViewService } from './vendor-firm-view.service';
+ @Component({
   selector: 'app-vendor-firm-view',
   templateUrl: './vendor-firm-view.component.html',
   styleUrls: ['./vendor-firm-view.component.scss'],
@@ -17,144 +13,98 @@ import { VendorFirmDetailsComponent } from './vendor-firm-details/vendor-firm-de
   imports: [
     CommonModule,
     MaterialModule,
-    VendorFirmDetailsComponent,
-    VendorFirmWalletDetailsComponent,
-    VendorFirmLedgerDetailsComponent,
-    VendorFirmBulkOrderReportComponent,
-    VendorFirmReportComponent,
-    VendorFirmDailyReportComponent
-  ]
+    RouterModule
+  ],
+  providers: [VendorFirmViewService]
 })
-export class VendorFirmViewComponent implements OnChanges, OnInit {
-  @Input() vendor: any;
-  @Output() back = new EventEmitter<boolean>();
+export class VendorFirmViewComponent implements OnInit {
   vendorFirmInfo: any;
-  selectedTab: string = 'vendorFirmDetails';
-  selectedSubTab: string = '';
-  selectedChildTab: string = '';
+  selectedTab: string = 'vendor-firm-details';
   btnPolicy: any;
-  selectedTabIndex: number = 0
-  selectedSubTabIndex: number = 0;
+  selectedTabIndex: number = 0;
+  updateval: any = false;
 
   vendorViewList = [
-    { name: 'VendorFirm Details', path: 'vendorFirmDetails', policyKey: 'vendorFirmDetails' },
-    {
-      name: 'Wallet',
-      path: 'wallet',
-      subTabs: [
-        {
-          name: 'Wallet Details',
-          path: 'walletDetails'
-        },
-        {
-          name: 'Ledger',
-          path: 'ledgerDetails'
-        }
-      ],
-      policyKey: 'vendorWallets'
-    },
-    {
-      name: 'Order Report',
-      path: 'orderReport',
-      subTabs: [
-        {
-          name: 'Outlet Report',
-          path: 'vendorFirmReport'
-        },
-        {
-          name: 'Daily Report',
-          path: 'vendorFirmDailyReport'
-        },
-        {
-          name: 'Bulk Order Report',
-          path: 'bulkOrderReport'
-        },
-      ],
-      policyKey: 'vendorOrderReport'
-    },
+    { name: 'Vendor Details', path: 'vendor-firm-details', policyKey: 'vendorFirmDetails', icon: 'business' },
+    { name: 'Wallet', path: 'vendor-firm-wallet-details', policyKey: 'vendorWallets', icon: 'account_balance_wallet' },
+    { name: 'Ledger', path: 'vendor-firm-ledger-details', policyKey: 'vendorWallets', icon: 'account_balance' },
+    { name: 'Order Report', path: 'vendor-firm-reports', policyKey: 'vendorOrderReport', icon: 'assessment' },
+    { name: 'Compliance', path: 'vendor-firm-compliance', policyKey: 'vendorCompliance', icon: 'verified_user' },
   ]
 
-  constructor(private permissionsService: PermissionsService) { }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.vendorFirmInfo = this.vendor;
-
-  }
+  constructor(
+    private permissionsService: PermissionsService,
+    private route: ActivatedRoute,
+    private router: Router, 
+    private vendorFirmViewService: VendorFirmViewService
+  ) { }
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
-    this.vendorViewList = this.permissionsService.filterTabsByPolicy(this.vendorViewList);
-
-    if (this.vendorViewList.length > 0) {
-      if (this.vendorViewList.findIndex(x => x.path === this.selectedTab) === -1) {
-        this.selectedTab = this.vendorViewList[0].path;
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.loadVendorFirm(id);
       }
-    }
-    this.initSubTabFor(this.selectedTab)
+    });
+
+    this.checkChildRoute();
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkChildRoute();
+    });
+
+    this.vendorViewList = this.permissionsService.filterTabsByPolicy(this.vendorViewList);
   }
 
-  goToSubTab(subPath: string): void {
-    this.selectedSubTab = subPath;
-    this.initChildTabFor(subPath);
-  }
-
-  getSubTab(): any[] {
-    const main = this.vendorViewList.find(item => item.path === this.selectedTab);
-    return main?.subTabs || [];
-  }
-
-  getChildTabs(): any[] {
-    const sub = this.getSubTab().find(item => item.path === this.selectedSubTab || item.name === this.selectedSubTab);
-    return sub?.childTabs || [];
-  }
-
-  private initSubTabFor(mainPath: string): void {
-    const main = this.vendorViewList.find(item => item.path === mainPath);
-    if (main?.subTabs?.length) {
-      const firstSub = main.subTabs[0];
-      this.selectedSubTab = firstSub.path || firstSub.name;
-      this.initChildTabFor(this.selectedSubTab);
+  checkChildRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // /app/vendor-firm/:id/:tab
+    if (urlParts.length >= 4) {
+      this.selectedTab = urlParts[3];
+      this.selectedTabIndex = this.vendorViewList.findIndex(x => x.path === this.selectedTab);
+      if (this.selectedTabIndex === -1) this.selectedTabIndex = 0;
     } else {
-      this.selectedSubTab = '';
-      this.selectedChildTab = '';
+      this.selectedTab = 'vendor-firm-details';
+      this.selectedTabIndex = 0;
+    }
+  }
+
+  async loadVendorFirm(id: string) {
+    try {
+      const currentVendor = this.vendorFirmViewService.getVendorFirm();
+      if (currentVendor && currentVendor._id === id) {
+        this.vendorFirmInfo = currentVendor;
+      } else {
+        this.vendorFirmInfo = await this.vendorFirmViewService.refreshVendorFirm(id);
+      }
+    } catch (error) {
+      console.error('Error loading vendor firm:', error);
     }
   }
 
   goBack(): void {
-    this.back.emit(true);
+    this.router.navigate(['/app/vendor-firm']);
   }
 
   gotToTab(tab: string): void {
-    this.selectedTab = tab;
-    this.initSubTabFor(tab);
+    this.router.navigate([tab], { relativeTo: this.route });
   }
 
-  private initChildTabFor(subPath: string): void {
-    const sub = this.getSubTab().find(item => item.path === subPath || item.name === subPath);
-    if (sub?.childTabs?.length) {
-      this.selectedChildTab = sub.childTabs[0].path;
-    } else {
-      this.selectedChildTab = '';
-    }
-  }
-  //  tab implementation 
   onTabChange(event: any) {
     const selectTab = this.vendorViewList[event.index]
     this.gotToTab(selectTab.path)
   }
-  onTabSubChange(event: any) {
-    const selectedSubTab = this.getSubTab()
-    const findIndex = selectedSubTab[event.index]
-    this.goToSubTab(findIndex.path)
+
+  receiveData(event: any) {
+    this.vendorFirmInfo = event;
+    this.vendorFirmViewService.setVendorFirm(event);
   }
 
-  getTabIcon(path: string): string {
-    const icons: { [key: string]: string } = {
-      'vendorFirmDetails': 'business',
-      'wallet': 'account_balance_wallet',
-      'orderReport': 'assessment'
-    };
-    return icons[path] || 'folder';
+  updateVendorFirm(val: any) {
+    this.updateval = val;
   }
 }
 

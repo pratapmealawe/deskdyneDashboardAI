@@ -1,19 +1,18 @@
-﻿import { Component, TemplateRef, ViewChild } from '@angular/core';
-import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { MatSelectChange } from '@angular/material/select';
+import { CommonModule } from '@angular/common';
+import { Component, Inject, Optional } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
-import { SetGeolocationComponent } from '../../common-components/set-geolocation/set-geolocation.component';
-import { Inject, Optional } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../../material.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
-import { VendorComplianceComponent } from './vendor-firm-compliance/vendor-compliance.component';
+import { MaterialModule } from '../../material.module';
+import { VendorFirmAddAddressComponent } from './vendor-firm-add-address/vendor-firm-add-address.component';
+import { VendorFirmPocModalComponent } from './vendor-firm-poc-modal/vendor-firm-poc-modal.component';
+import { VendorFirmSelectOutletsComponent } from './vendor-firm-select-outlets/vendor-firm-select-outlets.component';
+import { VendorFirmSelectPopupsComponent } from './vendor-firm-select-popups/vendor-firm-select-popups.component';
 
 @Component({
   selector: 'app-add-vendor-firm',
@@ -25,62 +24,26 @@ import { VendorComplianceComponent } from './vendor-firm-compliance/vendor-compl
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
-    DirectivesModule,
-    VendorComplianceComponent,
-    SetGeolocationComponent
+    DirectivesModule
   ]
 })
 export class AddVendorFirmComponent {
-  form: any;
-  addressForm: any;
-  pocForm: any;
-  popupForm: any;
-  showError = false;
-  showUpdate = false;
-  orgList: any;
-  orgName = 'select organization';
-  cafeteriaNameNCity: any;
-  outletByCafeteriaList: any[] = [];
-  eventsByOrganization: any[] = [];
-  selectedOrg: any;
-  selectedCafeteriaId: any;
-  showModalOutletList = false;
-  showModalOutletListforPopup = false;
-  selectedOutletsList: any = [];
-  selectedPopupsList: any = [];
-  defaultRole: any = 'Cashier';
-  isVendorEdit: any;
-  showAddbutton: any = false;
-  showCafeteria = false;
-  showSelectCafeteriaOption = true;
-  selectedVendorFirm: any;
-  vendorLocation: any;
-
-  // Dialog refs for MatDialog
-  outletDialogRef: MatDialogRef<any> | null = null;
-  addressDialogRef: MatDialogRef<any> | null = null;
-  pocDialogRef: MatDialogRef<any> | null = null;
-  popupDialogRef: MatDialogRef<any> | null = null;
-
-  @ViewChild('outletModal', { static: true }) outletDialog!: TemplateRef<any>;
-  @ViewChild('addAddress', { static: true }) addressDialog!: TemplateRef<any>;
-  @ViewChild('pocDetailsTemp', { static: true }) pocDialog!: TemplateRef<any>;
-  @ViewChild('popupModal', { static: true }) popupDialog!: TemplateRef<any>;
-
-  addressList: any = [];
+  form!: FormGroup;
+  addressList: any[] = [];
+  selectedOutletsList: any[] = [];
+  selectedPopupsList: any[] = [];
   pocDetails: any = [];
-
-  btnPolicy: any;
-  pocBtn: string = 'Submit';
+  orgList: any[] = [];
+  showUpdate: boolean = false;
+  isVendorEdit: boolean = false;
+  selectedVendorFirm: any = null;
   cafeterialist: any;
 
   constructor(
     private fb: FormBuilder,
     private dialog: MatDialog,
     private apiMainService: ApiMainService,
-    private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private permissionsService: PermissionsService,
     @Optional() public dialogRef: MatDialogRef<AddVendorFirmComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -88,17 +51,14 @@ export class AddVendorFirmComponent {
   }
 
   ngOnInit() {
-    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.createForm();
-    this.updateVendorFirm();
-    if (this.data && this.data._id) {
+
+    // Check if data is provided via Dialog (MAT_DIALOG_DATA)
+    if (this.data && (this.data._id || this.data.vendorFirm?._id)) {
+      const vendorData = this.data._id ? this.data : this.data.vendorFirm;
       this.isVendorEdit = true;
       this.showUpdate = true;
-      this.selectedVendorFirm = this.data;
-      this.patchVendorFirmAndBank(this.data);
-      // Additional patching if needed
-    } else {
-      this.isVendorEdit = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
+      this.patchAllData(vendorData);
     }
   }
 
@@ -115,58 +75,18 @@ export class AddVendorFirmComponent {
       vendorFirmName: ['', [Validators.required]],
       vendorFirmEmail: ['', [Validators.required, Validators.pattern(REGEX.EMAIL)]],
       vendorFirmPhoneNo: ['', [Validators.required, Validators.pattern(REGEX.PHONE)]],
-      retailShareTDSPct: [2, [Validators.required, Validators.min(0), Validators.max(10)]],
+      tds_percent: [2, [Validators.required, Validators.min(0), Validators.max(10)]],
+      fssai_no: [''],
       bank_details: this.fb.group({
         accountNo: ['', [Validators.required, Validators.pattern(REGEX.ACCOUNTNO)]],
-        ifsc: ['', [Validators.required, Validators.pattern(REGEX.IFSC)]],
-        upi: [''],
+        IFSC: ['', [Validators.required, Validators.pattern(REGEX.IFSC)]],
+        branch: ['', [Validators.required]],
+        accountType: ['', [Validators.required]],
         accountName: ['', [Validators.required]],
         bank_name: ['', [Validators.required]]
       }),
       accountEnrollment: [''],
       MMID: ['']
-    });
-    this.pocForm = this.fb.group({
-      poc_id: [''],
-      poc_name: [''],
-      poc_phoneNo: [''],
-      poc_email: [''],
-      poc_location: ['']
-    });
-    this.addressForm = this.fb.group({
-      address1: ['', [Validators.required]],
-      address2: ['', [Validators.required]],
-      landmark: ['', [Validators.required]],
-      location: ['', [Validators.required]],
-      geolocation: this.fb.group({
-        lat: ['', [Validators.required]],
-        lng: ['', [Validators.required]],
-      })
-    });
-    this.popupForm = this.fb.group({
-      popupId: [''],
-      popupName: [''],
-      popupType: [''],
-
-      cafeteriaDetails: this.fb.group({
-        cafeteria_name: [''],
-        cafeteria_city: [''],
-        cafeteria_location: this.fb.group({
-          lat: [''],
-          lng: ['']
-        }),
-        address1: [''],
-        address2: [''],
-        landmark: [''],
-        location: ['']
-      }),
-
-      organizationDetails: this.fb.group({
-        organization_name: [''],
-        organizationId: [''],
-        city: [''],
-        location: ['']
-      })
     });
   }
 
@@ -177,40 +97,6 @@ export class AddVendorFirmComponent {
     }
   }
 
-  toggleMap(index?: any) {
-    const dialogRef = this.dialog.open(SetGeolocationComponent, {
-      width: '900px',
-      disableClose: true,
-      panelClass: 'custom-dialog-container',
-      autoFocus: false,
-      data: {
-        selectedCenter: this.addressForm.get('geolocation')?.value
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.vendorLocation = result;
-        const geoGroup = this.addressForm.get('geolocation') as FormGroup;
-        geoGroup.patchValue({
-          lat: result.latlng.lat,
-          lng: result.latlng.lng,
-        });
-      }
-    });
-  }
-
-  updateLocation(event: any) {
-    this.vendorLocation = event;
-  }
-
-  async patchVendorLocation() {
-    const geoGroup = this.addressForm.get('geolocation') as FormGroup;
-    geoGroup.patchValue({
-      lat: this.vendorLocation.latlng.lat,
-      lng: this.vendorLocation.latlng.lng,
-    });
-  }
 
   removeAddress(index: number) {
     this.addressList.splice(index, 1);
@@ -246,73 +132,29 @@ export class AddVendorFirmComponent {
     return formData;
   }
 
-  addComplience() {
+  patchAllData(firm: any) {
+    if (!firm) return;
+    this.selectedVendorFirm = firm;
+    this.showUpdate = true;
 
-    // Merge form values with selectedVendorFirm to ensure _id is present if editing
-    const dialogData = {
-      ...this.selectedVendorFirm, // Contains _id if it exists
-      ...this.form.value,         // Contains latest form edits
-      compliance: this.selectedVendorFirm?.compliance || this.form.value.compliance // prioritize existing compliance data properly
-    };
+    // Patch Form
+    this.patchVendorFirmAndBank(firm);
 
-    const dialogRef = this.dialog.open(VendorComplianceComponent, {
-      width: '90vw',
-      maxWidth: '1000px',
-      height: '90vh',
-      disableClose: true,
-      data: dialogData,
-      autoFocus: false,
-      panelClass: 'custom-dialog-container'
-    });
+    // Patch Outlets & Popups
+    this.selectedOutletsList = Array.isArray(firm.outletList) ? [...firm.outletList] : [];
+    this.selectedPopupsList = Array.isArray(firm.popup_details) ? [...firm.popup_details] : [];
 
-    dialogRef.afterClosed().subscribe(result => {
-      // The VendorComplianceComponent saves data directly via API in saveImages().
-      // However, we might want to refresh the local data or form if needed.
-      if (this.selectedVendorFirm && this.selectedVendorFirm._id) {
-        // Optionally refresh vendor data or patch form
-        // For now, we assume the component handled the save.
-      }
-    });
-  }
+    // Patch POC Details
+    this.pocDetails = Array.isArray(firm.poc_details) ? [...firm.poc_details] : [];
 
-  updateVendorFirm() {
-    const firm = this.runtimeStorageService.getCacheData('VENDOR_FIRM_EDIT');
-    if (firm && firm._id) {
-      this.selectedVendorFirm = firm;
-      this.showUpdate = true;
-      this.selectedOutletsList = firm.outletList;
-      this.patchVendorFirmAndBank(firm);
-      this.selectedPopupsList = firm.popup_details;
-      this.patchPopupForm(firm);
-      if (firm.poc_details?.length) {
-        firm.poc_details.forEach((poc: any, index: number) => {
-          if (index !== 0 || this.pocDetails.length === 0) {
-            this.pocDetails.push(poc);
-          }
-        });
-      }
+    // Patch Addresses
+    this.addressList = [];
+    if (Array.isArray(firm.address)) {
+      this.addressList = [...firm.address];
+    }
 
-      if (firm.address?.length) {
-        firm.address.forEach((addr: any, index: number) => {
-          const addressGroup = this.fb.group({
-            address1: [addr.address1 || ''],
-            address2: [addr.address2 || ''],
-            landmark: [addr.landmark || ''],
-            location: [addr.location || ''],
-            geolocation: this.fb.group({
-              lat: [addr.geolocation?.lat || ''],
-              lng: [addr.geolocation?.lng || '']
-            })
-          });
-
-          if (index !== 0 || this.addressList.length === 0) {
-            this.addressList.push(addressGroup.value);
-          }
-        });
-      }
-      if (firm.accountEnrollment) {
-        this.form.get('accountEnrollment').setValue(firm.accountEnrollment);
-      }
+    if (firm.accountEnrollment) {
+      this.form.get('accountEnrollment')?.setValue(firm.accountEnrollment);
     }
   }
 
@@ -321,25 +163,16 @@ export class AddVendorFirmComponent {
       vendorFirmName: data.vendorFirmName,
       vendorFirmEmail: data.vendorFirmEmail,
       vendorFirmPhoneNo: data.vendorFirmPhoneNo,
+      tds_percent: data.tds_percent,
+      fssai_no: data.fssai_no,
       bank_details: data.bank_details,
       MMID: data.MMID || ''
     });
   }
 
-  patchPopupForm(data: any) {
-    if (!data?.popup_details) return;
-
-    this.popupForm.patchValue({
-      popupId: data.popup_details.popupId,
-      popupName: data.popup_details.popupName,
-      popupType: data.popup_details.popupType,
-      cafeteriaDetails: data.popup_details.cafeteriaDetails,
-      organizationDetails: data.popup_details.organizationDetails,
-    });
-  }
 
   closeAccountEnroll() {
-    this.form.get('accountEnrollment').setValue('');
+    this.form.get('accountEnrollment')?.setValue('');
   }
 
   trimStringValues(obj: any): any {
@@ -360,7 +193,8 @@ export class AddVendorFirmComponent {
         ...this.form.value,
         outletList: this.selectedOutletsList,
         popup_details: this.selectedPopupsList,
-        address: this.addressList // Ensure address list is sent
+        poc_details: this.pocDetails,
+        address: this.addressList
       };
 
       finalObj = this.trimStringValues(finalObj);
@@ -381,216 +215,114 @@ export class AddVendorFirmComponent {
     }
   }
 
-  getOrgName(org: MatSelectChange) {
-    this.showCafeteria = true;
-    if (org && org) {
-      this.orgName = org.value;
-      this.selectedOrg = this.orgList.filter((org: any) => org.organization_name === this.orgName);
-      const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
-      this.cafeterialist = cafes?.cafeteriaList ?? []
-    }
-  }
 
-  selectCafeteria(event: MatSelectChange) {
-    const value = event.value;
-    const cafeteriaName = value.cafeteria_name;
-    const cafeteriaCity = value.cafeteria_city;
-    const cafeteriaId = event.value.cafeteria_id;
-    const organizationName = this.orgList.find((org: any) =>
-      org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
-    )?.organization_name;
-
-    this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
-    this.showModalOutletList = true;
-  }
-
-  async getOutletByCafeteriaList(cafeteriaName: any, cafeteriaCity: any, organization: any) {
-    try {
-      this.outletByCafeteriaList = await this.apiMainService.getOutletByCafeteria(
-        cafeteriaName,
-        cafeteriaCity,
-        organization
-      );
-    } catch (error) {
-    }
-  }
-
-  selectCafeteriaForPopup(event: MatSelectChange) {
-    const cafeteria = event.value;
-    this.selectedCafeteriaId = cafeteria.cafeteria_id;
-    this.showModalOutletListforPopup = true;
-    this.getEventPopupsByCafe();
-  }
-
-  async getEventPopupsByCafe() {
-    try {
-      if (!this.selectedOrg?.length || !this.selectedCafeteriaId) {
-        return;
-      }
-      const events = await this.apiMainService
-        .getEventPopupsByOrgId(this.selectedOrg[0]._id);
-      this.eventsByOrganization = events.filter((event: any) =>
-        event?.cafeteriaDetails?.cafeteria_id === this.selectedCafeteriaId
-      );
-    } catch (error) {
-    }
-  }
-
-  get isAnyPopupSelected(): boolean {
-    return this.eventsByOrganization?.some((event: any) => event.isChecked);
-  }
-
-  // Address Dialog Methods
-  openAddressDialog() {
-    this.addressDialogRef = this.dialog.open(this.addressDialog, {
+  // New Dialog Integrations
+  openAddressTemplate(index?: number) {
+    const isEdit = index !== undefined;
+    const dialogRef = this.dialog.open(VendorFirmAddAddressComponent, {
       width: '800px',
       disableClose: false,
-      panelClass: 'custom-dialog-container'
+      panelClass: 'custom-dialog-container',
+      data: { address: isEdit ? this.addressList[index] : null }
     });
-  }
 
-  openAddressTemplate() {
-    this.isEditIndex = null;
-    this.addressForm.reset();
-    this.openAddressDialog();
-  }
-
-  editAddress(i: number) {
-    this.isEditIndex = i;
-    const value = this.addressList[i];
-    this.addressForm.patchValue(value);
-    this.openAddressDialog();
-  }
-
-  isEditIndex: number | null = null;
-  submitAddress() {
-    const addressData = this.addressForm.value;
-    if (this.isEditIndex !== null) {
-      this.addressList[this.isEditIndex] = { ...addressData };
-    } else {
-      this.addressList.push({ ...addressData });
-    }
-    this.isEditIndex = null;
-    this.addressDialogRef?.close();
-  }
-
-  // POC Dialog Methods
-  openPocDialog() {
-    this.pocDialogRef = this.dialog.open(this.pocDialog, {
-      width: '800px',
-      disableClose: false,
-      panelClass: 'custom-dialog-container'
-    });
-  }
-
-  openPOCTemplate() {
-    this.isEditPoc = null;
-    this.pocBtn = 'Submit';
-    this.pocForm.reset();
-    this.openPocDialog();
-  }
-
-  editPOC(i: number) {
-    this.isEditPoc = i;
-    this.pocBtn = 'Update';
-    const value = this.pocDetails[i];
-    this.pocForm.patchValue(value);
-    this.openPocDialog();
-  }
-
-  isEditPoc: number | null = null;
-  submitPocDetails() {
-    const pocDetails = this.pocForm.value;
-    if (this.isEditPoc !== null) {
-      this.pocDetails[this.isEditPoc] = { ...pocDetails };
-    } else {
-      this.pocDetails.push({ ...pocDetails });
-    }
-    this.isEditPoc = null;
-    this.pocDialogRef?.close();
-  }
-
-  // Outlet Dialog Methods
-  addOutlet() {
-    if (!this.outletDialog) {
-      console.error('TemplateRef outletDialog is not available');
-      return;
-    }
-    this.outletDialogRef = this.dialog.open(this.outletDialog, {
-      width: '1000px',
-      disableClose: false,
-      panelClass: 'custom-dialog-container'
-    });
-  }
-
-  getSelectedOutlets() {
-    this.outletByCafeteriaList.forEach((elm: any) => {
-      if (elm.isChecked) {
-        const exists = this.selectedOutletsList.some((outlet: any) => outlet.outletId === elm._id);
-        if (!exists) {
-          this.selectedOutletsList.push({
-            outletId: elm._id,
-            outletName: elm.outletName,
-            outletType: elm.outletType,
-            cafeteriaDetails: elm.cafeteriaDetails,
-            organizationDetails: elm.organizationDetails,
-          });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (isEdit) {
+          this.addressList[index!] = result;
+        } else {
+          this.addressList.push(result);
         }
       }
     });
-    this.outletDialogRef?.close();
+  }
+
+  editAddress(i: number) {
+    this.openAddressTemplate(i);
+  }
+
+  openPOCTemplate(index?: number) {
+    const isEdit = index !== undefined;
+    const dialogRef = this.dialog.open(VendorFirmPocModalComponent, {
+      width: '800px',
+      disableClose: false,
+      panelClass: 'custom-dialog-container',
+      data: { poc: isEdit ? this.pocDetails[index] : null }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (isEdit) {
+          this.pocDetails[index!] = result;
+        } else {
+          this.pocDetails.push(result);
+        }
+      }
+    });
+  }
+
+  editPOC(i: number) {
+    this.openPOCTemplate(i);
+  }
+
+  addOutlet() {
+    const dialogRef = this.dialog.open(VendorFirmSelectOutletsComponent, {
+      width: '1000px',
+      disableClose: false,
+      panelClass: 'custom-dialog-container',
+      data: { orgList: this.orgList }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && Array.isArray(result)) {
+        result.forEach((elm: any) => {
+          const exists = this.selectedOutletsList.some((outlet: any) => outlet.outletId === elm._id);
+          if (!exists) {
+            this.selectedOutletsList.push({
+              outletId: elm._id,
+              outletName: elm.outletName,
+              outletType: elm.outletType,
+              cafeteriaDetails: elm.cafeteriaDetails,
+              organizationDetails: elm.organizationDetails,
+            });
+          }
+        });
+      }
+    });
+  }
+
+  addPopup() {
+    const dialogRef = this.dialog.open(VendorFirmSelectPopupsComponent, {
+      width: '1000px',
+      disableClose: false,
+      panelClass: 'custom-dialog-container',
+      data: { orgList: this.orgList }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && Array.isArray(result)) {
+        result.forEach((elm: any) => {
+          const exists = this.selectedPopupsList.some((popup: any) => popup.popupId === elm._id);
+          if (!exists) {
+            this.selectedPopupsList.push({
+              popupId: elm._id,
+              popupName: elm.eventPopupName,
+              popupType: elm.eventPopupOpened,
+              cafeteriaDetails: elm.cafeteriaDetails,
+              organizationDetails: elm.organizationDetails,
+            });
+          }
+        });
+      }
+    });
   }
 
   deleteOutlet(index: number) {
     this.selectedOutletsList.splice(index, 1);
   }
 
-  // Popup Dialog Methods
-  addPopup() {
-    if (!this.popupDialog) {
-      console.error('TemplateRef popup is not available');
-      return;
-    }
-    this.popupDialogRef = this.dialog.open(this.popupDialog, {
-      width: '1000px',
-      disableClose: false,
-      panelClass: 'custom-dialog-container'
-    });
-
-    this.popupDialogRef.afterClosed().subscribe(() => {
-      this.showModalOutletListforPopup = false;
-    });
-  }
-
   deletePopup(index: number) {
     this.selectedPopupsList.splice(index, 1);
-  }
-
-  getOrgNameForPopup(event: any) {
-    if (event) {
-      this.orgName = event.value;
-      const cafes = this.orgList.find((o: any) => o.organization_name === this.orgName);
-      this.cafeterialist = cafes?.cafeteriaList ?? []
-    }
-  }
-
-  getSelectedPopups() {
-    this.eventsByOrganization.forEach((elm: any) => {
-      if (elm.isChecked) {
-        const exists = this.selectedPopupsList.some((popup: any) => popup.popupId === elm._id);
-        if (!exists) {
-          this.selectedPopupsList.push({
-            popupId: elm._id,
-            popupName: elm.eventPopupName,
-            popupType: elm.eventPopupOpened,
-            cafeteriaDetails: elm.cafeteriaDetails,
-            organizationDetails: elm.organizationDetails,
-          });
-        }
-      }
-    });
-    this.showModalOutletListforPopup = false;
-    this.popupDialogRef?.close();
   }
 
   goBack() {
@@ -607,14 +339,7 @@ export class AddVendorFirmComponent {
   }
 
   hasSubError(path: string[], error: string) {
-    let c: AbstractControl | null = null;
-    if (path[0] === 'address') {
-      c = this.addressForm.get(path[1]);
-    } else if (path[0] === 'poc_details') {
-      c = this.pocForm.get(path[1]);
-    } else {
-      c = this.form.get(path);
-    }
+    const c = this.form.get(path);
     return c?.hasError(error) && (c.touched || c.dirty);
   }
 

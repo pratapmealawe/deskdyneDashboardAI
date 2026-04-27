@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { OnlyNumberDirective, AlphaNumericDirective, OnlyAlphaDirective } from './common-directives.directive';
-import { AutoTooltipDirective } from './auto-tooltip.directive';
 import { HasPermissionDirective } from './has-permission.directive';
 
 @NgModule({
@@ -9,7 +8,6 @@ import { HasPermissionDirective } from './has-permission.directive';
     OnlyAlphaDirective,
     OnlyNumberDirective,
     AlphaNumericDirective,
-    AutoTooltipDirective,
     HasPermissionDirective,
   ],
   imports: [
@@ -19,7 +17,6 @@ import { HasPermissionDirective } from './has-permission.directive';
     OnlyAlphaDirective,
     OnlyNumberDirective,
     AlphaNumericDirective,
-    AutoTooltipDirective,
     HasPermissionDirective,
   ]
 })

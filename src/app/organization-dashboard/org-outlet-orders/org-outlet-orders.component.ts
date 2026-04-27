@@ -15,7 +15,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
-import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.component';
+import { OutletOrderCardComponent } from 'src/app/orders/outlet-orders/outlet-order-card/outlet-order-card.component';
 
 @Component({
   selector: 'app-org-outlet-orders',
@@ -29,12 +29,12 @@ import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.
     HighchartsChartModule,
     MaterialModule,
     CommonOutletCafeSelectComponent,
-    OrderCardComponent,
+    OutletOrderCardComponent,
   ]
 })
 export class OrgOutletOrdersComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
-  
+
   Highcharts: typeof Highcharts = Highcharts;
   orgDetails: any = {};
   headerConfig: CommonSelectConfig = {

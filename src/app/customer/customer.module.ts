@@ -16,8 +16,8 @@ import { MaterialModule } from 'src/app/material.module';
 import { BulkWalletUploadDialogComponent } from './bulk-wallet-upload-dialog/bulk-wallet-upload-dialog.component';
 import { CustomerCompanyWalletComponent } from './customer-company-wallet/customer-company-wallet.component';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { OrderSubscriptionPackageCardComponent } from '../other-orders/virtual-cafeteria/order-subscription-package-card/order-subscription-package-card.component';
-import { OrderCardComponent } from '../outlet-orders/order-card/order-card.component';
+import { OrderSubscriptionPackageCardComponent } from '../orders/other-orders/virtual-cafeteria/order-subscription-package-card/order-subscription-package-card.component';
+import { OutletOrderCardComponent } from '../orders/outlet-orders/outlet-order-card/outlet-order-card.component';
 
 
 @NgModule({
@@ -39,7 +39,7 @@ import { OrderCardComponent } from '../outlet-orders/order-card/order-card.compo
     CustomerRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    OrderCardComponent,
+    OutletOrderCardComponent,
     MaterialModule,
     HighchartsChartModule,
     OrderSubscriptionPackageCardComponent

@@ -1,8 +1,9 @@
-import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { VendorFirmWalletTxnDialogComponent } from './vendor-firm-wallet-txn-dialog/vendor-firm-wallet-txn-dialog.component';
+import { VendorFirmViewService } from '../vendor-firm-view.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { WalletTransactionHistoryComponent } from 'src/app/vendor-firm/vendor-firm-view/wallet-transaction-history/wallet-transaction-history.component';
@@ -19,19 +20,29 @@ import { WalletTransactionHistoryComponent } from 'src/app/vendor-firm/vendor-fi
   ]
 })
 export class VendorFirmWalletDetailsComponent implements OnChanges, OnInit, OnDestroy {
-  @Input() vendorFirmInfo: any;
+  vendorFirmInfo: any;
 
   walletBalance: number = 0;
   subsidyBalance: number = 0;
   dailyBalance: number = 0;
 
-  constructor(private snackBar: MatSnackBar, private dialog: MatDialog, private apiMainService: ApiMainService) { }
+  constructor(
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+    private apiMainService: ApiMainService,
+    private vendorFirmViewService: VendorFirmViewService
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
   }
 
   ngOnInit(): void {
-    this.getWalletBalance();
+    this.vendorFirmViewService.vendorFirm$.subscribe(vendor => {
+      if (vendor) {
+        this.vendorFirmInfo = vendor;
+        this.getWalletBalance();
+      }
+    });
   }
 
   ngOnDestroy(): void {

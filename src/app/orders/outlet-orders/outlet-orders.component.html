@@ -1,0 +1,204 @@
+<div class="orders-page-container">
+    <!-- Header Card -->
+    <div class="orders-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Outlet Orders</h1>
+                <p class="page-subtitle">Monitor live orders and access historical reports</p>
+            </div>
+            <div class="actions-section">
+                <div class="search-wrapper" *ngIf="filteredList.length > 0">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search by Order #, Name, Phone..."
+                        (keyup)="onSearch($any($event.target).value)" />
+                </div>
+                <div class="header-actions">
+                    <button mat-icon-button class="btn-filter" matTooltip="Filters" (click)="openFilterDialog()">
+                        <mat-icon [matBadge]="activeFilterCount" [matBadgeHidden]="activeFilterCount === 0"
+                            matBadgeSize="small" matBadgeColor="accent">filter_list</mat-icon>
+                    </button>
+                    <button mat-flat-button class="btn-export excel" matTooltip="Excel Export" (click)="excelExport()" *ngIf="filteredList.length > 0">
+                        <mat-icon>table_chart</mat-icon> Excel
+                    </button>
+                    <button mat-flat-button class="btn-export pdf" matTooltip="Download PDF" (click)="downloadPdf()" *ngIf="filteredList.length > 0">
+                        <mat-icon>picture_as_pdf</mat-icon> PDF
+                    </button>
+                    <button mat-icon-button class="btn-view-toggle" (click)="changeDataView()" *ngIf="filteredList.length > 0"
+                        [matTooltip]="isShowChart ? 'Show List' : 'Show Chart'">
+                        <mat-icon>{{ isShowChart ? 'view_list' : 'bar_chart' }}</mat-icon>
+                    </button>
+                    <button mat-icon-button class="btn-refresh" (click)="reloadPage()" matTooltip="Refresh Orders" [disabled]="isLoading">
+                        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Body -->
+    <div class="content-body">
+        <!-- Filter Section -->
+        <div class="filter-wrapper mb-4">
+            <app-common-outlet-cafe-select 
+                [config]="isAdmin ? headerConfigAdmin : headerConfig"
+                (submitted)="filterSubmitted($event)">
+            </app-common-outlet-cafe-select>
+        </div>
+
+        <!-- Error Banner -->
+        <div class="error-banner" *ngIf="errorMessage && !isLoading">
+            <mat-icon>error_outline</mat-icon>
+            <span>{{ errorMessage }}</span>
+            <button mat-button (click)="reloadPage()">Retry</button>
+        </div>
+
+        <!-- Active Filter Chips -->
+        <div class="active-filter-chips mb-4" *ngIf="activeFilterCount > 0">
+            <div class="chip-strip">
+                <div class="filter-chip" *ngIf="filterOrderStatus">
+                    {{ orderStatusMapper[filterOrderStatus] || filterOrderStatus }}
+                    <mat-icon (click)="filterOrderStatus = ''; applyFilter()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterPgName">
+                    {{ filterPgName }}
+                    <mat-icon (click)="filterPgName = ''; applyFilter()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterAppVersion">
+                    v{{ filterAppVersion }}
+                    <mat-icon (click)="filterAppVersion = ''; applyFilter()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterPlatform">
+                    {{ filterPlatform }}
+                    <mat-icon (click)="filterPlatform = ''; applyFilter()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterIsPosOrder">
+                    POS: {{ filterIsPosOrder === 'true' ? 'Yes' : 'No' }}
+                    <mat-icon (click)="filterIsPosOrder = ''; applyFilter()">close</mat-icon>
+                </div>
+                <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
+                    <mat-icon>filter_alt_off</mat-icon> Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Totals Strip -->
+        <div class="totals-strip mb-4" *ngIf="filteredList.length > 0">
+            <div class="total-chip">
+                <span class="chip-label">Orders</span>
+                <span class="chip-value">{{ filteredList.length }}</span>
+            </div>
+            <div class="total-chip">
+                <span class="chip-label">Wallet</span>
+                <span class="chip-value">₹{{ totalWalletUsed | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-chip" *ngIf="totalCompanyWallet > 0">
+                <span class="chip-label">Company</span>
+                <span class="chip-value">₹{{ totalCompanyWallet | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-chip" *ngIf="totalSubsidy > 0">
+                <span class="chip-label">Subsidy</span>
+                <span class="chip-value">₹{{ totalSubsidy | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-chip" *ngIf="totalPackaging > 0">
+                <span class="chip-label">Packaging</span>
+                <span class="chip-value">₹{{ totalPackaging | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-chip">
+                <span class="chip-label">Paid</span>
+                <span class="chip-value">₹{{ totalAmountPaid | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-chip highlight">
+                <span class="chip-label">Revenue</span>
+                <span class="chip-value">₹{{ totalAmount | number:'1.2-2' }}</span>
+            </div>
+        </div>
+
+        <!-- Status Filter (Only for real-time view) -->
+        <div class="stats-grid mb-4" *ngIf="!filterObj.dateFrom && !isShowChart && currentoutletOrderList.length > 0">
+            <div class="stat-card" [class.active]="selectedStatus === 'placed'" (click)="getLatestOrderStatusList('placed')">
+                <div class="stat-icon primary"><mat-icon>restaurant</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ orderStatusCountObj.placed }}</div>
+                    <div class="stat-label">New Orders</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="selectedStatus === 'readyOrder'" (click)="getLatestOrderStatusList('readyOrder')">
+                <div class="stat-icon ready"><mat-icon>room_service</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ orderStatusCountObj.readyOrder }}</div>
+                    <div class="stat-label">Ready</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="selectedStatus === 'completed'" (click)="getLatestOrderStatusList('completed')">
+                <div class="stat-icon success"><mat-icon>check_circle</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ orderStatusCountObj.completed }}</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="selectedStatus === 'paymentInprogress'" (click)="getLatestOrderStatusList('paymentInprogress')">
+                <div class="stat-icon warning"><mat-icon>hourglass_empty</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ orderStatusCountObj.paymentInprogress }}</div>
+                    <div class="stat-label">Processing</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="selectedStatus === 'paymentFailed'" (click)="getLatestOrderStatusList('paymentFailed')">
+                <div class="stat-icon error"><mat-icon>error</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ orderStatusCountObj.paymentFailed }}</div>
+                    <div class="stat-label">Failed</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="selectedStatus === 'all'" (click)="getLatestOrderStatusList('all')">
+                <div class="stat-icon info"><mat-icon>list_alt</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ currentoutletOrderList.length }}</div>
+                    <div class="stat-label">All Current</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoading">
+            <mat-spinner diameter="44"></mat-spinner>
+            <p>Loading orders...</p>
+        </div>
+
+        <!-- Orders List -->
+        <div class="orders-list-view" *ngIf="!isLoading && !isShowChart && !errorMessage">
+            <div class="row g-4" *ngIf="filteredList.length > 0; else noRecords">
+                <div class="col-12" *ngFor="let row of filteredList">
+                    <app-outlet-order-card [order]="row" (action)="handleOrderAction($event)"></app-outlet-order-card>
+                </div>
+            </div>
+
+            <ng-template #noRecords>
+                <div class="empty-state">
+                    <mat-icon class="empty-icon">receipt_long</mat-icon>
+                    <h3>No Orders Found</h3>
+                    <p>Try changing the status filter or date range.</p>
+                </div>
+            </ng-template>
+        </div>
+
+        <!-- Chart View -->
+        <div class="chart-view-container" *ngIf="isShowChart && !isLoading && !errorMessage">
+            <mat-card class="chart-card p-3 border-0 shadow-sm">
+                <highcharts-chart *ngIf="filteredList.length > 0" 
+                    [Highcharts]="Highcharts" 
+                    [options]="chartOptions"
+                    [update]="updateStatusFlag" 
+                    [oneToOne]="oneToOneStatusFlag"
+                    style="width: 100%; height: 450px; display: block">
+                </highcharts-chart>
+                
+                <div class="empty-state" *ngIf="filteredList.length === 0">
+                    <mat-icon class="empty-icon">bar_chart</mat-icon>
+                    <h3>No Chart Data</h3>
+                    <p>No data available to display chart.</p>
+                </div>
+            </mat-card>
+        </div>
+    </div>
+</div>

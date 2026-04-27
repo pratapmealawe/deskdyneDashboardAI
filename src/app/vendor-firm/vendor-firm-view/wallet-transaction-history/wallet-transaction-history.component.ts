@@ -2,6 +2,7 @@ import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges } from '@
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ApiMainService } from '@service/apiService/apiMain.service';
+import { VendorFirmViewService } from '../vendor-firm-view.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -61,7 +62,11 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
     loading = false;
     refreshInterval: any;
 
-    constructor(private snackBar: MatSnackBar, private apiMainService: ApiMainService) { }
+    constructor(
+        private snackBar: MatSnackBar,
+        private apiMainService: ApiMainService,
+        private vendorFirmViewService: VendorFirmViewService
+    ) { }
 
     ngOnChanges(changes: SimpleChanges): void {
         const today = new Date();
@@ -75,10 +80,13 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
     ngOnInit(): void {
         const today = new Date();
         this.dateRange = { start: today, end: today };
-        if (this.vendorFirmInfo) {
-            this.loadPage(true);
-        }
-
+        
+        this.vendorFirmViewService.vendorFirm$.subscribe(vendor => {
+            if (vendor) {
+                this.vendorFirmInfo = vendor;
+                this.loadPage(true);
+            }
+        });
     }
 
     ngOnDestroy(): void {

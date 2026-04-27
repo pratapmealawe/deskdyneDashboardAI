@@ -1,20 +1,17 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { PageEvent } from '@angular/material/paginator';
-import { Router, ActivatedRoute } from '@angular/router';
-import { AddVendorFirmComponent } from './add-vendor-firm/add-vendor-firm.component';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { LocalStorageService } from '@service/local-storage.service';
 import { SearchFilterService } from '@service/search-filter.service';
-import { ConfirmationModalService } from '@service/confirmation-modal.service';
-
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MaterialModule } from '../material.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
-import { VendorFirmViewComponent } from './vendor-firm-view/vendor-firm-view.component';
+import { MaterialModule } from '../material.module';
+import { AddVendorFirmComponent } from './add-vendor-firm/add-vendor-firm.component';
 import { VendorFirmCardComponent } from './vendor-firm-card/vendor-firm-card.component';
 
 @Component({
@@ -28,31 +25,22 @@ import { VendorFirmCardComponent } from './vendor-firm-card/vendor-firm-card.com
     FormsModule,
     ReactiveFormsModule,
     DirectivesModule,
-    VendorFirmViewComponent,
-    VendorFirmCardComponent
+    VendorFirmCardComponent,
+    RouterModule
   ]
 })
 export class VendorFirmComponent {
-  searchObj: any = {
-    vendorName: '',
-    vendorPhoneNo: '',
-    vendorEmail: '',
-  };
   vendorList: any;
-  orgName: any;
   vendorFirmInfo: any;
-  showSearchSection = true;
-  vendorInfo: any;
+  isListingView = true;
   searchControl = new FormControl('');
   pageSize: number = 10;
   pageIndex: number = 0;
   pagedVendorFirm: any[] = [];
   filteredList: any[] = [];
-
   organizationList: string[] = [];
   selectedOrgs: string[] = [];
   tempSelectedOrgs: string[] = [];
-
   @ViewChild('filterDialog') filterDialog!: TemplateRef<any>;
 
   constructor(
@@ -66,6 +54,15 @@ export class VendorFirmComponent {
   ) { }
 
   ngOnInit(): void {
+    this.checkRoute();
+
+    // Subscribe to router events to toggle view
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkRoute();
+    });
+
     this.getAllVendors()
     this.searchControl.valueChanges.pipe(
       debounceTime(400),
@@ -73,6 +70,13 @@ export class VendorFirmComponent {
     ).subscribe(() => {
       this.applyFilter();
     })
+  }
+
+  checkRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // /app/vendor-firm is 2 parts
+    this.isListingView = urlParts.length === 2 && urlParts[1] === 'vendor-firm';
   }
 
   async getAllVendors() {
@@ -159,14 +163,12 @@ export class VendorFirmComponent {
     }
 
     this.filteredList = [...filtered];
-    this.pageIndex = 0;
-    this.updateCard();
   }
 
   editVendor(vendor: any) {
-    this.localStorageService.setCacheData('VENDOR_FIRM_EDIT', vendor);
-    this.showSearchSection = false;
-    this.vendorInfo = vendor;
+    if (vendor) {
+      this.router.navigate(['/app/vendor-firm', vendor._id]);
+    }
   }
 
   async deleteVendorFirm() {
@@ -188,13 +190,7 @@ export class VendorFirmComponent {
     });
   }
 
-
-  resetForm() {
-    this.localStorageService.setCacheData('VENDOR_FIRM_EDIT', {});
-  }
-
   addVendor() {
-    this.resetForm();
     const dialogRef = this.dialog.open(AddVendorFirmComponent, {
       width: '90vw',
       maxHeight: '90vh',
@@ -207,24 +203,5 @@ export class VendorFirmComponent {
         this.getAllVendors();
       }
     });
-  }
-
-
-  toggleShowOrder(val: any) {
-    this.showSearchSection = val;
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
-    this.updateCard();
-  }
-
-  updateCard() {
-    if (!this.filteredList) return;
-    const start = this.pageIndex * this.pageSize;
-    const end = start + this.pageSize;
-    this.pagedVendorFirm = this.filteredList.slice(start, end);
-
   }
 }

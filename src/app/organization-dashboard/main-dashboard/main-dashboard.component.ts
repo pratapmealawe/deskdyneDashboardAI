@@ -42,7 +42,7 @@ import { OrgDashboardFilterDialogComponent } from './org-dashboard-filter-dialog
 import { CommonModule } from '@angular/common';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
-import { DailyBulkCardComponent } from "src/app/other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component";
+import { DailyBulkCardComponent } from "src/app/orders/other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component";
 
 @Component({
   selector: 'app-main-dashboard',
@@ -56,7 +56,7 @@ import { DailyBulkCardComponent } from "src/app/other-orders/daily-bulk-order/da
     ReactiveFormsModule,
     FormsModule,
     DailyBulkCardComponent
-]
+  ]
 })
 export class MainDashboardComponent {
   Highcharts: typeof Highcharts = Highcharts;
@@ -342,7 +342,7 @@ export class MainDashboardComponent {
         this.dashboardConfig.showEmpPolls ? this.apiMainService.getAdminEmpPolls(payload) : Promise.resolve([]),
         this.dashboardConfig.showVirtualCafe ? this.apiMainService.fetchFoodOrderPackagebysearchObj(payload) : Promise.resolve([])
       ]);
-      
+
       this.refreshStatusPie();
     } catch (err) {
       console.error('Error fetching dashboard data:', err);

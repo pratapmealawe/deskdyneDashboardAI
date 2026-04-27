@@ -1,5 +1,5 @@
 import { CommonSelectConfig, SubmitPayload, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { EmpPollCardComponent } from 'src/app/other-orders/emp-poll/emp-poll-card/emp-poll-card.component';
+import { EmpPollCardComponent } from 'src/app/orders/other-orders/emp-poll/emp-poll-card/emp-poll-card.component';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { CommonModule } from '@angular/common';
@@ -74,7 +74,7 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
             this.headerConfig.defaultCafeId = this.orgAdmin?.cafeDetails?.[0]?.cafeteria_id;
             this.headerConfig.disableCafe = true;
         }
-        
+
         this.headerConfig = { ...this.headerConfig };
     }
 

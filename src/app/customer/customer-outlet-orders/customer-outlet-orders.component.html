@@ -154,195 +154,22 @@
     </div>
 
     <!-- Orders cards -->
-    <div>
-        <ng-container *ngIf="filteredList.length > 0; else noOrders">
-            <div class="orders-list">
-                <div class="order-item-card" *ngFor="let row of pagedList">
-
-                    <!-- Card Top (matches orders.component card-top) -->
-                    <div class="card-top">
-                        <div class="order-avatar">
-                            {{ row.customerName?.[0] ||'O' }}
-                        </div>
-                        <div class="order-identity">
-                            <h3 class="order-title">#{{ row.orderNo }}</h3>
-                            <div class="order-sub-info">
-                                <span class="token-chip" *ngIf="row.tokenNo">
-                                    <mat-icon>confirmation_number</mat-icon> Token {{ row.tokenNo }}
-                                </span>
-                                <span class="date-text">
-                                    {{ row.SubmitedDate || row.orderDate | date:'MMM d, y, h:mm a' }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="card-top-right">
-                            <div class="status-badge" [ngClass]="row.orderstatus">
-                                <mat-icon>{{ row.orderstatus ==='completed' ?'check_circle' :
-                                    row.orderstatus ==='placed' ?'restaurant' :
-                                    row.orderstatus ==='readyOrder' ?'room_service' :
-                                    row.orderstatus ==='paymentFailed' ?'error' :
-                                    row.orderstatus ==='paymentInprogress' ?'hourglass_empty' :'info' }}</mat-icon>
-                                {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card Body (matches orders.component card-body with info-rows) -->
-                    <div class="card-body-grid">
-                        <!-- Left: Customer + Org + Flags -->
-                        <div class="card-body-left">
-                            <div class="info-row">
-                                <mat-icon class="info-icon">person</mat-icon>
-                                <div class="info-content">
-                                    <span class="info-label">Customer</span>
-                                    <span class="info-value">{{ row.customerName }}</span>
-                                </div>
-                            </div>
-                            <div class="info-row">
-                                <mat-icon class="info-icon">phone</mat-icon>
-                                <div class="info-content">
-                                    <span class="info-label">Phone</span>
-                                    <span class="info-value">{{ row.customerPhoneNo }}</span>
-                                </div>
-                            </div>
-                            <div class="info-row" *ngIf="row.customerEmail">
-                                <mat-icon class="info-icon">email</mat-icon>
-                                <div class="info-content">
-                                    <span class="info-label">Email</span>
-                                    <span class="info-value text-truncate" [matTooltip]="row.customerEmail">{{
-                                        row.customerEmail }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Org / Cafe Badges -->
-                            <div class="badge-row mt-2">
-                                <div class="org-badge" *ngIf="row.organizationDetails?.organization_name">
-                                    <mat-icon>business</mat-icon>
-                                    {{ row.organizationDetails?.organization_name }}
-                                </div>
-                                <div class="cafe-badge" *ngIf="row.cafeteriaDetails?.cafeteria_name">
-                                    <mat-icon>restaurant</mat-icon>
-                                    {{ row.cafeteriaDetails?.cafeteria_name }}
-                                </div>
-                            </div>
-
-                            <!-- Order Flags -->
-                            <div class="badge-row mt-1" *ngIf="row.isPreOrder || row.isCabinOrder">
-                                <div class="flag-badge preorder" *ngIf="row.isPreOrder">
-                                    <mat-icon>schedule</mat-icon> Pre-Order
-                                    <span *ngIf="row.preOrderMealType"> · {{ row.preOrderMealType }}</span>
-                                </div>
-                                <div class="flag-badge cabin" *ngIf="row.isCabinOrder">
-                                    <mat-icon>meeting_room</mat-icon> Cabin
-                                    <span *ngIf="row.cabinConfig?.cabinName"> · {{ row.cabinConfig?.cabinName }}</span>
-                                </div>
-                            </div>
-
-                            <!-- Special Request -->
-                            <div class="special-note mt-2" *ngIf="row.specialRequest">
-                                <mat-icon>notes</mat-icon>
-                                <span>{{ row.specialRequest }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Right: Items -->
-                        <div class="card-body-right">
-                            <div class="section-label">Order Items ({{ (row.itemList || row.itemlist)?.length || 0
-                                }})</div>
-                            <div class="items-scroll">
-                                <div class="item-row" *ngFor="let i of (row.itemList || row.itemlist)">
-                                    <div class="item-left">
-                                        <span class="type-dot" [ngClass]="i.itemType ==='Veg' ?'veg' :'nonveg'"
-                                            [title]="i.itemType"></span>
-                                        <span class="item-qty" *ngIf="i.count > 0">{{ i.count }}x</span>
-                                        <span class="item-name">{{ i.itemName }}</span>
-                                    </div>
-                                    <span class="item-price">₹{{ i.price * (i.count || 1) | number :'1.2-2' }}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card Footer (matches orders.component set) -->
-                    <div class="card-footer">
-                        <!-- Financials -->
-                        <div class="fin-strip">
-                            <div class="fin-cell">
-                                <span class="fin-label">Item Total</span>
-                                <span class="fin-value">₹{{ row.itemAmount | number :'1.2-2' }}</span>
-                            </div>
-                            <div class="fin-cell" *ngIf="row.taxes">
-                                <span class="fin-label">Taxes</span>
-                                <span class="fin-value">₹{{ row.taxes | number :'1.2-2' }}</span>
-                            </div>
-                            <div class="fin-cell" *ngIf="row.packagingAmount">
-                                <span class="fin-label">Packaging</span>
-                                <span class="fin-value">₹{{ row.packagingAmount | number :'1.2-2' }}</span>
-                            </div>
-                            <div class="fin-cell discount" *ngIf="row.subsidyAmount">
-                                <span class="fin-label">Subsidy</span>
-                                <span class="fin-value">- ₹{{ row.subsidyAmount | number :'1.2-2' }}</span>
-                            </div>
-                            <div class="fin-cell discount" *ngIf="row.moneyWalletPointsUsed">
-                                <span class="fin-label">Wallet</span>
-                                <span class="fin-value">- ₹{{ row.moneyWalletPointsUsed | number :'1.2-2' }}</span>
-                            </div>
-                            <div class="fin-cell discount" *ngIf="row.companyWalletPointUsed">
-                                <span class="fin-label">Company</span>
-                                <span class="fin-value">- ₹{{ row.companyWalletPointUsed | number :'1.2-2' }}</span>
-                            </div>
-                            <div class="fin-cell paid">
-                                <span class="fin-label">Paid (PG)</span>
-                                <span class="fin-value">₹{{ row.amount | number :'1.2-2' }}</span>
-                            </div>
-                            <div class="fin-cell grand">
-                                <span class="fin-label">Grand Total</span>
-                                <span class="fin-value">₹{{ getGrandTotal(row) | number :'1.2-2' }}</span>
-                            </div>
-                        </div>
-
-                        <!-- Meta -->
-                        <div class="meta-row mt-2 d-flex flex-wrap gap-2">
-                            <div class="meta-chip border rounded px-2 py-1 text-muted small d-inline-flex align-items-center gap-1 bg-light"
-                                *ngIf="row.pgName">
-                                <mat-icon style="font-size:16px; width:16px; height: 16px;">payment</mat-icon> {{
-                                row.pgName }}
-                            </div>
-                            <div class="meta-chip border rounded px-2 py-1 text-muted small d-inline-flex align-items-center gap-1 bg-light"
-                                *ngIf="row.appVersion">
-                                <mat-icon style="font-size:16px; width:16px; height: 16px;">smartphone</mat-icon> v{{
-                                row.appVersion }}
-                            </div>
-                            <div class="meta-chip border rounded px-2 py-1 text-muted small d-inline-flex align-items-center gap-1 bg-light"
-                                *ngIf="row.deviceInfo?.model">
-                                <mat-icon style="font-size:16px; width:16px; height: 16px;">devices</mat-icon> {{
-                                row.deviceInfo?.model }}
-                            </div>
-                            <div class="meta-chip border rounded px-2 py-1 text-muted small d-inline-flex align-items-center gap-1 bg-light"
-                                *ngIf="row.deviceInfo?.platform">
-                                <mat-icon style="font-size:16px; width:16px; height: 16px;">language</mat-icon> {{
-                                row.deviceInfo?.platform }}
-                            </div>
-                            <div class="meta-chip border rounded px-2 py-1 text-muted small d-inline-flex align-items-center gap-1 bg-light"
-                                *ngIf="row.isPosOrder">
-                                <mat-icon style="font-size:16px; width:16px; height: 16px;">point_of_sale</mat-icon> POS
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div *ngIf="filteredList.length > 0; else noOrders">
+        <div class="row g-4 mb-4">
+            <div [ngClass]="pagedList.length === 1 ? 'col-12' : 'col-12 col-md-6'" *ngFor="let row of pagedList">
+                <app-outlet-order-card [order]="row" [showActions]="false"></app-outlet-order-card>
             </div>
+        </div>
 
-            <!-- Paginator -->
-            <mat-paginator [length]="filteredList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
-            </mat-paginator>
-        </ng-container>
-
-        <ng-template #noOrders>
-            <div class="p-3 text-center text-muted">
-                No orders found for selected filters.
-            </div>
-        </ng-template>
+        <!-- Paginator -->
+        <mat-paginator [length]="filteredList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+            [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
     </div>
 
+    <ng-template #noOrders>
+        <div class="p-3 text-center text-muted">
+            No orders found for selected filters.
+        </div>
+    </ng-template>
 </div>

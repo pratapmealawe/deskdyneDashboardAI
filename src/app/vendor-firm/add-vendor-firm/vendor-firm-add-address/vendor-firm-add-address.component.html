@@ -1,0 +1,73 @@
+<div class="premium-modal">
+    <div class="modal-header">
+    <div class="title-wrap">
+        <div class="icon-box warning">
+            <mat-icon>location_on</mat-icon>
+        </div>
+        <div class="text">
+            <h3>{{ isEdit ? 'Edit Address' : 'Add Address' }}</h3>
+            <p>Define physical location for the vendor firm</p>
+        </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+    <mat-dialog-content class="dialog-content p-4">
+        <div class="form-grid-modern">
+        <div [formGroup]="addressForm">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Address Line 1</mat-label>
+                        <input matInput formControlName="address1" placeholder="Building/Street" />
+                        <mat-error *ngIf="hasSubError('address1','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Address Line 2</mat-label>
+                        <input matInput formControlName="address2" placeholder="Area/Locality" />
+                        <mat-error *ngIf="hasSubError('address2','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Landmark</mat-label>
+                        <input matInput formControlName="landmark" placeholder="Near XYZ" />
+                        <mat-error *ngIf="hasSubError('landmark','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Location</mat-label>
+                        <input matInput formControlName="location" placeholder="City" />
+                        <mat-error *ngIf="hasSubError('location','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-12" formGroupName="geolocation">
+                    <div class="d-flex gap-3 align-items-center">
+                        <mat-form-field appearance="outline" class="w-100">
+                            <mat-label>Coordinates</mat-label>
+                            <input matInput [value]="addressForm.get('geolocation.lat')?.value + ', ' + addressForm.get('geolocation.lng')?.value" readonly />
+                            <mat-icon matPrefix class="text-muted">my_location</mat-icon>
+                        </mat-form-field>
+                        <button mat-stroked-button color="primary" type="button" (click)="toggleMap()"
+                            class="btn-cancel" style="height: 52px; white-space: nowrap; border: 1px solid #e2e8f0;">
+                            <mat-icon>map</mat-icon> Pick on Map
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button mat-dialog-close class="btn-cancel me-2">Cancel</button>
+        <button mat-flat-button color="primary" [disabled]="!addressForm.valid" (click)="submitAddress()" class="btn-primary-action px-4">
+            <mat-icon>save</mat-icon> {{ isEdit ? 'Update' : 'Save' }} Address
+        </button>
+    </mat-dialog-actions>
+</div>

@@ -21,7 +21,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.component';
+import { OutletOrderCardComponent } from 'src/app/orders/outlet-orders/outlet-order-card/outlet-order-card.component';
 
 @Component({
   selector: 'app-event-pop-orders',
@@ -34,7 +34,7 @@ import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.
     FormsModule,
     ReactiveFormsModule,
     HighchartsChartModule,
-    OrderCardComponent,
+    OutletOrderCardComponent,
     OrderFilterDialogComponent
   ]
 })

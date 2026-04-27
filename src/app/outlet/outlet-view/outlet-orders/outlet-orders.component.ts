@@ -1,25 +1,21 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import * as Highcharts from 'highcharts';
-import * as ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
-import * as pdfMake from 'pdfmake/build/pdfmake';
-import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import {OrderFilterDialogComponent,OrderFilterDialogData} from 'src/app/common-components/order-filter-dialog/order-filter-dialog.component';
+import { OrderFilterDialogComponent, OrderFilterDialogData } from 'src/app/common-components/order-filter-dialog/order-filter-dialog.component';
 import { OutletViewService } from '../outlet-view.service';
-
-(pdfMake as any).vfs =
-  (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
-
+import { OutletOrderService } from '@service/outlet-order.service';
+import { ToasterService } from '@service/toaster.service';
+import { interval, Subscription } from 'rxjs';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.component';
+import { OutletOrderCardComponent } from 'src/app/orders/outlet-orders/outlet-order-card/outlet-order-card.component';
 
 @Component({
   selector: 'app-outlet-orders',
@@ -32,7 +28,7 @@ import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.
     FormsModule,
     ReactiveFormsModule,
     HighchartsChartModule,
-    OrderCardComponent,
+    OutletOrderCardComponent,
     OrderFilterDialogComponent
   ]
 })
@@ -42,8 +38,8 @@ export class OutletOrdersComponent implements OnInit {
   Highcharts: typeof Highcharts = Highcharts;
   orderStatusMapper: any = orderStatusMapper;
 
-  orders: any[] = [];
-  filteredOrders: any[] = [];
+  currentoutletOrderList: any[] = [];
+  filteredList: any[] = [];
   pagedOrders: any[] = [];
 
   chartOptions!: Highcharts.Options;
@@ -64,6 +60,17 @@ export class OutletOrdersComponent implements OnInit {
   }>;
 
   // Filters
+  selectedStatus = 'all';
+  orderStatusCountObj: any = {
+    paymentInprogress: 0,
+    paymentFailed: 0,
+    completed: 0,
+    placed: 0,
+    readyOrder: 0
+  };
+  pollingSub!: Subscription;
+  autoRefreshEnabled = true;
+
   searchText = '';
   filterOrderStatus = '';
   filterPgName = '';
@@ -78,18 +85,23 @@ export class OutletOrdersComponent implements OnInit {
   uniquePlatforms: string[] = [];
 
   // Totals
-  totalAmountPaid = 0;
-  totalWalletUsed = 0;
   totalAmount = 0;
+  totalWalletUsed = 0;
+  totalAmountPaid = 0;
   totalSubsidy = 0;
   totalCompanyWallet = 0;
   totalPackaging = 0;
+  totalTaxes = 0;
+  errorMessage = '';
 
   constructor(
     private apiMainService: ApiMainService,
     private fb: FormBuilder,
     private dialog: MatDialog,
-    private outletViewService: OutletViewService
+    private outletViewService: OutletViewService,
+    private outletOrderService: OutletOrderService,
+    private toaster: ToasterService,
+    private confirmationModalService: ConfirmationModalService
   ) {
     this.dateForm = this.fb.group({
       dateFrom: new FormControl<Date | null>(null),
@@ -106,6 +118,35 @@ export class OutletOrdersComponent implements OnInit {
         this.onSubmit();
       }
     });
+
+    this.startPolling();
+  }
+
+  ngOnDestroy(): void {
+    this.stopPolling();
+  }
+
+  private startPolling() {
+    this.stopPolling();
+    this.pollingSub = interval(30000).subscribe(() => {
+      if (this.autoRefreshEnabled && !this.loading && this.isTodaySelected()) {
+        this.onSubmit();
+      }
+    });
+  }
+
+  private stopPolling() {
+    if (this.pollingSub) {
+      this.pollingSub.unsubscribe();
+    }
+  }
+
+  public isTodaySelected(): boolean {
+    const dateFrom = this.dateForm.get('dateFrom')?.value;
+    if (!dateFrom) return false;
+    const today = new Date().toISOString().slice(0, 10);
+    const selected = new Date(dateFrom).toISOString().slice(0, 10);
+    return today === selected;
   }
 
   // ── Load ────────────────────────────────────────────────────
@@ -123,18 +164,57 @@ export class OutletOrdersComponent implements OnInit {
   async fetchOutletOrders(body: any) {
     try {
       this.loading = true;
-      const res = await this.apiMainService.fetchCompletedOutletOrdersbysearchObj(body);
-      this.orders = res || [];
+      const res = await this.apiMainService.fetchAllOutletOrdersbysearchObj(body);
+      this.currentoutletOrderList = res || [];
+      this.updateStatusCounts();
       this.extractUniqueFilterValues();
       this.applyFilters();
     } catch (err: any) {
       console.error('Error fetching outlet orders', err);
-      this.orders = [];
-      this.filteredOrders = [];
+      this.currentoutletOrderList = [];
+      this.filteredList = [];
       this.pagedOrders = [];
     } finally {
       this.loading = false;
     }
+  }
+
+  updateStatusCounts() {
+    const counts = {
+      paymentInprogress: 0,
+      paymentFailed: 0,
+      completed: 0,
+      placed: 0,
+      readyOrder: 0
+    };
+    this.currentoutletOrderList.forEach((o: any) => {
+      if (counts.hasOwnProperty(o.orderstatus)) {
+        (counts as any)[o.orderstatus]++;
+      }
+    });
+    this.orderStatusCountObj = counts;
+  }
+
+  getLatestOrderStatusList(status: string) {
+    this.selectedStatus = status;
+    this.applyFilters();
+  }
+
+  toggleAutoRefresh() {
+    this.autoRefreshEnabled = !this.autoRefreshEnabled;
+    if (this.autoRefreshEnabled) {
+      this.toaster.success('Auto-refresh enabled');
+    } else {
+      this.toaster.warning('Auto-refresh disabled');
+    }
+  }
+
+  excelExport() {
+    this.outletOrderService.exportToExcel(this.filteredList);
+  }
+
+  downloadPdf() {
+    this.outletOrderService.exportToPdf(this.filteredList);
   }
 
   // ── Filter values ────────────────────────────────────────────
@@ -145,7 +225,7 @@ export class OutletOrdersComponent implements OnInit {
     const platformSet = new Set<string>();
     const statusSet = new Set<string>();
 
-    this.orders.forEach((o: any) => {
+    this.currentoutletOrderList.forEach((o: any) => {
       if (o.pgName) pgSet.add(o.pgName);
       if (o.appVersion) versionSet.add(String(o.appVersion));
       if (o.deviceInfo?.platform) platformSet.add(o.deviceInfo.platform);
@@ -161,7 +241,12 @@ export class OutletOrdersComponent implements OnInit {
   // ── Filters & pagination ─────────────────────────────────────
 
   applyFilters() {
-    let list = [...this.orders];
+    let list = [...this.currentoutletOrderList];
+
+    // Status Filter (Stats Grid) - Only applies if date range is today or not set
+    if (this.selectedStatus && this.selectedStatus !== 'all' && this.isTodaySelected()) {
+      list = list.filter((o: any) => o.orderstatus === this.selectedStatus);
+    }
 
     if (this.searchText) {
       const lower = this.searchText.toLowerCase();
@@ -194,7 +279,7 @@ export class OutletOrdersComponent implements OnInit {
       list = list.filter((o: any) => !!o.isPosOrder === isPOS);
     }
 
-    this.filteredOrders = list;
+    this.filteredList = list;
     this.calculateTotals();
     this.pageIndex = 0;
     this.updatePagedOrders();
@@ -211,7 +296,7 @@ export class OutletOrdersComponent implements OnInit {
     this.totalCompanyWallet = 0;
     this.totalPackaging = 0;
 
-    this.filteredOrders.forEach((o: any) => {
+    this.filteredList.forEach((o: any) => {
       this.totalAmountPaid += Number(o.amount) || 0;
       this.totalWalletUsed += Number(o.moneyWalletPointsUsed) || 0;
       this.totalSubsidy += Number(o.subsidyAmount) || 0;
@@ -288,7 +373,7 @@ export class OutletOrdersComponent implements OnInit {
 
   private updatePagedOrders() {
     const start = this.pageIndex * this.pageSize;
-    this.pagedOrders = this.filteredOrders.slice(start, start + this.pageSize);
+    this.pagedOrders = this.filteredList.slice(start, start + this.pageSize);
   }
 
   // ── Chart ────────────────────────────────────────────────────
@@ -326,8 +411,8 @@ export class OutletOrdersComponent implements OnInit {
   }
 
   generateChartData() {
-    if (!this.filteredOrders.length) { this.chartOptions = {}; return; }
-    const { categories, series } = this.processOrdersData(this.filteredOrders);
+    if (!this.filteredList.length) { this.chartOptions = {}; return; }
+    const { categories, series } = this.processOrdersData(this.filteredList);
 
     this.chartOptions = {
       chart: { type: 'column' },
@@ -342,183 +427,113 @@ export class OutletOrdersComponent implements OnInit {
     this.updateStatusFlag = true;
   }
 
-  // ── Excel Export ─────────────────────────────────────────────
-
-  async excelExport() {
-    if (!this.filteredOrders.length) return;
-
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Outlet Orders');
-
-    worksheet.columns = [
-      { header: 'Order No', key: 'orderNo', width: 12 },
-      { header: 'Token No', key: 'tokenNo', width: 10 },
-      { header: 'Order Date', key: 'orderDate', width: 20 },
-      { header: 'Status', key: 'status', width: 16 },
-      { header: 'Customer Name', key: 'customerName', width: 22 },
-      { header: 'Mobile', key: 'mobile', width: 16 },
-      { header: 'Email', key: 'email', width: 26 },
-      { header: 'Org Name', key: 'orgName', width: 22 },
-      { header: 'Cafe Name', key: 'cafeName', width: 18 },
-      { header: 'Items', key: 'items', width: 42 },
-      { header: 'Item Amount (₹)', key: 'itemAmount', width: 16 },
-      { header: 'Packaging (₹)', key: 'packaging', width: 14 },
-      { header: 'Subsidy (₹)', key: 'subsidy', width: 14 },
-      { header: 'Wallet Used (₹)', key: 'walletUsed', width: 16 },
-      { header: 'Company Wallet (₹)', key: 'companyWallet', width: 18 },
-      { header: 'Amount Paid (₹)', key: 'amountPaid', width: 16 },
-      { header: 'PG Name', key: 'pgName', width: 14 },
-      { header: 'App Version', key: 'appVersion', width: 12 },
-      { header: 'Platform', key: 'platform', width: 12 },
-      { header: 'POS Order', key: 'isPosOrder', width: 10 },
-    ];
-
-    const headerRow = worksheet.getRow(1);
-    headerRow.font = { bold: true };
-    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
-
-    let totItemAmt = 0, totPackaging = 0, totSubsidy = 0,
-      totWallet = 0, totCompanyWallet = 0, totAmountPaid = 0;
-
-    this.filteredOrders.forEach((o: any) => {
-      const itemAmount = Number(o.itemAmount) || 0;
-      const packaging = Number(o.packagingAmount) || 0;
-      const subsidy = Number(o.subsidyAmount) || 0;
-      const walletUsed = Number(o.moneyWalletPointsUsed) || 0;
-      const companyWallet = Number(o.companyWalletPointUsed) || 0;
-      const amountPaid = Number(o.amount) || 0;
-
-      const items = (o.itemList || [])
-        .map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`)
-        .join('; ');
-
-      worksheet.addRow({
-        orderNo: o.orderNo,
-        tokenNo: o.tokenNo || '-',
-        orderDate: new Date(o.orderDate).toLocaleString('en-IN'),
-        status: this.orderStatusMapper[o.orderstatus] || o.orderstatus,
-        customerName: o.customerName,
-        mobile: o.customerPhoneNo,
-        email: o.customerEmail,
-        orgName: o.organizationDetails?.organization_name || '-',
-        cafeName: o.cafeteriaDetails?.cafeteria_name || '-',
-        items,
-        itemAmount, packaging, subsidy, walletUsed, companyWallet, amountPaid,
-        pgName: o.pgName || '-',
-        appVersion: o.appVersion || '-',
-        platform: o.deviceInfo?.platform || '-',
-        isPosOrder: o.isPosOrder ? 'Yes' : 'No',
-      });
-
-      totItemAmt += itemAmount;
-      totPackaging += packaging;
-      totSubsidy += subsidy;
-      totWallet += walletUsed;
-      totCompanyWallet += companyWallet;
-      totAmountPaid += amountPaid;
-    });
-
-    const totalsRow = worksheet.addRow({
-      orderNo: 'TOTAL',
-      itemAmount: totItemAmt, packaging: totPackaging, subsidy: totSubsidy,
-      walletUsed: totWallet, companyWallet: totCompanyWallet, amountPaid: totAmountPaid,
-    });
-    totalsRow.font = { bold: true };
-
-    worksheet.eachRow((row, idx) => {
-      if (idx >= 1) {
-        row.eachCell((cell) => {
-          cell.border = {
-            top: { style: 'thin', color: { argb: 'FFDDDDDD' } },
-            left: { style: 'thin', color: { argb: 'FFDDDDDD' } },
-            bottom: { style: 'thin', color: { argb: 'FFDDDDDD' } },
-            right: { style: 'thin', color: { argb: 'FFDDDDDD' } },
-          };
-        });
-      }
-    });
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    });
-    saveAs(blob, `outlet_orders_${this.outletObj?.outletName || 'outlet'}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  // ── Actions ────────────────────────────────────────────────
+  handleOrderAction(event: { type: 'ready' | 'complete' | 'cancel' | 'validate', order: any }) {
+    switch (event.type) {
+      case 'ready': this.readyOrder(event.order); break;
+      case 'complete': this.completeOrder(event.order); break;
+      case 'cancel': this.cancelOrder(event.order); break;
+      case 'validate': this.validatePayment(event.order); break;
+    }
   }
 
-  // ── PDF Export ───────────────────────────────────────────────
+  async validatePayment(order: any) {
+    try {
+      this.loading = true;
+      const res = await this.apiMainService.validateJusPayPaymentTransactionManual({
+        foodOrderId: order._id,
+        orderType: "outletOrder"
+      });
 
-  downloadPdf() {
-    if (!this.filteredOrders.length) return;
+      if (res.status === 'success' || res.status === 'placed' || res.status === true) {
+        this.toaster.success(res.message || 'Payment validated successfully');
+      } else {
+        this.toaster.error("Failed to validate payment transaction");
+      }
+      this.onSubmit();
+    } catch (err) {
+      console.error(err);
+      this.toaster.error("Error validating payment");
+    } finally {
+      this.loading = false;
+    }
+  }
 
-    const tableHeaders = [
-      { text: 'Order No', bold: true }, { text: 'Token', bold: true },
-      { text: 'Date', bold: true }, { text: 'Status', bold: true },
-      { text: 'Customer', bold: true }, { text: 'Mobile', bold: true },
-      { text: 'Items', bold: true }, { text: 'Item Amt (₹)', bold: true },
-      { text: 'Subsidy (₹)', bold: true }, { text: 'Wallet (₹)', bold: true },
-      { text: 'Paid (₹)', bold: true },
-    ];
-
-    const body: any[] = [tableHeaders];
-    let totItemAmt = 0, totSubsidy = 0, totWallet = 0, totAmountPaid = 0;
-
-    this.filteredOrders.forEach((o: any) => {
-      const itemAmount = Number(o.itemAmount) || 0;
-      const subsidy = Number(o.subsidyAmount) || 0;
-      const wallet = Number(o.moneyWalletPointsUsed) || 0;
-      const paid = Number(o.amount) || 0;
-      const items = (o.itemList || []).map((i: any) => `${i.itemName} x${i.count} @₹${i.price}`).join('; ');
-
-      body.push([
-        o.orderNo || '', o.tokenNo || '',
-        new Date(o.orderDate).toLocaleString('en-IN'),
-        this.orderStatusMapper[o.orderstatus] || o.orderstatus,
-        o.customerName || '', o.customerPhoneNo || '', items,
-        itemAmount.toFixed(2), subsidy.toFixed(2), wallet.toFixed(2), paid.toFixed(2),
-      ]);
-
-      totItemAmt += itemAmount; totSubsidy += subsidy; totWallet += wallet; totAmountPaid += paid;
+  cancelOrder(order: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to cancel this order?',
+      callback: this.submitCancellation,
+      context: this,
+      data: order
     });
+  }
 
-    body.push([
-      { text: 'Totals', bold: true, colSpan: 7, alignment: 'right' },
-      {}, {}, {}, {}, {}, {},
-      { text: totItemAmt.toFixed(2), bold: true },
-      { text: totSubsidy.toFixed(2), bold: true },
-      { text: totWallet.toFixed(2), bold: true },
-      { text: totAmountPaid.toFixed(2), bold: true },
-    ]);
+  async submitCancellation() {
+    try {
+      const body = {
+        fromOrderNo: true,
+        orderNo: this.confirmationModalService.data.orderNo,
+        outletId: this.confirmationModalService.data.outletId,
+        updatestatus: 'Cancel',
+      };
+      await this.apiMainService.updatescanOrder(body);
+      this.toaster.success("Order Cancelled SuccessFully");
+      this.onSubmit();
+    } catch (err) {
+      console.error('Error cancelling order:', err);
+      this.toaster.error("Failed to cancel order");
+    }
+  }
 
-    const dateStr = new Date().toISOString().slice(0, 10);
+  readyOrder(order: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to mark this order as ready?',
+      callback: this.submitReadyOrder,
+      context: this,
+      data: order
+    });
+  }
 
-    const docDefinition: any = {
-      pageOrientation: 'landscape',
-      pageMargins: [15, 15, 15, 15],
-      content: [
-        { text: 'Outlet Orders Report', style: 'header' },
-        { text: `Outlet: ${this.outletObj?.outletName || '-'}`, style: 'subheader' },
-        { text: `Generated on: ${dateStr}`, style: 'subheader', margin: [0, 0, 0, 10] },
-        {
-          table: {
-            headerRows: 1,
-            widths: [40, 35, 70, 55, 80, 60, '*', 60, 55, 55, 55],
-            body,
-          },
-          layout: {
-            fillColor: (rowIndex: number) => (rowIndex === 0 ? '#2E75B6' : null),
-            paddingLeft: () => 3, paddingRight: () => 3,
-            paddingTop: () => 3, paddingBottom: () => 3,
-            hLineColor: () => '#999999', vLineColor: () => '#999999',
-          },
-        },
-      ],
-      styles: {
-        header: { fontSize: 15, bold: true, margin: [0, 0, 0, 6] },
-        subheader: { fontSize: 10, color: '#555' },
-      },
-      defaultStyle: { fontSize: 8, color: '#000' },
-    };
+  async submitReadyOrder() {
+    try {
+      const body = {
+        fromOrderNo: true,
+        orderNo: this.confirmationModalService.data.orderNo,
+        outletId: this.confirmationModalService.data.outletId,
+        updatestatus: 'readyOrder',
+      };
+      await this.apiMainService.updatescanOrder(body);
+      this.toaster.success("Order marked as Ready");
+      this.onSubmit();
+    } catch (err) {
+      console.error('Error marking order ready:', err);
+      this.toaster.error("Failed to mark order as Ready");
+    }
+  }
 
-    (pdfMake as any).createPdf(docDefinition).download(`OutletOrders_${dateStr}.pdf`);
+  completeOrder(order: any) {
+    this.confirmationModalService.modal({
+      msg: 'Are you sure you want to complete this order?',
+      callback: this.submitCompletion,
+      context: this,
+      data: order
+    });
+  }
+
+  async submitCompletion() {
+    try {
+      const body = {
+        fromOrderNo: true,
+        orderNo: this.confirmationModalService.data.orderNo,
+        outletId: this.confirmationModalService.data.outletId,
+        updatestatus: 'completed',
+      };
+      await this.apiMainService.updatescanOrder(body);
+      this.toaster.success("Order Completed SuccessFully");
+      this.onSubmit();
+    } catch (err) {
+      console.error('Error completing order:', err);
+      this.toaster.error("Failed to complete order");
+    }
   }
 }

@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { PermissionsService } from '@service/permission.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { MatDialog } from '@angular/material/dialog';
 import { AddVendorFirmComponent } from '../../add-vendor-firm/add-vendor-firm.component';
+import { VendorFirmViewService } from '../vendor-firm-view.service';
 
 @Component({
   selector: 'app-vendor-firm-details',
@@ -15,14 +15,13 @@ import { AddVendorFirmComponent } from '../../add-vendor-firm/add-vendor-firm.co
   styleUrls: ['./vendor-firm-details.component.scss']
 })
 export class VendorFirmDetailsComponent implements OnInit {
-  @Input() vendorObj: any;
-  btnPolicy: any;
+  vendorObj: any;
   filteredOutletList: any;
   bankDetails: any;
 
   constructor(
-    private permissionsService: PermissionsService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private vendorFirmViewService: VendorFirmViewService
   ) { }
 
   editOrg() {
@@ -30,7 +29,7 @@ export class VendorFirmDetailsComponent implements OnInit {
       width: '90vw',
       maxHeight: '90vh',
       disableClose: true,
-      data: { vendorFirm: this.vendorObj }
+      data: this.vendorObj
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -41,10 +40,13 @@ export class VendorFirmDetailsComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
-    this.bankDetails = this.vendorObj.bank_details;
-    this.filteredOutletList = this.filterOutletListByCafeteria(this.vendorObj.outletList);
-
+    this.vendorFirmViewService.vendorFirm$.subscribe(vendor => {
+      if (vendor) {
+        this.vendorObj = vendor;
+        this.bankDetails = this.vendorObj.bank_details;
+        this.filteredOutletList = this.filterOutletListByCafeteria(this.vendorObj.outletList);
+      }
+    });
   }
 
   filterOutletListByCafeteria(outletList: any[]) {

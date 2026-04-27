@@ -3,158 +3,139 @@
 
 // General Container
 .add-vendor-firm-container {
-  padding: 1.5rem;
+  padding: 1.5rem 2rem;
   min-height: 100vh;
-  padding-bottom: 100px; // Space for sticky footer
+  padding-bottom: 100px; // Ensure content is not hidden by fixed footer
+  background-color: #f8fafc;
 }
 
 // Page Header Card
 .page-header-card {
   background: white;
-  border-radius: var.$border-radius-xl;
-  padding: 1rem 1.5rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.04);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0, 0, 0, 0.02);
+  margin-bottom: 1rem;
+  overflow: hidden;
 
-  .header-content {
+  .modal-header {
+    border-radius: 0;
+    border-bottom: 1px solid #f1f5f9;
+    padding: 1.25rem 1.75rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
 
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+    .title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
 
-  .back-btn {
-    color: #6c757d;
-    background: #f8f9fa;
-    border-radius: 8px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+      .back-btn {
+        width: 40px; height: 40px;
+        border-radius: 12px;
+        background: #f1f5f9;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        border: none;
+        &:hover { background: #e2e8f0; color: #1e293b; }
+      }
 
-  .info-btn {
-    color: #64748b;
+      .icon-box {
+        width: 44px; height: 44px; border-radius: 12px;
+        display: flex; align-items: center; justify-content: center;
+        mat-icon { font-size: 22px; width: 22px; height: 22px; }
+        &.primary { background: #eff6ff; color: var.$primary-color1; }
+        &.warning { background: #fffbeb; color: #d97706; }
+      }
 
-    &:hover {
-      color: var.$primary-color1;
+      .text {
+        h3 {
+          font-size: 1.15rem;
+          font-weight: 700;
+          color: var.$primary-color2;
+          margin: 0;
+        }
+        p {
+          font-size: 0.82rem;
+          color: #64748b;
+          margin: 0;
+        }
+      }
     }
-  }
 
-  .page-title {
-    font-size: 1.5rem;
-    font-weight: 700;
-    margin: 0;
-    color: var.$primary-color2;
-  }
-
-  .page-subtitle {
-    font-size: 0.9rem;
-    color: #9aa0a6;
-    margin: 0;
+    .close-btn {
+      color: #94a3b8;
+      &:hover { background: #f1f5f9; color: #64748b; }
+    }
   }
 
   .status-pill {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 16px;
-    border-radius: 50px;
-    font-size: 0.85rem;
-    font-weight: 600;
-
-    &.valid {
-      background-color: #f0fdf4;
-      color: #16a34a;
-      border: 1px solid #bbf7d0;
-    }
-
-    &.invalid {
-      background-color: #fef2f2;
-      color: #dc2626;
-      border: 1px solid #fecaca;
-    }
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
+    padding: 6px 14px;
+    border-radius: 99px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    mat-icon { font-size: 16px; width: 16px; height: 16px; }
+    &.valid { background: #f0fdf4; color: #16a34a; border: 1px solid #dcfce7; }
+    &.invalid { background: #fef2f2; color: #dc2626; border: 1px solid #fee2e2; }
   }
 }
 
-// Info Menu Panel
-.info-menu-content {
-  padding: 1rem;
-  min-width: 250px;
+// Modal Footer Style for Page Action Bar (Sticky version)
+.modal-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.98) !important;
+  backdrop-filter: blur(12px);
+  border-top: 1px solid #e2e8f0;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 1.5rem;
+  padding: 1rem 2.5rem !important;
+  margin: 2rem -2rem -1.5rem -2rem !important; // Offset container padding to span full width
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.03);
+  min-height: unset !important;
 }
 
-.info-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid #e2e8f0;
+.bg-light-soft { background-color: #f8fafc; }
 
-  mat-icon {
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    color: #f59e0b;
-  }
-
-  span {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #1e293b;
-  }
+// Shared Button Styles
+.btn-cancel {
+  border-radius: 99px;
+  font-weight: 600;
+  color: #64748b;
+  padding: 0 1.5rem;
+  height: 44px;
+  &:hover { background: #f1f5f9; }
 }
 
-.info-list {
-  list-style: none;
-  margin: 0;
-  padding: 8px 0 0;
-
-  li {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 6px 0;
-    font-size: 0.8rem;
-    color: #475569;
-
-    mat-icon {
-      font-size: 16px;
-      width: 16px;
-      height: 16px;
-    }
-  }
-
-  &.required li mat-icon {
-    color: #22c55e;
-  }
-
-  &.recommended li mat-icon {
-    color: #3b82f6;
-  }
+.btn-primary-action {
+  border-radius: 99px !important;
+  font-weight: 700 !important;
+  height: 44px !important;
+  font-size: 0.85rem !important;
+  mat-icon { margin-right: 6px; font-size: 18px; width: 18px; height: 18px; }
 }
 
 // Modern Cards
 .modern-card {
   background: white;
-  border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
-  border: 1px solid #edf2f7;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid #f1f5f9;
   overflow: hidden;
-  height: fit-content;
+  transition: transform 0.2s, box-shadow 0.2s;
+  margin-bottom: 1.5rem;
 
   .card-header {
     padding: 1.25rem 1.5rem;
@@ -162,82 +143,92 @@
     display: flex;
     align-items: center;
     gap: 1rem;
-    background-color: white;
+    background: white;
 
     &.with-actions {
       justify-content: space-between;
     }
 
     h3 {
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      color: #2d3748;
+      color: var.$primary-color2;
       margin: 0;
+      letter-spacing: -0.01em;
     }
 
     .icon-box {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
 
       mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
       }
 
-      &.primary {
-        background: rgba(var.$primary-color1, 0.1);
-        color: var.$primary-color1;
-      }
-
-      &.secondary {
-        background: rgba(var.$secondary-color3, 0.1);
-        color: var.$secondary-color3;
-      }
-
-      &.info {
-        background: #e0f2fe;
-        color: #0284c7;
-      }
-
-      &.warning {
-        background: #fef3c7;
-        color: #d97706;
-      }
-
-      &.success {
-        background: #dcfce7;
-        color: #16a34a;
-      }
-
-      &.purple {
-        background: #f3e8ff;
-        color: #9333ea;
-      }
+      &.primary { background: #eff6ff; color: var.$primary-color1; }
+      &.info { background: #f0f9ff; color: #0ea5e9; }
+      &.warning { background: #fffbeb; color: #d97706; }
+      &.success { background: #f0fdf4; color: #16a34a; }
+      &.purple { background: #faf5ff; color: #9333ea; }
     }
   }
 
   .card-body {
-    padding: 1.5rem;
+    padding: 1.5rem 1.75rem;
   }
 }
 
-// Custom Form Fields
-.custom-field {
-  ::ng-deep .mat-mdc-form-field-flex {
-    background-color: white !important;
+// Form Grid
+.form-grid-modern {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.full-width {
+  width: 100%;
+}
+
+// Section Label
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+
+  mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+    color: #94a3b8;
   }
 }
 
-// List Items (Address, Outlet, etc.)
+// List Items
 .list-container {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  /* Custom scrollbar for list container */
+  &::-webkit-scrollbar { width: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+  &::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
 }
 
 .list-item {
@@ -245,197 +236,167 @@
   align-items: center;
   justify-content: space-between;
   background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
-  padding: 1rem;
-  transition: box-shadow 0.2s;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+  transition: all 0.2s;
 
   &:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border-color: #cbd5e1;
+    border-color: #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    transform: translateY(-1px);
   }
 
   .item-content {
     flex-grow: 1;
-
     .item-main {
       h4 {
         font-size: 0.95rem;
-        font-weight: 600;
+        font-weight: 700;
         color: #1e293b;
         margin: 0;
-      }
-
-      p {
-        font-size: 0.85rem;
-        color: #64748b;
-        margin: 0;
-      }
-
-      .badge-type {
-        font-size: 0.75rem;
-        background: #eef2ff;
-        color: #4f46e5;
-        padding: 2px 8px;
-        border-radius: 4px;
-        font-weight: 500;
-
-        &.open {
-          background: #dcfce7;
-          color: #16a34a;
-        }
       }
     }
   }
 
-  .delete-btn {
-    color: #ef4444;
-    opacity: 0.6;
+  .action-btn {
+    width: 34px !important;
+    height: 34px !important;
+    padding: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #94a3b8;
+    border-radius: 10px !important;
+    background: transparent;
+    border: none !important;
+    transition: all 0.2s;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
     &:hover {
-      opacity: 1;
+      &.btn-edit { 
+        color: var.$primary-color1 !important; 
+        background: #eff6ff !important; 
+      }
+      &.btn-delete { 
+        color: #ef4444 !important; 
+        background: #fef2f2 !important; 
+      }
+    }
+
+    // Ensure Material MDC internal elements don't show weird outlines
+    ::ng-deep .mat-mdc-button-touch-target {
+      display: none;
     }
   }
 }
 
+// Empty Placeholder
 .empty-placeholder {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 3rem 0;
-  color: #94a3b8;
+  padding: 1.5rem 0;
+  text-align: center;
 
   mat-icon {
-    font-size: 40px;
-    width: 40px;
-    height: 40px;
-    margin-bottom: 0.5rem;
-    opacity: 0.5;
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+    opacity: 0.6;
   }
 
   p {
+    color: #94a3b8;
+    font-size: 0.9rem;
+    font-weight: 500;
     margin: 0;
   }
 }
 
-// Sticky Action Bar
-.action-bar-container {
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 100;
+// Badges
+.badge-type {
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 2px 10px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  color: #64748b;
+  &.open { background: #dcfce7; color: #16a34a; }
 }
 
-.action-bar {
-  pointer-events: auto;
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  padding: 0.75rem 1.5rem;
-  border-radius: 50px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.4rem;
-
-  .btn-submit {
-    border-radius: 50px;
-    padding: 0 2rem;
-    height: 44px;
-  }
-
-  .btn-cancel {
-    border-radius: 50px;
-    height: 44px;
-    padding: 0 1.5rem;
-    color: #64748b;
-  }
-}
-
-// Modal / Dialog Styles
-.dialog-header {
-  background: #f8fafc;
-}
-
-.dialog-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #1e293b;
-}
-
-.dialog-content {
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.dialog-footer {
-  background: #f8fafc;
-}
-
-// Modal List Item Styles
-.list-item-modal {
-  cursor: pointer;
-  border-radius: 12px;
-  border: 1px solid #e2e8f0;
-  padding: 1rem;
-  margin-bottom: 0.5rem;
-  transition: all 0.2s;
-  background-color: white;
-
-  &:hover {
-    background-color: #f8fafc;
-    border-color: var.$primary-color1;
-  }
-
-  &.selected {
-    border-color: var.$primary-color1;
-    background-color: rgba(var.$primary-color1, 0.04);
-  }
-
-  .labelText {
-    font-size: 0.7rem;
-    color: #64748b;
-    text-transform: uppercase;
-    font-weight: 600;
-    margin-bottom: 2px;
-  }
-
-  .labelData {
-    color: #1e293b;
-    font-size: 0.9rem;
-    font-weight: 500;
-  }
-}
-
-// Uploaded file tag
 .uploaded-file-tag {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  background-color: #ecfdf5;
-  color: #047857;
-  border-radius: 999px;
-  font-size: 0.85rem;
-  border: 1px solid #a7f3d0;
-
-  i {
-    cursor: pointer;
-
-    &:hover {
-      color: #dc2626;
-    }
-  }
+  gap: 8px;
+  padding: 6px 14px;
+  background: #f0fdf4;
+  color: #16a34a;
+  border: 1px solid #dcfce7;
+  border-radius: 99px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  i { cursor: pointer; color: #94a3b8; &:hover { color: #ef4444; } }
 }
 
-// Action button in card headers
-.action-btn {
-  mat-icon {
-    margin-right: 4px;
+// Animation
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// Material Field Overrides for Premium Look
+::ng-deep {
+  .mat-mdc-form-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: transparent !important;
+    }
+    
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: #e2e8f0 !important;
+      border-width: 1.5px !important;
+    }
+
+    &:hover .mdc-notched-outline > * {
+      border-color: #cbd5e1 !important;
+    }
+
+    &.mat-focused {
+      .mdc-notched-outline > * {
+        border-color: var.$primary-color1 !important;
+        border-width: 2px !important;
+      }
+      .mat-mdc-form-field-label {
+        color: var.$primary-color1 !important;
+      }
+    }
+  }
+
+  .mat-mdc-form-field-icon-prefix {
+    padding-right: 8px !important;
+    color: #94a3b8 !important;
+  }
+
+  .mat-mdc-dialog-container .mdc-dialog__surface {
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
   }
 }
