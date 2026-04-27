@@ -1,8 +1,21 @@
-<h2 mat-dialog-title>Create Notification</h2>
+<div class="create-notification-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box primary">
+        <mat-icon>add_alert</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Create Notification</h3>
+        <p>Compose and target push notifications</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-<mat-dialog-content>
-    <form [formGroup]="form" class="notification-form">
-
+  <mat-dialog-content class="dialog-content custom-scroll">
+    <form [formGroup]="form" class="notification-form mt-2">
         <div class="row">
             <div class="col-md-12">
                 <mat-form-field appearance="outline" class="w-100">
@@ -23,7 +36,7 @@
 
             <!-- Image Upload -->
             <div class="col-md-12 mb-3">
-                <label class="d-block mb-1" style="font-size:13px;color:#555;">Notification Image (optional)</label>
+                <label class="d-block mb-2 section-label" style="font-size:13px;color:#555;"><mat-icon>image</mat-icon> Notification Image (optional)</label>
                 <div class="notification-image-upload">
                     <ng-container *ngIf="!imageUrl">
                         <label class="upload-placeholder" for="notifImageInput">
@@ -34,7 +47,7 @@
                             (change)="onImageChange($event)">
                     </ng-container>
                     <ng-container *ngIf="imageUrl">
-                        <div class="image-preview-wrapper">
+                        <div class="image-preview-wrapper animate-fade-in">
                             <img [src]="imageUrl" class="notif-preview-img" alt="notification image" />
                             <button mat-icon-button class="remove-img-btn" type="button"
                                 (click)="removeImage()" matTooltip="Remove image">
@@ -48,8 +61,8 @@
 
         <div class="row mt-2">
             <div class="col-md-12 mb-3">
-                <label>Target Audience:</label><br>
-                <mat-radio-group formControlName="targetType" aria-label="Select an option">
+                <p class="section-label mb-2"><mat-icon>groups</mat-icon> Target Audience</p>
+                <mat-radio-group formControlName="targetType" aria-label="Select an option" class="modern-radio-group" color="primary">
                     <mat-radio-button *ngFor="let type of targetTypes" [value]="type.value" class="mr-3">
                         {{type.viewValue}}
                     </mat-radio-button>
@@ -58,7 +71,7 @@
         </div>
 
         <!-- Section: Organization Selection (Standard) -->
-        <div class="row" *ngIf="form.get('targetType')?.value ==='organization'">
+        <div class="row animate-fade-in" *ngIf="form.get('targetType')?.value ==='organization'">
             <div class="col-md-12">
                 <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Select Organization(s)</mat-label>
@@ -72,7 +85,7 @@
         </div>
 
         <!-- Section: Cafeteria Selection (Standard) -->
-        <div *ngIf="form.get('targetType')?.value ==='cafeteria'">
+        <div *ngIf="form.get('targetType')?.value ==='cafeteria'" class="animate-fade-in">
             <div class="row">
                 <div class="col-md-12">
                     <mat-form-field appearance="outline" class="w-100">
@@ -108,8 +121,7 @@
         </div>
 
         <!-- Section: Individual User Selection (Customer-Style Flow) -->
-        <div *ngIf="form.get('targetType')?.value ==='individual'" class="individual-selection-section">
-
+        <div *ngIf="form.get('targetType')?.value ==='individual'" class="individual-selection-section animate-fade-in">
             <!-- Filter Bar (like Customer component) -->
             <div class="individual-filter-bar">
                 <div class="filter-left">
@@ -172,7 +184,6 @@
                                 </span>
                             </div>
                             <div class="user-details">
-    
                                 <div class="detail-item">
                                     <mat-icon>email</mat-icon>
                                     <span matTooltip="{{user.email}}">{{ user?.email ||'-' }}</span>
@@ -221,21 +232,19 @@
                     <mat-error>Please select at least one user.</mat-error>
                 </div>
             </div>
-
         </div>
-
 
         <div class="row mt-3">
             <div class="col-md-12 mb-2">
-                <label>Delivery Mode:</label><br>
-                <mat-radio-group formControlName="deliveryMode">
+                <p class="section-label mb-2"><mat-icon>send</mat-icon> Delivery Mode</p>
+                <mat-radio-group formControlName="deliveryMode" class="modern-radio-group" color="primary">
                     <mat-radio-button value="schedule" class="mr-3">Schedule for Later</mat-radio-button>
                     <mat-radio-button value="now">Send Immediately</mat-radio-button>
                 </mat-radio-group>
             </div>
         </div>
 
-        <div class="row mt-2" *ngIf="form.get('deliveryMode')?.value ==='schedule'">
+        <div class="row mt-2 animate-fade-in" *ngIf="form.get('deliveryMode')?.value ==='schedule'">
             <div class="col-md-6">
                 <mat-form-field appearance="outline" class="w-100">
                     <mat-label>Date</mat-label>
@@ -251,14 +260,21 @@
                 </mat-form-field>
             </div>
         </div>
-
     </form>
-</mat-dialog-content>
+  </mat-dialog-content>
 
-<div mat-dialog-actions align="end">
-    <button mat-button (click)="close()">Cancel</button>
-    <button mat-raised-button color="primary" [disabled]="form.invalid || isLoading" (click)="submit()">
-        <mat-spinner *ngIf="isLoading" diameter="20" class="mr-2 d-inline-block"></mat-spinner>
-        {{ form.get('deliveryMode')?.value ==='now' ?'Send Now' :'Schedule' }}
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="close()" [disabled]="isLoading">CANCEL</button>
+    <button mat-flat-button color="primary" (click)="submit()" 
+            [disabled]="form.invalid || isLoading" class="btn-primary-action px-4">
+      <ng-container *ngIf="!isLoading">
+        <mat-icon>{{ form.get('deliveryMode')?.value ==='now' ?'send' :'schedule' }}</mat-icon>
+        <span>{{ form.get('deliveryMode')?.value ==='now' ?'SEND NOW' :'SCHEDULE' }}</span>
+      </ng-container>
+      <div class="d-flex align-items-center gap-2" *ngIf="isLoading">
+        <mat-spinner diameter="20" color="accent"></mat-spinner>
+        <span>Processing...</span>
+      </div>
     </button>
-</div>
+  </mat-dialog-actions>
+</div>
