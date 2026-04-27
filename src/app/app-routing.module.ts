@@ -65,31 +65,31 @@ const routes: Routes = [
       { path: 'event-popup', loadComponent: () => import('./event-popup/event-popup.component').then(m => m.EventPopupComponent) },
       {
         path: 'vendor-firm',
-        loadComponent: () => import('./vendor-firm/vendor-firm.component').then(m => m.VendorFirmComponent),
+        loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm.component').then(m => m.VendorFirmComponent),
         children: [
           {
             path: ':id',
-            loadComponent: () => import('./vendor-firm/vendor-firm-view/vendor-firm-view.component').then(m => m.VendorFirmViewComponent),
+            loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-view.component').then(m => m.VendorFirmViewComponent),
             children: [
-              { path: 'vendor-firm-details', loadComponent: () => import('./vendor-firm/vendor-firm-view/vendor-firm-details/vendor-firm-details.component').then(m => m.VendorFirmDetailsComponent) },
-              { path: 'vendor-firm-reports', loadComponent: () => import('./vendor-firm/vendor-firm-view/vendor-firm-reports/vendor-firm-reports.component').then(m => m.VendorFirmReportsComponent) },
-              { path: 'vendor-firm-wallet-details', loadComponent: () => import('./vendor-firm/vendor-firm-view/vendor-firm-wallet-details/vendor-firm-wallet-details.component').then(m => m.VendorFirmWalletDetailsComponent) },
-              { path: 'vendor-firm-ledger-details', loadComponent: () => import('./vendor-firm/vendor-firm-view/vendor-firm-ledger-details/vendor-firm-ledger-details.component').then(m => m.VendorFirmLedgerDetailsComponent) },
-              { path: 'wallet-transaction-history', loadComponent: () => import('./vendor-firm/vendor-firm-view/wallet-transaction-history/wallet-transaction-history.component').then(m => m.WalletTransactionHistoryComponent) },
-              { path: 'vendor-firm-compliance', loadComponent: () => import('./vendor-firm/vendor-firm-view/vendor-firm-compliance/vendor-compliance.component').then(m => m.VendorComplianceComponent) },
+              { path: 'vendor-firm-details', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-details/vendor-firm-details.component').then(m => m.VendorFirmDetailsComponent) },
+              { path: 'vendor-firm-reports', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-reports/vendor-firm-reports.component').then(m => m.VendorFirmReportsComponent) },
+              { path: 'vendor-firm-wallet-details', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-wallet-details/vendor-firm-wallet-details.component').then(m => m.VendorFirmWalletDetailsComponent) },
+              { path: 'vendor-firm-ledger-details', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-ledger-details/vendor-firm-ledger-details.component').then(m => m.VendorFirmLedgerDetailsComponent) },
+              { path: 'wallet-transaction-history', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/wallet-transaction-history/wallet-transaction-history.component').then(m => m.WalletTransactionHistoryComponent) },
+              { path: 'vendor-firm-compliance', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-compliance/vendor-compliance.component').then(m => m.VendorComplianceComponent) },
               { path: '', redirectTo: 'vendor-firm-details', pathMatch: 'full' }
             ]
           }
         ]
       },
-      { path: 'vendor', loadComponent: () => import('./vendor/vendor.component').then(m => m.VendorComponent) },
+      { path: 'vendor', loadComponent: () => import('./vendor-management/vendor/vendor.component').then(m => m.VendorComponent) },
       { path: 'currentOutletOrder', loadComponent: () => import('./orders/outlet-orders/outlet-orders.component').then(m => m.OutletOrdersComponent) },
       { path: 'otherOrder', loadComponent: () => import('./orders/other-orders/other-orders.component').then(m => m.OtherOrdersComponent) },
       { path: 'searchOrder', loadComponent: () => import('./orders/search-order/search-order.component').then(m => m.SearchOrderComponent) },
       { path: 'sessionManagement', loadComponent: () => import('./session-management/session-management.component').then(m => m.SessionManagementComponent) },
       { path: 'notifications', loadComponent: () => import('./notification/notification.component').then(m => m.NotificationComponent) },
-      { path: 'vendorWalletDashboard', loadComponent: () => import('./vendor-wallet-dashboard/vendor-wallet-dashboard.component').then(m => m.VendorWalletDashboardComponent) },
-      { path: 'vendorPayout', loadComponent: () => import('./vendor-payout/vendor-payout.component').then(m => m.VendorPayoutComponent) },
+      { path: 'vendorWalletDashboard', loadComponent: () => import('./vendor-management/vendor-wallet-dashboard/vendor-wallet-dashboard.component').then(m => m.VendorWalletDashboardComponent) },
+      { path: 'vendorPayout', loadComponent: () => import('./vendor-management/vendor-payout/vendor-payout.component').then(m => m.VendorPayoutComponent) },
 
       { path: 'customer', loadChildren: () => import('./customer/customer.module').then(m => m.CustomerModule) },
 
