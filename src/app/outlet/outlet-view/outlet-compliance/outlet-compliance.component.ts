@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, ViewChild } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { environment } from 'src/environments/environment';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { environment } from '@environments/environment';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { MatDialog } from '@angular/material/dialog';
-import { PolicyService } from 'src/service/policy.service';
+import { PermissionsService } from '@service/permission.service';
+import { OutletViewService } from '../outlet-view.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -21,7 +22,7 @@ import { FormsModule } from '@angular/forms';
   ]
 })
 export class OutletComplianceComponent implements OnInit {
-  @Input() outletObj: any;
+  outletObj: any;
   profileApproval: any;
   compliance: any = {};
   imageUrl = environment.imageUrl;
@@ -44,19 +45,29 @@ export class OutletComplianceComponent implements OnInit {
     file: undefined
   }
 
-  constructor(private apiMainService: ApiMainService, private sanitizer: DomSanitizer, private dialog: MatDialog, private policyService: PolicyService) {
-    this.access = this.policyService.getCurrentButtonPolicy();
-    console.log(this.access);
+  constructor(
+    private apiMainService: ApiMainService,
+    private sanitizer: DomSanitizer,
+    private dialog: MatDialog,
+    private permissionsService: PermissionsService,
+    private outletViewService: OutletViewService
+  ) {
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
 
   ngOnInit() {
-    this.profileApproval = this.outletObj.profileApproval;
-    if (this.outletObj.compliance) {
-      this.compliance = this.outletObj.compliance;
-      this.originalCompliance = { ...this.outletObj.compliance };
-      this.prepareForEdit();
-    }
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.profileApproval = this.outletObj.profileApproval;
+        if (this.outletObj.compliance) {
+          this.compliance = this.outletObj.compliance;
+          this.originalCompliance = { ...this.outletObj.compliance };
+          this.prepareForEdit();
+        }
+      }
+    });
   }
 
   prepareForEdit() {
@@ -98,7 +109,6 @@ export class OutletComplianceComponent implements OnInit {
       await this.apiMainService.updateProfileApproval(this.outletObj._id, status, { comment: this.comment });
       this.profileApproval = status;
     } catch (error) {
-      console.log('error while updating kitchen wallet', error);
     }
   }
 
@@ -109,7 +119,6 @@ export class OutletComplianceComponent implements OnInit {
       if (file) {
         // this.uploadedCompliance = file;
         const fileName = file.name;
-        console.log(fileName);
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = async (_event) => {
@@ -127,16 +136,13 @@ export class OutletComplianceComponent implements OnInit {
             });
 
             dialogRef.afterClosed().subscribe((result: any) => {
-              console.log('Closed with:', result);
               if (result && result.croppedImages) {
-                console.log('croppedImages ', result.croppedImages);
                 this.uploadedCompliance[filename] = result.croppedImages.file;
                 // this.uploadedCompliance[filename+'Old'] = this.compliance[filename];
                 this.compliance[filename] = result.croppedImages.resizeDataUrl;
               }
             });
           } catch (error) {
-            console.log('error while changes kitchen opened status ', error);
           }
         }
       }
@@ -196,7 +202,6 @@ export class OutletComplianceComponent implements OnInit {
       if (this.originalCompliance.fssaiFileUrlOld) {
         formData.append('fssaiFile', this.originalCompliance.fssaiFileUrlOld);
       }
-      console.log('formData', formData);
       const kitchen = await this.apiMainService.updateComplianceByAdmin(this.outletObj._id, formData);
       this.outletObj.compliance = kitchen.compliance;
       this.compliance = this.outletObj.compliance;
@@ -205,7 +210,6 @@ export class OutletComplianceComponent implements OnInit {
       this.uploadedCompliance = {};
       this.prepareForEdit();
     } catch (error) {
-      console.log('error while save compliance Images ', error);
     }
   }
 
@@ -214,19 +218,13 @@ export class OutletComplianceComponent implements OnInit {
     this.editMode = false;
   }
   uploadDoc(event: any) {
-    console.log("harish");
     if (event.documentname == "aadharFile") {
       this.originalCompliance.adhaarFileUrlold = event.url;
       // this.compliance.adhaarFileUrl=this.fileUrl + event.url;
       this.compliance.adhaarFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log(this.compliance.adhaarFileUrl);
-      console.log("event", event);
     } else if (event.documentname == "fssaiFile") {
       this.originalCompliance.fssaiFileUrlOld = event.url;
       // this.compliance.fssaiFileUrl=this.fileUrl + event.url;
-      console.log(this.compliance.fssaiFileUrl)
-      this.compliance.fssaiFileUrl = this.sanitizer.bypassSecurityTrustResourceUrl(this.fileUrl + event.url);
-      console.log("event", event);
     }
   }
   DeleteFile(file: any) {
@@ -237,3 +235,4 @@ export class OutletComplianceComponent implements OnInit {
     }
   }
 }
+

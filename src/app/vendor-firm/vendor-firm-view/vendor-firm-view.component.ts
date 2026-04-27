@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
-import { PolicyService } from 'src/service/policy.service';
+import { PermissionsService } from '@service/permission.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 import { VendorFirmWalletDetailsComponent } from './vendor-firm-wallet-details/vendor-firm-wallet-details.component';
@@ -7,7 +7,6 @@ import { VendorFirmLedgerDetailsComponent } from './vendor-firm-ledger-details/v
 import { VendorFirmBulkOrderReportComponent } from './vendor-firm-bulk-order-report/vendor-firm-bulk-order-report.component';
 import { VendorFirmReportComponent } from './vendor-firm-report/vendor-firm-report.component';
 import { VendorFirmDailyReportComponent } from './vendor-firm-daily-report/vendor-firm-daily-report.component';
-import { VendorFirmCardComponent } from '../vendor-firm-card/vendor-firm-card.component';
 import { VendorFirmDetailsComponent } from './vendor-firm-details/vendor-firm-details.component';
 
 @Component({
@@ -23,8 +22,7 @@ import { VendorFirmDetailsComponent } from './vendor-firm-details/vendor-firm-de
     VendorFirmLedgerDetailsComponent,
     VendorFirmBulkOrderReportComponent,
     VendorFirmReportComponent,
-    VendorFirmDailyReportComponent,
-    VendorFirmCardComponent
+    VendorFirmDailyReportComponent
   ]
 })
 export class VendorFirmViewComponent implements OnChanges, OnInit {
@@ -37,7 +35,6 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
   btnPolicy: any;
   selectedTabIndex: number = 0
   selectedSubTabIndex: number = 0;
-  tabPolicy: any;
 
   vendorViewList = [
     { name: 'VendorFirm Details', path: 'vendorFirmDetails', policyKey: 'vendorFirmDetails' },
@@ -77,7 +74,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
     },
   ]
 
-  constructor(private policyService: PolicyService) { }
+  constructor(private permissionsService: PermissionsService) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.vendorFirmInfo = this.vendor;
@@ -86,7 +83,7 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
 
   ngOnInit(): void {
     window.scrollTo(0, 0);
-    this.vendorViewList = this.policyService.filterTabsByPolicy(this.vendorViewList);
+    this.vendorViewList = this.permissionsService.filterTabsByPolicy(this.vendorViewList);
 
     if (this.vendorViewList.length > 0) {
       if (this.vendorViewList.findIndex(x => x.path === this.selectedTab) === -1) {
@@ -160,3 +157,4 @@ export class VendorFirmViewComponent implements OnChanges, OnInit {
     return icons[path] || 'folder';
   }
 }
+

@@ -1,11 +1,11 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
+﻿import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { PermissionsService } from '@service/permission.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
 import { SetGeolocationComponent } from '../../common-components/set-geolocation/set-geolocation.component';
 import { Inject, Optional } from '@angular/core';
@@ -80,7 +80,7 @@ export class AddVendorFirmComponent {
     private apiMainService: ApiMainService,
     private runtimeStorageService: RuntimeStorageService,
     private router: Router,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     @Optional() public dialogRef: MatDialogRef<AddVendorFirmComponent>,
     @Optional() @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -88,7 +88,7 @@ export class AddVendorFirmComponent {
   }
 
   ngOnInit() {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.createForm();
     this.updateVendorFirm();
     if (this.data && this.data._id) {
@@ -105,10 +105,8 @@ export class AddVendorFirmComponent {
   async getOrgList() {
     try {
       this.orgList = await this.apiMainService.getOrgList();
-      console.log(this.orgList, "roglist");
 
     } catch (error) {
-      console.log('getOrgList', error);
     }
   }
 
@@ -249,7 +247,6 @@ export class AddVendorFirmComponent {
   }
 
   addComplience() {
-    console.log('Opening Compliance Dialog');
 
     // Merge form values with selectedVendorFirm to ensure _id is present if editing
     const dialogData = {
@@ -269,7 +266,6 @@ export class AddVendorFirmComponent {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed', result);
       // The VendorComplianceComponent saves data directly via API in saveImages().
       // However, we might want to refresh the local data or form if needed.
       if (this.selectedVendorFirm && this.selectedVendorFirm._id) {
@@ -382,7 +378,6 @@ export class AddVendorFirmComponent {
         this.router.navigate(['/app/vendor-firm']);
       }
     } catch (error) {
-      console.log('submit error', error);
     }
   }
 
@@ -398,16 +393,12 @@ export class AddVendorFirmComponent {
 
   selectCafeteria(event: MatSelectChange) {
     const value = event.value;
-    console.log(event.value, "value ");
     const cafeteriaName = value.cafeteria_name;
     const cafeteriaCity = value.cafeteria_city;
     const cafeteriaId = event.value.cafeteria_id;
     const organizationName = this.orgList.find((org: any) =>
       org.cafeteriaList.some((cafe: any) => cafe.cafeteria_id === cafeteriaId)
     )?.organization_name;
-    console.log("Organization Name:", organizationName);
-
-    console.log(cafeteriaName, cafeteriaCity, organizationName, "cafeteriaName, cafeteriaCity, organization");
 
     this.getOutletByCafeteriaList(cafeteriaName, cafeteriaCity, organizationName);
     this.showModalOutletList = true;
@@ -421,7 +412,6 @@ export class AddVendorFirmComponent {
         organization
       );
     } catch (error) {
-      console.log('getOutletByCafeteriaList', error);
     }
   }
 
@@ -443,7 +433,6 @@ export class AddVendorFirmComponent {
         event?.cafeteriaDetails?.cafeteria_id === this.selectedCafeteriaId
       );
     } catch (error) {
-      console.log('eventsByOrganization', error);
     }
   }
 

@@ -4,8 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
 import { combineLatest, startWith } from 'rxjs';
 
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ChecklistQuestionDialogComponent } from './checklist-question-dialog/checklist-question-dialog.component';
 
 export interface ChecklistQuestion {
@@ -71,7 +71,6 @@ export class ChecklistQuestionComponent implements OnInit {
       // refresh filters after data load
       this.applyFilters(this.typeControl.value || '', this.searchControl.value || '');
     } catch (e) {
-      console.log('Error while fetching checklist questions ', e);
       this.allChecklistQuestions = [];
       this.applyFilters(this.typeControl.value || '', this.searchControl.value || '');
     }
@@ -142,7 +141,6 @@ export class ChecklistQuestionComponent implements OnInit {
     try {
       await this.apiMainService.saveQuestion(payload);
     } catch (e) {
-      console.log('Error while saving checklist question ', e);
     }
   }
 
@@ -150,7 +148,6 @@ export class ChecklistQuestionComponent implements OnInit {
     try {
       await this.apiMainService.updateChecklistQuestions(payload);
     } catch (e) {
-      console.log('Error while updating checklist question ', e);
     }
   }
 
@@ -161,7 +158,6 @@ export class ChecklistQuestionComponent implements OnInit {
       await this.apiMainService.deletechecklistQuestion(id);
       await this.getAllChecklistQuestions();
     } catch (e) {
-      console.log('Error while deleting checklist question ', e);
     }
   }
 

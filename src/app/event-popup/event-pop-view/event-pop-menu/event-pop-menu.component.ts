@@ -7,10 +7,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { NgbModalModule } from '@ng-bootstrap/ng-bootstrap';
 import { MaterialModule } from 'src/app/material.module';
 import { categoryList } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { AddEventPopMenuComponent } from './add-event-pop-menu/add-event-pop-menu.component';
 import { CopyEventPopMenuComponent } from './copy-event-pop-menu/copy-event-pop-menu.component';
 

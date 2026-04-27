@@ -8,7 +8,7 @@ import { saveAs } from 'file-saver';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import {
   OrderFilterDialogComponent,

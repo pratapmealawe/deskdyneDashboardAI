@@ -100,7 +100,6 @@ export class DeliveryOrderService {
       }
       return deliveryOrderStatus;
     } catch (error) {
-      console.log('error while tracking delivery task', error);
       throw error;
     }
   }

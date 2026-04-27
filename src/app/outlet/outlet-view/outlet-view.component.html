@@ -1,23 +1,4 @@
 <div class="outlet-view-container">
-    <!-- Header Section -->
-    <div class="outlet-header-card">
-        <div class="header-left">
-            <button mat-icon-button class="back-btn" (click)="goBack()">
-                <mat-icon>arrow_back</mat-icon>
-            </button>
-            <div class="title-section">
-                <h1 class="page-title">{{ outlet?.outletName || 'Outlet Details' }}</h1>
-                <p class="page-subtitle">{{ outlet?.organizationDetails?.organization_name || 'Organization' }} • {{
-                    outlet?.cafeteriaDetails?.cafeteria_name || 'Cafeteria' }}</p>
-            </div>
-        </div>
-        <div class="header-right">
-            <span class="status-badge" [class.open]="outlet?.outletOpened" [class.closed]="!outlet?.outletOpened">
-                <mat-icon>{{ outlet?.outletOpened ? 'storefront' : 'store' }}</mat-icon>
-                {{ outlet?.outletOpened ? 'Open' : 'Closed' }}
-            </span>
-        </div>
-    </div>
 
     <!-- Tab Navigation -->
     <div class="tabs-container">
@@ -32,23 +13,6 @@
 
     <!-- Tab Content -->
     <div class="tab-content">
-        <ng-container [ngSwitch]="selectedTab">
-            <app-outlet-details *ngSwitchCase="'outlet-details'" [outletObj]="outlet">
-            </app-outlet-details>
-            <app-outlet-menu *ngSwitchCase="'outlet-menu'" [outletObj]="outlet" (back)="updateOutlet($event)"
-                (dataToParent)="receiveData($event)">
-            </app-outlet-menu>
-            <app-qr-menu *ngSwitchCase="'qr-menu'" [outletObj]="outlet" (back)="updateOutlet($event)"
-                (dataToParent)="receiveData($event)">
-            </app-qr-menu>
-            <app-outlet-orders *ngSwitchCase="'outlet-orders'" [outletObj]="outlet">
-            </app-outlet-orders>
-            <app-outlet-feedback *ngSwitchCase="'outlet-feedback'" [outletObj]="outlet">
-            </app-outlet-feedback>
-            <div *ngSwitchDefault class="empty-state">
-                <mat-icon>error_outline</mat-icon>
-                <p>Component not found</p>
-            </div>
-        </ng-container>
+        <router-outlet></router-outlet>
     </div>
 </div>

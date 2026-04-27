@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ExcelService } from 'src/service/excel.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -70,7 +69,6 @@ export class DailyBillingComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private excelService: ExcelService,
     private dialog: MatDialog,
     fb: FormBuilder
   ) {
@@ -109,7 +107,6 @@ export class DailyBillingComponent implements OnInit {
       };
 
       this.billingList = await this.apiMainService.fetchDailyBulkOrdersbyOrgId(payload) || [];
-      console.log('billingList', this.billingList);
 
       this.buildDateGroups();
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { PolicyService } from 'src/service/policy.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { PermissionsService } from '@service/permission.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -8,6 +8,7 @@ import { DailyBulkOrderComponent } from './daily-bulk-order/daily-bulk-order.com
 import { BulkOrderComponent } from './bulk-order/bulk-order.component';
 import { EmployeePollComponent } from './emp-poll/emp-poll.component';
 import { VirtualCafeteriaComponent } from './virtual-cafeteria/virtual-cafeteria.component';
+import { ConsumptionOrderComponent } from './consumption-order/consumption-order.component';
 
 @Component({
   selector: 'app-other-orders',
@@ -20,7 +21,8 @@ import { VirtualCafeteriaComponent } from './virtual-cafeteria/virtual-cafeteria
     DailyBulkOrderComponent,
     BulkOrderComponent,
     EmployeePollComponent,
-    VirtualCafeteriaComponent
+    VirtualCafeteriaComponent,
+    ConsumptionOrderComponent
   ]
 })
 export class OtherOrdersComponent implements OnInit {
@@ -28,34 +30,21 @@ export class OtherOrdersComponent implements OnInit {
     { name: 'Admin Orders', path: 'adminOrders', icon: 'receipt_long', policyKey: 'otherAdminOrders' },
     { name: 'Bulk Orders', path: 'bulkOrders', icon: 'inventory_2', policyKey: 'otherBulkOrders' },
     { name: 'Employee Poll', path: 'employeePoll', icon: 'how_to_vote', policyKey: 'otherEmployeePoll' },
-    { name: 'Virtual Cafeteria', path: 'virtualCafeteria', icon: 'restaurant', policyKey: 'otherVirtualCafeteria' }
+    { name: 'Virtual Cafeteria', path: 'virtualCafeteria', icon: 'restaurant', policyKey: 'otherVirtualCafeteria' },
+    { name: 'Consumption Order', path: 'consumptionOrder', icon: 'shopping_bag', policyKey: 'otherConsumptionOrder' }
   ];
-  tabPolicy: any;
   selectedTabIndex = 0;
 
   constructor(
-    private sendDataToComponent: SendDataToComponent,
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) { }
 
   ngOnInit(): void {
-    this.orderTypeList = this.policyService.filterTabsByPolicy(this.orderTypeList);
+    this.orderTypeList = this.permissionsService.filterTabsByPolicy(this.orderTypeList);
   }
 
   onCustomTabChange(index: number): void {
     this.selectedTabIndex = index;
   }
-
-  refreshOrderList() {
-    if (this.selectedTabIndex == 0) {
-      this.sendDataToComponent.publish('UPDATE_DAILY_BULK_ORDER_PAGE', { reload: true });
-    } else if (this.selectedTabIndex == 1) {
-      this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true });
-    } else if (this.selectedTabIndex == 2) {
-      this.sendDataToComponent.publish('UPDATE_EMPLOYEE_POLL_PAGE', { reload: true });
-    } else if (this.selectedTabIndex == 3) {
-      this.sendDataToComponent.publish('UPDATE_VIRTUAL_CAFETERIA_PAGE', { reload: true });
-    }
-    // Cross-component refresh logic can be added here if needed
-  }
 }
+

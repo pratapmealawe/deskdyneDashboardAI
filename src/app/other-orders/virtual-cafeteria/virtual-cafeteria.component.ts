@@ -1,12 +1,11 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+﻿import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { b2b_orders_mapper } from 'src/config/b2b_orders.mapping.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { PolicyService } from 'src/service/policy.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { UtilityService } from 'src/service/utility.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { PermissionsService } from '@service/permission.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -69,11 +68,10 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
     public router: Router,
     private apiMainService: ApiMainService,
     private modalService: NgbModal,
-    private utilityService: UtilityService,
     private localStorageService: LocalStorageService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private sendDataToComponent: SendDataToComponent) {
-    this.access = this.policyService.getCurrentButtonPolicy();
+    this.access = this.permissionsService.getCurrentButtonPolicy();
   }
 
   ngOnInit(): void {
@@ -128,7 +126,6 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
         });
       }
     } catch (error) {
-      console.log('error while fetching order counts', error);
     } finally {
       this.isLoading = false;
     }
@@ -231,7 +228,6 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
         this.lastPage = page;
       }
     } catch (error) {
-      console.log('error while searching orders ', error);
       this.filteredList = [];
     } finally {
       this.isLoading = false;
@@ -274,12 +270,10 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
   openConnectionLost() {
     this.modalService.open(this.noConnectionContent, { ariaLabelledBy: 'modal-basic-title', size: 'md', backdrop: false, centered: true })
       .result.then((result) => {
-        console.log(`Closed with: ${result}`);
         if (result === 'retry') {
           this.reloadPage();
         }
       }, (reason) => {
-        console.log(`Model Dismissed`);
       });
   }
 
@@ -288,10 +282,10 @@ export class VirtualCafeteriaComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    console.log('ngOnDestroy current order component');
     // this.wsMainService.unsubscribeWS('NEW_ORDER',this.ws);
     this.sendDataToComponent.unsubscribe('UPDATE_ORDER_PAGE');
     //clearTimeout(this.currentOrderCounter);
   }
 
 }
+

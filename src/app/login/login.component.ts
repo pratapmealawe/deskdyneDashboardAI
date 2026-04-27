@@ -1,9 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { ToasterService } from 'src/service/toaster.service';
-
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { ToasterService } from '@service/toaster.service';
+import { PermissionsService } from '@service/permission.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,10 +37,11 @@ export class LoginComponent implements OnInit, OnDestroy {
   isVerifying = false;
 
   constructor(
-    private localStorageService: LocalStorageService,
     private router: Router,
+    private localStorageService: LocalStorageService,
     private apiMainService: ApiMainService,
-    private toasterService: ToasterService
+    private toasterService: ToasterService,
+    private permissionsService: PermissionsService
   ) { }
 
   ngOnInit(): void {
@@ -76,7 +77,14 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   private navigateToDashboard(profile: any) {
-    const isOrgAdmin = profile.policy_name === 'orgAdmin' || profile.role === 'ORGADMIN';
+    const returnUrl = this.localStorageService.getCacheData('RETURN_URL');
+    if (returnUrl && returnUrl !== '/' && !returnUrl.includes('/login')) {
+      this.localStorageService.resetCacheData('RETURN_URL');
+      this.router.navigateByUrl(returnUrl);
+      return;
+    }
+
+    const isOrgAdmin = this.permissionsService.isOrgUser(profile);
     const landingPage = isOrgAdmin ? '/orgapp/home' : '/app/home';
     this.router.navigate([landingPage]);
   }
@@ -96,8 +104,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.resetOtp();
       this.startTimer();
     } catch (error) {
-      console.log('error while login ', error);
-      // You can show snackbar/toast here
     } finally {
       this.isLoggingIn = false;
     }
@@ -116,7 +122,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.localStorageService.setCacheData('ADMIN_ID', this.adminId);
       this.localStorageService.setCacheData('ADMIN_TOKEN', loginObj.token);
       
-      // Fetch and save profile before navigating to ensure the guard has permission data
       const profile = await this.apiMainService.getadminprofile(this.adminId);
       this.localStorageService.setCacheData('ADMIN_PROFILE', profile);
 
@@ -124,8 +129,6 @@ export class LoginComponent implements OnInit, OnDestroy {
       this.navigateToDashboard(profile);
     } catch (error) {
       this.toasterService.error(300);
-      console.log('error while verifying otp ', error);
-      // You can show snackbar/toast here and maybe reset OTP
     } finally {
       this.isVerifying = false;
     }

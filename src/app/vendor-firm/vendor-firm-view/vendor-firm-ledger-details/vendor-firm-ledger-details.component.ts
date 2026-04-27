@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PageEvent } from '@angular/material/paginator';
 
 import { CommonModule } from '@angular/common';
@@ -63,11 +63,9 @@ export class VendorFirmLedgerDetailsComponent implements OnInit {
     // this.vendorFirmInfo._id
     try {
       const res = await this.apiMainService.getTotalVendorLedgerBalanceByFirm(this.vendorFirmInfo._id);
-      console.log(res);
 
       this.totalVendorLegersBalance = res.totalBalance;
     } catch (err: any) {
-      console.log(err);
     }
   }
 

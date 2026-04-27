@@ -7,7 +7,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 import { CommonModule } from '@angular/common';
@@ -34,6 +34,7 @@ import { OrderCardComponent } from 'src/app/outlet-orders/order-card/order-card.
 })
 export class OrgOutletOrdersComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
+  
   Highcharts: typeof Highcharts = Highcharts;
   orgDetails: any = {};
   headerConfig: CommonSelectConfig = {

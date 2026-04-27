@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-faq',
@@ -30,7 +30,6 @@ export class FaqComponent implements OnInit {
         this.allFAQs = [];
       }
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
   addFAQ() {
@@ -43,7 +42,6 @@ export class FaqComponent implements OnInit {
       this.getAllFAQs();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
   async updateFAQ(faqObj: any) {
@@ -52,7 +50,6 @@ export class FaqComponent implements OnInit {
       this.getAllFAQs();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
   cancel() {
@@ -66,7 +63,6 @@ export class FaqComponent implements OnInit {
       this.getAllFAQs();
       this.cancel();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     }
   }
   editFAQ(faqObj: any) {

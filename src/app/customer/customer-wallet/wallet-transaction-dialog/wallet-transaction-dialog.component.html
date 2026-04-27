@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-    {{ actionType === 'add' ? 'Add Money to Wallet' : 'Deduct Money from Wallet' }}
+    {{ actionType ==='add' ?'Add Money to Wallet' :'Deduct Money from Wallet' }}
 </h2>
 
 <mat-dialog-content>
@@ -38,7 +38,7 @@
 
 <mat-dialog-actions align="end" class="pb-3 pe-3">
     <button mat-button (click)="close()">Cancel</button>
-    <button mat-flat-button [color]="actionType === 'add' ? 'primary' : 'warn'" (click)="submit()">
-        {{ actionType === 'add' ? 'Add Money' : 'Deduct Money' }}
+    <button mat-flat-button [color]="actionType ==='add' ?'primary' :'warn'" (click)="submit()">
+        {{ actionType ==='add' ?'Add Money' :'Deduct Money' }}
     </button>
 </mat-dialog-actions>

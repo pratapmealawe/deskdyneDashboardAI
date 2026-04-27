@@ -1,9 +1,11 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 @import 'src/styles.scss';
 
 .outlet-menu-container {
   padding: 0;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 // Header Card
@@ -320,52 +322,12 @@
 // Menu List (Cards Grid)
 .menu-list {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.25rem;
+  width: 100%;
 
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  @media (min-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-// Modern Card Styling
-.menu-card-h {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
-  border: 1px solid #f1f5f9;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  padding: 14px;
-  gap: 16px;
-  position: relative;
-
-  &:hover {
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    transform: translateY(-2px);
-    border-color: #dbeafe;
-  }
-}
-
-// Menu List (Cards Grid)
-.menu-list {
-  display: grid;
-  // Default: 1 column (Mobile)
-  grid-template-columns: 1fr;
-  gap: 1rem;
-
-  // Tablet: 2 columns
-  @media (min-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  // Desktop: 3 columns (Strictly)
-  @media (min-width: 1200px) {
-    grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 480px) {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -375,15 +337,17 @@
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   border: 1px solid #e8ecf1;
-  transition: all 0.25s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: row;
   padding: 12px;
   gap: 14px;
+  position: relative;
+  min-width: 0;
 
   &:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    transform: translateY(-2px);
     border-color: #cbd5e1;
   }
 }

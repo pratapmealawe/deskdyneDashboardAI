@@ -1,0 +1,134 @@
+<div class="modern-dialog copy-menu-dialog">
+    <!-- Modern Compact Header -->
+    <div class="modern-header mb-3">
+        <div class="d-flex align-items-center gap-2">
+            <div class="icon-box primary">
+                <mat-icon ripple>content_copy</mat-icon>
+            </div>
+            <div>
+                <h2 class="dialog-title mb-0">Copy Menu Wizard</h2>
+                <p class="small text-muted mb-0">Multi-Step Transfer</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeModal()" class="close-btn" aria-label="Close">
+            <mat-icon ripple>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="dialog-content custom-scrollbar">
+        <!-- Step 1 & 2: Org & Cafe Selection -->
+        <div class="selection-grid mb-4">
+            <div class="selection-step">
+                <div class="step-badge">
+                    <span class="num">1</span>
+                    <span class="label">Source Organization</span>
+                </div>
+                <mat-form-field appearance="outline" class="w-100 no-padding">
+                    <mat-select [(ngModel)]="selectedSourceOrgId" (selectionChange)="onOrgChange()" placeholder="Select Organization">
+                        <mat-option *ngFor="let org of orgChoices" [value]="org._id">
+                            {{org.organization_name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>business</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <div class="selection-step">
+                <div class="step-badge">
+                    <span class="num">2</span>
+                    <span class="label">Source Cafeteria</span>
+                </div>
+                <mat-form-field appearance="outline" class="w-100 no-padding" [class.loading]="isFetchingCafeterias">
+                    <mat-select [(ngModel)]="selectedSourceCafeId" (selectionChange)="onCafeChange()" 
+                                [disabled]="!selectedSourceOrgId || isFetchingCafeterias" placeholder="Select Cafeteria">
+                        <mat-option *ngFor="let cafe of cafeteriaChoices" [value]="cafe.cafeteria_id">
+                            {{cafe.cafeteria_name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>restaurant</mat-icon>
+                    <mat-spinner matSuffix *ngIf="isFetchingCafeterias" diameter="20"></mat-spinner>
+                </mat-form-field>
+            </div>
+
+            <div class="selection-step">
+                <div class="step-badge">
+                    <span class="num">3</span>
+                    <span class="label">Menu Category</span>
+                </div>
+                <mat-form-field appearance="outline" class="w-100 no-padding">
+                    <mat-select [(ngModel)]="selectedMainCat" (selectionChange)="onMainCatChange()" 
+                                [disabled]="!selectedSourceCafeId" placeholder="Select Category">
+                        <mat-option *ngFor="let cat of mainCategories" [value]="cat">
+                            {{cat.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>category</mat-icon>
+                </mat-form-field>
+            </div>
+
+            <div class="selection-step">
+                <div class="step-badge">
+                    <span class="num">4</span>
+                    <span class="label">Sub Type</span>
+                </div>
+                <mat-form-field appearance="outline" class="w-100 no-padding">
+                    <mat-select [(ngModel)]="selectedSubCat" (selectionChange)="menuPreview = []"
+                                [disabled]="!selectedMainCat?.hasSub" [placeholder]="selectedMainCat?.hasSub ?'Select Sub Type' :'N/A'">
+                        <mat-option *ngFor="let sub of subCategories" [value]="sub.value">
+                            {{sub.name}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-icon matPrefix>layers</mat-icon>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div class="preview-actions mb-4" *ngIf="selectedSourceCafeId">
+            <button mat-flat-button color="primary" class="preview-btn" 
+                    [disabled]="!selectedSourceCafeId || (selectedMainCat?.hasSub && !selectedSubCat)"
+                    (click)="fetchPreview()">
+                <mat-icon>visibility</mat-icon> Preview Source Menu
+            </button>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="preview-section">
+            <div *ngIf="isLoading" class="loading-state">
+                <mat-spinner diameter="40"></mat-spinner>
+                <p>Fetching menu data...</p>
+            </div>
+
+            <div *ngIf="!isLoading && menuPreview.length > 0" class="menu-preview-grid">
+                <div class="preview-card" *ngFor="let item of menuPreview">
+                    <div class="item-img">
+                        <img [src]="item.itemImage ? imageUrl + item.itemImage :'assets/img/placeholder-food.png'" alt="">
+                    </div>
+                    <div class="item-info">
+                        <div class="name">{{item.itemName}}</div>
+                        <div class="price">₹{{item.slab1Price || 0}}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="!isLoading && menuPreview.length === 0 && selectedSourceCafeId && !isFetchingCafeterias" class="empty-state">
+                <mat-icon>inventory_2</mat-icon>
+                <p>Select criteria and click Preview to see items</p>
+            </div>
+            
+            <div *ngIf="!selectedSourceOrgId" class="initial-state">
+                <mat-icon>find_in_page</mat-icon>
+                <p>Select a source organization and cafeteria to begin</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-footer">
+        <button mat-button (click)="closeModal()">Cancel</button>
+        <div class="spacer"></div>
+        <button mat-flat-button color="primary" class="copy-btn" 
+                [disabled]="!menuPreview.length" (click)="copyMenus()">
+            <mat-icon>content_copy</mat-icon> Finalize & Copy
+        </button>
+    </div>
+</div>

@@ -40,9 +40,9 @@
           <mat-icon>account_balance</mat-icon>
         </div>
         <h3>Bank Details</h3>
-        <div class="verification-badge" [ngClass]="bankDetails?.bankVerified ? 'verified' : 'pending'">
-          <mat-icon>{{ bankDetails?.bankVerified ? 'verified' : 'pending' }}</mat-icon>
-          {{ bankDetails?.bankVerified ? 'Verified' : 'Pending' }}
+        <div class="verification-badge" [ngClass]="bankDetails?.bankVerified ?'verified' :'pending'">
+          <mat-icon>{{ bankDetails?.bankVerified ?'verified' :'pending' }}</mat-icon>
+          {{ bankDetails?.bankVerified ?'Verified' :'Pending' }}
         </div>
       </div>
       <div class="card-body">
@@ -51,28 +51,28 @@
             <div class="info-icon"><mat-icon>business</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Bank Name</span>
-              <span class="info-value">{{ bankDetails?.bank_name || '-' }}</span>
+              <span class="info-value">{{ bankDetails?.bank_name ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>credit_card</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Account Number</span>
-              <span class="info-value">{{ bankDetails?.accountNo || '-' }}</span>
+              <span class="info-value">{{ bankDetails?.accountNo ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>person</mat-icon></div>
             <div class="info-content">
               <span class="info-label">Account Name</span>
-              <span class="info-value">{{ bankDetails?.accountName || '-' }}</span>
+              <span class="info-value">{{ bankDetails?.accountName ||'-' }}</span>
             </div>
           </div>
           <div class="info-item">
             <div class="info-icon"><mat-icon>tag</mat-icon></div>
             <div class="info-content">
               <span class="info-label">IFSC Code</span>
-              <span class="info-value">{{ bankDetails?.ifsc || '-' }}</span>
+              <span class="info-value">{{ bankDetails?.ifsc ||'-' }}</span>
             </div>
           </div>
           <div class="info-item full-width" *ngIf="bankDetails?.upi">

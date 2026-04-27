@@ -1,0 +1,11 @@
+<div class="cafeteria-selection-area" *ngIf="cafeteriaList && cafeteriaList.length > 0">
+    <div class="selector-label">{{ config?.label || 'Select Cafeteria' }}</div>
+    <div class="cafeteria-pills">
+        <button *ngFor="let cafeteria of cafeteriaList" class="cafe-pill"
+            [class.active]="isActive(cafeteria)"
+            (click)="onSelect(cafeteria)">
+            <mat-icon>storefront</mat-icon>
+            {{ cafeteria.cafeteria_name }}
+        </button>
+    </div>
+</div>

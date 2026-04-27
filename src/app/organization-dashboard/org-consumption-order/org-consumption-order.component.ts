@@ -5,9 +5,9 @@ import { PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { environment } from 'src/environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { environment } from '@environments/environment';
 import { CommonSelectConfig, SubmitPayload, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { MaterialModule } from 'src/app/material.module';
 import { ConsumptionOrderCardComponent } from 'src/app/common-components/consumption-order-card/consumption-order-card.component';
@@ -163,7 +163,6 @@ export class OrgConsumptionOrderComponent implements OnInit {
   }
 
   downloadPdf() {
-    console.log('PDF export not implemented for Consumption Orders yet');
   }
 
   private latestStatusEntry(meal: any): { orderstatus?: string; reason?: string; adminName?: string; adminMobile?: string } {

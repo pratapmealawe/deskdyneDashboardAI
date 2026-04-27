@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ApiMainService } from '../../service/apiService/apiMain.service';
-import { ToasterService } from '../../service/toaster.service';
-import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { PageEvent } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';

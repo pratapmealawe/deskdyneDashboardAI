@@ -29,9 +29,9 @@
         <div class="vendor-identity">
           <div class="d-flex align-items-center gap-2 flex-wrap">
             <h3 class="vendor-title">{{ vendor?.vendorFirmName }}</h3>
-            <div class="verified-badge-pill" [ngClass]="vendor?.bank_details?.bankVerified ? 'verified' : 'pending'">
-              <mat-icon class="tiny-icon">{{ vendor?.bank_details?.bankVerified ? 'verified' : 'pending' }}</mat-icon>
-              <span>{{ vendor?.bank_details?.bankVerified ? 'Verified' : 'Pending' }}</span>
+            <div class="verified-badge-pill" [ngClass]="vendor?.bank_details?.bankVerified ?'verified' :'pending'">
+              <mat-icon class="tiny-icon">{{ vendor?.bank_details?.bankVerified ?'verified' :'pending' }}</mat-icon>
+              <span>{{ vendor?.bank_details?.bankVerified ?'Verified' :'Pending' }}</span>
             </div>
           </div>
           <div class="vendor-sub-info">
@@ -89,7 +89,7 @@
                 *ngIf="outlet?.cafeteriaDetails?.cafeteria_name && outlet?.cafeteriaDetails?.cafeteria_city">•</span>
               <span class="detail-item" *ngIf="outlet?.cafeteriaDetails?.cafeteria_city">
                 <mat-icon>location_on</mat-icon>
-                {{ outlet?.cafeteriaDetails?.location ? outlet?.cafeteriaDetails?.location + ', ' : '' }}{{
+                {{ outlet?.cafeteriaDetails?.location ? outlet?.cafeteriaDetails?.location +',' :'' }}{{
                 outlet?.cafeteriaDetails?.cafeteria_city }}
               </span>
             </div>

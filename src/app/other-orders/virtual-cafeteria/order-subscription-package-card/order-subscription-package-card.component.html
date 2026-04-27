@@ -36,7 +36,7 @@
                         | date:'MMM d, y'}}</span>
                     <span
                         class="badge bg-light border fw-semibold text-dark px-3 py-2 rounded-pill me-2">{{orderInput.orderNo}}</span>
-                    <i class=" bi bi-pencil-square" *ngIf="!editMode" (click)="onEditOrder(orderInput)"></i>
+                    <i class="bi bi-pencil-square" *ngIf="!editMode" (click)="onEditOrder(orderInput)"></i>
                     <i class="bi bi bi-x" *ngIf="editMode" (click)="toggleEditMode()"></i>
                 </div>
             </div>
@@ -56,17 +56,17 @@
                             <div><i class="bi bi-telephone me-1"></i>{{orderInput.customerPhoneNo}}</div>
                         </div>
                         <div class="col-12 col-md-3"
-                            *ngIf="order.mealType === 'Breakfast' && orderInput.orderType != 'apartment'">
+                            *ngIf="order.mealType ==='Breakfast' && orderInput.orderType !='apartment'">
                             <div class="labelData"><i class="bi bi-clock me-1"></i>{{order?.subscriptionBreakfastSlot}}
                             </div>
                         </div>
                         <div class="col-12 col-md-3"
-                            *ngIf="order.mealType === 'Lunch' && orderInput.orderType != 'apartment'">
+                            *ngIf="order.mealType ==='Lunch' && orderInput.orderType !='apartment'">
                             <div class="labelData"><i class="bi bi-clock me-1"></i>{{order?.subscriptionLunchSlot}}
                             </div>
                         </div>
                         <div class="col-12 col-md-3"
-                            *ngIf="order.mealType === 'Dinner' && orderInput.orderType != 'apartment'">
+                            *ngIf="order.mealType ==='Dinner' && orderInput.orderType !='apartment'">
                             <div class="labelData"><i class="bi bi-clock me-1"></i>{{order?.subscriptionDinnerSlot}}
                             </div>
                         </div>
@@ -88,7 +88,7 @@
                             <div><i class="bi bi-people-fill me-1"></i>{{orderInput.deliveryVendor}}</div>
                         </div>
                         <div class="col-12 col-md-3">
-                            <div class="labelData" [ngClass]="{orange:orderInput.orderCreatedBy === 'DDUser'}">
+                            <div class="labelData" [ngClass]="{orange:orderInput.orderCreatedBy ==='DDUser'}">
                                 <i class="bi bi-person-add me-1"></i>{{orderInput.orderCreatedBy}}
                             </div>
                         </div>
@@ -124,7 +124,7 @@
                                 <td class="text-start">{{ menu.description }}</td>
                                 <td>
                                     <span class="badge"
-                                        [ngClass]="menu.menuType === 'Veg' ? 'bg-success' : 'bg-danger'">
+                                        [ngClass]="menu.menuType ==='Veg' ?'bg-success' :'bg-danger'">
                                         {{ menu.menuType }}
                                     </span>
                                 </td>
@@ -146,7 +146,7 @@
                                 <p class="labelText text-start mb-0">
                                     {{ addon.addonName }}:
                                     <span class="labelData">
-                                        {{ addon.selected ? addon.selected : 'N/A' }}
+                                        {{ addon.selected ? addon.selected :'N/A' }}
                                     </span>
                                 </p>
                             </div>
@@ -176,12 +176,12 @@
                         </div>
                         <div class="col-12 col-md-3">
                             <p class="labelText mb-0">Order Status: <span
-                                    [ngClass]="order.orderstatus === 'placed' || order.orderstatus === 'accepted' || order.orderstatus === 'readyToDelivery' || order.orderstatus === 'deliveryBoyAssigned' || order.orderstatus === 'handedOverToDeliveryBoy' || order.orderstatus === 'placed' || order.orderstatus === 'delivered' || order.orderstatus === 'onTheWay' ? 'green' : order.orderstatus === 'paymentFailed' || order.orderstatus === 'cancelledByKitchen' || order.orderstatus === 'rejectedByKitchen' || order.orderstatus === 'cancelledByUser' ? 'red' : 'yellow'"
+                                    [ngClass]="order.orderstatus ==='placed' || order.orderstatus ==='accepted' || order.orderstatus ==='readyToDelivery' || order.orderstatus ==='deliveryBoyAssigned' || order.orderstatus ==='handedOverToDeliveryBoy' || order.orderstatus ==='placed' || order.orderstatus ==='delivered' || order.orderstatus ==='onTheWay' ?'green' : order.orderstatus ==='paymentFailed' || order.orderstatus ==='cancelledByKitchen' || order.orderstatus ==='rejectedByKitchen' || order.orderstatus ==='cancelledByUser' ?'red' :'yellow'"
                                     class="labelData">{{order.orderstatus}}</span></p>
                         </div>
                         <div class="col-12 col-md-3">
                             <p class="labelText mb-0">Order Type: <span
-                                    [ngClass]="(order.orderType === 'subscription' ||  order.orderType === 'subscriptionPackage') ? 'blue' : 'orange'"
+                                    [ngClass]="(order.orderType ==='subscription' ||  order.orderType ==='subscriptionPackage') ?'blue' :'orange'"
                                     class="labelData">{{order.orderType}}</span> <span
                                     *ngIf="order.isTrial">-Trial</span></p>
                         </div>
@@ -199,15 +199,15 @@
                             <p class="labelText mb-0">Distance: <span class="labelData">{{order?.distance}}</span>
                             </p>
                         </div>
-                        <div class="col-12 col-md-3" *ngIf="order.mealType === 'Breakfast'">
+                        <div class="col-12 col-md-3" *ngIf="order.mealType ==='Breakfast'">
                             <p class="labelText mb-0">Breakfast Slot: <span
                                     class="labelData">{{order?.subscriptionBreakfastSlot}}</span></p>
                         </div>
-                        <div class="col-12 col-md-3" *ngIf="order.mealType === 'Lunch'">
+                        <div class="col-12 col-md-3" *ngIf="order.mealType ==='Lunch'">
                             <p class="labelText mb-0">Lunch Slot: <span
                                     class="labelData">{{order?.subscriptionLunchSlot}}</span></p>
                         </div>
-                        <div class="col-12 col-md-3" *ngIf="order.mealType === 'Dinner'">
+                        <div class="col-12 col-md-3" *ngIf="order.mealType ==='Dinner'">
                             <p class="labelText mb-0">Dinner Slot: <span
                                     class="labelData">{{order?.subscriptionDinnerSlot}}</span></p>
                         </div>
@@ -215,10 +215,10 @@
                             <p class="labelText mb-0">Clustor: <span class="labelData">{{order?.clusterName}}</span></p>
                         </div>
                     </div>
-                    <ng-container *ngIf="order?.orderCreatedBy === 'DDUser' && order?.organization_name">
+                    <ng-container *ngIf="order?.orderCreatedBy ==='DDUser' && order?.organization_name">
                         <div class="col-6 col-md-4 col-lg-2">
                             <div class="labelText">Organization Name</div>
-                            <div class="labelData" [ngClass]="{orange:order.orderCreatedBy === 'DDUser'}">
+                            <div class="labelData" [ngClass]="{orange:order.orderCreatedBy ==='DDUser'}">
                                 {{order.organization_name}}</div>
                         </div>
                     </ng-container>
@@ -226,13 +226,13 @@
                         <div class="col-12 col-md-3 d-flex">
                             <div class="labelText me-2 mb-0">Package Name:</div>
 
-                            <div *ngIf="order?.mealPackage.packageType === 'Veg'" class="vegIcon typeIcon me-2">
+                            <div *ngIf="order?.mealPackage.packageType ==='Veg'" class="vegIcon typeIcon me-2">
                             </div>
 
-                            <div *ngIf="order?.mealPackage.packageType === 'NonVeg'" class="nonvegIcon typeIcon me-2">
+                            <div *ngIf="order?.mealPackage.packageType ==='NonVeg'" class="nonvegIcon typeIcon me-2">
                             </div>
 
-                            <div *ngIf="order?.mealPackage.packageType === 'Jain'" class="jainIcon typeIcon me-2">
+                            <div *ngIf="order?.mealPackage.packageType ==='Jain'" class="jainIcon typeIcon me-2">
                             </div>
 
                             <div class="labelData">{{ order?.mealPackage.packageName }}</div>
@@ -260,8 +260,7 @@
                             <p class="labelText mb-0">Subscription StartDate:
                                 <span class="labelData text-danger"
                                     *ngIf="!editOrderDate">{{order?.subscriptionStartDate|
-                                    date:
-                                    'MMM d, y'}}</span>
+                                    date:'MMM d, y'}}</span>
                             </p>
                             <input type="date" class="form-control" id="startDate" [min]="today" *ngIf="editOrderDate"
                                 [(ngModel)]="newSubscriptionDate" placeholder="startDate">
@@ -286,8 +285,7 @@
                             <p class="labelText mb-0">User Selected Dates:
                                 <span class="labelData userDates text-danger"
                                     *ngFor="let userDate of order?.userSelectedDates; let last = last">{{userDate |
-                                    date:
-                                    'MMM d, y'}}
+                                    date:'MMM d, y'}}
                                     <span class="bold" *ngIf="!last">| </span></span>
                             </p>
                         </div>
@@ -317,7 +315,7 @@
                                 <p class="labelText text-start mb-0">
                                     {{ addon.addonName }}:
                                     <span class="labelData">
-                                        {{ addon.selected ? addon.selected : 'N/A' }}
+                                        {{ addon.selected ? addon.selected :'N/A' }}
                                     </span>
                                 </p>
                             </div>
@@ -335,7 +333,7 @@
                                     <p class="labelText mb-0">
                                         Keep at doorstep:
                                         <span class="labelData">
-                                            {{ getInstructionStatus('Keep at doorstep') ? 'True' : 'False' }}
+                                            {{ getInstructionStatus('Keep at doorstep') ?'True' :'False' }}
                                         </span>
                                     </p>
                                 </div>
@@ -343,8 +341,7 @@
                                     <p class="labelText mb-0">
                                         Leave at reception or with guard:
                                         <span class="labelData">
-                                            {{ getInstructionStatus('Leave at reception or with guard') ? 'True' :
-                                            'False' }}
+                                            {{ getInstructionStatus('Leave at reception or with guard') ?'True' :'False' }}
                                         </span>
                                     </p>
                                 </div>
@@ -352,7 +349,7 @@
                                     <p class="labelText mb-0">
                                         Beware of pets:
                                         <span class="labelData">
-                                            {{ getInstructionStatus('Beware of pets') ? 'True' : 'False' }}
+                                            {{ getInstructionStatus('Beware of pets') ?'True' :'False' }}
                                         </span>
                                     </p>
                                 </div>
@@ -369,7 +366,7 @@
                                     <p class="labelText mb-0">
                                         {{ instr.instruction }}:
                                         <span class="labelData">
-                                            {{ instr.selected ? 'True' : 'False' }}
+                                            {{ instr.selected ?'True' :'False' }}
                                         </span>
                                     </p>
                                 </div>
@@ -462,92 +459,92 @@
                             <div class="receiptText">
                                 <div size="12">Receipt</div>
                             </div>
-                            <div class="header5 receipt3 receipt-parent">
+                            <div class="receipt3 receipt-parent">
                                 <div class="left-div">Item Amount</div>
                                 <div class="right-div dark">&#8377;
                                     <span>{{order?.mealPackage.packagePrice * order?.mealPackage.count *
                                         mealPerdayCount}}</span>
                                 </div>
                             </div>
-                            <div class="header5 receipt3 receipt-parent" *ngFor="let addon of packageAddonsList">
+                            <div class="receipt3 receipt-parent" *ngFor="let addon of packageAddonsList">
                                 <ng-container *ngIf="addon.selected">
                                     <div class="left-div">{{addon.addonName}}:</div>
                                     <div class="right-div">&#8377; {{addon.userAmount}}</div>
                                 </ng-container>
                             </div>
-                            <div class="header5 receipt-parent discount" *ngIf="order?.discount">
+                            <div class="receipt-parent discount" *ngIf="order?.discount">
                                 <div class="left-div">Item Discount</div>
                                 <div class="right-div">(-)&#8377; {{order?.discount}}</div>
                             </div>
-                            <div class="header5 receipt-parent discount" *ngIf="order?.mealPackage?.ddDiscount">
+                            <div class="receipt-parent discount" *ngIf="order?.mealPackage?.ddDiscount">
                                 <div class="left-div">Deskdyne Discount</div>
                                 <div class="right-div">(-)&#8377; {{order?.mealPackage?.ddDiscount}}</div>
                             </div>
-                            <div class="header5 receipt-parent discount" *ngIf="order?.mealPackage?.subsidyValue">
+                            <div class="receipt-parent discount" *ngIf="order?.mealPackage?.subsidyValue">
                                 <div class="left-div">Deskdyne Subsidy</div>
                                 <div class="right-div">(-)&#8377; {{order?.mealPackage?.subsidyValue}}</div>
                             </div>
-                            <div class="header5 receipt3 receipt-parent" *ngIf="order?.treePlantationAmount">
+                            <div class="receipt3 receipt-parent" *ngIf="order?.treePlantationAmount">
                                 <div class="left-div">Tree plantation amount</div>
                                 <div class="right-div dark">&#8377;
                                     <span>{{order?.treePlantationAmount}}</span>
                                 </div>
                             </div>
-                            <div class="header5 receipt3 receipt-parent" *ngIf="order?.treePlantationDiscount">
+                            <div class="receipt3 receipt-parent" *ngIf="order?.treePlantationDiscount">
                                 <div class="left-div">Tree plantation discount</div>
                                 <div class="right-div dark">(-)&#8377;
                                     <span>{{order?.treePlantationDiscount}}</span>
                                 </div>
                             </div>
 
-                            <div class="header5 receipt-parent" *ngIf="order?.taxes">
+                            <div class="receipt-parent" *ngIf="order?.taxes">
                                 <div class="left-div">Taxes</div>
                                 <div class="right-div">&#8377; {{(order?.taxes).toFixed(2)}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.subscriptionDeliveryCharges">
+                            <div class="discount receipt-parent" *ngIf="order?.subscriptionDeliveryCharges">
                                 <div class="left-div">Delivery Charges</div>
                                 <div class="right-div">&#8377; {{order?.subscriptionDeliveryCharges}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.ecoFriendlyPackagingCharges">
+                            <div class="discount receipt-parent" *ngIf="order?.ecoFriendlyPackagingCharges">
                                 <div class="left-div">Eco Friendly Packaging Charges</div>
                                 <div class="right-div">&#8377; {{order?.ecoFriendlyPackagingCharges}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.platformCharges">
+                            <div class="discount receipt-parent" *ngIf="order?.platformCharges">
                                 <div class="left-div">Platform Charges</div>
                                 <div class="right-div">&#8377; {{order?.platformCharges}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.platformChargesDiscount">
+                            <div class="discount receipt-parent" *ngIf="order?.platformChargesDiscount">
                                 <div class="left-div">Platform Charges Discount</div>
                                 <div class="right-div">(-)&#8377; {{order?.platformChargesDiscount ?? 0}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent"
+                            <div class="discount receipt-parent"
                                 *ngIf="order?.subscriptionDeliveryChargesDiscount">
                                 <div class="left-div">Delivery Charges Discount</div>
                                 <div class="right-div">(-)&#8377; {{order?.subscriptionDeliveryChargesDiscount ??
                                     0}}
                                 </div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.voucherDiscount">
+                            <div class="discount receipt-parent" *ngIf="order?.voucherDiscount">
                                 <div class="left-div">Voucher Discount</div>
                                 <div class="right-div">(-)&#8377; {{order?.voucherDiscount}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.couponDiscount">
+                            <div class="discount receipt-parent" *ngIf="order?.couponDiscount">
                                 <div class="left-div">Coupon Discount</div>
                                 <div class="right-div">(-)&#8377; {{order?.couponDiscount}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.cutleryDiscount">
+                            <div class="discount receipt-parent" *ngIf="order?.cutleryDiscount">
                                 <div class="left-div">No Cutlery Discount</div>
                                 <div class="right-div">(-)&#8377; {{order?.cutleryDiscount}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.moneyWalletPointsUsed">
+                            <div class="discount receipt-parent" *ngIf="order?.moneyWalletPointsUsed">
                                 <div class="left-div">Money Wallet Points Used</div>
                                 <div class="right-div">(-)&#8377; {{order?.moneyWalletPointsUsed}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent" *ngIf="order?.mealaweWalletPointsUsed">
+                            <div class="discount receipt-parent" *ngIf="order?.mealaweWalletPointsUsed">
                                 <div class="left-div">Mealawe Wallet Points Used</div>
                                 <div class="right-div">(-)&#8377; {{order?.mealaweWalletPointsUsed}}</div>
                             </div>
-                            <div class="header5 discount receipt-parent totalAmtdiv">
+                            <div class="discount receipt-parent totalAmtdiv">
                                 <div class="left-div bold">Total Amount</div>
                                 <div class="right-div bold">&#8377; {{order?.amount}}</div>
                             </div>
@@ -614,7 +611,7 @@
                             *ngFor="let history of order?.statusHistory; index as i">
                             <div class="p-2 h-100">
                                 <div class="labelText">{{ history.orderstatus }}: </div>
-                                <div class="labelData">{{ history.updatedOn | date: 'd-MMM-yyyy h:mm a' }}</div>
+                                <div class="labelData">{{ history.updatedOn | date:'d-MMM-yyyy h:mm a' }}</div>
                                 <div class="labelData">{{ history.updatedBy }}</div>
                                 <div class="labelData">{{ history.updateByType }}</div>
                             </div>
@@ -658,16 +655,16 @@
                 <!-- child view/hide order button -->
                 <div class="d-flex justify-content-end mt-2 w-100" *ngIf="order?.dailyOrderList.length > 0">
                     <button class="btn btn-sm btn-outline-primary" type="button" [disabled]="childOrdersEditMode"
-                        (click)="(childOrdersShow = !childOrdersShow)">{{ childOrdersShow ? 'Hide Child Orders' : 'View
+                        (click)="(childOrdersShow = !childOrdersShow)">{{ childOrdersShow ?'Hide Child Orders' :'View
                         Child Orders' }}</button>
                 </div>
                 <!-- child orders -->
                 <div *ngIf="childOrdersShow">
                     <div class="row cardDesign mt-3"
-                        *ngFor="let dailyOrder of order?.dailyOrderList | sort: 'orderDate' : -1 ">
+                        *ngFor="let dailyOrder of order?.dailyOrderList | sort:'orderDate' : -1">
                         <div class="col-12 col-md-4 col-lg-3">
                             <div class="row align-items-center">
-                                <div *ngIf="childOrdersEditMode && dailyOrder.orderstatus == 'accepted'"
+                                <div *ngIf="childOrdersEditMode && dailyOrder.orderstatus =='accepted'"
                                     class="form-check col-1">
                                     <input class="form-check-input pointer" type="checkbox" id="childOrder"
                                         (click)="childOrderSelected(dailyOrder)" name="childOrder">
@@ -678,7 +675,7 @@
                                 </div>
                                 <div class="col-5 col-md-6 col-lg-5">
                                     <div class="labelText">Order Date</div>
-                                    <div class="labelData">{{dailyOrder.orderDate| date: 'MMM d, y'}}</div>
+                                    <div class="labelData">{{dailyOrder.orderDate| date:'MMM d, y'}}</div>
                                 </div>
                             </div>
                         </div>
@@ -705,7 +702,7 @@
                                     <div class="labelData">{{dailyOrder.mealType}}</div>
                                 </div>
                                 <div class="col-6 col-md-7 col-lg-2">
-                                    <div class="inline right pointer header3" (click)="viewChildOrder(dailyOrder)"><i
+                                    <div class="inline right pointer" (click)="viewChildOrder(dailyOrder)"><i
                                             class="bi bi-eye"></i></div>
                                 </div>
                             </div>
@@ -715,7 +712,7 @@
             </div>
 
             <!-- Order Transfer -->
-            <div class="header3 bgTopDownpadding1" *ngIf="order.orderTransferred && order.orderTransferred.length>0">
+            <div class="bgTopDownpadding1" *ngIf="order.orderTransferred && order.orderTransferred.length>0">
                 Order
                 Transfer History</div>
             <div class="row" *ngIf="order?.orderTransferred && order?.orderTransferred.length>0">
@@ -724,13 +721,13 @@
                 </div>
             </div>
 
-            <div class="header3 bgTopDownpadding1" *ngIf="order?.orderTransferred && order?.orderTransferred.length>0">
+            <div class="bgTopDownpadding1" *ngIf="order?.orderTransferred && order?.orderTransferred.length>0">
                 Order
                 Transfer Charges</div>
 
             <!-- Kitchen Transfer -->
             <div *ngIf="orderTransferStart" class="bgTopDownpadding1">
-                <div class="header3 labelText">Search New Kitchen</div>
+                <div class="labelText">Search New Kitchen</div>
 
                 <div class="row">
                     <div class="col-6 col-md-4 col-lg-3">
@@ -836,20 +833,20 @@
             <!-- <span class="me-2" *ngIf="orderStage === 3">
             <button class="btn btn-danger btn-sm" (click)="acceptRejectOrder('rejectedByKitchen')">CANCEL ORDER AND PAY USER</button>
         </span> -->
-            <ng-container *ngIf="!order.kitchenName && order.orderstatus !== 'placed'">
+            <ng-container *ngIf="!order.kitchenName && order.orderstatus !=='placed'">
                 <span class="me-2" *ngIf="orderStage === 2 || orderStage === 3">
                     <button class="btn-danger btn-sm btn" (click)="tranferToAnotherKitchen()"
                         *ngIf="access?.changeKitchenBtn">Assign Kitchen</button>
                 </span>
             </ng-container>
-            <ng-container *ngIf="order.kitchenName && order.orderstatus !== 'placed'">
+            <ng-container *ngIf="order.kitchenName && order.orderstatus !=='placed'">
                 <span class="me-2" *ngIf="orderStage === 2 || orderStage === 3">
                     <button class="btn-danger btn-sm btn" (click)="tranferToAnotherKitchen()"
                         *ngIf="access?.changeKitchenBtn">Change Kitchen</button>
                 </span>
             </ng-container>
             <span class="me-2"
-                *ngIf="!editOrderDate && !childOrdersEditMode && !order.multiDateAllowed  && order.orderstatus !== 'placed' && selectedTab ==='Order Details'">
+                *ngIf="!editOrderDate && !childOrdersEditMode && !order.multiDateAllowed  && order.orderstatus !=='placed' && selectedTab ==='Order Details'">
                 <button class="btn-danger btn-sm btn" (click)="editSubscriptionDate()"
                     *ngIf="access?.editOrderDate">Edit
                     Order Date</button>

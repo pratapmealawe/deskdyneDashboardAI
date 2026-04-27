@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { SuggestionsFeedbackService } from 'src/service/suggestions-feedback.service';
+import { SuggestionsFeedbackService } from '@service/suggestions-feedback.service';
+import { PermissionsService } from '@service/permission.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,144 +11,106 @@ export class NavigationService {
   inReviewIncidentsCount$ = this.suggestionsFeedbackService.incidentCount$;
 
   deskDineOptions: any = [
-    { name: 'Home', showParent: true, route: 'home', image: 'home', imageblue: 'home_blue' },
-    { name: 'Dashboard', showParent: true, route: 'organization-dashboard', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
-    { name: 'Org Dashboard', showParent: true, route: 'dashboard', image: 'Dashbaord_white_1', imageblue: 'Organization_dashbaord_blue' },
-    { name: 'Orders Dashboard', showParent: true, route: 'orders-dashboard', image: 'Billing_white', imageblue: 'Billing_blue' },
-    { name: 'Organization', showParent: true, route: 'organization', image: 'Organization_white', imageblue: 'Organization_Blue' },
+    { name: 'Home', showParent: true, route: 'home', matIcon: 'home', permissionKey: 'home:read' },
+    { name: 'Dashboard', showParent: true, route: 'organization-dashboard', matIcon: 'dashboard', permissionKey: 'dashboard:read' },
+    { name: 'Org Dashboard', showParent: true, route: 'dashboard', matIcon: 'bar_chart', permissionKey: 'dashboard:read' },
+    { name: 'Orders Dashboard', showParent: true, route: 'orders-dashboard', matIcon: 'shopping_cart', permissionKey: 'reports:read' },
+    { name: 'Organization', showParent: true, route: 'organization', matIcon: 'corporate_fare', permissionKey: 'organization:read' },
     {
-      name: 'Outlet', showParent: true, image: 'Outlet_white', imageblue: 'Outlet_blue', children: [
-        { name: 'Search Outlet', route: 'outlet', showChild: true },
-        { name: 'Outlet Master Menu', route: 'outlet-master-menu', showChild: true }
+      name: 'Outlet', showParent: true, matIcon: 'store', permissionKey: 'outlet:read', children: [
+        { name: 'Search Outlet', route: 'outlet', showChild: true, matIcon: 'search' },
+        { name: 'Outlet Master Menu', route: 'outlet-master-menu', showChild: true, matIcon: 'menu_book' }
       ]
     },
-    { name: 'Event Popup', showParent: true, route: 'event-popup', image: 'Outlet_white', imageblue: 'Outlet_blue' },
-    { name: 'Vendor Firm', showParent: true, route: 'vendor-firm', image: 'Vendor firm_white', imageblue: 'Vendor firm_blue' },
-    { name: 'Vendor', showParent: true, route: 'searchVendor', image: 'Vendor_white', imageblue: 'Vendor_blue' },
+    { name: 'Event Popup', showParent: true, route: 'event-popup', matIcon: 'campaign', permissionKey: 'reports:read' },
+    { name: 'Vendor Firm', showParent: true, route: 'vendor-firm', matIcon: 'business', permissionKey: 'vendor:read' },
+    { name: 'Vendor', showParent: true, route: 'vendor', matIcon: 'person_search', permissionKey: 'vendor:read' },
     {
-      name: 'Outlet Orders', showParent: true, image: 'Outlet orders_white', imageblue: 'Outlet orders_blue', children: [
-        { name: 'Outlet Current Order', route: 'currentOrder', showChild: true },
-        { name: 'Outlet Export Order', route: 'outletExcelExport', showChild: true }
-      ]
-    },
-    {
-      name: 'Other Orders', showParent: true, image: 'Other orders_white', imageblue: 'Other orders_blue', children: [
-        { name: 'Current Order', route: 'otherOrder', showChild: true },
-        { name: 'Search Order', route: 'searchOrder', showChild: true },
-        { name: 'Daily Admin Export Orders', route: 'dailyAdminExcelExport', showChild: true },
-      ]
-    },
-    { name: 'Session Management', showParent: true, route: 'sessionManagement', image: 'Enquiries_white', imageblue: 'Enquiries_blue' },
-    { name: 'Notifications', showParent: true, route: 'scheduledNotifications', image: 'Enquiries_white', imageblue: 'Enquiries_blue' },
-    { name: 'Vendor Wallet Dashboard', showParent: true, route: 'vendorWalletDashboard', image: 'Users_white', imageblue: 'Users_blue' },
-    { name: 'Vendor Payout', showParent: true, route: 'vendorPayout', image: 'Users_white', imageblue: 'Users_blue' },
-    { name: 'Users', showParent: true, route: 'customer', image: 'Users_white', imageblue: 'Users_blue' },
-    { name: 'Billing', showParent: true, route: 'billing', image: 'Billing_white', imageblue: 'Billing_blue' },
-    { name: 'Bulk Master Menu', showParent: true, route: 'bulkMasterMenu', image: 'Food items_white', imageblue: 'Food items_blue' },
-    {
-      name: 'Incident Reporting',
-      showParent: true,
-      showBadge: true,
-      count: this.inReviewIncidentsCount$,
-      route: 'orgIncidentManagement',
-      image: 'Incident reporting_white',
-      imageblue: 'Incident reporting_blue',
-    },
-    {
-      name: 'Audit Report',
-      showParent: true,
-      route: 'auditReport',
-      image: 'Incident reporting_white',
-      imageblue: 'Incident reporting_blue',
-    },
-    {
-      name: 'CheckList', showParent: true, image: 'Checklist_white', imageblue: 'Checklist_blue', children: [
-        { name: 'View Checklist', route: 'viewChecklistQuestion', showChild: true },
-        { name: 'Submit CheckList', route: 'submitChecklist', showChild: true },
-        { name: 'Checklist History', route: 'checklistHistory', showChild: true }
+      name: 'Outlet Orders', showParent: true, matIcon: 'receipt_long', permissionKey: 'order:read', children: [
+        { name: 'Outlet Current Order', route: 'currentOrder', showChild: true, matIcon: 'pending_actions' },
+        { name: 'Outlet Export Order', route: 'outletExcelExport', showChild: true, matIcon: 'file_download' }
       ]
     },
     {
-      name: 'Reviews',
-      route: 'orgReviews',
-      image: 'Reviews_white',
-      imageblue: 'Reviews_blue',
-    },
-    {
-      name: 'Feedback',
-      showBadge: true,
-      count: this.unAcknowledgedFeedbackCount$,
-      route: 'appFeedbacks',
-      image: 'Feedback_white',
-      imageblue: 'Feedback_blue',
-    },
-    {
-      name: 'Excel Export',
-      showParent: true,
-      route: 'excelExport',
-      image: 'Excel reports_white',
-      imageblue: 'Excel reports_blue',
-    },
-    {
-      name: 'Enquiries',
-      showBadge: true,
-      count: this.enquiryCount$,
-      route: 'viewEnquiries',
-      image: 'Enquiries_white',
-      imageblue: 'Enquiries_blue',
-    },
-    {
-      name: 'Policy', showParent: true, image: 'Policy_white', imageblue: 'Policy_blue', children: [
-        { name: 'Policy', route: 'policy', showChild: true },
-        { name: 'Add Policy', route: 'addPolicy', showChild: true }
+      name: 'Other Orders', showParent: true, matIcon: 'list_alt', permissionKey: 'order:read', children: [
+        { name: 'Current Order', route: 'otherOrder', showChild: true, matIcon: 'pending_actions' },
+        { name: 'Search Order', route: 'searchOrder', showChild: true, matIcon: 'manage_search' },
       ]
     },
+    { name: 'Session Management', showParent: true, route: 'sessionManagement', matIcon: 'manage_accounts', permissionKey: 'session:read' },
+    { name: 'Notifications', showParent: true, route: 'notifications', matIcon: 'notifications', permissionKey: 'notification:read' },
+    { name: 'Vendor Wallet Dashboard', showParent: true, route: 'vendorWalletDashboard', matIcon: 'account_balance_wallet', permissionKey: 'wallet:read' },
+    { name: 'Vendor Payout', showParent: true, route: 'vendorPayout', matIcon: 'payments', permissionKey: 'payout:read' },
+    { name: 'Users', showParent: true, route: 'customer', matIcon: 'people', permissionKey: 'users:read' },
+    { name: 'Billing', showParent: true, route: 'billing', matIcon: 'receipt', permissionKey: 'billing:read' },
+    { name: 'Bulk Master Menu', showParent: true, route: 'bulkMasterMenu', matIcon: 'restaurant_menu', permissionKey: 'menu:read' },
+    { name: 'Incident Reporting', showParent: true, showBadge: true, count: this.inReviewIncidentsCount$, route: 'orgIncidentManagement', matIcon: 'report_problem', permissionKey: 'incident:read' },
     {
-      name: 'Admin', showParent: true, image: 'Admin_white', imageblue: 'Admin_blue', children: [
-        { name: 'Admin', route: 'admin', showChild: true },
-        { name: 'Add Admin', route: 'addAdmin', showChild: true }
+      name: 'CheckList', showParent: true, matIcon: 'checklist', permissionKey: 'checklist:read', children: [
+        { name: 'View Checklist', route: 'viewChecklistQuestion', showChild: true, matIcon: 'visibility' },
+        { name: 'Submit CheckList', route: 'submitChecklist', showChild: true, matIcon: 'task_alt' },
+        { name: 'Checklist History', route: 'checklistHistory', showChild: true, matIcon: 'history' }
       ]
     },
+    { name: 'Reviews', route: 'orgReviews', matIcon: 'star_rate', permissionKey: 'reports:read' },
+    { name: 'Feedback', showBadge: true, count: this.unAcknowledgedFeedbackCount$, route: 'appFeedbacks', matIcon: 'rate_review', permissionKey: 'reports:read' },
+    { name: 'Enquiries', showBadge: true, count: this.enquiryCount$, route: 'viewEnquiries', matIcon: 'contact_support', permissionKey: 'reports:read' },
     {
-      name: 'Miscelleneous', showParent: true, image: 'Misc_white', imageblue: 'Misc_blue', children: [
-        { name: 'FAQ', route: 'faq', showChild: true },
-        { name: 'Config Images', route: 'configImages', showChild: true },
-        { name: 'Config Group Images', route: 'configImagesGroup', showChild: true },
-        { name: 'Config Variables', route: 'configVariable', showChild: true },
-        { name: 'App Version Control', route: 'appVersionControl', showChild: true },
-        { name: 'Server Logs', route: 'serverlogs', showChild: true }
+      name: 'Roles & Permissions', showParent: true, matIcon: 'admin_panel_settings', route: 'rbac-management', permissionKey: 'role:read'
+    },
+    { name: 'Admin', route: 'admin', showParent: true, matIcon: 'admin_panel_settings', permissionKey: 'admin:read' },
+    {
+      name: 'Miscelleneous', showParent: true, matIcon: 'miscellaneous_services', permissionKey: 'config:read', children: [
+        { name: 'FAQ', route: 'faq', showChild: true, matIcon: 'help_outline' },
+        { name: 'Config Images', route: 'configImages', showChild: true, matIcon: 'image' },
+        { name: 'Config Group Images', route: 'configImagesGroup', showChild: true, matIcon: 'collections' },
+        { name: 'Config Variables', route: 'configVariable', showChild: true, matIcon: 'tune' },
+        { name: 'App Version Control', route: 'appVersionControl', showChild: true, matIcon: 'system_update' },
+        { name: 'Server Logs', route: 'serverlogs', showChild: true, matIcon: 'terminal' }
       ]
     }
   ];
 
   orgOptions: any = [
-    { name: 'Home', showParent: true, route: 'home', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
-    { name: 'Dashboard', showParent: true, route: 'orgDashboard', image: 'Dashbaord_white', imageblue: 'Dashbaord_blue' },
-    { name: 'Consumption Orders', showParent: true, route: 'consumptionOrders', image: 'Users_white', imageblue: 'Users_blue' },
-    { name: 'Menu Items', showParent: true, route: 'orgMenuItems', image: 'Food items_white', imageblue: 'Food items_blue' },
-    { name: 'Outlet Orders', showParent: true, route: 'outletExcelExport', image: 'Other orders_white', imageblue: 'Other orders_blue' },
-    { name: 'Admin Orders', showParent: true, route: 'dailyAdminExcelExport', image: 'Other orders_white', imageblue: 'Other orders_blue' },
-    { name: 'Reviews', showParent: true, route: 'orgReviews', image: 'Reviews_white', imageblue: 'Reviews_blue' },
-    { name: 'Users', showParent: true, route: 'customer', image: 'Users_white', imageblue: 'Users_blue' },
-    { name: 'Vendor Info', showParent: true, route: 'orgVendorInfo', image: 'Vendor_white', imageblue: 'Vendor_blue' },
-    { name: 'Menu Counters', showParent: true, route: 'orgMenuCounters', image: 'Food items_white', imageblue: 'Food items_blue' },
-    { name: 'Audit Report', showParent: true, route: 'auditReport', image: 'Incident reporting_white', imageblue: 'Incident reporting_blue' },
-    // { name: 'Incident Management', showParent: true, route: 'orgIncidentManagement', image: 'Incident reporting_white', imageblue: 'Incident reporting_blue' },
-    { name: 'Checklist', showParent: true, route: 'orgChecklist', image: 'Checklist_white', imageblue: 'Checklist_blue' },
-    // { name: 'Bulk Order History', showParent: true, route: 'orgBulkOrderHistory', image: 'Other orders_white', imageblue: 'Other orders_blue' },
-    { name: 'Employee List', showParent: true, route: 'orgEmployeeList', image: 'Users_white', imageblue: 'Users_blue' },
-    { name: 'Employee Poll', showParent: true, route: 'orgEmpPoll', image: 'Incident reporting_white', imageblue: 'Incident reporting_blue' },
-    { name: 'Salary Deduction', showParent: true, route: 'orgSalaryDeduction', image: 'Billing_white', imageblue: 'Billing_blue' },
-    { name: 'Billing', showParent: true, route: 'billing', image: 'Billing_white', imageblue: 'Billing_Blue' }
+    { name: 'Home', showParent: true, route: 'home', matIcon: 'home', permissionKey: 'home:read' },
+    { name: 'Dashboard', showParent: true, route: 'orgDashboard', matIcon: 'dashboard', permissionKey: 'dashboard:read' },
+    { name: 'Consumption Orders', showParent: true, route: 'consumptionOrders', matIcon: 'shopping_bag', permissionKey: 'order:read' },
+    { name: 'Menu Items', showParent: true, route: 'orgMenuItems', matIcon: 'restaurant_menu', permissionKey: 'menu:read' },
+    { name: 'Outlet Orders', showParent: true, route: 'outletExcelExport', matIcon: 'receipt_long', permissionKey: 'order:read' },
+    { name: 'Admin Orders', showParent: true, route: 'orgAdminDailyOrder', matIcon: 'list_alt', permissionKey: 'order:read' },
+    { name: 'Reviews', showParent: true, route: 'orgReviews', matIcon: 'star_rate', permissionKey: 'reports:read' },
+    { name: 'Users', showParent: true, route: 'customer', matIcon: 'people', permissionKey: 'users:read' },
+    { name: 'Vendor Info', showParent: true, route: 'orgVendorInfo', matIcon: 'business', permissionKey: 'vendor:read' },
+    { name: 'Menu Counters', showParent: true, route: 'orgMenuCounters', matIcon: 'countertops', permissionKey: 'menu:read' },
+    { name: 'Audit Report', showParent: true, route: 'auditReport', matIcon: 'fact_check', permissionKey: 'reports:read' },
+    { name: 'Checklist', showParent: true, route: 'orgChecklist', matIcon: 'checklist', permissionKey: 'checklist:read' },
+    { name: 'Employee List', showParent: true, route: 'orgEmployeeList', matIcon: 'badge', permissionKey: 'users:read' },
+    { name: 'Employee Poll', showParent: true, route: 'orgEmpPoll', matIcon: 'poll', permissionKey: 'reports:read' },
+    { name: 'Salary Deduction', showParent: true, route: 'orgSalaryDeduction', matIcon: 'money_off', permissionKey: 'reports:read' },
+    { name: 'Billing', showParent: true, route: 'billing', matIcon: 'receipt', permissionKey: 'billing:read' }
   ];
 
-  constructor(private suggestionsFeedbackService: SuggestionsFeedbackService) { }
+  constructor(
+    private suggestionsFeedbackService: SuggestionsFeedbackService,
+    private permissionsService: PermissionsService
+  ) { }
 
   getDeskDineOptions() {
-    return [...this.deskDineOptions];
+    return this.filterOptions([...this.deskDineOptions]);
   }
 
   getOrgOptions() {
-    return [...this.orgOptions];
+    return this.filterOptions([...this.orgOptions]);
+  }
+
+  private filterOptions(options: any[]): any[] {
+    return options.filter(option => {
+      // If bypass is on, hasPermission returns true, so everything shows.
+      // Once bypass is off, it will filter based on actual DB permissions.
+      if (option.permissionKey) {
+        return this.permissionsService.hasPermission(option.permissionKey);
+      }
+      return true;
+    });
   }
 }

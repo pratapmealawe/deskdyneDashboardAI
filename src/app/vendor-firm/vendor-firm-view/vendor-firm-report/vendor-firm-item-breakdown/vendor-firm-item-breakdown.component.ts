@@ -1,7 +1,8 @@
 import { Component, computed, Inject, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { ExcelService } from 'src/service/excel.service';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 
 // Option A: namespaced
 import * as pdfMake from 'pdfmake/build/pdfmake';
@@ -78,8 +79,7 @@ export class VendorFirmItemBreakdownComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: VendorFirmItemBreakdownDialogData,
-    public ref: MatDialogRef<VendorFirmItemBreakdownComponent>,
-    private excel: ExcelService
+    public ref: MatDialogRef<VendorFirmItemBreakdownComponent>
   ) {
     this.orders = Array.isArray(data?.orders) ? data.orders : [];
   }
@@ -88,6 +88,16 @@ export class VendorFirmItemBreakdownComponent {
   byItemPaged = computed(() => this.slice(this.byItem(), this.itemPageIndex(), this.itemPageSize()));
   byTypePaged = computed(() => this.slice(this.byType(), this.typePageIndex(), this.typePageSize()));
   byCategoryPaged = computed(() => this.slice(this.byCategory(), this.catPageIndex(), this.catPageSize()));
+
+  // Summary Highlights
+  summaryStats = computed(() => {
+    const items = this.byItem();
+    return {
+      totalItems: items.length,
+      totalQty: items.reduce((sum, r) => sum + r.count, 0),
+      totalSales: items.reduce((sum, r) => sum + r.totalPrice, 0)
+    };
+  });
 
   // Handlers
   onItemPage(e: PageEvent) { this.itemPageIndex.set(e.pageIndex); this.itemPageSize.set(e.pageSize); }
@@ -228,7 +238,28 @@ export class VendorFirmItemBreakdownComponent {
             ? `CategoryBreakdown_${title}`
             : `MrpSplitBreakdown_${title}`;
 
-    this.excel.download(rows, fname);
+    this.downloadExcel(rows, fname);
+  }
+
+  async downloadExcel(data: any[], filename: string) {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      const worksheet = workbook.addWorksheet('sheet1');
+
+      if (data.length > 0) {
+        const headers = Object.keys(data[0]);
+        worksheet.addRow(headers);
+        data.forEach(item => {
+          worksheet.addRow(Object.values(item));
+        });
+      }
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, filename + '.xlsx');
+    } catch (error) {
+      console.error('Excel download error:', error);
+    }
   }
 
 

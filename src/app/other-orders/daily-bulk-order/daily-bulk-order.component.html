@@ -1,6 +1,6 @@
 <div class="filter-card">
-    <div class="filter-row">
-        <div class="filter-item">
+    <div class="date-row">
+        <div>
             <span class="filter-label">Order Date</span>
             <mat-form-field appearance="outline" class="filter-field">
                 <mat-icon matPrefix>calendar_today</mat-icon>
@@ -10,6 +10,13 @@
                 <mat-datepicker #adminDatePicker></mat-datepicker>
             </mat-form-field>
         </div>
+        <div>
+            <button class="add-btn" mat-stroked-button (click)="createManualOrder()">
+                <mat-icon>add</mat-icon> Create Manual Order
+            </button>
+        </div>
+    </div>
+    <div class="filter-row">
         <div class="filter-item flex-grow-1">
             <span class="filter-label">Status</span>
             <div class="status-chips">
@@ -42,7 +49,7 @@
         <div *ngIf="filteredList.length > 0; else noRecord">
             <div class="orders-list">
                 <ng-container *ngFor="let order of filteredList">
-                    <app-daily-bulk-card *ngIf="order.orderType === 'dailyBulk'" [orderInput]="order"
+                    <app-daily-bulk-card *ngIf="order.orderType ==='dailyBulk'" [orderInput]="order"
                         (updateOrder)="refreshOrderList()"></app-daily-bulk-card>
                 </ng-container>
             </div>
@@ -63,9 +70,9 @@
                         <mat-icon>chevron_left</mat-icon>
                     </button>
                     <ng-container *ngFor="let p of visiblePages">
-                        <button *ngIf="p !== '...'" class="page-btn" [class.active]="p === page"
+                        <button *ngIf="p !=='...'" class="page-btn" [class.active]="p === page"
                             (click)="goToPage(p)">{{p}}</button>
-                        <span *ngIf="p === '...'" class="page-dots">...</span>
+                        <span *ngIf="p ==='...'" class="page-dots">...</span>
                     </ng-container>
                     <button class="page-btn" (click)="next(page)" [disabled]="page === totalPages || totalPages === 0">
                         <mat-icon>chevron_right</mat-icon>

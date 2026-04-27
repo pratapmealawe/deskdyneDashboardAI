@@ -1,11 +1,6 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
   OnInit,
-  Output,
-  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from '@angular/core';
@@ -15,11 +10,12 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { categoryList } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { OutletViewService } from '../outlet-view.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -39,10 +35,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     NgbModule,
   ]
 })
-export class QrMenuComponent implements OnInit, OnChanges {
-  @Input() outletObj: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @Output() dataToParent = new EventEmitter<string>();
+export class QrMenuComponent implements OnInit {
+  outletObj: any;
 
   @ViewChild('content') content!: TemplateRef<any>;
   @ViewChild(MatPaginator) menuPaginator!: MatPaginator;
@@ -88,21 +82,21 @@ export class QrMenuComponent implements OnInit, OnChanges {
     private confirmationModalService: ConfirmationModalService,
     private sendDataToComponent: SendDataToComponent,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private outletViewService: OutletViewService
   ) { }
 
   ngOnInit(): void {
     this.createForm();
     this.setupMealTypeAutoTime();
-    this.init();
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.init();
+      }
+    });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['outletObj']) {
-      this.outletObj = changes['outletObj'].currentValue;
-      this.init();
-    }
-  }
 
   // ===== INIT: fetch QrMenu docs (already mealType-wise) =====
   async init() {
@@ -130,7 +124,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
       this.menuPageIndex = 0;
       this.applyMenuFilters();
     } catch (err: any) {
-      console.log(err);
       this.qrMenus = [];
       this.allGroups = [];
       this.groupedMenuList = [];
@@ -223,7 +216,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         { duration: 2500 }
       );
     } catch (err) {
-      console.log('Error changing mealType active flag', err);
       group.isMealTypeActive = prev;
       this.snackBar.open('Failed to update meal status. Please try again.', 'Close', {
         duration: 2500,
@@ -248,7 +240,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
       this.snackBar.open(msg, 'Close', { duration: 3000 });
     } catch (err) {
-      console.log('Error changing category menu type', err);
       group.categoryMenuType = prev;
       this.snackBar.open('Failed to update menu mode. Please try again.', 'Close', {
         duration: 2500,
@@ -273,7 +264,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
       this.snackBar.open(msg, 'Close', { duration: 2500 });
     } catch (err) {
-      console.log('Error changing paid type', err);
       group.paidType = prev;
       this.snackBar.open('Failed to update paid type. Please try again.', 'Close', {
         duration: 2500,
@@ -348,21 +338,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
   }
 
   patchFormValue(group: any, item: any) {
-    console.log(item)
-    this.form.patchValue({
-      itemName: item.itemName,
-      mealType: group?.mealType || '',
-      acceptOrderFrom: group?.acceptOrderFrom || '',
-      acceptOrderTill: group?.acceptOrderTill || '',
-      price: item.price,
-      subsidy: item.subsidy ? item.subsidy : 0,
-      maxQuantity: item.maxQuantity ? item.maxQuantity : 1,
-      category: item.category,
-      itemType: item.itemType,
-      precedence: item.precedence,
-      isActive: item.isActive,
-      description: item.description,
-    });
   }
 
 
@@ -420,7 +395,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
 
       this.resetValues();
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -474,13 +448,11 @@ export class QrMenuComponent implements OnInit, OnChanges {
       }
       this.resetValues();
     } catch (error) {
-      console.log(error);
     }
   }
 
   // COPY MENU (creates a new identical menu item)
   async copyMenu(group: any, item: any) {
-    console.log(group);
 
     try {
       const outletId = this.outletObj._id;
@@ -510,7 +482,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         await this.init();
       }
     } catch (error) {
-      console.log('Error while copying menu item', error);
     }
   }
 
@@ -527,9 +498,7 @@ export class QrMenuComponent implements OnInit, OnChanges {
         await this.init();
       }
       this.resetValues();
-      this.back.emit(true);
     } catch (err) {
-      console.log(err);
     }
   }
 
@@ -554,7 +523,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         );
       }
     } catch (err) {
-      console.log('Error updating item activation', err);
       menu.isActive = prev;
 
       if (showToast) {
@@ -606,7 +574,6 @@ export class QrMenuComponent implements OnInit, OnChanges {
         { duration: 3000 }
       );
     } catch (err) {
-      console.log('Error applying fixed-mode activation', err);
 
       // Revert UI state
       menu.isActive = false;

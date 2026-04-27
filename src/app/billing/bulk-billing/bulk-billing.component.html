@@ -46,10 +46,10 @@
                                 <tr *ngFor="let o of grp.orders">
                                     <td class="fw-medium">{{ o.orderNo }}</td>
                                     <td>
-                                        <div class="fw-bold">{{ o.user_name || '-' }}</div>
+                                        <div class="fw-bold">{{ o.user_name ||'-' }}</div>
                                         <div class="small text-muted"
                                             *ngIf="o.user_phoneNo">
-                                            {{ o.user_phoneNo || '-' }}
+                                            {{ o.user_phoneNo ||'-' }}
                                         </div>
                                     </td>
                                     <td>

@@ -2,15 +2,14 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { UtilityService } from 'src/service/utility.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { interval, Subscription } from 'rxjs';
 import { CommonSelectConfig } from '../common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ConfirmationModalService } from '../../service/confirmation-modal.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { OrderFilterDialogComponent, OrderFilterDialogData } from '../common-components/order-filter-dialog/order-filter-dialog.component';
-import { ToasterService } from 'src/service/toaster.service';
+import { ToasterService } from '@service/toaster.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
@@ -72,7 +71,7 @@ export class OutletOrdersComponent implements OnInit, OnDestroy {
   };
 
 
-  constructor(public router: Router, private apiMainService: ApiMainService, private modalService: NgbModal, private utilityService: UtilityService, private sendDataToComponent: SendDataToComponent, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService, private dialog: MatDialog) {
+  constructor(public router: Router, private apiMainService: ApiMainService, private modalService: NgbModal, private sendDataToComponent: SendDataToComponent, private confirmationModalService: ConfirmationModalService, private toaster: ToasterService, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -89,7 +88,6 @@ export class OutletOrdersComponent implements OnInit, OnDestroy {
 
 
   filterSubmitted(event: any) {
-    console.log(event);
 
     if (event) {
       this.filterObj.cafeId = event.outlet_id;

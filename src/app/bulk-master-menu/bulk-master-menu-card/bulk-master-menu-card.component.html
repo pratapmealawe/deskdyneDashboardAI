@@ -2,12 +2,12 @@
   <!-- TOP: IMAGE SECTION -->
   <div class="image-section">
     <img [src]="imageUrl + foodItem.imageUrl" (error)="onImageError($event)"
-      [alt]="foodItem.itemName || 'Menu item image'" />
+      [alt]="foodItem.itemName ||'Menu item image'" />
     
     <div class="type-indicator" [ngClass]="{
-        veg: foodItem.itemType === 'Veg',
-        nonveg: foodItem.itemType === 'NonVeg',
-        jain: foodItem.itemType === 'Jain'
+        veg: foodItem.itemType ==='Veg',
+        nonveg: foodItem.itemType ==='NonVeg',
+        jain: foodItem.itemType ==='Jain'
       }">
       {{ foodItem.itemType }}
     </div>
@@ -27,39 +27,39 @@
 
   <!-- BOTTOM: CONTENT SECTION -->
   <div class="content-section">
-    <div class="item-title" [matTooltip]="foodItem.itemName">{{ foodItem.itemName || '-' }}</div>
+    <div class="item-title" [matTooltip]="foodItem.itemName">{{ foodItem.itemName ||'-' }}</div>
     
     <div class="item-meta">
       <div class="meta-tag">
         <mat-icon>palette</mat-icon>
-        <span>{{ foodItem.itemFlavour || 'Std' }}</span>
+        <span>{{ foodItem.itemFlavour ||'Std' }}</span>
       </div>
       <div class="meta-tag">
         <mat-icon>restaurant</mat-icon>
-        <span>{{ foodItem.itemServingType === 'perPerson' ? '1 Person' : foodItem.itemServingType }}</span>
+        <span>{{ foodItem.itemServingType ==='perPerson' ?'1 Person' : foodItem.itemServingType }}</span>
       </div>
     </div>
 
     <div class="description-preview">
-      {{ foodItem.itemDescription || 'No description provided.' }}
+      {{ foodItem.itemDescription ||'No description provided.' }}
     </div>
 
     <div class="pricing-grid">
       <div class="price-item" *ngIf="foodItem.slab1Price != null">
         <span class="slab-label">Slab 1</span>
-        <div class="slab-price"><span>₹</span>{{ foodItem.slab1Price | number: '1.0-1' }}</div>
+        <div class="slab-price"><span>₹</span>{{ foodItem.slab1Price | number:'1.0-1' }}</div>
       </div>
       <div class="price-item" *ngIf="foodItem.slab2Price != null">
         <span class="slab-label">Slab 2</span>
-        <div class="slab-price"><span>₹</span>{{ foodItem.slab2Price | number: '1.0-1' }}</div>
+        <div class="slab-price"><span>₹</span>{{ foodItem.slab2Price | number:'1.0-1' }}</div>
       </div>
       <div class="price-item" *ngIf="foodItem.slab3Price != null">
         <span class="slab-label">Slab 3</span>
-        <div class="slab-price"><span>₹</span>{{ foodItem.slab3Price | number: '1.0-1' }}</div>
+        <div class="slab-price"><span>₹</span>{{ foodItem.slab3Price | number:'1.0-1' }}</div>
       </div>
       <div class="price-item" *ngIf="foodItem.slab4Price != null">
         <span class="slab-label">Slab 4</span>
-        <div class="slab-price"><span>₹</span>{{ foodItem.slab4Price | number: '1.0-1' }}</div>
+        <div class="slab-price"><span>₹</span>{{ foodItem.slab4Price | number:'1.0-1' }}</div>
       </div>
     </div>
   </div>

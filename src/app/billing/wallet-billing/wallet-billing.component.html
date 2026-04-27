@@ -5,7 +5,7 @@
         <div class="col-12 col-md-3">
             <mat-form-field appearance="outline" class="w-100">
                 <mat-label>Organization</mat-label>
-                <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role === 'ORGADMIN' || isDisabled"
+                <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role ==='ORGADMIN' || isDisabled"
                     (selectionChange)="setOrgDetails()">
                     <mat-option [value]="''" disabled>Select Organization</mat-option>
                     <mat-option *ngFor="let option of orglist" [value]="option._id">
@@ -113,9 +113,7 @@
                                 </span>
                             </td>
                             <td class="px-3">
-                                <span class="badge" [ngClass]="{
-                                    'bg-success-subtle text-success': row.transactionType === 'Credit',
-                                    'bg-danger-subtle text-danger': row.transactionType === 'Debit'
+                                <span class="badge" [ngClass]="{'bg-success-subtle text-success': row.transactionType ==='Credit','bg-danger-subtle text-danger': row.transactionType ==='Debit'
                                 }">
                                     {{ row.transactionType }}
                                 </span>
@@ -125,10 +123,7 @@
                             </td>
                             <td class="px-3 text-muted small">{{ row.remark }}</td>
                             <td class="text-center px-3">
-                                <span class="badge rounded-pill" [ngClass]="{
-                                    'bg-success': row.status === 'completed',
-                                    'bg-warning text-dark': row.status === 'pending',
-                                    'bg-danger': row.status === 'failed'
+                                <span class="badge rounded-pill" [ngClass]="{'bg-success': row.status ==='completed','bg-warning text-dark': row.status ==='pending','bg-danger': row.status ==='failed'
                                 }">
                                     {{ row.status | titlecase }}
                                 </span>

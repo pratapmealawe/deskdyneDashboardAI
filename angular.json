@@ -39,7 +39,10 @@
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.min.js",
               "src/plugins/croppr.min.js"
-            ]
+            ],
+            "stylePreprocessorOptions": {
+              "includePaths": ["src"]
+            }
           },
           "configurations": {
             "production": {

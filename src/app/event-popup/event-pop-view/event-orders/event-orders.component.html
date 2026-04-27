@@ -41,7 +41,7 @@
             <!-- Chart / Table toggle -->
             <div class="col-12 col-md-2 d-flex justify-content-md-end justify-content-start">
                 <button mat-icon-button class="toggle-btn"
-                    matTooltip="{{ isShowChart ? 'Show list view' : 'Show chart view' }}" (click)="changeDataView()"
+                    matTooltip="{{ isShowChart ?'Show list view' :'Show chart view' }}" (click)="changeDataView()"
                     [disabled]="filteredOrders.length === 0">
                     <mat-icon *ngIf="!isShowChart">stacked_bar_chart</mat-icon>
                     <mat-icon *ngIf="isShowChart">list</mat-icon>
@@ -62,14 +62,14 @@
                 <div class="col-6 col-md-3">
                     <div class="summary-label">Total Amount (₹)</div>
                     <div class="summary-value">
-                        {{ totals.totalAmount | number : '1.2-2' }}
+                        {{ totals.totalAmount | number :'1.2-2' }}
                     </div>
                 </div>
 
                 <div class="col-6 col-md-3">
                     <div class="summary-label">Wallet Amount (₹)</div>
                     <div class="summary-value">
-                        {{ totals.walletAmount | number : '1.2-2' }}
+                        {{ totals.walletAmount | number :'1.2-2' }}
                     </div>
                 </div>
 
@@ -99,7 +99,7 @@
                         <div class="order-left">
                             <mat-card-header>
                                 <div mat-card-avatar class="order-avatar">
-                                    {{ row.customerName?.[0] || 'C' }}
+                                    {{ row.customerName?.[0] ||'C' }}
                                 </div>
 
                                 <div class="order-header-text">
@@ -107,8 +107,8 @@
                                         Order #{{ row.orderNo }}
                                     </mat-card-title>
                                     <mat-card-subtitle>
-                                        Token #{{ row.tokenNo || '-' }} •
-                                        {{ row.orderDate | date: 'MMM d, y, h:mm a' }}
+                                        Token #{{ row.tokenNo ||'-' }} •
+                                        {{ row.orderDate | date:'MMM d, y, h:mm a' }}
                                     </mat-card-subtitle>
                                 </div>
 
@@ -123,11 +123,11 @@
                                 <div><strong>Mobile:</strong> {{ row.customerPhoneNo }}</div>
                                 <div>
                                     <strong>Org:</strong>
-                                    {{ row.organizationDetails?.organization_name || '-' }}
+                                    {{ row.organizationDetails?.organization_name ||'-' }}
                                 </div>
                                 <div>
                                     <strong>Cafe:</strong>
-                                    {{ row.cafeteriaDetails?.cafeteria_name || '-' }}
+                                    {{ row.cafeteriaDetails?.cafeteria_name ||'-' }}
                                 </div>
                             </div>
                         </div>
@@ -143,7 +143,7 @@
                                             {{ i.itemName }} <span *ngIf="i.count">x{{ i.count }}</span>
                                         </div>
                                         <div class="item-price">
-                                            ₹{{ i.price | number : '1.2-2' }}
+                                            ₹{{ i.price | number :'1.2-2' }}
                                         </div>
                                     </div>
                                 </div>
@@ -154,19 +154,19 @@
                                 <div>
                                     <div class="label">Item Amount</div>
                                     <div class="value">
-                                        ₹{{ row.itemAmount | number : '1.2-2' }}
+                                        ₹{{ row.itemAmount | number :'1.2-2' }}
                                     </div>
                                 </div>
                                 <div>
                                     <div class="label">Wallet Used</div>
                                     <div class="value">
-                                        ₹{{ row.moneyWalletPointsUsed || 0 | number : '1.2-2' }}
+                                        ₹{{ row.moneyWalletPointsUsed || 0 | number :'1.2-2' }}
                                     </div>
                                 </div>
                                 <div>
                                     <div class="label">Amount Paid</div>
                                     <div class="value">
-                                        ₹{{ row.amount || 0 | number : '1.2-2' }}
+                                        ₹{{ row.amount || 0 | number :'1.2-2' }}
                                     </div>
                                 </div>
                                 <div>
@@ -174,7 +174,7 @@
                                     <div class="value total">
                                         ₹{{
                                         (row.amount || 0) + (row.moneyWalletPointsUsed || 0)
-                                        | number : '1.2-2'
+                                        | number :'1.2-2'
                                         }}
                                     </div>
                                 </div>

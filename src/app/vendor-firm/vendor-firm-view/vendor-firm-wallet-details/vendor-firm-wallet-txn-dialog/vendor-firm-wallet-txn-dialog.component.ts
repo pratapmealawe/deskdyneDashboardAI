@@ -1,8 +1,8 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { BankTransactionService } from 'src/service/bank-transaction.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { BankTransactionService } from '@service/bank-transaction.service';
 
 export interface WalletTxnDialogData {
   vendorFirmId: string;
@@ -49,7 +49,6 @@ export class VendorFirmWalletTxnDialogComponent {
       remark: ['', [Validators.required, Validators.maxLength(200)]]
     });
     // If transferring subsidy, cap by available subsidy
-    console.log(data);
 
     if (this.data.kind === 'Transfer') {
       const max =
@@ -84,7 +83,6 @@ export class VendorFirmWalletTxnDialogComponent {
           });
         } else if (this.data.transferSource === 'subsidy') {
           // Subsidy → wallet (existing)
-          console.log('Subsidy → wallet (existing)');
           await this.api.moveSubsidyToWallet({
             vendorFirmId: this.data.vendorFirmId,
             amount: +amt.toFixed(2),

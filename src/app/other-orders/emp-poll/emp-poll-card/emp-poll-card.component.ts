@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { SendDataToComponent } from '@service/sendDataToComponent.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { LocalStorageService } from '@service/local-storage.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -48,7 +48,6 @@ export class EmpPollCardComponent {
           if (adminId) {
             this.orderInput.actionBy = adminId;
           }
-          console.log(this.orderInput);
 
           await this.apiMainService.createOrderFromPollObj(this.orderInput);
           this.sendDataToComponent.publish('UPDATE_BULK_ORDER_PAGE', { reload: true, _id: this.order._id });

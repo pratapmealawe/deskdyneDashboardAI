@@ -20,7 +20,7 @@
             </div>
 
             <div class="card-actions">
-                <button mat-stroked-button class="action-btn" (click)="openTxnDialog('Transfer', 'wallet')"
+                <button mat-stroked-button class="action-btn" (click)="openTxnDialog('Transfer','wallet')"
                     matTooltip="Transfer">
                     <mat-icon>swap_horiz</mat-icon>
                 </button>
@@ -55,7 +55,7 @@
 
             <div class="card-actions">
                 <button mat-stroked-button class="action-btn full-width" *ngIf="subsidyBalance > 0"
-                    (click)="openTxnDialog('Transfer', 'subsidy')">
+                    (click)="openTxnDialog('Transfer','subsidy')">
                     <mat-icon>swap_horiz</mat-icon> Transfer to Wallet
                 </button>
                 <span *ngIf="!subsidyBalance || subsidyBalance <= 0" class="empty-state-text">No actions
@@ -83,7 +83,7 @@
 
             <div class="card-actions">
                 <button mat-stroked-button class="action-btn full-width" *ngIf="dailyBalance > 0"
-                    (click)="openTxnDialog('Transfer', 'daily')">
+                    (click)="openTxnDialog('Transfer','daily')">
                     <mat-icon>swap_horiz</mat-icon> Transfer to Wallet
                 </button>
                 <span *ngIf="!dailyBalance || dailyBalance <= 0" class="empty-state-text">No actions available</span>

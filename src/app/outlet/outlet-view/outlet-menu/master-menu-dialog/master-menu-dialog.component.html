@@ -4,7 +4,7 @@
     <span>Add from Master Menu</span>
   </div>
   <div class="selection-count header-count" *ngIf="selectedItems.length > 0">
-    {{ selectedItems.length }} item{{ selectedItems.length > 1 ? 's' : '' }} selected
+    {{ selectedItems.length }} item{{ selectedItems.length > 1 ?'s' :'' }} selected
   </div>
   <button mat-icon-button mat-dialog-close class="close-btn">
     <mat-icon>close</mat-icon>
@@ -39,7 +39,7 @@
   <!-- SELECTION LIST -->
   <div class="selection-list">
     <div class="menu-card-h selection-card" *ngFor="let item of filteredMasterMenuList"
-      [ngClass]="{ 'selected': isSelected(item) }" (click)="onItemToggle(item)">
+      [ngClass]="{'selected': isSelected(item) }" (click)="onItemToggle(item)">
       
       <!-- Checkbox overlay for selection -->
       <div class="selection-indicator" *ngIf="isSelected(item)">
@@ -49,7 +49,7 @@
       <!-- Square Image with padding -->
       <div class="card-image-h">
         <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" onerror="this.src='assets/images/placeholder.png'"/>
-        <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
+        <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
           <span class="indicator-dot"></span>
         </div>
       </div>
@@ -58,8 +58,8 @@
       <div class="card-content-h">
         <!-- Row 1: Name + Category -->
         <div class="content-top">
-          <h3 class="item-name">{{ item.itemName || 'Unnamed item' }}</h3>
-          <span class="category-tag">{{ item.category || 'General' }}</span>
+          <h3 class="item-name">{{ item.itemName ||'Unnamed item' }}</h3>
+          <span class="category-tag">{{ item.category ||'General' }}</span>
         </div>
 
         <!-- Row 2: Description -->

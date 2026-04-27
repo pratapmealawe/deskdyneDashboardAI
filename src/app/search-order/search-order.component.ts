@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { orderStatusMapper } from 'src/config/order-status.config';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -106,7 +106,6 @@ export class SearchOrderComponent {
           this.nextOn = false;
       }
     } catch (error) {
-      console.log('error while searching orders ', error);
     }
   }
 

@@ -5,7 +5,7 @@
                 <div class="labelText mb-1">ORDER NO.</div>
                 <div class="d-flex align-items-center gap-2">
                     <span class="labelData">#{{ orderInput?.orderNo }}</span>
-                    <span class="status-badge" [ngClass]="'status-' + orderInput?.orderstatus?.replace(' ', '')">
+                    <span class="status-badge" [ngClass]="'status-' + orderInput?.orderstatus?.replace('','')">
                         {{ orderInput?.orderstatus | uppercase }}
                     </span>
                 </div>
@@ -14,18 +14,18 @@
                 <div class="labelText mb-1">TYPE</div>
                 <div class="labelData d-flex align-items-center gap-1">
                     <i class="bi bi-box-seam text-secondary"></i>
-                    <span> {{ orderInput?.orderType || 'Bulk Order' }}</span>
+                    <span> {{ orderInput?.orderType ||'Bulk Order' }}</span>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
                 <div class="labelText mb-1">TIMELINE</div>
                 <div class="d-flex flex-column">
                     <div class="small-text text-secondary mb-1 fs-12">
-                        Ordered: <span class="text-dark fw-medium">{{ orderInput?.orderDate | date: 'MMM d, y' }}</span>
+                        Ordered: <span class="text-dark fw-medium">{{ orderInput?.orderDate | date:'MMM d, y' }}</span>
                     </div>
                     <div class="small-text text-secondary fs-12">
-                        Delivery: <span class="text-dark fw-medium">{{ orderInput?.deliveryDate | date: 'MMM d' }} • {{
-                            orderInput?.slotStartTime | date: 'shortTime' }}</span>
+                        Delivery: <span class="text-dark fw-medium">{{ orderInput?.deliveryDate | date:'MMM d' }} • {{
+                            orderInput?.slotStartTime | date:'shortTime' }}</span>
                     </div>
                 </div>
             </div>
@@ -62,7 +62,7 @@
                 <div class="labelText mb-1">ORDER NO.</div>
                 <div class="d-flex align-items-center gap-2">
                     <span class="labelData">#{{ order?.orderNo }}</span>
-                    <span class="status-badge" [ngClass]="'status-' + order?.orderstatus?.replace(' ', '')">
+                    <span class="status-badge" [ngClass]="'status-' + order?.orderstatus?.replace('','')">
                         {{ order?.orderstatus | uppercase }}
                     </span>
                 </div>
@@ -71,18 +71,18 @@
                 <div class="labelText mb-1">TYPE</div>
                 <div class="labelData d-flex align-items-center gap-1">
                     <i class="bi bi-box-seam text-secondary"></i>
-                    <span>{{ order?.orderType || 'Bulk Order' }}</span>
+                    <span>{{ order?.orderType ||'Bulk Order' }}</span>
                 </div>
             </div>
             <div class="col-lg-3 col-md-3 d-flex flex-column border-sep">
                 <div class="labelText mb-1">TIMELINE</div>
                 <div class="d-flex flex-column">
                     <div class="small-text text-secondary mb-1 fs-12">
-                        Ordered: <span class="text-dark fw-medium">{{ order?.orderDate | date: 'MMM d, y' }}</span>
+                        Ordered: <span class="text-dark fw-medium">{{ order?.orderDate | date:'MMM d, y' }}</span>
                     </div>
                     <div class="small-text text-secondary fs-12">
-                        Delivery: <span class="text-dark fw-medium">{{ order?.deliveryDate | date: 'MMM d' }} • {{
-                            order?.slotStartTime | date: 'shortTime' }}</span>
+                        Delivery: <span class="text-dark fw-medium">{{ order?.deliveryDate | date:'MMM d' }} • {{
+                            order?.slotStartTime | date:'shortTime' }}</span>
                     </div>
                 </div>
             </div>
@@ -103,9 +103,9 @@
                 <div class="labelText mb-1">CONTROLS</div>
                 <div class="d-flex align-items-center gap-2">
                     <button class="view bg-primary-subtle text-primary border-0"
-                        *ngIf="order?.orderstatus !== 'completed'" (click)="toggleEditMode()"
-                        [title]="editMode ? 'Disable Edit' : 'Enable Edit'">
-                        <mat-icon>{{ editMode ? 'close' : 'edit' }}</mat-icon>
+                        *ngIf="order?.orderstatus !=='completed'" (click)="toggleEditMode()"
+                        [title]="editMode ?'Disable Edit' :'Enable Edit'">
+                        <mat-icon>{{ editMode ?'close' :'edit' }}</mat-icon>
                     </button>
                     <button class="view" (click)="showLess()" title="Collapse">
                         <mat-icon>expand_less</mat-icon>
@@ -191,7 +191,7 @@
 
                     <!-- Edit Price Controls -->
                     <div class="mt-3"
-                        *ngIf="editMode && (order.orderstatus === 'placed' || order.orderstatus === 'accepted' || order.orderstatus === 'waitingForApproval')">
+                        *ngIf="editMode && (order.orderstatus ==='placed' || order.orderstatus ==='accepted' || order.orderstatus ==='waitingForApproval')">
                         <div class="d-flex flex-column gap-2">
                             <div *ngIf="itemPriceEdit" class="d-flex gap-2 align-items-center">
                                 <input type="number" class="form-control form-control-sm" [(ngModel)]="order.itemAmount"
@@ -306,16 +306,16 @@
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="small text-muted">Manual</span>
-                        <span class="fw-bold text-dark small">{{ order?.startManualDelivery ? 'Yes' : 'No' }}</span>
+                        <span class="fw-bold text-dark small">{{ order?.startManualDelivery ?'Yes' :'No' }}</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2">
                         <span class="small text-muted">Slot</span>
-                        <span class="fw-bold text-dark small">{{ order?.slotStartTime | date: 'shortTime' }} - {{
-                            order?.slotEndTime | date: 'shortTime' }}</span>
+                        <span class="fw-bold text-dark small">{{ order?.slotStartTime | date:'shortTime' }} - {{
+                            order?.slotEndTime | date:'shortTime' }}</span>
                     </div>
                     <div class="d-flex justify-content-between">
                         <span class="small text-muted">Partner</span>
-                        <span class="fw-bold text-dark small">{{ order?.deliveryVendor || 'N/A' }}</span>
+                        <span class="fw-bold text-dark small">{{ order?.deliveryVendor ||'N/A' }}</span>
                     </div>
                 </div>
             </div>
@@ -407,15 +407,15 @@
                             {{ log?.orderstatus }}
                         </span>
                         <span class="text-dark fw-bold" style="font-size: 12px;">
-                            {{ log?.updatedOn | date: 'd MMM y, h:mm a' }}
+                            {{ log?.updatedOn | date:'d MMM y, h:mm a' }}
                         </span>
-                        <span *ngIf="order.orderstatus !== 'placed'" class="text-muted fw-normal"
+                        <span *ngIf="order.orderstatus !=='placed'" class="text-muted fw-normal"
                             style="font-size: 11px;">
-                            • by {{ log?.actionBy || 'System Admin' }}
+                            • by {{ log?.actionBy ||'System Admin' }}
                         </span>
-                        <span *ngIf="order.orderstatus === 'placed'" class="text-muted fw-normal"
+                        <span *ngIf="order.orderstatus ==='placed'" class="text-muted fw-normal"
                             style="font-size: 11px;">
-                            • by {{ 'User' }}
+                            • by {{'User' }}
                         </span>
                     </div>
                 </div>
@@ -427,9 +427,9 @@
         <!-- Action Buttons -->
         <div class="mt-auto pt-3 border-top d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="action-buttons" *ngIf="editMode">
-                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus === 'waitingForApproval'"
+                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus ==='waitingForApproval'"
                     (click)="acceptRejectOrder('placed')">Place Order</button>
-                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus === 'placed'"
+                <button class="btn btn-primary btn-sm fw-medium" *ngIf="order?.orderstatus ==='placed'"
                     (click)="acceptRejectOrder('accepted')">Accept Order</button>
                 <button class="btn btn-warning btn-sm fw-medium" *ngIf="orderStage === 2"
                     (click)="acceptRejectOrder('preparing')">Preparing</button>
@@ -443,7 +443,7 @@
                 <button class="btn btn-success btn-sm fw-medium" *ngIf="orderStage === 4 || orderStage === 5"
                     (click)="acceptRejectOrder('delivered')">Delivered</button>
                 <button class="btn btn-outline-danger btn-sm fw-medium"
-                    *ngIf="orderStage === 1 || orderStage === 2 || order?.orderstatus === 'waitingForApproval'"
+                    *ngIf="orderStage === 1 || orderStage === 2 || order?.orderstatus ==='waitingForApproval'"
                     (click)="acceptRejectOrder('cancelled')">Cancel Order</button>
                 <button class="btn btn-dark btn-sm fw-medium" *ngIf="orderStage >= 4"
                     (click)="payAmtToKitchen()">Complete & Add to Wallet</button>

@@ -41,7 +41,7 @@
 
         <!-- Status Tiles / Stats -->
         <div class="stats-grid mb-4">
-            <div class="stat-card" [class.active]="selectedStatus === 'paymentInprogress'"
+            <div class="stat-card" [class.active]="selectedStatus ==='paymentInprogress'"
                 (click)="getLatestOrderStatusList('paymentInprogress')">
                 <div class="stat-icon warning">
                     <mat-icon>hourglass_empty</mat-icon>
@@ -52,7 +52,7 @@
                 </div>
             </div>
 
-            <div class="stat-card" [class.active]="selectedStatus === 'paymentFailed'"
+            <div class="stat-card" [class.active]="selectedStatus ==='paymentFailed'"
                 (click)="getLatestOrderStatusList('paymentFailed')">
                 <div class="stat-icon error">
                     <mat-icon>error</mat-icon>
@@ -63,7 +63,7 @@
                 </div>
             </div>
 
-            <div class="stat-card" [class.active]="selectedStatus === 'placed'"
+            <div class="stat-card" [class.active]="selectedStatus ==='placed'"
                 (click)="getLatestOrderStatusList('placed')">
                 <div class="stat-icon primary">
                     <mat-icon>restaurant</mat-icon>
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <div class="stat-card" [class.active]="selectedStatus === 'readyOrder'"
+            <div class="stat-card" [class.active]="selectedStatus ==='readyOrder'"
                 (click)="getLatestOrderStatusList('readyOrder')">
                 <div class="stat-icon ready">
                     <mat-icon>room_service</mat-icon>
@@ -85,7 +85,7 @@
                 </div>
             </div>
 
-            <div class="stat-card" [class.active]="selectedStatus === 'completed'"
+            <div class="stat-card" [class.active]="selectedStatus ==='completed'"
                 (click)="getLatestOrderStatusList('completed')">
                 <div class="stat-icon success">
                     <mat-icon>check_circle</mat-icon>
@@ -102,19 +102,19 @@
             <div class="chip-strip">
                 <div class="filter-chip" *ngIf="filterPgName">
                     {{ filterPgName }}
-                    <mat-icon (click)="filterPgName = ''; applyFilter()">close</mat-icon>
+                    <mat-icon (click)="filterPgName =''; applyFilter()">close</mat-icon>
                 </div>
                 <div class="filter-chip" *ngIf="filterAppVersion">
                     v{{ filterAppVersion }}
-                    <mat-icon (click)="filterAppVersion = ''; applyFilter()">close</mat-icon>
+                    <mat-icon (click)="filterAppVersion =''; applyFilter()">close</mat-icon>
                 </div>
                 <div class="filter-chip" *ngIf="filterPlatform">
                     {{ filterPlatform }}
-                    <mat-icon (click)="filterPlatform = ''; applyFilter()">close</mat-icon>
+                    <mat-icon (click)="filterPlatform =''; applyFilter()">close</mat-icon>
                 </div>
                 <div class="filter-chip" *ngIf="filterIsPosOrder">
-                    POS: {{ filterIsPosOrder === 'true' ? 'Yes' : 'No' }}
-                    <mat-icon (click)="filterIsPosOrder = ''; applyFilter()">close</mat-icon>
+                    POS: {{ filterIsPosOrder ==='true' ?'Yes' :'No' }}
+                    <mat-icon (click)="filterIsPosOrder =''; applyFilter()">close</mat-icon>
                 </div>
                 <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
                     <mat-icon>filter_alt_off</mat-icon> Clear All
@@ -130,27 +130,27 @@
             </div>
             <div class="total-chip">
                 <span class="chip-label">Wallet</span>
-                <span class="chip-value">₹{{ totalWalletUsed | number : '1.2-2' }}</span>
+                <span class="chip-value">₹{{ totalWalletUsed | number :'1.2-2' }}</span>
             </div>
             <div class="total-chip" *ngIf="totalCompanyWallet > 0">
                 <span class="chip-label">Company</span>
-                <span class="chip-value">₹{{ totalCompanyWallet | number : '1.2-2' }}</span>
+                <span class="chip-value">₹{{ totalCompanyWallet | number :'1.2-2' }}</span>
             </div>
             <div class="total-chip" *ngIf="totalSubsidy > 0">
                 <span class="chip-label">Subsidy</span>
-                <span class="chip-value">₹{{ totalSubsidy | number : '1.2-2' }}</span>
+                <span class="chip-value">₹{{ totalSubsidy | number :'1.2-2' }}</span>
             </div>
             <div class="total-chip" *ngIf="totalPackaging > 0">
                 <span class="chip-label">Packaging</span>
-                <span class="chip-value">₹{{ totalPackaging | number : '1.2-2' }}</span>
+                <span class="chip-value">₹{{ totalPackaging | number :'1.2-2' }}</span>
             </div>
             <div class="total-chip">
                 <span class="chip-label">Paid</span>
-                <span class="chip-value">₹{{ totalAmountPaid | number : '1.2-2' }}</span>
+                <span class="chip-value">₹{{ totalAmountPaid | number :'1.2-2' }}</span>
             </div>
             <div class="total-chip highlight">
                 <span class="chip-label">Revenue</span>
-                <span class="chip-value">₹{{ totalAmount | number : '1.2-2' }}</span>
+                <span class="chip-value">₹{{ totalAmount | number :'1.2-2' }}</span>
             </div>
         </div>
 
@@ -168,7 +168,7 @@
                     <!-- Card Top (matches outlet-card card-top) -->
                     <div class="card-top">
                         <div class="order-avatar">
-                            {{ row.customerName?.[0] || 'O' }}
+                            {{ row.customerName?.[0] ||'O' }}
                         </div>
                         <div class="order-identity">
                             <h3 class="order-title">#{{ row.orderNo }}</h3>
@@ -177,35 +177,35 @@
                                     <mat-icon>confirmation_number</mat-icon> Token {{ row.tokenNo }}
                                 </span>
                                 <span class="date-text">
-                                    {{ row.SubmitedDate || row.orderDate | date: 'MMM d, y, h:mm a' }}
+                                    {{ row.SubmitedDate || row.orderDate | date:'MMM d, y, h:mm a' }}
                                 </span>
                             </div>
                         </div>
                         <div class="card-top-right">
                             <div class="status-badge" [ngClass]="row.orderstatus">
-                                <mat-icon>{{ row.orderstatus === 'completed' ? 'check_circle' :
-                                    row.orderstatus === 'placed' ? 'restaurant' :
-                                    row.orderstatus === 'readyOrder' ? 'room_service' :
-                                    row.orderstatus === 'paymentFailed' ? 'error' :
-                                    row.orderstatus === 'paymentInprogress' ? 'hourglass_empty' : 'info' }}</mat-icon>
+                                <mat-icon>{{ row.orderstatus ==='completed' ?'check_circle' :
+                                    row.orderstatus ==='placed' ?'restaurant' :
+                                    row.orderstatus ==='readyOrder' ?'room_service' :
+                                    row.orderstatus ==='paymentFailed' ?'error' :
+                                    row.orderstatus ==='paymentInprogress' ?'hourglass_empty' :'info' }}</mat-icon>
                                 {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
                             </div>
                             <div class="card-actions">
-                                <button mat-icon-button color="primary" *ngIf="row.orderstatus === 'placed'"
+                                <button mat-icon-button color="primary" *ngIf="row.orderstatus ==='placed'"
                                     (click)="readyOrder(row)" matTooltip="Mark Ready">
                                     <mat-icon>check</mat-icon>
                                 </button>
                                 <button mat-icon-button class="complete-btn"
-                                    *ngIf="row.orderstatus === 'placed' || row.orderstatus === 'readyOrder'"
+                                    *ngIf="row.orderstatus ==='placed' || row.orderstatus ==='readyOrder'"
                                     (click)="completeOrder(row)" matTooltip="Complete Order">
                                     <mat-icon>done_all</mat-icon>
                                 </button>
-                                <button mat-icon-button color="warn" *ngIf="row.orderstatus === 'placed'"
+                                <button mat-icon-button color="warn" *ngIf="row.orderstatus ==='placed'"
                                     (click)="cancelOrder(row)" matTooltip="Cancel Order">
                                     <mat-icon>cancel</mat-icon>
                                 </button>
                                 <button mat-icon-button color="accent"
-                                    *ngIf="row.orderstatus === 'paymentInprogress' && isPaymentValidationVisible(row)"
+                                    *ngIf="row.orderstatus ==='paymentInprogress' && isPaymentValidationVisible(row)"
                                     (click)="validatePayment(row)" matTooltip="Validate Payment">
                                     <mat-icon>verified</mat-icon>
                                 </button>
@@ -280,7 +280,7 @@
                                     <div class="item-main">
                                         <div class="item-left">
                                             <span class="type-dot"
-                                                [ngClass]="i.itemType === 'Veg' ? 'veg' : 'nonveg'"></span>
+                                                [ngClass]="i.itemType ==='Veg' ?'veg' :'nonveg'"></span>
                                             <span class="item-qty" *ngIf="i.count > 0">
                                                 {{ i.count }}x
                                             </span>
@@ -290,7 +290,7 @@
                                             </span>
                                         </div>
                                         <span class="item-price">
-                                            ₹{{ i.price * (i.count || 1) | number : '1.2-2' }}
+                                            ₹{{ i.price * (i.count || 1) | number :'1.2-2' }}
                                         </span>
                                     </div>
                                     <div class="addOn-row" *ngIf="i.addOnsList?.length > 0">
@@ -298,7 +298,7 @@
                                             <span class="addon-label">ADD-ONS :</span>
                                             <span class="addon-text">
                                                 <ng-container *ngFor="let addon of i.addOnsList; let last = last">
-                                                    {{ addon.addOnName }}{{ !last ? ', ' : '' }}
+                                                    {{ addon.addOnName }}{{ !last ?',' :'' }}
                                                 </ng-container>
                                             </span>
                                         </div>
@@ -317,51 +317,51 @@
                         <div class="fin-strip">
                             <div class="fin-cell">
                                 <span class="fin-label">Item Total</span>
-                                <span class="fin-value">₹{{ row.itemAmount | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.itemAmount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell" *ngIf="row.addOnCharges > 0">
                                 <span class="fin-label">Add-on Charges</span>
-                                <span class="fin-value">₹{{ row.addOnCharges | number: '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.addOnCharges | number:'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell" *ngIf="row.taxes">
                                 <span class="fin-label">Taxes</span>
-                                <span class="fin-value">₹{{ row.taxes | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.taxes | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell" *ngIf="row.packagingAmount">
                                 <span class="fin-label">Packaging</span>
-                                <span class="fin-value">₹{{ row.packagingAmount | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.packagingAmount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.subsidyAmount">
                                 <span class="fin-label">Subsidy</span>
-                                <span class="fin-value">- ₹{{ row.subsidyAmount | number : '1.2-2' }}</span>
+                                <span class="fin-value">- ₹{{ row.subsidyAmount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.totalDiscountAmount">
                                 <span class="fin-label">Item Discount</span>
-                                <span class="fin-value">- ₹{{ row.totalDiscountAmount | number: '1.2-2' }}</span>
+                                <span class="fin-value">- ₹{{ row.totalDiscountAmount | number:'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell discount coupon-cell" *ngIf="row.appliedCoupon?.discountAmount">
                                 <span class="fin-label">
                                     Coupon
                                     <span class="coupon-code-inline">{{ row.appliedCoupon?.couponCode }}</span>
                                 </span>
-                                <span class="fin-value">- ₹{{ row.appliedCoupon?.discountAmount | number: '1.2-2'
+                                <span class="fin-value">- ₹{{ row.appliedCoupon?.discountAmount | number:'1.2-2'
                                     }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.moneyWalletPointsUsed">
                                 <span class="fin-label">Wallet</span>
-                                <span class="fin-value">- ₹{{ row.moneyWalletPointsUsed | number : '1.2-2' }}</span>
+                                <span class="fin-value">- ₹{{ row.moneyWalletPointsUsed | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell discount" *ngIf="row.companyWalletPointUsed">
                                 <span class="fin-label">Company</span>
-                                <span class="fin-value">- ₹{{ row.companyWalletPointUsed | number : '1.2-2' }}</span>
+                                <span class="fin-value">- ₹{{ row.companyWalletPointUsed | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell paid">
                                 <span class="fin-label">Paid (PG)</span>
-                                <span class="fin-value">₹{{ row.amount | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ row.amount | number :'1.2-2' }}</span>
                             </div>
                             <div class="fin-cell grand">
                                 <span class="fin-label">Grand Total</span>
-                                <span class="fin-value">₹{{ getGrandTotal(row) | number : '1.2-2' }}</span>
+                                <span class="fin-value">₹{{ getGrandTotal(row) | number :'1.2-2' }}</span>
                             </div>
                         </div>
 

@@ -1,11 +1,11 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PageEvent } from '@angular/material/paginator';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonSelectConfig, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import * as pdfMake from 'pdfmake/build/pdfmake';

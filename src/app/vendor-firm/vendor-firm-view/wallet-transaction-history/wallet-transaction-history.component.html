@@ -44,20 +44,18 @@
         <div class="row g-4" *ngIf="transactionHistoryList.length > 0; else noRecords">
             <div class="col-12 col-md-6 col-lg-4" *ngFor="let tx of transactionHistoryList">
                 <div class="transaction-item-card"
-                    [class.pending-neft-card]="tx.status?.toLowerCase() === 'pending' && (tx.mode?.toLowerCase() === 'neft' || tx.mode?.toLowerCase() === 'imps')">
+                    [class.pending-neft-card]="tx.status?.toLowerCase() ==='pending' && (tx.mode?.toLowerCase() ==='neft' || tx.mode?.toLowerCase() ==='imps')">
 
                     <!-- Card Top -->
                     <div class="card-top">
                         <div class="transaction-icon"
-                            [ngClass]="{'credit': tx?.transactionType === 'Credit' || (tx?.transactionType || '').includes('To_Wallet'), 'debit': tx?.transactionType === 'Debit' || (tx?.transactionType || '').includes('To_bank')}">
-                            <mat-icon>{{ (tx?.transactionType === 'Debit' || (tx?.transactionType ||
-                                '').includes('To_bank')) ? 'arrow_upward' : 'arrow_downward' }}</mat-icon>
+                            [ngClass]="{'credit': tx?.transactionType ==='Credit' || (tx?.transactionType ||'').includes('To_Wallet'),'debit': tx?.transactionType ==='Debit' || (tx?.transactionType ||'').includes('To_bank')}">
+                            <mat-icon>{{ (tx?.transactionType ==='Debit' || (tx?.transactionType ||'').includes('To_bank')) ?'arrow_upward' :'arrow_downward' }}</mat-icon>
                         </div>
                         <div class="transaction-main-info">
                             <h3 class="transaction-amount"
-                                [ngClass]="{'text-success': tx?.transactionType === 'Credit' || (tx?.transactionType || '').includes('To_Wallet'), 'text-danger': tx?.transactionType === 'Debit' || (tx?.transactionType || '').includes('To_bank')}">
-                                {{ (tx?.transactionType === 'Debit' || (tx?.transactionType ||
-                                '').includes('To_bank')) ? '-' : '+' }}
+                                [ngClass]="{'text-success': tx?.transactionType ==='Credit' || (tx?.transactionType ||'').includes('To_Wallet'),'text-danger': tx?.transactionType ==='Debit' || (tx?.transactionType ||'').includes('To_bank')}">
+                                {{ (tx?.transactionType ==='Debit' || (tx?.transactionType ||'').includes('To_bank')) ?'-' :'+' }}
                                 {{ tx?.transaction_amount | currency:'INR' }}
                             </h3>
                             <div class="status-badge" [ngClass]="getStatusColorClass(tx?.status)">
@@ -66,7 +64,7 @@
                             </div>
                         </div>
                         <!-- Auto-refreshing indicator -->
-                        <div *ngIf="tx?.status?.toLowerCase() === 'pending' && (tx?.mode?.toLowerCase() === 'neft' || tx?.mode?.toLowerCase() === 'imps')"
+                        <div *ngIf="tx?.status?.toLowerCase() ==='pending' && (tx?.mode?.toLowerCase() ==='neft' || tx?.mode?.toLowerCase() ==='imps')"
                             class="refreshing-indicator ms-auto" matTooltip="Auto-refreshing status">
                             <mat-icon class="spin">sync</mat-icon>
                         </div>

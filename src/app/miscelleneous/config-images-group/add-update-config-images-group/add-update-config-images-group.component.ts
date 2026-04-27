@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { ToasterService } from 'src/service/toaster.service';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 
 @Component({
   selector: 'app-add-update-config-images-group',

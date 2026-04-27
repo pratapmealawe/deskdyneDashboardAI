@@ -4,9 +4,9 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEventPopComponent } from './add-event-pop/add-event-pop.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
@@ -94,7 +94,6 @@ export class EventPopupComponent implements OnInit {
         this.pagedEvent = [];
       }
     } catch (error) {
-      console.log('searchEvent', error);
     }
   }
 

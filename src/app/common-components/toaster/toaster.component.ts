@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ToasterService } from 'src/service/toaster.service';
+import { ToasterService } from '@service/toaster.service';
 
 
 import { CommonModule } from '@angular/common';
@@ -54,7 +54,7 @@ export class ToasterComponent {
     setToastTimeout(toast: any) {
         if (toast.type === 'alarm') {
             const audio = new Audio('assets/push_notification.wav');
-            audio.play().catch(e => console.log('Audio play error', e));
+            audio.play().catch(e => console.error('Audio play failed:', e));
         }
 
         const duration = toast.type === 'alarm' ? 30000 : 5000;

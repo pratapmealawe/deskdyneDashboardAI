@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
 import * as Highcharts from 'highcharts';
 import Drilldown from 'highcharts/modules/drilldown';
 import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
@@ -164,12 +164,10 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
     this.isLoading = true;
     this.isChartShow = false;
     try {
-      console.log('payload', payload);
       const reviewList = await this.apiMainService.getfeedbacklistByfilter(payload);
       this.reviewList = [...reviewList];
       this.applySearch();
     } catch (e) {
-      console.log('Error while fetching config variables ', e);
     } finally {
       this.isLoading = false;
     }

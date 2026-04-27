@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -84,7 +84,7 @@ export class BulkBillingComponent {
         fromDate: this.filteredData.date_from,
         toDate: this.filteredData.date_to,
       };
-      this.billingList = await this.apiMainService.B2B_fetchBulkOrdersbyFilter(payload) || [];
+      this.billingList = await this.apiMainService.fetchBulkOrdersByFilter(payload) || [];
       this.buildDateGroups();
     } catch (err) {
       this.billingList = [];

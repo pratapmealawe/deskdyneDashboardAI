@@ -1,0 +1,122 @@
+<div class="copy-menu-modal premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>content_copy</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Copy Menu Configuration</h3>
+                <p>Select a cafeteria to copy its menu settings</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeModal()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <div class="row g-4 mt-1 mb-4">
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Select Organization</mat-label>
+                    <mat-select [(ngModel)]="selectedOrg" (selectionChange)="onOrgChange()">
+                        <mat-option *ngFor="let org of orgList" [value]="org">
+                            {{org.organization_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Select Cafeteria</mat-label>
+                    <mat-select [(ngModel)]="selectedCafeteria" (selectionChange)="onCafeteriaChange()"
+                        [disabled]="!selectedOrg">
+                        <mat-option *ngFor="let cafeteria of cafeteriaList" [value]="cafeteria">
+                            {{cafeteria.cafeteria_name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <!-- Preview Section -->
+        <div class="menu-preview-section" *ngIf="deliverySettings.length > 0">
+            <div class="section-divider mb-4">
+                <span class="divider-text">Preview Saved Menu</span>
+            </div>
+
+            <mat-accordion multi>
+                <mat-expansion-panel class="premium-expansion-panel mb-3" *ngFor="let element of deliverySettings"
+                    [expanded]="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title>
+                            <div class="header-info-grid">
+                                <div class="info-block">
+                                    <span class="label">Meal Type</span>
+                                    <span class="value">{{element.selectedMealType}}</span>
+                                </div>
+                                <div class="info-block">
+                                    <span class="label">MOQ</span>
+                                    <span class="value">{{element.deliveryMOQ}}</span>
+                                </div>
+                                <div class="info-block">
+                                    <span class="label">Charge</span>
+                                    <span class="value text-primary">{{element.deliveryCharge | currency :'INR'}}</span>
+                                </div>
+                                <div class="info-block">
+                                    <span class="label">Time Window</span>
+                                    <span class="value">{{element.deliveryTimeFrom}} - {{element.deliveryTimeTo}}</span>
+                                </div>
+                            </div>
+                        </mat-panel-title>
+                    </mat-expansion-panel-header>
+
+                    <div class="config-list pt-2" *ngIf="element.mealConfig && element.mealConfig.length > 0">
+                        <div class="config-item-premium d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded" 
+                             *ngFor="let config of element.mealConfig">
+                            <div class="d-flex align-items-center gap-3">
+                                <mat-icon class="text-secondary">restaurant</mat-icon>
+                                <span class="fw-bold">{{config.itemName}}</span>
+                            </div>
+                            <div class="d-flex gap-4">
+                                <div class="text-end">
+                                    <small class="d-block text-muted">Price</small>
+                                    <span class="fw-bold">{{config.mealPrice | currency :'INR'}}</span>
+                                </div>
+                                <div class="text-end">
+                                    <small class="d-block text-muted">Kitchen</small>
+                                    <span class="fw-bold text-primary">{{config.payAmtToKitchen | currency :'INR'}}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+        <!-- Empty States -->
+        <div class="empty-state-modern py-5" *ngIf="selectedCafeteria && deliverySettings.length === 0">
+            <div class="empty-icon-wrap">
+                <mat-icon>restaurant_menu</mat-icon>
+            </div>
+            <h4>No Menu Available</h4>
+            <p>This cafeteria doesn't have any saved menu configurations yet.</p>
+        </div>
+
+        <div class="empty-state-modern py-5" *ngIf="!selectedOrg">
+            <div class="empty-icon-wrap">
+                <mat-icon>business</mat-icon>
+            </div>
+            <h4>Select a Source</h4>
+            <p>Please select an organization and cafeteria to preview the menu you want to copy.</p>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeModal()">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="saveChanges()" [disabled]="deliverySettings.length === 0">
+            <mat-icon>content_copy</mat-icon>
+            <span>Copy Configuration</span>
+        </button>
+    </mat-dialog-actions>
+</div>

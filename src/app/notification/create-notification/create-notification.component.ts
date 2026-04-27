@@ -1,10 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
-import { environment } from 'src/environments/environment';
+import { environment } from '@environments/environment';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 

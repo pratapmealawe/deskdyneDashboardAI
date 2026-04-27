@@ -1,5 +1,5 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles/theme/variable' as var;
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
 
 .event-page-container {
     padding: 1.5rem;
@@ -161,4 +161,5 @@
         transform: translateY(0);
     }
 }
+
 

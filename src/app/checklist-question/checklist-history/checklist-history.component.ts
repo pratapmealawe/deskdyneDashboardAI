@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonSelectConfig, SubmitPayload } from '../../common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 
 
 @Component({
@@ -110,7 +110,6 @@ export class ChecklistHistoryComponent implements OnInit {
       }
 
     } catch (e) {
-      console.log('Error while fetching data', e);
     }
   }
 

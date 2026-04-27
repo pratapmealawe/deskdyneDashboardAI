@@ -16,9 +16,9 @@ import {
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MaterialModule } from 'src/app/material.module';
 import { ImageCropperComponent } from '../../common-components/image-cropper/image-cropper.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { environment } from 'src/environments/environment';
-import { PolicyService } from 'src/service/policy.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { environment } from '@environments/environment';
+import { PermissionsService } from '@service/permission.service';
 import { Inject } from '@angular/core';
 
 @Component({
@@ -43,7 +43,7 @@ export class AddBulkMasterMenuComponent implements OnInit {
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<AddBulkMasterMenuComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private fb: FormBuilder
   ) { 
     if (data) {
@@ -53,10 +53,10 @@ export class AddBulkMasterMenuComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.initForm();
 
-    // Edit mode → patch values
+    // Edit mode â†’ patch values
     if (this.editfoodItemObj && this.editfoodItemObj._id) {
       this.imageUrl = environment.imageUrl + this.editfoodItemObj.imageUrl;
       this.foodItemForm.patchValue({
@@ -136,10 +136,6 @@ export class AddBulkMasterMenuComponent implements OnInit {
               }
             });
           } catch (e) {
-            console.log(
-              'error while opening image cropper modal',
-              e
-            );
           }
         };
       }
@@ -164,23 +160,21 @@ export class AddBulkMasterMenuComponent implements OnInit {
   private async addNewItem(item: any): Promise<void> {
     const formData = this.buildFormData(item);
     try {
-      await this.apiMainService.B2B_fooditemAdd(formData);
+      await this.apiMainService.saveBulkMasterMenu(formData);
       this.goToPreviousPage('new');
     } catch (error) {
-      console.log(error);
     }
   }
 
   private async updateFoodItem(item: any): Promise<void> {
     const formData = this.buildFormData(item);
     try {
-      await this.apiMainService.updateB2BfoodItem(
+      await this.apiMainService.updateBulkMasterMenu(
         formData,
         this.editfoodItemObj._id
       );
       this.goToPreviousPage('edit');
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -207,3 +201,4 @@ export class AddBulkMasterMenuComponent implements OnInit {
     this.dialogRef.close(action);
   }
 }
+

@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, OnDestroy, SimpleChanges } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 
@@ -69,7 +69,6 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
         if (changes['vendorFirmInfo'] && this.vendorFirmInfo) {
             this.loadPage(true);
         }
-        console.log("isDialog", this.isDialog);
 
     }
 
@@ -79,7 +78,6 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
         if (this.vendorFirmInfo) {
             this.loadPage(true);
         }
-        console.log("isDialog", this.isDialog);
 
     }
 
@@ -145,7 +143,6 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
         this.loading = true;
         try {
             const body = this.buildQueryBody();
-            console.log(body);
 
 
             const response: any = await this.apiMainService.getVendorTransactionByFirmAndTypeAndDate(body);
@@ -193,10 +190,8 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
 
         if (hasPendingNeft) {
             if (!this.refreshInterval) {
-                console.log('Starting auto-refresh for pending NEFT transactions...');
                 // Use setTimeout instead of setInterval for cleaner async flow
                 this.refreshInterval = setTimeout(async () => {
-                    console.log('Auto-refreshing transactions...');
                     await this.checkPendingNeftTransactions();
                     // After checking, reload the page which will re-trigger this setup if still needed
                     this.refreshInterval = null; // Clear so loadPage can set it up again
@@ -206,7 +201,6 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
         } else {
             // Clean up if no longer pending
             if (this.refreshInterval) {
-                console.log('No pending NEFT transactions found. Stopping auto-refresh.');
                 clearTimeout(this.refreshInterval);
                 this.refreshInterval = null;
             }
@@ -218,13 +212,10 @@ export class WalletTransactionHistoryComponent implements OnChanges, OnInit, OnD
             tx.status?.toLowerCase() === 'pending' && (tx.mode?.toLowerCase() === 'neft' || tx.mode?.toLowerCase() === 'imps')
         );
 
-        console.log('Pending NEFT transactions:', pendingNeftTxns);
-
         for (const tx of pendingNeftTxns) {
             if (tx.payout_id) {
                 try {
                     const res = await this.apiMainService.checkJusPayPayoutStatus(tx.payout_id);
-                    console.log(`Status check for ${tx.payout_id}:`, res);
                 } catch (err: any) {
                     console.error(`Error checking status for ${tx.payout_id}:`, err);
                 }

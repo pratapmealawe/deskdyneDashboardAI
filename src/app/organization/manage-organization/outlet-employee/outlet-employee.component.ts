@@ -1,73 +1,96 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { OrganizationSharedService } from '../../organization-shared.service';
+import { Subscription } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import * as ExcelJS from 'exceljs';
-import { saveAs } from 'file-saver';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from '../../../material.module';
+import { ToasterService } from '@service/toaster.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import * as ExcelJS from 'exceljs';
+import { saveAs } from 'file-saver';
 import { AddOutletEmployeeComponent } from './add-outlet-employee/add-outlet-employee.component';
 import { BulkAddOutletEmployeeComponent } from './bulk-add-outlet-employee/bulk-add-outlet-employee.component';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ImportOutletEmployeeComponent } from './import-outlet-employee/import-outlet-employee.component';
+import { CafeteriaSelectorComponent } from '../cafeteria-selector/cafeteria-selector.component';
 
 @Component({
   selector: 'app-outlet-employee',
   standalone: true,
-  imports: [CommonModule, FormsModule, MaterialModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MaterialModule,
+    CafeteriaSelectorComponent
+  ],
   templateUrl: './outlet-employee.component.html',
   styleUrls: ['./outlet-employee.component.scss']
 })
 export class OutletEmployeeComponent implements OnInit {
-  @Input() orgObj: any;
+  orgObj: any;
   employeeList: any[] = [];
-  selectedCafeteria: any;
-  selectedCafeteriaName: string | null = null;
+  selectedCafeteria: any = null;
   selectedCafeteriaId: string | null = null;
   loading = false;
   pageSize = 10;
   pageIndex = 0;
-  pageSizeOptions = [5, 10, 25, 50];
+  pageSizeOptions = [10, 25, 50, 100];
   searchTerm: string = '';
-  fileName: string | null = null;
-
+  private orgSub: Subscription | undefined;
   constructor(
-    private apiMainService: ApiMainService,
+    private api: ApiMainService,
     private dialog: MatDialog,
-    private confirmationModalService: ConfirmationModalService,
-    private toasterService: ToasterService
+    private confirmationModal: ConfirmationModalService,
+    private toaster: ToasterService,
+    private orgSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
-    this.initCafeteriaDefaults();
-  }
-
-  private initCafeteriaDefaults(): void {
-    if (this.orgObj && this.orgObj.cafeteriaList && this.orgObj.cafeteriaList.length > 0) {
-      this.selectedCafeteria = this.orgObj.cafeteriaList[0];
-      this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
-      this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
-      this.getEmployeeListByCafeId();
+    if (this.orgObj) {
+      this.initializeComponent();
+    } else {
+      this.orgSub = this.orgSharedService.organization$.subscribe(org => {
+        if (org) {
+          this.orgObj = org;
+          this.initializeComponent();
+        }
+      });
     }
   }
 
-  // ---------- CAFETERIA ----------
+  initializeComponent(): void {
+    if (this.orgObj?.cafeteriaList?.length > 0) {
+      this.selectCafeteria(this.orgObj.cafeteriaList[0]);
+    }
+  }
 
-  onCafeteriaChange(): void {
-    if (!this.selectedCafeteria) return;
-    this.selectedCafeteriaName = this.selectedCafeteria.cafeteria_name;
-    this.selectedCafeteriaId = this.selectedCafeteria.cafeteria_id;
-    this.getEmployeeListByCafeId();
-    this.resetPagination();
+  ngOnDestroy() {
+    if (this.orgSub) {
+      this.orgSub.unsubscribe();
+    }
   }
 
   selectCafeteria(cafeteria: any): void {
     this.selectedCafeteria = cafeteria;
-    this.selectedCafeteriaName = cafeteria.cafeteria_name;
     this.selectedCafeteriaId = cafeteria.cafeteria_id;
-    this.getEmployeeListByCafeId();
-    this.resetPagination();
+    this.refreshEmployeeList();
+  }
+
+  async refreshEmployeeList() {
+    if (!this.selectedCafeteriaId) return;
+    try {
+      this.loading = true;
+      const res = await this.api.getOutletEmployeeListByCafeteriaId(this.selectedCafeteriaId);
+      this.employeeList = res || [];
+      this.pageIndex = 0;
+    } catch (error) {
+      console.error(error);
+      this.toaster.error('Failed to fetch employees');
+    } finally {
+      this.loading = false;
+    }
   }
 
   getInitials(name: string): string {
@@ -77,37 +100,27 @@ export class OutletEmployeeComponent implements OnInit {
     return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 
-  // ---------- API ----------
-
-  async getEmployeeListByCafeId(): Promise<void> {
-    if (!this.orgObj?._id || !this.selectedCafeteriaId) return;
-    try {
-      this.loading = true;
-      this.employeeList = await this.apiMainService.getOutletEmployeeListByCafeteriaId(this.selectedCafeteriaId) || [];
-      this.resetPagination();
-    } catch (error) {
-      console.error(error);
-      this.toasterService.error('Failed to fetch employees');
-    } finally {
-      this.loading = false;
-    }
-  }
-
   // ---------- ACTIONS ----------
 
   addManualEmployee(): void {
     if (!this.selectedCafeteria) {
-      this.toasterService.warning('Please select a cafeteria first');
+      this.toaster.warning('Please select an outlet first');
       return;
     }
-    this.openAddEditDialog();
+    const dialogRef = this.dialog.open(AddOutletEmployeeComponent, {
+      width: '500px',
+      data: {
+        orgObj: this.orgObj,
+        selectedCafeteria: this.selectedCafeteria
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.refreshEmployeeList();
+    });
   }
 
   editEmployee(employee: any): void {
-    this.openAddEditDialog(employee);
-  }
-
-  openAddEditDialog(employee: any = null): void {
     const dialogRef = this.dialog.open(AddOutletEmployeeComponent, {
       width: '500px',
       data: {
@@ -118,82 +131,169 @@ export class OutletEmployeeComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.getEmployeeListByCafeId();
-      }
+      if (result) this.refreshEmployeeList();
     });
   }
 
   addMultipleEmployee(): void {
     if (!this.selectedCafeteria) {
-      this.toasterService.warning('Please select a cafeteria first');
+      this.toaster.warning('Please select an outlet first');
       return;
     }
-    this.openBulkAddDialog();
-  }
-
-  openBulkAddDialog(employees: any[] = []): void {
     const dialogRef = this.dialog.open(BulkAddOutletEmployeeComponent, {
-      width: '95vw',
+      width: '90vw',
       maxWidth: '1200px',
       data: {
         orgObj: this.orgObj,
-        selectedCafeteria: this.selectedCafeteria,
-        employees: employees
+        selectedCafeteria: this.selectedCafeteria
       },
-      panelClass: 'full-screen-dialog'
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.getEmployeeListByCafeId();
-      }
-      this.fileName = null;
+      if (result) this.refreshEmployeeList();
     });
   }
 
-  // ---------- DELETE ----------
+  openImportDialog(): void {
+    if (!this.selectedCafeteria) {
+      this.toaster.warning('Please select an outlet first');
+      return;
+    }
+
+    const dialogRef = this.dialog.open(ImportOutletEmployeeComponent, {
+      width: '740px',
+      data: {
+        orgObj: this.orgObj,
+        selectedCafeteria: this.selectedCafeteria
+      },
+      panelClass: 'premium-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) this.refreshEmployeeList();
+    });
+  }
 
   deleteEmployee(employee: any): void {
-    this.confirmationModalService.modal({
-      msg: `Are you sure you want to delete ${employee.employeeName}?`,
-      callback: () => this.confirmDelete(employee._id),
+    this.confirmationModal.modal({
+      msg: `Are you sure you want to remove ${employee.employeeName} from this outlet?`,
+      callback: () => this.confirmDeleteEmployee(employee),
       context: this
     });
   }
 
-  async confirmDelete(id: string): Promise<void> {
+  async confirmDeleteEmployee(employee: any): Promise<void> {
     try {
-      await this.apiMainService.deleteOutletEmployee(id);
-      this.toasterService.success('Employee deleted');
-      this.getEmployeeListByCafeId();
-    } catch (error) {
-      console.error(error);
-      this.toasterService.error('Failed to delete employee');
+      await this.api.deleteOutletEmployee(employee._id);
+      this.toaster.success('Employee removed');
+      await this.refreshEmployeeList();
+    } catch (err) {
+      console.error(err);
+      this.toaster.error('Failed to remove employee');
     }
   }
 
-  // ---------- FILTER / PAGINATION ----------
+  exportEmployees(): void {
+    const list = this.filteredEmployees;
+    if (!list || list.length === 0) {
+      this.toaster.error('No staff records found to export');
+      return;
+    }
+    this.generateEmployeesExcel(list);
+  }
+
+  private async generateEmployeesExcel(data: any[]): Promise<void> {
+    try {
+      const workbook = new ExcelJS.Workbook();
+      workbook.creator = 'DeskDyne Dashboard';
+      workbook.created = new Date();
+
+      const worksheet = workbook.addWorksheet('Staff List', {
+        views: [{ state: 'frozen', ySplit: 2 }]
+      });
+
+      // Title Row
+      worksheet.mergeCells('A1:E1');
+      const titleCell = worksheet.getCell('A1');
+      titleCell.value = `STAFF LIST - ${this.selectedCafeteria?.cafeteria_name || 'Outlet'}`;
+      titleCell.font = { size: 14, bold: true, color: { argb: 'FFFFFF' } };
+      titleCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '0E49B5' } };
+      titleCell.alignment = { horizontal: 'center', vertical: 'middle' };
+
+      // Column Headers
+      const headers = [
+        { header: 'EMPLOYEE ID', key: 'employeeId', width: 20 },
+        { header: 'NAME', key: 'employeeName', width: 30 },
+        { header: 'PHONE NO', key: 'employeePhoneNo', width: 20 },
+        { header: 'EMAIL', key: 'employeeEmail', width: 35 },
+        { header: 'OUTLET', key: 'cafeteria', width: 30 }
+      ];
+
+      worksheet.columns = headers;
+
+      const headerRow = worksheet.getRow(2);
+      headerRow.height = 25;
+      headerRow.eachCell((cell) => {
+        cell.font = { bold: true, color: { argb: 'FFFFFF' } };
+        cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: '2563EB' } };
+        cell.alignment = { horizontal: 'center', vertical: 'middle' };
+        cell.border = {
+          top: { style: 'thin' },
+          left: { style: 'thin' },
+          bottom: { style: 'thin' },
+          right: { style: 'thin' }
+        };
+      });
+
+      // Add Data
+      data.forEach((emp, index) => {
+        const row = worksheet.addRow({
+          employeeId: emp.employeeId || 'N/A',
+          employeeName: emp.employeeName || 'N/A',
+          employeePhoneNo: emp.employeePhoneNo || 'N/A',
+          employeeEmail: emp.employeeEmail || 'N/A',
+          cafeteria: this.selectedCafeteria?.cafeteria_name || 'N/A'
+        });
+
+        if (index % 2 === 0) {
+          row.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'F8FAFC' } };
+        }
+
+        row.eachCell((cell) => {
+          cell.alignment = { vertical: 'middle', horizontal: 'left' };
+          cell.border = {
+            top: { style: 'thin', color: { argb: 'E2E8F0' } },
+            left: { style: 'thin', color: { argb: 'E2E8F0' } },
+            bottom: { style: 'thin', color: { argb: 'E2E8F0' } },
+            right: { style: 'thin', color: { argb: 'E2E8F0' } }
+          };
+        });
+      });
+
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+      saveAs(blob, `Staff_List_${this.selectedCafeteria?.cafeteria_name || 'Outlet'}.xlsx`);
+      this.toaster.success('Export successful');
+    } catch (error) {
+      console.error('Export error:', error);
+      this.toaster.error('Failed to export list');
+    }
+  }
+
+  // ---------- FILTER & PAGINATION ----------
 
   get filteredEmployees(): any[] {
     let list = this.employeeList || [];
-    if (this.selectedCafeteriaId) {
-      list = list.filter((emp) => emp.cafeteria_id === this.selectedCafeteriaId);
-    }
     if (this.searchTerm) {
       const term = this.searchTerm.toLowerCase();
-      list = list.filter((emp) =>
+      list = list.filter(emp =>
         emp.employeeName?.toLowerCase().includes(term) ||
         emp.employeeId?.toLowerCase().includes(term) ||
-        emp.employeePhoneNo?.toString().includes(this.searchTerm) ||
+        emp.employeePhoneNo?.toString().includes(term) ||
         emp.employeeEmail?.toLowerCase().includes(term)
       );
     }
     return list;
-  }
-
-  private resetPagination(): void {
-    this.pageIndex = 0;
   }
 
   get pagedEmployees(): any[] {
@@ -206,107 +306,4 @@ export class OutletEmployeeComponent implements OnInit {
     this.pageSize = event.pageSize;
     this.pageIndex = event.pageIndex;
   }
-
-  // ---------- EXCEL HELPERS ----------
-
-  clearFile(): void {
-    this.fileName = null;
-  }
-
-  onFileDrop(event: DragEvent): void {
-    event.preventDefault();
-    const files = event.dataTransfer?.files;
-    if (files && files.length > 0) {
-      this.processFile(files[0]);
-    }
-  }
-
-  onFileChange(event: any): void {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      this.processFile(file);
-    }
-  }
-
-  async processFile(file: File): Promise<void> {
-    this.fileName = file.name;
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const workbook = new ExcelJS.Workbook();
-      await workbook.xlsx.load(arrayBuffer);
-      const worksheet = workbook.worksheets[0];
-
-      let parsedEmployees: any[] = [];
-
-      worksheet.eachRow((row: any, rowNumber: number) => {
-        if (rowNumber === 1) return;
-
-        const idCell = row.getCell(1).value;
-        const nameCell = row.getCell(2).value;
-        const phoneCell = row.getCell(3).value;
-        const emailCell = row.getCell(4).value;
-
-        const employeeId = (idCell || '').toString().trim();
-        const employeeName = (nameCell || '').toString().trim();
-        const phone = (phoneCell || '').toString().trim();
-        let email = '';
-        if (emailCell && typeof emailCell === 'object' && 'text' in emailCell) {
-          email = (emailCell as any).text?.toString().trim() || '';
-        } else {
-          email = (emailCell || '').toString().trim();
-        }
-
-        if (!employeeId && !employeeName && !phone && !email) return;
-
-        parsedEmployees.push({
-          organization_name: this.orgObj.organization_name,
-          organization_id: this.orgObj._id,
-          cafeteria_name: this.selectedCafeteria.cafeteria_name,
-          cafeteria_id: this.selectedCafeteria.cafeteria_id,
-          employeeId,
-          employeeName,
-          employeePhoneNo: phone,
-          employeeEmail: email
-        });
-      });
-
-      if (parsedEmployees.length > 0) {
-        this.openBulkAddDialog(parsedEmployees);
-      } else {
-        this.toasterService.warning('No valid employees found in Excel');
-        this.fileName = null;
-      }
-    } catch (err) {
-      console.error('Error reading Excel file', err);
-      this.toasterService.error('Failed to read Excel file');
-      this.fileName = null;
-    }
-  }
-
-  async downloadExcelTemplate(): Promise<void> {
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Outlet Employees Template');
-
-    worksheet.addRow(['Employee ID', 'Employee Name', 'Phone No', 'Email']);
-
-    const headerRow = worksheet.getRow(1);
-    headerRow.font = { bold: true };
-    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
-
-    worksheet.columns = [
-      { key: 'employeeId', width: 15 },
-      { key: 'employeeName', width: 25 },
-      { key: 'employeePhoneNo', width: 15 },
-      { key: 'employeeEmail', width: 30 }
-    ];
-
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], {
-      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-    });
-    saveAs(blob, 'outlet_employees_template.xlsx');
-  }
 }
-
-

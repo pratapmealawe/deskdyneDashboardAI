@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { LocalStorageService } from '../../../service/local-storage.service';
-import { RuntimeStorageService } from '../../../service/runtime-storage.service';
-import { SessionTimeoutService } from '../../../service/session-timeout.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
+import { SessionTimeoutService } from '@service/session-timeout.service';
 
 import { CommonModule } from '@angular/common';
 

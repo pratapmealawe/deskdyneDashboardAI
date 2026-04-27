@@ -75,7 +75,7 @@
           <!-- Square Image -->
           <div class="card-image-h">
             <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" onerror="this.src='assets/images/placeholder-food.png'"/>
-            <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
+            <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
               <span class="indicator-dot"></span>
             </div>
           </div>
@@ -83,7 +83,7 @@
           <!-- Card Content -->
           <div class="card-content-h">
             <div class="content-top">
-              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h3>
+              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName ||'Unnamed item' }}</h3>
               <div class="item-actions">
                 <button mat-icon-button class="edit-btn" (click)="edit(item)" matTooltip="Edit">
                   <mat-icon>edit</mat-icon>
@@ -115,7 +115,7 @@
                 <span class="currency">₹</span>{{ item.price }}
               </div>
               <div class="stock-toggle">
-                <span class="status-label">{{ item.isActive ? 'Active' : 'Inactive' }}</span>
+                <span class="status-label">{{ item.isActive ?'Active' :'Inactive' }}</span>
                 <mat-slide-toggle color="primary" [checked]="item.isActive" 
                   (change)="toggleStatus(item, $event)">
                 </mat-slide-toggle>

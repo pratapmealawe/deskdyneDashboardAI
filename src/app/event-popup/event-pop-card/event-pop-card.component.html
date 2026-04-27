@@ -7,11 +7,10 @@
     </div>
     <div class="org-info">
       <div class="org-label">Organization</div>
-      <h2 class="org-name">{{ eventGroup?.organizationName || 'No Organization' }}</h2>
+      <h2 class="org-name">{{ eventGroup?.organizationName ||'No Organization' }}</h2>
     </div>
     <div class="org-stats" *ngIf="eventGroup?.outletList?.length">
-      <span class="badge-count">{{ eventGroup.outletList.length }} Event{{ eventGroup.outletList.length > 1 ? 's' :
-        '' }}</span>
+      <span class="badge-count">{{ eventGroup.outletList.length }} Event{{ eventGroup.outletList.length > 1 ?'s' :'' }}</span>
     </div>
   </div>
 
@@ -30,9 +29,9 @@
         <div class="event-identity">
           <h3 class="event-name">{{ eventObj.eventPopupName }}</h3>
           <div class="status-badges-row">
-            <div class="status-badge" [ngClass]="eventObj.eventPopupOpened ? 'open' : 'closed'">
-              <mat-icon>{{ eventObj.eventPopupOpened ? 'check_circle' : 'cancel' }}</mat-icon>
-              {{ eventObj.eventPopupOpened ? 'Active' : 'Stopped' }}
+            <div class="status-badge" [ngClass]="eventObj.eventPopupOpened ?'open' :'closed'">
+              <mat-icon>{{ eventObj.eventPopupOpened ?'check_circle' :'cancel' }}</mat-icon>
+              {{ eventObj.eventPopupOpened ?'Active' :'Stopped' }}
             </div>
             <!-- If events have a preorder status, add here -->
           </div>
@@ -60,7 +59,7 @@
           <mat-icon class="info-icon">low_priority</mat-icon>
           <div class="info-content">
             <span class="info-label">Precedence</span>
-            <span class="info-value">{{ eventObj?.precedence || '0' }}</span>
+            <span class="info-value">{{ eventObj?.precedence ||'0' }}</span>
           </div>
         </div>
         <div class="info-row" *ngIf="eventObj.eventPopupDescription">

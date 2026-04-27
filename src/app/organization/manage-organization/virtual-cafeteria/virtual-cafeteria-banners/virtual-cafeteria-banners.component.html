@@ -1,0 +1,63 @@
+<div class="banners-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>view_carousel</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Cafeteria Banners</h3>
+                <p>Upload and manage high-resolution display banners</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="close()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <div class="selection-container">
+            <p class="section-label mb-3">
+                <mat-icon>info</mat-icon> 
+                Display Banners 
+                <span class="ms-2 badge bg-light text-dark fw-normal" style="font-size: 0.7rem;">Drag to reorder</span>
+            </p>
+
+            <div class="upload-area mb-4" (click)="bannerInput.click()" [class.disabled]="isLoading">
+                <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
+                <p>{{ isLoading ? 'Processing...' : 'Click to upload a new banner (3:1 recommended)' }}</p>
+                <input #bannerInput type="file" (change)="onImageSelect($event)" accept="image/*" class="d-none">
+            </div>
+
+            <div class="loading-overlay-inline mb-3" *ngIf="isLoading">
+                <mat-spinner diameter="30"></mat-spinner>
+                <span>Preparing asset...</span>
+            </div>
+
+            <div cdkDropList (cdkDropListDropped)="drop($event)" class="banner-preview-grid" *ngIf="banners.length > 0; else noBanners">
+                <div *ngFor="let banner of banners; let i = index" cdkDrag class="banner-card">
+                    <div class="drag-handle" cdkDragHandle>
+                        <mat-icon>drag_indicator</mat-icon>
+                    </div>
+                    <img [src]="banner.startsWith('http') ? banner : (serverUrl + banner)" 
+                         onerror="this.src='assets/Imageunavailable.webp'" />
+                    <button mat-icon-button color="warn" class="remove-btn" (click)="deleteBanner(banner, i)" type="button">
+                        <mat-icon>delete</mat-icon>
+                    </button>
+                </div>
+            </div>
+
+            <ng-template #noBanners>
+                <div class="empty-state-card py-5 text-center border rounded-3 bg-light-soft">
+                    <mat-icon class="empty-icon">image_not_supported</mat-icon>
+                    <p class="mt-2 text-muted">No banners uploaded yet</p>
+                </div>
+            </ng-template>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-flat-button color="primary" (click)="close()" class="btn-primary-action px-5">
+            <mat-icon>done</mat-icon> DONE
+        </button>
+    </mat-dialog-actions>
+</div>

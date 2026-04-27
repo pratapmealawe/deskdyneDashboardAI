@@ -1,15 +1,15 @@
-import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+﻿import { ChangeDetectorRef, Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatRadioChange } from '@angular/material/radio';
 import { NavigationEnd, Router } from '@angular/router';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ToasterService } from 'src/service/toaster.service';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { GoogleMapService } from 'src/service/google-map.service';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { GoogleMapService } from '@service/google-map.service';
+import { PermissionsService } from '@service/permission.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
 import { REGEX } from 'src/shared/constants/regex';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -86,7 +86,7 @@ export class AddOrganizationComponent implements OnInit {
 
   constructor(
     private apiMainService: ApiMainService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private googleMapService: GoogleMapService,
     private chgDetRef: ChangeDetectorRef,
     private dialog: MatDialog,
@@ -131,7 +131,7 @@ export class AddOrganizationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     const cacheOrg = this.runtimeStorageService.getCacheData('VIEW_ORG');
     if (cacheOrg && cacheOrg._id) {
       this.viewOrg = cacheOrg;
@@ -178,8 +178,6 @@ export class AddOrganizationComponent implements OnInit {
       cafeteria_city: ['', Validators.required],
       cafeteria_gstin: ['', Validators.pattern(REGEX.GSTIN)],
       cafeteria_location: this.fb.group({ lat: ['', Validators.required], lng: ['', Validators.required], }),
-      clusterId: [''],
-      clusterName: [''],
       address1: ['', [Validators.required, Validators.minLength(5)]],
       address2: ['', [Validators.required, Validators.minLength(5)]],
       landmark: ['', [Validators.required, Validators.maxLength(80)]],
@@ -446,7 +444,6 @@ export class AddOrganizationComponent implements OnInit {
   // --- Original Patch Logic ---
   patchFormValue(org: any) {
     this.orgInfo = org;
-    let clusterdetails: any = {};
     this.orgSubsidy = org.subsidy;
     this.imageUrl = environment.imageUrl + org.organizationLogoUrl;
     this.form.patchValue({
@@ -473,16 +470,10 @@ export class AddOrganizationComponent implements OnInit {
 
     if (org.cafeteriaList) {
       org.cafeteriaList.forEach((cafe: any) => {
-        if (cafe.clusterId) {
-          clusterdetails = { clusterId: cafe.clusterId, clusterName: cafe.clusterName };
-        }
-
         const group = this.new_cafeteria(true);
 
-        // Patch cluster
+        // Patch cafe data
         group.patchValue({
-          clusterId: clusterdetails.clusterId,
-          clusterName: clusterdetails.clusterName,
           ...cafe
         });
 
@@ -533,7 +524,6 @@ export class AddOrganizationComponent implements OnInit {
               }
             });
           } catch (e) {
-            console.log('error while changes kitchen opened status ', e);
           }
         };
       }
@@ -562,20 +552,10 @@ export class AddOrganizationComponent implements OnInit {
           lat: result.latlng.lat,
           lng: result.latlng.lng
         });
-        // Cluster Logic
-        this.updateClusterForDialog();
       }
     });
   }
 
-  async updateClusterForDialog() {
-    let cluster = await this.googleMapService.getClusterName(this.cafeLocation.latlng);
-    let clusterDetails = this.runtimeStorageService.getCacheData('CLUSTERS_details');
-    this.cafeteriaFormGroup.patchValue({
-      clusterId: clusterDetails.clusterId,
-      clusterName: clusterDetails.clusterName
-    });
-  }
 
   updateLocation(event: any) {
     this.cafeLocation = event;
@@ -610,7 +590,6 @@ export class AddOrganizationComponent implements OnInit {
       this.clearRunTimeStorage();
       this.router.navigate(['/app/organization']);
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -644,7 +623,6 @@ export class AddOrganizationComponent implements OnInit {
       this.clearRunTimeStorage();
       this.router.navigate(['/app/organization']);
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -674,7 +652,6 @@ export class AddOrganizationComponent implements OnInit {
         this.patchFormValue(res); // Will refresh lists
       }
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -692,9 +669,7 @@ export class AddOrganizationComponent implements OnInit {
         subsidy,
         cafeteria_Id
       );
-      console.log(res);
     } catch (error) {
-      console.log(error);
     }
   }
 
@@ -742,3 +717,4 @@ export class AddOrganizationComponent implements OnInit {
     this.cafeteriaFormGroup.get('cafeteria_gstin')?.patchValue(gstinValue);
   }
 }
+

@@ -9,9 +9,9 @@
         <div class="d-flex flex-column">
           <div class="d-flex align-items-center gap-2">
             <h3 class="firm-name mb-0" [title]="vendor?.vendorFirmName">{{ vendor?.vendorFirmName }}</h3>
-            <div class="verified-badge-pill" [ngClass]="vendor?.bank_details?.bankVerified ? 'verified' : 'pending'">
-              <mat-icon class="tiny-icon">{{ vendor?.bank_details?.bankVerified ? 'verified' : 'pending' }}</mat-icon>
-              <span>{{ vendor?.bank_details?.bankVerified ? 'Verified' : 'Pending' }}</span>
+            <div class="verified-badge-pill" [ngClass]="vendor?.bank_details?.bankVerified ?'verified' :'pending'">
+              <mat-icon class="tiny-icon">{{ vendor?.bank_details?.bankVerified ?'verified' :'pending' }}</mat-icon>
+              <span>{{ vendor?.bank_details?.bankVerified ?'Verified' :'Pending' }}</span>
             </div>
           </div>
         </div>

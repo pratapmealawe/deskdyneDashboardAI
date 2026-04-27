@@ -1,10 +1,10 @@
-import { Component, Input, OnInit } from '@angular/core';
+﻿import { Component, Input, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { AddEventPopComponent } from '../../add-event-pop/add-event-pop.component';
-import { environment } from 'src/environments/environment';
-import { PolicyService } from 'src/service/policy.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
+import { environment } from '@environments/environment';
+import { PermissionsService } from '@service/permission.service';
+import { RuntimeStorageService } from '@service/runtime-storage.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -28,13 +28,13 @@ export class EventPopDetailsComponent implements OnInit {
   constructor(
     private router: Router,
     private runtimeStorageService: RuntimeStorageService,
-    private policyService: PolicyService,
+    private permissionsService: PermissionsService,
     private dialog: MatDialog
   ) {
   }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
   }
 
   editOrg() {
@@ -61,3 +61,4 @@ export class EventPopDetailsComponent implements OnInit {
     return (words[0].charAt(0) + words[1].charAt(0)).toUpperCase();
   }
 }
+

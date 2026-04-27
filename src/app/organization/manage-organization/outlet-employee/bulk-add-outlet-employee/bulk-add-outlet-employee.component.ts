@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { MaterialModule } from '../../../../material.module';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
 
 @Component({
   selector: 'app-bulk-add-outlet-employee',
@@ -71,23 +71,47 @@ export class BulkAddOutletEmployeeComponent implements OnInit {
 
     this.isSubmitting = true;
     try {
-      const res = await this.apiMainService.addOutletEmployeeList(validEmployees);
-      if (res && res.length > 0) {
-        this.toasterService.success(`${res.length} employees added successfully`);
-        this.dialogRef.close(true);
+      const res: any = await this.apiMainService.addOutletEmployeeList(validEmployees);
+      
+      if (res?.insertedCount > 0 || (Array.isArray(res) && res.length > 0)) {
+        const count = res.insertedCount || res.length;
+        this.toasterService.success(`${count} staff added successfully`);
+      } else if (!res?.skippedEmployees?.length) {
+        this.toasterService.success('Staff added successfully');
       }
+
+      if (res?.skippedEmployees?.length > 0) {
+        this.handleSkippedRecords(res.skippedEmployees);
+      }
+      
+      this.dialogRef.close(true);
     } catch (error: any) {
-      console.error(error);
-      const skipped = error?.error?.msg?.skippedEmployees;
-      if (Array.isArray(skipped) && skipped.length > 0) {
-        this.toasterService.warning(`${skipped.length} records were skipped (duplicates or data issues)`);
-        // We close with true because some might have succeeded (the API is a bit ambiguous on partial success)
+      console.error('Bulk add error:', error);
+      const skippedEmployees = error?.error?.skippedEmployees || error?.error?.msg?.skippedEmployees;
+      
+      if (Array.isArray(skippedEmployees) && skippedEmployees.length > 0) {
+        this.handleSkippedRecords(skippedEmployees);
         this.dialogRef.close(true);
       } else {
-        this.toasterService.error('Failed to add employees');
+        this.toasterService.error(error?.error?.msg || error?.error?.message || 'Failed to add employees');
       }
     } finally {
       this.isSubmitting = false;
+    }
+  }
+
+  private handleSkippedRecords(skippedEmployees: any[]): void {
+    const dups = skippedEmployees.filter((e: any) => e.skipCode === 'DUPLICATE_CAFETERIA').length;
+    const diffOrg = skippedEmployees.filter((e: any) => e.skipCode === 'DIFFERENT_ORG').length;
+    
+    let msg = '';
+    if (dups > 0) msg += `${dups} staff already in outlet. `;
+    if (diffOrg > 0) msg += `${diffOrg} belong to another organization. `;
+    
+    if (msg === '') {
+      this.toasterService.warning(`${skippedEmployees.length} records skipped (duplicates or data issues)`);
+    } else {
+      this.toasterService.warning(msg.trim());
     }
   }
 

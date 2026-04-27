@@ -1,0 +1,58 @@
+<div class="config-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>settings</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Category Configuration</h3>
+                <p>{{ category?.categoryDisplayName || category?.categoryName }}</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeDialog()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <div class="form-grid-modern p-2">
+            <div class="row g-3 m-0">
+                <div class="col-md-6" *ngFor="let item of config">
+                    <div class="selection-container">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>{{ item.label }}</mat-label>
+                            <input matInput type="number" [(ngModel)]="item.value" [placeholder]="item.label">
+                        </mat-form-field>
+                    </div>
+                </div>
+                
+                <!-- Visibility Settings Section -->
+                <div class="col-12 mt-2">
+                    <p class="section-label mb-3"><mat-icon>visibility</mat-icon> Visibility Settings</p>
+                    <div class="d-flex align-items-center justify-content-between p-3 bg-light-soft rounded-4 border">
+                        <div class="visibility-info">
+                            <p class="fw-bold m-0" style="color: #1e293b;">Show Only to Employees</p>
+                            <p class="small text-muted m-0">When enabled, this category will only be visible to registered employees.</p>
+                        </div>
+                        <mat-slide-toggle color="primary" [(ngModel)]="showOnlyToEmployees"></mat-slide-toggle>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeDialog()" [disabled]="loading">Cancel</button>
+        <button mat-flat-button color="primary" class="btn-primary-action px-4" 
+                (click)="updateVirtualCafeteria()" [disabled]="loading">
+            <ng-container *ngIf="!loading">
+                <mat-icon>save</mat-icon>
+                <span>Update Configuration</span>
+            </ng-container>
+            <div class="d-flex align-items-center gap-2" *ngIf="loading">
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+                <span>Saving...</span>
+            </div>
+        </button>
+    </mat-dialog-actions>
+</div>

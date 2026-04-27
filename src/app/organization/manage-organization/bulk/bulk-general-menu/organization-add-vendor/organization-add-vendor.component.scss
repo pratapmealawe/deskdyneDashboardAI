@@ -1,0 +1,153 @@
+@use "styles/theme/variable" as var;
+
+.vendor-dialog-container {
+    padding: 0;
+
+    .modern-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid #f1f5f9;
+
+        .dialog-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var.$primary-color2;
+            letter-spacing: -0.02em;
+        }
+
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            mat-icon { font-size: 20px; width: 20px; height: 20px; }
+            &.primary { background: #eff6ff; color: var.$primary-color1; }
+        }
+
+        .close-btn { color: #94a3b8; }
+    }
+
+    .custom-content {
+        padding: 1rem 1.5rem 1rem 1.5rem;
+        overflow-x: hidden;
+        min-width: 500px; // Standardized width
+        max-height: 60vh;
+        margin: 0;
+
+        &::-webkit-scrollbar { width: 6px; }
+        &::-webkit-scrollbar-track { background: transparent; }
+        &::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    }
+
+    .field-label {
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .vendor-radio-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .vendor-chip {
+        ::ng-deep .mat-radio-label {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            margin: 0;
+
+            &:hover {
+                background: #f1f5f9;
+                border-color: #cbd5e1;
+            }
+        }
+
+        &.mat-radio-checked {
+            ::ng-deep .mat-radio-label {
+                background: #eff6ff;
+                border-color: var.$primary-color1;
+                box-shadow: 0 4px 12px rgba(14, 73, 181, 0.1);
+            }
+        }
+
+        .vendor-info {
+            display: flex;
+            flex-direction: column;
+            margin-left: 8px;
+
+            .name { font-weight: 600; color: #1e293b; font-size: 0.95rem; }
+            .phone { font-size: 0.8rem; color: #64748b; }
+        }
+    }
+
+    .dialog-actions-strip {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.75rem;
+        padding: 1.25rem 1.5rem 0.5rem 1.5rem; // Increased side padding
+        border-top: 1px solid #f1f5f9;
+
+        button {
+            border-radius: var.$border-radius-pill;
+            font-weight: 600;
+            height: 42px;
+            padding: 0 1.5rem;
+        }
+
+        .btn-cancel { color: #64748b; }
+        .btn-save {
+            background-color: var.$primary-color1;
+            box-shadow: 0 4px 12px rgba(14, 73, 181, 0.2);
+            mat-icon { margin-right: 6px; font-size: 18px; width: 18px; height: 18px; }
+        }
+    }
+}
+
+/* PILL-STYLE INPUT OVERRIDES */
+::ng-deep .vendor-dialog-container {
+    .mat-form-field-appearance-outline {
+        .mat-form-field-flex {
+            border-radius: 99px !important;
+            padding: 0 16px !important;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+        .mat-form-field-outline { display: none; }
+        .mat-form-field-infix { padding: 0.8rem 0 !important; border-top: none; }
+        
+        &.mat-focused .mat-form-field-flex {
+            border-color: var.$primary-color1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(14, 73, 181, 0.1);
+        }
+    }
+}
+
+/* Fix double scrollbar issue in material dialogs */
+::ng-deep .mat-dialog-container {
+    padding: 0 !important;
+    overflow: hidden !important;
+    border-radius: 20px !important;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+}
+
+::ng-deep .mat-dialog-content {
+    margin: 0 !important;
+    padding: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important; // Let the inner wrapper handle it
+}
+
+

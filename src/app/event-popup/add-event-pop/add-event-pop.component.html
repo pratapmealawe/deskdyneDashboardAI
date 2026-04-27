@@ -1,7 +1,7 @@
 <h2 mat-dialog-title class="dialog-header">
     <div class="header-left">
         <div class="title-group">
-            <h1 class="page-title">{{ showUpdate ? 'Edit Event Popup' : 'Add Event Popup' }}</h1>
+            <h1 class="page-title">{{ showUpdate ?'Edit Event Popup' :'Add Event Popup' }}</h1>
             <p class="page-subtitle">Configure promotion events, banners, and timing.</p>
         </div>
     </div>
@@ -11,14 +11,14 @@
         </button>
         <div class="status-pill" [class.active]="eventform.get('eventPopupOpened')?.value"
             [class.inactive]="!eventform.get('eventPopupOpened')?.value">
-            <mat-icon>{{ eventform.get('eventPopupOpened')?.value ? 'check_circle' : 'pause_circle' }}</mat-icon>
-            {{ eventform.get('eventPopupOpened')?.value ? 'Active' : 'Paused' }}
+            <mat-icon>{{ eventform.get('eventPopupOpened')?.value ?'check_circle' :'pause_circle' }}</mat-icon>
+            {{ eventform.get('eventPopupOpened')?.value ?'Active' :'Paused' }}
         </div>
     </div>
 </h2>
 
 <mat-dialog-content class="dialog-content">
-    <form [formGroup]="eventform" id="addEventForm" (ngSubmit)="onSubmit(showUpdate ? 'update' : undefined)">
+    <form [formGroup]="eventform" id="addEventForm" (ngSubmit)="onSubmit(showUpdate ?'update' : undefined)">
         <div class="row g-4 animate-fadeIn">
             <!-- LEFT COLUMN: Appearance & Settings -->
             <div class="col-12 col-lg-4">
@@ -237,7 +237,7 @@
         <button class="btn-submit" [class.active]="eventform.valid && seletedCafetria" mat-flat-button type="submit"
             form="addEventForm">
             <mat-icon>check</mat-icon>
-            {{ showUpdate ? 'Update Event' : 'Create Event' }}
+            {{ showUpdate ?'Update Event' :'Create Event' }}
         </button>
     </div>
 </div>

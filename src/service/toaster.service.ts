@@ -6,7 +6,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class ToasterService {
 
-  msgObj:any = {
+  msgObj: any = {
     100: 'Kindly select from and to date',
     101: 'To date cannot be lesser than from date',
     104: 'Payment transaction failed',
@@ -33,30 +33,30 @@ export class ToasterService {
     125: 'Nothing to download',
     300: 'Something went wrong, Please try again later.',
     301: 'Please assign vendor to this order.'
-}
+  }
 
-toasterSubject = new BehaviorSubject({});
-constructor() { }
+  toasterSubject = new BehaviorSubject({});
+  constructor() { }
 
-success(msgCode: any){
-  const msg = this.msgObj[msgCode]? this.msgObj[msgCode] : msgCode;
-  this.toasterSubject.next({msg, type: 'success'});
-}
-error(msgCode: any){
-  const msg = this.msgObj[msgCode]? this.msgObj[msgCode] : msgCode;
-  this.toasterSubject.next({msg, type: 'error'});
-}
+  success(msgCode: any) {
+    const msg = this.msgObj[msgCode] ? this.msgObj[msgCode] : msgCode;
+    this.toasterSubject.next({ msg, type: 'success' });
+  }
+  error(msgCode: any) {
+    const msg = this.msgObj[msgCode] ? this.msgObj[msgCode] : msgCode;
+    this.toasterSubject.next({ msg, type: 'error' });
+  }
 
-warning(msgCode: any){
-  const msg = this.msgObj[msgCode]? this.msgObj[msgCode] : msgCode;
-  this.toasterSubject.next({msg, type: 'warning'});
-}
-info(msgCode: any){
-  const msg = this.msgObj[msgCode]? this.msgObj[msgCode] : msgCode;
-  this.toasterSubject.next({msg, type: 'info'});
-}
-alarm(msgCode: any){
-  const msg = this.msgObj[msgCode]? this.msgObj[msgCode] : msgCode;
-  this.toasterSubject.next({msg, type: 'alarm'});
-} 
+  warning(msgCode: any) {
+    const msg = this.msgObj[msgCode] ? this.msgObj[msgCode] : msgCode;
+    this.toasterSubject.next({ msg, type: 'warning' });
+  }
+  info(msgCode: any) {
+    const msg = this.msgObj[msgCode] ? this.msgObj[msgCode] : msgCode;
+    this.toasterSubject.next({ msg, type: 'info' });
+  }
+  alarm(msgCode: any) {
+    const msg = this.msgObj[msgCode] ? this.msgObj[msgCode] : msgCode;
+    this.toasterSubject.next({ msg, type: 'alarm' });
+  }
 }

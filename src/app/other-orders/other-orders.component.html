@@ -8,9 +8,6 @@
                 <span>{{ view.name }}</span>
             </button>
         </div>
-        <button mat-icon-button class="refresh-btn" (click)="refreshOrderList()" matTooltip="Refresh">
-            <mat-icon>refresh</mat-icon>
-        </button>
     </div>
 
     <!-- Tab Content Area -->
@@ -19,5 +16,6 @@
         <app-bulk-order *ngIf="selectedTabIndex === 1"></app-bulk-order>
         <app-emp-poll *ngIf="selectedTabIndex === 2"></app-emp-poll>
         <app-virtual-cafeteria *ngIf="selectedTabIndex === 3"></app-virtual-cafeteria>
+        <app-consumption-order *ngIf="selectedTabIndex === 4"></app-consumption-order>
     </div>
 </div>

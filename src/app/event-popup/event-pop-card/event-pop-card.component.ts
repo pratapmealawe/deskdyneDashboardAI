@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
-import { ToasterService } from 'src/service/toaster.service';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
 
@@ -58,7 +58,6 @@ export class EventPopCardComponent implements OnInit {
       this.toaster.success("Successfully Deleted Event....!")
       this.refresh.emit();
     } catch (err: any) {
-      console.log(err);
     }
   }
 

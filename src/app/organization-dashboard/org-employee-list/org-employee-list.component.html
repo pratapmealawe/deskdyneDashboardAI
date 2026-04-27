@@ -43,7 +43,7 @@
                     <div class="employee-meta">
                         <span class="meta-item">
                             <mat-icon>badge</mat-icon>
-                            {{ employee.employeeId || 'N/A' }}
+                            {{ employee.employeeId ||'N/A' }}
                         </span>
                         <span class="meta-item">
                             <mat-icon>phone</mat-icon>
@@ -55,19 +55,13 @@
                         </span>
                     </div>
                 </div>
-                <div class="employee-cafe">
-                    <span class="cafe-badge">
-                        <mat-icon>storefront</mat-icon>
-                        {{ employee.cafeteria_name || 'N/A' }}
-                    </span>
-                </div>
             </div>
         </div>
 
         <!-- No Search Results -->
         <div class="empty-state" *ngIf="searchTerm && filteredEmployeeList.length === 0">
             <mat-icon>search_off</mat-icon>
-            <p>No employees found for "{{ searchTerm }}"</p>
+            <p>No employees found for"{{ searchTerm }}"</p>
             <span>Try a different search term</span>
         </div>
     </div>

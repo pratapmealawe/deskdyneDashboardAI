@@ -3,10 +3,10 @@ import { FormArray, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatCalendar } from '@angular/material/datepicker';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
+import { environment } from '@environments/environment';
 import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
 
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
@@ -69,7 +69,7 @@ export class AddOutletMenuComponent implements OnInit {
     if (this.data.item) {
       this.imageUrl = this.data.item.imageUrl;
       this.patchFormValue(this.data.item);
-    } 
+    }
     if (this.data.outletObj?.isPreOrder) {
       const timings = this.data.outletObj?.mealTiming?.map((m: any) => m.mealType) || [];
       const control = this.form.get('mealTimingInfo');
@@ -233,7 +233,7 @@ export class AddOutletMenuComponent implements OnInit {
       });
     }
 
-    if (item.addOnsList?.length) {
+    if (item.addOnsList?.length >= 1) {
       this.addons_List.clear();
       this.uploadedAddonImageFiles = [];
 
@@ -241,20 +241,11 @@ export class AddOutletMenuComponent implements OnInit {
         this.addons_List.push(new FormGroup({
           addOnImageUrl: new FormControl(addon.addOnImageUrl ?? ''),
           addOnName: new FormControl(addon.addOnName ?? ''),
-          addOnPrice: new FormControl(addon.addOnPrice ?? 0, [Validators.min(0)]),
+          addOnPrice: new FormControl(addon.addOnPrice ?? 1, [Validators.min(1)]),
           addOnType: new FormControl(addon.addOnType ?? 'NA'),
         }));
         this.uploadedAddonImageFiles.push(null);
       });
-    } else {
-      this.addons_List.clear();
-      this.uploadedAddonImageFiles = [null];
-      this.addons_List.push(new FormGroup({
-        addOnImageUrl: new FormControl(''),
-        addOnName: new FormControl(''),
-        addOnPrice: new FormControl(0),
-        addOnType: new FormControl('NA')
-      }));
     }
   }
 

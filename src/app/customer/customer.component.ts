@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 import { PageEvent } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { BulkWalletUploadDialogComponent } from './bulk-wallet-upload-dialog/bulk-wallet-upload-dialog.component';
@@ -98,7 +98,6 @@ export class CustomerComponent implements OnInit, OnChanges {
     this.orgDetails = this.orglist.find(
       (org: any) => org._id === this.filterObj?.orgId
     );
-    console.log(this.filterObj?.orgId, "this.filterObj?.orgId");
   }
 
   onKeyEvent(event: any) {
@@ -155,7 +154,6 @@ export class CustomerComponent implements OnInit, OnChanges {
       this.pageIndex = 0;
       this.updatePagedData();
     } catch (err: any) {
-      console.log(err);
       this.customerList = [];
       this.filteredCustomerList = [];
       this.updatePagedData();

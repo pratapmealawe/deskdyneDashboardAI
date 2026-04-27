@@ -1,4 +1,4 @@
-import {
+﻿import {
   Component,
   EventEmitter,
   Input,
@@ -7,9 +7,9 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { ConfirmationModalService } from '../../../service/confirmation-modal.service';
-import { environment } from 'src/environments/environment';
-import { PolicyService } from 'src/service/policy.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { environment } from '@environments/environment';
+import { PermissionsService } from '@service/permission.service';
 
 @Component({
   selector: 'app-bulk-master-menu-card',
@@ -29,11 +29,11 @@ export class BulkMasterMenuCardComponent implements OnInit {
 
   constructor(
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService
+    private permissionsService: PermissionsService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
+    this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
   }
 
   onImageError(event: Event): void {
@@ -59,3 +59,4 @@ export class BulkMasterMenuCardComponent implements OnInit {
     this.deleteItem.emit(this.foodItem);
   }
 }
+

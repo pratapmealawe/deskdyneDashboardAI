@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PageEvent } from '@angular/material/paginator';
-import { SearchFilterService } from 'src/service/search-filter.service';
-import { CustomPipeModule } from 'src/pipes/pipe.module';
+import { SearchFilterService } from '@service/search-filter.service';
+import { CustomPipeModule } from '@pipes/pipe.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { BulkMasterMenuCardComponent } from './bulk-master-menu-card/bulk-master-menu-card.component';
 import { AddBulkMasterMenuComponent } from './add-bulk-master-menu/add-bulk-master-menu.component';
@@ -56,7 +56,7 @@ export class BulkMasterMenuComponent implements OnInit {
 
   async getMenuItemsList(): Promise<void> {
     try {
-      const menuItems: any = await this.apiMainService.getAllB2BFooditems();
+      const menuItems: any = await this.apiMainService.getAllBulkMasterMenus();
       this.allMenuItems = menuItems || [];
       this.applySearchAndPagination();
     } catch (error) {
@@ -100,10 +100,9 @@ export class BulkMasterMenuComponent implements OnInit {
 
   async deleteMenuItem(item: any): Promise<void> {
     try {
-      await this.apiMainService.deleteB2BFoodItem(item._id);
+      await this.apiMainService.deleteBulkMasterMenu(item._id);
       this.getMenuItemsList();
     } catch (error) {
-      console.log(error);
     }
   }
 

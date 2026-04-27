@@ -1,0 +1,59 @@
+<div class="package-virtual-cafeteria-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>inventory_2</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Add New Package</h3>
+                <p>Configure and add new meals to the cafeteria</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeDialog()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <form [formGroup]="packageForm" *ngIf="data">
+            <!-- Source Selection Configuration -->
+            <h6 class="section-label"><mat-icon>settings_suggest</mat-icon> Configuration Settings</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-12">
+                    <mat-form-field appearance="outline" class="full-width">
+                        <mat-label>Select Meals from Mealawe</mat-label>
+                        <mat-icon matPrefix>restaurant</mat-icon>
+                        <mat-select formControlName="selectedMeals" multiple placeholder="Select multiple meals">
+                            <mat-option *ngFor="let meal of filteredMeals" [value]="meal._id">
+                                {{ meal.packageName }} (₹{{ meal.packagePrice - meal.discount }})
+                            </mat-option>
+                        </mat-select>
+                        <mat-hint>Filtering by Category and Cluster removed for quicker access.</mat-hint>
+                    </mat-form-field>
+                </div>
+            </div>
+
+
+            <!-- Empty State -->
+            <div *ngIf="itemListArray.length === 0" class="text-center py-5 bg-light-soft rounded-4 border-dashed">
+                <mat-icon style="font-size: 48px; width: 48px; height: 48px; color: #cbd5e1;">restaurant_menu</mat-icon>
+                <p class="mt-2 text-muted">Select meals from the configuration settings above to begin.</p>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer">
+        <button mat-button class="btn-cancel me-2" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button mat-flat-button color="primary" (click)="onSave()" 
+                [disabled]="packageForm.invalid || isSubmitting" class="btn-primary-action">
+            <ng-container *ngIf="!isSubmitting">
+                <mat-icon>save_as</mat-icon>
+                <span>Save Package</span>
+            </ng-container>
+            <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+                <span>Processing...</span>
+            </div>
+        </button>
+    </mat-dialog-actions>
+</div>

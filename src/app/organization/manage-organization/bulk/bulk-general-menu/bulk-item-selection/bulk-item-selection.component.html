@@ -1,0 +1,50 @@
+<div class="dialog-container p-4">
+    <!-- DIALOG HEADER (Modern Header Pattern) -->
+    <div class="modern-header mb-4">
+        <div class="d-flex align-items-center gap-3">
+            <div class="icon-box primary">
+                <mat-icon ripple>shopping_basket</mat-icon>
+            </div>
+            <div>
+                <h2 class="dialog-title mb-0">Select {{ menuType | titlecase }} Items</h2>
+                <p class="small text-muted mb-0">Browse and select items from our master kitchen inventory</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="close()" class="close-btn">
+            <mat-icon ripple>close</mat-icon>
+        </button>
+    </div>
+
+    <div class="dialog-content">
+        <mat-form-field appearance="outline" class="w-100 mb-3">
+            <mat-label>Search Items</mat-label>
+            <input matInput [(ngModel)]="searchText" placeholder="Type item name..." autocomplete="off">
+            <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <div class="items-grid">
+            <div class="food-item-card" *ngFor="let food of foodItemList | filter: searchText:'itemName'"
+                [class.selected]="selectedFoodItems.includes(food)" 
+                (click)="toggleSelection(food)">
+                <div class="card-img-wrapper">
+                    <img [src]="imageUrl + food.imageUrl" (error)="food.imageUrl ='placeholder.png'" alt="FoodItem">
+                    <div class="selection-overlay" *ngIf="selectedFoodItems.includes(food)">
+                        <mat-icon>check_circle</mat-icon>
+                    </div>
+                </div>
+                <div class="card-info p-2">
+                    <span class="item-name">{{ food.itemName }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dialog-actions d-flex justify-content-end gap-2 mt-4">
+        <button mat-stroked-button color="warn" (click)="close()">Cancel</button>
+        <button mat-flat-button color="primary" 
+                [disabled]="!selectedFoodItems.length"
+                (click)="close('add')">
+            Add Selected ({{ selectedFoodItems.length }})
+        </button>
+    </div>
+</div>

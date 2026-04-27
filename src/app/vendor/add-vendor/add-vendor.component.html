@@ -43,9 +43,9 @@
           </mat-menu>
 
           <!-- Validity Badge -->
-          <div class="status-pill" [ngClass]="isAddVendorValid() ? 'valid' : 'invalid'">
-            <mat-icon>{{ isAddVendorValid() ? 'check_circle' : 'info' }}</mat-icon>
-            <span>{{ isAddVendorValid() ? 'Ready to Save' : 'Incomplete' }}</span>
+          <div class="status-pill" [ngClass]="isAddVendorValid() ?'valid' :'invalid'">
+            <mat-icon>{{ isAddVendorValid() ?'check_circle' :'info' }}</mat-icon>
+            <span>{{ isAddVendorValid() ?'Ready to Save' :'Incomplete' }}</span>
           </div>
         </div>
       </div>
@@ -71,7 +71,7 @@
                   {{ firm.vendorFirmName }}
                 </mat-option>
               </mat-select>
-              <mat-error *ngIf="hasError(form, 'vendorId', 'required')">
+              <mat-error *ngIf="hasError(form,'vendorId','required')">
                 Vendor Firm is required
               </mat-error>
             </mat-form-field>
@@ -93,7 +93,7 @@
                 <mat-select formControlName="vendorRole" [(value)]="defaultRole">
                   <mat-option *ngFor="let role of vendorRole" [value]="role">{{ role }}</mat-option>
                 </mat-select>
-                <mat-error *ngIf="hasError(form, 'vendorRole', 'required')">Required</mat-error>
+                <mat-error *ngIf="hasError(form,'vendorRole','required')">Required</mat-error>
               </mat-form-field>
             </div>
 
@@ -197,7 +197,7 @@
                   <mat-label>Vendor Name</mat-label>
                   <input matInput formControlName="vendorName" placeholder="e.g. John Doe" />
                   <mat-icon matSuffix class="text-muted">badge</mat-icon>
-                  <mat-error *ngIf="hasError(form, 'vendorName', 'required')">Name is required</mat-error>
+                  <mat-error *ngIf="hasError(form,'vendorName','required')">Name is required</mat-error>
                 </mat-form-field>
               </div>
               <div class="col-12 col-md-6 mb-3">
@@ -205,8 +205,8 @@
                   <mat-label>Phone No</mat-label>
                   <input matInput formControlName="vendorPhoneNo" placeholder="e.g. 9876543210" />
                   <mat-icon matSuffix class="text-muted">phone</mat-icon>
-                  <mat-error *ngIf="hasError(form, 'vendorPhoneNo', 'required')">Phone is required</mat-error>
-                  <mat-error *ngIf="hasError(form, 'vendorPhoneNo', 'pattern')">Enter valid 10 digit number</mat-error>
+                  <mat-error *ngIf="hasError(form,'vendorPhoneNo','required')">Phone is required</mat-error>
+                  <mat-error *ngIf="hasError(form,'vendorPhoneNo','pattern')">Enter valid 10 digit number</mat-error>
                 </mat-form-field>
               </div>
               <div class="col-12 mb-3">
@@ -214,8 +214,8 @@
                   <mat-label>Email</mat-label>
                   <input matInput formControlName="vendorEmail" placeholder="e.g. john@example.com" />
                   <mat-icon matSuffix class="text-muted">email</mat-icon>
-                  <mat-error *ngIf="hasError(form, 'vendorEmail', 'required')">Email is required</mat-error>
-                  <mat-error *ngIf="hasError(form, 'vendorEmail', 'pattern')">Invalid Email</mat-error>
+                  <mat-error *ngIf="hasError(form,'vendorEmail','required')">Email is required</mat-error>
+                  <mat-error *ngIf="hasError(form,'vendorEmail','pattern')">Invalid Email</mat-error>
                 </mat-form-field>
               </div>
             </div>
@@ -252,7 +252,7 @@
                     <div class="d-flex flex-wrap gap-3 text-muted small">
                       <span class="d-flex align-items-center gap-1">
                         <mat-icon style="font-size: 14px; height: 14px; width: 14px;">place</mat-icon>
-                        {{ address.location || 'No Location' }}
+                        {{ address.location ||'No Location' }}
                       </span>
                       <span class="d-flex align-items-center gap-1" *ngIf="address.landmark">
                         <mat-icon style="font-size: 14px; height: 14px; width: 14px;">flag</mat-icon>
@@ -270,7 +270,7 @@
         </div>
 
         <!-- OUTLET SECTION -->
-        <div class="modern-card mb-4" *ngIf="form.get('accessType')?.value === 'outlet'">
+        <div class="modern-card mb-4" *ngIf="form.get('accessType')?.value ==='outlet'">
           <div class="card-header with-actions">
             <div class="d-flex align-items-center gap-3">
               <div class="icon-box success">
@@ -300,11 +300,11 @@
                     <div class="d-flex flex-wrap gap-3 text-muted small">
                       <span class="d-flex align-items-center gap-1">
                         <mat-icon style="font-size: 14px; height: 14px; width: 14px;">business</mat-icon>
-                        {{ outlet.organizationDetails?.organization_name || '-' }}
+                        {{ outlet.organizationDetails?.organization_name ||'-' }}
                       </span>
                       <span class="d-flex align-items-center gap-1">
                         <mat-icon style="font-size: 14px; height: 14px; width: 14px;">restaurant</mat-icon>
-                        {{ outlet.cafeteriaDetails?.cafeteria_name || '-' }}
+                        {{ outlet.cafeteriaDetails?.cafeteria_name ||'-' }}
                       </span>
                     </div>
                   </div>
@@ -318,7 +318,7 @@
         </div>
 
         <!-- POPUP SECTION -->
-        <div class="modern-card mb-4" *ngIf="form.get('accessType')?.value === 'popup'">
+        <div class="modern-card mb-4" *ngIf="form.get('accessType')?.value ==='popup'">
           <div class="card-header with-actions">
             <div class="d-flex align-items-center gap-3">
               <div class="icon-box purple">
@@ -343,17 +343,17 @@
                   <div class="item-main">
                     <div class="d-flex align-items-center mb-1 gap-2">
                       <h4 class="m-0">{{ popup.popupName }}</h4>
-                      <span class="badge-type" [class.open]="popup.popupType">{{ popup.popupType ? 'Opened' : 'Closed'
+                      <span class="badge-type" [class.open]="popup.popupType">{{ popup.popupType ?'Opened' :'Closed'
                         }}</span>
                     </div>
                     <div class="d-flex flex-wrap gap-3 text-muted small">
                       <span class="d-flex align-items-center gap-1">
                         <mat-icon style="font-size: 14px; height: 14px; width: 14px;">business</mat-icon>
-                        {{ popup.organizationDetails?.organization_name || '-' }}
+                        {{ popup.organizationDetails?.organization_name ||'-' }}
                       </span>
                       <span class="d-flex align-items-center gap-1">
                         <mat-icon style="font-size: 14px; height: 14px; width: 14px;">restaurant</mat-icon>
-                        {{ popup.cafeteriaDetails?.cafeteria_name || '-' }}
+                        {{ popup.cafeteriaDetails?.cafeteria_name ||'-' }}
                       </span>
                     </div>
                   </div>
