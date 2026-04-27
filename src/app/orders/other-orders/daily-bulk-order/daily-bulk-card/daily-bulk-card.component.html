@@ -12,6 +12,9 @@
         <span class="type-chip">
           <mat-icon>inventory_2</mat-icon> Daily Bulk
         </span>
+        <span *ngIf="order.sourceType === 'manualAdmin'" class="manual-order-chip">
+          <mat-icon>inventory_2</mat-icon> Manual Order
+        </span>
         <span class="date-text">
           {{ order?.orderDate | date:'MMM d, y, h:mm a' }}
         </span>
