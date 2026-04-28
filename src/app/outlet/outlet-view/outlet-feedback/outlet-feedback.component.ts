@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/material.module';
-import { OrgOrderComponent } from 'src/app/organization-dashboard/org-reviews/org-order/org-order.component';
+import { ReviewCardComponent } from 'src/app/review/review-card/review-card.component';
 import { OutletViewService } from '../outlet-view.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { OutletViewService } from '../outlet-view.service';
   imports: [
     CommonModule,
     MaterialModule,
-    OrgOrderComponent
+    ReviewCardComponent
   ]
 })
 export class OutletFeedbackComponent implements OnInit {

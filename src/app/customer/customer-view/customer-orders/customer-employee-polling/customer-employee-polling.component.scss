@@ -1,0 +1,105 @@
+@use "src/styles/theme/variable" as var;
+
+.board-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #edf2f7;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card-header {
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+
+    .header-title-group {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .header-icon-wrapper {
+            width: 40px;
+            height: 40px;
+            background: #f1f5f9;
+            color: #64748b;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            mat-icon {
+                font-size: 20px;
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .header-text-wrapper {
+            h3 {
+                font-size: 1.15rem;
+                font-weight: 700;
+                color: var.$primary-color2;
+            }
+        }
+    }
+}
+
+.card-body {
+    padding: 1.5rem !important;
+}
+
+.premium-empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+
+    .empty-media {
+        margin-bottom: 1.5rem;
+        display: flex;
+        justify-content: center;
+    }
+
+    .icon-circle {
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        background: #f8fafc;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #cbd5e1;
+
+        mat-icon {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    h3 {
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: #1e293b;
+        margin-bottom: 0.5rem;
+    }
+
+    p {
+        color: #64748b;
+        font-size: 0.95rem;
+        max-width: 400px;
+        margin: 0 auto;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

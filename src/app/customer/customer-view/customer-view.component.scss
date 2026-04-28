@@ -1,13 +1,12 @@
-@use 'styles/theme/mixins' as mixin;
-@use "styles/theme/variable" as var;
+@use 'src/styles/theme/mixins' as mixin;
+@use "src/styles/theme/variable" as var;
 
-.customer-view-container {
+.org-view-container {
   min-height: 100vh;
-  padding: 1.5rem;
 }
 
 // Header Card
-.customer-header-card {
+.org-header-card {
   background: white;
   border-radius: var.$border-radius-xl;
   padding: 1.75rem 2rem;
@@ -71,8 +70,15 @@
 .main-tabs {
   display: flex;
   gap: 0.5rem;
+  padding-bottom: 0.5rem;
   overflow-x: auto;
   scrollbar-width: none;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
 
   &::-webkit-scrollbar {
     display: none;
@@ -118,9 +124,7 @@
 
 // Tab Content
 .tab-content {
-  .fade-in {
-    animation: fadeIn 0.3s ease;
-  }
+  animation: fadeIn 0.3s ease;
 }
 
 @keyframes fadeIn {
@@ -137,11 +141,7 @@
 
 // Responsive
 @media (max-width: 768px) {
-  .customer-view-container {
-    padding: 1rem;
-  }
-
-  .customer-header-card {
+  .org-header-card {
     padding: 1.25rem 1rem;
 
     .header-left {

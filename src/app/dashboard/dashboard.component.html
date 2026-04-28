@@ -32,8 +32,9 @@
     <!-- Main Tabs (pill-style) -->
     <div class="tabs-container">
       <div class="main-tabs">
-        <button *ngFor="let tab of tabs" class="tab-btn" [class.active]="selectedIndex === tab.index"
-          (click)="onTabChange(tab.index)">
+        <button *ngFor="let tab of tabs" class="tab-btn" 
+          [routerLink]="['/app/dashboard', tab.path]"
+          routerLinkActive="active">
           <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
           <span>{{ tab.name }}</span>
         </button>
@@ -42,18 +43,7 @@
 
     <!-- Tab Content -->
     <div class="tab-content-area py-2">
-      <div [ngSwitch]="selectedIndex">
-        <app-main-dashboard *ngSwitchCase="0" [orgAdmin]="{orgDetails: orgSelected}"></app-main-dashboard>
-        <app-other-orders *ngSwitchCase="1"></app-other-orders>
-        <app-org-menu-items *ngSwitchCase="2" [adminOrg]="orgSelected"></app-org-menu-items>
-        <app-org-outlet-orders *ngSwitchCase="3" [adminOrg]="orgSelected"></app-org-outlet-orders>
-        <app-org-reviews *ngSwitchCase="4" [adminOrg]="orgSelected"></app-org-reviews>
-        <app-customer *ngSwitchCase="5" [adminOrg]="orgSelected"></app-customer>
-        <app-org-vendor-info *ngSwitchCase="6" [adminOrg]="orgSelected"></app-org-vendor-info>
-        <app-org-menu-counters *ngSwitchCase="7" [adminOrg]="orgSelected"></app-org-menu-counters>
-        <app-audit-report *ngSwitchCase="8" [adminOrg]="orgSelected"></app-audit-report>
-        <app-org-emp-poll *ngSwitchCase="9" [adminOrg]="orgSelected"></app-org-emp-poll>
-      </div>
+      <router-outlet></router-outlet>
     </div>
   </div>
 

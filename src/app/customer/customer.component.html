@@ -1,113 +1,119 @@
-<div class="page-container" *ngIf="!isViewCustomer">
-    <div class="content-body">
-        <!-- Header Card -->
-        <div class="header-card">
-            <div class="header-content">
-                <div class="title-section">
-                    <h1 class="page-title">User Management</h1>
-                    <p class="page-subtitle">Search and manage customer accounts</p>
-                </div>
-                <div class="actions-section">
-                    <div class="search-wrapper">
-                        <mat-icon class="search-icon">search</mat-icon>
-                        <input type="text" placeholder="Search by name, phone, or email..."
-                            (input)="searchFilter($event)" [value]="searchText" />
-                    </div>
-                </div>
+<div class="org-page-container">
+  <div class="content-body">
+    <!-- Main Content Listing -->
+    <ng-container *ngIf="isListingView">
+      <div class="org-header-card">
+        <div class="header-content">
+          <div class="title-section">
+            <h1 class="page-title">User Management</h1>
+            <p class="page-subtitle" *ngIf="orgDetails?.organization_name">
+              Users for <strong>{{ orgDetails.organization_name }}</strong>
+            </p>
+          </div>
+
+          <div class="actions-section">
+            <mat-form-field appearance="outline" class="org-filter-field" *ngIf="!isDisabled && !isOrgAdmin">
+              <mat-label>Organization</mat-label>
+              <mat-select [(ngModel)]="filterObj.orgId" (selectionChange)="submitFilter()">
+                <mat-option value="">All Organizations</mat-option>
+                <mat-option *ngFor="let org of orglist" [value]="org._id">{{ org.organization_name }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div class="search-wrapper">
+              <mat-icon class="search-icon">search</mat-icon>
+              <input type="text" placeholder="Search by name, phone or email..." [formControl]="searchControl" />
             </div>
+
+            <button mat-flat-button class="btn-primary-action" *ngIf="!isOrgAdmin"
+              (click)="openBulkWalletDialog()">
+              <mat-icon>account_balance_wallet</mat-icon>
+              <span>Bulk Wallet</span>
+            </button>
+
+            <button mat-flat-button class="btn-export excel" (click)="exportToExcel()">
+              <mat-icon>table_chart</mat-icon>
+              <span>Export</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- User Cards List -->
+      <ng-container *ngIf="filteredCustomerList.length; else noUsers">
+        <div class="user-grid">
+          <div class="user-item-card" *ngFor="let user of pagedCustomerList"
+            (click)="!isOrgAdmin && viewCustomer(user)">
+            <!-- Card Top -->
+            <div class="card-top">
+              <div class="user-avatar">
+                <img *ngIf="user.imageUrl; else initialsTemplate" [src]="user.imageUrl" [alt]="user.userName"
+                  class="profile-img">
+                <ng-template #initialsTemplate>
+                  {{ getInitials(user.userName) }}
+                </ng-template>
+              </div>
+              <div class="user-identity">
+                <h3 class="user-name">{{ user.userName || 'Unnamed User' }}</h3>
+                <div class="meta-badges-row">
+                  <div class="meta-badge phone">
+                    <mat-icon>phone</mat-icon>
+                    {{ user.phoneNo }}
+                  </div>
+                  <div class="meta-badge org" *ngIf="user.employeeInfo?.org_name">
+                    <mat-icon>business</mat-icon>
+                    {{ user.employeeInfo.org_name }}
+                  </div>
+                </div>
+              </div>
+              <div class="card-actions">
+                <button mat-icon-button class="view-btn">
+                  <mat-icon>chevron_right</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+              <div class="info-row" *ngIf="user.email">
+                <mat-icon class="info-icon">email</mat-icon>
+                <div class="info-content">
+                  <span class="info-label">Email Address</span>
+                  <span class="info-value text-truncate" [matTooltip]="user.email">{{ user.email }}</span>
+                </div>
+              </div>
+              <div class="info-row" *ngIf="user.city">
+                <mat-icon class="info-icon">location_on</mat-icon>
+                <div class="info-content">
+                  <span class="info-label">City</span>
+                  <span class="info-value">{{ user.city }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Filter Bar -->
-        <div class="filter-bar">
-            <div class="filter-left">
-                <mat-form-field appearance="outline" class="org-select">
-                    <mat-label>Organization</mat-label>
-                    <mat-select [(ngModel)]="filterObj.orgId" [disabled]="orgAdmin?.role ==='ORGADMIN' || isDisabled"
-                        (selectionChange)="submitFilter()">
-                        <mat-option [value]="''">All Organizations</mat-option>
-                        <mat-option *ngFor="let option of orglist" [value]="option._id">
-                            {{ option.organization_name }}
-                        </mat-option>
-                    </mat-select>
-                </mat-form-field>
-            </div>
-            <div class="filter-right" *ngIf="filteredCustomerList.length">
-                <button mat-stroked-button class="btn-action" *ngIf="!isOrgAdmin" (click)="openBulkWalletDialog()">
-                    <mat-icon>upload_file</mat-icon>
-                    <span class="btn-text">Bulk Wallet</span>
-                </button>
-                <button mat-stroked-button class="btn-action excel" (click)="exportToExcel()">
-                    <mat-icon>file_download</mat-icon>
-                    <span class="btn-text">Excel</span>
-                </button>
-                <button mat-stroked-button class="btn-action pdf" (click)="exportToPdf()">
-                    <mat-icon>picture_as_pdf</mat-icon>
-                    <span class="btn-text">PDF</span>
-                </button>
-            </div>
+        <div class="pagination-container">
+          <mat-paginator [length]="filteredCustomerList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+            [pageSizeOptions]="[10, 50, 100]" (page)="onPageChange($event)" class="custom-paginator"
+            showFirstLastButtons>
+          </mat-paginator>
         </div>
+      </ng-container>
 
-        <!-- User Cards List -->
-        <ng-container *ngIf="filteredCustomerList.length; else noUsers">
-            <div class="user-grid">
-                <mat-card class="user-card" *ngFor="let user of pagedCustomerList"
-                    (click)="!isOrgAdmin && viewCustomer(user)">
-                    <div class="user-card-content">
-                        <div class="user-avatar">
-                            <span class="avatar-text">{{ getInitials(user?.userName) }}</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-primary">
-                                <h3 class="user-name">{{ user?.userName ||'-' }}</h3>
-                                <span class="user-org-badge" *ngIf="user?.employeeInfo?.org_name">
-                                    {{ user?.employeeInfo?.org_name }}
-                                </span>
-                            </div>
-                            <div class="user-details">
-                                <div class="detail-item">
-                                    <mat-icon>phone</mat-icon>
-                                    <span>{{ user?.phoneNo ||'-' }}</span>
-                                </div>
-                                <div class="detail-item">
-                                    <mat-icon>email</mat-icon>
-                                    <span class="text-truncate">{{ user?.email ||'-' }}</span>
-                                </div>
-                                <div class="detail-item" *ngIf="user?.employeeInfo?.empId">
-                                    <mat-icon>badge</mat-icon>
-                                    <span>{{ user?.employeeInfo?.empId }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="user-actions" *ngIf="!isOrgAdmin">
-                            <button mat-icon-button color="primary" class="view-btn" matTooltip="View details"
-                                (click)="viewCustomer(user); $event.stopPropagation()">
-                                <mat-icon>visibility</mat-icon>
-                            </button>
-                        </div>
-                    </div>
-                </mat-card>
-            </div>
+      <ng-template #noUsers>
+        <div class="empty-state">
+          <mat-icon class="empty-icon">person_off</mat-icon>
+          <h3>No Users Found</h3>
+          <p>Try adjusting your search filters or selecting a different organization.</p>
+        </div>
+      </ng-template>
+    </ng-container>
 
-            <!-- Pagination -->
-            <div class="pagination-container">
-                <mat-paginator [length]="filteredCustomerList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
-                    [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
-                </mat-paginator>
-            </div>
-        </ng-container>
-
-        <!-- Empty State -->
-        <ng-template #noUsers>
-            <div class="empty-state">
-                <mat-icon class="empty-icon">people_outline</mat-icon>
-                <h3>No Users Found</h3>
-                <p>Try adjusting your search criteria or selecting a different organization.</p>
-            </div>
-        </ng-template>
+    <!-- Detail View Outlet -->
+    <div [hidden]="isListingView">
+      <router-outlet></router-outlet>
     </div>
+  </div>
 </div>
-
-<!-- Detail view -->
-<ng-container *ngIf="isViewCustomer">
-    <app-customer-view [userDetails]="selectedUser" (backBtnEmitter)="backBtnPress()"></app-customer-view>
-</ng-container>

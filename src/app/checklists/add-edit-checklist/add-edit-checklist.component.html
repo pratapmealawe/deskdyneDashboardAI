@@ -1,0 +1,61 @@
+<div class="add-checklist-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!isEditMode" [class.warning]="isEditMode">
+        <mat-icon>{{ isEditMode ? 'edit_note' : 'add_task' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ isEditMode ? 'Edit Checklist Question' : 'Add New Question' }}</h3>
+        <p>{{ isEditMode ? 'Update the checklist question details and category' : 'Create a new question for the audit checklist' }}</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="onCancel()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" id="checklistForm" class="p-2">
+      <div class="form-grid-modern">
+        
+        <!-- Category Row -->
+        <div class="selection-container mb-4">
+          <p class="section-label mb-2"><mat-icon>category</mat-icon> Question Category</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Type</mat-label>
+            <mat-icon matPrefix class="me-2 text-muted">label</mat-icon>
+            <mat-select formControlName="checklistQuestionType" placeholder="Select category">
+              <mat-option *ngFor="let type of data.checklistTypes" [value]="type">
+                {{ type }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="checklistQuestionTypeCtrl?.hasError('required')">Category is required</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Question Textarea Row -->
+        <div class="question-container">
+          <p class="section-label mb-2"><mat-icon>help_outline</mat-icon> Question Description</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Checklist Question</mat-label>
+            <textarea matInput formControlName="checklistQuestion" rows="4" 
+              placeholder="e.g. Is the kitchen floor cleaned and sanitized?"></textarea>
+            <mat-hint>Minimum 5 characters required</mat-hint>
+            <mat-error *ngIf="checklistQuestionCtrl?.hasError('required')">Question is required</mat-error>
+            <mat-error *ngIf="checklistQuestionCtrl?.hasError('minlength')">Too short (min 5 chars)</mat-error>
+          </mat-form-field>
+        </div>
+        
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="checklistForm" 
+            [disabled]="form.invalid" class="btn-primary-action px-4">
+      <mat-icon>{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
+      <span>{{ isEditMode ? 'Update Question' : 'Create Question' }}</span>
+    </button>
+  </mat-dialog-actions>
+</div>

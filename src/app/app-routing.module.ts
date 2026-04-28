@@ -6,7 +6,6 @@ import { OrgLayoutComponent } from './layout/org-layout/org-layout.component';
 
 const routes: Routes = [
   { path: 'login', loadComponent: () => import('./login/login.component').then(m => m.LoginComponent) },
-  { path: 'guest', loadChildren: () => import('./guest/guest.module').then(m => m.GuestModule) },
 
 
   // General App Layout
@@ -16,7 +15,23 @@ const routes: Routes = [
     canActivate: [accessGuard],
     children: [
       { path: 'home', loadComponent: () => import('./home/home.component').then(m => m.HomeComponent) },
-      { path: 'dashboard', loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent) },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./dashboard/dashboard.component').then(m => m.DashboardComponent),
+        children: [
+          { path: 'main', loadComponent: () => import('./organization-dashboard/main-dashboard/main-dashboard.component').then(m => m.MainDashboardComponent) },
+          { path: 'admin-orders', loadComponent: () => import('./orders/other-orders/other-orders.component').then(m => m.OtherOrdersComponent) },
+          { path: 'menu-items', loadComponent: () => import('./organization-dashboard/org-menu-items/org-menu-items.component').then(m => m.OrgMenuItemsComponent) },
+          { path: 'orders', loadComponent: () => import('./organization-dashboard/org-outlet-orders/org-outlet-orders.component').then(m => m.OrgOutletOrdersComponent) },
+          { path: 'reviews', loadComponent: () => import('./organization-dashboard/org-reviews/org-reviews.component').then(m => m.OrgReviewsComponent) },
+          { path: 'users', loadComponent: () => import('./customer/customer.component').then(m => m.CustomerComponent) },
+          { path: 'vendor-info', loadComponent: () => import('./organization-dashboard/org-vendor-info/org-vendor-info.component').then(m => m.OrgVendorInfoComponent) },
+          { path: 'menu-counters', loadComponent: () => import('./organization-dashboard/org-menu-counters/org-menu-counters.component').then(m => m.OrgMenuCountersComponent) },
+          { path: 'audit-reports', loadComponent: () => import('./organization-dashboard/audit-report/audit-report.component').then(m => m.AuditReportComponent) },
+          { path: 'emp-poll', loadComponent: () => import('./organization-dashboard/org-emp-poll/org-emp-poll.component').then(m => m.OrgEmpPollComponent) },
+          { path: '', redirectTo: 'main', pathMatch: 'full' }
+        ]
+      },
       { path: 'organization-dashboard', loadComponent: () => import('./main-dashboard/main-dashboard.component').then(m => m.MainDashboardComponent) },
       { path: 'orders-dashboard', loadComponent: () => import('./orders-dashboard/orders-dashboard.component').then(m => m.OrdersDashboardComponent) },
       {
@@ -61,7 +76,7 @@ const routes: Routes = [
           }
         ]
       },
-      { path: 'outlet-master-menu', loadComponent: () => import('./outlet/outlet-master-menu/outlet-master-menu.component').then(m => m.OutletMasterMenuComponent) },
+      { path: 'outlet-master-menu', loadComponent: () => import('./outlet-master-menu/outlet-master-menu.component').then(m => m.OutletMasterMenuComponent) },
       { path: 'event-popup', loadComponent: () => import('./event-popup/event-popup.component').then(m => m.EventPopupComponent) },
       {
         path: 'vendor-firm',
@@ -90,12 +105,36 @@ const routes: Routes = [
       { path: 'notifications', loadComponent: () => import('./notification/notification.component').then(m => m.NotificationComponent) },
       { path: 'vendorWalletDashboard', loadComponent: () => import('./vendor-management/vendor-wallet-dashboard/vendor-wallet-dashboard.component').then(m => m.VendorWalletDashboardComponent) },
       { path: 'vendorPayout', loadComponent: () => import('./vendor-management/vendor-payout/vendor-payout.component').then(m => m.VendorPayoutComponent) },
-
-      { path: 'customer', loadChildren: () => import('./customer/customer.module').then(m => m.CustomerModule) },
-
+      {
+        path: 'customer',
+        loadComponent: () => import('./customer/customer.component').then(m => m.CustomerComponent),
+        children: [
+          {
+            path: ':id',
+            loadComponent: () => import('./customer/customer-view/customer-view.component').then(m => m.CustomerViewComponent),
+            children: [
+              { path: 'details', loadComponent: () => import('./customer/customer-view/customer-details/customer-details.component').then(m => m.CustomerDetailsComponent) },
+              { path: 'wallet', loadComponent: () => import('./customer/customer-view/customer-wallet/customer-wallet.component').then(m => m.CustomerWalletComponent) },
+              { path: 'company-wallet', loadComponent: () => import('./customer/customer-view/customer-company-wallet/customer-company-wallet.component').then(m => m.CustomerCompanyWalletComponent) },
+              { path: 'orders', loadComponent: () => import('./customer/customer-view/customer-orders/customer-orders.component').then(m => m.CustomerOrdersComponent) },
+              { path: 'review', loadComponent: () => import('./customer/customer-view/customer-review/customer-review.component').then(m => m.CustomerReviewComponent) },
+              { path: 'feedback', loadComponent: () => import('./customer/customer-view/customer-feedback/customer-feedback.component').then(m => m.CustomerFeedbackComponent) },
+              { path: '', redirectTo: 'details', pathMatch: 'full' }
+            ]
+          }
+        ]
+      },
+      { path: 'billing', loadChildren: () => import('./billing/billing.module').then(m => m.BillingModule) },
       { path: 'bulkMasterMenu', loadComponent: () => import('./bulk-master-menu/bulk-master-menu.component').then(m => m.BulkMasterMenuComponent) },
+      { path: 'incidentManagement', loadComponent: () => import('./incident-management/incident-management.component').then(m => m.IncidentManagementComponent) },
+      { path: 'viewChecklistQuestion', loadComponent: () => import('./checklists/checklists.component').then(m => m.ChecklistsComponent) },
+      { path: 'checklistHistory', loadComponent: () => import('./checklists/checklist-history/checklist-history.component').then(m => m.ChecklistHistoryComponent) },
+      { path: 'reviews', loadComponent: () => import('./review/review.component').then(m => m.ReviewComponent) },
+
       { path: 'admin', loadComponent: () => import('./admin/admin.component').then(m => m.AdminComponent) },
       { path: 'rbac-management', loadComponent: () => import('./rbac-management/rbac-management.component').then(m => m.RbacManagementComponent) },
+      { path: 'viewEnquiries', loadComponent: () => import('./enquiries/enquiries.component').then(m => m.EnquiriesComponent) },
+      { path: 'feedbacks', loadComponent: () => import('./feedbacks/feedbacks.component').then(m => m.FeedbacksComponent) },
 
       { path: 'faq', loadChildren: () => import('./miscelleneous/faq/faq.module').then(m => m.FaqModule) },
       { path: 'configVariable', loadChildren: () => import('./miscelleneous/config-variable/config-variable.module').then(m => m.ConfigVariableModule) },
@@ -105,9 +144,6 @@ const routes: Routes = [
 
 
       { path: 'serverlogs', loadChildren: () => import('./miscelleneous/server-logs/server-logs.module').then(m => m.ServerLogsModule) },
-      { path: 'billing', loadChildren: () => import('./billing/billing.module').then(m => m.BillingModule) },
-      { path: 'appFeedbacks', loadChildren: () => import('./suggessions-feedbacks/suggessions-feedbacks.module').then(m => m.SuggessionsFeedbacksModule) },
-      { path: 'checklistHistory', loadComponent: () => import('./checklist-question/checklist-history/checklist-history.component').then(m => m.ChecklistHistoryComponent) },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
     ]
   },

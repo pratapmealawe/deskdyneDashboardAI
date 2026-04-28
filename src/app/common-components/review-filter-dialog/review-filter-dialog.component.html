@@ -1,0 +1,67 @@
+<div class="filter-dialog">
+    <!-- Header -->
+    <div class="dialog-header">
+        <div class="header-left">
+            <mat-icon class="header-icon">filter_list</mat-icon>
+            <div>
+                <h2 class="dialog-title">Review Filters</h2>
+                <span class="active-badge" *ngIf="activeCount > 0">{{ activeCount }} active</span>
+            </div>
+        </div>
+        <button mat-icon-button class="close-btn" (click)="cancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Filter Body -->
+    <div class="dialog-body">
+        <!-- Rating Filter -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <mat-icon>star</mat-icon> Star Rating
+            </label>
+            <div class="chip-selector">
+                <div class="chip-option" [class.active]="filterRating === ''" (click)="filterRating = ''">
+                    All
+                </div>
+                <div class="chip-option" [class.active]="filterRating === '5'" (click)="filterRating = '5'">5 ★</div>
+                <div class="chip-option" [class.active]="filterRating === '4'" (click)="filterRating = '4'">4 ★</div>
+                <div class="chip-option" [class.active]="filterRating === '3'" (click)="filterRating = '3'">3 ★</div>
+                <div class="chip-option" [class.active]="filterRating === '2'" (click)="filterRating = '2'">2 ★</div>
+                <div class="chip-option" [class.active]="filterRating === '1'" (click)="filterRating = '1'">1 ★</div>
+                <div class="chip-option" [class.active]="filterRating === 'skipped'" (click)="filterRating = 'skipped'">
+                    Skipped
+                </div>
+            </div>
+        </div>
+
+        <!-- Has Comment -->
+        <div class="filter-group">
+            <label class="filter-label">
+                <mat-icon>comment</mat-icon> Feedback Comment
+            </label>
+            <div class="chip-selector">
+                <div class="chip-option" [class.active]="hasCommentOnly === false" (click)="hasCommentOnly = false">
+                    All Reviews
+                </div>
+                <div class="chip-option" [class.active]="hasCommentOnly === true" (click)="hasCommentOnly = true">
+                    <mat-icon>check_circle</mat-icon> With Comments Only
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="dialog-footer">
+        <button mat-stroked-button class="btn-clear" (click)="clearAll()" *ngIf="activeCount > 0">
+            <mat-icon>filter_alt_off</mat-icon> Clear All
+        </button>
+        <div class="footer-right">
+            <button mat-stroked-button class="btn-cancel" (click)="cancel()">Cancel</button>
+            <button mat-flat-button class="btn-apply" (click)="apply()">
+                <mat-icon>check</mat-icon> Apply Filters
+                <span class="apply-count" *ngIf="activeCount > 0">({{ activeCount }})</span>
+            </button>
+        </div>
+    </div>
+</div>

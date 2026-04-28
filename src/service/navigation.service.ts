@@ -40,23 +40,20 @@ export class NavigationService {
     },
     { name: 'Session Management', showParent: true, route: 'sessionManagement', matIcon: 'manage_accounts', permissionKey: 'session:read' },
     { name: 'Notifications', showParent: true, route: 'notifications', matIcon: 'notifications', permissionKey: 'notification:read' },
-    { name: 'Users', showParent: true, route: 'customer', matIcon: 'people', permissionKey: 'users:read' },
+    { name: 'Customer', showParent: true, route: 'customer', matIcon: 'people', permissionKey: 'users:read' },
     { name: 'Billing', showParent: true, route: 'billing', matIcon: 'receipt', permissionKey: 'billing:read' },
     { name: 'Bulk Master Menu', showParent: true, route: 'bulkMasterMenu', matIcon: 'restaurant_menu', permissionKey: 'menu:read' },
-    { name: 'Incident Reporting', showParent: true, showBadge: true, count: this.inReviewIncidentsCount$, route: 'orgIncidentManagement', matIcon: 'report_problem', permissionKey: 'incident:read' },
+    { name: 'Incident Reporting', showParent: true, showBadge: true, count: this.inReviewIncidentsCount$, route: 'incidentManagement', matIcon: 'report_problem', permissionKey: 'incident:read' },
     {
       name: 'CheckList', showParent: true, matIcon: 'checklist', permissionKey: 'checklist:read', children: [
         { name: 'View Checklist', route: 'viewChecklistQuestion', showChild: true, matIcon: 'visibility' },
-        { name: 'Submit CheckList', route: 'submitChecklist', showChild: true, matIcon: 'task_alt' },
         { name: 'Checklist History', route: 'checklistHistory', showChild: true, matIcon: 'history' }
       ]
     },
-    { name: 'Reviews', route: 'orgReviews', matIcon: 'star_rate', permissionKey: 'reports:read' },
-    { name: 'Feedback', showBadge: true, count: this.unAcknowledgedFeedbackCount$, route: 'appFeedbacks', matIcon: 'rate_review', permissionKey: 'reports:read' },
+    { name: 'Reviews', route: 'reviews', matIcon: 'star_rate', permissionKey: 'reports:read' },
+    { name: 'Feedback', showBadge: true, count: this.unAcknowledgedFeedbackCount$, route: 'feedbacks', matIcon: 'rate_review', permissionKey: 'reports:read' },
     { name: 'Enquiries', showBadge: true, count: this.enquiryCount$, route: 'viewEnquiries', matIcon: 'contact_support', permissionKey: 'reports:read' },
-    {
-      name: 'Roles & Permissions', showParent: true, matIcon: 'admin_panel_settings', route: 'rbac-management', permissionKey: 'role:read'
-    },
+    { name: 'Roles & Permissions', showParent: true, matIcon: 'admin_panel_settings', route: 'rbac-management', permissionKey: 'role:read'},    
     { name: 'Admin', route: 'admin', showParent: true, matIcon: 'admin_panel_settings', permissionKey: 'admin:read' },
     {
       name: 'Miscelleneous', showParent: true, matIcon: 'miscellaneous_services', permissionKey: 'config:read', children: [

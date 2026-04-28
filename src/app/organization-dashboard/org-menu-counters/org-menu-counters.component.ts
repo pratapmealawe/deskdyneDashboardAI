@@ -4,6 +4,8 @@ import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { LocalStorageService } from '@service/local-storage.service';
 import { SearchFilterService } from '@service/search-filter.service';
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 
 interface filter {
   orgId: string;
@@ -33,6 +35,7 @@ import { OutletDetailComponent } from './outlet-detail/outlet-detail.component';
 })
 export class OrgMenuCountersComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
+  private orgSub?: Subscription;
   outletList: any[] = [];
   filteredOutletList: any[] = [];
   searchObj: filter = {
@@ -57,11 +60,22 @@ export class OrgMenuCountersComponent implements OnInit, OnChanges {
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private searchService: SearchFilterService
+    private searchService: SearchFilterService,
+    private organizationSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
     this.setInitials();
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.adminOrg = org;
+        this.setInitials();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orgSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

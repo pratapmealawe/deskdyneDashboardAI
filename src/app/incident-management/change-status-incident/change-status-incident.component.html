@@ -1,0 +1,65 @@
+<div class="change-status-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [ngClass]="nextStatus === 'blocked' ? 'error' : 'primary'">
+        <mat-icon>{{ nextStatus === 'blocked' ? 'block' : 'published_with_changes' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Update Incident Status</h3>
+        <p>Transition incident from <strong>{{ incident.status | titlecase }}</strong> to <strong>{{ nextStatus | titlecase }}</strong></p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" id="statusChangeForm" class="p-2">
+      <div class="form-grid-modern">
+        
+        <!-- User Assignment (Conditional) -->
+        <div class="selection-container mb-4" *ngIf="showSiteUser">
+          <p class="section-label mb-2"><mat-icon>person_search</mat-icon> Assign To Site Executive</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Executive</mat-label>
+            <mat-icon matPrefix>person</mat-icon>
+            <mat-select formControlName="assignedToId" placeholder="Choose a user">
+              <mat-option *ngFor="let admin of adminList" [value]="admin._id">
+                {{ admin.name }}
+              </mat-option>
+            </mat-select>
+            <mat-error *ngIf="form.get('assignedToId')?.hasError('required')">Assignment is required for acknowledgment</mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Remark Textarea -->
+        <div class="remark-container">
+          <p class="section-label mb-2"><mat-icon>rate_review</mat-icon> Update Remark</p>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Resolution/Status Detail</mat-label>
+            <textarea matInput formControlName="remark" rows="4" 
+              placeholder="Provide a brief update or reason for status change..."></textarea>
+            <mat-error *ngIf="form.get('remark')?.hasError('required')">Remark is required for status updates</mat-error>
+          </mat-form-field>
+        </div>
+        
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="statusChangeForm" 
+            [disabled]="form.invalid || isSubmitting" (click)="submit()" class="btn-primary-action px-4">
+      <ng-container *ngIf="!isSubmitting">
+        <mat-icon>check_circle</mat-icon>
+        <span>Confirm Transition</span>
+      </ng-container>
+      <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+        <mat-spinner diameter="20" color="accent"></mat-spinner>
+        <span>Updating...</span>
+      </div>
+    </button>
+  </mat-dialog-actions>
+</div>

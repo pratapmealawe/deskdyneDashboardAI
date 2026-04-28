@@ -6,19 +6,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
-// Organization Dashboard Standalone Components
-import { MainDashboardComponent } from 'src/app/organization-dashboard/main-dashboard/main-dashboard.component';
-import { OrgMenuItemsComponent } from 'src/app/organization-dashboard/org-menu-items/org-menu-items.component';
-import { OrgOutletOrdersComponent } from 'src/app/organization-dashboard/org-outlet-orders/org-outlet-orders.component';
-import { OrgReviewsComponent } from 'src/app/organization-dashboard/org-reviews/org-reviews.component';
-import { OrgVendorInfoComponent } from 'src/app/organization-dashboard/org-vendor-info/org-vendor-info.component';
-import { OrgMenuCountersComponent } from 'src/app/organization-dashboard/org-menu-counters/org-menu-counters.component';
-import { AuditReportComponent } from 'src/app/organization-dashboard/audit-report/audit-report.component';
-import { OrgEmpPollComponent } from 'src/app/organization-dashboard/org-emp-poll/org-emp-poll.component';
-// Other Components / Modules
-import { OtherOrdersComponent } from 'src/app/orders/other-orders/other-orders.component';
-import { CustomerModule } from 'src/app/customer/customer.module';
+import { CustomerComponent } from 'src/app/customer/customer.component';
 import { BillingModule } from 'src/app/billing/billing.module';
+import { RouterModule, NavigationEnd } from '@angular/router';
+import { OrganizationSharedService } from '../organization/organization-shared.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -30,20 +22,9 @@ import { BillingModule } from 'src/app/billing/billing.module';
     FormsModule,
     HighchartsChartModule,
     MaterialModule,
-
-    // Standalone Components
-    MainDashboardComponent,
-    OrgMenuItemsComponent,
-    OrgOutletOrdersComponent,
-    OrgReviewsComponent,
-    OrgVendorInfoComponent,
-    OrgMenuCountersComponent,
-    AuditReportComponent,
-    OrgEmpPollComponent,
-    OtherOrdersComponent,
+    RouterModule,
 
     // Modules
-    CustomerModule,
     BillingModule
   ]
 })
@@ -56,37 +37,71 @@ export class DashboardComponent implements OnInit {
 
   selectedIndex: number = 0;
   allTabs = [
-    { index: 0, name: 'Dashboard', icon: 'dashboard', policyKey: 'Dashboard' },
-    { index: 1, name: 'Admin Orders', icon: 'receipt_long', policyKey: 'dashBoardAdminOrder' },
-    { index: 2, name: 'Menu Items', icon: 'menu_book', policyKey: 'menuItems' },
-    { index: 3, name: 'Orders', icon: 'shopping_cart', policyKey: 'Orders' },
-    { index: 4, name: 'Reviews', icon: 'rate_review', policyKey: 'Reviews' },
-    { index: 5, name: 'Users', icon: 'people', policyKey: 'User' },
-    { index: 6, name: 'Vendor Info', icon: 'store', policyKey: 'vendorInfo' },
-    { index: 7, name: 'Menu Counters', icon: 'countertops', policyKey: 'menuCounters' },
-    { index: 8, name: 'Audit Reports', icon: 'assessment', policyKey: 'auditReports' },
-    { index: 9, name: 'Employee Poll', icon: 'poll', policyKey: 'empPoll' }
+    { index: 0, name: 'Dashboard', icon: 'dashboard', policyKey: 'Dashboard', path: 'main' },
+    { index: 1, name: 'Admin Orders', icon: 'receipt_long', policyKey: 'dashBoardAdminOrder', path: 'admin-orders' },
+    { index: 2, name: 'Menu Items', icon: 'menu_book', policyKey: 'menuItems', path: 'menu-items' },
+    { index: 3, name: 'Orders', icon: 'shopping_cart', policyKey: 'Orders', path: 'orders' },
+    { index: 4, name: 'Reviews', icon: 'rate_review', policyKey: 'Reviews', path: 'reviews' },
+    { index: 5, name: 'Users', icon: 'people', policyKey: 'User', path: 'users' },
+    { index: 6, name: 'Vendor Info', icon: 'store', policyKey: 'vendorInfo', path: 'vendor-info' },
+    { index: 7, name: 'Menu Counters', icon: 'countertops', policyKey: 'menuCounters', path: 'menu-counters' },
+    { index: 8, name: 'Audit Reports', icon: 'assessment', policyKey: 'auditReports', path: 'audit-reports' },
+    { index: 9, name: 'Employee Poll', icon: 'poll', policyKey: 'empPoll', path: 'emp-poll' }
   ];
 
   tabs: any[] = [];
-  constructor(private apiMainService: ApiMainService, private router: Router, private ref: ChangeDetectorRef, private permissionsService: PermissionsService) {
+  constructor(
+    private apiMainService: ApiMainService,
+    private router: Router,
+    private ref: ChangeDetectorRef,
+    private permissionsService: PermissionsService,
+    private organizationSharedService: OrganizationSharedService
+  ) {
   }
 
   ngOnInit() {
     this.tabs = this.permissionsService.filterTabsByPolicy(this.allTabs);
     this.getorganizations();
+
+    // Sync selectedIndex with route
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.updateSelectedIndex();
+    });
+    this.updateSelectedIndex();
+  }
+
+  updateSelectedIndex() {
+    const url = this.router.url;
+    const currentPath = url.split('/').pop();
+    const tab = this.tabs.find(t => t.path === currentPath);
+    if (tab) {
+      this.selectedIndex = tab.index;
+    }
   }
 
   onTabChange(index: number) {
     this.selectedIndex = index;
+    const tab = this.allTabs.find(t => t.index === index);
+    if (tab) {
+      this.router.navigate(['/app/dashboard', tab.path]);
+    }
   }
 
   changeOrganization(e: any) {
     const id = e.value
     this.orgSelected = this.orglist.find((item: any) => item._id === id);
     this.isOrgSelected = true;
+    this.organizationSharedService.setOrganization(this.orgSelected);
+    
     if (this.tabs.length > 0) {
-      this.selectedIndex = this.tabs[0].index; // Reset to first visible tab on org change
+      // If we are already on a dashboard path, stay there, otherwise go to first tab
+      const url = this.router.url;
+      if (!url.includes('/dashboard/')) {
+        this.selectedIndex = this.tabs[0].index;
+        this.router.navigate(['/app/dashboard', this.tabs[0].path]);
+      }
     }
   }
 

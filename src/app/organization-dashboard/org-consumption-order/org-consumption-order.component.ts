@@ -10,7 +10,7 @@ import { LocalStorageService } from '@service/local-storage.service';
 import { environment } from '@environments/environment';
 import { CommonSelectConfig, SubmitPayload, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { MaterialModule } from 'src/app/material.module';
-import { ConsumptionOrderCardComponent } from 'src/app/common-components/consumption-order-card/consumption-order-card.component';
+import { ConsumptionOrderCardComponent } from 'src/app/orders/other-orders/consumption-order/consumption-order-card/consumption-order-card.component';
 
 @Component({
   selector: 'app-org-consumption-order',
@@ -61,9 +61,9 @@ export class OrgConsumptionOrderComponent implements OnInit {
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
     if (this.orgAdmin?.orgDetails?._id) {
-       this.headerConfig.defaultOrgId = this.orgAdmin.orgDetails._id;
+      this.headerConfig.defaultOrgId = this.orgAdmin.orgDetails._id;
     }
-    
+
     if (this.orgAdmin?.role === 'HYPERPURE_POC') {
       this.headerConfig.defaultCafeId = this.orgAdmin?.cafeDetails?.[0]?.cafeteria_id;
       this.headerConfig.disableCafe = true;
@@ -194,9 +194,9 @@ export class OrgConsumptionOrderComponent implements OnInit {
     };
 
     const headers = [
-      'Date', 'Review', 'Image', 'Created At', 'Org Name', 'Cafeteria Name', 
-      'Item Name', 'Meal Price', 'Count', 'Total Amount (Incl. GST)', 
-      'Item Status', 'Created By (Name)', 'Created By (Phone)', 
+      'Date', 'Review', 'Image', 'Created At', 'Org Name', 'Cafeteria Name',
+      'Item Name', 'Meal Price', 'Count', 'Total Amount (Incl. GST)',
+      'Item Status', 'Created By (Name)', 'Created By (Phone)',
       'Admin Name', 'Admin Mobile', 'Cancel Reason'
     ];
     const headerRow = ws.addRow(headers);
@@ -295,14 +295,14 @@ export class OrgConsumptionOrderComponent implements OnInit {
       for (const it of entry.rows) {
         const r = ws.addRow(['', '', '', it.createdAt ? it.createdAt : '', it.orgName, it.cafeName, it.itemName, it.mealPrice, it.count, it.totalPrice, it.itemStatus, it.createdByName, it.createdByPhone, it.adminName, it.adminMobile, it.cancelReason]);
         r.outlineLevel = 1;
-        r.getCell(4).numFmt = dateTimeFmt; 
+        r.getCell(4).numFmt = dateTimeFmt;
         r.eachCell((c, idx) => {
           c.border = thinBorder;
-          if (idx === 8 || idx === 10) { 
+          if (idx === 8 || idx === 10) {
             c.numFmt = currencyFmt;
             c.alignment = { horizontal: 'right' };
           }
-          if (idx === 9) { 
+          if (idx === 9) {
             c.numFmt = '#,##0';
             c.alignment = { horizontal: 'center' };
           }

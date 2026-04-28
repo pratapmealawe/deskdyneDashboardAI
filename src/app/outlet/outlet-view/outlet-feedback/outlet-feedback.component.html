@@ -2,7 +2,7 @@
     <!-- FEEDBACK LIST -->
     <div *ngIf="feedbackList.length > 0">
         <div class="feedback-item" *ngFor="let feedback of feedbackList; let i = index">
-            <app-org-order [order]="feedback"></app-org-order>
+            <app-review-card [order]="feedback"></app-review-card>
         </div>
 
         <div class="load-more-container" *ngIf="nextOn">

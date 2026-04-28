@@ -10,12 +10,12 @@ import { PermissionsService } from '@service/permission.service';
 export class BillingComponent implements OnInit {
   @Input() adminOrg: any;
   allBillingTypes: any = [
-    { name: "Outlet", type: "outletBilling", policyKey: "billingoutletWallet" },
-    { name: "Wallet", type: "walletBilling", policyKey: "billingWallet" },
-    { name: "Virtual Cafeteria", type: "vcBilling", policyKey: "billingvirtualCafeteria" },
-    { name: "Daily Order", type: "dailyOrderBilling", policyKey: "billingdailyOrder" },
-    { name: "Bulk", type: "bulkOrderBilling", policyKey: "billingbulk" },
-    { name: "Company Wallet", type: "companyWalletBilling", policyKey: "billingcompanyWallet" },
+    { name: "Outlet", type: "outletBilling", policyKey: "billingoutletWallet", icon: "storefront" },
+    { name: "Wallet", type: "walletBilling", policyKey: "billingWallet", icon: "account_balance_wallet" },
+    { name: "Virtual Cafeteria", type: "vcBilling", policyKey: "billingvirtualCafeteria", icon: "restaurant" },
+    { name: "Daily Order", type: "dailyOrderBilling", policyKey: "billingdailyOrder", icon: "calendar_today" },
+    { name: "Bulk", type: "bulkOrderBilling", policyKey: "billingbulk", icon: "inventory_2" },
+    { name: "Company Wallet", type: "companyWalletBilling", policyKey: "billingcompanyWallet", icon: "business" },
   ];
   billingTypes: any = [];
   selectedTab: string = '';
@@ -30,8 +30,6 @@ export class BillingComponent implements OnInit {
   filterBillingTabs() {
     this.billingTypes = this.allBillingTypes.filter((tab: any) => {
       if (!tab.policyKey) return true;
-      // Convert legacy policy keys to granular RBAC keys, e.g. billingoutletWallet -> billing:outlet_wallet:read
-      // Or just check if the key exists directly as a permission
       return this.permissionsService.hasPermission(tab.policyKey);
     });
 
@@ -41,9 +39,9 @@ export class BillingComponent implements OnInit {
     }
   }
 
-  onTabChange(event: MatTabChangeEvent) {
-    this.selectedTabIndex = event.index;
-    this.selectedTab = this.billingTypes[event.index].type;
+  onCustomTabChange(index: number) {
+    this.selectedTabIndex = index;
+    this.selectedTab = this.billingTypes[index].type;
   }
 }
 

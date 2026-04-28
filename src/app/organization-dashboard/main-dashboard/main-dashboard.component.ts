@@ -43,6 +43,8 @@ import { CommonModule } from '@angular/common';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
 import { DailyBulkCardComponent } from "src/app/orders/other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component";
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-main-dashboard',
@@ -61,6 +63,7 @@ import { DailyBulkCardComponent } from "src/app/orders/other-orders/daily-bulk-o
 export class MainDashboardComponent {
   Highcharts: typeof Highcharts = Highcharts;
   @Input() orgAdmin: any;
+  private orgSub?: Subscription;
 
   orgDetails: any;
   cafeList: any[] = [];
@@ -201,7 +204,8 @@ export class MainDashboardComponent {
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private organizationSharedService: OrganizationSharedService
   ) {
     this.dateGroup = new FormGroup(
       {
@@ -213,7 +217,19 @@ export class MainDashboardComponent {
     this.setupCharts();
   }
 
-  ngOnInit(): void { this.initFunc(); }
+  ngOnInit(): void { 
+    this.initFunc(); 
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.orgAdmin = { orgDetails: org };
+        this.initFunc();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orgSub?.unsubscribe();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['orgAdmin']?.currentValue) this.initFunc();

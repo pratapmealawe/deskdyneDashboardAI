@@ -381,7 +381,7 @@ export class ApiConfigService {
       getCompanyWalletTransactionHistoryByPhoneNo: p('/api/getCompanyWalletTransactionHistoryByPhoneNo', 'GET'),
       getCompanyWalletByPhoneNo: p('/api/getCompanyWalletByPhoneNo', 'GET'),
       getCompanyOrganizationTransactionHistory: p('/api/getCompanyOrganizationTransactionHistory', 'POST'),
-      getCustomerProfileDetails: p('/api/getCustomerProfileDetails', 'GET'),
+      getCustomerById: p('/api/getcustomerprofile', 'GET'),
       getEmployeelistByCafeteriaIds: p('/api/getEmployeelistByCafeteriaIds', 'POST'),
       getOutletEmployeeListByCafeteriaId: p('/api/getOutletEmployeeListByCafeteriaId', 'GET'),
       createScheduledNotification: p('/api/createNotification', 'POST'),

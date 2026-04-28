@@ -4,13 +4,13 @@ import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PageEvent } from '@angular/material/paginator';
-import { SearchFilterService } from '@service/search-filter.service';
 import { CustomPipeModule } from '@pipes/pipe.module';
 import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { BulkMasterMenuCardComponent } from './bulk-master-menu-card/bulk-master-menu-card.component';
 import { AddBulkMasterMenuComponent } from './add-bulk-master-menu/add-bulk-master-menu.component';
-
 import { MatDialog } from '@angular/material/dialog';
+import { environment } from '@environments/environment';
+import { categoryList } from 'src/config/food-category.config';
 
 @Component({
   selector: 'app-bulk-master-menu',
@@ -28,26 +28,26 @@ import { MatDialog } from '@angular/material/dialog';
   ]
 })
 export class BulkMasterMenuComponent implements OnInit {
-  // master + filtered + paged lists
+  
   allMenuItems: any[] = [];
   filteredMenuItems: any[] = [];
-  pagedMenuItems: any[] = [];
-
-  searchText = '';
+  masterMenuList: any[] = []; // for filtering
   
+  displayImgUrl = environment.imageUrl;
+  searchTerm: string = '';
+  selectedCategoryFilter: string = '';
+  categoryList = categoryList;
+  groupedMenuList: any[] = [];
+  showCard: boolean = false;
+
   // paginator config
   pageIndex = 0;
   pageSize = 10;
   pageSizeOptions: number[] = [5, 10, 25, 50];
 
-  get filteredLength(): number {
-    return this.filteredMenuItems.length;
-  }
-
   constructor(
     private apiMainService: ApiMainService,
-    private searchService: SearchFilterService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) { }
 
   ngOnInit(): void {
@@ -56,21 +56,71 @@ export class BulkMasterMenuComponent implements OnInit {
 
   async getMenuItemsList(): Promise<void> {
     try {
-      const menuItems: any = await this.apiMainService.getAllBulkMasterMenus();
-      this.allMenuItems = menuItems || [];
-      this.applySearchAndPagination();
+      const res: any = await this.apiMainService.getAllBulkMasterMenus();
+      if (res) {
+        this.allMenuItems = res;
+        this.masterMenuList = res;
+        this.applyFilter();
+      }
     } catch (error) {
       console.error(error);
       this.allMenuItems = [];
-      this.applySearchAndPagination();
+      this.masterMenuList = [];
+      this.applyFilter();
     }
+  }
+
+  applyFilter() {
+    let temp = [...this.masterMenuList];
+
+    // 1. Text Search
+    if (this.searchTerm) {
+      const term = this.searchTerm.toLowerCase();
+      temp = temp.filter(item =>
+        (item.itemName && item.itemName.toLowerCase().includes(term)) ||
+        (item.itemDescription && item.itemDescription.toLowerCase().includes(term))
+      );
+    }
+
+    // 2. Category Filter
+    if (this.selectedCategoryFilter && this.selectedCategoryFilter !== 'all') {
+      temp = temp.filter(item => item.category === this.selectedCategoryFilter);
+    }
+
+    // 3. Sort (if precedence exists, otherwise by name)
+    this.filteredMenuItems = temp.sort((a: any, b: any) => {
+      if (a.precedence != null && b.precedence != null) {
+        return a.precedence - b.precedence;
+      }
+      return (a.itemName || '').localeCompare(b.itemName || '');
+    });
+
+    this.showCard = this.filteredMenuItems.length > 0;
+    this.groupItemsByCategory();
+  }
+
+  groupItemsByCategory() {
+    const grouped = this.filteredMenuItems.reduce((acc, item) => {
+      const category = item.category || 'Uncategorized';
+      if (!acc[category]) {
+        acc[category] = [];
+      }
+      acc[category].push(item);
+      return acc;
+    }, {} as Record<string, any[]>);
+
+    this.groupedMenuList = Object.keys(grouped).map(category => ({
+      category,
+      items: grouped[category]
+    }));
   }
 
   openAddEditDialog(editType: 'new' | 'edit', item?: any): void {
     const dialogRef = this.dialog.open(AddBulkMasterMenuComponent, {
-      width: '800px',
+      width: '950px',
       maxWidth: '95vw',
       disableClose: true,
+      panelClass: 'custom-dialog-container',
       data: {
         editType: editType,
         editMenuItemObj: item || {}
@@ -88,61 +138,8 @@ export class BulkMasterMenuComponent implements OnInit {
     this.openAddEditDialog('new');
   }
 
-  editMenuItem(item: any): void {
-    this.openAddEditDialog('edit', item);
-  }
-
-  gotoPreviousState($event: any): void {
-    if ($event !== 'cancel') {
-      this.getMenuItemsList();
-    }
-  }
-
-  async deleteMenuItem(item: any): Promise<void> {
-    try {
-      await this.apiMainService.deleteBulkMasterMenu(item._id);
-      this.getMenuItemsList();
-    } catch (error) {
-    }
-  }
-
-  // ------------ SEARCH + PAGINATION ------------
-
-  onSearchChange(value: string): void {
-    this.searchText = value || '';
-    this.pageIndex = 0; // reset to first page on new search
-    this.applySearchAndPagination();
-  }
-
-  clearSearch(): void {
-    this.searchText = '';
-    this.pageIndex = 0;
-    this.applySearchAndPagination();
-  }
-
   onPageChange(event: PageEvent): void {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.updatePagedData();
-  }
-
-  private applySearchAndPagination(): void {
-    if (this.searchText && this.searchText.trim().length > 0) {
-      this.filteredMenuItems = this.searchService.searchData(
-        this.allMenuItems,
-        { keys: ['itemName'] },
-        this.searchText.trim(),
-      );
-    } else {
-      this.filteredMenuItems = [...this.allMenuItems];
-    }
-
-    this.updatePagedData();
-  }
-
-  private updatePagedData(): void {
-    const start = this.pageIndex * this.pageSize;
-    const end = start + this.pageSize;
-    this.pagedMenuItems = this.filteredMenuItems.slice(start, end);
   }
 }

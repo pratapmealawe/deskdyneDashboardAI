@@ -5,6 +5,8 @@ import { AddAuditReportDialogComponent } from './add-audit-report-dialog/add-aud
 import { PdfPreviewDialogComponent } from './pdf-preview-dialog/pdf-preview-dialog.component';
 import { environment } from '@environments/environment';
 import { LocalStorageService } from '@service/local-storage.service';
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
@@ -24,6 +26,7 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class AuditReportComponent implements OnInit {
   @Input() adminOrg: any;
+  private orgSub?: Subscription;
 
   // Dropdown data
   orglist: any[] = [];
@@ -46,10 +49,25 @@ export class AuditReportComponent implements OnInit {
   isOrgAdmin: boolean = false;
   orgAdmin: any;
 
-  constructor(private api: ApiMainService, private dialog: MatDialog, private localStorageService: LocalStorageService,) { }
+  constructor(
+    private api: ApiMainService,
+    private dialog: MatDialog,
+    private localStorageService: LocalStorageService,
+    private organizationSharedService: OrganizationSharedService
+  ) { }
 
   ngOnInit(): void {
     this.loadOrgs();
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.adminOrg = org;
+        this.setInitials();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orgSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

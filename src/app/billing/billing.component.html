@@ -1,27 +1,35 @@
-<div class="vendor-header">
-    <div>
-        <h4 class="m-0 fw-semibold">Billing</h4>
+<div class="billing-container animate-fade-in">
+    <!-- Header Section -->
+    <div class="billing-header-card">
+        <div class="title-section">
+            <h1 class="page-title">Financials & Billing</h1>
+            <p class="page-subtitle">Track payments, wallets, and settlement history</p>
+        </div>
     </div>
-</div>
 
+    <!-- Tabs Container -->
+    <div class="tabs-container">
+        <div class="main-tabs">
+            <button *ngFor="let view of billingTypes; let i = index" class="tab-btn"
+                [class.active]="selectedTabIndex === i" (click)="onCustomTabChange(i)">
+                <mat-icon class="tab-icon">{{ view.icon }}</mat-icon>
+                <span>{{ view.name }}</span>
+            </button>
+        </div>
+    </div>
 
-<div class="container-fluid">
-    <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)"
-        class="custom-tabs pb-3">
-        <mat-tab *ngFor="let view of billingTypes">
-            <ng-template mat-tab-label>
-                {{ view.name }}
-            </ng-template>
-        </mat-tab>
-    </mat-tab-group>
-
-    <ng-container [ngSwitch]="selectedTab">
-        <app-outlet-billing [selectedOrg]="adminOrg" *ngSwitchCase="'outletBilling'"></app-outlet-billing>
-        <app-wallet-billing [selectedOrg]="adminOrg" *ngSwitchCase="'walletBilling'"></app-wallet-billing>
-        <app-vc-billing [selectedOrg]="adminOrg" *ngSwitchCase="'vcBilling'"></app-vc-billing>
-        <app-daily-billing *ngSwitchCase="'dailyOrderBilling'"></app-daily-billing>
-        <app-bulk-billing *ngSwitchCase="'bulkOrderBilling'"></app-bulk-billing>
-        <app-company-wallet-billing [selectedOrg]="adminOrg"
-            *ngSwitchCase="'companyWalletBilling'"></app-company-wallet-billing>
-    </ng-container>
+    <!-- Tab Content Area -->
+    <div class="tab-content-area">
+        <div class="content-card">
+            <ng-container [ngSwitch]="selectedTab">
+                <app-outlet-billing [selectedOrg]="adminOrg" *ngSwitchCase="'outletBilling'"></app-outlet-billing>
+                <app-wallet-billing [selectedOrg]="adminOrg" *ngSwitchCase="'walletBilling'"></app-wallet-billing>
+                <app-vc-billing [selectedOrg]="adminOrg" *ngSwitchCase="'vcBilling'"></app-vc-billing>
+                <app-daily-billing *ngSwitchCase="'dailyOrderBilling'"></app-daily-billing>
+                <app-bulk-billing *ngSwitchCase="'bulkOrderBilling'"></app-bulk-billing>
+                <app-company-wallet-billing [selectedOrg]="adminOrg"
+                    *ngSwitchCase="'companyWalletBilling'"></app-company-wallet-billing>
+            </ng-container>
+        </div>
+    </div>
 </div>

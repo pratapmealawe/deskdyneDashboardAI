@@ -8,6 +8,8 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
 import { orderStatusMapper } from 'src/config/order-status.config';
 import { ApiMainService } from '@service/apiService/apiMain.service';
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
 import { CommonModule } from '@angular/common';
@@ -34,6 +36,7 @@ import { OutletOrderCardComponent } from 'src/app/orders/outlet-orders/outlet-or
 })
 export class OrgOutletOrdersComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
+  private orgSub?: Subscription;
 
   Highcharts: typeof Highcharts = Highcharts;
   orgDetails: any = {};
@@ -62,10 +65,21 @@ export class OrgOutletOrdersComponent implements OnInit, OnChanges {
   paginatedList: any[] = [];
   constructor(
     private apiMainService: ApiMainService,
+    private organizationSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
     this.setInitials();
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.adminOrg = org;
+        this.setInitials();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orgSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

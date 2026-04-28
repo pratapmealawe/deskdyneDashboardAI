@@ -1733,9 +1733,10 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST({ url: urlObj.url, method: urlObj.method }, paylod);
   }
 
-  getCustomerProfileDetails(phoneNo: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerProfileDetails;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${phoneNo}`, method: urlObj.method });
+
+  getCustomerById(id: any) {
+    const urlObj = this.apiConfigService.apiEndPointObj.getCustomerById;
+    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
   }
 
   createScheduledNotification(data: any) {

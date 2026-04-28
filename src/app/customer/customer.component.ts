@@ -1,10 +1,13 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { ApiMainService } from '@service/apiService/apiMain.service';
-import { LocalStorageService } from '@service/local-storage.service';
-import { SearchFilterService } from '@service/search-filter.service';
+import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
+import { CommonModule } from '@angular/common';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { debounceTime, distinctUntilChanged, filter } from 'rxjs';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
 import { MatDialog } from '@angular/material/dialog';
-import { BulkWalletUploadDialogComponent } from './bulk-wallet-upload-dialog/bulk-wallet-upload-dialog.component';
+import { ImportCustomerMoneyWalletComponent } from './import-customer-money-wallet/import-customer-money-wallet.component';
 
 // Excel & PDF
 import * as ExcelJS from 'exceljs';
@@ -19,13 +22,28 @@ interface Filter {
   orgId: string;
 }
 
+import { MaterialModule } from '../material.module';
+import { LocalStorageService } from '@service/local-storage.service';
+import { OrganizationSharedService } from '../organization/organization-shared.service';
+import { Subscription } from 'rxjs';
+
 @Component({
   selector: 'app-customer',
   templateUrl: './customer.component.html',
-  styleUrls: ['./customer.component.scss']
+  styleUrls: ['./customer.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    RouterModule,
+    MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
+    DirectivesModule
+  ]
 })
 export class CustomerComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
+  private orgSub?: Subscription;
   isDisabled: boolean = false;
   customerList: any[] = [];
   filteredCustomerList: any[] = [];
@@ -39,19 +57,20 @@ export class CustomerComponent implements OnInit, OnChanges {
   orgDetails: any = {};
   orgAdmin: any;
   isOrgAdmin: boolean = false;
-  isViewCustomer: boolean = false;
+  isListingView: boolean = true;
   selectedUser: any;
 
   // search + pagination
-  searchText: string = '';
+  searchControl = new FormControl('');
   pageIndex: number = 0;
   pageSize: number = 10;
 
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
-    private searchService: SearchFilterService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router,
+    private organizationSharedService: OrganizationSharedService
   ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -62,7 +81,41 @@ export class CustomerComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
+    this.checkRoute();
+
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.adminOrg = org;
+        this.setInitialData();
+      }
+    });
+
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkRoute();
+    });
+
     this.getOrgList(); // 👉 only this; we’ll fetch users after org is set
+
+    this.searchControl.valueChanges.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(value => {
+      this.applyLocalFilter(value);
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orgSub?.unsubscribe();
+  }
+
+  checkRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // Listing view is when we are exactly at /customer (or /app/customer)
+    // Adjust based on actual base path
+    this.isListingView = !urlParts.includes('view') && urlParts[urlParts.length - 1] === 'customer';
   }
 
   async getOrgList() {
@@ -100,40 +153,24 @@ export class CustomerComponent implements OnInit, OnChanges {
     );
   }
 
-  onKeyEvent(event: any) {
-    if (event.key === "Escape") {
-      (event.target as HTMLInputElement).value = '';
+  applyLocalFilter(value: any) {
+    if (!value) {
       this.filteredCustomerList = [...this.customerList];
+      this.updatePagedData();
+      return;
     }
-
-    if (event.key === "Enter") {
-      this.searchFilter(event);
-    }
-  }
-  searchFilter(e: any) {
-    this.searchText = e.target.value || '';
-    const config = { keys: ['userName', 'phoneNo', 'email'] };
-
-    this.filteredCustomerList = this.searchService.searchData(
-      this.customerList,
-      config,
-      this.searchText
+    const lower = value.toLowerCase();
+    this.filteredCustomerList = this.customerList.filter((user: any) =>
+      user.userName?.toLowerCase().includes(lower) ||
+      user.phoneNo?.toLowerCase().includes(lower) ||
+      user.email?.toLowerCase().includes(lower)
     );
-
     this.pageIndex = 0;
     this.updatePagedData();
   }
 
   clearSearch() {
-    this.searchText = '';
-    const config = { keys: ['userName', 'phoneNo', 'email'] };
-    this.filteredCustomerList = this.searchService.searchData(
-      this.customerList,
-      config,
-      ''
-    );
-    this.pageIndex = 0;
-    this.updatePagedData();
+    this.searchControl.setValue('');
   }
 
   submitFilter() {
@@ -173,12 +210,11 @@ export class CustomerComponent implements OnInit, OnChanges {
   }
 
   viewCustomer(user: any) {
-    this.selectedUser = user;
-    this.isViewCustomer = true;
+    this.router.navigate(['/app/customer', user._id]);
   }
 
   backBtnPress() {
-    this.isViewCustomer = false;
+    this.router.navigate(['/app/customer']);
   }
 
   // 👉 Generate initials for avatar
@@ -321,7 +357,7 @@ export class CustomerComponent implements OnInit, OnChanges {
   }
 
   openBulkWalletDialog() {
-    this.dialog.open(BulkWalletUploadDialogComponent, {
+    this.dialog.open(ImportCustomerMoneyWalletComponent, {
       width: '500px',
       disableClose: true,
       data: {
