@@ -121,6 +121,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       this.localStorageService.setCacheData('ADMIN_ID', this.adminId);
       this.localStorageService.setCacheData('ADMIN_TOKEN', loginObj.token);
+      this.localStorageService.setCacheData('DD_ADMIN_TOKEN', loginObj.token);
       
       const profile = await this.apiMainService.getadminprofile(this.adminId);
       this.localStorageService.setCacheData('ADMIN_PROFILE', profile);

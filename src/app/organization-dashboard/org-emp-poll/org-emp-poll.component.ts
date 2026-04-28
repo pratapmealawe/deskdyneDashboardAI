@@ -9,6 +9,8 @@ import { MaterialModule } from 'src/app/material.module';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { SendDataToComponent } from '@service/sendDataToComponent.service';
 import { LocalStorageService } from '@service/local-storage.service';
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-org-emp-poll',
@@ -26,6 +28,7 @@ import { LocalStorageService } from '@service/local-storage.service';
 })
 export class OrgEmpPollComponent implements OnInit, OnChanges {
     @Input() adminOrg: any;
+    private orgSub?: Subscription;
 
     headerConfig: CommonSelectConfig = {
         mode: 'cafeteria',
@@ -44,13 +47,26 @@ export class OrgEmpPollComponent implements OnInit, OnChanges {
     constructor(
         private apiMainService: ApiMainService,
         private sendDataToComponent: SendDataToComponent,
-        private localStorageService: LocalStorageService
+        private localStorageService: LocalStorageService,
+        private organizationSharedService: OrganizationSharedService
     ) { }
 
     ngOnInit(): void {
         this.orgAdmin = this.localStorageService.getCacheData('ADMIN_PROFILE');
         this.subscribeEvents();
         this.updateHeaderConfig();
+
+        this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+            if (org) {
+                this.adminOrg = org;
+                this.updateHeaderConfig();
+                this.getEmployeePollList();
+            }
+        });
+    }
+
+    ngOnDestroy(): void {
+        this.orgSub?.unsubscribe();
     }
 
     ngOnChanges(changes: any): void {

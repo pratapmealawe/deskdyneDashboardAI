@@ -1,9 +1,7 @@
 import {
   Component,
-  EventEmitter,
-  Input,
   OnInit,
-  Output,
+  Inject,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -19,7 +17,7 @@ import { ImageCropperComponent } from '../../common-components/image-cropper/ima
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { environment } from '@environments/environment';
 import { PermissionsService } from '@service/permission.service';
-import { Inject } from '@angular/core';
+import { categoryList } from 'src/config/food-category.config';
 
 @Component({
   selector: 'app-add-bulk-master-menu',
@@ -34,9 +32,12 @@ export class AddBulkMasterMenuComponent implements OnInit {
 
   imageUrl: any;
   uploadedImageFile: File | null = null;
+  displayImgUrl = environment.imageUrl;
+  imageReplaced: boolean = false;
 
   foodItemForm!: FormGroup;
   btnPolicy: any;
+  categoryList = categoryList;
 
   constructor(
     private apiMainService: ApiMainService,
@@ -56,19 +57,21 @@ export class AddBulkMasterMenuComponent implements OnInit {
     this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.initForm();
 
-    // Edit mode â†’ patch values
+    // Edit mode â patch values
     if (this.editfoodItemObj && this.editfoodItemObj._id) {
-      this.imageUrl = environment.imageUrl + this.editfoodItemObj.imageUrl;
+      this.imageUrl = this.editfoodItemObj.imageUrl;
       this.foodItemForm.patchValue({
         itemName: this.editfoodItemObj.itemName,
         itemType: this.editfoodItemObj.itemType || 'Veg',
-        itemServingType:
-          this.editfoodItemObj.itemServingType || 'perPerson',
+        itemServingType: this.editfoodItemObj.itemServingType || 'perPerson',
         slab1Price: this.editfoodItemObj.slab1Price,
         slab2Price: this.editfoodItemObj.slab2Price,
         slab3Price: this.editfoodItemObj.slab3Price,
         slab4Price: this.editfoodItemObj.slab4Price,
         itemDescription: this.editfoodItemObj.itemDescription,
+        category: this.editfoodItemObj.category || '',
+        isActive: this.editfoodItemObj.isActive !== false,
+        itemFlavour: this.editfoodItemObj.itemFlavour || 'Std'
       });
     }
   }
@@ -89,23 +92,14 @@ export class AddBulkMasterMenuComponent implements OnInit {
         '',
         [Validators.required, Validators.maxLength(300)],
       ],
+      category: ['', Validators.required],
+      isActive: [true],
+      itemFlavour: ['Std']
     });
   }
 
-  get f() {
-    return this.foodItemForm.controls;
-  }
-
-  setItemType(type: string): void {
-    this.foodItemForm.get('itemType')?.setValue(type);
-    this.foodItemForm.get('itemType')?.markAsDirty();
-    this.foodItemForm.get('itemType')?.markAsTouched();
-  }
-
-  setServingType(type: string): void {
-    this.foodItemForm.get('itemServingType')?.setValue(type);
-    this.foodItemForm.get('itemServingType')?.markAsDirty();
-    this.foodItemForm.get('itemServingType')?.markAsTouched();
+  hasError(controlName: string, errorName: string) {
+    return this.foodItemForm.controls[controlName].hasError(errorName);
   }
 
   handleFileInput($event: any): void {
@@ -118,13 +112,13 @@ export class AddBulkMasterMenuComponent implements OnInit {
           const imageUrl = reader.result;
           try {
             const dialogRef = this.dialog.open(ImageCropperComponent, {
-              width: '50%',
+              width: '500px',
               panelClass: 'image-cropper-dialog',
               disableClose: true,
               data: {
                 imageUrl: imageUrl,
-                imageWidth: 150,
-                imageHeight: 150,
+                imageWidth: 300,
+                imageHeight: 300,
                 aspectRatio: 1
               }
             });
@@ -133,6 +127,7 @@ export class AddBulkMasterMenuComponent implements OnInit {
               if (result && result.croppedImages) {
                 this.uploadedImageFile = result.croppedImages.file;
                 this.imageUrl = result.croppedImages.resizeDataUrl;
+                this.imageReplaced = true;
               }
             });
           } catch (e) {
@@ -161,7 +156,7 @@ export class AddBulkMasterMenuComponent implements OnInit {
     const formData = this.buildFormData(item);
     try {
       await this.apiMainService.saveBulkMasterMenu(formData);
-      this.goToPreviousPage('new');
+      this.dialogRef.close('new');
     } catch (error) {
     }
   }
@@ -173,7 +168,7 @@ export class AddBulkMasterMenuComponent implements OnInit {
         formData,
         this.editfoodItemObj._id
       );
-      this.goToPreviousPage('edit');
+      this.dialogRef.close('edit');
     } catch (error) {
     }
   }
@@ -193,12 +188,17 @@ export class AddBulkMasterMenuComponent implements OnInit {
     formData.append('slab3Price', `${item.slab3Price}`);
     formData.append('slab4Price', `${item.slab4Price}`);
     formData.append('itemDescription', item.itemDescription);
+    formData.append('category', item.category);
+    formData.append('isActive', `${item.isActive}`);
+    formData.append('itemFlavour', item.itemFlavour);
 
     return formData;
   }
 
-  goToPreviousPage(action: string): void {
-    this.dialogRef.close(action);
+  preventInvalidNumber(event: any) {
+    if (['e', 'E', '+', '-'].includes(event.key)) {
+      event.preventDefault();
+    }
   }
 }
 

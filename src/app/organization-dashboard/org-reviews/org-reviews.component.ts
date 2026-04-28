@@ -8,6 +8,8 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 
 (pdfMake as any).vfs =
   (pdfFonts as any).pdfMake?.vfs ?? (pdfFonts as any).vfs ?? {};
@@ -18,7 +20,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HighchartsChartModule } from 'highcharts-angular';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
-import { OrgOrderComponent } from './org-order/org-order.component';
+import { ReviewCardComponent } from '../../review/review-card/review-card.component';
 
 @Component({
   selector: 'app-org-reviews',
@@ -32,11 +34,12 @@ import { OrgOrderComponent } from './org-order/org-order.component';
     HighchartsChartModule,
     CommonOutletCafeSelectComponent,
     MaterialModule,
-    OrgOrderComponent
+    ReviewCardComponent
   ]
 })
 export class OrgReviewsComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
+  private orgSub?: Subscription;
   Highcharts: typeof Highcharts = Highcharts;
   orglist: any = [];
   isAdmin: boolean = false;
@@ -124,10 +127,21 @@ export class OrgReviewsComponent implements OnInit, OnChanges {
   constructor(
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
+    private organizationSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit() {
     this.setInitials();
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.adminOrg = org;
+        this.setInitials();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    this.orgSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

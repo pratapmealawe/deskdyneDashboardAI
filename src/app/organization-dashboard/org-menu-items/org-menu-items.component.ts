@@ -8,6 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { VendorFirmItemBreakdownComponent  } from 'src/app/vendor-management/vendor-firm/vendor-firm-view/vendor-firm-reports/vendor-firm-outlet-order-report/vendor-firm-item-breakdown/vendor-firm-item-breakdown.component';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
@@ -35,6 +37,7 @@ import { CommonOutletCafeSelectComponent } from 'src/app/common-components/commo
 export class OrgMenuItemsComponent implements OnInit, OnChanges {
   Highcharts: typeof Highcharts = Highcharts;
   @Input() adminOrg: any;
+  private orgSub?: Subscription;
   outletOrderData: any[] = [];
   selectedOutletId = '';
   headerConfig: CommonSelectConfig = {
@@ -63,7 +66,8 @@ export class OrgMenuItemsComponent implements OnInit, OnChanges {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private dialog: MatDialog,
-    private http: HttpClient
+    private http: HttpClient,
+    private organizationSharedService: OrganizationSharedService
   ) {
     this.dateGroup = new FormGroup({
       start: new FormControl(new Date()),
@@ -73,6 +77,16 @@ export class OrgMenuItemsComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.setInitials();
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.adminOrg = org;
+        this.setInitials();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orgSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

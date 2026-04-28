@@ -1,0 +1,157 @@
+<div class="modern-card board-card animate-fade-in" *ngIf="userDetails">
+
+    <!-- Header Card -->
+    <div class="orders-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Outlet Orders</h1>
+                <p class="page-subtitle">Historical purchase records and spend analysis</p>
+            </div>
+            <div class="actions-section">
+                <div class="search-wrapper">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search by Order #" [(ngModel)]="orderNoSearch"
+                        (input)="applyFilters()" />
+                </div>
+                <div class="header-actions">
+                    <button mat-icon-button class="btn-filter" matTooltip="More Filters" (click)="openFilterDialog()">
+                        <mat-icon [matBadge]="activeFilterCount" [matBadgeHidden]="activeFilterCount === 0"
+                            matBadgeSize="small" matBadgeColor="accent">filter_list</mat-icon>
+                    </button>
+                    <button mat-flat-button class="btn-export excel" (click)="excelExport()"
+                        [disabled]="filteredList.length === 0">
+                        <mat-icon>table_chart</mat-icon> Excel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content-body">
+
+        <!-- Totals Strip -->
+        <div class="totals-strip mb-4" *ngIf="filteredList.length > 0">
+            <div class="total-chip">
+                <span class="chip-label">Total Orders</span>
+                <span class="chip-value">{{ filteredList.length }}</span>
+            </div>
+            <div class="total-chip">
+                <span class="chip-label">Wallet Used</span>
+                <span class="chip-value">₹{{ totalWalletUsed | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-chip">
+                <span class="chip-label">Online Paid</span>
+                <span class="chip-value">₹{{ totalAmountPaid | number:'1.2-2' }}</span>
+            </div>
+            <div class="total-chip highlight">
+                <span class="chip-label">Total Spend</span>
+                <span class="chip-value">₹{{ totalAmount | number:'1.2-2' }}</span>
+            </div>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="filter-section-wrapper">
+            <div class="row g-3 align-items-center">
+                <!-- Quick Selection Buttons -->
+                <div class="col-12 col-xl-6">
+                    <div class="d-flex flex-wrap gap-2">
+                        <button mat-stroked-button class="quick-btn" (click)="setDateRange('today')" [class.active]="isRangeActive('today')">Today</button>
+                        <button mat-stroked-button class="quick-btn" (click)="setDateRange('yesterday')" [class.active]="isRangeActive('yesterday')">Yesterday</button>
+                        <button mat-stroked-button class="quick-btn" (click)="setDateRange('last7days')" [class.active]="isRangeActive('last7days')">7 Days</button>
+                        <button mat-stroked-button class="quick-btn" (click)="setDateRange('last30days')" [class.active]="isRangeActive('last30days')">30 Days</button>
+                        <button mat-stroked-button class="quick-btn" (click)="setDateRange('thisMonth')" [class.active]="isRangeActive('thisMonth')">This Month</button>
+                    </div>
+                </div>
+
+                <!-- Custom Range Picker -->
+                <div class="col-12 col-md-8 col-xl-4">
+                    <form [formGroup]="dateForm">
+                        <mat-form-field appearance="outline" class="w-100 hide-subscript">
+                            <mat-label>Custom Date Range</mat-label>
+                            <mat-date-range-input [rangePicker]="picker">
+                                <input matStartDate placeholder="Start" formControlName="dateFrom" />
+                                <input matEndDate placeholder="End" formControlName="dateTo" />
+                            </mat-date-range-input>
+                            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                            <mat-date-range-picker #picker></mat-date-range-picker>
+                        </mat-form-field>
+                    </form>
+                </div>
+
+                <!-- Apply Button -->
+                <div class="col-12 col-md-4 col-xl-2">
+                    <button mat-flat-button color="primary" (click)="applyDateRange()" class="w-100 btn-apply">
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Filter Chips -->
+        <div class="active-filter-chips mb-4" *ngIf="activeFilterCount > 0">
+            <div class="chip-strip">
+                <div class="filter-chip" *ngIf="filterOrderStatus">
+                    Status: {{ orderStatusMapper[filterOrderStatus] || filterOrderStatus }}
+                    <mat-icon (click)="filterOrderStatus =''; applyFilters()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterPgName">
+                    PG: {{ filterPgName }}
+                    <mat-icon (click)="filterPgName =''; applyFilters()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterAppVersion">
+                    v{{ filterAppVersion }}
+                    <mat-icon (click)="filterAppVersion =''; applyFilters()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterPlatform">
+                    {{ filterPlatform }}
+                    <mat-icon (click)="filterPlatform =''; applyFilters()">close</mat-icon>
+                </div>
+                <div class="filter-chip" *ngIf="filterIsPosOrder">
+                    POS: {{ filterIsPosOrder ==='true' ?'Yes' :'No' }}
+                    <mat-icon (click)="filterIsPosOrder =''; applyFilters()">close</mat-icon>
+                </div>
+                <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
+                    <mat-icon>filter_alt_off</mat-icon> Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Chart Section -->
+        <div class="chart-section-wrapper mb-4" *ngIf="filteredList.length > 0">
+            <mat-card class="p-3 border-0 shadow-sm" style="border-radius: 20px;">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="mb-0 font-weight-bold text-dark">Spend Analytics</h5>
+                    <span class="small text-muted">Trend based on selected filters</span>
+                </div>
+                <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions" [(update)]="updateFlag"
+                    style="width: 100%; height: 300px; display: block;">
+                </highcharts-chart>
+            </mat-card>
+        </div>
+
+        <!-- Orders Grid -->
+        <div *ngIf="filteredList.length > 0; else noOrders">
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-4" *ngFor="let row of pagedList">
+                    <app-outlet-order-card [order]="row" [showActions]="false"></app-outlet-order-card>
+                </div>
+            </div>
+
+            <mat-paginator [length]="filteredList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+                [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+                class="custom-paginator">
+            </mat-paginator>
+        </div>
+
+        <ng-template #noOrders>
+            <div class="premium-empty-state">
+                <div class="icon-circle">
+                    <mat-icon>receipt_long</mat-icon>
+                </div>
+                <h3>No Orders Found</h3>
+                <p>We couldn't find any orders matching your selection. Try adjusting the filters.</p>
+            </div>
+        </ng-template>
+
+    </div>
+</div>

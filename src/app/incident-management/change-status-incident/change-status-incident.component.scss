@@ -1,0 +1,76 @@
+@use "styles/theme/variable" as var;
+
+.premium-modal {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+  min-width: 480px;
+  max-width: 520px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: white;
+}
+
+.modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  .title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+
+    .icon-box {
+      width: 48px; height: 48px; border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      mat-icon { font-size: 24px; width: 24px; height: 24px; }
+      &.primary { background: #eff6ff; color: var.$primary-color1; }
+      &.warning { background: #fffbeb; color: #d97706; }
+      &.error { background: #fef2f2; color: #dc2626; }
+    }
+
+    .text {
+      h3 { font-size: 1.25rem; font-weight: 700; color: var.$primary-color2; margin: 0; }
+      p { font-size: 0.85rem; color: #64748b; margin: 0; strong { color: var.$primary-color1; } }
+    }
+  }
+
+  .close-btn { color: #94a3b8; transition: all 0.2s; &:hover { background: #f1f5f9; color: #475569; } }
+}
+
+.bg-light-soft { background-color: #f8fafc; }
+
+.dialog-content {
+  padding: 2rem 2rem !important;
+  margin: 0;
+}
+
+.section-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.85rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;
+  mat-icon { font-size: 20px; width: 20px; height: 20px; color: #94a3b8; }
+}
+
+.full-width { width: 100%; }
+
+.btn-cancel { border-radius: 99px; font-weight: 600; color: #64748b; padding: 0 1.5rem; &:hover { background: #f1f5f9; } }
+.btn-primary-action {
+  border-radius: 99px !important; font-weight: 700 !important; height: 48px !important; font-size: 0.9rem !important;
+  padding: 0 2rem !important;
+  mat-icon { margin-right: 8px; font-size: 20px; width: 20px; height: 20px; }
+  box-shadow: 0 4px 12px rgba(14, 73, 181, 0.2) !important;
+  transition: all 0.2s ease !important;
+  &:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(14, 73, 181, 0.3) !important; }
+}
+
+::ng-deep {
+  .mat-mdc-dialog-container .mdc-dialog__surface { 
+    border-radius: 20px !important; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important; 
+  }
+  .mat-mdc-form-field-subscript-wrapper { font-size: 0.75rem !important; }
+  .mat-mdc-form-field-prefix .mat-icon { color: #94a3b8 !important; margin-right: 8px; }
+}

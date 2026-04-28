@@ -1,0 +1,377 @@
+<div class="customer-details-container">
+
+  <!-- Hero Profile Section -->
+  <div class="profile-hero">
+    <div class="hero-content">
+      <div class="avatar-section">
+        <div class="avatar-circle" *ngIf="!customerDetails?.customer?.imageUrl">
+          {{ getInitials(customerDetails?.customer?.userName) }}
+        </div>
+        <img *ngIf="customerDetails?.customer?.imageUrl" 
+          [src]="imgBasePath + customerDetails.customer.imageUrl"
+          class="avatar-image" alt="User Image" (error)="imgError($event)" />
+      </div>
+      <div class="hero-info">
+        <h1 class="user-name">{{ customerDetails?.customer?.userName || customerDetails?.userName ||'User Name' }}</h1>
+        <div class="quick-badges">
+          <span class="quick-badge" *ngIf="customerDetails?.customer?.phoneNo">
+            <mat-icon>phone</mat-icon>
+            {{ customerDetails?.customer?.phoneNo }}
+          </span>
+          <span class="quick-badge" *ngIf="customerDetails?.customer?.email">
+            <mat-icon>email</mat-icon>
+            {{ customerDetails?.customer?.email }}
+          </span>
+          <span class="quick-badge org" *ngIf="customerDetails?.customer?.organization">
+            <mat-icon>business</mat-icon>
+            {{ customerDetails?.customer?.organization }}
+          </span>
+          <span class="quick-badge verified" *ngIf="customerDetails?.customer?.phoneNoVerified">
+            <mat-icon>verified</mat-icon>
+            Verified
+          </span>
+        </div>
+      </div>
+    </div>
+    <button mat-raised-button class="delete-btn" color="warn" (click)="confirmDelete()">
+      <mat-icon>delete</mat-icon>
+      Delete User
+    </button>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Customer Details Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon user">
+          <mat-icon>person</mat-icon>
+        </div>
+        <h3>Customer Details</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>badge</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">User Name</span>
+              <span class="info-value">{{ customerDetails?.customer?.userName ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>phone</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Phone No</span>
+              <span class="info-value">{{ customerDetails?.customer?.phoneNo ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>email</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ customerDetails?.customer?.email ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ customerDetails?.customer?.city ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>place</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ customerDetails?.customer?.location ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>event</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Joined On</span>
+              <span class="info-value">{{ customerDetails?.customer?.createdOn | date:'dd MMM yyyy' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cafeteria Details Card -->
+    <div class="info-card" *ngIf="customerDetails?.customer?.cafe_details">
+      <div class="card-header">
+        <div class="header-icon cafe">
+          <mat-icon>restaurant</mat-icon>
+        </div>
+        <h3>Cafeteria Details</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>storefront</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Cafeteria Name</span>
+              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.cafeteria_name ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.cafeteria_city ||'-' }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>home</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Address</span>
+              <span class="info-value">{{ customerDetails?.customer?.cafe_details?.address ||'-' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Employee Details Card -->
+    <div class="info-card" *ngIf="customerDetails?.employee">
+      <div class="card-header">
+        <div class="header-icon employee">
+          <mat-icon>work</mat-icon>
+        </div>
+        <h3>Employee Information</h3>
+        <span class="badge-chip">Daily Order</span>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>business</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Organization</span>
+              <span class="info-value">{{ customerDetails?.employee?.organization_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>badge</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Employee ID</span>
+              <span class="info-value">{{ customerDetails?.employee?.employeeId }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>person</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ customerDetails?.employee?.employeeName }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>phone</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ customerDetails?.employee?.employeePhoneNo }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>email</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ customerDetails?.employee?.employeeEmail }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>restaurant</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Cafeteria</span>
+              <span class="info-value">{{ customerDetails?.employee?.cafeteria_name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Outlet Employee Card -->
+    <div class="info-card" *ngIf="customerDetails?.outletEmployee">
+      <div class="card-header">
+        <div class="header-icon outlet">
+          <mat-icon>store</mat-icon>
+        </div>
+        <h3>Outlet Employee</h3>
+        <span class="badge-chip teal">Outlet</span>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>business</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Organization</span>
+              <span class="info-value">{{ customerDetails?.outletEmployee?.organization_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>badge</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Employee ID</span>
+              <span class="info-value">{{ customerDetails?.outletEmployee?.employeeId }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>person</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ customerDetails?.outletEmployee?.employeeName }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>phone</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ customerDetails?.outletEmployee?.employeePhoneNo }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>email</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ customerDetails?.outletEmployee?.employeeEmail }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>restaurant</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Cafeteria</span>
+              <span class="info-value">{{ customerDetails?.outletEmployee?.cafeteria_name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Virtual Cafeteria Employee Card -->
+    <div class="info-card" *ngIf="customerDetails?.vcEmployee">
+      <div class="card-header">
+        <div class="header-icon vc">
+          <mat-icon>local_cafe</mat-icon>
+        </div>
+        <h3>Virtual Cafeteria Employee</h3>
+        <span class="badge-chip purple">VC</span>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>business</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Organization</span>
+              <span class="info-value">{{ customerDetails?.vcEmployee?.organization_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>badge</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Employee ID</span>
+              <span class="info-value">{{ customerDetails?.vcEmployee?.employeeId }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>person</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ customerDetails?.vcEmployee?.employeeName }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>phone</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ customerDetails?.vcEmployee?.employeePhoneNo }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>email</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ customerDetails?.vcEmployee?.employeeEmail }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POC Details Card (Full Width) -->
+    <div class="info-card full-span" *ngIf="customerDetails?.orgInfo?.poc_details?.length">
+      <div class="card-header">
+        <div class="header-icon poc">
+          <mat-icon>contacts</mat-icon>
+        </div>
+        <h3>Organization POC</h3>
+        <span class="count-badge">{{ customerDetails?.orgInfo?.organization_name }}</span>
+      </div>
+      <div class="card-body">
+        <div class="poc-list">
+          <div class="poc-item" *ngFor="let poc of getFilteredPocs()">
+            <div class="poc-avatar">
+              {{ getInitials(poc.poc_name) }}
+            </div>
+            <div class="poc-info">
+              <div class="poc-name">{{ poc.poc_name }}</div>
+              <div class="poc-contact">
+                <div class="contact-row" *ngIf="poc.poc_phoneNo">
+                  <mat-icon>phone</mat-icon> {{ poc.poc_phoneNo }}
+                </div>
+                <div class="contact-row" *ngIf="poc.poc_email">
+                  <mat-icon>email</mat-icon> {{ poc.poc_email }}
+                </div>
+              </div>
+            </div>
+            <div class="poc-meta">
+              <span class="role-badge" [ngClass]="poc.poc_role">{{ poc.poc_role }}</span>
+              <span class="location-badge" *ngIf="poc.poc_location">
+                <mat-icon>place</mat-icon>{{ poc.poc_location }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cafeteria List Card (Full Width) -->
+    <div class="info-card full-span" *ngIf="customerDetails?.orgInfo?.cafeteriaList?.length">
+      <div class="card-header">
+        <div class="header-icon cafe">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <h3>Organization Cafeterias</h3>
+        <span class="count-badge large">{{ customerDetails?.orgInfo?.cafeteriaList?.length }}</span>
+      </div>
+      <div class="card-body">
+        <div class="cafe-grid">
+          <div class="cafe-card" *ngFor="let cafe of customerDetails?.orgInfo?.cafeteriaList">
+            <div class="cafe-header">
+              <div class="cafe-icon">
+                <mat-icon>restaurant</mat-icon>
+              </div>
+              <div class="cafe-info">
+                <h4>{{ cafe.cafeteria_name }}</h4>
+                <div class="cafe-meta">
+                  <span><mat-icon>place</mat-icon> {{ cafe.location }} - {{ cafe.cafeteria_city }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="cafe-address">
+              <mat-icon>home</mat-icon>
+              <span>{{ cafe.address1 }}<span *ngIf="cafe.address2">, {{ cafe.address2 }}</span></span>
+            </div>
+            <div class="cafe-features">
+              <span class="feature-chip" *ngIf="cafe.showVirtualCafe">Virtual Cafe</span>
+              <span class="feature-chip" *ngIf="cafe.showAdminDaily">Daily Orders</span>
+              <span class="feature-chip" *ngIf="cafe.showEmpPolls">Emp Polls</span>
+              <span class="feature-chip" *ngIf="cafe.showConsumptionOrder">Consumption</span>
+              <span class="feature-chip" *ngIf="cafe.showSodexo">Sodexo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

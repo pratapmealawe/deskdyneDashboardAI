@@ -1,0 +1,69 @@
+<div class="customer-orders-container">
+    <div class="bulk-dashboard-header">
+        <div class="header-card">
+            <div class="header-icon-box">
+                <mat-icon>shopping_bag</mat-icon>
+            </div>
+            <div class="header-text-content">
+                <h1 class="page-title">Customer Orders</h1>
+                <p class="page-subtitle">
+                    View and track all types of customer orders
+                </p>
+            </div>
+        </div>
+
+        <!-- LEVEL 1: Tab Selection -->
+        <div class="tabs-row level-1">
+            <div class="main-tabs">
+                <button class="pill-tab-btn" [class.active]="selectedSubTab ==='outlet'"
+                    (click)="selectSubTab('outlet')">
+                    <mat-icon>store</mat-icon>
+                    <span>Outlet Orders</span>
+                </button>
+                <button class="pill-tab-btn" [class.active]="selectedSubTab ==='vc'" (click)="selectSubTab('vc')">
+                    <mat-icon>coffee</mat-icon>
+                    <span>Virtual Cafeteria Orders</span>
+                </button>
+                <button class="pill-tab-btn" [class.active]="selectedSubTab ==='vc_meal'"
+                    (click)="selectSubTab('vc_meal')">
+                    <mat-icon>restaurant</mat-icon>
+                    <span>Virtual Cafeteria Meal Orders</span>
+                </button>
+                <button class="pill-tab-btn" [class.active]="selectedSubTab ==='bulk'" (click)="selectSubTab('bulk')">
+                    <mat-icon>shopping_cart</mat-icon>
+                    <span>Bulk Orders</span>
+                </button>
+                <button class="pill-tab-btn" [class.active]="selectedSubTab ==='admin'" (click)="selectSubTab('admin')">
+                    <mat-icon>admin_panel_settings</mat-icon>
+                    <span>Admin Daily Orders</span>
+                </button>
+                <button class="pill-tab-btn" [class.active]="selectedSubTab ==='poll'" (click)="selectSubTab('poll')">
+                    <mat-icon>poll</mat-icon>
+                    <span>Emp Polling</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="sub-tab-content">
+        <div *ngIf="selectedSubTab ==='outlet'">
+            <app-customer-outlet-orders [userDetails]="userDetails"></app-customer-outlet-orders>
+        </div>
+        <div *ngIf="selectedSubTab ==='vc'">
+            <app-customer-virtual-cafeteria-orders [userObj]="userDetails"></app-customer-virtual-cafeteria-orders>
+        </div>
+        <div *ngIf="selectedSubTab ==='vc_meal'">
+            <app-customer-virtual-cafeteria-meal-orders
+                [userObj]="userDetails"></app-customer-virtual-cafeteria-meal-orders>
+        </div>
+        <div *ngIf="selectedSubTab ==='bulk'">
+            <app-customer-bulk-orders [userDetails]="userDetails"></app-customer-bulk-orders>
+        </div>
+        <div *ngIf="selectedSubTab ==='admin'">
+            <app-customer-admin-daily-orders [userDetails]="userDetails"></app-customer-admin-daily-orders>
+        </div>
+        <div *ngIf="selectedSubTab ==='poll'">
+            <app-customer-employee-polling [userDetails]="userDetails"></app-customer-employee-polling>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="modern-card board-card animate-fade-in">
+    <div class="card-header with-actions">
+        <div class="header-title-group">
+            <div class="header-icon-wrapper">
+                <mat-icon>restaurant</mat-icon>
+            </div>
+            <div class="header-text-wrapper">
+                <h3 class="m-0">Meal Orders</h3>
+                <p class="m-0 text-muted small">Subscription & Meal Package History</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="customer-past-meal-orders-container">
+            <div *ngIf="orderList.length > 0; else noOrders" class="orders-grid">
+                <div *ngFor="let order of orderList" class="order-card-wrapper mb-3">
+                    <app-order-subscription-package-card 
+                        [orderInput]="order" 
+                        [parentPage]="'user'" 
+                        [showDeliveryDetail]="false">
+                    </app-order-subscription-package-card>
+                </div>
+                
+                <div class="load-more-container mt-4 text-center">
+                    <button *ngIf="nextOn" mat-flat-button color="primary" class="btn-primary-action" (click)="getMore()">
+                        <mat-icon>expand_more</mat-icon>
+                        Load More
+                    </button>
+                </div>
+            </div>
+
+            <ng-template #noOrders>
+                <div class="premium-empty-state">
+                    <div class="empty-media">
+                        <div class="icon-circle">
+                            <mat-icon>fastfood</mat-icon>
+                        </div>
+                    </div>
+                    <h3>No Meal Orders</h3>
+                    <p>No subscription or meal package orders found for this user.</p>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

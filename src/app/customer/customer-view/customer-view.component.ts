@@ -1,34 +1,94 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PermissionsService } from '@service/permission.service';
+import { MaterialModule } from 'src/app/material.module';
+import { CustomerSharedService } from '../customer-shared.service';
 
 @Component({
   selector: 'app-customer-view',
   templateUrl: './customer-view.component.html',
-  styleUrls: ['./customer-view.component.scss']
+  styleUrls: ['./customer-view.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    RouterModule,
+  ],
+  providers: [CustomerSharedService]
 })
 export class CustomerViewComponent implements OnInit, OnChanges {
-  @Input() userDetails: any
-  @Output() backBtnEmitter: any = new EventEmitter();
+  userDetails: any
+  @ViewChild('mainTabsContainer') mainTabsContainer!: ElementRef;
+  private routeSub: any;
+  isDown = false;
+  startX = 0;
+  scrollLeft = 0;
 
   userViewList = [
-    { name: 'User Details', path: 'userDetails', policyKey: 'userDetails' },
-    // { name: 'Past Orders', path: 'pastorders' },
-    // { name: 'Past Meal Orders', path: 'pastmealorders' },
-    { name: 'Outlet Orders', path: 'outletOrders', policyKey: 'customerOutletOrder' },
-    { name: 'Wallet', path: 'wallet', policyKey: 'customerWallet' },
-    { name: 'Company Wallet', path: 'companyWallet', policyKey: 'customerCompanyWallet' }
+    { name: 'Details', path: 'details', policyKey: 'customerDetails', icon: 'person' },
+    { name: 'Orders', path: 'orders', policyKey: 'customerOrders', icon: 'shopping_bag' },
+    { name: 'Wallet', path: 'wallet', policyKey: 'customerWallet', icon: 'account_balance_wallet' },
+    { name: 'Company Wallet', path: 'company-wallet', policyKey: 'customerCompanyWallet', icon: 'corporate_fare' },
+    { name: 'Review', path: 'review', policyKey: 'customerReview', icon: 'rate_review' },
+    { name: 'Feedback', path: 'feedback', policyKey: 'customerFeedback', icon: 'feedback' }
   ];
-  selectedTab = 'userDetails';
+  selectedTab = 'details';
   selectedTabIndex: number = 0;
 
 
-  constructor(private permissionsService: PermissionsService) { }
+  constructor(
+    private permissionsService: PermissionsService,
+    private customerSharedService: CustomerSharedService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) { }
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
+
+    this.customerSharedService.userDetails$.subscribe(details => {
+      this.userDetails = details;
+    });
+
+    // Extract ID from route
+    this.route.params.subscribe(params => {
+      const id = params['id'];
+      if (id) {
+        this.loadCustomer(id);
+      }
+    });
+
     this.userViewList = this.userViewList.filter(tab => {
       if (!tab.policyKey) return true;
       return this.permissionsService.hasPermission(tab.policyKey);
     });
+
+    this.updateSelectedTab();
+  }
+
+  async loadCustomer(id: string) {
+    // Check if customer is already in shared state
+    const currentCustomer = this.customerSharedService.getUserDetails();
+    if (currentCustomer && (currentCustomer._id === id || currentCustomer.customer?._id === id)) {
+      this.userDetails = currentCustomer;
+    } else {
+      // Fetch from API if not present or different
+      this.userDetails = await this.customerSharedService.refreshCustomerById(id);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.routeSub) {
+      this.routeSub.unsubscribe();
+    }
+  }
+
+  updateSelectedTab() {
+    const url = this.router.url;
+    const currentTab = url.split('/').pop() || 'details';
+    const index = this.userViewList.findIndex(t => t.path === currentTab);
+    this.selectedTabIndex = index >= 0 ? index : 0;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -52,22 +112,46 @@ export class CustomerViewComponent implements OnInit, OnChanges {
   }
 
   onMainTabChange(index: number) {
+    const userId = this.userDetails?.customer?._id || this.userDetails?._id;
+    if (!userId || userId === 'undefined') return;
+
     this.selectedTabIndex = index;
-    this.selectedTab = this.userViewList[index].path;
+    const tab = this.userViewList[index].path;
+    this.router.navigate(['/app/customer', userId, tab]);
   }
 
-  getTabIcon(path: string): string {
-    const icons: { [key: string]: string } = {
-      'userDetails': 'person',
-      'orders': 'receipt_long',
-      'wallet': 'account_balance_wallet',
-      'companyWallet': 'corporate_fare'
-    };
-    return icons[path] || 'tab';
-  }
 
   backBtn() {
-    this.backBtnEmitter.emit(true)
+    this.router.navigate(['/app/customer']);
+  }
+
+  onMouseDown(e: MouseEvent): void {
+    this.isDown = true;
+    this.startX = e.pageX - this.mainTabsContainer.nativeElement.offsetLeft;
+    this.scrollLeft = this.mainTabsContainer.nativeElement.scrollLeft;
+  }
+
+  onMouseLeave(): void {
+    this.isDown = false;
+  }
+
+  onMouseUp(): void {
+    this.isDown = false;
+  }
+
+  onMouseMove(e: MouseEvent): void {
+    if (!this.isDown) return;
+    e.preventDefault();
+    const x = e.pageX - this.mainTabsContainer.nativeElement.offsetLeft;
+    const walk = (x - this.startX) * 2; // scroll-fast
+    this.mainTabsContainer.nativeElement.scrollLeft = this.scrollLeft - walk;
+  }
+
+  getInitials(name: string | undefined): string {
+    if (!name) return '?';
+    const parts = name.trim().split(' ').filter(Boolean);
+    if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
   }
 
 }

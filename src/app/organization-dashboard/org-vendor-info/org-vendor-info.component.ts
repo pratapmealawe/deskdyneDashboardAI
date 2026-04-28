@@ -4,6 +4,8 @@ import { ApiMainService } from '@service/apiService/apiMain.service';
 import { LocalStorageService } from '@service/local-storage.service';
 import { SearchFilterService } from '@service/search-filter.service';
 import { VendorComplianceComponent } from 'src/app/vendor-management/vendor-firm/vendor-firm-view/vendor-firm-compliance/vendor-compliance.component';
+import { OrganizationSharedService } from 'src/app/organization/organization-shared.service';
+import { Subscription } from 'rxjs';
 
 interface data {
   orgId: string;
@@ -21,6 +23,7 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class OrgVendorInfoComponent implements OnInit, OnChanges {
   @Input() adminOrg: any;
+  private orgSub?: Subscription;
   orgDetails: any;
   vendorList: any[] = [];
   page: number = 1;
@@ -37,11 +40,22 @@ export class OrgVendorInfoComponent implements OnInit, OnChanges {
     private apiMainService: ApiMainService,
     private localStorageService: LocalStorageService,
     private searchService: SearchFilterService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
+    private organizationSharedService: OrganizationSharedService
   ) { }
 
   ngOnInit(): void {
     this.setInitials();
+    this.orgSub = this.organizationSharedService.organization$.subscribe(org => {
+      if (org) {
+        this.adminOrg = org;
+        this.setInitials();
+      }
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.orgSub?.unsubscribe();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

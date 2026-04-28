@@ -20,9 +20,9 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'orgReports', loadComponent: () => import('./org-reports/org-reports.component').then(m => m.OrgReportsComponent) },
       { path: 'orgVendorInfo', loadComponent: () => import('./org-vendor-info/org-vendor-info.component').then(m => m.OrgVendorInfoComponent) },
       { path: 'orgMenuCounters', loadComponent: () => import('./org-menu-counters/org-menu-counters.component').then(m => m.OrgMenuCountersComponent) },
-      { path: 'orgIncidentManagement', loadComponent: () => import('./org-incident-management/org-incident-management.component').then(m => m.OrgIncidentManagementComponent) },
+      { path: 'orgIncidentManagement', loadComponent: () => import('../incident-management/incident-management.component').then(m => m.IncidentManagementComponent) },
       { path: 'auditReport', loadComponent: () => import('./audit-report/audit-report.component').then(m => m.AuditReportComponent) },
-      { path: 'orgChecklist', loadChildren: () => import('../checklist-question/checklist-history/checklist-history.module').then(m => m.ChecklistHistoryModule) },
+      { path: 'orgChecklist', loadComponent: () => import('../checklists/checklist-history/checklist-history.component').then(m => m.ChecklistHistoryComponent) },
       { path: 'orgEmployeeList', loadComponent: () => import('./org-employee-list/org-employee-list.component').then(m => m.OrgEmployeeListComponent) },
       { path: 'orgBulkOrderHistory', loadComponent: () => import('./org-bulk-order-history/org-bulk-order-history.component').then(m => m.OrgBulkOrderHistoryComponent) },
       { path: 'orgManualOrders', loadComponent: () => import('./org-manual-orders/org-manual-orders.component').then(m => m.OrgManualOrdersComponent) },
@@ -30,7 +30,25 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'orgSalaryDeduction', loadComponent: () => import('./org-salary-deduction/org-salary-deduction.component').then(m => m.OrgSalaryDeductionComponent) },
       { path: 'submitChecklist', loadComponent: () => import('./org-checklist/org-checklist.component').then(m => m.OrgChecklistComponent) },
       { path: 'orgAdminDailyOrder', loadComponent: () => import('./org-admin-daily-order/org-admin-daily-order.component').then(m => m.OrgAdminDailyOrderComponent) },
-      { path: 'customer', loadChildren: () => import('../customer/customer.module').then(m => m.CustomerModule) },
+      {
+        path: 'customer',
+        loadComponent: () => import('../customer/customer.component').then(m => m.CustomerComponent),
+        children: [
+          {
+            path: ':id',
+            loadComponent: () => import('../customer/customer-view/customer-view.component').then(m => m.CustomerViewComponent),
+            children: [
+              { path: 'details', loadComponent: () => import('../customer/customer-view/customer-details/customer-details.component').then(m => m.CustomerDetailsComponent) },
+              { path: 'wallet', loadComponent: () => import('../customer/customer-view/customer-wallet/customer-wallet.component').then(m => m.CustomerWalletComponent) },
+              { path: 'company-wallet', loadComponent: () => import('../customer/customer-view/customer-company-wallet/customer-company-wallet.component').then(m => m.CustomerCompanyWalletComponent) },
+              { path: 'orders', loadComponent: () => import('../customer/customer-view/customer-orders/customer-orders.component').then(m => m.CustomerOrdersComponent) },
+              { path: 'review', loadComponent: () => import('../customer/customer-view/customer-review/customer-review.component').then(m => m.CustomerReviewComponent) },
+              { path: 'feedback', loadComponent: () => import('../customer/customer-view/customer-feedback/customer-feedback.component').then(m => m.CustomerFeedbackComponent) },
+              { path: '', redirectTo: 'details', pathMatch: 'full' }
+            ]
+          }
+        ]
+      },
       { path: 'billing', loadChildren: () => import('../billing/billing.module').then(m => m.BillingModule) },
       { path: 'orgEmpPoll', loadComponent: () => import('./org-emp-poll/org-emp-poll.component').then(m => m.OrgEmpPollComponent) },
       { path: '', redirectTo: 'home', pathMatch: 'full' }
