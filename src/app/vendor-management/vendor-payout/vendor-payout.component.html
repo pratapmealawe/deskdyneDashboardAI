@@ -1,0 +1,163 @@
+<div class="vendor-page-container animate-fade-in">
+  <!-- PAGE HEADER -->
+  <div class="vendor-header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Vendor Payout</h1>
+        <p class="page-subtitle">Manage wallet balances, transfers, and payout history</p>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search by Firm name..." [formControl]="searchControl" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-body">
+    <!-- Empty State -->
+    <div *ngIf="!pagedVendorWallet.length" class="empty-state">
+      <mat-icon class="empty-icon">account_balance_wallet</mat-icon>
+      <h3>No Wallets Found</h3>
+      <p>There are no vendor firms matching your search.</p>
+    </div>
+
+    <!-- Vendor Payout List -->
+    <div class="vendor-payout-list" *ngIf="pagedVendorWallet.length">
+      <div class="modern-card payout-firm-card" *ngFor="let vendor of pagedVendorWallet">
+        <!-- Firm Header -->
+        <div class="card-header border-0 pb-0">
+          <div class="d-flex justify-content-between align-items-start w-100 p-3">
+            <div class="d-flex align-items-center gap-3">
+              <div class="icon-box primary">
+                <mat-icon>business</mat-icon>
+              </div>
+              <div class="firm-info">
+                <div class="firm-label-tag">Vendor Firm</div>
+                <h3 (click)="openVendorDetails(vendor)" class="firm-name-link">{{ vendor.vendorFirmName }}</h3>
+                <div class="d-flex align-items-center gap-3 mt-1 text-muted small info-badges">
+                  <span class="d-flex align-items-center gap-1" *ngIf="vendor.vendorFirmPhoneNo">
+                    <mat-icon>phone</mat-icon>
+                    {{ vendor.vendorFirmPhoneNo }}
+                  </span>
+                  <span class="d-flex align-items-center gap-1" *ngIf="vendor.vendorFirmEmail">
+                    <mat-icon>email</mat-icon>
+                    {{ vendor.vendorFirmEmail }}
+                  </span>
+                </div>
+              </div>
+            </div>
+            <div class="bank-info text-end">
+              <div class="badge-type open" *ngIf="vendor.bank_name">
+                <mat-icon>account_balance</mat-icon>
+                {{ vendor.bank_name }} - {{ vendor.accountNo }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Balance Sections (Modern Cards Grid) -->
+        <div class="card-body px-4 pb-4">
+          <div class="cards-grid-modern">
+            
+            <!-- Wallet Card -->
+            <div class="balance-card-modern wallet-card">
+              <div class="card-header-flex">
+                <div class="icon-badge wallet-bg">
+                  <mat-icon>account_balance_wallet</mat-icon>
+                </div>
+                <div class="header-action-text">
+                  <span class="label">Wallet Balance</span>
+                </div>
+              </div>
+
+              <div class="card-content">
+                <h2 class="amount" [class.text-muted]="!vendor.wallet_balance || vendor.wallet_balance <= 0">
+                  {{ (vendor.wallet_balance || 0) | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                </h2>
+              </div>
+
+              <div class="card-actions">
+                <button mat-flat-button color="primary" class="action-btn flex-grow-1"
+                  (click)="openTxnDialog(vendor, 'Transfer', 'wallet')">
+                  <mat-icon>payments</mat-icon> Transfer Payout
+                </button>
+                <button mat-stroked-button class="action-btn icon-only" (click)="openHistoryDialog(vendor)" matTooltip="View History">
+                  <mat-icon>history</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Subsidy Card -->
+            <div class="balance-card-modern">
+              <div class="card-header-flex">
+                <div class="icon-badge subsidy-bg">
+                  <mat-icon>card_giftcard</mat-icon>
+                </div>
+                <div class="header-action-text">
+                  <span class="label">Subsidy Balance</span>
+                </div>
+                <button mat-icon-button matTooltip="Subsidy gets credited monthly." class="info-btn ms-auto">
+                  <mat-icon>info_outline</mat-icon>
+                </button>
+              </div>
+
+              <div class="card-content">
+                <h2 class="amount" [class.text-muted]="!vendor.subsidy_balance || vendor.subsidy_balance <= 0">
+                  {{ (vendor.subsidy_balance || 0) | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                </h2>
+              </div>
+
+              <div class="card-actions">
+                <button mat-stroked-button class="action-btn full-width" *ngIf="vendor.subsidy_balance > 0"
+                  (click)="openTxnDialog(vendor, 'Transfer', 'subsidy')">
+                  <mat-icon>swap_horiz</mat-icon> Move to Wallet
+                </button>
+                <span *ngIf="!vendor.subsidy_balance || vendor.subsidy_balance <= 0" class="empty-state-text">No balance available</span>
+              </div>
+            </div>
+
+            <!-- Daily Card -->
+            <div class="balance-card-modern">
+              <div class="card-header-flex">
+                <div class="icon-badge daily-bg">
+                  <mat-icon>schedule</mat-icon>
+                </div>
+                <div class="header-action-text">
+                  <span class="label">Daily Balance</span>
+                </div>
+                <button mat-icon-button matTooltip="Daily balance gets credited monthly." class="info-btn ms-auto">
+                  <mat-icon>info_outline</mat-icon>
+                </button>
+              </div>
+
+              <div class="card-content">
+                <h2 class="amount" [class.text-muted]="!vendor.daily_balance || vendor.daily_balance <= 0">
+                  {{ (vendor.daily_balance || 0) | currency:'INR':'symbol':'1.2-2':'en-IN' }}
+                </h2>
+              </div>
+
+              <div class="card-actions">
+                <button mat-stroked-button class="action-btn full-width" *ngIf="vendor.daily_balance > 0"
+                  (click)="openTxnDialog(vendor, 'Transfer', 'daily')">
+                  <mat-icon>swap_horiz</mat-icon> Move to Wallet
+                </button>
+                <span *ngIf="!vendor.daily_balance || vendor.daily_balance <= 0" class="empty-state-text">No balance available</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Paginator -->
+    <div class="pagination-wrapper mt-4" *ngIf="vendorWalletList.length">
+      <mat-paginator [length]="vendorWalletList.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+        [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+        class="custom-paginator">
+      </mat-paginator>
+    </div>
+  </div>
+</div>

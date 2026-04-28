@@ -51,18 +51,20 @@
 
       <!-- Card Body -->
       <div class="card-body">
-        <div class="info-row">
-          <mat-icon class="info-icon">payments</mat-icon>
-          <div class="info-content">
-            <span class="info-label">Subsidy</span>
-            <span class="info-value">{{ outlet?.subsidy || 0 }} %</span>
+        <div class="info-group">
+          <div class="info-row">
+            <mat-icon class="info-icon">payments</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Subsidy</span>
+              <span class="info-value">{{ outlet?.subsidy || 0 }} %</span>
+            </div>
           </div>
-        </div>
-        <div class="info-row">
-          <mat-icon class="info-icon">low_priority</mat-icon>
-          <div class="info-content">
-            <span class="info-label">Precedence</span>
-            <span class="info-value">{{ outlet?.precedence ||'-' }}</span>
+          <div class="info-row">
+            <mat-icon class="info-icon">low_priority</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Precedence</span>
+              <span class="info-value">{{ outlet?.precedence ||'-' }}</span>
+            </div>
           </div>
         </div>
         <div class="info-row" *ngIf="outlet.outletDescription">

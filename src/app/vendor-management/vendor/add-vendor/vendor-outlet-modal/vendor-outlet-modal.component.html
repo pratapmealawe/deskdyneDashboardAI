@@ -1,0 +1,57 @@
+<div class="premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box success">
+        <mat-icon>store</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Select Outlets</h3>
+        <p>Choose outlets to link with this vendor</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content p-4">
+    <div *ngIf="outlets.length; else noOutlets">
+      <div class="form-grid-modern">
+        <div *ngFor="let outlet of outlets" class="list-item-modal-modern" (click)="toggleCheckbox(outlet)"
+          [class.selected]="outlet.isChecked">
+          <div class="d-flex align-items-center gap-3 w-100">
+            <mat-checkbox [(ngModel)]="outlet.isChecked" color="primary" (click)="$event.stopPropagation()"></mat-checkbox>
+            
+            <div class="item-info flex-grow-1">
+              <div class="main-text">{{ outlet.outletName }}</div>
+              <div class="sub-text d-flex align-items-center gap-3">
+                <span class="d-flex align-items-center gap-1">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">business</mat-icon>
+                  {{ outlet.organizationDetails?.organization_name || '-' }}
+                </span>
+                <span class="d-flex align-items-center gap-1">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">restaurant</mat-icon>
+                  {{ outlet.cafeteriaDetails?.cafeteria_name || '-' }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noOutlets>
+      <div class="empty-placeholder py-5">
+        <mat-icon>storefront</mat-icon>
+        <p>No outlets available for this vendor firm.</p>
+      </div>
+    </ng-template>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button (click)="close()" class="btn-cancel me-2">Cancel</button>
+    <button mat-flat-button color="primary" (click)="confirmSelection()" class="btn-primary-action px-4">
+      <mat-icon>add</mat-icon> Add Selected
+    </button>
+  </mat-dialog-actions>
+</div>

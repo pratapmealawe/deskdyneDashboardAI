@@ -929,6 +929,189 @@ See full implementation in `src/app/common-components/org-outlet-orders/`.
 
 ---
 
+## 18. Horizontal List Cards (Entity Listing)
+
+Used for listings where each item needs to show several details and actions in a single row.
+
+**Reference**: `organization-card`
+
+### HTML Structure
+
+```html
+<div class="list-container">
+  <div class="item-card" *ngFor="let item of list">
+    <!-- Left: Avatar/Icon Box -->
+    <div class="avatar-section">
+      <div class="avatar">
+        <img *ngIf="item.logo" [src]="item.logo" class="avatar-img">
+        <span *ngIf="!item.logo">{{ initials }}</span>
+      </div>
+    </div>
+
+    <!-- Middle: Info & Details -->
+    <div class="info-section">
+      <div class="info-header">
+        <h3 class="title">{{ item.name }}</h3>
+        <span class="location-badge">
+           <mat-icon>location_city</mat-icon>
+           {{ item.city }}
+        </span>
+      </div>
+      <div class="details-row">
+        <div class="detail-item">
+          <mat-icon>place</mat-icon>
+          <span>{{ item.location }}</span>
+        </div>
+        <!-- Chips/Status inside row -->
+        <div class="chip-group">
+          <span class="chip status-success">{{ item.status }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Actions -->
+    <div class="actions-section">
+      <button mat-icon-button class="view-btn"><mat-icon>visibility</mat-icon></button>
+      <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
+    </div>
+  </div>
+</div>
+```
+
+### SCSS
+
+```scss
+.item-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  transition: all 0.2s ease;
+  gap: 1.5rem;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: var.$primary-color3;
+    box-shadow: var.$box-shadow-card-hover;
+  }
+
+  .avatar {
+    width: 56px; height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var.$primary-color3, var.$primary-color1);
+    color: white; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+
+  .info-section {
+    flex-grow: 1; min-width: 0;
+    .info-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 4px; }
+    .title { margin: 0; font-size: 1.1rem; font-weight: 600; color: var.$primary-color2; }
+  }
+
+  .actions-section { display: flex; gap: 0.5rem; }
+}
+```
+
+---
+
+## 19. Modern Data Table (Floating Rows)
+
+A premium table design with spacing between rows and hover elevation.
+
+**Reference**: `organization-card` (POC/Cafeteria modal)
+
+### HTML Structure
+
+```html
+<table mat-table [dataSource]="dataSource" class="modern-table">
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef>Name</th>
+    <td mat-cell *matCellDef="let row">{{ row.name }}</td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columns"></tr>
+  <tr mat-row *matRowDef="let row; columns: columns;" class="table-row"></tr>
+</table>
+```
+
+### SCSS
+
+```scss
+.modern-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px; // Key for the floating row effect
+
+  th.mat-mdc-header-cell {
+    background-color: var.$primary-color1;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    padding: 12px 16px;
+    border: none;
+    
+    &:first-child { border-radius: 8px 0 0 8px; }
+    &:last-child { border-radius: 0 8px 8px 0; }
+  }
+
+  .table-row {
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    transition: all 0.2s ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    td { padding: 12px 16px; border: none; }
+    td:first-child { border-radius: 8px 0 0 8px; }
+    td:last-child { border-radius: 0 8px 8px 0; }
+  }
+}
+```
+
+---
+
+## 20. Dialog Header (Consistent)
+
+Consistent styling for both `MatDialog` and custom modal overlays.
+
+### HTML
+
+```html
+<div class="modal-header">
+  <div class="d-flex align-items-center gap-2">
+    <mat-icon class="header-icon">info</mat-icon>
+    <h3>Dialog Title</h3>
+  </div>
+  <button mat-icon-button (click)="close()"><mat-icon>close</mat-icon></button>
+</div>
+```
+
+### SCSS
+
+```scss
+.modal-header {
+  padding: 1.25rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8f9fa;
+
+  h3 { margin: 0; font-size: 1.25rem; font-weight: 600; color: var.$primary-color2; }
+  .header-icon { color: var.$primary-color1; }
+}
+```
+
+---
+
 ## Quick Reference: File Locations
 
 | Pattern | Reference Component |
@@ -946,5 +1129,7 @@ See full implementation in `src/app/common-components/org-outlet-orders/`.
 | Empty/Loading | `vendor-firm`, `outlet-excel-export`, `main-dashboard` |
 | Sticky Bar | `add-vendor-firm` |
 | Pagination | `vendor-firm`, `outlet-excel-export` |
+| List Cards | `organization-card` |
+| Modern Table | `organization-card` (modal) |
 | Theme Vars | `src/styles/theme/_variable.scss` |
 | Mixins | `src/styles/theme/_mixins.scss` |

@@ -53,7 +53,7 @@ const routes: Routes = [
             children: [
               { path: 'outlet-details', loadComponent: () => import('./outlet/outlet-view/outlet-details/outlet-details.component').then(m => m.OutletDetailsComponent) },
               { path: 'outlet-menu', loadComponent: () => import('./outlet/outlet-view/outlet-menu/outlet-menu.component').then(m => m.OutletMenuComponent) },
-              { path: 'qr-menu', loadComponent: () => import('./outlet/outlet-view/qr-menu/qr-menu.component').then(m => m.QrMenuComponent) },
+              { path: 'outlet-qr-menu', loadComponent: () => import('./outlet/outlet-view/outlet-qr-menu/outlet-qr-menu.component').then(m => m.OutletQrMenuComponent) },
               { path: 'outlet-orders', loadComponent: () => import('./outlet/outlet-view/outlet-orders/outlet-orders.component').then(m => m.OutletOrdersComponent) },
               { path: 'outlet-feedback', loadComponent: () => import('./outlet/outlet-view/outlet-feedback/outlet-feedback.component').then(m => m.OutletFeedbackComponent) },
               { path: '', redirectTo: 'outlet-details', pathMatch: 'full' }
@@ -63,16 +63,33 @@ const routes: Routes = [
       },
       { path: 'outlet-master-menu', loadComponent: () => import('./outlet/outlet-master-menu/outlet-master-menu.component').then(m => m.OutletMasterMenuComponent) },
       { path: 'event-popup', loadComponent: () => import('./event-popup/event-popup.component').then(m => m.EventPopupComponent) },
-      { path: 'vendor-firm', loadComponent: () => import('./vendor-firm/vendor-firm.component').then(m => m.VendorFirmComponent) },
-      { path: 'vendor', loadComponent: () => import('./vendor/vendor.component').then(m => m.VendorComponent) },
-      { path: 'currentOrder', loadComponent: () => import('./outlet-orders/outlet-orders.component').then(m => m.OutletOrdersComponent) },
-      { path: 'outletExcelExport', loadComponent: () => import('./outlet-excel-export/outlet-excel-export.component').then(m => m.OutletExcelExportComponent) },
-      { path: 'otherOrder', loadComponent: () => import('./other-orders/other-orders.component').then(m => m.OtherOrdersComponent) },
-      { path: 'searchOrder', loadComponent: () => import('./search-order/search-order.component').then(m => m.SearchOrderComponent) },
+      {
+        path: 'vendor-firm',
+        loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm.component').then(m => m.VendorFirmComponent),
+        children: [
+          {
+            path: ':id',
+            loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-view.component').then(m => m.VendorFirmViewComponent),
+            children: [
+              { path: 'vendor-firm-details', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-details/vendor-firm-details.component').then(m => m.VendorFirmDetailsComponent) },
+              { path: 'vendor-firm-reports', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-reports/vendor-firm-reports.component').then(m => m.VendorFirmReportsComponent) },
+              { path: 'vendor-firm-wallet-details', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-wallet-details/vendor-firm-wallet-details.component').then(m => m.VendorFirmWalletDetailsComponent) },
+              { path: 'vendor-firm-ledger-details', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-ledger-details/vendor-firm-ledger-details.component').then(m => m.VendorFirmLedgerDetailsComponent) },
+              { path: 'wallet-transaction-history', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/wallet-transaction-history/wallet-transaction-history.component').then(m => m.WalletTransactionHistoryComponent) },
+              { path: 'vendor-firm-compliance', loadComponent: () => import('./vendor-management/vendor-firm/vendor-firm-view/vendor-firm-compliance/vendor-compliance.component').then(m => m.VendorComplianceComponent) },
+              { path: '', redirectTo: 'vendor-firm-details', pathMatch: 'full' }
+            ]
+          }
+        ]
+      },
+      { path: 'vendor', loadComponent: () => import('./vendor-management/vendor/vendor.component').then(m => m.VendorComponent) },
+      { path: 'currentOutletOrder', loadComponent: () => import('./orders/outlet-orders/outlet-orders.component').then(m => m.OutletOrdersComponent) },
+      { path: 'otherOrder', loadComponent: () => import('./orders/other-orders/other-orders.component').then(m => m.OtherOrdersComponent) },
+      { path: 'searchOrder', loadComponent: () => import('./orders/search-order/search-order.component').then(m => m.SearchOrderComponent) },
       { path: 'sessionManagement', loadComponent: () => import('./session-management/session-management.component').then(m => m.SessionManagementComponent) },
       { path: 'notifications', loadComponent: () => import('./notification/notification.component').then(m => m.NotificationComponent) },
-      { path: 'vendorWalletDashboard', loadComponent: () => import('./vendor-wallet-dashboard/vendor-wallet-dashboard.component').then(m => m.VendorWalletDashboardComponent) },
-      { path: 'vendorPayout', loadComponent: () => import('./vendor-payout/vendor-payout.component').then(m => m.VendorPayoutComponent) },
+      { path: 'vendorWalletDashboard', loadComponent: () => import('./vendor-management/vendor-wallet-dashboard/vendor-wallet-dashboard.component').then(m => m.VendorWalletDashboardComponent) },
+      { path: 'vendorPayout', loadComponent: () => import('./vendor-management/vendor-payout/vendor-payout.component').then(m => m.VendorPayoutComponent) },
 
       { path: 'customer', loadChildren: () => import('./customer/customer.module').then(m => m.CustomerModule) },
 

@@ -1,0 +1,29 @@
+<div class="bulk-dashboard-header">
+  <div class="header-card">
+    <div class="header-icon-box">
+      <mat-icon>assessment</mat-icon>
+    </div>
+    <div class="header-text-content">
+      <h1 class="page-title">Vendor Reports</h1>
+      <p class="page-subtitle">Analyze and export order reports</p>
+    </div>
+  </div>
+
+  <div class="tabs-row level-1">
+    <div class="main-tabs">
+      <button *ngFor="let tab of reportTabs" class="pill-tab-btn" [class.active]="selectedTab === tab.path"
+        (click)="selectTab(tab.path)">
+        <mat-icon>{{ tab.icon }}</mat-icon>
+        <span>{{ tab.name }}</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="report-content-area">
+  <ng-container [ngSwitch]="selectedTab">
+    <app-vendor-firm-outlet-order-report *ngSwitchCase="'outlet-report'"></app-vendor-firm-outlet-order-report>
+    <app-vendor-firm-admin-daily-order-report *ngSwitchCase="'daily-report'"></app-vendor-firm-admin-daily-order-report>
+    <app-vendor-firm-admin-bulk-order-report *ngSwitchCase="'bulk-report'"></app-vendor-firm-admin-bulk-order-report>
+  </ng-container>
+</div>

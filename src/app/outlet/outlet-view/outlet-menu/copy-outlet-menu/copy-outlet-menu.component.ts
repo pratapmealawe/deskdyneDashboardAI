@@ -26,16 +26,23 @@ export class CopyOutletMenuComponent implements OnInit {
   filteredOutletMenuList: any[] = [];
   selectedMenuItems: any[] = [];
   searchTerm: string = '';
+  outletObj: any;
 
   constructor(
     private apiMainService: ApiMainService,
     private toastr: ToasterService,
     public dialogRef: MatDialogRef<CopyOutletMenuComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { outletObj: any }
-  ) { }
+  ) {
+    this.outletObj = data.outletObj;
+  }
 
   ngOnInit(): void {
     this.fetchAllOutlets();
+  }
+
+  close() {
+    this.dialogRef.close();
   }
 
   async fetchAllOutlets() {

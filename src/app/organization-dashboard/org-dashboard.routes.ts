@@ -10,7 +10,7 @@ export const ORG_DASHBOARD_ROUTES: Routes = [
       { path: 'hyperpureDashboard', loadComponent: () => import('./hyperpure-dashboard/hyperpure-dashboard.component').then(m => m.HyperpureDashboardComponent) },
       { path: 'consumptionOrders', loadComponent: () => import('./org-consumption-order/org-consumption-order.component').then(m => m.OrgConsumptionOrderComponent) },
       { path: 'orgMenuItems', loadComponent: () => import('./org-menu-items/org-menu-items.component').then(m => m.OrgMenuItemsComponent) },
-      { path: 'outletExcelExport', loadComponent: () => import('../outlet-excel-export/outlet-excel-export.component').then(m => m.OutletExcelExportComponent) },
+      { path: 'currentoutletOrder', loadComponent: () => import('../orders/outlet-orders/outlet-orders.component').then(m => m.OutletOrdersComponent) },
 
 
       { path: 'orgOrders', loadComponent: () => import('./org-outlet-orders/org-outlet-orders.component').then(m => m.OrgOutletOrdersComponent) },

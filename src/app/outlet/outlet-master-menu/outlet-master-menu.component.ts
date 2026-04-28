@@ -1,17 +1,15 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { ConfirmationModalService } from '@service/confirmation-modal.service';
-import { ImageCropperComponent } from '../../common-components/image-cropper/image-cropper.component';
-import { AddOutletMasterMenuComponent } from './add-outlet-master-menu/add-outlet-master-menu.component';
-import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatChipsModule } from '@angular/material/chips';
 import { MaterialModule } from 'src/app/material.module';
-import { ComboPopupComponent } from '../outlet-view/combo-popup/combo-popup.component';
+import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
+import { AddOutletMasterMenuComponent } from './add-outlet-master-menu/add-outlet-master-menu.component';
 
 @Component({
   selector: 'app-outlet-master-menu',
@@ -23,16 +21,12 @@ import { ComboPopupComponent } from '../outlet-view/combo-popup/combo-popup.comp
     MaterialModule,
     MatChipsModule,
     FormsModule,
-    ReactiveFormsModule,
-    ComboPopupComponent,
-    ImageCropperComponent,
-    AddOutletMasterMenuComponent
+    ReactiveFormsModule
   ]
 })
 export class OutletMasterMenuComponent implements OnInit {
   @Input() outletObj: any;
   @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @ViewChild('comboContent') comboContent: any;
   categorySelected: boolean = false;
   // removed form property
   selectedCategory: any;

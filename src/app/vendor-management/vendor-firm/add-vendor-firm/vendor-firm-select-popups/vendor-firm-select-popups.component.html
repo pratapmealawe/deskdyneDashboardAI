@@ -1,0 +1,81 @@
+<div class="premium-modal">
+    <div class="modal-header">
+    <div class="title-wrap">
+        <div class="icon-box purple">
+            <mat-icon>event</mat-icon>
+        </div>
+        <div class="text">
+            <h3>Select Popups</h3>
+            <p>Assign event popups to this vendor firm</p>
+        </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+    <mat-dialog-content class="dialog-content p-4">
+        <div class="form-grid-modern">
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Organization</mat-label>
+                    <mat-select (selectionChange)="getOrgName($event)">
+                        <mat-option *ngFor="let org of orgList" [value]="org.organization_name">
+                            {{ org.organization_name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Cafeteria</mat-label>
+                    <mat-select [disabled]="!orgName" (selectionChange)="selectCafeteriaForPopup($event)">
+                        <mat-option *ngFor="let cafeteria of cafeterialist" [value]="cafeteria">
+                            {{ cafeteria.cafeteria_name }} - {{ cafeteria.cafeteria_city }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div *ngIf="showModalOutletListforPopup" class="animate-fade-in">
+            <div *ngFor="let event of eventsByOrganization" class="list-item-modal"
+                (click)="toggleCheckboxforPopup(event)" [class.selected]="event.isChecked">
+                <div class="d-flex align-items-center gap-3">
+                    <mat-checkbox [(ngModel)]="event.isChecked" color="primary"
+                        (click)="$event.stopPropagation()"></mat-checkbox>
+                    <div class="w-100">
+                        <div class="row align-items-center">
+                            <div class="col-md-4">
+                                <div class="labelText">Popup Name</div>
+                                <div class="labelData fw-bold">{{ event.eventPopupName }}</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="labelText">Status</div>
+                                <div class="labelData">
+                                    <span class="badge-type" [class.open]="event.eventPopupOpened">
+                                        {{ event.eventPopupOpened ? 'Opened' : 'Closed' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <div class="labelText">Description</div>
+                                <div class="labelData text-truncate">{{ event.eventPopupDescription || '-' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="eventsByOrganization.length == 0" class="empty-placeholder">
+                <mat-icon>event_busy</mat-icon>
+                <p>No available popups for this selection</p>
+            </div>
+        </div>
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button mat-dialog-close class="btn-cancel me-2">Cancel</button>
+        <button mat-flat-button color="primary" [disabled]="!isAnyPopupSelected" (click)="getSelectedPopups()" class="btn-primary-action px-4">
+            <mat-icon>add</mat-icon> Link Popups
+        </button>
+    </mat-dialog-actions>
+</div>

@@ -121,7 +121,7 @@ export class OrgLayoutComponent implements OnInit {
     const dashboardTabMap: { [key: string]: string } = {
       'orgDashboard': 'Dashboard',
       'orgMenuItems': 'menuItems',
-      'outletExcelExport': 'Orders',
+      'currentoutletOrder': 'Orders',
       'orgReviews': 'Reviews',
       'customer': 'User',
       'orgVendorInfo': 'vendorInfo',

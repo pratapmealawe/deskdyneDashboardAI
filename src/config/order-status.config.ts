@@ -27,7 +27,8 @@ export const orderStatusMapper = {
     'subscription': 'Subscription',
     'rescheduled': 'Rescheduled',
     'subscriptionPackage': 'Subscription',
-
+    'autocompleted': 'Auto Completed',
+    'autoCompleted': 'Auto Completed'
 }
 
 

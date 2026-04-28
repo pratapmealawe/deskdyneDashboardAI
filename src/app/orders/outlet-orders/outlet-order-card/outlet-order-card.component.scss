@@ -1,0 +1,587 @@
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
+
+// ──────────────────────────────────────────────────────────────
+// Order Item Card (matches outlet-item-card structure)
+// ──────────────────────────────────────────────────────────────
+.order-item-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease;
+    margin-bottom: 1.25rem;
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: var.$primary-color3;
+        box-shadow: 0 4px 12px rgba(14, 73, 181, 0.1);
+    }
+}
+
+// Card Top (matches outlet-card card-top)
+.card-top {
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    border-bottom: 1px solid #f1f1f1;
+    flex-wrap: wrap;
+
+    .order-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        text-transform: uppercase;
+    }
+
+    .order-identity {
+        flex-grow: 1;
+        overflow: hidden;
+
+        .order-title {
+            margin: 0 0 4px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #2d3748;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .order-sub-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+
+            .token-chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                background: #f1f5f9;
+                color: #475569;
+                padding: 3px 10px;
+                border-radius: 20px;
+                font-size: 0.7rem;
+                font-weight: 700;
+                border: 1px solid #e2e8f0;
+
+                mat-icon {
+                    font-size: 14px;
+                    width: 14px;
+                    height: 14px;
+                    color: #94a3b8;
+                }
+
+                &.pg-chip {
+                    background: #f0f9ff;
+                    color: #0369a1;
+                    border-color: #bae6fd;
+                    mat-icon { color: #0ea5e9; }
+                }
+
+                &.version-chip {
+                    background: #f8fafc;
+                    color: #475569;
+                    border-color: #e2e8f0;
+                    mat-icon { color: #64748b; }
+                }
+            }
+
+            .date-text {
+                font-size: 0.82rem;
+                color: #718096;
+            }
+        }
+    }
+
+    .card-top-right {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-shrink: 0;
+    }
+
+    .card-actions {
+        display: flex;
+        gap: 4px;
+
+        button {
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            padding: 0;
+
+            mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+            }
+        }
+    }
+}
+
+// Status Badge (matches outlet-card status-badge)
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+    mat-icon {
+        font-size: 15px;
+        width: 15px;
+        height: 15px;
+    }
+
+    &.placed {
+        background-color: #eff6ff;
+        color: #1d4ed8;
+        border: 1px solid #dbeafe;
+    }
+
+    &.readyOrder {
+        background-color: #f5f3ff;
+        color: #6d28d9;
+        border: 1px solid #ede9fe;
+    }
+
+    &.paymentInprogress {
+        background-color: #fffbeb;
+        color: #b45309;
+        border: 1px solid #fef3c7;
+    }
+
+    &.paymentFailed {
+        background-color: #fef2f2;
+        color: #b91c1c;
+        border: 1px solid #fee2e2;
+    }
+
+    &.completed {
+        background-color: #f0fdf4;
+        color: #15803d;
+        border: 1px solid #dcfce7;
+    }
+
+    &.cancelled {
+        background-color: #f9fafb;
+        color: #374151;
+        border: 1px solid #f3f4f6;
+    }
+
+    &.autocompleted, &.autoCompleted {
+        background-color: #ecfdf5;
+        color: #059669;
+        border: 1px solid #d1fae5;
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Card Body Grid (Two columns)
+// ──────────────────────────────────────────────────────────────
+.card-body-grid {
+    display: flex;
+    flex-direction: row;
+
+    @media (max-width: 992px) {
+        flex-direction: column;
+    }
+}
+
+.card-body-left {
+    width: 340px;
+    flex-shrink: 0;
+    padding: 1.25rem;
+    border-right: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    @media (max-width: 992px) {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #f1f5f9;
+    }
+}
+
+// Info Row (matches outlet-card info-row)
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    .info-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #a0aec0;
+        margin-top: 2px;
+    }
+
+    .info-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+        overflow: hidden;
+
+        .info-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .info-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2d3748;
+
+            &.text-truncate {
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+        }
+    }
+}
+
+// Badge Row
+.badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.org-badge,
+.cafe-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+
+    mat-icon {
+        font-size: 13px;
+        width: 13px;
+        height: 13px;
+    }
+}
+
+.org-badge {
+    background: #f0f9ff;
+    color: #0369a1;
+    border: 1px solid #bae6fd;
+
+    mat-icon {
+        color: #38bdf8;
+    }
+}
+
+.cafe-badge {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+    border: 1px solid #fcd34d;
+
+    mat-icon {
+        color: #f59e0b;
+    }
+}
+
+.flag-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 0.73rem;
+    font-weight: 600;
+
+    mat-icon {
+        font-size: 13px;
+        width: 13px;
+        height: 13px;
+    }
+
+    &.preorder {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    &.cabin {
+        background: #ede9fe;
+        color: #5b21b6;
+    }
+}
+
+.special-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.82rem;
+    color: #92400e;
+    line-height: 1.4;
+
+    mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        margin-top: 1px;
+        flex-shrink: 0;
+        color: #d97706;
+    }
+}
+
+// Card Body Right — Items
+.card-body-right {
+    flex: 1;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+
+    .section-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        color: #94a3b8;
+        margin-bottom: 0.75rem;
+        letter-spacing: 0.03em;
+    }
+}
+
+.items-scroll {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+
+    &::-webkit-scrollbar {
+        width: 5px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+    }
+}
+
+.item-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .item-row {
+        display: flex;
+        flex-direction: column;
+        padding: 0.6rem 0;
+    }
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    .item-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+
+        .type-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+
+            &.veg { background: #10b981; }
+            &.nonveg { background: #ef4444; }
+        }
+
+        .item-qty {
+            font-weight: 800;
+            color: #4f46e5;
+            font-size: 0.85rem;
+            background: #eef2ff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            border: 1px solid #c7d2fe;
+            line-height: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 0.92rem;
+        }
+
+        .item-cat {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            background: #f8fafc;
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid #f1f5f9;
+        }
+    }
+
+    .item-price {
+        font-weight: 600;
+        color: #475569;
+        font-size: 0.9rem;
+    }
+}
+
+.addOn-row {
+    margin-top: 4px;
+    margin-left: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .addon-chip {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+
+        .addon-label {
+            font-size: 0.65rem;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .addon-text {
+            font-size: 0.75rem;
+            color: #718096;
+            font-style: italic;
+        }
+    }
+
+    .addOn-price {
+        font-size: 0.8rem;
+        color: #94a3b8;
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Card Footer (matches outlet-card card-footer)
+// ──────────────────────────────────────────────────────────────
+.card-footer {
+    padding: 1rem 1.25rem;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+.fin-strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    margin-bottom: 1rem;
+
+    .fin-cell {
+        display: flex;
+        flex-direction: column;
+        gap: 1px;
+
+        .fin-label {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .fin-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        &.discount {
+            .fin-value { color: #e11d48; }
+        }
+
+        &.paid {
+            .fin-value { color: #0891b2; }
+        }
+
+        &.grand {
+            .fin-label { color: #4f46e5; }
+            .fin-value { 
+                color: #4f46e5;
+                font-weight: 700;
+                font-size: 0.95rem;
+            }
+        }
+        
+        &.coupon-cell {
+            .coupon-code-inline {
+                background: #fff1f2;
+                color: #e11d48;
+                padding: 0 4px;
+                border-radius: 3px;
+                font-size: 0.65rem;
+                margin-left: 4px;
+                border: 1px dashed #fda4af;
+            }
+        }
+    }
+}
+
+.meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+
+    .meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.72rem;
+        color: #64748b;
+        font-weight: 600;
+        background: #ffffff;
+        padding: 4px 10px;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+
+        mat-icon {
+            font-size: 14px;
+            width: 14px;
+            height: 14px;
+            color: #94a3b8;
+        }
+    }
+}
+
+.complete-btn {
+    color: #16a34a !important;
+}

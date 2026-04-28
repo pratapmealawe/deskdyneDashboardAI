@@ -1,0 +1,132 @@
+<div class="copy-master-menu-modal premium-modal">
+  <!-- HEADER -->
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box primary">
+        <mat-icon>content_copy</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Copy Menu from Master</h3>
+        <p>Browse the global master menu and copy items to {{ outletObj?.outletName }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="selection-badge me-2" *ngIf="selectedItems.length > 0">
+        <mat-icon>check_circle</mat-icon>
+        {{ selectedItems.length }} Selected
+      </div>
+      <button mat-icon-button (click)="close()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-dialog-content class="dialog-content custom-scrollbar">
+    <!-- FILTERS SECTION -->
+    <div class="sticky-filters">
+      <div class="filter-card">
+        <div class="search-box-wrapper">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search master menu..." [(ngModel)]="searchTerm" (input)="applyMasterFilter()" />
+        </div>
+
+        <mat-form-field appearance="outline" class="category-select">
+          <mat-label>Category Filter</mat-label>
+          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyMasterFilter()">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let category of categoryList" [value]="category.value">
+              {{ category.title }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix class="field-icon">filter_list</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <div class="content-padding">
+      <!-- SELECTION LIST GRID -->
+      <div class="selection-grid" *ngIf="filteredMasterMenuList.length > 0">
+        <div class="menu-item-card selection-mode" *ngFor="let item of filteredMasterMenuList"
+          [ngClass]="{'is-selected': isSelected(item) }" (click)="onItemToggle(item)">
+          
+          <div class="selection-check" *ngIf="isSelected(item)">
+            <mat-icon>check</mat-icon>
+          </div>
+
+          <div class="card-content-wrapper">
+            <div class="menu-image-wrapper">
+              <img [src]="displayImgUrl + item.imageUrl" class="menu-avatar" alt="{{ item.itemName }}"
+                onerror="this.src='assets/Imageunavailable.webp'" />
+              <div [ngClass]="item.itemType === 'Veg' ? 'vegIcon' : 'nonvegIcon'" class="type-indicator"></div>
+            </div>
+
+            <div class="menu-details">
+              <h4 class="menu-name">{{ item.itemName || 'Unnamed item' }}</h4>
+              <p class="description-text" *ngIf="item.description">
+                {{ item.description }}
+              </p>
+
+
+              <!-- Chips Row -->
+              <div class="chips-row-modern" *ngIf="(item.mealTimingInfo?.length || outletObj?.mealTiming?.length)">
+                <span class="meal-chip-modern"
+                  *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (outletObj?.mealTiming || []))"
+                  [ngClass]="meal.mealSubsidyType || 'default'">
+                  {{ meal.mealType || meal }}
+                </span>
+              </div>
+
+              <!-- Discount/Subsidy Section -->
+              <div class="subsidy-section-modern" *ngIf="item.subsidy || item.discountEnabled">
+                <div class="subsidy-pill" *ngIf="item.subsidy">
+                  <mat-icon>sell</mat-icon>
+                  <span>₹{{ item.subsidy }}</span>
+                </div>
+
+                <ng-container *ngIf="item.discountEnabled">
+                  <div class="discount-pill" [ngClass]="item.discountType">
+                    <mat-icon>discount</mat-icon>
+                    <span>{{ item.discountType === 'percentage' ? item.discountValue + '%' : '₹' + item.discountValue }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <!-- Precedence Badge -->
+          <div class="precedence-badge-top" *ngIf="item.precedence !== undefined && item.precedence !== null">
+            <mat-icon>sort</mat-icon>
+            <span>{{ item.precedence }}</span>
+          </div>
+
+          <div class="menu-footer">
+            <div class="price-tag">
+              <span class="currency">₹</span>
+              <span class="value">{{ item.price }}</span>
+            </div>
+            <div class="category-badge-simple">{{ item.category || 'General' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state-modern" *ngIf="filteredMasterMenuList.length === 0">
+        <div class="icon-box">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h4>No items found</h4>
+        <p>We couldn't find any items matching your current filters. Try adjusting your search.</p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <!-- FOOTER -->
+  <mat-dialog-actions align="end" class="modal-footer">
+    <button mat-button class="btn-cancel" (click)="close()">Cancel</button>
+    <button mat-flat-button color="primary" class="btn-primary-action" (click)="submit()"
+      [disabled]="selectedItems.length === 0">
+      <mat-icon>content_copy</mat-icon>
+      <span>Copy Items</span>
+    </button>
+  </mat-dialog-actions>
+</div>

@@ -5,7 +5,7 @@ import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { LocalStorageService } from '@service/local-storage.service';
 import { MatDialog } from '@angular/material/dialog';
-import { VendorFirmItemBreakdownComponent  } from 'src/app/vendor-firm/vendor-firm-view/vendor-firm-report/vendor-firm-item-breakdown/vendor-firm-item-breakdown.component';
+import { VendorFirmItemBreakdownComponent  } from 'src/app/vendor-management/vendor-firm/vendor-firm-view/vendor-firm-reports/vendor-firm-outlet-order-report/vendor-firm-item-breakdown/vendor-firm-item-breakdown.component';
 import { firstValueFrom } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
@@ -28,7 +28,8 @@ import { CommonOutletCafeSelectComponent } from 'src/app/common-components/commo
     ReactiveFormsModule,
     FormsModule,
     MaterialModule,
-    CommonOutletCafeSelectComponent
+    CommonOutletCafeSelectComponent,
+    VendorFirmItemBreakdownComponent
   ]
 })
 export class OrgMenuItemsComponent implements OnInit, OnChanges {

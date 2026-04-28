@@ -1,0 +1,232 @@
+@use 'styles/theme/mixins' as mixin;
+@use "styles/theme/variable" as var;
+
+// --- Page Layout ---
+.transaction-history-wrapper {
+    padding-bottom: 2rem;
+}
+
+/* Dashboard Style Header (Matches Reports UI) */
+.bulk-dashboard-header {
+  background: white;
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  margin: 0.5rem 0 1.5rem 0;
+
+  .header-card {
+    background: transparent;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: none;
+    border: none;
+
+    .header-icon-box {
+      width: 44px;
+      height: 44px;
+      background: #eff6ff;
+      color: var.$primary-color1;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      mat-icon {
+        font-size: 22px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    .header-text-content {
+      .page-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: var.$primary-color2;
+        margin: 0;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+
+      .page-subtitle {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin: 2px 0 0 0;
+        line-height: 1.4;
+      }
+    }
+  }
+}
+
+.compact-field {
+    width: auto;
+    min-width: 280px;
+    ::ng-deep .mat-mdc-form-field-wrapper { padding-bottom: 0 !important; }
+    ::ng-deep .mat-mdc-text-field-wrapper { background-color: #f8fafc !important; border-radius: 12px !important; }
+    ::ng-deep .mat-mdc-form-field-subscript-wrapper { display: none; }
+}
+
+.btn-primary-action {
+    border-radius: 12px !important; font-weight: 700 !important; height: 48px !important;
+    mat-icon { margin-right: 6px; font-size: 20px; width: 20px; height: 20px; }
+}
+
+.btn-cancel { border-radius: 12px; font-weight: 600; color: #64748b; height: 48px; &:hover { background: #f1f5f9; } }
+
+.btn-export-premium {
+    background: #0f172a !important; color: white !important; border-radius: 12px !important; font-weight: 700 !important; height: 48px !important;
+    padding: 0 20px !important;
+    mat-icon { margin-right: 8px; font-size: 20px; width: 20px; height: 20px; }
+    &:hover { background: #1e293b !important; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
+}
+
+// --- Transaction Cards (Premium Redesign) ---
+.transaction-item-card {
+    background: #fff;
+    border-radius: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #f1f5f9;
+    position: relative;
+
+    &:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        border-color: #e2e8f0;
+    }
+
+    &.pending-neft-card {
+        border: 1px solid #fde68a;
+        background: linear-gradient(to bottom, #fffefc, #fff);
+        
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: #f59e0b;
+        }
+    }
+
+    .card-top {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        border-bottom: 1px dashed #f1f5f9;
+        background: transparent;
+
+        .transaction-icon {
+            width: 44px; height: 44px; border-radius: 12px;
+            display: flex; justify-content: center; align-items: center;
+            flex-shrink: 0;
+
+            mat-icon { font-size: 24px; width: 24px; height: 24px; }
+
+            &.credit { background: #f0fdf4; color: #16a34a; }
+            &.debit { background: #fef2f2; color: #dc2626; }
+        }
+
+        .transaction-main-info {
+            flex: 1;
+            min-width: 0;
+
+            .transaction-amount {
+                margin: 0 0 2px 0; font-size: 1.2rem; font-weight: 800; letter-spacing: -0.02em;
+                &.text-success { color: #16a34a !important; }
+                &.text-danger { color: #dc2626 !important; }
+            }
+
+            .status-badge {
+                display: inline-flex; align-items: center; gap: 6px;
+                font-size: 0.7rem; font-weight: 700; padding: 4px 12px; border-radius: 99px;
+                text-transform: uppercase; letter-spacing: 0.025em;
+
+                .status-icon { font-size: 14px; width: 14px; height: 14px; }
+
+                &.green { background: #dcfce7; color: #166534; }
+                &.orange { background: #fef3c7; color: #92400e; }
+                &.red { background: #fee2e2; color: #991b1b; }
+                &.primary2 { background: #dbeafe; color: #1e40af; }
+            }
+        }
+    }
+
+    .card-body {
+        padding: 1rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+
+        .info-row {
+            display: flex; align-items: center; gap: 0.85rem;
+            padding: 0.5rem 0.75rem; border-radius: 12px; transition: background 0.2s ease;
+            
+            &:hover { background: #f8fafc; }
+
+            .info-icon { font-size: 18px; width: 18px; height: 18px; color: #94a3b8; }
+
+            .info-content {
+                flex: 1; display: flex; flex-direction: column; min-width: 0;
+
+                .info-label { font-size: 10px; color: #94a3b8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; }
+                .info-value {
+                    font-size: 0.9rem; color: #334155; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                    &.small { font-size: 0.8rem; }
+                    &.text-wrap { white-space: normal; }
+                }
+            }
+        }
+    }
+}
+
+// --- Empty State ---
+.empty-state {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 5rem 2rem; text-align: center; background: white; border-radius: 24px;
+    border: 2px dashed #e2e8f0; margin-top: 2rem;
+
+    .empty-icon { font-size: 80px; width: 80px; height: 80px; color: #f1f5f9; margin-bottom: 1.5rem; }
+    h3 { color: #1e293b; font-weight: 800; margin-bottom: 0.75rem; font-size: 1.5rem; letter-spacing: -0.02em; }
+    p { color: #64748b; max-width: 400px; line-height: 1.6; }
+}
+
+// --- Animation ---
+.animate-all { animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.refreshing-indicator {
+    color: #f59e0b;
+    .spin { animation: spin 1s linear infinite; font-size: 20px; width: 20px; height: 20px; }
+}
+
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+::ng-deep .mat-mdc-paginator {
+    background: white !important; border-radius: 16px; margin-top: 2rem; padding: 8px 16px; border: 1px solid #f1f5f9;
+}
+
+.skeleton-card {
+    height: 320px; background: #f1f5f9; border-radius: 20px; position: relative; overflow: hidden;
+    &::after {
+        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+        animation: loading-shimmer 1.5s infinite;
+    }
+}
+
+@keyframes loading-shimmer { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+@media (max-width: 768px) {
+    .bulk-dashboard-header { padding: 1.25rem; }
+    .compact-field { min-width: 100%; }
+    .filter-btns { width: 100%; }
+    .filter-btns button { flex: 1; }
+}

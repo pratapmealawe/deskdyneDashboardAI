@@ -24,7 +24,7 @@
       <button *ngFor="let view of orgViewList; let i = index" class="tab-btn"
         [class.active]="selectedMainTabIndex === i" (click)="onMainTabChange(i)">
         <mat-icon class="tab-icon">
-          {{ getTabIcon(view.path) }}
+          {{ view.icon }}
         </mat-icon>
         <span>{{ view.name }}</span>
       </button>

@@ -15,6 +15,8 @@ export interface CommonSelectConfig {
   defaultOrgId?: string;
   defaultCafeId?: string;
   defaultOutletId?: string;
+  defaultDateFrom?: Date;
+  defaultDateTo?: Date;
 
   /** Disable specific dropdowns */
   disableOrg?: boolean;
@@ -194,8 +196,8 @@ export class CommonOutletCafeSelectComponent implements OnInit, OnChanges {
   private async applyDefaultsIfAny(): Promise<void> {
     // Defaults for date-range
     if (this.config?.showDateRange) {
-      if (this.config.minDate) this.dateForm.get('dateFrom')?.setValue(this.config.minDate);
-      if (this.config.maxDate) this.dateForm.get('dateTo')?.setValue(this.config.maxDate);
+      if (this.config.defaultDateFrom) this.dateForm.get('dateFrom')?.setValue(this.config.defaultDateFrom);
+      if (this.config.defaultDateTo) this.dateForm.get('dateTo')?.setValue(this.config.defaultDateTo);
     }
 
     // Defaults for org/cafe/outlet

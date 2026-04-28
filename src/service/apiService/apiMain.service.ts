@@ -492,20 +492,6 @@ export class ApiMainService {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.lastsevendaysorderdaywisecount, searchObj);
   }
 
-  getDayRangeBasedLogs(startDate: any, endDate: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getDayRangeBasedLogs;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${startDate}` + `/${endDate}`, method: urlObj.method });
-  }
-
-  getTimeBasedLogs(hour: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getTimeBasedLogs;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${hour}`, method: urlObj.method });
-  }
-
-  getLineBasedLogs(lineLimit: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.getLineBasedLogs;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${lineLimit}`, method: urlObj.method });
-  }
 
   getDayRangeBasedAuditLogs(startDate: any, endDate: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getDayRangeBasedAuditLogs;
@@ -685,60 +671,6 @@ export class ApiMainService {
   updateGuestEmployee(id: any, employeeObj: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.updateGuestEmployee;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, employeeObj);
-  }
-
-  B2B_fetchBulkMenu(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, false, true);
-  }
-
-  B2B_saveBulkMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_updateBulkMenu, data, null, false, true);
-  }
-
-  B2B_fetchIndividualMenu(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndividualMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, false, true);
-  }
-
-  B2B_saveIndMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_updateIndMenu, data, null, false, true);
-  }
-
-  B2B_fetchBulkSnacksMenu(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchBulkSnacksMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, false, true);
-  }
-
-  B2B_Bulk_SnackMenuAdd(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_Bulk_SnackMenuAdd, data, null, false, true);
-  }
-
-  B2B_fetchIndSnacksMenu(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_fetchIndSnacksMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, false, true);
-  }
-
-  B2B_Ind_SnackMenuAdd(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_updateIndividualSnacksMenu, data, null, false, true);
-  }
-
-  B2B_saveSnackBoxMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveSnackBoxMenu, data, null, false, true);
-  }
-
-  B2B_snackBoxMenuFetch(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_snackBoxMenuFetch;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, false, true);
-  }
-
-  B2B_customSnackBoxMenuFetch(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.B2B_customSnackBoxMenuFetch;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method }, null, null, false, true);
-  }
-
-  B2B_saveCustomSnackBoxMenu(data: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.B2B_saveCustomSnackBoxMenu, data, null, false, true);
   }
 
   updateBulkMasterMenu(item: any, id: any) {
@@ -1161,6 +1093,7 @@ export class ApiMainService {
   createDailyPackageOrder(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.createDailyPackageOrder, body);
   }
+  
   getOutletOrdersByCustomerId(id: any, dateFrom: any, dateTo: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.getOutletOrdersByCustomerId;
     return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}/${dateFrom}/${dateTo}`, method: urlObj.method });
@@ -1272,55 +1205,6 @@ export class ApiMainService {
 
   orgInfo(body: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.orgInfo, body);
-  }
-
-  b2b_fetchBulkCakeMenu(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.b2b_fetchBulkCakeMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  b2b_fetchBulkLuxMenu(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.b2b_fetchBulkLuxMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  b2b_fetchBulkSweetMenu(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.b2b_fetchBulkSweetMenu;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  b2b_predefinedSnackboxFetch(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.b2b_predefinedSnackboxFetch;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  b2b_customizedSnackboxFetch(id: any) {
-    const urlObj = this.apiConfigService.apiEndPointObj.b2b_customizedSnackboxFetch;
-    return this.apiHttpService.REQUEST({ url: urlObj.url + `/${id}`, method: urlObj.method });
-  }
-
-  b2b_BulkCakeMenuAdd(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.b2b_BulkCakeMenuAdd, body);
-  }
-
-  b2b_updateBulkCakeMenu(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.b2b_updateBulkCakeMenu, body);
-  }
-
-  b2b_updateBulkLuxMenu(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.b2b_updateBulkLuxMenu, body);
-  }
-
-  b2b_updateBulkSweetMenu(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.b2b_updateBulkSweetMenu, body);
-  }
-
-  b2b_updatePredefinedSnackBox(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.b2b_updatePredefinedSnackBox, body);
-  }
-
-  b2b_updateCustomizedSnackBox(body: any) {
-    return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.b2b_updateCustomizedSnackBox, body);
   }
 
   fetchFoodOrderPackagebysearchObj(body: any) {
@@ -1528,7 +1412,6 @@ export class ApiMainService {
   getAuditLogs(params: any) {
     return this.apiHttpService.REQUEST(this.apiConfigService.apiEndPointObj.getAuditLogs, params);
   }
-
 
   addVirtualCafeteriaCategory(body: any) {
     const urlObj = this.apiConfigService.apiEndPointObj.virtualCafeteriaCategoryAdd
@@ -1914,7 +1797,8 @@ export class ApiMainService {
         appType,
         pageIndex: options.pageIndex,
         pageSize: options.pageSize,
-        searchTerm: options.searchTerm
+        searchTerm: options.searchTerm,
+        status: options.status
     };
     return this.apiHttpService.REQUEST(urlObj, body);
   }

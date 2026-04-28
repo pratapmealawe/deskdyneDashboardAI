@@ -1,50 +1,45 @@
-<div class="notification-page-container">
-  <!-- Header Section -->
-  <div class="notification-header-card">
-    <div class="header-content">
-      <div class="title-section">
-        <h1 class="page-title">Session Management</h1>
-        <p class="page-subtitle">Platform-wide session monitoring and security control</p>
-      </div>
+<div class="org-page-container">
+  <div class="content-body">
+    <!-- Header Section -->
+    <div class="org-header-card">
+      <div class="header-content">
+        <div class="title-section">
+          <h1 class="page-title">Session Management</h1>
+        </div>
+        <div class="actions-section">
+          <div class="search-wrapper">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch($event)" placeholder="Search by name, ID, or email...">
+          </div>
 
-      <div class="search-wrapper">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input type="text" [(ngModel)]="searchTerm" (input)="onSearch($event)" placeholder="Search by name, ID, or email...">
-      </div>
+          <mat-form-field appearance="outline" class="org-filter-field">
+            <mat-label>App Type</mat-label>
+            <mat-select [(ngModel)]="selectedAppType" (selectionChange)="refreshSessions()">
+              <mat-option *ngFor="let type of appTypes" [value]="type">{{ type }}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-    </div>
-  </div>
+          <mat-form-field appearance="outline" class="org-filter-field">
+            <mat-label>Status</mat-label>
+            <mat-select [(ngModel)]="selectedStatus" (selectionChange)="refreshSessions()">
+              <mat-option *ngFor="let status of sessionStatuses" [value]="status">{{ status }}</mat-option>
+            </mat-select>
+          </mat-form-field>
 
-  <!-- Filters Section -->
-  <div class="card p-3 mb-4 border-0 shadow-sm" style="border-radius: 12px;">
-    <div class="filters-section align-items-center mb-0">
-      <mat-form-field appearance="outline" class="dense-field" style="margin-right: 15px;">
-        <mat-label>App Type</mat-label>
-        <mat-select [(ngModel)]="selectedAppType" (selectionChange)="refreshSessions()">
-          <mat-option *ngFor="let type of appTypes" [value]="type">{{ type }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="dense-field">
-        <mat-label>Status</mat-label>
-        <mat-select [(ngModel)]="selectedStatus" (selectionChange)="refreshSessions()">
-          <mat-option *ngFor="let status of sessionStatuses" [value]="status">{{ status }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-
-      <div class="ml-auto d-flex align-items-center">
-        <button mat-stroked-button color="warn" class="mr-2" (click)="openGroupLogoutDialog()" style="border-radius: 20px;">
-          <mat-icon>power_settings_new</mat-icon> Group Force Logout
-        </button>
-        <button mat-stroked-button color="primary" (click)="refreshSessions()" style="border-radius: 20px;">
-          <mat-icon>refresh</mat-icon> Refresh List
-        </button>
+          <button mat-flat-button class="btn-group-logout" (click)="openGroupLogoutDialog()">
+            <mat-icon>power_settings_new</mat-icon>
+            <span>Group Logout</span>
+          </button>
+          
+          <button mat-icon-button class="btn-refresh" (click)="refreshSessions()" matTooltip="Refresh List">
+            <mat-icon>refresh</mat-icon>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- Content Body -->
-  <div class="content-body position-relative">
+    <!-- Content Body -->
+    <div class="position-relative">
     <div *ngIf="isLoading" class="d-flex justify-content-center my-5">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
@@ -134,5 +129,6 @@
       [pageSizeOptions]="[10, 25, 50, 100]" (page)="onPageChange($event)" showFirstLastButtons class="custom-paginator"
       *ngIf="totalSessions > 0">
     </mat-paginator>
+  </div>
   </div>
 </div>

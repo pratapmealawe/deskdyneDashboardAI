@@ -1,269 +1,209 @@
 <div class="orders-page-container">
 
-  <!-- HEADER CARD -->
-  <div class="export-header-card">
-    <div class="header-content">
-      <div class="title-section">
-        <h1 class="page-title">Outlet Orders</h1>
-        <p class="page-subtitle">View, filter and export orders for this outlet</p>
-      </div>
-      <div class="actions-section">
-        <div class="search-wrapper" *ngIf="filteredOrders.length > 0">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input type="text" placeholder="Search by Order #, Name, Phone, Email..."
-            [value]="searchText" (keyup)="onSearch($any($event.target).value)" />
-        </div>
-        <div class="export-btns" *ngIf="filteredOrders.length > 0">
-          <button mat-icon-button class="btn-filter" matTooltip="Advanced Filters"
-            (click)="openFilterDialog()">
-            <mat-icon [matBadge]="activeFilterCount" [matBadgeHidden]="activeFilterCount === 0"
-              matBadgeSize="small" matBadgeColor="accent">filter_list</mat-icon>
-          </button>
-          <button mat-flat-button class="btn-export excel" matTooltip="Excel Export" (click)="excelExport()">
-            <mat-icon>table_chart</mat-icon> Excel
-          </button>
-          <button mat-flat-button class="btn-export pdf" matTooltip="Download PDF" (click)="downloadPdf()">
-            <mat-icon>picture_as_pdf</mat-icon> PDF
-          </button>
-          <button mat-icon-button class="btn-view-toggle"
-            [matTooltip]="isShowChart ?'Show List' :'Show Chart'"
-            (click)="changeDataView()">
-            <mat-icon>{{ isShowChart ?'view_list' :'bar_chart' }}</mat-icon>
-          </button>
-        </div>
-      </div>
+    <!-- Error Banner -->
+    <div class="error-banner animate-fadeIn" *ngIf="errorMessage">
+        <mat-icon>error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
     </div>
-  </div>
 
-  <!-- FILTER WRAPPER -->
-  <div class="filter-wrapper mb-4">
-    <form [formGroup]="dateForm">
-      <div class="filter-bar">
-        <mat-form-field appearance="outline" class="filter-field date-field">
-          <mat-label>Date Range</mat-label>
-          <mat-date-range-input [rangePicker]="picker">
-            <input matStartDate placeholder="From" formControlName="dateFrom" />
-            <input matEndDate placeholder="To" formControlName="dateTo" />
-          </mat-date-range-input>
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-date-range-picker #picker></mat-date-range-picker>
-        </mat-form-field>
-
-        <button mat-flat-button color="primary" class="btn-apply" (click)="onSubmit()"
-          [disabled]="!dateForm.valid || !outletObj">
-          <mat-icon>search</mat-icon> Apply
-        </button>
-      </div>
-    </form>
-  </div>
-
-  <!-- ACTIVE FILTER CHIPS -->
-  <div class="active-filter-chips mb-4" *ngIf="activeFilterCount > 0 || searchText">
-    <div class="chip-strip">
-      <div class="filter-chip" *ngIf="searchText">"{{ searchText }}"
-        <mat-icon (click)="searchText =''; applyFilters()">close</mat-icon>
-      </div>
-      <div class="filter-chip" *ngIf="filterOrderStatus">
-        {{ orderStatusMapper[filterOrderStatus] || filterOrderStatus }}
-        <mat-icon (click)="filterOrderStatus =''; applyFilters()">close</mat-icon>
-      </div>
-      <div class="filter-chip" *ngIf="filterPgName">
-        PG: {{ filterPgName }}
-        <mat-icon (click)="filterPgName =''; applyFilters()">close</mat-icon>
-      </div>
-      <div class="filter-chip" *ngIf="filterAppVersion">
-        v{{ filterAppVersion }}
-        <mat-icon (click)="filterAppVersion =''; applyFilters()">close</mat-icon>
-      </div>
-      <div class="filter-chip" *ngIf="filterPlatform">
-        {{ filterPlatform }}
-        <mat-icon (click)="filterPlatform =''; applyFilters()">close</mat-icon>
-      </div>
-      <div class="filter-chip" *ngIf="filterIsPosOrder">
-        POS: {{ filterIsPosOrder ==='true' ?'Yes' :'No' }}
-        <mat-icon (click)="filterIsPosOrder =''; applyFilters()">close</mat-icon>
-      </div>
-      <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
-        <mat-icon>filter_alt_off</mat-icon> Clear All
-      </button>
-    </div>
-  </div>
-
-  <!-- TOTALS STRIP -->
-  <div class="totals-strip" *ngIf="filteredOrders.length > 0">
-    <div class="total-chip">
-      <span class="chip-label">Orders</span>
-      <span class="chip-value">{{ filteredOrders.length }}</span>
-    </div>
-    <div class="total-chip" *ngIf="totalWalletUsed > 0">
-      <span class="chip-label">Wallet Used</span>
-      <span class="chip-value">₹{{ totalWalletUsed | number:'1.2-2' }}</span>
-    </div>
-    <div class="total-chip" *ngIf="totalCompanyWallet > 0">
-      <span class="chip-label">Company Wallet</span>
-      <span class="chip-value">₹{{ totalCompanyWallet | number:'1.2-2' }}</span>
-    </div>
-    <div class="total-chip" *ngIf="totalSubsidy > 0">
-      <span class="chip-label">Subsidy</span>
-      <span class="chip-value">₹{{ totalSubsidy | number:'1.2-2' }}</span>
-    </div>
-    <div class="total-chip" *ngIf="totalPackaging > 0">
-      <span class="chip-label">Packaging</span>
-      <span class="chip-value">₹{{ totalPackaging | number:'1.2-2' }}</span>
-    </div>
-    <div class="total-chip">
-      <span class="chip-label">Amount Paid</span>
-      <span class="chip-value">₹{{ totalAmountPaid | number:'1.2-2' }}</span>
-    </div>
-    <div class="total-chip highlight">
-      <span class="chip-label">Revenue</span>
-      <span class="chip-value">₹{{ totalAmount | number:'1.2-2' }}</span>
-    </div>
-  </div>
-
-  <!-- LOADING STATE -->
-  <div class="loading-state" *ngIf="loading">
-    <mat-spinner diameter="44"></mat-spinner>
-    <p>Loading orders...</p>
-  </div>
-
-  <!-- LIST VIEW -->
-  <ng-container *ngIf="!loading && !isShowChart && filteredOrders.length > 0">
-    <div class="row g-3">
-      <div class="col-12" *ngFor="let row of pagedOrders">
-        <mat-card class="order-card">
-          <div class="order-card-inner">
-
-            <!-- LEFT: customer info -->
-            <div class="order-left">
-              <div class="order-card-header">
-                <div class="order-avatar">{{ row.customerName?.[0] ||'C' }}</div>
-                <div class="order-header-text">
-                  <div class="order-title">Order #{{ row.orderNo }}</div>
-                  <div class="order-subtitle">
-                    Token #{{ row.tokenNo ||'–' }} &nbsp;·&nbsp;
-                    {{ row.orderDate | date:'MMM d, y, h:mm a' }}
-                  </div>
-                </div>
-                <span class="status-chip" [ngClass]="row.orderstatus">
-                  {{ orderStatusMapper[row.orderstatus] || row.orderstatus }}
-                </span>
-              </div>
-
-              <div class="order-meta">
-                <div class="meta-row">
-                  <mat-icon class="meta-icon">person</mat-icon>
-                  <span>{{ row.customerName }}</span>
-                </div>
-                <div class="meta-row" *ngIf="row.customerPhoneNo">
-                  <mat-icon class="meta-icon">phone</mat-icon>
-                  <span>{{ row.customerPhoneNo }}</span>
-                </div>
-                <div class="meta-row" *ngIf="row.customerEmail">
-                  <mat-icon class="meta-icon">email</mat-icon>
-                  <span>{{ row.customerEmail }}</span>
-                </div>
-                <div class="meta-row" *ngIf="row.organizationDetails?.organization_name">
-                  <mat-icon class="meta-icon">business</mat-icon>
-                  <span>{{ row.organizationDetails.organization_name }}</span>
-                </div>
-                <div class="meta-row" *ngIf="row.cafeteriaDetails?.cafeteria_name">
-                  <mat-icon class="meta-icon">storefront</mat-icon>
-                  <span>{{ row.cafeteriaDetails.cafeteria_name }}</span>
-                </div>
-
-                <!-- Tech badges -->
-                <div class="badge-row mt-2">
-                  <span class="info-badge" *ngIf="row.pgName">
-                    <mat-icon>payment</mat-icon>{{ row.pgName }}
-                  </span>
-                  <span class="info-badge" *ngIf="row.deviceInfo?.platform">
-                    <mat-icon>devices</mat-icon>{{ row.deviceInfo.platform }}
-                  </span>
-                  <span class="info-badge" *ngIf="row.appVersion">
-                    <mat-icon>apps</mat-icon>v{{ row.appVersion }}
-                  </span>
-                  <span class="info-badge pos" *ngIf="row.isPosOrder">
-                    <mat-icon>point_of_sale</mat-icon>POS
-                  </span>
-                </div>
-              </div>
+    <!-- Header Card -->
+    <div class="orders-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Outlet Orders</h1>
+                <p class="page-subtitle">View and analyze orders for this outlet</p>
             </div>
 
-            <!-- RIGHT: items + amounts -->
-            <div class="order-right">
-              <div class="items-section">
-                <div class="section-label">Items</div>
-                <div class="item-list">
-                  <div class="item-row" *ngFor="let i of row.itemList">
-                    <span class="item-name">{{ i.itemName }}
-                      <span *ngIf="i.count" class="item-qty"> ×{{ i.count }}</span>
-                    </span>
-                    <span class="item-price">₹{{ i.price | number:'1.2-2' }}</span>
-                  </div>
-                </div>
-              </div>
+            <div class="actions-section">
+                <!-- Date Filter -->
+                <form [formGroup]="dateForm" class="d-flex align-items-center gap-2 flex-wrap">
+                    <mat-form-field appearance="outline" class="date-range-field">
+                        <mat-label>Date Range</mat-label>
+                        <mat-date-range-input [rangePicker]="picker">
+                            <input matStartDate placeholder="From" formControlName="dateFrom" />
+                            <input matEndDate placeholder="To" formControlName="dateTo" />
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #picker></mat-date-range-picker>
+                    </mat-form-field>
+                    <button mat-flat-button color="primary" class="btn-primary-action" (click)="onSubmit()"
+                        [disabled]="!dateForm.valid || !outletObj">
+                        <mat-icon>search</mat-icon>
+                        Apply
+                    </button>
+                </form>
 
-              <div class="amounts-grid">
-                <div class="amount-block">
-                  <div class="amount-label">Item Amount</div>
-                  <div class="amount-value">₹{{ row.itemAmount | number:'1.2-2' }}</div>
+                <div class="header-actions">
+                    <button mat-stroked-button class="btn-export excel" (click)="excelExport()" [disabled]="!filteredList.length">
+                        <mat-icon>table_chart</mat-icon>
+                        Excel
+                    </button>
+                    <button mat-stroked-button class="btn-export pdf" (click)="downloadPdf()" [disabled]="!filteredList.length">
+                        <mat-icon>picture_as_pdf</mat-icon>
+                        PDF
+                    </button>
+                    <button mat-icon-button class="btn-view-toggle" [matTooltip]="isShowChart ? 'List View' : 'Chart View'"
+                        (click)="changeDataView()" [disabled]="!filteredList.length">
+                        <mat-icon>{{ isShowChart ? 'view_list' : 'bar_chart' }}</mat-icon>
+                    </button>
+                    <button mat-icon-button class="btn-filter" (click)="openFilterDialog()" matTooltip="Advanced Filters">
+                        <mat-icon [matBadge]="activeFilterCount" [matBadgeHidden]="activeFilterCount === 0"
+                            matBadgeSize="small" matBadgeColor="accent">filter_list</mat-icon>
+                    </button>
+                    <button mat-icon-button class="btn-auto-refresh" [class.active]="autoRefreshEnabled" 
+                        (click)="toggleAutoRefresh()" matTooltip="Toggle Auto-Refresh">
+                        <mat-icon>sync</mat-icon>
+                        <span class="live-badge" *ngIf="autoRefreshEnabled">Live</span>
+                    </button>
+                    <button mat-icon-button class="btn-refresh" (click)="onSubmit()" matTooltip="Refresh">
+                        <mat-icon [class.spin]="loading">refresh</mat-icon>
+                    </button>
                 </div>
-                <div class="amount-block" *ngIf="row.subsidyAmount">
-                  <div class="amount-label">Subsidy</div>
-                  <div class="amount-value">₹{{ row.subsidyAmount | number:'1.2-2' }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Grid (Only for Today) -->
+    <div class="stats-grid mb-4 animate-fadeIn" *ngIf="isTodaySelected() && !isShowChart && currentoutletOrderList.length > 0">
+        <div class="stat-card" [class.active]="selectedStatus === 'placed'" (click)="getLatestOrderStatusList('placed')">
+            <div class="stat-icon primary"><mat-icon>restaurant</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ orderStatusCountObj.placed }}</div>
+                <div class="stat-label">New Orders</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="selectedStatus === 'readyOrder'" (click)="getLatestOrderStatusList('readyOrder')">
+            <div class="stat-icon ready"><mat-icon>room_service</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ orderStatusCountObj.readyOrder }}</div>
+                <div class="stat-label">Ready</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="selectedStatus === 'completed'" (click)="getLatestOrderStatusList('completed')">
+            <div class="stat-icon success"><mat-icon>check_circle</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ orderStatusCountObj.completed }}</div>
+                <div class="stat-label">Completed</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="selectedStatus === 'paymentInprogress'" (click)="getLatestOrderStatusList('paymentInprogress')">
+            <div class="stat-icon warning"><mat-icon>hourglass_empty</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ orderStatusCountObj.paymentInprogress }}</div>
+                <div class="stat-label">Processing</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="selectedStatus === 'paymentFailed'" (click)="getLatestOrderStatusList('paymentFailed')">
+            <div class="stat-icon error"><mat-icon>error</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ orderStatusCountObj.paymentFailed }}</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+        <div class="stat-card" [class.active]="selectedStatus === 'all'" (click)="getLatestOrderStatusList('all')">
+            <div class="stat-icon info"><mat-icon>list_alt</mat-icon></div>
+            <div class="stat-info">
+                <div class="stat-value">{{ currentoutletOrderList.length }}</div>
+                <div class="stat-label">All Today</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Totals Strip & Search -->
+    <div class="filter-wrapper mb-4 animate-fadeIn" *ngIf="currentoutletOrderList.length > 0">
+        <div class="row align-items-center g-3">
+            <div class="col-12 col-lg-8">
+                <div class="totals-strip">
+                    <div class="total-chip">
+                        <span class="chip-label">Orders</span>
+                        <span class="chip-value">{{ filteredList.length }}</span>
+                    </div>
+                    <div class="total-chip" *ngIf="totalWalletUsed > 0">
+                        <span class="chip-label">Wallet</span>
+                        <span class="chip-value">₹{{ totalWalletUsed | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="total-chip" *ngIf="totalSubsidy > 0">
+                        <span class="chip-label">Subsidy</span>
+                        <span class="chip-value">₹{{ totalSubsidy | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="total-chip" *ngIf="totalPackaging > 0">
+                        <span class="chip-label">Pkg</span>
+                        <span class="chip-value">₹{{ totalPackaging | number:'1.2-2' }}</span>
+                    </div>
+                    <div class="total-chip highlight">
+                        <span class="chip-label">Revenue</span>
+                        <span class="chip-value">₹{{ totalAmount | number:'1.2-2' }}</span>
+                    </div>
                 </div>
-                <div class="amount-block" *ngIf="row.packagingAmount">
-                  <div class="amount-label">Packaging</div>
-                  <div class="amount-value">₹{{ row.packagingAmount | number:'1.2-2' }}</div>
+            </div>
+            <div class="col-12 col-lg-4">
+                <div class="search-wrapper">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search by name, phone, email..." [value]="searchText"
+                        (keyup)="onSearch($any($event.target).value)" />
                 </div>
-                <div class="amount-block" *ngIf="row.companyWalletPointUsed">
-                  <div class="amount-label">Company Wallet</div>
-                  <div class="amount-value">₹{{ row.companyWalletPointUsed | number:'1.2-2' }}</div>
+            </div>
+        </div>
+
+        <!-- Active Filters -->
+        <div class="mt-3" *ngIf="activeFilterCount > 0 || searchText">
+            <div class="chip-strip">
+                <div class="filter-chip" *ngIf="searchText">
+                    "{{ searchText }}"
+                    <mat-icon (click)="searchText = ''; applyFilters()">close</mat-icon>
                 </div>
-                <div class="amount-block">
-                  <div class="amount-label">Wallet Used</div>
-                  <div class="amount-value">₹{{ row.moneyWalletPointsUsed || 0 | number:'1.2-2' }}</div>
+                <div class="filter-chip" *ngIf="filterOrderStatus">
+                    Status: {{ orderStatusMapper[filterOrderStatus] || filterOrderStatus }}
+                    <mat-icon (click)="filterOrderStatus = ''; applyFilters()">close</mat-icon>
                 </div>
-                <div class="amount-block">
-                  <div class="amount-label">Amount Paid</div>
-                  <div class="amount-value">₹{{ row.amount || 0 | number:'1.2-2' }}</div>
+                <div class="filter-chip" *ngIf="filterPgName">
+                    PG: {{ filterPgName }}
+                    <mat-icon (click)="filterPgName = ''; applyFilters()">close</mat-icon>
                 </div>
-                <div class="amount-block col-span-2">
-                  <div class="amount-label">Total Revenue</div>
-                  <div class="amount-value total">
-                    ₹{{ (row.amount || 0) + (row.moneyWalletPointsUsed || 0) | number:'1.2-2' }}
-                  </div>
+                <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
+                    Clear All
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-section">
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="loading">
+            <mat-spinner diameter="40"></mat-spinner>
+            <p class="mt-3">Fetching orders...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div class="empty-state animate-fadeIn" *ngIf="!loading && filteredList.length === 0">
+            <mat-icon class="empty-icon">receipt_long</mat-icon>
+            <h3>No Orders Found</h3>
+            <p>Try adjusting your search or filters.</p>
+        </div>
+
+        <div class="orders-list-view" *ngIf="!loading && !isShowChart && filteredList.length > 0">
+            <div class="row g-4">
+                <div class="col-12" *ngFor="let order of pagedOrders">
+                    <app-outlet-order-card [order]="order" (action)="handleOrderAction($event)"></app-outlet-order-card>
                 </div>
-              </div>
             </div>
 
-          </div>
-        </mat-card>
-      </div>
+            <!-- Paginator -->
+            <div class="paginator-wrap mt-4">
+                <mat-paginator [length]="filteredList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+                    [pageSizeOptions]="[10, 20, 50, 100]" (page)="onPageChange($event)" showFirstLastButtons>
+                </mat-paginator>
+            </div>
+        </div>
+
+        <!-- Chart View -->
+        <div class="chart-view-container animate-fadeIn" *ngIf="!loading && isShowChart && filteredList.length > 0">
+            <mat-card class="p-4 border-0 shadow-sm rounded-4">
+                <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions" [update]="updateStatusFlag"
+                    [oneToOne]="oneToOneStatusFlag" style="width: 100%; height: 500px; display: block">
+                </highcharts-chart>
+            </mat-card>
+        </div>
     </div>
-
-    <!-- Paginator -->
-    <div class="paginator-wrap">
-      <mat-paginator [length]="filteredOrders.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
-        [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons>
-      </mat-paginator>
-    </div>
-  </ng-container>
-
-  <!-- CHART VIEW -->
-  <div class="chart-card" *ngIf="!loading && isShowChart && filteredOrders.length > 0">
-    <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptions"
-      [update]="updateStatusFlag" [oneToOne]="oneToOneStatusFlag"
-      style="width: 100%; height: 400px; display: block">
-    </highcharts-chart>
-  </div>
-
-  <!-- EMPTY STATE -->
-  <div class="empty-state" *ngIf="!loading && filteredOrders.length === 0">
-    <mat-icon class="empty-icon">receipt_long</mat-icon>
-    <h3>No Orders Found</h3>
-    <p>Try adjusting your filters or date range.</p>
-  </div>
-
 </div>

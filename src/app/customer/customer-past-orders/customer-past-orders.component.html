@@ -1,8 +1,8 @@
 <div class="customer-past-orders-container">
-    <div *ngIf="orderList.length > 0; else noOrders" class="orders-grid">
-        <mat-card *ngFor="let order of orderList" class="order-card-wrapper border-0 shadow-sm mb-3">
-            <app-order-card [order]="order"></app-order-card>
-        </mat-card>
+    <div *ngIf="orderList.length > 0; else noOrders" class="row g-4">
+        <div [ngClass]="orderList.length === 1 ? 'col-12' : 'col-12 col-md-6'" *ngFor="let order of orderList">
+            <app-outlet-order-card [order]="order"></app-outlet-order-card>
+        </div>
         
         <div class="load-more-container mt-4 text-center">
             <button *ngIf="nextOn" mat-flat-button color="primary" (click)="getMore()">

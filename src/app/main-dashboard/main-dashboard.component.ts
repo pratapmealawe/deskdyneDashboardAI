@@ -17,7 +17,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MaterialModule } from 'src/app/material.module';
 import { HighchartsChartModule } from 'highcharts-angular';
-import { DailyBulkCardComponent } from '../other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component';
+import { DailyBulkCardComponent } from '../orders/other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component';
 
 @Component({
   selector: 'app-main-dashboard',

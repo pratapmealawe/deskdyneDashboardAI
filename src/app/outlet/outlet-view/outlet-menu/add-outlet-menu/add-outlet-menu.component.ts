@@ -55,6 +55,7 @@ export class AddOutletMenuComponent implements OnInit {
 
   selectedWeeklyDates: Date[] = [];
   today = new Date();
+  isSubmitting: boolean = false;
 
   constructor(
     private dialog: MatDialog,
@@ -440,6 +441,7 @@ export class AddOutletMenuComponent implements OnInit {
       });
     }
 
+    this.isSubmitting = true;
     try {
       let res: any;
       if (this.data.item) {
@@ -459,7 +461,12 @@ export class AddOutletMenuComponent implements OnInit {
       }
     } catch (error) {
       console.error('Error saving menu item:', error);
-      this.toastr.error('Failed to save menu item');
+    } finally {
+      this.isSubmitting = false;
     }
+  }
+
+  close(): void {
+    this.dialogRef.close();
   }
 }

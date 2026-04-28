@@ -1,8 +1,7 @@
-﻿import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Inject } from '@angular/core';
-
 import { environment } from '@environments/environment';
 import { ApiMainService } from '@service/apiService/apiMain.service';
 import { RuntimeStorageService } from '@service/runtime-storage.service';
@@ -72,6 +71,11 @@ export class AddOutletComponent implements OnInit {
   // For meal type dropdown
   mealTypes: string[] = ['Fullday', 'Breakfast', 'Lunch', 'Dinner', 'High Tea'];
   billingTypeOptions: string[] = ['ecommerce', 'revenueSharing'];
+  subsidyTypes = [
+    { value: 'chargeable', label: 'Chargeable (Employee Paid)' },
+    { value: 'free', label: 'Free (Organization Paid)' },
+    { value: 'subsidized', label: 'Subsidized (Salary Deduction)' }
+  ];
 
   // Error text for meal timings
   mealTimingError: string | null = null;

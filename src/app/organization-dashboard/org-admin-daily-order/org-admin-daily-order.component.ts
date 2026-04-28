@@ -9,7 +9,7 @@ import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import { LocalStorageService } from '@service/local-storage.service';
 import { CommonSelectConfig, CommonOutletCafeSelectComponent } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { DailyBulkCardComponent } from 'src/app/other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component';
+import { DailyBulkCardComponent } from 'src/app/orders/other-orders/daily-bulk-order/daily-bulk-card/daily-bulk-card.component';
 import * as Highcharts from 'highcharts';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -126,7 +126,7 @@ export class OrgAdminDailyOrderComponent implements OnInit {
         orgId: this.orgAdmin?.orgDetails?._id,
         cafeteriaId: this.selectedCafeteriaId
       };
-      
+
       const res: any = await this.apiMainService.getDailyOrdersCountByDateRange(payload);
       if (res) {
         this.adminOrderStatusList.forEach((status: any) => {

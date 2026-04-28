@@ -1,54 +1,64 @@
-<div class="outlet-menu-container">
-
-  <!-- HEADER SECTION -->
-  <div class="menu-header-card">
-    <div class="header-left">
-      <div class="header-icon">
+<div class="outlet-menu-container animate-fadeIn">
+  <!-- Page Header -->
+  <div class="bulk-dashboard-header">
+    <div class="header-card">
+      <div class="header-icon-box">
         <mat-icon>restaurant_menu</mat-icon>
       </div>
-      <div class="header-text">
-        <h2 class="header-title">Menu Management</h2>
-        <p class="header-subtitle">Manage outlet menu items, categories and pricing</p>
+      <div class="header-text-content">
+        <h1 class="page-title">Menu Management</h1>
+        <p class="page-subtitle">
+          Manage outlet menu items, categories and pricing
+        </p>
       </div>
     </div>
-    <div class="header-actions">
-      <button mat-stroked-button class="action-btn" (click)="openUploadExcelPopup()">
-        <mat-icon>upload</mat-icon>
-        Upload Excel
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+      <button mat-flat-button color="primary" class="btn-primary-action" *appHasPermission="'MENU:ADD'"
+        (click)="open(); resetValues()">
+        <mat-icon>add</mat-icon>
+        Add Menu
       </button>
-      <button mat-stroked-button class="action-btn" (click)="excelExport()">
+      <button mat-stroked-button class="btn-secondary-action" (click)="openUploadExcelPopup()">
+        <mat-icon>upload</mat-icon>
+        Import
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="excelExport()">
         <mat-icon>download</mat-icon>
         Export
       </button>
-      <button mat-stroked-button class="action-btn" (click)="openOutlet()">
+      <button mat-stroked-button class="btn-secondary-action" (click)="openOutlet()">
         <mat-icon>content_copy</mat-icon>
-        Copy Menu
+        Copy Outlet Menu
       </button>
-      <button mat-stroked-button class="action-btn" (click)="openMenu()">
+      <button mat-stroked-button class="btn-secondary-action" (click)="openMenu()">
         <mat-icon>library_add</mat-icon>
-        Master Menu
-      </button>
-      <button mat-flat-button color="primary" class="action-btn primary-btn" *appHasPermission="'MENU:ADD'"
-        (click)="open(); resetValues()">
-        <mat-icon>add</mat-icon>
-        Add Item
+        Copy Outlet Master Menu
       </button>
     </div>
   </div>
 
-  <!-- FILTERS SECTION -->
-  <div class="filters-card">
-    <div class="filters-row">
-      <div class="filter-group search-group">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input type="text" class="search-input" placeholder="Search menu items..." [(ngModel)]="searchTermMenu"
-          (input)="applyMenuFilters()" />
-        <button *ngIf="searchTermMenu" class="clear-btn" (click)="searchTermMenu=''; applyMenuFilters()">
-          <mat-icon>close</mat-icon>
-        </button>
+  <!-- Main Content Area -->
+  <div class="modern-card">
+    <div class="card-header with-actions">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box info">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <h3 class="mb-0">Menu Directory</h3>
+          <span class="count-badge-premium">{{ filteredMenuList?.length || 0 }}</span>
+        </div>
       </div>
 
-      <div class="filter-group">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search menu items..." [(ngModel)]="searchTermMenu"
+            (input)="applyMenuFilters()">
+        </div>
+
         <mat-form-field appearance="outline" class="category-filter">
           <mat-label>Category</mat-label>
           <mat-select [(value)]="selectedCategoryFilter" (selectionChange)="applyMenuFilters()">
@@ -58,166 +68,176 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
 
-      <div class="filter-group" *ngIf="outletObj?.isWeeklyMenu">
-        <mat-form-field appearance="outline" class="category-filter">
-          <mat-label>Filter by Date</mat-label>
-          <input matInput [matDatepicker]="menuDatePicker" [(ngModel)]="selectedDateFilter"
-            (dateChange)="applyMenuFilters()" placeholder="All dates" readonly />
-          <mat-datepicker-toggle matIconSuffix [for]="menuDatePicker"></mat-datepicker-toggle>
-          <button *ngIf="selectedDateFilter" matSuffix mat-icon-button
-            (click)="selectedDateFilter = null; applyMenuFilters()">
-            <mat-icon>close</mat-icon>
-          </button>
-          <mat-datepicker #menuDatePicker></mat-datepicker>
-        </mat-form-field>
-      </div>
-
-      <div class="filter-stats">
-        <div class="stat-chip">
-          <mat-icon>inventory_2</mat-icon>
-          <span>{{ filteredMenuList?.length || 0 }} items</span>
+        <div class="date-filter" *ngIf="currentMenuView === 'weekly'">
+          <mat-form-field appearance="outline" class="category-filter">
+            <mat-label>Filter by Date</mat-label>
+            <input matInput [matDatepicker]="menuDatePicker" [(ngModel)]="selectedDateFilter"
+              (dateChange)="applyMenuFilters()" placeholder="All dates" readonly />
+            <mat-datepicker-toggle matIconSuffix [for]="menuDatePicker"></mat-datepicker-toggle>
+            <button *ngIf="selectedDateFilter" matSuffix mat-icon-button
+              (click)="selectedDateFilter = null; applyMenuFilters()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-datepicker #menuDatePicker></mat-datepicker>
+          </mat-form-field>
         </div>
-      </div>
-  </div>
-
-  <!-- PRE-ORDER INFO BANNER -->
-  <div class="preorder-info-banner mt-3" *ngIf="outletObj?.isPreOrder">
-    <div class="banner-content">
-      <mat-icon class="info-icon">info</mat-icon>
-      <div class="banner-text">
-        <span class="banner-title">Pre-Order Mode Enabled</span>
-        <span class="banner-description">
-          All menu items are automatically synchronized with the outlet's global meal timings. 
-          Individual item selection is disabled to ensure consistency across the pre-order schedule.
-        </span>
       </div>
     </div>
-  </div>
 
-  <!-- MENU LIST -->
-  <div class="menu-content-area" *ngIf="showCard">
-    <div *ngFor="let group of groupedMenuList" class="category-section">
-      <div class="category-header">
-        <div class="category-info">
-          <div class="category-icon-circle">
-            <mat-icon>{{ outletObj?.isWeeklyMenu ?'event' :'category' }}</mat-icon>
+    <!-- View Mode Tabs -->
+    <div class="view-mode-tabs-premium" *ngIf="outletObj?.isWeeklyMenu">
+      <div class="tabs-inner">
+        <button class="mode-tab" [class.active]="currentMenuView === 'normal'" (click)="onViewChange('normal')">
+          <mat-icon>list_alt</mat-icon>
+          <div class="tab-label">
+            <span class="main">Normal Menu</span>
+            <span class="sub">Grouped by categories</span>
           </div>
-          <span class="category-name">{{ group.category }}</span>
+        </button>
+        <button class="mode-tab" [class.active]="currentMenuView === 'weekly'" (click)="onViewChange('weekly')">
+          <mat-icon>date_range</mat-icon>
+          <div class="tab-label">
+            <span class="main">Weekly Menu</span>
+            <span class="sub">Sorted by schedule</span>
+          </div>
+        </button>
+      </div>
+    </div>
+
+    <div class="card-body p-4">
+      <!-- PRE-ORDER INFO BANNER -->
+      <div class="preorder-info-banner mb-4" *ngIf="outletObj?.isPreOrder">
+        <div class="banner-content">
+          <mat-icon class="info-icon">info</mat-icon>
+          <div class="banner-text">
+            <span class="banner-title">Pre-Order Mode Enabled</span>
+            <span class="banner-description">
+              All menu items are automatically synchronized with the outlet's global meal timings.
+              Individual item selection is disabled to ensure consistency across the pre-order schedule.
+            </span>
+          </div>
         </div>
       </div>
 
-      <!-- Category Sub-sections -->
-      <div *ngFor="let sub of group.subGroups" class="sub-group-section">
-        <div class="sub-header" *ngIf="sub.title">
-          <div class="sub-title-main">
-            <mat-icon class="prefix-icon">arrow_drop_down</mat-icon>
-            <span class="sub-name">{{ sub.title }}</span>
-          </div>
-          <div class="sub-actions">
-            <span class="item-count-badge">{{ sub.items.length }} items</span>
-            <button mat-button class="view-all-btn">View All</button>
-          </div>
-        </div>
-
-        <!-- Menu Items List -->
-        <div class="menu-list">
-          <div class="menu-card-h" *ngFor="let item of sub.items; let i = index">
-          <!-- Square Image with padding -->
-          <div class="card-image-h">
-            <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" />
-            <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
-              <span class="indicator-dot"></span>
+      <!-- MENU LIST -->
+      <div class="menu-content-area" *ngIf="showCard">
+        <div *ngFor="let group of groupedMenuList" class="category-section">
+          <div class="category-header">
+            <div class="category-info">
+              <div class="category-icon-circle">
+                <mat-icon>{{ currentMenuView === 'weekly' ? 'event' : 'category' }}</mat-icon>
+              </div>
+              <span class="category-name">{{ group.category }}</span>
             </div>
+            <span class="category-badge">{{ group.subGroups[0].items.length }} Items</span>
           </div>
 
-          <!-- Card Content -->
-          <div class="card-content-h">
-            <!-- Row 1: Name + Actions -->
-            <div class="content-top">
-              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName ||'Unnamed item' }}</h3>
-              <div class="item-actions">
-                <button mat-icon-button class="edit-btn" *appHasPermission="'MENU:EDIT'" (click)="edit(item)"
-                  matTooltip="Edit">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button class="delete-btn" *appHasPermission="'MENU:DELETE'" (click)="showPopup(item)"
-                  matTooltip="Delete">
-                  <mat-icon>delete</mat-icon>
-                </button>
+          <!-- Category Sub-sections -->
+          <div *ngFor="let sub of group.subGroups; let lastSub = last" class="sub-group-section">
+            <div class="sub-header" *ngIf="sub.title">
+              <div class="sub-title-main">
+                <mat-icon>subdirectory_arrow_right</mat-icon>
+                <span>{{ sub.title }}</span>
               </div>
             </div>
 
-            <!-- Row 2: Description -->
-            <p class="item-description" *ngIf="item.description" [matTooltip]="item.description">
-              {{ item.description }}
-            </p>
+            <!-- Menu Items List -->
+            <div class="menu-grid-premium">
+              <div class="menu-item-card" *ngFor="let item of sub.items; let i = index">
+                <div class="card-content-wrapper">
+                  <div class="menu-image-wrapper">
+                    <img [src]="displayImgUrl + item.imageUrl" class="menu-avatar" alt="{{ item.itemName }}"
+                      (error)="onImageError($event)" />
+                    <div [ngClass]="item.itemType === 'Veg' ? 'vegIcon' : 'nonvegIcon'" class="type-indicator"></div>
+                  </div>
 
-            <!-- Row 3: Subsidy -->
-            <div class="subsidy-row">
-              <div class="subsidy-chip" *ngIf="item.subsidy">
-                <mat-icon>sell</mat-icon>
-                <span>₹{{ item.subsidy }} subsidy</span>
-              </div>
+                  <div class="menu-details">
+                    <h4 class="menu-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h4>
+                    <p class="description-text" *ngIf="item.description" [matTooltip]="item.description">
+                      {{ item.description }}
+                    </p>
 
-              <ng-container *ngIf="item.discountEnabled">
-                <!-- Percentage -->
-                <div class="discount-chip" *ngIf="item.discountType ==='percentage'">
-                   <mat-icon>discount</mat-icon>
-                  <span class="discount-value">{{ item.discountValue }}%</span>
-                  <span class="discount-label">OFF</span>
+                    <!-- Chips Row -->
+                    <div class="chips-row-modern">
+                      <span class="meal-chip-modern"
+                        *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (outletObj?.isPreOrder ? outletObj.mealTiming : []))"
+                        [ngClass]="meal.mealSubsidyType">
+                        {{ meal.mealType }}
+                      </span>
+                    </div>
+
+                    <!-- Discount/Subsidy Section -->
+                    <div class="subsidy-section-modern" *ngIf="item.subsidy || item.discountEnabled">
+                      <div class="subsidy-pill" *ngIf="item.subsidy">
+                        <mat-icon>sell</mat-icon>
+                        <span>₹{{ item.subsidy }} subsidy</span>
+                      </div>
+
+                      <ng-container *ngIf="item.discountEnabled">
+                        <div class="discount-pill" [ngClass]="item.discountType">
+                          <mat-icon>discount</mat-icon>
+                          <span>{{ item.discountType === 'percentage' ? item.discountValue + '%' : '₹' +
+                            item.discountValue }} OFF</span>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
                 </div>
-                <!-- Flat -->
-                <div class="discount-chip" *ngIf="item.discountType ==='flat'">
-                  <mat-icon>discount</mat-icon>
-                  <span class="discount-label">FLAT</span>
-                  <span class="discount-value">₹{{ item.discountValue }}</span>
+
+                <!-- Precedence Badge Top Right -->
+                <div class="precedence-badge-top" *ngIf="item.precedence !== undefined && item.precedence !== null"
+                  matTooltip="Precedence">
+                  <mat-icon>sort</mat-icon>
+                  <span>{{ item.precedence }}</span>
                 </div>
-              </ng-container>
-            </div>
 
-            <!-- Row 4: Meal Chips + Section -->
-            <div class="chips-row">
-              <span class="meal-chip" *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (outletObj?.isPreOrder ? outletObj.mealTiming : []))" [ngClass]="meal.mealSubsidyType">
-                {{ meal.mealType }}
-              </span>
-              <span class="section-chip" *ngIf="outletObj?.isSectionWiseMenu && item.sectionConfig">
-                {{ item.sectionConfig.sectionName }}
-              </span>
-              <span class="precedence-chip" *ngIf="item.precedence !== undefined && item.precedence !== null"
-                matTooltip="Display Order">
-                <mat-icon inline>sort</mat-icon> {{ item.precedence }}
-              </span>
-            </div>
+                <div class="menu-footer">
+                  <div class="price-tag">
+                    <span class="currency">₹</span>
+                    <span class="value">{{ item.price }}</span>
+                  </div>
 
-            <!-- Row 5: Price + Stock Toggle -->
-            <div class="card-footer">
-              <div class="price-display">
-                <span class="currency">₹</span>{{ item.price }}
-              </div>
-              <div class="stock-toggle">
-                <mat-slide-toggle color="primary" [checked]="item.isActive" class="scale-08"
-                  (change)="showPopupForItemActivation(item, $event)">
-                </mat-slide-toggle>
+                  <div class="footer-actions">
+                    <button mat-icon-button class="premium-icon-btn edit" *appHasPermission="'MENU:EDIT'"
+                      (click)="edit(item)" matTooltip="Edit">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button class="premium-icon-btn delete" *appHasPermission="'MENU:DELETE'"
+                      (click)="showPopup(item)" matTooltip="Delete">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                    <mat-slide-toggle color="primary" [checked]="item.isActive"
+                      (change)="showPopupForItemActivation(item, $event)" class="status-toggle"
+                      matTooltip="Toggle Status">
+                    </mat-slide-toggle>
+                  </div>
+                </div>
               </div>
             </div>
+
+            <!-- Section Divider (Not for last item) -->
+            <div class="section-divider-modern" *ngIf="!lastSub"></div>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="!showCard">
-    <div class="empty-icon">
-      <mat-icon>restaurant</mat-icon>
+      <!-- Empty States -->
+      <div class="empty-state-modern py-5" *ngIf="!showCard && !searchTermMenu">
+        <div class="empty-icon-wrap">
+          <mat-icon>restaurant</mat-icon>
+        </div>
+        <h4>No menu items found</h4>
+        <p>Start by adding new items to your menu or using the master menu tool</p>
+      </div>
+
+      <div class="empty-state-modern py-5" *ngIf="!showCard && searchTermMenu">
+        <div class="empty-icon-wrap">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h4>No match for "{{ searchTermMenu }}"</h4>
+        <p>Try refining your search terms or clearing filters</p>
+      </div>
     </div>
-    <h3>No menu items found</h3>
-    <p>Start by adding new items to your menu</p>
-    <button mat-flat-button color="primary" (click)="open(); resetValues()">
-      <mat-icon>add</mat-icon>
-      Add First Item
-    </button>
   </div>
 </div>

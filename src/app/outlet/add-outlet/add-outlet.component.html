@@ -215,14 +215,15 @@
                     <mat-form-field appearance="outline" class="full-width" *ngIf="form.get('isFullAmountOrgPaid')?.value">
                       <mat-label>Subsidy Type</mat-label>
                       <mat-select formControlName="mealSubsidyType">
-                        <mat-option value="chargeable">Chargeable</mat-option>
-                        <mat-option value="free">Free</mat-option>
+                        <mat-option *ngFor="let type of subsidyTypes" [value]="type.value">
+                          {{ type.label }}
+                        </mat-option>
                       </mat-select>
                     </mat-form-field>
                   </div>
                   <div class="col-6">
-                    <mat-form-field appearance="outline" class="full-width" *ngIf="form.get('isFullAmountOrgPaid')?.value">
-                      <mat-label>Free Count</mat-label>
+                    <mat-form-field appearance="outline" class="full-width" *ngIf="form.get('isFullAmountOrgPaid')?.value && group.get('mealSubsidyType')?.value !== 'chargeable'">
+                      <mat-label>{{ group.get('mealSubsidyType')?.value === 'free' ? 'Free Count' : 'Subsidized Count' }}</mat-label>
                       <input matInput type="number" formControlName="maxCountFree" />
                     </mat-form-field>
                   </div>

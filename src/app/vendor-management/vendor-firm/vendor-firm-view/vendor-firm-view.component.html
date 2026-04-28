@@ -1,0 +1,29 @@
+<div class="vendor-view-container">
+  <!-- Header Section -->
+  <div class="vendor-header-card">
+    <div class="header-left">
+      <button mat-icon-button class="back-btn" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="title-section">
+        <h1 class="page-title">{{ vendorFirmInfo?.vendorFirmName ||'Vendor Details' }}</h1>
+        <p class="page-subtitle">Manage vendor information, wallet & reports</p>
+      </div>
+    </div>
+  </div>
+  <div class="tabs-container">
+    <div class="main-tabs">
+      <button *ngFor="let view of vendorViewList; let i = index" class="tab-btn" [class.active]="selectedTabIndex === i"
+        (click)="selectedTabIndex = i; gotToTab(view.path)">
+        <mat-icon class="tab-icon">{{ view.icon }}</mat-icon>
+        <span>{{ view.name }}</span>
+      </button>
+    </div>
+
+    </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

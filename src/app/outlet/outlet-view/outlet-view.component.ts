@@ -1,16 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
-import { filter } from 'rxjs';
-import { SendDataToComponent } from '@service/sendDataToComponent.service';
-import { PermissionsService } from '@service/permission.service';
-import { OutletViewService } from './outlet-view.service';
-import { ApiMainService } from '@service/apiService/apiMain.service';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
+import { PermissionsService } from '@service/permission.service';
+import { filter } from 'rxjs';
 import { MaterialModule } from 'src/app/material.module';
+import { OutletViewService } from './outlet-view.service';
 
 @Component({
   selector: 'app-outlet-view',
-  templateUrl: './outlet-view.component.html',
+  templateUrl: './outlet-view.component.html', 
   styleUrls: ['./outlet-view.component.scss'],
   standalone: true,
   imports: [
@@ -21,14 +19,14 @@ import { MaterialModule } from 'src/app/material.module';
   providers: [OutletViewService]
 })
 export class OutletViewComponent implements OnInit {
-  @Input() outlet: any;
+  outlet: any;
   selectedtab: number = 0;
   outletViewList = [
-    { name: 'Basic Details', path: 'outlet-details', policyKey: 'outletBasicDetails' },
-    { name: 'Menu', path: 'outlet-menu', policyKey: 'outletMenu' },
-    { name: 'QR Menu', path: 'qr-menu', policyKey: 'outletQrMenu' },
-    { name: 'Outlet Orders', path: 'outlet-orders', policyKey: 'outletOrders' },
-    { name: 'Reviews', path: 'outlet-feedback', policyKey: 'outletReviews' },
+    { name: 'Basic Details', path: 'outlet-details', policyKey: 'outletBasicDetails', icon: 'info' },
+    { name: 'Menu', path: 'outlet-menu', policyKey: 'outletMenu', icon: 'restaurant_menu' },
+    { name: 'QR Menu', path: 'outlet-qr-menu', policyKey: 'outletQrMenu', icon: 'qr_code_2' },
+    { name: 'Outlet Orders', path: 'outlet-orders', policyKey: 'outletOrders', icon: 'receipt_long' },
+    { name: 'Reviews', path: 'outlet-feedback', policyKey: 'outletReviews', icon: 'rate_review' },
   ];
   selectedTab = 'outlet-details';
   updateval: any = false;
@@ -70,7 +68,7 @@ export class OutletViewComponent implements OnInit {
       this.selectedtab = this.outletViewList.findIndex(x => x.path === this.selectedTab);
       if (this.selectedtab === -1) this.selectedtab = 0;
     } else {
-      this.selectedTab = 'details';
+      this.selectedTab = 'outlet-details';
       this.selectedtab = 0;
     }
   }
@@ -104,15 +102,6 @@ export class OutletViewComponent implements OnInit {
     this.outletViewService.setOutlet(event);
   }
 
-  getTabIcon(path: string): string {
-    const icons: { [key: string]: string } = {
-      'outlet-details': 'info',
-      'outlet-menu': 'restaurant_menu',
-      'qr-menu': 'qr_code_2',
-      'outlet-orders': 'receipt_long',
-      'outlet-feedback': 'rate_review'
-    };
-    return icons[path] || 'tab';
-  }
+
 }
 

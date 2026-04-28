@@ -129,8 +129,8 @@
 
   <!-- LIST VIEW -->
   <ng-container *ngIf="!loading && !isShowChart && filteredOrders.length > 0">
-    <div class="row g-3">
-      <div class="col-12" *ngFor="let row of pagedOrders">
+    <div class="row g-4">
+      <div [ngClass]="pagedOrders.length === 1 ? 'col-12' : 'col-12 col-md-6'" *ngFor="let row of pagedOrders">
         <mat-card class="order-card">
           <div class="order-card-inner">
 

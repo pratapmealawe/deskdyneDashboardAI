@@ -1,0 +1,534 @@
+<div class="vendor-compliance-wrapper" [class.tab-mode]="!dialogRef">
+  
+  <!-- Dashboard Style Header (Matches Reports UI) -->
+  <div class="bulk-dashboard-header" *ngIf="!dialogRef">
+    <div class="header-card">
+      <div class="header-icon-box">
+        <mat-icon>verified_user</mat-icon>
+      </div>
+      <div class="header-text-content">
+        <h1 class="page-title">Compliance Details</h1>
+        <p class="page-subtitle">Manage legal and compliance documents</p>
+      </div>
+      <div class="ms-auto" *ngIf="!editMode && !orgVendorInfo">
+        <button type="button" mat-flat-button color="primary" class="btn-primary-action px-4" (click)="editMode = true">
+          <mat-icon>edit</mat-icon> Edit Details
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Original Dialog Header (Kept for Dialog Mode) -->
+  <div class="modal-header" *ngIf="dialogRef">
+    <div class="title-wrap">
+      <div class="icon-box info">
+        <mat-icon>verified_user</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Compliance Details</h3>
+        <p>Manage legal and compliance documents</p>
+      </div>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <button *ngIf="!editMode && !orgVendorInfo" type="button" mat-stroked-button color="primary"
+        class="btn-primary-action" (click)="editMode = true" style="border-radius: 99px;">
+        <mat-icon>edit</mat-icon> Edit Details
+      </button>
+      <button *ngIf="dialogRef" mat-icon-button class="close-btn" (click)="dialogRef.close()">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div [class.report-content-area]="!dialogRef" [class.dialog-content]="dialogRef" [class.content-scroll]="dialogRef">
+    <!-- VIEW MODE -->
+    <div class="row g-3" *ngIf="!editMode">
+
+      <!-- Standard Item Template -->
+      <ng-template #viewItem let-label="label" let-value="value" let-fileUrl="fileUrl" let-downloadUrl="downloadUrl"
+        let-fileName="fileName">
+        <div class="col-12 col-md-6" *ngIf="value || fileUrl">
+          <div class="compliance-item-card">
+            <div class="labelText">{{label}}</div>
+            <div class="labelData">{{value ||'Document Attached'}}</div>
+
+            <!-- Enhanced File Preview for View Mode -->
+            <div class="file-preview-inline" *ngIf="fileUrl">
+              <div class="thumbnail" [class.pdf-bg]="isPdf(fileUrl)">
+                <img *ngIf="isImage(fileUrl)" [src]="fileUrl" alt="Thumbnail">
+                <mat-icon *ngIf="isPdf(fileUrl)">picture_as_pdf</mat-icon>
+                <mat-icon *ngIf="!isImage(fileUrl) && !isPdf(fileUrl)">insert_drive_file</mat-icon>
+              </div>
+              <div class="file-meta-small">
+                <span class="file-name-small">{{fileName}}</span>
+                <span class="file-type">{{isPdf(fileUrl) ?'PDF Document' : (isImage(fileUrl) ?'Image/Photo' :'File')}}</span>
+              </div>
+              <div class="d-flex gap-2">
+                <button mat-stroked-button color="primary" class="view-btn-small" (click)="viewFile(fileUrl, fileName)">
+                  View
+                </button>
+                <button *ngIf="isAdmin" mat-icon-button color="accent" (click)="downloadFile(downloadUrl || fileUrl)"
+                  matTooltip="Download">
+                  <mat-icon style="font-size: 18px;">download</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+
+      <!-- FSSAI -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'FSSAI License No', value: compliance?.fssaiNo, fileUrl: compliance?.fssaiFileUrl || compliance?.fssaiImageUrl, fileName:'Fssai Cert'}"></ng-container>
+
+      <!-- Site FSSAI -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Site FSSAI No', value: compliance?.siteFssaiNo, fileUrl: compliance?.siteFssaiFileUrl, fileName:'Site FSSAI Cert'}"></ng-container>
+
+      <!-- Shop Act -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Shop Act License', value: compliance?.shopActLicenseNo, fileUrl: compliance?.shopActLicenseFileUrl, fileName:'Shop Act Cert'}"></ng-container>
+
+      <!-- Aadhar -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Aadhar Card No', value: compliance?.adhaar, fileUrl: compliance?.aadharFileUrl || compliance?.adhaarFrontImageUrl, fileName:'Aadhar Card'}"></ng-container>
+
+      <!-- Udyam -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Udyam Aadhar', value: compliance?.udyamAadharNo, fileUrl: compliance?.udyamAadharFileUrl, fileName:'Udyam Card'}"></ng-container>
+
+      <!-- Trade License -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Trade License', value: compliance?.tradeLicNumber, fileUrl: compliance?.TradeLicUrl, fileName:'Trade License'}"></ng-container>
+
+      <!-- GST -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'GST Identification No', value: compliance?.gstNumber, fileUrl: compliance?.GSTFileUrl, fileName:'GST Cert'}"></ng-container>
+
+      <!-- PAN -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'PAN Card No', value: compliance?.panNumber, fileUrl: compliance?.PanCardFileUrl, fileName:'PAN Card'}"></ng-container>
+
+      <!-- PF -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'PF Number', value: compliance?.pfno, fileUrl: compliance?.pfFileUrl, fileName:'PF Doc'}"></ng-container>
+
+      <!-- ESI -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'ESI Number', value: compliance?.ESIFileno, fileUrl: compliance?.ESIFileUrl, fileName:'ESI Doc'}"></ng-container>
+
+      <!-- ESI T3 -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'ESI T3 Number', value: compliance?.esiT3Number, fileUrl: compliance?.esiT3FileUrl, fileName:'ESI T3 Doc'}"></ng-container>
+
+      <!-- Pest Control -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Pest Control Doc', value: compliance?.pestconNumber, fileUrl: compliance?.pestconFileUrl, fileName:'Pest Control Doc'}"></ng-container>
+
+      <!-- Cancelled Cheque -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Cancelled Cheque', value:'', fileUrl: compliance?.cancelledChequeFileUrl, fileName:'Cancelled Cheque'}"></ng-container>
+
+      <!-- Self Declaration -->
+      <ng-container
+        *ngTemplateOutlet="viewItem; context: {label:'Self Declaration', value:'', fileUrl: compliance?.selfDeclarationFileUrl, fileName:'Self Declaration'}"></ng-container>
+
+      <!-- Comment -->
+      <div class="col-12" *ngIf="compliance?.comment">
+        <div class="compliance-item-card">
+          <div class="labelText">General Comment</div>
+          <div class="labelData" style="font-size: 1rem; font-weight: 500;">{{compliance.comment}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT MODE -->
+    <div class="row g-3 form-grid-modern" *ngIf="editMode">
+
+      <!-- FSSAI -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>FSSAI License No</mat-label>
+            <input matInput type="number" [(ngModel)]="compliance.fssaiNo" (input)="checkFieldStatus($event,'fssaiNo')" #fssaiNoRef="ngModel" required pattern="^[0-9]{14}$" placeholder="14-digit FSSAI Number">
+            <mat-error *ngIf="fssaiNoRef.invalid && fssaiNoRef.touched">
+              <span *ngIf="fssaiNoRef.errors?.['required']">FSSAI Number is required</span>
+              <span *ngIf="fssaiNoRef.errors?.['pattern']">Please enter a valid 14-digit number</span>
+            </mat-error>
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Expiry Date</mat-label>
+            <input matInput type="date" [(ngModel)]="compliance.fssaiExpiryDate">
+          </mat-form-field>
+
+          <div class="labelText">License Document <span class="required-star">*</span></div>
+          <div *ngIf="!compliance.fssaiFileUrl" #fssaiFileRef class="mt-2">
+            <app-pdfupload [documentname]="'fssailic'" [documentUrl]="compliance.fssaiFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+            <div class="error-text" *ngIf="fssaiFileStatus && showError">Document is required</div>
+          </div>
+
+          <div *ngIf="compliance.fssaiFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.fssaiFileUrl)">
+              <img *ngIf="isImage(compliance.fssaiFileUrl)" [src]="compliance.fssaiFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.fssaiFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Fssai Certificate</span>
+              <span class="file-type">Ready to save</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="primary" (click)="viewFile(compliance.fssaiFileUrl,'Fssai')"
+                matTooltip="View"><mat-icon>visibility</mat-icon></button>
+              <button mat-icon-button color="warn" (click)="DeleteFile('fssailic')"
+                matTooltip="Remove"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aadhar -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Aadhar Card No</mat-label>
+            <input matInput type="number" [(ngModel)]="compliance.adhaar" (input)="checkFieldStatus($event,'aadharNo')" #aadharNo="ngModel" required pattern="^[2-9]{1}[0-9]{11}$" placeholder="12-digit Aadhar Number">
+            <mat-error *ngIf="aadharNo.invalid && aadharNo.touched">
+              <span *ngIf="aadharNo.errors?.['required']">Aadhar number is required</span>
+              <span *ngIf="aadharNo.errors?.['pattern']">Invalid format (12 digits required)</span>
+            </mat-error>
+          </mat-form-field>
+
+          <div class="labelText">Aadhar Front/PDF <span class="required-star">*</span></div>
+          <div *ngIf="!compliance.aadharFileUrl" #adhaarFileRef class="mt-2">
+            <app-pdfupload [documentname]="'aadharFile'" [documentUrl]="compliance.aadharFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+            <div class="error-text" *ngIf="adhaarFileStatus && showError">Document is required</div>
+          </div>
+
+          <div *ngIf="compliance.aadharFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.aadharFileUrl)">
+              <img *ngIf="isImage(compliance.aadharFileUrl)" [src]="compliance.aadharFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.aadharFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Aadhar Document</span>
+              <span class="file-type">Ready to save</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="primary" (click)="viewFile(compliance.aadharFileUrl,'Aadhar')"
+                matTooltip="View"><mat-icon>visibility</mat-icon></button>
+              <button mat-icon-button color="warn" (click)="DeleteFile('aadharFile')"
+                matTooltip="Remove"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Site FSSAI -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Site FSSAI No</mat-label>
+            <input matInput type="number" [(ngModel)]="compliance.siteFssaiNo" placeholder="Site FSSAI Number">
+          </mat-form-field>
+          <div class="labelText">Site Fssai Doc</div>
+          <div *ngIf="!compliance.siteFssaiFileUrl" class="mt-2">
+            <app-pdfupload [documentname]="'siteFssaiFile'" [documentUrl]="compliance.siteFssaiFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.siteFssaiFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.siteFssaiFileUrl)">
+              <img *ngIf="isImage(compliance.siteFssaiFileUrl)" [src]="compliance.siteFssaiFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.siteFssaiFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Site Fssai Cert</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('siteFssaiFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Shop Act -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Shop Act License No</mat-label>
+            <input matInput type="text" [(ngModel)]="compliance.shopActLicenseNo" placeholder="Shop Act Number">
+          </mat-form-field>
+          <div class="labelText">Shop Act Doc</div>
+          <div *ngIf="!compliance.shopActLicenseFileUrl" class="mt-2 text-center">
+            <app-pdfupload [documentname]="'shopActLicenseFile'" [documentUrl]="compliance.shopActLicenseFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.shopActLicenseFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.shopActLicenseFileUrl)">
+              <img *ngIf="isImage(compliance.shopActLicenseFileUrl)" [src]="compliance.shopActLicenseFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.shopActLicenseFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Shop Act Cert</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('shopActLicenseFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Udyam -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Udyam Aadhar No</mat-label>
+            <input matInput type="number" [(ngModel)]="compliance.udyamAadharNo" placeholder="Udyam Number">
+          </mat-form-field>
+          <div class="labelText">Udyam Doc</div>
+          <div *ngIf="!compliance.udyamAadharFileUrl" class="mt-2 text-center">
+            <app-pdfupload [documentname]="'udyamAadharFile'" [documentUrl]="compliance.udyamAadharFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.udyamAadharFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.udyamAadharFileUrl)">
+              <img *ngIf="isImage(compliance.udyamAadharFileUrl)" [src]="compliance.udyamAadharFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.udyamAadharFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Udyam Cert</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('udyamAadharFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Trade License -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>Trade License No</mat-label>
+            <input matInput type="number" [(ngModel)]="compliance.tradeLicNumber" placeholder="Trade Lic Number">
+          </mat-form-field>
+          <div class="labelText">Trade License Doc</div>
+          <div *ngIf="!compliance.TradeLicUrl" class="mt-2 text-center">
+            <app-pdfupload [documentname]="'TradeLic'" [documentUrl]="compliance.TradeLicUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.TradeLicUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.TradeLicUrl)">
+              <img *ngIf="isImage(compliance.TradeLicUrl)" [src]="compliance.TradeLicUrl">
+              <mat-icon *ngIf="isPdf(compliance.TradeLicUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Trade License</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('TradeLic')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GST -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>GST No</mat-label>
+            <input matInput type="text" [(ngModel)]="compliance.gstNumber" placeholder="GSTN">
+          </mat-form-field>
+          <div class="labelText">GST Certificate</div>
+          <div *ngIf="!compliance.GSTFileUrl" class="mt-2 text-center">
+            <app-pdfupload [documentname]="'GSTFile'" [documentUrl]="compliance.GSTFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.GSTFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.GSTFileUrl)">
+              <img *ngIf="isImage(compliance.GSTFileUrl)" [src]="compliance.GSTFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.GSTFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">GST Doc</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('GSTFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PF -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>PF No</mat-label>
+            <input matInput type="text" [(ngModel)]="compliance.pfno" placeholder="PF Number">
+          </mat-form-field>
+          <div class="labelText">PF Document</div>
+          <div *ngIf="!compliance.pfFileUrl" class="mt-2 text-center">
+            <app-pdfupload [documentname]="'pfFile'" [documentUrl]="compliance.pfFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.pfFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.pfFileUrl)">
+              <img *ngIf="isImage(compliance.pfFileUrl)" [src]="compliance.pfFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.pfFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">PF Doc</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('pfFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ESI -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>ESI No</mat-label>
+            <input matInput type="text" [(ngModel)]="compliance.ESIFileno" placeholder="ESI Number">
+          </mat-form-field>
+          <div class="labelText">ESI Document</div>
+          <div *ngIf="!compliance.ESIFileUrl" class="mt-2 text-center">
+            <app-pdfupload [documentname]="'ESIFile'" [documentUrl]="compliance.ESIFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.ESIFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.ESIFileUrl)">
+              <img *ngIf="isImage(compliance.ESIFileUrl)" [src]="compliance.ESIFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.ESIFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">ESI Doc</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('ESIFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PAN (Moved below others) -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>PAN Card No</mat-label>
+            <input matInput type="text" [(ngModel)]="compliance.panNumber" #panNoRef="ngModel"
+              (input)="checkFieldStatus($event,'panNo')" required pattern="^[A-Z]{5}[0-9]{4}[A-Z]{1}$"
+              placeholder="ABCDE1234F">
+            <mat-error *ngIf="panNoRef.invalid && panNoRef.touched">
+              <span *ngIf="panNoRef.errors?.['required']">PAN is required</span>
+              <span *ngIf="panNoRef.errors?.['pattern']">Invalid PAN format</span>
+            </mat-error>
+          </mat-form-field>
+          <div class="labelText">PAN Card Copy <span class="required-star">*</span></div>
+          <div *ngIf="!compliance.PanCardFileUrl" #panFileRef class="mt-2 text-center">
+            <app-pdfupload [documentname]="'PanCardFile'" [documentUrl]="compliance.PanCardFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+            <div class="error-text" *ngIf="panFileStatus && showError">Document is required</div>
+          </div>
+          <div *ngIf="compliance.PanCardFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.PanCardFileUrl)">
+              <img *ngIf="isImage(compliance.PanCardFileUrl)" [src]="compliance.PanCardFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.PanCardFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">PAN Card Doc</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('PanCardFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Self Declaration -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <div class="mb-4">
+            <label class="labelText">Self Declaration</label>
+          </div>
+          <div class="labelText">Declaration Doc</div>
+          <div *ngIf="!compliance.selfDeclarationFileUrl" class="mt-2 text-center">
+            <app-pdfupload [documentname]="'selfDeclarationFile'" [documentUrl]="compliance.selfDeclarationFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+          </div>
+          <div *ngIf="compliance.selfDeclarationFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.selfDeclarationFileUrl)">
+              <img *ngIf="isImage(compliance.selfDeclarationFileUrl)" [src]="compliance.selfDeclarationFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.selfDeclarationFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Declaration Doc</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('selfDeclarationFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cancelled Cheque -->
+      <div class="col-12 col-md-6">
+        <div class="compliance-item-card edit-mode">
+          <div class="mb-3">
+            <label class="labelText">Cancelled Cheque <span class="required-star">*</span></label>
+            <p style="font-size: 11px; color: #6b7280; margin-top: -4px;">Must show bank name, AC holder, and IFSC</p>
+          </div>
+          <div *ngIf="!compliance.cancelledChequeFileUrl" #cancelledChequeRef class="mt-2">
+            <app-pdfupload [documentname]="'cancelledChequeFile'" [documentUrl]="compliance.cancelledChequeFileUrl"
+              (upload)="uploadDoc($event)"></app-pdfupload>
+            <div class="error-text" *ngIf="cancelledChequeFileStatus && showError">Cheque copy is required</div>
+          </div>
+          <div *ngIf="compliance.cancelledChequeFileUrl" class="file-preview-inline">
+            <div class="thumbnail" [class.pdf-bg]="isPdf(compliance.cancelledChequeFileUrl)">
+              <img *ngIf="isImage(compliance.cancelledChequeFileUrl)" [src]="compliance.cancelledChequeFileUrl">
+              <mat-icon *ngIf="isPdf(compliance.cancelledChequeFileUrl)">picture_as_pdf</mat-icon>
+            </div>
+            <div class="file-meta-small">
+              <span class="file-name-small">Cheque Copy</span>
+            </div>
+            <div class="d-flex gap-1">
+              <button mat-icon-button color="warn"
+                (click)="DeleteFile('cancelledChequeFile')"><mat-icon>delete_outline</mat-icon></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Comments -->
+      <div class="col-12">
+        <div class="compliance-item-card edit-mode">
+          <mat-form-field appearance="outline" class="w-100">
+            <mat-label>General Comments</mat-label>
+            <textarea matInput rows="3" [(ngModel)]="compliance.comment"
+              placeholder="Add any additional information here..."></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="modal-footer px-4 py-3 bg-light-soft border-top mt-4" *ngIf="editMode" [class.rounded-footer]="!dialogRef">
+    <button mat-button class="btn-cancel me-2" (click)="cancelEdit()">Cancel</button>
+    <button mat-flat-button color="primary" class="btn-primary-action px-4" (click)="saveImages()">
+      <mat-icon>save</mat-icon> Save Changes
+    </button>
+  </div>
+</div>

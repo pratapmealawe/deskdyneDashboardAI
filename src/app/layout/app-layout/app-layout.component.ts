@@ -82,12 +82,28 @@ export class AppLayoutComponent implements OnInit {
     }
 
     const el = event.currentTarget as HTMLElement;
+    const filteredChildren = link.children.filter((c: any) => c.showChild);
+    const approximateHeight = (filteredChildren.length * 44) + 50; // Header + items padding
+    const windowHeight = window.innerHeight;
     const rect = el.getBoundingClientRect();
-    this.flyoutY = rect.top;
-    this.flyoutChildren = link.children.filter((c: any) => c.showChild);
+
+    if (rect.top + approximateHeight > windowHeight - 20) {
+      // If overflows bottom, push up but keep at least 10px from top
+      this.flyoutY = Math.max(10, windowHeight - approximateHeight - 20);
+    } else {
+      this.flyoutY = rect.top;
+    }
+
+    this.flyoutChildren = filteredChildren;
     this.flyoutParent = link;
     this.activeFlyoutIndex = index;
     this.openChildSectionIndex = index;
+  }
+
+  @HostListener('window:resize')
+  @HostListener('window:scroll')
+  onWindowScrollOrResize(): void {
+    this.closeFlyout();
   }
 
   closeFlyout(): void {

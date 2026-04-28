@@ -1,10 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { PermissionsService } from '@service/permission.service';
 import { MaterialModule } from '../../material.module';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { OrganizationSharedService } from '../organization-shared.service';
-import { Subscription } from 'rxjs';
+import { Subscription, filter } from 'rxjs';
 
 
 @Component({
@@ -21,7 +21,6 @@ import { Subscription } from 'rxjs';
 export class ManageOrganizationComponent implements OnInit {
   organization: any;
   @ViewChild('mainTabsContainer') mainTabsContainer!: ElementRef;
-  
   isDown = false;
   startX = 0;
   scrollLeft = 0;
@@ -29,17 +28,15 @@ export class ManageOrganizationComponent implements OnInit {
   btnPolicy: any;
   private routeSub: Subscription | undefined;
   orgViewList = [
-    { name: 'Org Details', path: 'details', policyKey: 'orgDetails' },
-    { name: 'Compliance', path: 'compliance', policyKey: 'compliance' },
-    { name: 'Bulk Menu', path: 'bulk-menu', policyKey: 'bulkMenu' },
-    { name: 'Virtual Cafeteria', path: 'virtual-cafeteria', policyKey: 'virtualCafeteria' },
-    { name: 'Admin Daily Order', path: 'admin-daily-order', policyKey: 'adminDailyOrder' },
-    { name: 'Employee Listing', path: 'employees', policyKey: 'employeeList' },
-    { name: 'Consumption Menu', path: 'consumption-order', policyKey: 'consumptionMenu' },
-    { name: 'Outlet Employee Listing', path: 'outlet-employees', policyKey: 'outletEmployee' },
-    { name: 'Company Wallet', path: 'company-wallet', policyKey: 'companyWallet' },
-    // { name: 'QR Employee', path: 'qr-employees', policyKey: 'qrEmployee' },
-    // { name: 'Guest Employee Listing', path: 'guest-employees', policyKey: 'guestEmployeeList' },
+    { name: 'Org Details', path: 'details', policyKey: 'orgDetails', icon: 'business' },
+    { name: 'Compliance', path: 'compliance', policyKey: 'compliance', icon: 'verified_user' },
+    { name: 'Bulk Menu', path: 'bulk-menu', policyKey: 'bulkMenu', icon: 'restaurant_menu' },
+    { name: 'Virtual Cafeteria', path: 'virtual-cafeteria', policyKey: 'virtualCafeteria', icon: 'storefront' },
+    { name: 'Admin Daily Order', path: 'admin-daily-order', policyKey: 'adminDailyOrder', icon: 'fact_check' },
+    { name: 'Employee Listing', path: 'employees', policyKey: 'employeeList', icon: 'people' },
+    { name: 'Consumption Menu', path: 'consumption-order', policyKey: 'consumptionMenu', icon: 'receipt_long' },
+    { name: 'Outlet Employee Listing', path: 'outlet-employees', policyKey: 'outletEmployee', icon: 'badge' },
+    { name: 'Company Wallet', path: 'company-wallet', policyKey: 'companyWallet', icon: 'account_balance_wallet' },
   ];
 
   constructor(
@@ -50,6 +47,7 @@ export class ManageOrganizationComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    window.scrollTo(0, 0);
     this.btnPolicy = this.permissionsService.getCurrentButtonPolicy();
     this.orgViewList = this.permissionsService.filterTabsByPolicy(this.orgViewList);
     
@@ -61,8 +59,12 @@ export class ManageOrganizationComponent implements OnInit {
       }
     });
 
-    // Update selected tab index based on current URL
-    this.updateSelectedTabFromUrl();
+    this.checkChildRoute();
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.checkChildRoute();
+    });
   }
 
   async loadOrganization(id: string) {
@@ -76,11 +78,18 @@ export class ManageOrganizationComponent implements OnInit {
     }
   }
 
-  updateSelectedTabFromUrl() {
-    const url = this.router.url;
-    const activeIndex = this.orgViewList.findIndex(tab => url.includes(tab.path));
-    if (activeIndex !== -1) {
-      this.selectedMainTabIndex = activeIndex;
+  checkChildRoute() {
+    const baseUrl = this.router.url.split('?')[0].split('#')[0];
+    const urlParts = baseUrl.split('/').filter(p => p);
+    // /app/organization/:id/:tab
+    if (urlParts.length >= 4) {
+      const tabPath = urlParts[3];
+      const activeIndex = this.orgViewList.findIndex(tab => tab.path === tabPath);
+      if (activeIndex !== -1) {
+        this.selectedMainTabIndex = activeIndex;
+      }
+    } else {
+      this.selectedMainTabIndex = 0;
     }
   }
 
@@ -130,23 +139,7 @@ export class ManageOrganizationComponent implements OnInit {
     this.mainTabsContainer.nativeElement.scrollLeft = this.scrollLeft - walk;
   }
 
-  getTabIcon(path: string): string {
 
-    const icons: { [key: string]: string } = {
-      'details': 'business',
-      'compliance': 'verified_user',
-      'bulk-menu': 'restaurant_menu',
-      'virtual-cafeteria': 'storefront',
-      'consumption-order': 'receipt_long',
-      'outlet-employees': 'badge',
-      'wallet': 'account_balance_wallet',
-      'qr-employees': 'qr_code',
-      'admin-daily-order': 'fact_check',
-      'employees': 'people',
-      'guest-employees': 'person_add_alt'
-    };
-    return icons[path] || 'article';
-  }
 
 }
 
