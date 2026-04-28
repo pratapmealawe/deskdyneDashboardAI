@@ -1,0 +1,77 @@
+<div class="menu-card-h">
+  <!-- Square Image with padding -->
+  <div class="card-image-h">
+    <img [src]="imageUrl + foodItem.imageUrl" alt="{{ foodItem.itemName }}"
+      onerror="this.src='assets/images/dummyUpload.png'" />
+    <div class="type-indicator" [ngClass]="foodItem.itemType ==='Veg' ?'veg' :'non-veg'">
+      <span class="indicator-dot"></span>
+    </div>
+  </div>
+
+  <!-- Card Content -->
+  <div class="card-content-h">
+    <!-- Row 1: Name + Actions -->
+    <div class="content-top">
+      <h3 class="item-name" [matTooltip]="foodItem.itemName">{{ foodItem.itemName ||'Unnamed item' }}</h3>
+      <div class="item-actions">
+        <button mat-icon-button class="edit-btn" *ngIf="btnPolicy?.editFoodItem !== false" (click)="editFoodItem($event)"
+          matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button class="delete-btn" *ngIf="btnPolicy?.deleteFoodItem !== false"
+          (click)="showDeletePopup($event)" matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </div>
+    </div>
+
+    <!-- Row 2: Description -->
+    <p class="item-description" *ngIf="foodItem.itemDescription" [matTooltip]="foodItem.itemDescription">
+      {{ foodItem.itemDescription }}
+    </p>
+
+    <!-- Row 3: Meta Info (Serving Type, Flavour) -->
+    <div class="meta-row">
+      <span class="meta-chip">
+        <mat-icon>palette</mat-icon>
+        {{ foodItem.itemFlavour || 'Std' }}
+      </span>
+      <span class="meta-chip">
+        <mat-icon>restaurant</mat-icon>
+        {{ foodItem.itemServingType === 'perPerson' ? '1 Person' : foodItem.itemServingType }}
+      </span>
+    </div>
+
+    <!-- Row 4: Pricing Slabs -->
+    <div class="slabs-row">
+      <div class="slab-badge" *ngIf="foodItem.slab1Price != null">
+        <span class="slab-name">S1:</span>
+        <span class="slab-val">₹{{ foodItem.slab1Price }}</span>
+      </div>
+      <div class="slab-badge" *ngIf="foodItem.slab2Price != null">
+        <span class="slab-name">S2:</span>
+        <span class="slab-val">₹{{ foodItem.slab2Price }}</span>
+      </div>
+      <div class="slab-badge" *ngIf="foodItem.slab3Price != null">
+        <span class="slab-name">S3:</span>
+        <span class="slab-val">₹{{ foodItem.slab3Price }}</span>
+      </div>
+      <div class="slab-badge" *ngIf="foodItem.slab4Price != null">
+        <span class="slab-name">S4:</span>
+        <span class="slab-val">₹{{ foodItem.slab4Price }}</span>
+      </div>
+    </div>
+
+    <!-- Row 5: Active Toggle -->
+    <div class="card-footer">
+      <div class="price-display">
+        <span class="currency">₹</span>{{ foodItem.slab1Price }} <small class="text-muted">(Min)</small>
+      </div>
+      <div class="stock-toggle">
+        <mat-slide-toggle color="primary" [checked]="foodItem.isActive" class="scale-08"
+          (change)="toggleActivation($event)">
+        </mat-slide-toggle>
+      </div>
+    </div>
+  </div>
+</div>

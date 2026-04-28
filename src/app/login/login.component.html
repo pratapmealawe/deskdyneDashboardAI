@@ -2,7 +2,7 @@
   <div class="row g-0 min-vh-100">
 
     <!-- LEFT IMAGE PANEL (HIDDEN ON SMALL SCREENS) -->
-    <div class="col-12 col-md-8 px-0 d-none d-md-flex ">
+    <div class="col-12 col-md-8 px-0 d-none d-md-flex">
       <div class="login-img h-100 position-relative">
         <div class="logo-desktop">
           <img src="assets/images/logos/DeskDyne-Logo-01.png" alt="DeskDyne Logo" />
@@ -72,7 +72,7 @@
             </button>
 
             <div class="resend-text" [class.active]="timer === 0" (click)="timer === 0 && resendOTP()">
-              {{ timer === 0 ? 'Resend OTP' : ('Resend in ' + timer + 's') }}
+              {{ timer === 0 ?'Resend OTP' : ('Resend in' + timer +'s') }}
             </div>
           </div>
         </div>

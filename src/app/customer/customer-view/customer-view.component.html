@@ -1,0 +1,31 @@
+<div class="org-view-container">
+  <!-- Header Section -->
+  <div class="org-header-card">
+    <div class="header-left">
+      <button mat-icon-button class="back-btn" (click)="backBtn()">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="title-section">
+        <h1 class="page-title">{{ userDetails?.customer?.userName || userDetails?.userName || 'Customer Details' }}</h1>
+        <p class="page-subtitle">View and manage customer account, wallet & orders</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Navigation -->
+  <div class="tabs-container">
+    <div class="main-tabs" #mainTabsContainer (mousedown)="onMouseDown($event)" (mouseleave)="onMouseLeave()"
+      (mouseup)="onMouseUp()" (mousemove)="onMouseMove($event)">
+      <button *ngFor="let view of userViewList; let i = index" class="tab-btn" [class.active]="selectedTabIndex === i"
+        (click)="onMainTabChange(i)">
+        <mat-icon class="tab-icon">{{ view.icon }}</mat-icon>
+        <span>{{ view.name }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>

@@ -7,11 +7,10 @@
     </div>
     <div class="org-info">
       <div class="org-label">Organization</div>
-      <h2 class="org-name">{{ outletGroup?.organizationName || 'No Organization' }}</h2>
+      <h2 class="org-name">{{ outletGroup?.organizationName ||'No Organization' }}</h2>
     </div>
     <div class="org-stats" *ngIf="outletGroup?.outletList?.length">
-      <span class="badge-count">{{ outletGroup.outletList.length }} Outlet{{ outletGroup.outletList.length > 1 ? 's' :
-        '' }}</span>
+      <span class="badge-count">{{ outletGroup.outletList.length }} Outlet{{ outletGroup.outletList.length > 1 ?'s' :'' }}</span>
     </div>
   </div>
 
@@ -21,13 +20,23 @@
       <!-- Card Top -->
       <div class="card-top">
         <div class="outlet-avatar">
-          {{ getInitials(outlet.outletName) }}
+          <img *ngIf="outlet.imageUrl; else initialsTemplate" [src]="imageUrl + outlet.imageUrl" [alt]="outlet.outletName"
+            class="profile-img">
+          <ng-template #initialsTemplate>
+            {{ getInitials(outlet.outletName) }}
+          </ng-template>
         </div>
         <div class="outlet-identity">
           <h3 class="outlet-name">{{ outlet.outletName }}</h3>
-          <div class="status-badge" [ngClass]="outlet.outletOpened ? 'open' : 'closed'">
-            <mat-icon>{{ outlet.outletOpened ? 'check_circle' : 'cancel' }}</mat-icon>
-            {{ outlet.outletOpened ? 'Open' : 'Closed' }}
+          <div class="status-badges-row">
+            <div class="status-badge" [ngClass]="outlet.outletOpened ?'open' :'closed'">
+              <mat-icon>{{ outlet.outletOpened ?'check_circle' :'cancel' }}</mat-icon>
+              {{ outlet.outletOpened ?'Open' :'Closed' }}
+            </div>
+            <div class="status-badge preorder" *ngIf="outlet.isPreOrder">
+              <mat-icon>schedule</mat-icon>
+              Pre-order
+            </div>
           </div>
         </div>
         <div class="card-actions">
@@ -42,18 +51,20 @@
 
       <!-- Card Body -->
       <div class="card-body">
-        <div class="info-row">
-          <mat-icon class="info-icon">payments</mat-icon>
-          <div class="info-content">
-            <span class="info-label">Subsidy</span>
-            <span class="info-value">₹ {{ outlet?.subsidy || 0 }}</span>
+        <div class="info-group">
+          <div class="info-row">
+            <mat-icon class="info-icon">payments</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Subsidy</span>
+              <span class="info-value">{{ outlet?.subsidy || 0 }} %</span>
+            </div>
           </div>
-        </div>
-        <div class="info-row">
-          <mat-icon class="info-icon">low_priority</mat-icon>
-          <div class="info-content">
-            <span class="info-label">Precedence</span>
-            <span class="info-value">{{ outlet?.precedence || '-' }}</span>
+          <div class="info-row">
+            <mat-icon class="info-icon">low_priority</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Precedence</span>
+              <span class="info-value">{{ outlet?.precedence ||'-' }}</span>
+            </div>
           </div>
         </div>
         <div class="info-row" *ngIf="outlet.outletDescription">

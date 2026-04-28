@@ -1,0 +1,80 @@
+<div class="premium-modal">
+    <div class="modal-header">
+    <div class="title-wrap">
+        <div class="icon-box primary">
+            <mat-icon>store</mat-icon>
+        </div>
+        <div class="text">
+            <h3>Select Outlets</h3>
+            <p>Link existing outlets to this vendor firm</p>
+        </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<mat-dialog-content class="dialog-content p-4">
+    <div class="form-grid-modern">
+        <div class="row g-3 mb-4">
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Organization</mat-label>
+                    <mat-select (selectionChange)="getOrgName($event)">
+                        <mat-option *ngFor="let org of orgList" [value]="org.organization_name">
+                            {{ org.organization_name }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="col-md-6">
+                <mat-form-field appearance="outline" class="w-100">
+                    <mat-label>Cafeteria</mat-label>
+                    <mat-select [disabled]="!orgName" (selectionChange)="selectCafeteria($event)">
+                        <mat-option *ngFor="let cafeteria of cafeterialist" [value]="cafeteria">
+                            {{ cafeteria.cafeteria_name }} - {{ cafeteria.cafeteria_city }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div *ngIf="showModalOutletList" class="animate-fade-in">
+            <div *ngFor="let outlet of outletByCafeteriaList" class="list-item-modal" (click)="toggleCheckbox(outlet)"
+                [class.selected]="outlet.isChecked">
+                <div class="d-flex align-items-center gap-3">
+                    <mat-checkbox [(ngModel)]="outlet.isChecked" color="primary"
+                        (click)="$event.stopPropagation()"></mat-checkbox>
+                    <div class="w-100">
+                        <div class="row align-items-center">
+                            <div class="col-md-5">
+                                <div class="labelText">Outlet Name</div>
+                                <div class="labelData fw-bold">{{ outlet.outletName }}</div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="labelText">Type</div>
+                                <div class="labelData">{{ outlet.outletType || '-' }}</div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="labelText">Description</div>
+                                <div class="labelData text-truncate">{{ outlet.outletDescription || '-' }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="outletByCafeteriaList.length === 0" class="empty-placeholder">
+                <mat-icon>storefront</mat-icon>
+                <p>No available outlets for this selection</p>
+            </div>
+        </div>
+    </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button mat-dialog-close class="btn-cancel me-2">Cancel</button>
+    <button mat-flat-button (click)="getSelectedOutlets()" color="primary" class="btn-primary-action px-4" [disabled]="!outletByCafeteriaList.length">
+        <mat-icon>add</mat-icon> Add Selected
+    </button>
+</mat-dialog-actions>
+</div>

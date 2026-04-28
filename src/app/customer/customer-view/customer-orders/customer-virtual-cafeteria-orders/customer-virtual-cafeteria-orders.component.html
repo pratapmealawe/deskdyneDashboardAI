@@ -1,0 +1,42 @@
+<div class="modern-card board-card animate-fade-in">
+    <div class="card-header with-actions">
+        <div class="header-title-group">
+            <div class="header-icon-wrapper">
+                <mat-icon>history</mat-icon>
+            </div>
+            <div class="header-text-wrapper">
+                <h3 class="m-0">Past Orders</h3>
+                <p class="m-0 text-muted small">Virtual Cafeteria Order History</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-body p-4">
+        <div class="customer-past-orders-container">
+            <div *ngIf="orderList.length > 0; else noOrders" class="row g-4">
+                <div class="col-12 col-md-4" *ngFor="let order of orderList">
+                    <!-- <app-vc-order-card [order]="order"></app-vc-order-card> -->
+                </div>
+
+                <div class="load-more-container mt-4 text-center w-100">
+                    <button *ngIf="nextOn" mat-flat-button color="primary" class="btn-primary-action" (click)="getMore()">
+                        <mat-icon>expand_more</mat-icon>
+                        Load More
+                    </button>
+                </div>
+            </div>
+
+            <ng-template #noOrders>
+                <div class="premium-empty-state">
+                    <div class="empty-media">
+                        <div class="icon-circle">
+                            <mat-icon>history_toggle_off</mat-icon>
+                        </div>
+                    </div>
+                    <h3>No Orders Found</h3>
+                    <p>There are no past virtual cafeteria orders recorded for this customer.</p>
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

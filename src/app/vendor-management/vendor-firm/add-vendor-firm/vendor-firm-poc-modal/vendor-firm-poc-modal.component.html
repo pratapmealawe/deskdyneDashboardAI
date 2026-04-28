@@ -1,0 +1,70 @@
+<div class="premium-modal">
+    <div class="modal-header">
+    <div class="title-wrap">
+        <div class="icon-box info">
+            <mat-icon>contact_page</mat-icon>
+        </div>
+        <div class="text">
+            <h3>POC Details</h3>
+            <p>Point of contact for this vendor firm</p>
+        </div>
+    </div>
+    <button mat-icon-button mat-dialog-close class="close-btn">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+    <mat-dialog-content class="dialog-content p-4">
+        <div class="form-grid-modern">
+        <div [formGroup]="pocForm">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>POC ID</mat-label>
+                        <input matInput formControlName="poc_id" />
+                        <mat-error *ngIf="hasSubError('poc_id','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-8">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Full Name</mat-label>
+                        <input matInput formControlName="poc_name" />
+                        <mat-error *ngIf="hasSubError('poc_name','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Phone Number</mat-label>
+                        <mat-icon matPrefix class="text-muted">phone</mat-icon>
+                        <input matInput formControlName="poc_phoneNo" />
+                        <mat-error *ngIf="hasSubError('poc_phoneNo','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Email Address</mat-label>
+                        <mat-icon matPrefix class="text-muted">email</mat-icon>
+                        <input matInput formControlName="poc_email" />
+                        <mat-error *ngIf="hasSubError('poc_email','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-12">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Location/City</mat-label>
+                        <mat-icon matPrefix class="text-muted">place</mat-icon>
+                        <input matInput formControlName="poc_location" />
+                        <mat-error *ngIf="hasSubError('poc_location','required')">Required</mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+        </div>
+    </div>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button mat-dialog-close class="btn-cancel me-2">Cancel</button>
+        <button mat-flat-button color="primary" [disabled]="!pocForm.valid" (click)="submitPocDetails()" class="btn-primary-action px-4">
+            <mat-icon>check</mat-icon> {{ pocBtn || 'Save POC' }}
+        </button>
+    </mat-dialog-actions>
+</div>

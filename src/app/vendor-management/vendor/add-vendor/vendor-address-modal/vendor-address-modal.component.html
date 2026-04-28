@@ -1,0 +1,59 @@
+<div class="premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box warning">
+        <mat-icon>location_on</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Select Address</h3>
+        <p>Choose an address from the vendor firm's list</p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content p-4">
+    <div *ngIf="addressList.length; else noAddress">
+      <mat-radio-group [(ngModel)]="selectedAddress" class="form-grid-modern">
+        <div *ngFor="let address of addressList" class="list-item-modal-modern"
+          [class.selected]="selectedAddress === address" (click)="selectAddress(address)">
+
+          <div class="d-flex align-items-center gap-3 w-100">
+            <mat-radio-button [value]="address" color="primary" (click)="$event.stopPropagation()">
+            </mat-radio-button>
+
+            <div class="item-info flex-grow-1">
+              <div class="main-text">{{ address.address1 }}</div>
+              <div class="sub-text d-flex align-items-center gap-3">
+                <span class="d-flex align-items-center gap-1">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">place</mat-icon>
+                  {{ address.location || '-' }}
+                </span>
+                <span class="d-flex align-items-center gap-1" *ngIf="address.landmark">
+                  <mat-icon style="font-size: 14px; width: 14px; height: 14px;">flag</mat-icon>
+                  {{ address.landmark }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </mat-radio-group>
+    </div>
+
+    <ng-template #noAddress>
+      <div class="empty-placeholder py-5">
+        <mat-icon>map</mat-icon>
+        <p>No addresses available for this vendor firm.</p>
+      </div>
+    </ng-template>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button (click)="close()" class="btn-cancel me-2">Cancel</button>
+    <button mat-flat-button color="primary" (click)="confirmSelection()" [disabled]="!selectedAddress" class="btn-primary-action px-4">
+      <mat-icon>add</mat-icon> Add Selected
+    </button>
+  </mat-dialog-actions>
+</div>

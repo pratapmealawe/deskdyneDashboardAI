@@ -2,9 +2,9 @@ import { Component, Input, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { PageEvent } from '@angular/material/paginator';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { SearchFilterService } from 'src/service/search-filter.service';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { LocalStorageService } from '@service/local-storage.service';
+import { SearchFilterService } from '@service/search-filter.service';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as pdfMake from "pdfmake/build/pdfmake";
@@ -132,7 +132,6 @@ export class WalletBillingComponent {
       const res = await this.apiMainService.getCustomerWalletListByOrgId(this.filterObj);
       this.parseResponse(res);
     } catch (err: any) {
-      console.log(err);
       this.allTransactions = [];
       this.pagedTransactions = [];
     }

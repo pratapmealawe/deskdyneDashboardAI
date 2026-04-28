@@ -1,0 +1,406 @@
+import { Component, Inject, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ToasterService } from '@service/toaster.service';
+import { ImageCropperComponent } from 'src/app/common-components/image-cropper/image-cropper.component';
+import { environment } from '@environments/environment';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+
+@Component({
+    selector: 'app-create-notification',
+    standalone: true,
+    imports: [
+        CommonModule,
+        MaterialModule,
+        FormsModule,
+        ReactiveFormsModule
+    ],
+    templateUrl: './create-notification.component.html',
+    styleUrls: ['./create-notification.component.scss']
+})
+export class CreateNotificationComponent implements OnInit {
+    form: FormGroup;
+    isLoading = false;
+    imageUrl: string | null = null;
+    uploadedImageFile: any = null;
+    imageReplaced = false;
+    orgList: any[] = [];
+    cafeteriaList: any[] = [];
+    usersList: any[] = [];
+    selectedUsers: any[] = [];
+    filteredUsersList: any[] = []; // For search/filter within the list
+
+    targetTypes = [
+        { value: 'organization', viewValue: 'Organization' },
+        { value: 'cafeteria', viewValue: 'Cafeteria' },
+        { value: 'individual', viewValue: 'Individual (Select Users)' },
+        { value: 'all', viewValue: 'All Users' }
+    ];
+
+    minDate = new Date();
+
+    constructor(
+        private fb: FormBuilder,
+        private dialog: MatDialog,
+        private apiMainService: ApiMainService,
+        private toaster: ToasterService,
+        public dialogRef: MatDialogRef<CreateNotificationComponent>,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) {
+        this.form = this.fb.group({
+            title: ['', Validators.required],
+            body: ['', Validators.required],
+            targetType: ['organization', Validators.required],
+            targetIds: [[]], // For org/cafeteria multiselect
+
+            // New fields for Individual selection flow
+            filterOrgId: [''],
+            filterCafeId: [''],
+            userSearch: [''], // For filtering the displayed user list
+            individualIds: [[]], // Now an array of selected user IDs
+            parentOrgId: [''], // For Cascading Cafeteria Selection
+
+            deliveryMode: ['schedule', Validators.required],
+            scheduledDate: [new Date()],
+            scheduledTime: ['12:00']
+        });
+    }
+
+    async ngOnInit() {
+        await this.fetchOrgList();
+        // Cafeteria list now depends on Org selection, so no initial fetch
+
+        if (this.data) {
+            this.form.patchValue({
+                title: this.data.title,
+                body: this.data.body,
+                targetType: (this.data.targetType || '').toLowerCase()
+            });
+
+            if (this.data.imageUrl) {
+                this.imageUrl = environment.imageUrl + this.data.imageUrl;
+            }
+
+            // Handle target population logic
+            const type = (this.data.targetType || '').toLowerCase();
+            if (type === 'organization') {
+                // For Org, targetIds are org IDs.
+                this.form.patchValue({ targetIds: this.data.targetIds });
+            } else if (type === 'cafeteria') {
+                // For Cafeteria, targetIds are cafe IDs.
+                // We need to find the parent Org to populate the dropdown and parentOrgId
+                if (this.data.targetIds && this.data.targetIds.length > 0) {
+                    const firstCafeId = this.data.targetIds[0];
+                    // Find org containing this cafe
+                    const parentOrg = this.orgList.find(o => o.cafeteriaList && o.cafeteriaList.some((c: any) => c.cafeteria_id === firstCafeId));
+                    if (parentOrg) {
+                        this.form.patchValue({ parentOrgId: parentOrg.orgID || parentOrg._id });
+                        this.form.get('parentOrgId')?.setValue(parentOrg.orgID || parentOrg._id, { emitEvent: false });
+                        this.updateCafeteriaList(parentOrg.orgID || parentOrg._id);
+                        this.form.patchValue({ targetIds: this.data.targetIds });
+                    }
+                }
+            } else if (type === 'individual') {
+                // If we have data.targetIds as user IDs
+                // We typically can't fully restore the state without fetching all users or knowing the Org/Cafe context.
+                // Best effort: just prefill Title/Body.
+            }
+        }
+
+        // Watch targetType changes to update validation
+        this.form.get('targetType')?.valueChanges.subscribe(val => {
+            this.updateValidators(val);
+            this.usersList = [];
+            this.filteredUsersList = [];
+            this.selectedUsers = [];
+            this.form.patchValue({
+                filterOrgId: '',
+                filterCafeId: '',
+                individualIds: [],
+                userSearch: '',
+                targetIds: [], // Clear selections on type change
+                parentOrgId: '' // Clear parent org selection
+            }, { emitEvent: false });
+
+            // If switching to cafeteria mode, we need to clear cafeteria list until org is selected
+            if (val === 'cafeteria') {
+                this.cafeteriaList = [];
+            }
+        });
+
+        // Watch filter changes to fetch users or cafeterias
+        this.form.get('filterOrgId')?.valueChanges.subscribe(async (val) => {
+            if (this.form.get('targetType')?.value === 'individual') {
+                this.form.patchValue({ filterCafeId: '' }, { emitEvent: false });
+                this.updateCafeteriaList(val);
+                await this.fetchUsersByOrg(val);
+            }
+        });
+
+        // NEW: specific handler for 'cafeteria' target type organization selection
+        this.form.get('parentOrgId')?.valueChanges.subscribe(val => {
+            if (this.form.get('targetType')?.value === 'cafeteria') {
+                this.form.patchValue({ targetIds: [] }, { emitEvent: false }); // Clear selected cafeterias
+                this.updateCafeteriaList(val);
+            }
+        });
+
+        this.form.get('userSearch')?.valueChanges.subscribe(val => {
+            this.filterUsers(val);
+        });
+
+        // Watch parentOrgId for Cafeteria mode logic similarly
+        this.form.get('parentOrgId')?.valueChanges.subscribe(val => {
+            if (this.form.get('targetType')?.value === 'cafeteria') {
+                // Update cafeteria list based on this org
+                this.updateCafeteriaList(val);
+                // Reset targetIds (cafeteria selection)
+                this.form.patchValue({ targetIds: [] });
+            }
+        });
+
+        this.updateValidators('organization'); // Initial state
+    }
+
+    updateValidators(targetType: string) {
+        const targetIdsControl = this.form.get('targetIds');
+        const individualIdsControl = this.form.get('individualIds');
+        const filterOrgIdControl = this.form.get('filterOrgId');
+        const parentOrgIdControl = this.form.get('parentOrgId'); // New control
+
+        // Reset validators
+        targetIdsControl?.clearValidators();
+        individualIdsControl?.clearValidators();
+        filterOrgIdControl?.clearValidators();
+        parentOrgIdControl?.clearValidators(); // Clear for new control
+
+        if (targetType === 'organization') {
+            targetIdsControl?.setValidators([Validators.required]);
+        } else if (targetType === 'cafeteria') {
+            targetIdsControl?.setValidators([Validators.required]);
+            parentOrgIdControl?.setValidators([Validators.required]); // Parent org is required for cafeteria selection
+        } else if (targetType === 'individual') {
+            individualIdsControl?.setValidators([Validators.required]);
+        }
+
+        targetIdsControl?.updateValueAndValidity();
+        individualIdsControl?.updateValueAndValidity();
+        filterOrgIdControl?.updateValueAndValidity();
+        parentOrgIdControl?.updateValueAndValidity(); // Update validity for new control
+    }
+
+    async fetchOrgList() {
+        try {
+            const searchObj = { countOnly: false };
+            const res: any = await this.apiMainService.B2B_fetchFilteredAllOrgs(searchObj, 1);
+            if (res) {
+                this.orgList = Array.isArray(res) ? res : (res.data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching org list', error);
+        }
+    }
+
+    updateCafeteriaList(orgId: string) {
+        const selectedOrg = this.orgList.find(o => o.orgID === orgId || o._id === orgId);
+        if (selectedOrg && selectedOrg.cafeteriaList) {
+            this.cafeteriaList = selectedOrg.cafeteriaList;
+        } else {
+            this.cafeteriaList = [];
+        }
+    }
+
+    async fetchUsersByOrg(orgId: string) {
+        if (!orgId) return;
+        this.isLoading = true;
+        try {
+            const res: any = await this.apiMainService.getCustomerListByOrgId({ orgId });
+            if (res) {
+                this.usersList = res || [];
+                this.filterUsers(this.form.get('userSearch')?.value);
+            } else {
+                this.usersList = [];
+                this.filteredUsersList = [];
+                this.toaster.info('No users found.');
+            }
+        } catch (error) {
+            console.error('Error fetching users by org', error);
+            this.toaster.error('Failed to fetch users.');
+            this.usersList = [];
+            this.filteredUsersList = [];
+        } finally {
+            this.isLoading = false;
+        }
+    }
+
+
+    filterUsers(query: string) {
+        if (!query) {
+            this.filteredUsersList = this.usersList;
+            return;
+        }
+        const lowerQuery = query.toLowerCase();
+        this.filteredUsersList = this.usersList.filter(u =>
+            (u.userName?.toLowerCase().includes(lowerQuery)) ||
+            (u.phoneNo?.toLowerCase().includes(lowerQuery)) ||
+            (u.email?.toLowerCase().includes(lowerQuery))
+        );
+    }
+
+    toggleUserSelection(user: any) {
+        const index = this.selectedUsers.findIndex(u => u._id === user._id);
+        if (index === -1) {
+            this.selectedUsers.push(user);
+        } else {
+            this.selectedUsers.splice(index, 1);
+        }
+        this.updateIndividualIds();
+    }
+
+    isUserSelected(user: any): boolean {
+        return this.selectedUsers.some(u => u._id === user._id);
+    }
+
+    removeUser(user: any) {
+        this.selectedUsers = this.selectedUsers.filter(u => u._id !== user._id);
+        this.updateIndividualIds();
+    }
+
+    // Helper to generate initials
+    getInitials(name: string | undefined): string {
+        if (!name) return '?';
+        const parts = name.trim().split(' ').filter(Boolean);
+        if (parts.length === 1) return parts[0].charAt(0).toUpperCase();
+        return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+    }
+
+    updateIndividualIds() {
+        const ids = this.selectedUsers.map(u => u._id);
+        this.form.patchValue({ individualIds: ids });
+        this.form.get('individualIds')?.updateValueAndValidity();
+    }
+
+    async submit() {
+        if (this.form.invalid) return;
+
+        this.isLoading = true;
+        const formVal = this.form.value;
+        const payload = this.buildPayload();
+
+        if (formVal.deliveryMode === 'schedule') {
+            const date = new Date(formVal.scheduledDate);
+            if (formVal.scheduledTime) {
+                const [hours, minutes] = formVal.scheduledTime.split(':').map((val: string) => parseInt(val, 10));
+                date.setHours(hours, minutes, 0, 0);
+            }
+            const scheduledAt = date.toISOString();
+
+            if (payload instanceof FormData) {
+                payload.append('scheduledAt', scheduledAt);
+            } else {
+                payload.scheduledAt = scheduledAt;
+            }
+
+            try {
+                const res: any = await this.apiMainService.createScheduledNotification(payload);
+                this.handleResponse(res);
+            } catch (err) {
+                this.handleError(err);
+            }
+        } else {
+            try {
+                const res: any = await this.apiMainService.sendNowNotification(payload);
+                this.handleResponse(res);
+            } catch (err) {
+                this.handleError(err);
+            }
+        }
+    }
+
+    handleResponse(res: any) {
+        this.isLoading = false;
+        if (res) {
+            this.toaster.success('Notification submitted successfully');
+            this.dialogRef.close(true);
+        } else {
+            this.toaster.error(res.message || 'Operation failed');
+        }
+    }
+
+    handleError(err: any) {
+        this.isLoading = false;
+        console.error(err);
+        this.toaster.error('Something went wrong');
+    }
+
+    onImageChange(event: any) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const dialogRef = this.dialog.open(ImageCropperComponent, {
+                width: '50%',
+                panelClass: 'image-cropper-dialog',
+                disableClose: true,
+                data: { imageUrl: reader.result, imageWidth: 300, imageHeight: 300, aspectRatio: 1 }
+            });
+            dialogRef.afterClosed().subscribe((result: any) => {
+                if (result?.croppedImages) {
+                    this.uploadedImageFile = result.croppedImages.file;
+                    this.imageUrl = result.croppedImages.resizeDataUrl;
+                    this.imageReplaced = true;
+                }
+            });
+        };
+        // reset input so same file can be re-selected
+        event.target.value = '';
+    }
+
+    removeImage() {
+        this.imageUrl = null;
+        this.uploadedImageFile = null;
+        this.imageReplaced = false;
+    }
+
+    private buildPayload(): any | FormData {
+        const formVal = this.form.value;
+        const payload: any = {
+            title: formVal.title,
+            body: formVal.body,
+            targetType: formVal.targetType,
+            notificationType: 'USER'
+        };
+
+        if (formVal.targetType === 'individual') {
+            payload.targetIds = formVal.individualIds;
+        } else if (formVal.targetType !== 'all') {
+            payload.targetIds = formVal.targetIds;
+        }
+
+        if (!this.imageReplaced || !this.uploadedImageFile) {
+            if (this.data && this.data.imageUrl && this.imageUrl) {
+                payload.imageUrl = this.data.imageUrl;
+            }
+            return payload;
+        }
+
+        const fd = new FormData();
+        Object.entries(payload).forEach(([key, val]) => {
+            if (Array.isArray(val)) {
+                fd.append(key, JSON.stringify(val));
+            } else {
+                fd.append(key, val as any);
+            }
+        });
+        fd.append('image', this.uploadedImageFile);
+        return fd;
+    }
+
+    close() {
+        this.dialogRef.close(false);
+    }
+}

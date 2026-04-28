@@ -1,0 +1,174 @@
+<div class="review-page-container">
+    <!-- Header Card -->
+    <div class="review-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Review Analysis</h1>
+                <p class="page-subtitle">Detailed insights and customer feedback across outlets</p>
+            </div>
+            <div class="actions-section">
+                <div class="search-wrapper" *ngIf="displayedList.length > 0">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search by name or order #..." #searchInput
+                        (keyup)="onSearch(searchInput.value)" />
+                </div>
+                <div class="header-actions">
+                    <button mat-icon-button class="btn-filter" matTooltip="Filters" (click)="openFilterDialog()">
+                        <mat-icon [matBadge]="activeFilterCount" [matBadgeHidden]="activeFilterCount === 0"
+                            matBadgeSize="small" matBadgeColor="accent">filter_list</mat-icon>
+                    </button>
+                    <button mat-flat-button class="btn-export excel" matTooltip="Excel Export" (click)="excelExport()"
+                        *ngIf="displayedList.length > 0">
+                        <mat-icon>table_chart</mat-icon> Excel
+                    </button>
+                    <button mat-flat-button class="btn-export pdf" matTooltip="Download PDF" (click)="downloadPdf()"
+                        *ngIf="displayedList.length > 0">
+                        <mat-icon>picture_as_pdf</mat-icon> PDF
+                    </button>
+                    <button mat-icon-button class="btn-view-toggle" (click)="changeDataView()"
+                        *ngIf="reviewList.length > 0" [matTooltip]="isChartShow ? 'Show List' : 'Show Visual Insights'">
+                        <mat-icon>{{ isChartShow ? 'view_list' : 'bar_chart' }}</mat-icon>
+                    </button>
+                    <button mat-icon-button class="btn-refresh" (click)="reloadReviews()" matTooltip="Refresh Reviews"
+                        [disabled]="isLoading">
+                        <mat-icon [class.spin]="isLoading">refresh</mat-icon>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Body -->
+    <div class="content-body">
+        <!-- Filter Section (Standard Cafe/Outlet Select) -->
+        <div class="filter-wrapper mb-4">
+            <app-common-outlet-cafe-select [config]="isAdmin ? headerConfigAdmin : headerConfig"
+                (submitted)="filterSubmitted($event)">
+            </app-common-outlet-cafe-select>
+        </div>
+
+        <!-- Totals Strip -->
+        <div class="totals-strip mb-4" *ngIf="reviewList.length > 0">
+            <div class="total-chip">
+                <span class="chip-label">Total Reviews</span>
+                <span class="chip-value">{{ reviewList.length }}</span>
+            </div>
+            <div class="total-chip highlight">
+                <span class="chip-label">Avg Rating</span>
+                <span class="chip-value">{{ averageRating | number:'1.1-1' }} ★</span>
+            </div>
+            <div class="total-chip">
+                <span class="chip-label">Rated</span>
+                <span class="chip-value">{{ (reviewList.length - (ratingCounts[5]?.count || 0)) }}</span>
+            </div>
+            <div class="total-chip">
+                <span class="chip-label">Skipped</span>
+                <span class="chip-value">{{ ratingCounts[5]?.count || 0 }}</span>
+            </div>
+        </div>
+
+        <!-- Rating Status Grid (Clickable Filters) -->
+        <div class="stats-grid mb-4" *ngIf="!isChartShow && reviewList.length > 0">
+            <div class="stat-card" [class.active]="filterRating === '5'" (click)="onFilterRating('5')">
+                <div class="stat-icon success"><mat-icon>star</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ ratingCounts[0]?.count || 0 }}</div>
+                    <div class="stat-label">5 Stars</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="filterRating === '4'" (click)="onFilterRating('4')">
+                <div class="stat-icon primary"><mat-icon>star</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ ratingCounts[1]?.count || 0 }}</div>
+                    <div class="stat-label">4 Stars</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="filterRating === '3'" (click)="onFilterRating('3')">
+                <div class="stat-icon info"><mat-icon>star_half</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ ratingCounts[2]?.count || 0 }}</div>
+                    <div class="stat-label">3 Stars</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="filterRating === '2'" (click)="onFilterRating('2')">
+                <div class="stat-icon warning"><mat-icon>star_outline</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ ratingCounts[3]?.count || 0 }}</div>
+                    <div class="stat-label">2 Stars</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="filterRating === '1'" (click)="onFilterRating('1')">
+                <div class="stat-icon error"><mat-icon>star_outline</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ ratingCounts[4]?.count || 0 }}</div>
+                    <div class="stat-label">1 Star</div>
+                </div>
+            </div>
+            <div class="stat-card" [class.active]="filterRating === 'skipped'" (click)="onFilterRating('skipped')">
+                <div class="stat-icon info"><mat-icon>chat_bubble_outline</mat-icon></div>
+                <div class="stat-info">
+                    <div class="stat-value">{{ ratingCounts[5]?.count || 0 }}</div>
+                    <div class="stat-label">Skipped</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Filter Chips -->
+        <div class="active-filter-chips mb-4" *ngIf="activeFilterCount > 0 || searchText">
+            <div class="chip-strip">
+                <span class="label">Active Filters:</span>
+                <div class="filter-chip active" *ngIf="filterRating" (click)="onFilterRating(filterRating)">
+                    {{ filterRating === 'skipped' ? 'Skipped' : filterRating + ' Stars' }}
+                    <mat-icon>close</mat-icon>
+                </div>
+                <div class="filter-chip active" *ngIf="hasCommentOnly" (click)="hasCommentOnly = false; applySearch()">
+                    With Comments Only
+                    <mat-icon>close</mat-icon>
+                </div>
+                <button mat-stroked-button class="btn-clear-all" (click)="clearFilters()">
+                    <mat-icon>filter_alt_off</mat-icon> Clear All
+                </button>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div class="loading-state" *ngIf="isLoading">
+            <mat-spinner diameter="44"></mat-spinner>
+            <p>Loading reviews...</p>
+        </div>
+
+        <!-- Reviews List View -->
+        <div class="reviews-list-view" *ngIf="!isLoading && !isChartShow">
+            <div class="row g-4" *ngIf="displayedList.length > 0; else noRecords">
+                <div class="col-12" *ngFor="let order of paginatedReviewList">
+                    <app-review-card [order]="order"></app-review-card>
+                </div>
+            </div>
+
+            <ng-template #noRecords>
+                <div class="empty-state">
+                    <mat-icon class="empty-icon">rate_review</mat-icon>
+                    <h3>No Reviews Found</h3>
+                    <p>No feedback found matching your current filter criteria.</p>
+                </div>
+            </ng-template>
+
+            <!-- Paginator -->
+            <div class="paginator-wrapper mt-4" *ngIf="displayedList.length > 0">
+                <mat-paginator [length]="displayedList.length" [pageSize]="pageSize"
+                    [pageSizeOptions]="[5, 10, 25, 100]" (page)="onPageChange($event)" class="custom-paginator"
+                    showFirstLastButtons>
+                </mat-paginator>
+            </div>
+        </div>
+
+        <!-- Chart View -->
+        <div class="chart-view-container" *ngIf="isChartShow && !isLoading">
+            <mat-card class="chart-card p-4 border-0 shadow-sm">
+                <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsPie" [(update)]="updateStatusFlag"
+                    [oneToOne]="oneToOneStatusFlag" style="width: 100%; height: 500px; display: block;">
+                </highcharts-chart>
+            </mat-card>
+        </div>
+    </div>
+</div>

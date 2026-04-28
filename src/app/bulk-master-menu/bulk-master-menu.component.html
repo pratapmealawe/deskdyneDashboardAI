@@ -1,0 +1,69 @@
+<div class="container-fluid bulk-menu-container">
+
+  <!-- HEADER SECTION -->
+  <div class="org-header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Bulk Master Menu</h1>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search bulk items..." [(ngModel)]="searchTerm" (input)="applyFilter()" />
+        </div>
+
+        <mat-form-field appearance="outline" class="category-filter">
+          <mat-label>Category</mat-label>
+          <mat-select [(value)]="selectedCategoryFilter" (selectionChange)="applyFilter()">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let cat of categoryList" [value]="cat.value">
+              {{ cat.title }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-flat-button color="primary" class="btn-add-item" (click)="addMenuItem()"
+          *appHasPermission="'FOOD_ITEM:ADD'">
+          <mat-icon>add</mat-icon>
+          <span>Add Bulk Menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU LIST -->
+  <div class="menu-content-area" *ngIf="showCard">
+    <div *ngFor="let group of groupedMenuList" class="category-section">
+      <!-- Category Header -->
+      <div class="category-header">
+        <div class="category-info">
+          <div class="category-icon-circle">
+            <mat-icon>category</mat-icon>
+          </div>
+          <span class="category-name">{{ group.category }}</span>
+        </div>
+        <span class="category-count">{{ group.items.length }} item{{ group.items.length > 1 ?'s' :'' }}</span>
+      </div>
+
+      <!-- Menu Items List -->
+      <div class="menu-list">
+        <app-bulk-master-menu-card *ngFor="let item of group.items; let i = index" [foodItem]="item"
+          (refreshList)="getMenuItemsList()">
+        </app-bulk-master-menu-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!showCard">
+    <div class="empty-icon">
+      <mat-icon>inventory_2</mat-icon>
+    </div>
+    <h3>No bulk items found</h3>
+    <p>Start by adding new items to your bulk master menu</p>
+    <button mat-flat-button color="primary" (click)="addMenuItem()">
+      <mat-icon>add</mat-icon>
+      Add First Item
+    </button>
+  </div>
+</div>

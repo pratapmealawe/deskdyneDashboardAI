@@ -1,50 +1,64 @@
-<div class="outlet-menu-container">
-
-  <!-- HEADER SECTION -->
-  <div class="menu-header-card">
-    <div class="header-left">
-      <div class="header-icon">
+<div class="outlet-menu-container animate-fadeIn">
+  <!-- Page Header -->
+  <div class="bulk-dashboard-header">
+    <div class="header-card">
+      <div class="header-icon-box">
         <mat-icon>restaurant_menu</mat-icon>
       </div>
-      <div class="header-text">
-        <h2 class="header-title">Menu Management</h2>
-        <p class="header-subtitle">Manage outlet menu items, categories and pricing</p>
+      <div class="header-text-content">
+        <h1 class="page-title">Menu Management</h1>
+        <p class="page-subtitle">
+          Manage outlet menu items, categories and pricing
+        </p>
       </div>
     </div>
-    <div class="header-actions">
-      <button mat-stroked-button class="action-btn" (click)="excelExport()">
+
+    <!-- Header Actions -->
+    <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+      <button mat-flat-button color="primary" class="btn-primary-action" *appHasPermission="'MENU:ADD'"
+        (click)="open(); resetValues()">
+        <mat-icon>add</mat-icon>
+        Add Menu
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="openUploadExcelPopup()">
+        <mat-icon>upload</mat-icon>
+        Import
+      </button>
+      <button mat-stroked-button class="btn-secondary-action" (click)="excelExport()">
         <mat-icon>download</mat-icon>
         Export
       </button>
-      <button mat-stroked-button class="action-btn" (click)="openOutlet()">
+      <button mat-stroked-button class="btn-secondary-action" (click)="openOutlet()">
         <mat-icon>content_copy</mat-icon>
-        Copy Menu
+        Copy Outlet Menu
       </button>
-      <button mat-stroked-button class="action-btn" (click)="openMenu()">
+      <button mat-stroked-button class="btn-secondary-action" (click)="openMenu()">
         <mat-icon>library_add</mat-icon>
-        Master Menu
-      </button>
-      <button mat-flat-button color="primary" class="action-btn primary-btn" *ngIf="true || btnPolicy?.addMenu"
-        (click)="open(); resetValues()">
-        <mat-icon>add</mat-icon>
-        Add Item
+        Copy Outlet Master Menu
       </button>
     </div>
   </div>
 
-  <!-- FILTERS SECTION -->
-  <div class="filters-card">
-    <div class="filters-row">
-      <div class="filter-group search-group">
-        <mat-icon class="search-icon">search</mat-icon>
-        <input type="text" class="search-input" placeholder="Search menu items..." [(ngModel)]="searchTermMenu"
-          (input)="applyMenuFilters()" />
-        <button *ngIf="searchTermMenu" class="clear-btn" (click)="searchTermMenu=''; applyMenuFilters()">
-          <mat-icon>close</mat-icon>
-        </button>
+  <!-- Main Content Area -->
+  <div class="modern-card">
+    <div class="card-header with-actions">
+      <div class="d-flex align-items-center gap-3">
+        <div class="icon-box info">
+          <mat-icon>inventory_2</mat-icon>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <h3 class="mb-0">Menu Directory</h3>
+          <span class="count-badge-premium">{{ filteredMenuList?.length || 0 }}</span>
+        </div>
       </div>
 
-      <div class="filter-group">
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search menu items..." [(ngModel)]="searchTermMenu"
+            (input)="applyMenuFilters()">
+        </div>
+
         <mat-form-field appearance="outline" class="category-filter">
           <mat-label>Category</mat-label>
           <mat-select [(value)]="selectedCategoryFilter" (selectionChange)="applyMenuFilters()">
@@ -54,517 +68,176 @@
             </mat-option>
           </mat-select>
         </mat-form-field>
-      </div>
 
-      <div class="filter-stats">
-        <div class="stat-chip">
-          <mat-icon>inventory_2</mat-icon>
-          <span>{{ filteredMenuList?.length || 0 }} items</span>
+        <div class="date-filter" *ngIf="currentMenuView === 'weekly'">
+          <mat-form-field appearance="outline" class="category-filter">
+            <mat-label>Filter by Date</mat-label>
+            <input matInput [matDatepicker]="menuDatePicker" [(ngModel)]="selectedDateFilter"
+              (dateChange)="applyMenuFilters()" placeholder="All dates" readonly />
+            <mat-datepicker-toggle matIconSuffix [for]="menuDatePicker"></mat-datepicker-toggle>
+            <button *ngIf="selectedDateFilter" matSuffix mat-icon-button
+              (click)="selectedDateFilter = null; applyMenuFilters()">
+              <mat-icon>close</mat-icon>
+            </button>
+            <mat-datepicker #menuDatePicker></mat-datepicker>
+          </mat-form-field>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- MENU LIST -->
-  <div class="menu-content-area" *ngIf="showCard">
-    <div *ngFor="let group of groupedMenuList" class="category-section">
-      <!-- Category Header -->
-      <div class="category-header">
-        <div class="category-info">
-          <div class="category-icon-circle">
-            <mat-icon>category</mat-icon>
+    <!-- View Mode Tabs -->
+    <div class="view-mode-tabs-premium" *ngIf="outletObj?.isWeeklyMenu">
+      <div class="tabs-inner">
+        <button class="mode-tab" [class.active]="currentMenuView === 'normal'" (click)="onViewChange('normal')">
+          <mat-icon>list_alt</mat-icon>
+          <div class="tab-label">
+            <span class="main">Normal Menu</span>
+            <span class="sub">Grouped by categories</span>
           </div>
-          <span class="category-name">{{ group.category }}</span>
-        </div>
-        <span class="category-count">{{ group.items.length }} item{{ group.items.length > 1 ? 's' : '' }}</span>
+        </button>
+        <button class="mode-tab" [class.active]="currentMenuView === 'weekly'" (click)="onViewChange('weekly')">
+          <mat-icon>date_range</mat-icon>
+          <div class="tab-label">
+            <span class="main">Weekly Menu</span>
+            <span class="sub">Sorted by schedule</span>
+          </div>
+        </button>
       </div>
+    </div>
 
-      <!-- Menu Items List -->
-      <div class="menu-list">
-        <div class="menu-card-h" *ngFor="let item of group.items; let i = index">
-          <!-- Square Image with padding -->
-          <div class="card-image-h">
-            <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" />
-            <div class="type-indicator" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'non-veg'">
-              <span class="indicator-dot"></span>
-            </div>
-          </div>
-
-          <!-- Card Content -->
-          <div class="card-content-h">
-            <!-- Row 1: Name + Actions -->
-            <div class="content-top">
-              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h3>
-              <div class="item-actions">
-                <button mat-icon-button class="edit-btn" *ngIf="true || btnPolicy?.editMenu" (click)="edit(item, i)"
-                  matTooltip="Edit">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button class="delete-btn" *ngIf="true || btnPolicy?.deleteMenu"
-                  (click)="showPopup(item, i)" matTooltip="Delete">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
-            </div>
-
-            <!-- Row 2: Description -->
-            <p class="item-description" *ngIf="item.description" [matTooltip]="item.description">
-              {{ item.description }}
-            </p>
-
-            <!-- Row 3: Subsidy -->
-            <div class="subsidy-row" *ngIf="item.subsidy">
-              <div class="subsidy-chip">
-                <mat-icon>sell</mat-icon>
-                <span>₹{{ item.subsidy }} subsidy</span>
-              </div>
-            </div>
-
-            <!-- Row 4: Meal Chips + Section -->
-            <div class="chips-row">
-              <span class="meal-chip" *ngFor="let meal of item.mealTimingInfo">
-                {{ meal.mealType }}
-              </span>
-              <span class="section-chip" *ngIf="outletObj?.isSectionWiseMenu && item.sectionConfig">
-                {{ item.sectionConfig.sectionName }}
-              </span>
-              <span class="precedence-chip" *ngIf="item.precedence !== undefined && item.precedence !== null"
-                matTooltip="Display Order">
-                <mat-icon inline>sort</mat-icon> {{ item.precedence }}
-              </span>
-            </div>
-
-            <!-- Row 5: Price + Stock Toggle -->
-            <div class="card-footer">
-              <div class="price-display">
-                <span class="currency">₹</span>{{ item.price }}
-              </div>
-              <div class="stock-toggle">
-                <mat-slide-toggle color="primary" [checked]="item.isActive" class="scale-08"
-                  (change)="showPopupForItemActivation(item, $event)">
-                </mat-slide-toggle>
-              </div>
-            </div>
+    <div class="card-body p-4">
+      <!-- PRE-ORDER INFO BANNER -->
+      <div class="preorder-info-banner mb-4" *ngIf="outletObj?.isPreOrder">
+        <div class="banner-content">
+          <mat-icon class="info-icon">info</mat-icon>
+          <div class="banner-text">
+            <span class="banner-title">Pre-Order Mode Enabled</span>
+            <span class="banner-description">
+              All menu items are automatically synchronized with the outlet's global meal timings.
+              Individual item selection is disabled to ensure consistency across the pre-order schedule.
+            </span>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Empty State -->
-  <div class="empty-state" *ngIf="!showCard">
-    <div class="empty-icon">
-      <mat-icon>restaurant</mat-icon>
-    </div>
-    <h3>No menu items found</h3>
-    <p>Start by adding new items to your menu</p>
-    <button mat-flat-button color="primary" (click)="open(); resetValues()">
-      <mat-icon>add</mat-icon>
-      Add First Item
-    </button>
-  </div>
-
-  <!-- ADD / EDIT MENU DIALOG TEMPLATE -->
-  <ng-template #content>
-    <div mat-dialog-title class="dialog-title">
-      <div class="title-left">
-        <mat-icon>{{ showUpdateBtn ? 'edit' : 'add_circle' }}</mat-icon>
-        {{ showUpdateBtn ? 'Edit Menu Item' : 'Add Menu Item' }}
-      </div>
-      <button mat-icon-button [matMenuTriggerFor]="infoMenu" class="info-btn" matTooltip="Required Fields">
-        <mat-icon>info</mat-icon>
-      </button>
-      <mat-menu #infoMenu="matMenu" class="info-menu-panel">
-        <div class="info-menu-content" (click)="$event.stopPropagation()">
-          <div class="info-header">
-            <mat-icon>checklist</mat-icon>
-            <span>Required Fields</span>
-          </div>
-          <ul class="info-list required">
-            <li><mat-icon>check_circle</mat-icon> Item Name</li>
-            <li><mat-icon>check_circle</mat-icon> Price</li>
-            <li><mat-icon>check_circle</mat-icon> Category</li>
-            <li><mat-icon>check_circle</mat-icon> Item Type (Veg/Non-Veg)</li>
-            <li><mat-icon>check_circle</mat-icon> Available</li>
-          </ul>
-          <div class="info-header mt-2">
-            <mat-icon>stars</mat-icon>
-            <span>Recommended</span>
-          </div>
-          <ul class="info-list recommended">
-            <li><mat-icon>add_circle_outline</mat-icon> Item Image</li>
-            <li><mat-icon>add_circle_outline</mat-icon> Description</li>
-            <li><mat-icon>add_circle_outline</mat-icon> Meal Timings</li>
-          </ul>
-        </div>
-      </mat-menu>
-    </div>
-
-    <mat-dialog-content class="dialog-content">
-      <div [formGroup]="form" class="dialog-form-layout">
-        <!-- LEFT SIDEBAR: Image Upload -->
-        <div class="dialog-sidebar">
-          <div class="image-upload-card">
-            <div class="upload-card-header">
-              <mat-icon>image</mat-icon>
-              <span>Item Image</span>
+      <!-- MENU LIST -->
+      <div class="menu-content-area" *ngIf="showCard">
+        <div *ngFor="let group of groupedMenuList" class="category-section">
+          <div class="category-header">
+            <div class="category-info">
+              <div class="category-icon-circle">
+                <mat-icon>{{ currentMenuView === 'weekly' ? 'event' : 'category' }}</mat-icon>
+              </div>
+              <span class="category-name">{{ group.category }}</span>
             </div>
-            <div class="upload-wrapper">
-              <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
-                (change)="handleFileInput($event)" />
-              <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
-                <img *ngIf="imageUrl && !imageReplaced" [src]="showUpdateBtn ? displayImgUrl + imageUrl : imageUrl"
-                  class="preview-image" />
-                <img *ngIf="imageUrl && imageReplaced" [src]="uploadStatus ? imageUrl : displayImgUrl + imageUrl"
-                  class="preview-image" />
-                <div *ngIf="!imageUrl" class="placeholder-content">
-                  <mat-icon>cloud_upload</mat-icon>
-                  <span>Upload Image</span>
+            <span class="category-badge">{{ group.subGroups[0].items.length }} Items</span>
+          </div>
+
+          <!-- Category Sub-sections -->
+          <div *ngFor="let sub of group.subGroups; let lastSub = last" class="sub-group-section">
+            <div class="sub-header" *ngIf="sub.title">
+              <div class="sub-title-main">
+                <mat-icon>subdirectory_arrow_right</mat-icon>
+                <span>{{ sub.title }}</span>
+              </div>
+            </div>
+
+            <!-- Menu Items List -->
+            <div class="menu-grid-premium">
+              <div class="menu-item-card" *ngFor="let item of sub.items; let i = index">
+                <div class="card-content-wrapper">
+                  <div class="menu-image-wrapper">
+                    <img [src]="displayImgUrl + item.imageUrl" class="menu-avatar" alt="{{ item.itemName }}"
+                      (error)="onImageError($event)" />
+                    <div [ngClass]="item.itemType === 'Veg' ? 'vegIcon' : 'nonvegIcon'" class="type-indicator"></div>
+                  </div>
+
+                  <div class="menu-details">
+                    <h4 class="menu-name" [matTooltip]="item.itemName">{{ item.itemName || 'Unnamed item' }}</h4>
+                    <p class="description-text" *ngIf="item.description" [matTooltip]="item.description">
+                      {{ item.description }}
+                    </p>
+
+                    <!-- Chips Row -->
+                    <div class="chips-row-modern">
+                      <span class="meal-chip-modern"
+                        *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (outletObj?.isPreOrder ? outletObj.mealTiming : []))"
+                        [ngClass]="meal.mealSubsidyType">
+                        {{ meal.mealType }}
+                      </span>
+                    </div>
+
+                    <!-- Discount/Subsidy Section -->
+                    <div class="subsidy-section-modern" *ngIf="item.subsidy || item.discountEnabled">
+                      <div class="subsidy-pill" *ngIf="item.subsidy">
+                        <mat-icon>sell</mat-icon>
+                        <span>₹{{ item.subsidy }} subsidy</span>
+                      </div>
+
+                      <ng-container *ngIf="item.discountEnabled">
+                        <div class="discount-pill" [ngClass]="item.discountType">
+                          <mat-icon>discount</mat-icon>
+                          <span>{{ item.discountType === 'percentage' ? item.discountValue + '%' : '₹' +
+                            item.discountValue }} OFF</span>
+                        </div>
+                      </ng-container>
+                    </div>
+                  </div>
                 </div>
-                <div class="upload-overlay">
-                  <span>Change Image</span>
+
+                <!-- Precedence Badge Top Right -->
+                <div class="precedence-badge-top" *ngIf="item.precedence !== undefined && item.precedence !== null"
+                  matTooltip="Precedence">
+                  <mat-icon>sort</mat-icon>
+                  <span>{{ item.precedence }}</span>
+                </div>
+
+                <div class="menu-footer">
+                  <div class="price-tag">
+                    <span class="currency">₹</span>
+                    <span class="value">{{ item.price }}</span>
+                  </div>
+
+                  <div class="footer-actions">
+                    <button mat-icon-button class="premium-icon-btn edit" *appHasPermission="'MENU:EDIT'"
+                      (click)="edit(item)" matTooltip="Edit">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button class="premium-icon-btn delete" *appHasPermission="'MENU:DELETE'"
+                      (click)="showPopup(item)" matTooltip="Delete">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                    <mat-slide-toggle color="primary" [checked]="item.isActive"
+                      (change)="showPopupForItemActivation(item, $event)" class="status-toggle"
+                      matTooltip="Toggle Status">
+                    </mat-slide-toggle>
+                  </div>
                 </div>
               </div>
             </div>
-            <p class="upload-hint">Click to upload or drag an image</p>
-          </div>
 
-          <!-- Item Type Section -->
-          <div class="type-selection-card">
-            <div class="upload-card-header">
-              <mat-icon>restaurant</mat-icon>
-              <span>Item Type</span>
-            </div>
-            <mat-radio-group formControlName="itemType" class="type-radio-group">
-              <div class="type-option veg" [class.selected]="form.get('itemType')?.value === 'Veg'">
-                <mat-radio-button value="Veg">
-                  <span class="type-indicator veg-dot"></span>
-                  <span>Veg</span>
-                </mat-radio-button>
-              </div>
-              <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value === 'NonVeg'">
-                <mat-radio-button value="NonVeg">
-                  <span class="type-indicator nonveg-dot"></span>
-                  <span>Non-Veg</span>
-                </mat-radio-button>
-              </div>
-            </mat-radio-group>
-          </div>
-
-          <!-- Quick Settings -->
-          <div class="quick-settings-card">
-            <div class="settings-toggle">
-              <mat-slide-toggle formControlName="isActive" color="primary">
-                Available
-              </mat-slide-toggle>
-            </div>
-            <div class="settings-toggle">
-              <mat-slide-toggle formControlName="doNotChangeInFuture" color="primary">
-                Lock Subsidy
-              </mat-slide-toggle>
-            </div>
-          </div>
-        </div>
-
-        <!-- RIGHT MAIN: Form Fields -->
-        <div class="dialog-main">
-          <!-- Basic Info Section -->
-          <div class="form-section">
-            <div class="section-header">
-              <mat-icon>info</mat-icon>
-              <span>Basic Information</span>
-            </div>
-            <div class="row g-3">
-              <div class="col-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Item Name</mat-label>
-                  <input matInput type="text" formControlName="itemName" placeholder="e.g. Masala Dosa" />
-                  <mat-error *ngIf="f['itemName'].hasError('required')">Item name is required</mat-error>
-                </mat-form-field>
-              </div>
-              <div class="col-12">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Description</mat-label>
-                  <textarea matInput formControlName="description" rows="2"
-                    placeholder="Brief description of the item..."></textarea>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-
-          <!-- Pricing Section -->
-          <div class="form-section">
-            <div class="section-header">
-              <mat-icon>payments</mat-icon>
-              <span>Pricing</span>
-            </div>
-            <div class="row g-3">
-              <div class="col-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Price (₹)</mat-label>
-                  <input matInput type="number" min="1" formControlName="price"
-                    (keydown)="preventInvalidNumber($event)" />
-                  <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
-                  <mat-error *ngIf="f['price'].hasError('required')">Required</mat-error>
-                </mat-form-field>
-              </div>
-              <div class="col-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Subsidy (₹)</mat-label>
-                  <input matInput type="number" min="0" formControlName="subsidy"
-                    (keydown)="preventInvalidNumber($event)" />
-                  <mat-icon matPrefix class="field-icon">discount</mat-icon>
-                </mat-form-field>
-              </div>
-              <div class="col-6">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Display Order</mat-label>
-                  <input matInput type="number" min="0" formControlName="precedence" />
-                  <mat-icon matPrefix class="field-icon">sort</mat-icon>
-                </mat-form-field>
-              </div>
-            </div>
-          </div>
-
-          <!-- Meal Timings Section -->
-          <div class="form-section">
-            <div class="section-header">
-              <mat-icon>schedule</mat-icon>
-              <span>Meal Timings</span>
-            </div>
-            <mat-chip-listbox formControlName="mealTimingInfo" multiple class="chip-selection">
-              <mat-chip-option *ngFor="let chip of outletObj?.mealTiming" [value]="chip.mealType">
-                {{ chip?.mealType }} ({{ chip.acceptOrderFrom }} - {{ chip.acceptOrderTill }})
-              </mat-chip-option>
-            </mat-chip-listbox>
-          </div>
-
-          <!-- Category Section -->
-          <div class="form-section">
-            <div class="section-header">
-              <mat-icon>category</mat-icon>
-              <span>Category</span>
-            </div>
-            <mat-chip-listbox formControlName="category" class="chip-selection">
-              <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
-                {{ chip?.title }}
-              </mat-chip-option>
-            </mat-chip-listbox>
-            <div class="text-danger small mt-1" *ngIf="f['category'].invalid && f['category'].touched">
-              Category is required
-            </div>
-          </div>
-
-          <!-- Section Config -->
-          <div class="form-section" *ngIf="outletObj?.isSectionWiseMenu && outletObj?.sectionConfig?.length > 0">
-            <div class="section-header">
-              <mat-icon>layers</mat-icon>
-              <span>Outlet Section</span>
-            </div>
-            <mat-form-field appearance="outline" class="w-100">
-              <mat-label>Select Section</mat-label>
-              <mat-select formControlName="sectionConfig" [compareWith]="compareSection">
-                <mat-option [value]="null">None</mat-option>
-                <mat-option *ngFor="let section of outletObj.sectionConfig" [value]="section">
-                  {{ section.sectionName }} ({{ section.sectionType | titlecase }})
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-          </div>
-
-          <!-- Nutrition Section -->
-          <div class="form-section">
-            <div class="section-header">
-              <mat-icon>local_fire_department</mat-icon>
-              <span>Nutrition Information</span>
-            </div>
-
-            <div class="row g-3">
-              <div class="col-12 col-md-4">
-                <mat-form-field appearance="outline" class="w-100">
-                  <mat-label>Energy (kcal)</mat-label>
-                  <input matInput type="number" formControlName="energyValue" />
-                  <mat-icon matPrefix class="field-icon">bolt</mat-icon>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <div [formArrayName]="'nutritionList'" class="nutrition-list">
-              <div class="nutrition-row"
-                *ngFor="let poc of nutrition_Lists.controls; let i = index; let first = first; let last = last"
-                [formGroupName]="i">
-                <mat-form-field appearance="outline" class="nutrition-field">
-                  <mat-label>Nutrient</mat-label>
-                  <mat-select formControlName="nutritionName">
-                    <mat-option value="Protein">Protein</mat-option>
-                    <mat-option value="Fat">Fat</mat-option>
-                    <mat-option value="Carbs">Carbs</mat-option>
-                    <mat-option value="Fiber">Fiber</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="nutrition-field">
-                  <mat-label>Value</mat-label>
-                  <input matInput type="number" formControlName="nutritionValue" />
-                </mat-form-field>
-                <mat-form-field appearance="outline" class="nutrition-field small">
-                  <mat-label>Unit</mat-label>
-                  <mat-select formControlName="nutritionUnit">
-                    <mat-option value="gm">gm</mat-option>
-                    <mat-option value="ml">ml</mat-option>
-                  </mat-select>
-                </mat-form-field>
-                <div class="nutrition-actions">
-                  <button mat-icon-button color="primary" *ngIf="last" (click)="addNutritionLists()" class="add-btn"
-                    type="button">
-                    <mat-icon>add_circle</mat-icon>
-                  </button>
-                  <button mat-icon-button color="warn" *ngIf="!first" (click)="removenNutritionLists(i)" type="button">
-                    <mat-icon>remove_circle</mat-icon>
-                  </button>
-                </div>
-              </div>
-            </div>
+            <!-- Section Divider (Not for last item) -->
+            <div class="section-divider-modern" *ngIf="!lastSub"></div>
           </div>
         </div>
       </div>
-    </mat-dialog-content>
 
-    <mat-dialog-actions align="end" class="dialog-actions">
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" *ngIf="!showUpdateBtn" [disabled]="form.invalid"
-        [mat-dialog-close]="'add'">
-        <mat-icon>add</mat-icon> Add Item
-      </button>
-      <button mat-raised-button color="accent" *ngIf="showUpdateBtn" [disabled]="form.invalid"
-        [mat-dialog-close]="'update'">
-        <mat-icon>save</mat-icon> Update Item
-      </button>
-    </mat-dialog-actions>
-  </ng-template>
-
-  <!-- MASTER MENU DIALOG TEMPLATE -->
-  <ng-template #masterMenu>
-    <h2 mat-dialog-title class="dialog-title">
-      <mat-icon>library_add</mat-icon>
-      Add from Master Menu
-    </h2>
-
-    <mat-dialog-content class="dialog-content">
-      <div class="dialog-filters">
-        <div class="filter-group search-group">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input type="text" class="search-input" placeholder="Search items..." [(ngModel)]="searchTerm"
-            (input)="applyMasterFilter()" />
+      <!-- Empty States -->
+      <div class="empty-state-modern py-5" *ngIf="!showCard && !searchTermMenu">
+        <div class="empty-icon-wrap">
+          <mat-icon>restaurant</mat-icon>
         </div>
-        <mat-form-field appearance="outline" class="category-select">
-          <mat-label>Category</mat-label>
-          <mat-select [(ngModel)]="selectedCategory" (selectionChange)="applyMasterFilter()">
-            <mat-option value="">All Categories</mat-option>
-            <mat-option *ngFor="let category of categoryList" [value]="category.value">
-              {{ category.title }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
+        <h4>No menu items found</h4>
+        <p>Start by adding new items to your menu or using the master menu tool</p>
       </div>
 
-      <div class="selection-list">
-        <div class="selection-card" *ngFor="let item of filteredMasterMenuList"
-          [ngClass]="{ 'selected': isSelected(item) }" (click)="onItemToggle(item, {checked: !isSelected(item)})">
-          <mat-checkbox [checked]="isSelected(item)" (click)="$event.stopPropagation()"
-            style="display:none"></mat-checkbox>
-          <img [src]="displayImgUrl + item.imageUrl" class="selection-thumb" />
-          <div class="selection-info">
-            <div class="selection-name">{{ item.itemName || '-' }}</div>
-            <div class="selection-meta">
-              <span class="meta-chip">{{ item.category || '-' }}</span>
-              <span class="meta-chip price">₹{{ item.price }}</span>
-              <span class="type-dot" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'nonveg'"></span>
-            </div>
-          </div>
-        </div>
-        <div class="empty-list" *ngIf="filteredMasterMenuList.length === 0">
+      <div class="empty-state-modern py-5" *ngIf="!showCard && searchTermMenu">
+        <div class="empty-icon-wrap">
           <mat-icon>search_off</mat-icon>
-          <span>No items found</span>
         </div>
+        <h4>No match for "{{ searchTermMenu }}"</h4>
+        <p>Try refining your search terms or clearing filters</p>
       </div>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end" class="dialog-actions">
-      <div class="selection-count" *ngIf="selectedItems.length > 0">
-        {{ selectedItems.length }} item(s) selected
-      </div>
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" [mat-dialog-close]="'addMasterMenu'"
-        [disabled]="selectedItems.length === 0">
-        <mat-icon>add</mat-icon> Add Selected
-      </button>
-    </mat-dialog-actions>
-  </ng-template>
-
-  <!-- SELECT OUTLET DIALOG TEMPLATE -->
-  <ng-template #selectOutletModal>
-    <h2 mat-dialog-title class="dialog-title">
-      <mat-icon>content_copy</mat-icon>
-      Copy Menu from Outlet
-    </h2>
-
-    <mat-dialog-content class="dialog-content">
-      <div class="dialog-filters">
-        <mat-form-field appearance="outline" class="outlet-select">
-          <mat-label>Select Outlet</mat-label>
-          <mat-select [(ngModel)]="selectedOutlet" (selectionChange)="onOutletChange()">
-            <mat-option [value]="null">Select Outlet</mat-option>
-            <mat-option *ngFor="let outlet of outletList" [value]="outlet">
-              {{ outlet.outletName }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <div class="filter-group search-group" *ngIf="selectedOutlet">
-          <mat-icon class="search-icon">search</mat-icon>
-          <input type="text" class="search-input" placeholder="Search items..." [(ngModel)]="searchTermCopyMenu"
-            (input)="applyCopyMenuFilter()" />
-        </div>
-      </div>
-
-      <div class="selection-list" *ngIf="selectedOutlet">
-        <div class="selection-card" *ngFor="let item of filteredOutletMenuList"
-          [ngClass]="{ 'selected': isMenuSelected(item) }"
-          (click)="onMenuItemToggle(item, {checked: !isMenuSelected(item)})">
-          <mat-checkbox [checked]="isMenuSelected(item)" (click)="$event.stopPropagation()"
-            style="display:none"></mat-checkbox>
-          <img [src]="displayImgUrl + item.imageUrl" class="selection-thumb" />
-          <div class="selection-info">
-            <div class="selection-name">{{ item.itemName || '-' }}</div>
-            <div class="selection-meta">
-              <span class="meta-chip">{{ item.category || '-' }}</span>
-              <span class="meta-chip price">₹{{ item.price }}</span>
-              <span class="type-dot" [ngClass]="item.itemType === 'Veg' ? 'veg' : 'nonveg'"></span>
-            </div>
-          </div>
-        </div>
-        <div class="empty-list" *ngIf="outletMenuList.length === 0">
-          <mat-icon>info</mat-icon>
-          <span>No menu items in selected outlet</span>
-        </div>
-      </div>
-
-      <div class="empty-list" *ngIf="!selectedOutlet">
-        <mat-icon>storefront</mat-icon>
-        <span>Select an outlet to view its menu</span>
-      </div>
-    </mat-dialog-content>
-
-    <mat-dialog-actions align="end" class="dialog-actions">
-      <div class="selection-count" *ngIf="transformedMenuItems.length > 0">
-        {{ transformedMenuItems.length }} item(s) selected
-      </div>
-      <button mat-button mat-dialog-close>Cancel</button>
-      <button mat-raised-button color="primary" [mat-dialog-close]="'addMenuItem'"
-        [disabled]="transformedMenuItems.length === 0">
-        <mat-icon>content_copy</mat-icon> Copy Selected
-      </button>
-    </mat-dialog-actions>
-  </ng-template>
-
+    </div>
+  </div>
 </div>

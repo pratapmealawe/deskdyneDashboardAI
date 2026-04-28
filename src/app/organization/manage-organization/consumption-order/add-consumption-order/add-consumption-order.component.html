@@ -1,0 +1,77 @@
+<div class="add-consumption-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!isEditMode" [class.warning]="isEditMode">
+        <mat-icon>{{ isEditMode ? 'edit' : 'restaurant_menu' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ isEditMode ? 'Edit Menu Item' : 'Add New Item' }}</h3>
+        <p>Outlet: <strong>{{ data.selectedCafeteria?.cafeteria_name || data.mealItem?.cafeteria_name }}</strong></p>
+      </div>
+    </div>
+    <button mat-icon-button (click)="close()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="itemForm" (ngSubmit)="save()" id="consumptionItemForm" class="p-2">
+      <div class="form-grid-modern">
+        <!-- Item Name Row -->
+        <div class="row g-3">
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Item Name</mat-label>
+              <mat-icon matPrefix>fastfood</mat-icon>
+              <input matInput formControlName="itemName" placeholder="e.g. Deluxe Veg Thali" />
+              <mat-error *ngIf="itemForm.get('itemName')?.hasError('required')">Item name is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Price & MG Row -->
+        <div class="row g-3 mt-1">
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Price (Incl. GST)</mat-label>
+              <mat-icon matPrefix>currency_rupee</mat-icon>
+              <input matInput type="number" formControlName="mealPrice" placeholder="0.00" />
+              <mat-error *ngIf="itemForm.get('mealPrice')?.hasError('required')">Price is required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Min Guarantees</mat-label>
+              <mat-icon matPrefix>verified</mat-icon>
+              <input matInput type="number" formControlName="minGuarantees" placeholder="0" />
+              <mat-error *ngIf="itemForm.get('minGuarantees')?.hasError('required')">MG is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Meal Type Hint (If applicable) -->
+        <div class="selection-container mt-3">
+          <p class="section-label mb-2"><mat-icon>info</mat-icon> Item Configuration</p>
+          <div class="alert alert-info py-2 px-3 m-0" style="font-size: 0.85rem; border-radius: 12px; background: #f0f7ff; border: 1px solid #e0efff; color: #1e40af;">
+            This item will be available for consumption orders in the <strong>{{ data.selectedCafeteria?.cafeteria_name || 'selected' }}</strong> cafeteria.
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="close()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="consumptionItemForm" 
+            [disabled]="itemForm.invalid || isSubmitting" class="btn-primary-action px-4">
+      <ng-container *ngIf="!isSubmitting">
+        <mat-icon>{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
+        <span>{{ isEditMode ? 'Update Item' : 'Create Item' }}</span>
+      </ng-container>
+      <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+        <mat-spinner diameter="20" color="accent"></mat-spinner>
+        <span>Saving...</span>
+      </div>
+    </button>
+  </mat-dialog-actions>
+</div>

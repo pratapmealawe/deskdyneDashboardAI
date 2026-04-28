@@ -1,0 +1,182 @@
+<div class="page-container">
+    <div class="page-header-card mb-4 mt-2">
+        <div class="header-content">
+            <div class="title-section">
+                <h2 class="page-title">Admin Daily Order Menu</h2>
+                <p class="page-subtitle">Manage menu configurations and delivery settings for {{ selectedCafeteriaName }}</p>
+            </div>
+            
+            <app-cafeteria-selector 
+                [cafeteriaList]="orgObj?.cafeteriaList" 
+                [selectedCafeteria]="selectedCafeteria"
+                (cafeteriaChanged)="onCafeteriaChange({value: $event})">
+            </app-cafeteria-selector>
+
+            <div class="header-actions mt-4 d-flex justify-content-end gap-2 w-100">
+                <button mat-flat-button color="primary" class="btn-primary-action" *ngIf="!vendorDetails" (click)="assignVendor()">
+                    <mat-icon>add</mat-icon> Assign Vendor
+                </button>
+                <button mat-flat-button color="primary" class="btn-primary-action" *ngIf="vendorDetails" (click)="changeVendor()">
+                    <mat-icon>edit</mat-icon> Change Vendor
+                </button>
+                <button mat-stroked-button class="btn-secondary-action" (click)="copyMenu()">
+                    <mat-icon>content_copy</mat-icon> Copy Menu
+                </button>
+                <button mat-stroked-button class="btn-secondary-action" (click)="importMenu()">
+                    <mat-icon>upload</mat-icon> Import
+                </button>
+                <button mat-stroked-button class="btn-secondary-action" (click)="exportMenu()" [disabled]="deliverySettings.length === 0">
+                    <mat-icon>download</mat-icon>Export
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="modern-card mt-4">
+        <div class="card-header with-actions">
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-box primary">
+                    <mat-icon>restaurant_menu</mat-icon>
+                </div>
+                <h3>Saved Menu</h3>
+            </div>
+            <button mat-flat-button color="primary" class="btn-primary-action" (click)="addDeliverySettings()">
+                <mat-icon>add</mat-icon> Add
+            </button>
+        </div>
+
+        <div class="card-body bg-light-soft" *ngIf="deliverySettings.length > 0">
+            <mat-accordion multi class="premium-accordion">
+                <mat-expansion-panel class="mb-3 border-0 shadow-sm rounded-lg" *ngFor="let element of deliverySettings"
+                    [expanded]="true">
+                    <mat-expansion-panel-header>
+                        <mat-panel-title class="flex-grow-1">
+                            <div class="header-info-grid me-1">
+                                <div class="info-block" style="min-width: 110px;">
+                                    <span class="label">Meal Type</span>
+                                    <span class="value">{{element.selectedMealType}}</span>
+                                </div>
+                                <div class="info-block" style="min-width: 100px;">
+                                    <span class="label">Delivery MOQ</span>
+                                    <span class="value">{{element.deliveryMOQ}}</span>
+                                </div>
+                                <div class="info-block" style="min-width: 110px;">
+                                    <span class="label">Delivery Charge</span>
+                                    <span class="value highlight-price">
+                                        {{element.deliveryCharge | currency :'INR'}}
+                                    </span>
+                                </div>
+                                <div class="info-block" style="min-width: 150px;">
+                                    <span class="label">Time Window</span>
+                                    <span class="value text-nowrap">{{formatTime(element.deliveryTimeFrom)}} -
+                                        {{formatTime(element.deliveryTimeTo)}}</span>
+                                </div>
+                                <div class="info-block" style="min-width: 90px;">
+                                    <span class="label">Cut Off</span>
+                                    <span class="value">{{formatTime(element.cutOffTime)}}</span>
+                                </div>
+                            </div>
+                        </mat-panel-title>
+                        <mat-panel-description class="flex-grow-0">
+                            <div class="actions-strip-glass" (click)="$event.stopPropagation()">
+                                <button mat-icon-button class="premium-icon-btn edit" (click)="onEdit(element)" matTooltip="Edit meal type">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button class="premium-icon-btn delete" (click)="onDelete(element)" matTooltip="Remove meal type">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                                <button mat-icon-button class="premium-icon-btn add" (click)="onAddSubMenu(element.selectedMealType)"
+                                    matTooltip="Add new configuration">
+                                    <mat-icon>add</mat-icon>
+                                </button>
+                            </div>
+                        </mat-panel-description>
+                    </mat-expansion-panel-header>
+
+                    <div class="nested-configs-container py-3" *ngIf="element.mealConfig && element.mealConfig.length > 0">
+                        <div class="d-flex align-items-center gap-2 mb-3">
+                            <div class="section-divider"></div>
+                            <h6 class="nested-title text-uppercase">Menu Configurations</h6>
+                            <div class="section-divider"></div>
+                        </div>
+
+                        <mat-accordion multi class="nested-accordion">
+                            <mat-expansion-panel class="mb-3 bg-white border-light shadow-xs"
+                                *ngFor="let config of element.mealConfig">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title class="flex-grow-1">
+                                        <div class="header-info-grid me-3">
+                                            <div class="info-block" style="min-width: 130px;">
+                                                <span class="label">Meal Name</span>
+                                                <span class="value text-primary-dark">{{config.itemName}}</span>
+                                            </div>
+                                            <div class="info-block meal-price" style="min-width: 100px;">
+                                                <span class="label">Meal Price</span>
+                                                <span class="value price-tag">{{config.mealPrice | currency :'INR'}}</span>
+                                            </div>
+                                            <div class="info-block kitchen-pay" style="min-width: 100px;">
+                                                <span class="label">Kitchen Pay</span>
+                                                <span class="value info-tag">{{config.payAmtToKitchen | currency :'INR'}}</span>
+                                            </div>
+                                            <div class="info-block" style="min-width: 90px;">
+                                                <span class="label">Same Day</span>
+                                                <div>
+                                                    <span class="status-chip"
+                                                        [ngClass]="config.isSameDay ?'completed' :'cancelled'">
+                                                        {{config.isSameDay ?'Yes' :'No'}}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </mat-panel-title>
+                                    <mat-panel-description class="flex-grow-0">
+                                        <div class="actions-strip-glass" (click)="$event.stopPropagation()">
+                                            <div class="active-toggle-pill me-3">
+                                                <span class="pill-label">Active</span>
+                                                <mat-slide-toggle color="primary" [checked]="config?.isActive"
+                                                    (change)="isActiveAndDeActiveMealConfig(element.selectedMealType,config)"></mat-slide-toggle>
+                                            </div>
+                                            <button mat-icon-button class="premium-icon-btn edit-sm"
+                                                (click)="onEditSubMenu(element.selectedMealType, config)">
+                                                <mat-icon>edit</mat-icon>
+                                            </button>
+                                            <button mat-icon-button class="premium-icon-btn delete-sm"
+                                                (click)="onDeleteSubMenu(element.selectedMealType,config)">
+                                                <mat-icon>delete</mat-icon>
+                                            </button>
+                                        </div>
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+
+                                <div class="weekly-cards-grid py-3">
+                                    <div class="weekly-item-card" *ngFor="let day of config.weeklyMenu" [class.not-applicable]="!day.notApplicable">
+                                        <div class="card-top">
+                                            <span class="day-label">{{day.itemDay}}</span>
+                                            <span class="status-badge-pill" [ngClass]="day.notApplicable ?'verified' :'pending'">
+                                                {{day.notApplicable ?'Applicable' :'N/A'}}
+                                            </span>
+                                        </div>
+                                        <div class="card-content mt-2">
+                                            <div class="item-name-row">
+                                                <mat-icon class="tiny-icon">fastfood</mat-icon>
+                                                <span class="fw-bold truncate-text" [title]="day.itemName">{{day.itemName ||'No Item'}}</span>
+                                            </div>
+                                            <p class="item-desc mt-1 truncate-text" [title]="day.itemDescription">{{day.itemDescription ||'No description provided'}}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+        <div class="empty-state-wrap p-5" *ngIf="deliverySettings.length === 0">
+            <div class="empty-state">
+                <mat-icon>restaurant_menu</mat-icon>
+                <h3>No Menu Found</h3>
+                <p>We couldn't find any menu configurations for this cafeteria. Try adding a new one or importing a menu.</p>
+            </div>
+        </div>
+    </div>
+</div>

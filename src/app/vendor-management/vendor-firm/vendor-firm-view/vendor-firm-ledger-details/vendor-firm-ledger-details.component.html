@@ -1,0 +1,146 @@
+<div class="ledger-details-wrapper animate-all">
+  <!-- Page Header Modern -->
+  <div class="bulk-dashboard-header">
+    <div class="header-card">
+      <div class="header-icon-box">
+        <mat-icon>account_balance</mat-icon>
+      </div>
+      <div class="header-text-content">
+        <h1 class="page-title">Ledger Details</h1>
+        <p class="page-subtitle">Track payments, order balances, and historical ledger entries</p>
+      </div>
+      <div class="ms-auto balance-badge-premium d-none d-md-flex">
+        <span class="label">Current Balance</span>
+        <span class="value">{{ totalVendorLegersBalance | currency:'INR' }}</span>
+      </div>
+    </div>
+
+    <!-- Filter & Search Integrated -->
+    <div class="header-filters mt-4 d-flex flex-wrap align-items-center gap-3">
+      <!-- Status Filter -->
+      <mat-form-field appearance="outline" class="compact-field status-select">
+        <mat-label>Filter Status</mat-label>
+        <mat-select multiple [(ngModel)]="selectedStatuses" (selectionChange)="onStatusChanged()">
+          <mat-option [value]="'New'">New</mat-option>
+          <mat-option [value]="'InProgress'">InProgress</mat-option>
+          <mat-option [value]="'Closed'">Closed</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <!-- Search -->
+      <div class="search-wrapper-premium">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" [(ngModel)]="searchOrderNo" (keyup.enter)="onSearch()" placeholder="Search Order No..." />
+        <button *ngIf="searchOrderNo" mat-icon-button class="clear-btn" (click)="searchOrderNo=''; onSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <button mat-flat-button color="primary" class="btn-primary-action" (click)="onSearch()">
+        <mat-icon>filter_list</mat-icon> Apply Filters
+      </button>
+
+      <div class="w-100 d-md-none mt-2">
+        <div class="balance-badge-premium w-100 justify-content-between">
+          <span class="label">Current Balance</span>
+          <span class="value">{{ totalVendorLegersBalance | currency:'INR' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="content-body">
+  <ng-container *ngIf="isLoading; else listTpl">
+    <div class="row g-4">
+      <div class="col-12 col-md-6 col-lg-4" *ngFor="let s of [1,2,3,4,5,6]">
+        <div class="skeleton-card"></div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #listTpl>
+    <div class="row g-4" *ngIf="displayedLedgers.length > 0; else noRecords">
+      <div class="col-12 col-md-6 col-lg-4" *ngFor="let ledger of displayedLedgers">
+        <div class="transaction-item-card">
+
+          <!-- Card Top -->
+          <div class="card-top">
+            <div class="transaction-icon" [ngClass]="getBillingTypeColorClass(ledger.billingType)">
+              <mat-icon>receipt_long</mat-icon>
+            </div>
+            <div class="transaction-main-info">
+              <h3 class="transaction-amount text-primary">
+                {{ getLedgerDisplayAmount(ledger) | currency:'INR' }}
+              </h3>
+              <div class="status-badge" [ngClass]="getStatusColorClass(ledger.status)">
+                <mat-icon class="status-icon" [ngClass]="getStatusIcon(ledger.status)"></mat-icon>
+                {{ normalizeStatus(ledger.status) }}
+              </div>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="card-body">
+            <!-- Order No & Type -->
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <div class="fw-bold text-dark">#{{ ledger.orderNo }}</div>
+              <span class="small-badge" [ngClass]="getOrderTypeColorClass(ledger.orderType)">
+                {{ ledger.orderType }}
+              </span>
+            </div>
+
+            <div class="info-row">
+              <mat-icon class="info-icon">calendar_today</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Created On</span>
+                <span class="info-value">{{ ledger.createdOn | date:'MMM d, y, h:mm a' }}</span>
+              </div>
+            </div>
+
+            <div class="info-row" *ngIf="ledger.transferOn">
+              <mat-icon class="info-icon">event_available</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Transfer On</span>
+                <span class="info-value">{{ ledger.transferOn | date:'MMM d, y' }}</span>
+              </div>
+            </div>
+
+            <div class="info-row" *ngIf="ledger.billingType">
+              <mat-icon class="info-icon">category</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Billing Type</span>
+                <span class="info-value">{{ ledger.billingType | titlecase }}</span>
+              </div>
+            </div>
+
+            <div class="info-row" *ngIf="ledger.remark">
+              <mat-icon class="info-icon">comment</mat-icon>
+              <div class="info-content">
+                <span class="info-label">Remark</span>
+                <span class="info-value text-wrap small">{{ ledger.remark }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer / Paginator -->
+      <div class="col-12">
+        <div class="pagination-container">
+          <mat-paginator [length]="paginatorLength" [pageSize]="limit" [pageIndex]="page - 1"
+            [pageSizeOptions]="[10, 50, 100, 200, 500]" [showFirstLastButtons]="true" (page)="onPage($event)">
+          </mat-paginator>
+        </div>
+      </div>
+    </div>
+
+    <ng-template #noRecords>
+      <div class="empty-state">
+        <mat-icon class="empty-icon">account_balance_wallet</mat-icon>
+        <h3>No Ledger History Found</h3>
+        <p>No transactions match your filters.</p>
+      </div>
+    </ng-template>
+  </ng-template>
+</div>
+</div>

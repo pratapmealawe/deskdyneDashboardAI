@@ -1,171 +1,99 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild,
-  TemplateRef,
-} from '@angular/core';
-import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
-
-import { ConfirmationModalService } from 'src/service/confirmation-modal.service';
-import { ImageCropperComponent } from 'src/app/image-cropper/image-cropper.component';
 import { categoryList, nutritionListOptions } from 'src/config/food-category.config';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { PolicyService } from 'src/service/policy.service';
-import { SendDataToComponent } from 'src/service/sendDataToComponent.service';
-import { ToasterService } from 'src/service/toaster.service';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { ConfirmationModalService } from '@service/confirmation-modal.service';
+import { ToasterService } from '@service/toaster.service';
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { DirectivesModule } from 'src/shared/directives/common-directives.directives.modules';
+import { ImportOutletMenuComponent } from './import-outlet-menu/import-outlet-menu.component';
+import { AddOutletMenuComponent } from './add-outlet-menu/add-outlet-menu.component';
+import { CopyOutletMenuComponent } from './copy-outlet-menu/copy-outlet-menu.component';
+import { CopyMasterMenuComponent } from './copy-master-menu/copy-master-menu.component';
+import { OutletViewService } from '../outlet-view.service';
 
 @Component({
   selector: 'app-outlet-menu',
   templateUrl: './outlet-menu.component.html',
   styleUrls: ['./outlet-menu.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    MaterialModule,
+    DirectivesModule
+  ]
 })
-export class OutletMenuComponent implements OnInit, OnChanges {
-  @Input() outletObj: any;
-  @Output() back: EventEmitter<any> = new EventEmitter<any>();
-  @Output() dataToParent = new EventEmitter<string>();
-
-  @ViewChild('content') content!: TemplateRef<any>;
-  @ViewChild('masterMenu') masterMenu!: TemplateRef<any>;
-  @ViewChild('selectOutletModal') selectOutletModal!: TemplateRef<any>;
-
-  // @ViewChild(MatPaginator) menuPaginator!: MatPaginator; // Removed
-
+export class OutletMenuComponent implements OnInit {
+  outletObj: any;
   categoryList = categoryList;
   nutritionListOptions = nutritionListOptions;
-  form!: FormGroup;
-
-  selectedCategory: any;
-  uploadedImageFile: any;
-  imageUrl: any;
   displayImgUrl = environment.imageUrl;
   showCard: boolean = false;
-
-  // main outlet menu lists
-  menuList: any[] = [];
-  filteredMenuList: any[] = [];
-  groupedMenuList: any[] = [];
-
-  // outlet copy
-  selectedOutlet: any = null;
-  outletMenuList: any[] = [];
-  filteredOutletMenuList: any[] = [];
-  searchTermCopyMenu: string = '';
-
-  // master menu
-  filteredMasterMenuList: any[] = [];
-  tempList: any[] = [];
-
-  // selections for master/copy
-  selectedMasterItem: any = null;
-  selectedItems: any[] = [];
-  selectedMenuItems: any[] = [];
-  transformedMenuItems: any[] = [];
-
-  menuId: any = 0;
-  showUpdateBtn: boolean = false;
-  imageReplaced: boolean = false;
-  uploadStatus: boolean = false;
-  noImages: boolean = false;
+  selectedCategory: any;
+  menuItems: any[] = [];
   foodItem: any;
-  btnPolicy: any;
-  outletList: any[] = [];
   menuInfo: any;
   eventInfo: any;
-
+  // main outlet menu lists
+  filteredMenuList: any[] = [];
+  groupedMenuList: any[] = [];
   // filters
-  searchTerm: string = '';        // for master menu
   searchTermMenu: string = '';    // for outlet menu
   selectedCategoryFilter: string = '';
-
-  // pagination removed
-  energyTooltip = `
-Nutrient Conversion Factors:
-• Protein: 4 kcal/g
-• Carbohydrates: 4 kcal/g
-• Fat: 9 kcal/g
-• Fiber: 2 kcal/g
-`;
-
+  currentMenuView: 'normal' | 'weekly' = 'normal';
+  selectedDateFilter: Date | null = null;
+  // weekly menu dates
+  selectedWeeklyDates: Date[] = [];
+  today = new Date();
+  fallbackImage = 'assets/Imageunavailable.webp';
 
   constructor(
-    private fb: FormBuilder,
     private apiMainService: ApiMainService,
     private confirmationModalService: ConfirmationModalService,
-    private policyService: PolicyService,
-    private sendDataToComponent: SendDataToComponent,
     private dialog: MatDialog,
-    private toastr: ToasterService
+    private toastr: ToasterService,
+    private outletViewService: OutletViewService
   ) { }
 
   ngOnInit(): void {
-    this.btnPolicy = this.policyService.getCurrentButtonPolicy();
-    this.fetchOutletMasterMenus();
-    this.fetchAllOutlets();
-    this.createForm();
-    this.init();
+    this.outletViewService.outlet$.subscribe(outlet => {
+      if (outlet) {
+        this.outletObj = outlet;
+        this.currentMenuView = outlet.isWeeklyMenu ? 'weekly' : 'normal';
+        this.fetchMenuItems();
+      }
+    });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['outletObj']) {
-      this.outletObj = changes['outletObj'].currentValue;
-      this.init();
-    }
-  }
 
-  // INIT OUTLET MENU
-  init() {
-    if (this.outletObj?.menuList && this.outletObj.menuList.length > 0) {
-      this.filteredMenuList = this.outletObj.menuList
-        .slice()
-        .sort((a: any, b: any) => a.precedence - b.precedence);
-      this.showCard = true;
-    } else {
-      this.filteredMenuList = [];
-      this.showCard = false;
-    }
-
-    this.applyMenuFilters();
-  }
-
-  // FETCH ALL OUTLETS
-  async fetchAllOutlets() {
+  async fetchMenuItems() {
     try {
-      const res = await this.apiMainService.fetchAllOutlets();
-      this.outletList = res || [];
+      this.resetValues();
+      const res = await this.apiMainService.getMenuItems(this.outletObj._id);
+      this.menuItems = res || [];
+      this.applyMenuFilters();
     } catch (e) {
-      console.log('error while fetching outlets', e);
-      this.outletList = [];
+      this.menuItems = [];
+      this.applyMenuFilters();
     }
   }
 
-  // OUTLET MENU FILTERS + PAGINATION
   applyMenuFilters() {
-    if (!this.outletObj?.menuList) {
+    if (!this.menuItems) {
       this.filteredMenuList = [];
       this.groupedMenuList = [];
       this.showCard = false;
       return;
     }
 
-    let temp = this.outletObj.menuList
-      .slice()
-      .sort((a: any, b: any) => a.precedence - b.precedence);
+    let temp = this.menuItems.slice().sort((a: any, b: any) => a.precedence - b.precedence);
 
     if (this.selectedCategoryFilter) {
-      temp = temp.filter(
-        (item: any) => item.category === this.selectedCategoryFilter
-      );
+      temp = temp.filter((item: any) => item.category === this.selectedCategoryFilter);
     }
 
     if (this.searchTermMenu) {
@@ -177,11 +105,29 @@ Nutrient Conversion Factors:
       );
     }
 
-    this.filteredMenuList = temp;
-    this.showCard = this.filteredMenuList.length > 0;
+    if (this.currentMenuView === 'weekly' && this.selectedDateFilter) {
+      temp = temp.filter((item: any) => (item.weeklyMenuDates || []).some((d: any) => this.isSameDay(new Date(d.date), this.selectedDateFilter!)));
+    }
 
-    // Show all items (no pagination)
-    this.groupedMenuList = this.buildGroupedMenu(this.filteredMenuList);
+    this.filteredMenuList = temp;
+
+    if (this.currentMenuView === 'weekly') {
+      this.groupedMenuList = this.buildDateGroupedMenu(temp);
+    } else {
+      this.groupedMenuList = this.buildGroupedMenu(temp);
+    }
+
+    this.showCard = this.filteredMenuList.length > 0;
+  }
+
+  onViewChange(view: 'normal' | 'weekly') {
+    this.currentMenuView = view;
+    this.applyMenuFilters();
+  }
+  
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.src = this.fallbackImage;
   }
 
   private buildGroupedMenu(list: any[]) {
@@ -196,515 +142,115 @@ Nutrient Conversion Factors:
 
     return Object.keys(grouped).map((category) => ({
       category,
-      items: grouped[category],
+      subGroups: [{ title: '', items: grouped[category] }]
     }));
   }
 
-  // Pagination methods removed
-
-
-  onOutletChange() {
-    if (this.selectedOutlet) {
-      this.outletMenuList = this.selectedOutlet.menuList || [];
-    } else {
-      this.outletMenuList = [];
-    }
-    this.applyCopyMenuFilter();
+  private innerGroupBy(list: any[], key: string) {
+    const grouped = list.reduce((acc: any, item: any) => {
+      const val = item[key] || 'Uncategorized';
+      if (!acc[val]) acc[val] = [];
+      acc[val].push(item);
+      return acc;
+    }, {});
+    return Object.keys(grouped).map(title => ({ title, items: grouped[title] }));
   }
 
-  applyCopyMenuFilter() {
-    let temp = this.outletMenuList || [];
-    if (this.searchTermCopyMenu) {
-      const term = this.searchTermCopyMenu.toLowerCase();
-      temp = temp.filter((item: any) =>
-        (item.itemName || '').toLowerCase().includes(term) ||
-        (item.description || '').toLowerCase().includes(term)
-      );
-    }
-    this.filteredOutletMenuList = temp;
-  }
-
-  // NUMBER VALIDATIONS
-  preventInvalidNumber(e: KeyboardEvent) {
-    const invalidKeys = ['-', '+', 'e', 'E'];
-    if (invalidKeys.includes(e.key)) e.preventDefault();
-  }
-
-  preventInvalidPaste(
-    e: ClipboardEvent,
-    type: 'integer' | 'decimal' = 'integer'
-  ) {
-    const text = e.clipboardData?.getData('text') ?? '';
-    if (type === 'integer') {
-      if (!/^[1-9]\d*$/.test(text)) e.preventDefault();
-    } else {
-      if (!/^\d+(\.\d+)?$/.test(text)) e.preventDefault();
-    }
-  }
-
-  // FORM
-  createForm() {
-    this.form = this.fb.group({
-      itemName: ['', [Validators.required, Validators.maxLength(80)]],
-      price: [null, [Validators.required, Validators.min(1)]],
-      subsidy: [0, [Validators.min(0)]],
-      category: ['', Validators.required],
-      mealTimingInfo: [[], Validators.required],
-      itemType: ['Veg', Validators.required],
-      precedence: [0, [Validators.min(0)]],
-      isActive: [false],
-      description: ['', [Validators.maxLength(200)]],
-      doNotChangeInFuture: [false],
-      energyValue: [10],
-      sectionConfig: [null],
-      nutritionList: this.fb.array([
-        this.fb.group({
-          nutritionId: [null],
-          nutritionName: [''],
-          nutritionValue: [''],
-          nutritionUnit: [''],
-        }),
-      ]),
-    });
-
-    this.form.get('nutritionList')?.valueChanges.subscribe(() => {
-      this.calculateEnergyValue();
-    });
-  }
-
-  calculateEnergyValue() {
-    const nutritionList = this.form.get('nutritionList')?.value as any[];
-    if (!nutritionList) return;
-
-    let totalEnergy = 0;
-    nutritionList.forEach((item) => {
-      const value = parseFloat(item.nutritionValue) || 0;
-      const nutritionId = item.nutritionId;
-
-      if (nutritionId === 1) { // Protein
-        totalEnergy += value * 4;
-      } else if (nutritionId === 2) { // Fat
-        totalEnergy += value * 9;
-      } else if (nutritionId === 3) { // Carbohydrate
-        totalEnergy += value * 4;
-      } else if (nutritionId === 4) { // Fibre
-        totalEnergy += value * 2;
-      }
-    });
-
-    this.form.get('energyValue')?.patchValue(totalEnergy, { emitEvent: false });
-  }
-
-
-  get nutrition_Lists(): FormArray {
-    return this.form.get('nutritionList') as FormArray;
-  }
-
-  addNutritionLists() {
-    this.nutrition_Lists.push(
-      this.fb.group({
-        nutritionId: [null],
-        nutritionName: [''],
-        nutritionValue: [''],
-        nutritionUnit: [''],
-      })
+  isSameDay(d1: Date, d2: Date): boolean {
+    return (
+      d1.getFullYear() === d2.getFullYear() &&
+      d1.getMonth() === d2.getMonth() &&
+      d1.getDate() === d2.getDate()
     );
   }
 
-  removenNutritionLists(index: number) {
-    this.nutrition_Lists.removeAt(index);
-  }
+  buildDateGroupedMenu(list: any[]) {
+    const dateGroups: any = {};
+    const unassigned: any[] = [];
 
-  patchFormValue(item: any) {
-    console.log(item);
-
-    this.form.patchValue({
-      itemName: item.itemName,
-      price: item.price,
-      subsidy: item.subsidy ? item.subsidy : 0,
-      category: item.category,
-      mealTimingInfo: item.mealTimingInfo
-        ? item.mealTimingInfo.map((a: any) => a.mealType)
-        : [],
-      itemType: item.itemType,
-      precedence: item.precedence,
-      isActive: item.isActive,
-      doNotChangeInFuture: item.doNotChangeInFuture,
-      description: item.description,
-      energyValue: item.nutritionInfo ? item.nutritionInfo.energyValue : 0,
-      sectionConfig: item.sectionConfig || null,
-      nutritionList: item.nutritionInfo
-        ? [...item.nutritionInfo.nutritionList]
-        : [],
+    list.forEach(item => {
+      if (!item.weeklyMenuDates || item.weeklyMenuDates.length === 0) {
+        unassigned.push(item);
+      } else {
+        item.weeklyMenuDates.forEach((d: any) => {
+          const dateStr = new Date(d.date).toLocaleDateString('en-IN', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          if (!dateGroups[dateStr]) {
+            dateGroups[dateStr] = [];
+          }
+          if (!dateGroups[dateStr].find((i: any) => i._id === item._id)) {
+            dateGroups[dateStr].push(item);
+          }
+        });
+      }
     });
 
-    if (item.nutritionInfo && item.nutritionInfo.nutritionList?.length) {
-      this.nutrition_Lists.clear();
-      item.nutritionInfo.nutritionList.forEach((nutrition: any) => {
-        const nutrientID = nutrition.nutrientID || nutrition.nutritionId;
-        const nutrientName = nutrition.nutrientname || nutrition.nutritionName;
+    const result = Object.keys(dateGroups).map(date => ({
+      category: date,
+      subGroups: this.innerGroupBy(dateGroups[date], 'category')
+    }));
 
-        // Find matching option from config
-        const option = this.nutritionListOptions.find(o =>
-          o.id === nutrientID || o.id === Number(nutrientName)
-        );
-
-        this.nutrition_Lists.push(this.fb.group({
-          nutritionId: [option ? option.id : nutrientID],
-          nutritionName: [option ? option : Number(nutrientName)],
-          nutritionValue: [nutrition.nutritionValue || 0],
-          nutritionUnit: [nutrition.nutritionUnit || 'gm']
-        }));
+    if (unassigned.length > 0) {
+      result.push({
+        category: 'All Days',
+        subGroups: this.innerGroupBy(unassigned, 'category')
       });
     }
+
+    return result;
   }
 
-  // MASTER MENU FILTER
-  applyMasterFilter() {
-    let tempList = [...(this.tempList || [])];
 
-    if (this.selectedCategory) {
-      tempList = tempList.filter(
-        (data: any) => data.category === this.selectedCategory
-      );
+  toggleDate(date: Date) {
+    const index = this.selectedWeeklyDates.findIndex(d => this.isSameDay(d, date));
+    if (index === -1) {
+      this.selectedWeeklyDates.push(date);
+    } else {
+      this.selectedWeeklyDates.splice(index, 1);
     }
-
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-      tempList = tempList.filter((data: any) =>
-        (data.itemName?.toLowerCase() || '').includes(term)
-      );
-    }
-
-    this.filteredMasterMenuList = tempList;
   }
 
-  async fetchOutletMasterMenus() {
-    try {
-      const res = await this.apiMainService.getAllOutletMasterMenus();
-      if (res) {
-        this.filteredMasterMenuList = res;
-        this.tempList = this.filteredMasterMenuList;
+  isDateSelected(date: Date): boolean {
+    return this.selectedWeeklyDates.some(d => this.isSameDay(d, date));
+  }
+
+  weeklyDateClass = (date: Date): string => {
+    return this.isDateSelected(date) ? 'selected-date' : '';
+  };
+
+  weeklyDateFilter = (date: Date | null): boolean => {
+    if (!date) return false;
+    return true;
+  };
+
+  async edit(item: any) {
+    this.open('update', item);
+  }
+
+  open(action: 'add' | 'update' = 'add', item?: any) {
+    const dialogRef = this.dialog.open(AddOutletMenuComponent, {
+      width: '85vw',
+      maxWidth: '1200px',
+      panelClass: 'modern-dialog',
+      disableClose: true,
+      data: { outletObj: this.outletObj, item: item }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.fetchMenuItems();
       }
-    } catch (e) {
-      console.log('error while fetching outlet master menus', e);
-      this.filteredMasterMenuList = [];
-      this.tempList = [];
-    }
+    });
   }
 
-  // IMAGE HANDLING (ImageCropper via NgbModal)
-  handleFileInput($event: any) {
-    if ($event && $event.target && $event.target.files) {
-      const file: File = $event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = async (_event) => {
-          const imageUrl = reader.result;
-          try {
-            const dialogRef = this.dialog.open(ImageCropperComponent, {
-              width: '50%',
-              panelClass: 'image-cropper-dialog',
-              disableClose: true,
-              data: {
-                imageUrl: imageUrl,
-                imageWidth: 150,
-                imageHeight: 150,
-                aspectRatio: 1
-              }
-            });
-
-            dialogRef.afterClosed().subscribe((result: any) => {
-              if (result && result.croppedImages) {
-                this.uploadedImageFile = result.croppedImages.file;
-                this.imageUrl = result.croppedImages.resizeDataUrl;
-                this.uploadStatus = true;
-                this.imageReplaced = true;
-              }
-            });
-
-          } catch (e) {
-            console.log('error while opening image cropper', e);
-          }
-        };
-      }
-    }
-  }
-
-  // EDIT / ADD
-  async edit(item: any, index: any) {
-    this.imageUrl = item.imageUrl;
-    this.showUpdateBtn = true;
-    this.menuId = item._id;
-
-    this.patchFormValue(item);
-    this.open();
-  }
-
-  async addMasterMenu() {
-    this.imageReplaced = true;
-    this.uploadStatus = false;
-    this.imageUrl = this.selectedMasterItem?.imageUrl;
-
-    try {
-      console.log("selectedItems", this.selectedItems);
-
-      const res = await this.apiMainService.addOutletList(
-        this.outletObj._id,
-        { outletList: this.selectedItems }
-      );
-      this.selectedItems = [];
-      this.dataToParent.emit(res);
-    } catch (err) {
-      console.log(err);
-    }
-
-    if (this.selectedMasterItem) {
-      this.form.patchValue(this.selectedMasterItem);
-    }
-  }
-
-  async addMenuItem() {
-    this.imageReplaced = true;
-    this.uploadStatus = false;
-    this.imageUrl = this.selectedMasterItem?.imageUrl;
-
-    try {
-      this.transformedMenuItems.forEach((item: any) => {
-        delete item._id;
-      });
-      console.log("transformedMenuItems", this.transformedMenuItems);
-
-      // Check for duplicates
-      const existingItemNames = new Set(
-        (this.outletObj.menuList || []).map((item: any) => item.itemName.toLowerCase().trim())
-      );
-
-      const duplicates = this.transformedMenuItems.filter((item: any) =>
-        existingItemNames.has(item.itemName.toLowerCase().trim())
-      );
-
-      if (duplicates.length > 0) {
-        const duplicateNames = duplicates.map((d: any) => d.itemName).join(', ');
-        this.toastr.error(`Duplicate items found: ${duplicateNames}`);
-        return; // Stop execution
-      }
-
-      const res = await this.apiMainService.addOutletList(
-        this.outletObj._id,
-        { outletList: this.transformedMenuItems }
-      );
-      this.transformedMenuItems = [];
-      this.selectedMenuItems = [];
-      this.dataToParent.emit(res);
-    } catch (err) {
-      console.log(err);
-    }
-
-
-    if (this.selectedMasterItem) {
-      this.form.patchValue(this.selectedMasterItem);
-    }
-  }
-
-  async updateMenu(index: any) {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    if (
-      typeof this.form.value.subsidy === 'undefined' ||
-      this.form.value.subsidy === null ||
-      this.form.value.subsidy === ''
-    ) {
-      this.form.patchValue({ subsidy: 0 });
-    }
-    try {
-      const outletId = this.outletObj._id;
-      const formData = new FormData();
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-      formData.append('imageUrl', this.form.value.imageUrl);
-      formData.append('description', this.form.value.description);
-      formData.append('isActive', this.form.value.isActive);
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append(
-        'quantityAvailable',
-        this.form.value.quantityAvailable
-      );
-      formData.append(
-        'setDailyQuantity',
-        this.form.value.setDailyQuantity
-      );
-      formData.append('subsidy', this.form.value.subsidy);
-      formData.append(
-        'doNotChangeInFuture',
-        this.form.value.doNotChangeInFuture
-      );
-      formData.append('category', this.form.value.category);
-      formData.append('subCategory', this.form.value.subCategory);
-      formData.append('itemType', this.form.value.itemType);
-      formData.append('precedence', this.form.value.precedence);
-
-      const mealTypes = this.form.value.mealTimingInfo;
-      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
-        mealTypes.includes(meal.mealType)
-      );
-      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
-      const nutritionListMapped = this.form.value.nutritionList.map((item: any) => ({
-        nutritionId: item.nutritionId,
-        nutritionValue: item.nutritionValue,
-        nutritionUnit: item.nutritionUnit,
-        nutrientname: item.nutritionName && typeof item.nutritionName === 'object' ? item.nutritionName.title : item.nutritionName
-      }));
-
-      const nutritionInfo = {
-        energyValue: this.form.value.energyValue,
-        nutritionList: nutritionListMapped,
-      };
-      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
-
-      if (this.form.value.sectionConfig) {
-        const payload = {
-          ...this.form.value.sectionConfig,
-          sectionId: this.form.value.sectionConfig._id,
-        };
-        formData.append('sectionConfig', JSON.stringify(payload));
-      }
-
-      const res = await this.apiMainService.updateOutletMenu(
-        outletId,
-        this.menuId,
-        formData
-      );
-
-      if (res && res._id) {
-        this.outletObj = res;
-        this.init();
-      }
-
-      this.resetValues();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  resetValues() {
-    this.form.reset();
-    this.menuId = '';
-    this.imageUrl = '';
-    this.uploadedImageFile = '';
-    this.showUpdateBtn = false;
-    this.imageReplaced = false;
-    this.noImages = false;
-    this.nutrition_Lists.clear();
-    this.addNutritionLists();
-  }
-
-  async submit() {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
-    }
-    try {
-      const formData: any = new FormData();
-      if (this.imageUrl) {
-        formData.append('image', this.uploadedImageFile);
-      }
-      formData.append('imageUrl', this.imageUrl);
-      formData.append('description', this.form.value.description);
-      formData.append(
-        'isActive',
-        this.form.value.isActive ? this.form.value.isActive : false
-      );
-      formData.append('itemName', this.form.value.itemName);
-      formData.append('price', this.form.value.price);
-      formData.append(
-        'quantityAvailable',
-        this.form.value.quantityAvailable
-          ? this.form.value.quantityAvailable
-          : 0
-      );
-      formData.append(
-        'setDailyQuantity',
-        this.form.value.setDailyQuantity
-          ? this.form.value.setDailyQuantity
-          : 0
-      );
-      formData.append(
-        'subsidy',
-        this.form.value.subsidy ? this.form.value.subsidy : 0
-      );
-      formData.append(
-        'doNotChangeInFuture',
-        this.form.value.doNotChangeInFuture
-          ? this.form.value.doNotChangeInFuture
-          : false
-      );
-      formData.append('category', this.form.value.category);
-      formData.append('subCategory', this.form.value.subCategory);
-      formData.append('itemType', this.form.value.itemType);
-      formData.append(
-        'precedence',
-        this.form.value.precedence ? this.form.value.precedence : 0
-      );
-
-      const mealTypes = this.form.value.mealTimingInfo;
-      const updatedMeal = this.outletObj.mealTiming.filter((meal: any) =>
-        mealTypes?.includes(meal.mealType)
-      );
-      formData.append('mealTimingInfo', JSON.stringify(updatedMeal));
-
-      const nutritionListMapped = this.form.value.nutritionList.map((item: any) => ({
-        nutritionId: item.nutritionId,
-        nutritionValue: item.nutritionValue,
-        nutritionUnit: item.nutritionUnit,
-        nutrientname: item.nutritionName && typeof item.nutritionName === 'object' ? item.nutritionName.title : item.nutritionName
-      }));
-
-      const nutritionInfo = {
-        energyValue: this.form.value.energyValue,
-        nutritionList: nutritionListMapped,
-      };
-      formData.append('nutritionInfo', JSON.stringify(nutritionInfo));
-
-      if (this.form.value.sectionConfig) {
-        const payload = {
-          ...this.form.value.sectionConfig,
-          sectionId: this.form.value.sectionConfig._id,
-        };
-        formData.append('sectionConfig', JSON.stringify(payload));
-      }
-
-      const res = await this.apiMainService.addOutletMenu(
-        formData,
-        this.outletObj._id
-      );
-
-      if (res && res._id) {
-        this.outletObj = res;
-        this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-        this.init();
-      }
-      this.resetValues();
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  get f() {
-    return this.form.controls;
-  }
-
-  // SELECTION HELPERS
   compareSection(o1: any, o2: any): boolean {
     if (!o1 || !o2) {
       return o1 === o2;
     }
-    // Check various ID combinations since saved item has sectionId but list has _id
     if (o1._id && o2._id) return o1._id === o2._id;
     if (o1.sectionId && o2._id) return o1.sectionId === o2._id;
     if (o1._id && o2.sectionId) return o1._id === o2.sectionId;
@@ -712,89 +258,28 @@ Nutrient Conversion Factors:
     return false;
   }
 
-  onItemSelected(item: any) {
-    this.selectedMasterItem = item;
-    console.log('Selected Master Menu Item:', item);
-  }
-
-  onItemToggle(item: any, event: any) {
-    const checkbox = event;
-
-    if (checkbox.checked) {
-      this.selectedItems.push(item);
-    } else {
-      this.selectedItems = this.selectedItems.filter(
-        (i) => i._id !== item._id
-      );
-    }
-  }
-
-  onMenuItemToggle(item: any, event: any) {
-    const checkbox = event;
-
-    if (checkbox.checked) {
-      this.selectedMenuItems.push(item);
-    } else {
-      this.selectedMenuItems = this.selectedMenuItems.filter(
-        (i: any) => i._id !== item._id
-      );
-    }
-
-    this.transformedMenuItems = this.selectedMenuItems.map((each: any) => {
-      return {
-        ...each,
-        mealTimingInfo: each.mealTimingInfo.map(
-          (info: any) => info.mealType
-        ),
-      };
-    });
-  }
-
-  isSelected(item: any): boolean {
-    return this.selectedItems.find((i) => i._id === item._id) !== undefined;
-  }
-
-  isMenuSelected(item: any): boolean {
-    return (
-      this.transformedMenuItems.find((i) => i._id === item._id) !==
-      undefined
-    );
-  }
-
-  // DELETE / ACTIVATE / DEACTIVATE
   async deleteFoodItem() {
-    const res: any = await this.apiMainService.deleteOutletMenu(
-      this.outletObj._id,
-      this.foodItem._id
-    );
-    if (res && res._id) {
-      this.outletObj = res;
-      this.sendDataToComponent.publish('SAVE_OUTLET_MENU', res);
-      this.showCard = true;
-      this.init();
+    const res: any = await this.apiMainService.deleteOutletMenu(this.outletObj._id, this.foodItem._id);
+    if (res) {
+      this.fetchMenuItems();
+      this.toastr.success('Menu item deleted successfully');
     }
-    this.resetValues();
-    this.back.emit(true);
   }
 
   async changeMenuActivation() {
     const menu = this.menuInfo;
     const event = this.eventInfo;
-
     menu.isActive = event.checked;
-
     const menuObj = {
       isActive: event.checked,
     };
-
-    await this.apiMainService.changeMenuActivation(
-      this.outletObj._id,
-      menu._id,
-      menuObj
-    );
+    const res = await this.apiMainService.changeMenuActivation(this.outletObj._id, menu._id, menuObj);
+    if (res) {
+      this.toastr.success(`Item ${event.checked ? 'Enabled' : 'Disabled'} successfully`);
+    }
   }
 
-  showPopup(item: any, i: any) {
+  showPopup(item: any) {
     this.foodItem = item;
     this.confirmationModalService.modal({
       msg: `Are you sure, you want to delete ${item.itemName}`,
@@ -807,8 +292,7 @@ Nutrient Conversion Factors:
     this.menuInfo = menu;
     this.eventInfo = event;
     this.confirmationModalService.modal({
-      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'
-        } ${menu.itemName} Item`,
+      msg: `Are you sure, you want to ${event.checked ? 'Enable' : 'Disable'} ${menu.itemName} Item`,
       callback: this.changeMenuActivation,
       cancelCallback: this.revertMenuActivation,
       context: this
@@ -816,7 +300,6 @@ Nutrient Conversion Factors:
   }
 
   revertMenuActivation() {
-    // Revert the toggle to its original state
     if (this.menuInfo && this.eventInfo) {
       const originalState = !this.eventInfo.checked;
       this.menuInfo.isActive = originalState;
@@ -826,54 +309,42 @@ Nutrient Conversion Factors:
     }
   }
 
-  // MAT DIALOG OPENERS
-  open() {
-    this.selectedMasterItem = null;
-
-    const dialogRef = this.dialog.open(this.content, {
-      width: '950px',
-      maxWidth: '95vw',
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'add') {
-        this.submit();
-      } else if (result === 'update') {
-        this.updateMenu(this.menuId);
-      }
-    });
+  resetValues() {
+    this.searchTermMenu = '';
+    this.selectedCategoryFilter = '';
+    this.selectedDateFilter = null;
+    this.applyMenuFilters();
   }
 
   openMenu() {
-    const dialogRef = this.dialog.open(this.masterMenu, {
-      width: '900px',
-      maxWidth: '95vw',
-      disableClose: false,
+    const dialogRef = this.dialog.open(CopyMasterMenuComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      panelClass: 'modern-dialog',
+      disableClose: true,
+      data: { outletObj: this.outletObj }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'addMasterMenu') {
-        this.addMasterMenu();
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        this.fetchMenuItems();
       }
-      this.selectedItems = [];
-      this.selectedMenuItems = [];
     });
   }
 
   openOutlet() {
-    const dialogRef = this.dialog.open(this.selectOutletModal, {
-      width: '900px',
-      maxWidth: '95vw',
-      disableClose: false,
+    const dialogRef = this.dialog.open(CopyOutletMenuComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      panelClass: 'modern-dialog',
+      disableClose: true,
+      data: { outletObj: this.outletObj }
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result === 'addMenuItem') {
-        this.addMenuItem();
+    dialogRef.afterClosed().subscribe(async (result) => {
+      if (result) {
+        this.fetchMenuItems();
       }
-      this.transformedMenuItems = [];
-      this.selectedMenuItems = [];
     });
   }
 
@@ -894,7 +365,6 @@ Nutrient Conversion Factors:
       { header: 'Subsidy (₹)', key: 'subsidy', width: 15 }
     ];
 
-    // Header style
     worksheet.getRow(1).font = { bold: true };
     worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
 
@@ -915,26 +385,9 @@ Nutrient Conversion Factors:
 
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
-      type:
-        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     });
     saveAs(blob, fileName);
-  }
-
-  onNutritionSelect(option: any, index: number) {
-    if (option) {
-      this.nutrition_Lists.at(index).patchValue({
-        nutritionId: option.id
-      });
-    }
-  }
-
-  isOptionSelected(optionId: number, currentIndex: number): boolean {
-    const selectedIds = this.nutrition_Lists.controls
-      .map((control, idx) => (idx !== currentIndex ? control.get('nutritionId')?.value : null))
-      .filter(id => id !== null && id !== undefined);
-
-    return selectedIds.includes(optionId);
   }
 
   compareNutrition(o1: any, o2: any): boolean {
@@ -942,4 +395,23 @@ Nutrient Conversion Factors:
     return o1.id === o2.id;
   }
 
+  openUploadExcelPopup() {
+    const dialogRef = this.dialog.open(ImportOutletMenuComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      panelClass: 'modern-dialog',
+      disableClose: true,
+      data: {
+        outletId: this.outletObj._id,
+        outletObj: this.outletObj
+      }
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.fetchMenuItems();
+        this.toastr.success('Bulk upload successful');
+      }
+    });
+  }
 }

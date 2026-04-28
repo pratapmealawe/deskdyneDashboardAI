@@ -1,19 +1,21 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { NgbOffcanvas } from '@ng-bootstrap/ng-bootstrap';
-import { environment } from 'src/environments/environment';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
-import { LocalStorageService } from 'src/service/local-storage.service';
-import { RuntimeStorageService } from 'src/service/runtime-storage.service';
-import { UtilityService } from 'src/service/utility.service';
-import { register } from 'swiper/element/bundle';
+import { environment } from '@environments/environment';
+import { ApiMainService } from '@service/apiService/apiMain.service';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-register();
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss']
+  styleUrls: ['./home.component.scss'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    NgbModule,
+    RouterModule
+  ]
 })
 export class HomeComponent implements OnInit {
   admin: any;
@@ -26,7 +28,7 @@ export class HomeComponent implements OnInit {
     'assets/clients/Confluxsys.png',
     'assets/clients/Cradlewise.png',
     'assets/clients/Credit Suisse.png',
-    'assets/clients/Finzly.png',
+    'assets/clients/Fizly.png',
     'assets/clients/Flytbase.png',
     'assets/clients/Godrej Properties.png',
     'assets/clients/Metta Social.png',
@@ -46,51 +48,46 @@ export class HomeComponent implements OnInit {
 
   imageUrl: string = environment.imageUrl;
   carouselImages: any[] = [];
+  chunkedImages: any[][] = [];
 
-  constructor(private router: Router, private apiMainService: ApiMainService, private localStorageService: LocalStorageService,
-    private runtimeStorageService: RuntimeStorageService, private utilityService: UtilityService, private offcanvasService: NgbOffcanvas) {
+  constructor(private apiMainService: ApiMainService) {
 
   }
 
   async ngOnInit() {
-    // this.admin =  this.localStorageService.getCacheData('ADMIN_PROFILE') ;
-
-    // if(this.admin?.role === "ADMIN") {
-    //   this.router.navigate(["/dashboard"])
-    // } else {
-    //   this.router.navigate(["/orgDashboard"])
-    // }
-
     await this.fetchCarouselImages();
   }
 
   async fetchCarouselImages() {
     try {
       const res: any = await this.apiMainService.getImageGroupConfigByName("dashoard_home");
-      console.log(res);
 
-      if (res) {
+      if (res && res.imageData) {
         this.carouselImages = res.imageData;
+        this.chunkedImages = this.chunkArray(this.carouselImages, 4);
       }
-      // Fallback/Demo structure if API is not yet ready or empty
       if (!this.carouselImages.length) {
-        // console.warn("No specific carousel images found, using placeholders if needed.");
       }
     } catch (error) {
       console.error("Error fetching carousel images", error);
     }
   }
 
+  chunkArray(array: any[], size: number) {
+    const result = [];
+    for (let i = 0; i < array.length; i += size) {
+      result.push(array.slice(i, i + size));
+    }
+    return result;
+  }
+
   hideClientLogo(event: any) {
-    // Hide the column (grandparent of img -> div.logo-wrapper -> div.col...)
-    // Structure: div.col... > div.logo-wrapper > img
     const imgElement = event.target as HTMLElement;
-    const wrapper = imgElement.parentElement; // div.logo-wrapper
-    const col = wrapper?.parentElement; // div.col-6...
+    const wrapper = imgElement.parentElement;
+    const col = wrapper?.parentElement;
     if (col) {
       col.style.display = 'none';
       if (col.parentElement && col.parentElement.children.length === 1) {
-        // Optional: hide row if no logos? But difficult to track live
       }
     }
   }

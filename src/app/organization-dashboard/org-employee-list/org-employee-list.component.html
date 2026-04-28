@@ -1,0 +1,82 @@
+<div class="export-page-container">
+    <!-- Header Card -->
+    <div class="export-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Employee List</h1>
+                <p class="page-subtitle">View organization employees</p>
+            </div>
+            <!-- No Add Employee or Action buttons here, per user request -->
+        </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card p-3 mb-4">
+        <app-common-outlet-cafe-select [config]="headerConfig" (submitted)="filterSubmitted($event)">
+        </app-common-outlet-cafe-select>
+    </div>
+
+    <!-- Employee List Section -->
+    <div class="employee-list-section" *ngIf="employeeList.length > 0">
+        <div class="section-header">
+            <div class="section-title">
+                <mat-icon>groups</mat-icon>
+                <h3>Employee List</h3>
+                <span class="count-badge">{{ filteredEmployeeList.length }}</span>
+            </div>
+            <div class="section-actions">
+                <mat-form-field appearance="outline" class="search-field">
+                    <mat-icon matPrefix>search</mat-icon>
+                    <input matInput placeholder="Search employees..." [(ngModel)]="searchTerm"
+                        (input)="applySearchFilter()" />
+                </mat-form-field>
+            </div>
+        </div>
+
+        <div class="employee-grid" *ngIf="filteredEmployeeList.length > 0">
+            <div class="employee-card" *ngFor="let employee of filteredEmployeeList">
+                <div class="employee-avatar">
+                    {{ getInitials(employee.employeeName) }}
+                </div>
+                <div class="employee-info">
+                    <div class="employee-name">{{ employee.employeeName }}</div>
+                    <div class="employee-meta">
+                        <span class="meta-item">
+                            <mat-icon>badge</mat-icon>
+                            {{ employee.employeeId ||'N/A' }}
+                        </span>
+                        <span class="meta-item">
+                            <mat-icon>phone</mat-icon>
+                            {{ employee.employeePhoneNo }}
+                        </span>
+                        <span class="meta-item email">
+                            <mat-icon>email</mat-icon>
+                            {{ employee.employeeEmail }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Search Results -->
+        <div class="empty-state" *ngIf="searchTerm && filteredEmployeeList.length === 0">
+            <mat-icon>search_off</mat-icon>
+            <p>No employees found for"{{ searchTerm }}"</p>
+            <span>Try a different search term</span>
+        </div>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="employeeList.length === 0 && !isLoading">
+        <mat-icon>groups</mat-icon>
+        <p>No employees found</p>
+        <span>Adjust your cafeteria filter</span>
+    </div>
+
+    <!-- Loading State -->
+    <div class="empty-state" *ngIf="isLoading">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p class="mt-3">Loading employees...</p>
+    </div>
+</div>
+

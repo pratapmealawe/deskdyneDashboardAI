@@ -1,0 +1,149 @@
+<div class="event-pop-menu-container">
+
+  <!-- HEADER SECTION -->
+  <div class="menu-header-card">
+    <div class="header-left">
+      <div class="header-icon">
+        <mat-icon>restaurant_menu</mat-icon>
+      </div>
+      <div class="header-text">
+        <h2 class="header-title">Menu Management</h2>
+        <p class="header-subtitle">Manage event menu items and categories</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <!-- Future possibility: Export, Excel upload like Outlet -->
+      <button mat-stroked-button class="action-btn" (click)="openCopyMenu()">
+        <mat-icon>content_copy</mat-icon>
+        Copy Menu
+      </button>
+      <button mat-flat-button color="primary" class="action-btn primary-btn" (click)="open()">
+        <mat-icon>add</mat-icon>
+        Add Item
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTERS SECTION -->
+  <div class="filters-card">
+    <div class="filters-row">
+      <div class="filter-group search-group">
+        <mat-icon class="search-icon">search</mat-icon>
+        <input type="text" class="search-input" placeholder="Search menu items..." [(ngModel)]="searchTermMenu"
+          (input)="applyMenuFilters()" />
+        <button *ngIf="searchTermMenu" class="clear-btn" (click)="searchTermMenu=''; applyMenuFilters()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="filter-group">
+        <mat-form-field appearance="outline" class="category-filter">
+          <mat-label>Category</mat-label>
+          <mat-select [(value)]="selectedCategoryFilter" (selectionChange)="applyMenuFilters()">
+            <mat-option value="">All Categories</mat-option>
+            <mat-option *ngFor="let cat of categoryList" [value]="cat.value">
+              {{ cat.title }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="filter-stats">
+        <div class="stat-chip">
+          <mat-icon>inventory_2</mat-icon>
+          <span>{{ filteredMenuList?.length || 0 }} items</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU LIST -->
+  <div class="menu-content-area" *ngIf="showCard">
+    <div *ngFor="let group of groupedMenuList" class="category-section">
+      <div class="category-header">
+        <div class="category-info">
+          <div class="category-icon-circle">
+            <mat-icon>category</mat-icon>
+          </div>
+          <span class="category-name">{{ group.category }}</span>
+          <span class="item-count-badge">{{ group.items.length }} items</span>
+        </div>
+      </div>
+
+      <div class="menu-list">
+        <div class="menu-card-h" *ngFor="let item of group.items; let i = index">
+          <!-- Square Image -->
+          <div class="card-image-h">
+            <img [src]="displayImgUrl + item.imageUrl" alt="{{ item.itemName }}" onerror="this.src='assets/images/placeholder-food.png'"/>
+            <div class="type-indicator" [ngClass]="item.itemType ==='Veg' ?'veg' :'non-veg'">
+              <span class="indicator-dot"></span>
+            </div>
+          </div>
+
+          <!-- Card Content -->
+          <div class="card-content-h">
+            <div class="content-top">
+              <h3 class="item-name" [matTooltip]="item.itemName">{{ item.itemName ||'Unnamed item' }}</h3>
+              <div class="item-actions">
+                <button mat-icon-button class="edit-btn" (click)="edit(item)" matTooltip="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button class="delete-btn" (click)="showDeletePopup(item)" matTooltip="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <p class="item-description" *ngIf="item.description" [matTooltip]="item.description">
+              {{ item.description }}
+            </p>
+
+            <div class="subsidy-row">
+              <div class="subsidy-chip" *ngIf="item.subsidy">
+                <mat-icon>sell</mat-icon>
+                <span>₹{{ item.subsidy }} subsidy</span>
+              </div>
+              
+              <span class="precedence-chip" *ngIf="item.precedence !== undefined && item.precedence !== null"
+                matTooltip="Display Order">
+                <mat-icon inline>sort</mat-icon> {{ item.precedence }}
+              </span>
+            </div>
+
+            <div class="card-footer">
+              <div class="price-display">
+                <span class="currency">₹</span>{{ item.price }}
+              </div>
+              <div class="stock-toggle">
+                <span class="status-label">{{ item.isActive ?'Active' :'Inactive' }}</span>
+                <mat-slide-toggle color="primary" [checked]="item.isActive" 
+                  (change)="toggleStatus(item, $event)">
+                </mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- PAGINATION (keeping as optional/footer) -->
+    <div class="pagination-container mt-4" *ngIf="filteredMenuList.length > menuPageSize">
+      <mat-paginator [length]="filteredMenuList.length" [pageSize]="menuPageSize" [pageIndex]="menuPageIndex"
+        [pageSizeOptions]="[12, 24, 48]" (page)="onMenuPageChange($event)" showFirstLastButtons>
+      </mat-paginator>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!showCard">
+    <div class="empty-icon">
+      <mat-icon>restaurant</mat-icon>
+    </div>
+    <h3>No menu items found</h3>
+    <p>Start by adding new items or copying from another event</p>
+    <button mat-flat-button color="primary" (click)="open()">
+      <mat-icon>add</mat-icon>
+      Add First Item
+    </button>
+  </div>
+</div>

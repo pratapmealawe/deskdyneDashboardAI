@@ -1,0 +1,226 @@
+<div class="add-outlet-qr-menu-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!showUpdateBtn" [class.warning]="showUpdateBtn">
+        <mat-icon>{{ showUpdateBtn ? 'edit' : 'add_circle' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ showUpdateBtn ? 'Edit Menu Item' : 'Add Menu Item' }}</h3>
+        <p>{{ showUpdateBtn ? 'Update QR menu item details' : 'Enter details for the new QR menu item' }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-icon-button class="info-btn" [matMenuTriggerFor]="infoMenu" matTooltip="Quick Tips">
+        <mat-icon>info</mat-icon>
+      </button>
+      <button mat-icon-button (click)="close()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <mat-menu #infoMenu="matMenu" class="info-menu-panel">
+      <div class="info-menu-content">
+        <div class="info-header">
+          <mat-icon>lightbulb</mat-icon>
+          <span>Quick Tips</span>
+        </div>
+        <ul class="info-list required">
+          <li><mat-icon>check_circle</mat-icon> Name and Price are mandatory</li>
+          <li><mat-icon>check_circle</mat-icon> Select at least one category</li>
+        </ul>
+        <ul class="info-list recommended">
+          <li><mat-icon>stars</mat-icon> Set meal type for correct order windows</li>
+          <li><mat-icon>stars</mat-icon> Add max quantity to prevent over-ordering</li>
+        </ul>
+      </div>
+    </mat-menu>
+  </div>
+
+  <mat-dialog-content class="dialog-content">
+    <div [formGroup]="form" class="dialog-form-layout" *ngIf="form">
+      <!-- LEFT SIDEBAR -->
+      <div class="dialog-sidebar">
+        <!-- Item Type Section -->
+        <div class="type-selection-card">
+          <div class="upload-card-header">
+            <mat-icon>restaurant</mat-icon>
+            <span>Item Type</span>
+          </div>
+          <mat-radio-group formControlName="itemType" class="type-radio-group">
+            <div class="type-option veg" [class.selected]="form.get('itemType')?.value === 'Veg'">
+              <mat-radio-button value="Veg">
+                <span class="type-indicator veg-dot"></span>
+                <span>Veg</span>
+              </mat-radio-button>
+            </div>
+            <div class="type-option non-veg" [class.selected]="form.get('itemType')?.value === 'NonVeg'">
+              <mat-radio-button value="NonVeg">
+                <span class="type-indicator nonveg-dot"></span>
+                <span>Non-Veg</span>
+              </mat-radio-button>
+            </div>
+          </mat-radio-group>
+        </div>
+
+        <!-- Quick Settings -->
+        <div class="quick-settings-card" *ngIf="showUpdateBtn">
+          <div class="settings-toggle">
+            <mat-slide-toggle formControlName="isActive" color="primary">
+              Active
+            </mat-slide-toggle>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT MAIN: Form Fields -->
+      <div class="dialog-main">
+        <!-- Basic Info Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon>info</mat-icon>
+            <span>Basic Information</span>
+          </div>
+          <div class="row g-3">
+            <div class="col-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Item Name</mat-label>
+                <mat-icon matPrefix class="field-icon">title</mat-icon>
+                <input matInput type="text" formControlName="itemName" placeholder="e.g. Masala Dosa" />
+                <mat-error *ngIf="f['itemName'].hasError('required')">Item name is required</mat-error>
+                <mat-error *ngIf="f['itemName'].hasError('maxlength')">Maximum 80 characters allowed</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Description</mat-label>
+                <mat-icon matPrefix class="field-icon">notes</mat-icon>
+                <textarea matInput formControlName="description" rows="2"
+                  placeholder="Brief description of the item..."></textarea>
+                <mat-error *ngIf="f['description'].hasError('maxlength')">Maximum 200 characters allowed</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing & Configuration Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon>payments</mat-icon>
+            <span>Pricing & Configuration</span>
+          </div>
+          <div class="row g-3">
+            <div class="col-12 col-md-6 col-lg-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Price (₹)</mat-label>
+                <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+                <input matInput type="number" min="1" formControlName="price"
+                  (keydown)="preventInvalidNumber($event)"
+                  (paste)="preventInvalidPaste($event, 'decimal')" />
+                <mat-error *ngIf="f['price'].hasError('required')">Required</mat-error>
+                <mat-error *ngIf="f['price'].hasError('min')">Price must be at least 1</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Subsidy (₹)</mat-label>
+                <mat-icon matPrefix class="field-icon">discount</mat-icon>
+                <input matInput type="number" min="0" formControlName="subsidy"
+                  (keydown)="preventInvalidNumber($event)"
+                  (paste)="preventInvalidPaste($event, 'decimal')" />
+                <mat-error *ngIf="f['subsidy'].hasError('min')">Subsidy cannot be negative</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Max Quantity</mat-label>
+                <mat-icon matPrefix class="field-icon">inventory_2</mat-icon>
+                <input matInput type="number" min="0" formControlName="maxQuantity"
+                  (keydown)="preventInvalidNumber($event)"
+                  (paste)="preventInvalidPaste($event, 'decimal')" />
+                <mat-error *ngIf="f['maxQuantity'].hasError('min')">Cannot be negative</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Display Order</mat-label>
+                <mat-icon matPrefix class="field-icon">sort</mat-icon>
+                <input matInput type="number" min="0" formControlName="precedence"
+                  (keydown)="preventInvalidNumber($event)"
+                  (paste)="preventInvalidPaste($event)" />
+                <mat-error *ngIf="f['precedence'].hasError('min')">Cannot be negative</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Meal Timing Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon>schedule</mat-icon>
+            <span>Meal Timing</span>
+          </div>
+          <div class="row g-3">
+            <div class="col-12 col-md-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Meal Type</mat-label>
+                <mat-icon matPrefix class="field-icon">dinner_dining</mat-icon>
+                <mat-select formControlName="mealType">
+                  <mat-option *ngFor="let chip of data.outletObj?.mealTiming" [value]="chip.mealType">
+                    {{ chip.mealType }}
+                  </mat-option>
+                </mat-select>
+                <mat-error *ngIf="f['mealType'].hasError('required')">Meal type is required</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Accept Order From</mat-label>
+                <mat-icon matPrefix class="field-icon">access_time</mat-icon>
+                <input matInput type="time" formControlName="acceptOrderFrom" readonly />
+                <mat-error *ngIf="f['acceptOrderFrom'].hasError('required')">Start time is required</mat-error>
+              </mat-form-field>
+            </div>
+            <div class="col-12 col-md-4">
+              <mat-form-field appearance="outline" class="w-100">
+                <mat-label>Accept Order Till</mat-label>
+                <mat-icon matPrefix class="field-icon">access_time_filled</mat-icon>
+                <input matInput type="time" formControlName="acceptOrderTill" readonly />
+                <mat-error *ngIf="f['acceptOrderTill'].hasError('required')">End time is required</mat-error>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Section -->
+        <div class="form-section">
+          <div class="section-header">
+            <mat-icon>category</mat-icon>
+            <span>Category</span>
+          </div>
+          <mat-chip-listbox formControlName="category" class="chip-selection" aria-label="Category selection">
+            <mat-chip-option *ngFor="let chip of categoryList" [value]="chip.value">
+              {{ chip?.title }}
+            </mat-chip-option>
+          </mat-chip-listbox>
+          <div class="text-danger small mt-1" *ngIf="f['category'].invalid && f['category'].touched">
+            Category is required
+          </div>
+        </div>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="close()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" (click)="submit()"
+      *ngIf="!showUpdateBtn" class="btn-primary-action px-4">
+      <mat-icon>add</mat-icon>
+      <span>Create Item</span>
+    </button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" (click)="submit()"
+      *ngIf="showUpdateBtn" class="btn-primary-action px-4">
+      <mat-icon>save</mat-icon>
+      <span>Update Item</span>
+    </button>
+  </mat-dialog-actions>
+</div>

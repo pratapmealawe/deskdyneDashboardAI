@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatRadioModule } from '@angular/material/radio';
 
 import { ConfigVariableRoutingModule } from './config-variable-routing.module';
 import { ConfigVariableComponent } from './config-variable.component';
@@ -23,7 +24,8 @@ import { ConfigVariableComponent } from './config-variable.component';
     MatIconModule,
     MatInputModule,
     MatFormFieldModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatRadioModule
   ]
 })
 export class ConfigVariableModule { }

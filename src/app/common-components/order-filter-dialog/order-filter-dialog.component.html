@@ -22,7 +22,7 @@
                 <mat-icon>receipt_long</mat-icon> Order Status
             </label>
             <div class="chip-selector">
-                <div class="chip-option" [class.active]="filterOrderStatus === ''" (click)="filterOrderStatus = ''">
+                <div class="chip-option" [class.active]="filterOrderStatus ===''" (click)="filterOrderStatus =''">
                     All
                 </div>
                 <div class="chip-option" *ngFor="let s of data.uniqueOrderStatuses"
@@ -38,7 +38,7 @@
                 <mat-icon>payment</mat-icon> Payment Gateway
             </label>
             <div class="chip-selector">
-                <div class="chip-option" [class.active]="filterPgName === ''" (click)="filterPgName = ''">
+                <div class="chip-option" [class.active]="filterPgName ===''" (click)="filterPgName =''">
                     All
                 </div>
                 <div class="chip-option" *ngFor="let pg of data.uniquePgNames" [class.active]="filterPgName === pg"
@@ -54,7 +54,7 @@
                 <mat-icon>smartphone</mat-icon> App Version
             </label>
             <div class="chip-selector">
-                <div class="chip-option" [class.active]="filterAppVersion === ''" (click)="filterAppVersion = ''">
+                <div class="chip-option" [class.active]="filterAppVersion ===''" (click)="filterAppVersion =''">
                     All
                 </div>
                 <div class="chip-option" *ngFor="let v of data.uniqueAppVersions"
@@ -70,7 +70,7 @@
                 <mat-icon>devices</mat-icon> Platform
             </label>
             <div class="chip-selector">
-                <div class="chip-option" [class.active]="filterPlatform === ''" (click)="filterPlatform = ''">
+                <div class="chip-option" [class.active]="filterPlatform ===''" (click)="filterPlatform =''">
                     All
                 </div>
                 <div class="chip-option" *ngFor="let p of data.uniquePlatforms" [class.active]="filterPlatform === p"
@@ -86,15 +86,15 @@
                 <mat-icon>point_of_sale</mat-icon> POS Order
             </label>
             <div class="chip-selector">
-                <div class="chip-option" [class.active]="filterIsPosOrder === ''" (click)="filterIsPosOrder = ''">
+                <div class="chip-option" [class.active]="filterIsPosOrder ===''" (click)="filterIsPosOrder =''">
                     All
                 </div>
-                <div class="chip-option" [class.active]="filterIsPosOrder === 'true'"
-                    (click)="filterIsPosOrder = 'true'">
+                <div class="chip-option" [class.active]="filterIsPosOrder ==='true'"
+                    (click)="filterIsPosOrder ='true'">
                     <mat-icon>check_circle</mat-icon> Yes
                 </div>
-                <div class="chip-option" [class.active]="filterIsPosOrder === 'false'"
-                    (click)="filterIsPosOrder = 'false'">
+                <div class="chip-option" [class.active]="filterIsPosOrder ==='false'"
+                    (click)="filterIsPosOrder ='false'">
                     <mat-icon>cancel</mat-icon> No
                 </div>
             </div>

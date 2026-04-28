@@ -1,0 +1,198 @@
+@use "styles/theme/variable" as var;
+
+.premium-modal {
+    display: flex;
+    flex-direction: column;
+    max-height: 95vh;
+    border-radius: 20px;
+    overflow: hidden;
+    background: white;
+}
+
+.modal-header {
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .title-wrap {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            mat-icon {
+                font-size: 22px;
+                width: 22px;
+                height: 22px;
+            }
+
+            &.primary {
+                background: #eff6ff;
+                color: var.$primary-color1;
+            }
+
+            &.warning {
+                background: #fffbeb;
+                color: #d97706;
+            }
+        }
+
+        .text {
+            h3 {
+                font-size: 1.15rem;
+                font-weight: 700;
+                color: var.$primary-color2;
+                margin: 0;
+            }
+
+            p {
+                font-size: 0.82rem;
+                color: #64748b;
+                margin: 0;
+            }
+        }
+    }
+
+    .close-btn {
+        color: #94a3b8;
+
+        &:hover {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+    }
+}
+
+.dialog-content {
+    padding: 1.5rem 2rem !important;
+    margin: 0;
+}
+
+.section-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+
+    mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+        color: #94a3b8;
+    }
+}
+
+.menu-item-row {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+
+    &:hover {
+        border-color: #e2e8f0;
+        background: #fff;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+        transform: translateY(-2px);
+    }
+
+    .row-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px dashed #e2e8f0;
+
+        .meal-name {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            color: var.$primary-color2;
+
+            .badge {
+                font-size: 0.7rem;
+                padding: 4px 10px;
+                background: #eff6ff;
+                color: var.$primary-color1;
+                border-radius: 6px;
+                text-transform: uppercase;
+            }
+        }
+    }
+}
+
+.full-width {
+    width: 100%;
+}
+
+/* Form Styling */
+::ng-deep {
+    .mat-mdc-form-field {
+        margin-bottom: 4px;
+    }
+
+    .mat-mdc-text-field-wrapper {
+        background-color: transparent !important;
+    }
+
+    .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+    }
+}
+
+/* Actions */
+.modal-footer {
+    padding: 1rem 1.75rem;
+    border-top: 1px solid #f1f5f9;
+    background: #f8fafc;
+}
+
+.btn-cancel {
+    border-radius: 99px;
+    font-weight: 600;
+    color: #64748b;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+
+    &:hover {
+        background: #f1f5f9;
+    }
+}
+
+.btn-primary-action {
+    border-radius: 99px !important;
+    font-weight: 700 !important;
+    height: 44px !important;
+    padding-left: 2rem !important;
+    padding-right: 2rem !important;
+    font-size: 0.85rem !important;
+
+    mat-icon {
+        margin-right: 6px;
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+    }
+}
+
+.bg-light-soft {
+    background-color: #f8fafc;
+}

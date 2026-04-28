@@ -46,7 +46,7 @@
                                 <tr *ngFor="let o of grp.orders">
                                     <td class="fw-medium">{{ o.orderNo }}</td>
                                     <td>
-                                        <div class="fw-bold">{{ o.pocDetails?.pocName || o.customerName || '-' }}</div>
+                                        <div class="fw-bold">{{ o.pocDetails?.pocName || o.customerName ||'-' }}</div>
                                         <div class="small text-muted"
                                             *ngIf="o.pocDetails?.pocPhoneNo || o.customerPhoneNo">
                                             {{ o.pocDetails?.pocPhoneNo || o.customerPhoneNo }}

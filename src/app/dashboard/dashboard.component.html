@@ -1,0 +1,56 @@
+<div class="container-fluid py-4 dashboard-main-container">
+
+  <!-- Page Header Card -->
+  <div class="page-header-card mb-4">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Manage your organization's performance and operations</p>
+      </div>
+
+      <div class="actions-section">
+        <mat-form-field appearance="outline" class="org-selector">
+          <mat-label>Select Organization</mat-label>
+          <mat-select (selectionChange)="changeOrganization($event)" [value]="orgSelected?._id">
+            <mat-option *ngFor="let org of orglist" [value]="org._id">
+              {{org?.organization_name}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div class="loading-state" *ngIf="isLoading">
+    <mat-spinner diameter="44"></mat-spinner>
+    <p>Loading organizations...</p>
+  </div>
+
+  <!-- Content Area -->
+  <div *ngIf="!isLoading && orgSelected">
+    <!-- Main Tabs (pill-style) -->
+    <div class="tabs-container">
+      <div class="main-tabs">
+        <button *ngFor="let tab of tabs" class="tab-btn" 
+          [routerLink]="['/app/dashboard', tab.path]"
+          routerLinkActive="active">
+          <mat-icon class="tab-icon">{{ tab.icon }}</mat-icon>
+          <span>{{ tab.name }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content-area py-2">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && !orgSelected">
+    <mat-icon>business</mat-icon>
+    <h3>No Organization Selected</h3>
+    <p>Please select an organization from the selector above to view the dashboard.</p>
+  </div>
+</div>

@@ -1,0 +1,31 @@
+<div class="other-orders-container animate-fade-in">
+    <!-- Header Section -->
+    <div class="orders-header-card">
+        <div class="title-section">
+            <h1 class="page-title">Special Orders & Analytics</h1>
+            <p class="page-subtitle">Manage bulk, admin, and virtual cafeteria operations</p>
+        </div>
+    </div>
+
+    <!-- Tabs Container -->
+    <div class="tabs-container">
+        <div class="main-tabs" #mainTabsContainer>
+            <button *ngFor="let view of orderTypeList; let i = index" class="tab-btn"
+                [class.active]="selectedTabIndex === i" (click)="onCustomTabChange(i)">
+                <mat-icon class="tab-icon">{{ view.icon }}</mat-icon>
+                <span>{{ view.name }}</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Tab Content Area -->
+    <div class="tab-content-area">
+        <div class="content-card">
+            <app-daily-bulk-order *ngIf="selectedTabIndex === 0"></app-daily-bulk-order>
+            <app-bulk-order *ngIf="selectedTabIndex === 1"></app-bulk-order>
+            <app-emp-poll *ngIf="selectedTabIndex === 2"></app-emp-poll>
+            <app-virtual-cafeteria *ngIf="selectedTabIndex === 3"></app-virtual-cafeteria>
+            <app-consumption-order *ngIf="selectedTabIndex === 4"></app-consumption-order>
+        </div>
+    </div>
+</div>

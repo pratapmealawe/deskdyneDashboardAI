@@ -1,0 +1,341 @@
+<!-- Daily Bulk Order Card — Orders-style layout -->
+<div class="order-card">
+
+  <!-- Card Top -->
+  <div class="card-top">
+    <div class="order-avatar">
+      {{ order?.pocDetails?.pocName?.substring(0,2)?.toUpperCase() ||'DB' }}
+    </div>
+    <div class="order-identity">
+      <h3 class="order-title">#{{ order?.orderNo }}</h3>
+      <div class="order-sub-info">
+        <span class="type-chip">
+          <mat-icon>inventory_2</mat-icon> Daily Bulk
+        </span>
+        <span *ngIf="order.sourceType === 'manualAdmin'" class="manual-order-chip">
+          <mat-icon>inventory_2</mat-icon> Manual Order
+        </span>
+        <span class="date-text">
+          {{ order?.orderDate | date:'MMM d, y, h:mm a' }}
+        </span>
+      </div>
+    </div>
+    <div class="card-top-right">
+      <div class="status-badge" [ngClass]="getStatusClass(order?.orderstatus)">
+        <mat-icon>{{ getStatusIcon(order?.orderstatus) }}</mat-icon>
+        {{ getStatusLabel(order?.orderstatus) }}
+      </div>
+      <div class="card-actions" *ngIf="showActions">
+        <ng-container *ngFor="let action of actionList">
+          <button mat-flat-button [color]="action.color ==='warn' ?'warn' :'primary'" class="action-btn"
+            (click)="handleAction(action.action)">
+            <mat-icon>{{ action.icon }}</mat-icon>
+            {{ action.label }}
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Body Grid -->
+  <div class="card-body-grid">
+
+    <!-- Left Column: Details -->
+    <div class="card-body-left">
+      <!-- Customer POC -->
+      <div class="info-row">
+        <mat-icon class="info-icon">person</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Customer POC</span>
+          <span class="info-value">{{ order?.pocDetails?.pocName }}</span>
+        </div>
+      </div>
+      <div class="info-row" *ngIf="order?.pocDetails?.pocPhoneNo">
+        <mat-icon class="info-icon">phone</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Phone</span>
+          <span class="info-value">{{ order?.pocDetails?.pocPhoneNo }}</span>
+        </div>
+      </div>
+      <div class="info-row" *ngIf="order?.pocDetails?.pocEmail">
+        <mat-icon class="info-icon">email</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Email</span>
+          <span class="info-value text-truncate" [matTooltip]="order?.pocDetails?.pocEmail">{{
+            order?.pocDetails?.pocEmail }}</span>
+        </div>
+      </div>
+
+      <!-- Organization Badge -->
+      <div class="badge-row">
+        <div class="org-badge" *ngIf="order?.orgName">
+          <mat-icon>business</mat-icon>
+          {{ order?.cafeteriaName }} ({{ order?.orgName }})
+        </div>
+      </div>
+
+      <!-- Location -->
+      <div class="info-row" *ngIf="order?.customerLocation?.address || order?.orgCity">
+        <mat-icon class="info-icon">location_on</mat-icon>
+        <div class="info-content">
+          <span class="info-label">City</span>
+          <span class="info-value">{{ order?.customerLocation?.address || order?.orgCity }}</span>
+        </div>
+      </div>
+      <div class="info-row" *ngIf="order?.customerLocation?.location">
+        <mat-icon class="info-icon">pin_drop</mat-icon>
+        <div class="info-content">
+          <span class="info-label">Location</span>
+          <span class="info-value text-truncate" [matTooltip]="order?.customerLocation?.location">{{
+            order?.customerLocation?.location }}</span>
+        </div>
+      </div>
+
+      <!-- Vendor Details Section -->
+      <div class="vendor-details-card" *ngIf="order?.vendorFirmName || order?.vendorName">
+        <div class="vendor-card-header">
+          <mat-icon>store</mat-icon>
+          <span>Vendor Details</span>
+        </div>
+        <div class="vendor-card-body">
+          <div class="info-row" *ngIf="order?.vendorFirmName">
+            <mat-icon class="info-icon">storefront</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Firm</span>
+              <span class="info-value">{{ order?.vendorFirmName }}</span>
+            </div>
+          </div>
+          <div class="info-row" *ngIf="order?.vendorName">
+            <mat-icon class="info-icon">person</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ order?.vendorName }}</span>
+            </div>
+          </div>
+          <div class="info-row" *ngIf="order?.vendorPhoneNo">
+            <mat-icon class="info-icon">phone</mat-icon>
+            <div class="info-content">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ order?.vendorPhoneNo }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery Details -->
+      <div class="delivery-info-strip">
+        <div class="delivery-cell">
+          <mat-icon>calendar_today</mat-icon>
+          <div>
+            <span class="info-label">Delivery Date</span>
+            <span class="info-value">{{ order?.deliveryDate | date:'MMM d, y' }}</span>
+          </div>
+        </div>
+        <div class="delivery-cell">
+          <mat-icon>schedule</mat-icon>
+          <div>
+            <span class="info-label">Delivery Slot</span>
+            <span class="info-value">{{ formatTime12Hour(order?.itemList?.[0]?.deliveryTimeFrom) }} - {{
+              formatTime12Hour(order?.itemList?.[0]?.deliveryTimeTo) }}</span>
+          </div>
+        </div>
+        <div class="delivery-cell">
+          <mat-icon>local_shipping</mat-icon>
+          <div>
+            <span class="info-label">Mode</span>
+            <span class="info-value">{{ order?.deliveryVendor ||'Standard' }}</span>
+          </div>
+        </div>
+        <div class="delivery-cell" *ngIf="order?.startManualDelivery">
+          <mat-icon>pan_tool</mat-icon>
+          <div>
+            <span class="info-label">Manual Delivery</span>
+            <span class="info-value">Yes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Special Request -->
+      <div class="special-note" *ngIf="order?.specialRequest">
+        <mat-icon>notes</mat-icon>
+        <span>{{ order?.specialRequest }}</span>
+      </div>
+    </div>
+
+    <!-- Right Column: Items -->
+    <div class="card-body-right">
+      <div class="section-header">
+        <span class="section-label">Order Items</span>
+        <span class="items-count-badge">{{ order?.itemList?.length || 0 }} items</span>
+      </div>
+      <div class="items-scroll">
+        <div class="item-row" *ngFor="let item of order?.itemList">
+          <div class="item-left">
+            <span class="item-qty-chip">{{ item?.count }}x</span>
+            <span class="item-name">{{ item?.deliveredItem }}</span>
+          </div>
+          <div class="item-tags">
+            <span class="meta-tag meal-type">{{ item?.mealType }}</span>
+            <span class="meta-tag item-type" *ngIf="item?.itemName">{{ item?.itemName }}</span>
+          </div>
+          <span class="item-price">₹{{ (item?.mealPrice || 0) * (item?.count || 1) | number :'1.2-2' }}</span>
+        </div>
+      </div>
+
+      <!-- Order Images (inline) -->
+      <div class="images-section" *ngIf="order?.beforePackingImageUrl || order?.afterPackingImageUrl">
+        <div class="section-label" style="margin-top: 12px;">Order Images</div>
+        <div class="images-row">
+          <div class="image-card" *ngIf="order?.beforePackingImageUrl"
+            (click)="openImagePreview(imageUrl + order?.beforePackingImageUrl)">
+            <img [src]="imageUrl + order?.beforePackingImageUrl" alt="Before Packing" />
+            <span class="image-label">Before Packing</span>
+          </div>
+          <div class="image-card" *ngIf="order?.afterPackingImageUrl"
+            (click)="openImagePreview(imageUrl + order?.afterPackingImageUrl)">
+            <img [src]="imageUrl + order?.afterPackingImageUrl" alt="After Packing" />
+            <span class="image-label">After Packing</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Employee Details (collapsible) -->
+  <div class="employees-section" *ngIf="order?.employeePollDetails?.length">
+    <div class="section-toggle" (click)="showEmployees = !showEmployees">
+      <div class="toggle-left">
+        <mat-icon>groups</mat-icon>
+        <span class="section-label">Employee Details</span>
+      </div>
+      <div class="toggle-right">
+        <span class="count-chip">{{ order?.employeePollDetails?.length }} employees</span>
+        <mat-icon [class.rotated]="showEmployees">expand_more</mat-icon>
+      </div>
+    </div>
+    <div class="employee-grid" *ngIf="showEmployees">
+      <div class="employee-chip" *ngFor="let emp of order?.employeePollDetails">
+        <div class="emp-avatar">
+          {{ emp?.employeeName?.substring(0,2)?.toUpperCase() }}
+        </div>
+        <div class="emp-info">
+          <span class="emp-name">{{ emp?.employeeName }}</span>
+          <span class="emp-meta" *ngIf="emp?.employeePhoneNo">{{ emp?.employeePhoneNo }}</span>
+          <span class="emp-meta" *ngIf="emp?.employeeEmail">{{ emp?.employeeEmail }}</span>
+          <span class="emp-item" *ngIf="emp?.deliveredItem">{{ emp?.deliveredItem }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card Footer -->
+  <div class="card-footer">
+    <!-- Financial Strip -->
+    <div class="fin-strip">
+      <div class="fin-cell">
+        <span class="fin-label">Subtotal</span>
+        <span class="fin-value">₹{{ (order?.orderAmount || 0) | number :'1.2-2' }}</span>
+      </div>
+      <div class="fin-cell" *ngIf="order?.deliveryCharge">
+        <span class="fin-label">Delivery</span>
+        <span class="fin-value">₹{{ order?.deliveryCharge | number :'1.2-2' }}</span>
+      </div>
+      <div class="fin-cell" *ngIf="order?.taxes">
+        <span class="fin-label">Taxes</span>
+        <span class="fin-value">₹{{ order?.taxes | number :'1.2-2' }}</span>
+      </div>
+      <div class="fin-cell grand">
+        <span class="fin-label">Total</span>
+        <span class="fin-value">₹{{ (order?.amount || 0) | number :'1.2-2' }}</span>
+      </div>
+      <div class="fin-cell paid">
+        <span class="fin-label">Paid to Kitchen</span>
+        <span class="fin-value">₹{{ (order?.amtAfterCommisionPaidToKitchen || order?.itemAmount || 0) | number :'1.2-2'
+          }}</span>
+      </div>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="footer-actions">
+      <button mat-stroked-button class="history-btn" (click)="openOrderHistory()" *ngIf="order?.statusHistory?.length">
+        <mat-icon>history</mat-icon>
+        Order History ({{ order?.statusHistory?.length }})
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Action Confirm Dialog Template -->
+<ng-template #actionDialogTpl>
+  <h2 mat-dialog-title class="dialog-title-row">
+    <mat-icon>{{ tempStatus ==='cancelled' ?'warning' :'check_circle' }}</mat-icon>
+    {{ activeModalAction }}
+  </h2>
+  <mat-dialog-content>
+    <p class="dialog-message" *ngIf="modalMessage">{{ modalMessage }}</p>
+    <mat-form-field appearance="outline" class="full-width" *ngIf="showDeliveryInput">
+      <mat-label>Delivery Charge</mat-label>
+      <span matPrefix>₹&nbsp;</span>
+      <input matInput type="number" [(ngModel)]="deliveryChargesFromModal" placeholder="0">
+    </mat-form-field>
+    <mat-form-field appearance="outline" class="full-width" *ngIf="commentRequired">
+      <mat-label>Comment <span class="required-star" *ngIf="commentRequired">*</span></mat-label>
+      <textarea matInput rows="3" [(ngModel)]="statusComment" placeholder="Enter comment..."></textarea>
+      <mat-error *ngIf="commentRequired && !statusComment">Comment is required to proceed.</mat-error>
+    </mat-form-field>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-stroked-button mat-dialog-close>Cancel</button>
+    <button mat-flat-button [color]="tempStatus ==='cancelled' ?'warn' :'primary'" (click)="confirmAction()"
+      [disabled]="commentRequired && !statusComment">
+      Confirm
+    </button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Order History Dialog Template -->
+<ng-template #historyDialogTpl>
+  <h2 mat-dialog-title class="dialog-title-row">
+    <mat-icon>history</mat-icon>
+    Order History
+  </h2>
+  <mat-dialog-content>
+    <div class="history-timeline" *ngIf="order?.statusHistory?.length; else noHistory">
+      <div class="history-item" *ngFor="let log of order?.statusHistory; let i = index; let last = last">
+        <div class="history-dot" [class.active]="i === 0"></div>
+        <div class="history-connector" *ngIf="!last"></div>
+        <div class="history-content">
+          <div class="history-status">{{ getStatusLabel(log?.orderstatus) }}</div>
+          <div class="history-date">{{ log?.updatedOn | date:'d MMM y, h:mm a' }}</div>
+          <div class="history-actor">by {{ log?.actionBy ||'System Admin' }}</div>
+          <div class="history-comment" *ngIf="log?.comment">"{{ log?.comment }}"</div>
+        </div>
+      </div>
+    </div>
+    <ng-template #noHistory>
+      <div class="empty-history">
+        <mat-icon>info_outline</mat-icon>
+        <span>No history available</span>
+      </div>
+    </ng-template>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</ng-template>
+
+<!-- Image Preview Dialog Template -->
+<ng-template #imagePreviewTpl>
+  <h2 mat-dialog-title class="dialog-title-row">
+    <mat-icon>image</mat-icon>
+    Package Image
+  </h2>
+  <mat-dialog-content>
+    <div class="image-preview-wrapper">
+      <img [src]="previewImageSrc" alt="Package Image" />
+    </div>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-flat-button color="primary" mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</ng-template>

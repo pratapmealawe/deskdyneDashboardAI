@@ -1,0 +1,210 @@
+<div mat-dialog-title class="dialog-title">
+  <div class="title-left">
+    <mat-icon>{{ editType === 'edit' ? 'edit' : 'add_circle' }}</mat-icon>
+    {{ editType === 'edit' ? 'Edit Bulk Item' : 'Add New Bulk Item' }}
+  </div>
+  <button mat-icon-button [matMenuTriggerFor]="infoMenu" class="info-btn" matTooltip="Required Fields">
+    <mat-icon>info</mat-icon>
+  </button>
+  <mat-menu #infoMenu="matMenu" class="info-menu-panel">
+    <div class="info-menu-content" (click)="$event.stopPropagation()">
+      <div class="info-header">
+        <mat-icon>checklist</mat-icon>
+        <span>Required Fields</span>
+      </div>
+      <ul class="info-list required">
+        <li><mat-icon>check_circle</mat-icon> Item Name</li>
+        <li><mat-icon>check_circle</mat-icon> Slab 1 Price</li>
+        <li><mat-icon>check_circle</mat-icon> Category</li>
+        <li><mat-icon>check_circle</mat-icon> Description</li>
+      </ul>
+    </div>
+  </mat-menu>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <form [formGroup]="foodItemForm" class="dialog-form-layout">
+    <!-- LEFT SIDEBAR: Image Upload & Type -->
+    <div class="dialog-sidebar">
+
+      <!-- Image Upload Card -->
+      <div class="image-upload-card">
+        <div class="upload-card-header">
+          <mat-icon>image</mat-icon>
+          <span>Item Image</span>
+        </div>
+        <div class="upload-wrapper">
+          <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
+            (change)="handleFileInput($event)" />
+
+          <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
+            <img *ngIf="imageUrl && !imageReplaced && editType === 'edit'" [src]="displayImgUrl + imageUrl"
+              class="preview-image" />
+            <img *ngIf="imageUrl && imageReplaced && editType === 'edit'" [src]="imageUrl" class="preview-image" />
+            <img *ngIf="imageUrl && editType !== 'edit'" [src]="imageUrl" class="preview-image" />
+
+            <div *ngIf="!imageUrl" class="placeholder-content">
+              <mat-icon>cloud_upload</mat-icon>
+              <span>Upload Image</span>
+            </div>
+            <div class="upload-overlay">
+              <span>Change Image</span>
+            </div>
+          </div>
+        </div>
+        <p class="upload-hint">Click to upload or drag an image</p>
+      </div>
+
+      <!-- Item Type Section -->
+      <div class="type-selection-card">
+        <div class="upload-card-header">
+          <mat-icon>restaurant</mat-icon>
+          <span>Item Type</span>
+        </div>
+        <mat-radio-group formControlName="itemType" class="type-radio-group">
+          <div class="type-option veg" [class.selected]="foodItemForm.get('itemType')?.value ==='Veg'">
+            <mat-radio-button value="Veg">
+              <span class="type-indicator veg-dot"></span>
+              <span>Veg</span>
+            </mat-radio-button>
+          </div>
+          <div class="type-option non-veg" [class.selected]="foodItemForm.get('itemType')?.value ==='NonVeg'">
+            <mat-radio-button value="NonVeg">
+              <span class="type-indicator nonveg-dot"></span>
+              <span>Non-Veg</span>
+            </mat-radio-button>
+          </div>
+        </mat-radio-group>
+        <mat-error *ngIf="hasError('itemType','required')" class="d-block mt-1 small">Required</mat-error>
+      </div>
+
+      <!-- Serving Type Section -->
+      <div class="type-selection-card mt-3">
+        <div class="upload-card-header">
+          <mat-icon>groups</mat-icon>
+          <span>Serving Type</span>
+        </div>
+        <mat-radio-group formControlName="itemServingType" class="type-radio-group">
+          <div class="type-option" [class.selected]="foodItemForm.get('itemServingType')?.value ==='perPerson'">
+            <mat-radio-button value="perPerson">1 Person</mat-radio-button>
+          </div>
+          <div class="type-option" [class.selected]="foodItemForm.get('itemServingType')?.value ==='perPlate'">
+            <mat-radio-button value="perPlate">Plate</mat-radio-button>
+          </div>
+          <div class="type-option" [class.selected]="foodItemForm.get('itemServingType')?.value ==='perKg'">
+            <mat-radio-button value="perKg">Per Kg</mat-radio-button>
+          </div>
+        </mat-radio-group>
+      </div>
+
+      <!-- Quick Settings -->
+      <div class="quick-settings-card">
+        <div class="settings-toggle">
+          <mat-slide-toggle formControlName="isActive" color="primary">
+            Available
+          </mat-slide-toggle>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT MAIN: Form Fields -->
+    <div class="dialog-main">
+
+      <!-- Basic Info Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>info</mat-icon>
+          <span>Basic Information</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Item Name</mat-label>
+              <input matInput formControlName="itemName" placeholder="Enter bulk item name" />
+              <mat-error *ngIf="hasError('itemName','required')">Item Name is required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-md-6">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Flavour / Variant</mat-label>
+              <input matInput formControlName="itemFlavour" placeholder="Standard / Spicy / etc." />
+            </mat-form-field>
+          </div>
+          <div class="col-12">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Description</mat-label>
+              <textarea matInput rows="3" formControlName="itemDescription" placeholder="Short description for bulk order"></textarea>
+              <mat-hint align="end">{{ foodItemForm.get('itemDescription')?.value?.length || 0 }}/300</mat-hint>
+              <mat-error *ngIf="hasError('itemDescription','required')">Description is required</mat-error>
+            </mat-form-field>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>category</mat-icon>
+          <span>Category <span class="text-danger">*</span></span>
+        </div>
+        <mat-chip-listbox formControlName="category" class="chip-selection">
+          <mat-chip-option *ngFor="let cat of categoryList" [value]="cat.value">
+            {{ cat.title }}
+          </mat-chip-option>
+        </mat-chip-listbox>
+        <mat-error *ngIf="hasError('category','required')" class="d-block mt-1 small">Category is required</mat-error>
+      </div>
+
+      <!-- Pricing Slabs Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon>payments</mat-icon>
+          <span>Slab Pricing (₹)</span>
+        </div>
+        <div class="row g-3">
+          <div class="col-6 col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Slab 1</mat-label>
+              <input matInput type="number" formControlName="slab1Price" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+              <mat-error *ngIf="hasError('slab1Price','required')">Required</mat-error>
+            </mat-form-field>
+          </div>
+          <div class="col-6 col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Slab 2</mat-label>
+              <input matInput type="number" formControlName="slab2Price" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="col-6 col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Slab 3</mat-label>
+              <input matInput type="number" formControlName="slab3Price" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="col-6 col-md-3">
+            <mat-form-field appearance="outline" class="w-100">
+              <mat-label>Slab 4</mat-label>
+              <input matInput type="number" formControlName="slab4Price" (keydown)="preventInvalidNumber($event)" />
+              <mat-icon matPrefix class="field-icon">currency_rupee</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+        <p class="text-muted small mt-2">Slabs define pricing based on order quantity ranges.</p>
+      </div>
+
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button class="btn-cancel" mat-stroked-button color="warn" mat-dialog-close="cancel">
+    <mat-icon>cancel</mat-icon> Cancel
+  </button>
+  <button class="btn-submit" mat-raised-button color="primary" [disabled]="foodItemForm.invalid" (click)="onSubmit()">
+    <mat-icon>{{ editType === 'edit' ? 'update' : 'check_circle' }}</mat-icon>
+    {{ editType === 'edit' ? 'Update Item' : 'Add Item' }}
+  </button>
+</mat-dialog-actions>

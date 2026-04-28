@@ -1,0 +1,150 @@
+@use "styles/theme/variable" as var;
+@use 'src/styles/theme/mixins' as mixin;
+
+.bulk-dashboard-header {
+    background: white;
+    border-radius: 20px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    margin: 1rem 0 1.5rem 0;
+
+    .header-card {
+        background: transparent;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 1.25rem;
+        box-shadow: none;
+        border: none;
+        margin-bottom: 1.5rem;
+
+        .header-icon-box {
+            width: 44px;
+            height: 44px;
+            background: #eff6ff;
+            color: var.$primary-color1;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            mat-icon {
+                font-size: 22px;
+                width: 22px;
+                height: 22px;
+            }
+        }
+
+        .header-text-content {
+            .page-title {
+                font-size: 1.4rem;
+                font-weight: 800;
+                color: var.$primary-color2;
+                margin: 0;
+                letter-spacing: -0.02em;
+                line-height: 1.2;
+            }
+
+            .page-subtitle {
+                font-size: 0.85rem;
+                color: #64748b;
+                margin: 2px 0 0 0;
+                line-height: 1.4;
+            }
+        }
+    }
+}
+
+.menu-content-container {
+    animation: fadeIn 0.4s ease;
+}
+
+.tabs-row {
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 0 1rem; // Add side padding for global alignment
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    .main-tabs {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: nowrap;
+    }
+
+    &.level-1 {
+        padding: 0.8rem 1rem;
+        background: transparent;
+        border: none;
+        border-top: 1px solid #f1f5f9;
+        border-bottom: 1px solid #f1f5f9;
+        box-shadow: none;
+        border-radius: 0;
+        margin-bottom: 0 !important;
+    }
+}
+
+.pill-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: var.$border-radius-pill;
+    border: 1px solid transparent;
+    background: white;
+    color: #64748b;
+    font-weight: 600;
+    font-size: 0.88rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    font-family: inherit;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+
+    mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: #94a3b8;
+        transition: color 0.3s ease;
+    }
+
+    &:hover {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: var.$primary-color1;
+
+        mat-icon {
+            color: var.$primary-color1;
+        }
+    }
+
+    &.active {
+        background: var.$primary-color1;
+        color: white;
+        border-color: var.$primary-color1;
+        box-shadow: 0 4px 12px rgba(14, 73, 181, 0.25);
+
+        mat-icon {
+            color: white;
+        }
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

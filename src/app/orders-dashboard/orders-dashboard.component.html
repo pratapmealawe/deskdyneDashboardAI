@@ -1,0 +1,112 @@
+<div class="dashboard-container">
+    <!-- Header Card -->
+    <div class="page-header-card">
+        <div class="header-content">
+            <div class="title-section">
+                <h1 class="page-title">Orders Dashboard</h1>
+                <p class="page-subtitle">Real-time view of all outlet orders</p>
+            </div>
+            <div class="actions-section">
+                <!-- Search -->
+                <div class="search-wrapper">
+                    <mat-icon class="search-icon">search</mat-icon>
+                    <input type="text" placeholder="Search order #, Name, Mobile..."
+                        (keyup)="onSearch($any($event.target).value)" />
+                </div>
+
+                <!-- Refresh -->
+                <button mat-stroked-button class="btn-refresh" [class.isLoading]="isLoading" (click)="reloadPage()"
+                    [disabled]="isLoading">
+                    <mat-icon>refresh</mat-icon>
+                    <span>Refresh</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Tiles / Stats -->
+    <div class="stats-row mb-4">
+        <div class="stat-card" *ngFor="let status of statusList" [class.active]="selectedStatus === status"
+            (click)="getAllOrders(status)">
+
+            <div class="stat-icon-wrap" [ngClass]="{'pending-gradient': status ==='paymentInprogress' || status ==='readyOrder','error-gradient': status ==='paymentFailed' || status ==='cancelled','primary-gradient': status ==='placed' || status ==='autoComplete','success-gradient': status ==='completed','ready-gradient': status ==='readyOrder'
+                }">
+                <mat-icon *ngIf="status ==='paymentInprogress'">hourglass_empty</mat-icon>
+                <mat-icon *ngIf="status ==='paymentFailed'">error</mat-icon>
+                <mat-icon *ngIf="status ==='placed'">restaurant</mat-icon>
+                <mat-icon *ngIf="status ==='completed'">check_circle</mat-icon>
+                <mat-icon *ngIf="status ==='cancelled'">cancel</mat-icon>
+                <mat-icon *ngIf="status ==='readyOrder'">thumb_up</mat-icon>
+                <mat-icon *ngIf="status ==='autoComplete'">autorenew</mat-icon>
+            </div>
+
+            <div class="stat-info">
+                <span class="stat-label">Order Status</span>
+                <span class="stat-value">{{ orderStatusMapper[status] || status }}</span>
+            </div>
+
+            <div class="active-indicator" *ngIf="selectedStatus === status"></div>
+        </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-state">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Fetching latest orders...</p>
+    </div>
+
+    <div *ngIf="!isLoading">
+        <div class="container-fluid px-0" *ngIf="orders.length > 0">
+            <mat-accordion multi>
+                <mat-expansion-panel *ngFor="let dateKey of dateKeys" class="mb-3">
+                    <mat-expansion-panel-header class="py-4">
+                        <div class="w-100 d-flex justify-content-between align-items-center pe-3">
+                            <mat-panel-title class="group-title">
+                                <mat-icon class="calendar-icon">calendar_today</mat-icon>
+                                <span class="date-text">{{ dateKey }}</span>
+                                <span class="count-badge">{{ ordersByDate[dateKey]?.length }}</span>
+                            </mat-panel-title>
+
+                            <!-- Bulk Actions -->
+                            <div class="bulk-actions">
+                                <button mat-flat-button class="bulk-btn success-btn"
+                                    *ngIf="showBulkActions(dateKey)"
+                                    (click)="bulkCompleteOrders(ordersByDate[dateKey], $event)">
+                                    <mat-icon>done_all</mat-icon>
+                                    <span>Complete All</span>
+                                </button>
+
+                                <button mat-flat-button class="bulk-btn warn-btn"
+                                    *ngIf="showBulkActions(dateKey)"
+                                    (click)="bulkPaymentFailedOrders(ordersByDate[dateKey], $event)">
+                                    <mat-icon>error_outline</mat-icon>
+                                    <span>Payment Failed</span>
+                                </button>
+
+                                <button mat-flat-button class="bulk-btn primary-btn"
+                                    *ngIf="showValidateAll(dateKey)"
+                                    (click)="bulkValidatePayments(ordersByDate[dateKey], $event)">
+                                    <mat-icon>verified_user</mat-icon>
+                                    <span>Validate All</span>
+                                </button>
+                            </div>
+                        </div>
+                    </mat-expansion-panel-header>
+
+                    <!-- Order Cards Grid for this Date -->
+                    <div class="row g-4 pt-3">
+                        <div class="col-12 col-md-6 col-xl-4" *ngFor="let row of ordersByDate[dateKey]">
+                            <app-orders-dashboard-card [order]="row" (refresh)="getAllOrders()">
+                            </app-orders-dashboard-card>
+                        </div>
+                    </div>
+                </mat-expansion-panel>
+            </mat-accordion>
+        </div>
+
+        <div *ngIf="orders.length === 0" class="empty-state">
+            <mat-icon>receipt_long</mat-icon>
+            <h3>No Orders Found</h3>
+            <p>We couldn't find any orders for the selected status.</p>
+        </div>
+    </div>
+</div>

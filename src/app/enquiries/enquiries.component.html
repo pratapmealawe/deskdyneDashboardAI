@@ -1,0 +1,75 @@
+<div class="vendor-header">
+    <div>
+        <h4 class="m-0 fw-semibold">Enquiries</h4>
+    </div>
+    <div class="header-actions">
+        <button class="btn-view" mat-raised-button color="primary" (click)="updateAllEnquiries()">
+            <mat-icon>done_all</mat-icon>
+            Acknowledge All
+        </button>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div *ngIf="enquirylist && enquirylist.length > 0; else noRecords">
+        <div class="feedback-list">
+            <mat-card class="order-card" *ngFor="let lead of pagedEnquiries">
+                <div class="order-card-inner">
+                    <!-- LEFT SIDE: Avatar + Main Info -->
+                    <div class="order-left">
+                        <mat-card-header>
+                            <div mat-card-avatar class="order-avatar">
+                                {{ lead.name?.[0] || 'U' }}
+                            </div>
+                            <div class="order-header-text">
+                                <mat-card-title>
+                                    {{ lead.name }}
+                                </mat-card-title>
+                                <mat-card-subtitle>
+                                    {{ lead.designation }} • {{ lead.organizationName }}
+                                </mat-card-subtitle>
+                            </div>
+
+                            <span class="status-chip" [ngClass]="lead.status === 'review' ? 'review' : 'acknowledged'">
+                                {{ lead.status === 'review' ? 'Pending' : 'Acknowledged' }}
+                            </span>
+                        </mat-card-header>
+                    </div>
+
+                    <!-- RIGHT SIDE: Details -->
+                    <div class="order-right">
+                        <div class="row g-2">
+                            <div class="col-6 col-md-4">
+                                <div class="labelText">Phone</div>
+                                <div class="labelData">{{ lead.phoneNo }}</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="labelText">Email</div>
+                                <div class="labelData">{{ lead.emailId }}</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="labelText">City</div>
+                                <div class="labelData">{{ lead.city }}</div>
+                            </div>
+                            <div class="col-6 col-md-4">
+                                <div class="labelText">Employee Count</div>
+                                <div class="labelData">{{ lead.employeeCount }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-card>
+        </div>
+
+        <mat-paginator [length]="enquirylist.length" [pageSize]="pageSize" [pageIndex]="pageIndex"
+            [pageSizeOptions]="[10, 50, 100, 200, 500]" (page)="onPageChange($event)" showFirstLastButtons
+            aria-label="Select page">
+        </mat-paginator>
+    </div>
+
+    <ng-template #noRecords>
+        <div class="center text-muted mt-5">
+            No Records Found
+        </div>
+    </ng-template>
+</div>

@@ -1,521 +1,379 @@
-<div class="add-outlet-container">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-    <!-- HEADER -->
-    <div class="page-header-card mb-4">
-      <div class="header-content">
-        <div class="d-flex align-items-center gap-3">
-          <button mat-icon-button (click)="back()" class="back-btn" type="button">
-            <mat-icon>arrow_back</mat-icon>
-          </button>
-          <div>
-            <h1 class="page-title">{{ showUpdate ? 'Edit Outlet' : 'Add Outlet' }}</h1>
-            <p class="page-subtitle">Configure outlet details, timings, and settings.</p>
-          </div>
-        </div>
-
-        <div class="header-right">
-          <!-- Info Button -->
-          <button mat-icon-button [matMenuTriggerFor]="infoMenu" class="info-btn" matTooltip="Required Fields">
-            <mat-icon>info</mat-icon>
-          </button>
-          <mat-menu #infoMenu="matMenu" class="info-menu-panel">
-            <div class="info-menu-content" (click)="$event.stopPropagation()">
-              <div class="info-header">
-                <mat-icon>checklist</mat-icon>
-                <span>Required Fields</span>
-              </div>
-              <ul class="info-list required">
-                <li><mat-icon>check_circle</mat-icon> Outlet Name</li>
-                <li><mat-icon>check_circle</mat-icon> Description</li>
-                <li><mat-icon>check_circle</mat-icon> Commission Percentages</li>
-                <li><mat-icon>check_circle</mat-icon> Organization & Cafeteria</li>
-                <li><mat-icon>check_circle</mat-icon> Meal Timings</li>
-                <li><mat-icon>check_circle</mat-icon> Billing Type</li>
-              </ul>
-              <div class="info-header mt-2">
-                <mat-icon>stars</mat-icon>
-                <span>Recommended</span>
-              </div>
-              <ul class="info-list recommended">
-                <li><mat-icon>add_circle_outline</mat-icon> Outlet Image</li>
-              </ul>
-            </div>
-          </mat-menu>
-
-          <!-- Validity Badge -->
-          <div class="status-pill" [ngClass]="form.valid && seletedCafetria && !mealTimingError ? 'valid' : 'invalid'">
-            <mat-icon>{{ form.valid && seletedCafetria && !mealTimingError ? 'check_circle' : 'info' }}</mat-icon>
-            <span>{{ form.valid && seletedCafetria && !mealTimingError ? 'Ready to Save' : 'Incomplete' }}</span>
-          </div>
-        </div>
+<div class="add-outlet-dialog premium-modal">
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box" [class.primary]="!showUpdate" [class.warning]="showUpdate">
+        <mat-icon>{{ showUpdate ? 'edit' : 'storefront' }}</mat-icon>
+      </div>
+      <div class="text">
+        <h3>{{ showUpdate ? 'Edit Outlet' : 'Add New Outlet' }}</h3>
+        <p>{{ showUpdate ? 'Update outlet details and configurations' : 'Configure and register a new outlet terminal'
+          }}</p>
       </div>
     </div>
+    <button mat-icon-button (click)="back()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-    <div class="row g-4">
-      <!-- LEFT COLUMN: Image & Settings -->
-      <div class="col-12 col-lg-4">
-        <!-- IMAGE & UPLOAD -->
-        <div class="modern-card mb-4">
-          <div class="card-header">
-            <div class="icon-box info">
-              <mat-icon>image</mat-icon>
-            </div>
-            <h3>Outlet Image</h3>
-          </div>
-          <div class="card-body">
-            <div class="upload-wrapper">
-              <input #fileInput type="file" class="uploadInput" accept="image/*" capture="camera"
-                (change)="handleFileInput($event)" style="display: none;" />
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="form" id="addOutletForm" (ngSubmit)="onSubmit()" class="p-2">
+      <div class="form-grid-modern">
 
-              <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
-                <img *ngIf="imageUrl" [src]="imageUrl" class="preview-image" />
-                <div *ngIf="!imageUrl" class="placeholder-content">
+        <p class="section-label"><mat-icon>store</mat-icon> Basic Information</p>
+
+        <div class="row g-3">
+          <!-- IMAGE COLUMN (3) -->
+          <div class="col-md-3">
+            <div class="image-section" [class.has-image]="imageUrl" (click)="fileInput.click()">
+              <div class="image-preview-wrapper" [class.full-cover]="imageUrl">
+                <img *ngIf="imageUrl" [src]="imageUrl" />
+                <div *ngIf="!imageUrl" class="placeholder">
                   <mat-icon>cloud_upload</mat-icon>
-                  <span>Upload Image</span>
                 </div>
-                <div class="upload-overlay">
-                  <span>Change Image</span>
+              </div>
+              <div class="upload-text" *ngIf="!imageUrl">
+                <p>Outlet Image</p>
+              </div>
+              <div class="change-image-overlay" *ngIf="imageUrl">
+                <mat-icon>edit</mat-icon>
+                <span>Change Image</span>
+              </div>
+              <input #fileInput type="file" class="d-none" accept="image/*" (change)="handleFileInput($event)" />
+            </div>
+          </div>
+
+          <!-- BASIC FIELDS COLUMN (9) -->
+          <div class="col-md-9">
+            <div class="row g-3">
+              <div class="col-md-8">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Outlet Name</mat-label>
+                  <mat-icon matPrefix>store</mat-icon>
+                  <input matInput placeholder="e.g. Starbucks Main" formControlName="outletName" />
+                  <mat-error *ngIf="form.get('outletName')?.hasError('required')">Outlet name is required</mat-error>
+                </mat-form-field>
+              </div>
+              <div class="col-md-4">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Precedence</mat-label>
+                  <mat-icon matPrefix>sort</mat-icon>
+                  <input matInput type="number" formControlName="precedence" placeholder="Order" />
+                </mat-form-field>
+              </div>
+              <div class="col-12">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Outlet Description</mat-label>
+                  <textarea matInput rows="4" formControlName="outletDescription"
+                    placeholder="Brief details about this outlet"></textarea>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TRIPLE COLUMN CONFIGURATION ROW -->
+        <div class="row g-4 mt-1">
+          <!-- 1. OUTLET FEATURES (FIRST) -->
+          <div class="col-md-4">
+            <div class="selection-container h-100">
+              <p class="section-label mt-0 mb-3"><mat-icon>toggle_on</mat-icon> Outlet Features</p>
+              <div class="form-grid-modern gap-3">
+                <mat-slide-toggle formControlName="outletOpened" color="primary">Outlet Opened</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isSectionWiseMenu" color="primary">Section Wise</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isWeeklyMenu" color="primary">Weekly Menu</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isPreOrder" color="primary">Pre-Order</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isPriceHide" color="primary">Hide Price</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isCabinOrder" color="primary">Cabin Order</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isPackagingRequired" color="primary">Packaging Req</mat-slide-toggle>
+                <mat-slide-toggle formControlName="isFullAmountOrgPaid" color="primary">Full Org Paid</mat-slide-toggle>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. CONFIGURATION & BILLING -->
+          <div class="col-md-4">
+            <div class="selection-container h-100">
+              <p class="section-label mt-0 mb-3"><mat-icon>settings</mat-icon> Config & Billing</p>
+              <div class="form-grid-modern gap-3">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Billing Type</mat-label>
+                  <mat-icon matPrefix>receipt_long</mat-icon>
+                  <mat-select formControlName="billingType">
+                    <mat-option *ngFor="let type of billingTypeOptions" [value]="type">{{ type | titlecase
+                      }}</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Packaging Amount</mat-label>
+                  <mat-icon matPrefix>currency_rupee</mat-icon>
+                  <input matInput type="number" formControlName="packagingAmount" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width" *ngIf="!form.get('isPreOrder')?.value">
+                  <mat-label>Outlet Closing Time</mat-label>
+                  <mat-icon matPrefix>access_time</mat-icon>
+                  <input matInput type="time" formControlName="closeTime" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Packaging Amount</mat-label>
+                  <mat-icon matPrefix>currency_rupee</mat-icon>
+                  <input matInput type="packagingAmount" formControlName="closeTime" />
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. COMMISSIONS -->
+          <div class="col-md-4">
+            <div class="selection-container h-100">
+              <p class="section-label mt-0 mb-3"><mat-icon>payments</mat-icon> Commissions (%)</p>
+              <div class="form-grid-modern gap-3">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Vendor Comm (%)</mat-label>
+                  <mat-icon matPrefix>percent</mat-icon>
+                  <input matInput type="number" formControlName="vendorCommissionPercentage" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>MRP Comm (%)</mat-label>
+                  <mat-icon matPrefix>percent</mat-icon>
+                  <input matInput type="number" formControlName="MRPCommissionPercentage" />
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Subsidy (%)</mat-label>
+                  <mat-icon matPrefix>savings</mat-icon>
+                  <input matInput type="number" formControlName="subsidy" />
+                  <button mat-icon-button matSuffix type="button" *ngIf="showUpdate" 
+                          (click)="updateOutletLevelSubsidy()" matTooltip="Update all levels">
+                    <mat-icon color="primary">save</mat-icon>
+                  </button>
+                </mat-form-field>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- ASSIGNMENT SECTION -->
+        <p class="section-label"><mat-icon>business</mat-icon> Assignment</p>
+        <div class="selection-container" (click)="openOrgList()" style="cursor: pointer;">
+          <div class="d-flex justify-content-between align-items-center">
+            <div class="flex-grow-1">
+              <div *ngIf="selectedCafeteria; else noSelection">
+                <p class="m-0 fw-bold text-primary">
+                  {{ selectedCafeteria.organizationDetails?.organization_name || selectedCafeteria.organizationDetails?.name || 'Organization Selected' }}
+                </p>
+                <p class="m-0 small text-muted">
+                  {{ selectedCafeteria.cafeteriaDetails?.cafeteria_name || selectedCafeteria.cafeteriaDetails?.cafeteriaName || 'Cafeteria Selected' }}
+                </p>
+              </div>
+              <ng-template #noSelection>
+                <div class="d-flex align-items-center gap-2">
+                  <mat-icon class="text-muted">add_circle_outline</mat-icon>
+                  <p class="m-0 text-muted">Click to select Organization & Cafeteria</p>
+                </div>
+              </ng-template>
+            </div>
+            <mat-icon color="primary" *ngIf="selectedCafeteria">business</mat-icon>
+          </div>
+        </div>
+
+        <div *ngIf="!form.get('isPreOrder')?.value">
+          <div class="d-flex justify-content-between align-items-center">
+            <p class="section-label"><mat-icon>schedule</mat-icon> Meal Timings</p>
+            <div class="d-flex gap-2">
+              <button mat-button color="accent" type="button" (click)="setStandardEndTime()">Set Manual</button>
+              <button mat-button color="primary" type="button" (click)="addMealTiming()">+ Add Timing</button>
+            </div>
+          </div>
+          <div class="row g-3" formArrayName="mealTimings">
+            <div class="col-md-6" *ngFor="let group of mealTimings.controls; let i = index" [formGroupName]="i">
+              <div class="meal-item-row h-100">
+                <div class="remove-btn" (click)="removeMealTiming(i)">×</div>
+                <div class="row g-2 w-100">
+                  <div class="col-md-12">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>Meal Type</mat-label>
+                      <input matInput formControlName="mealType" (input)="onMealTypeChange(i)" />
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>From</mat-label>
+                      <input matInput type="time" formControlName="acceptOrderFrom" />
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" class="full-width">
+                      <mat-label>To</mat-label>
+                      <input matInput type="time" formControlName="acceptOrderTill" />
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" class="full-width" *ngIf="form.get('isFullAmountOrgPaid')?.value">
+                      <mat-label>Subsidy Type</mat-label>
+                      <mat-select formControlName="mealSubsidyType">
+                        <mat-option *ngFor="let type of subsidyTypes" [value]="type.value">
+                          {{ type.label }}
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                  <div class="col-6">
+                    <mat-form-field appearance="outline" class="full-width" *ngIf="form.get('isFullAmountOrgPaid')?.value && group.get('mealSubsidyType')?.value !== 'chargeable'">
+                      <mat-label>{{ group.get('mealSubsidyType')?.value === 'free' ? 'Free Count' : 'Subsidized Count' }}</mat-label>
+                      <input matInput type="number" formControlName="maxCountFree" />
+                    </mat-form-field>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- SETTINGS -->
-        <div class="modern-card mb-4">
-          <div class="card-header">
-            <div class="icon-box secondary">
-              <mat-icon>settings</mat-icon>
-            </div>
-            <h3>Configuration</h3>
-          </div>
-          <div class="card-body">
-            <div class="switch-group">
-              <mat-slide-toggle formControlName="outletOpened" color="primary">
-                Outlet Opened
-              </mat-slide-toggle>
-
-              <mat-slide-toggle formControlName="isSectionWiseMenu" color="primary">
-                Section Wise Menu
-              </mat-slide-toggle>
-
-              <mat-slide-toggle formControlName="isPreOrder" color="primary">
-                Pre-Order Enabled
-              </mat-slide-toggle>
-
-              <mat-slide-toggle formControlName="isCabinOrder" color="primary">
-                Cabin Order Enabled
-              </mat-slide-toggle>
-
-              <mat-slide-toggle formControlName="isPackagingRequired" color="primary">
-                Packaging Order Required
-              </mat-slide-toggle>
-            </div>
-
-            <div class="mt-4">
-              <mat-form-field appearance="outline" class="w-100 custom-field">
-                <mat-label>Packaging Amount</mat-label>
-                <input matInput type="number" formControlName="packagingAmount" />
-                <mat-icon matSuffix class="text-muted">currency_rupee</mat-icon>
-                <mat-error *ngIf="f['packagingAmount'].invalid">Required (Min 0)</mat-error>
-              </mat-form-field>
-            </div>
-
-            <div class="mt-4" *ngIf="form.get('isPreOrder')?.value">
-              <h4 class="text-secondary mb-2" style="font-size: 0.9rem;">Pre-Order Settings</h4>
-              <div class="d-flex flex-column gap-2 p-3 bg-light rounded">
-                <mat-radio-group formControlName="preOrderMealType" class="d-flex gap-3 mb-2">
+        <!-- PRE-ORDER SETTINGS -->
+        <div *ngIf="form.get('isPreOrder')?.value">
+          <p class="section-label"><mat-icon>event_available</mat-icon> Pre-Order Config</p>
+          <div class="selection-container" formGroupName="preOrderConfig">
+            <div class="row g-3 align-items-center">
+              <div class="col-md-4">
+                <mat-radio-group formControlName="type" class="d-flex gap-3">
+                  <mat-radio-button value="normal">Normal</mat-radio-button>
+                  <mat-radio-button value="holiday">Holiday Only</mat-radio-button>
+                </mat-radio-group>
+              </div>
+              <div class="col-md-3">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Max Days</mat-label>
+                  <input matInput type="number" formControlName="maxDays" />
+                </mat-form-field>
+              </div>
+              <div class="col-md-5">
+                <mat-radio-group formControlName="mealType" class="d-flex flex-wrap gap-3">
+                  <mat-radio-button value="breakfast">Breakfast</mat-radio-button>
                   <mat-radio-button value="lunch">Lunch</mat-radio-button>
                   <mat-radio-button value="dinner">Dinner</mat-radio-button>
-                  <mat-radio-button value="breakfast">Breakfast</mat-radio-button>
+                  <mat-radio-button value="high tea">High Tea</mat-radio-button>
                 </mat-radio-group>
-
-                <mat-checkbox formControlName="isSatAvailable">Saturday Available</mat-checkbox>
-                <mat-checkbox formControlName="isSunAvailable">Sunday Available</mat-checkbox>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- BILLING TYPE -->
-        <div class="modern-card mb-4">
-          <div class="card-header">
-            <div class="icon-box warning">
-              <mat-icon>receipt_long</mat-icon>
-            </div>
-            <h3>Billing Type</h3>
-          </div>
-          <div class="card-body">
-            <mat-form-field appearance="outline" class="w-100 custom-field">
-              <mat-label>Billing Type</mat-label>
-              <mat-select formControlName="billingType">
-                <mat-option *ngFor="let type of billingTypeOptions" [value]="type">
-                  {{ type | titlecase }}
-                </mat-option>
-              </mat-select>
-              <mat-error *ngIf="f['billingType'].invalid">
-                *Billing Type is required
-              </mat-error>
-            </mat-form-field>
-          </div>
-        </div>
-      </div>
-
-      <!-- RIGHT COLUMN: Details -->
-      <div class="col-12 col-lg-8">
-        <!-- BASIC INFO -->
-        <div class="modern-card mb-4">
-          <div class="card-header">
-            <div class="icon-box primary">
-              <mat-icon>storefront</mat-icon>
-            </div>
-            <h3>Basic Details</h3>
-          </div>
-          <div class="card-body">
-            <div class="row">
-              <div class="col-12 col-md-6 mb-3">
-                <mat-form-field appearance="outline" class="w-100 custom-field">
-                  <mat-label>Outlet Name</mat-label>
-                  <input matInput placeholder="e.g. Starbucks" formControlName="outletName" />
-                  <mat-icon matSuffix class="text-muted">store</mat-icon>
-                  <mat-error *ngIf="f['outletName'].invalid && (f['outletName'].touched || showError)">
-                    *Outlet name is required
-                  </mat-error>
-                </mat-form-field>
-              </div>
-              <div class="col-12 col-md-6 mb-3">
-                <mat-form-field appearance="outline" class="w-100 custom-field">
-                  <mat-label>Precedence</mat-label>
-                  <input matInput type="number" formControlName="precedence" />
-                  <mat-icon matSuffix class="text-muted">sort</mat-icon>
-                </mat-form-field>
-              </div>
-              <div class="col-12 mb-3">
-                <mat-form-field appearance="outline" class="w-100 custom-field">
-                  <mat-label>Description</mat-label>
-                  <textarea matInput rows="3" placeholder="Brief description of the outlet..."
-                    formControlName="outletDescription"></textarea>
-                  <mat-error *ngIf="f['outletDescription'].invalid && (f['outletDescription'].touched || showError)">
-                    *Description is required
-                  </mat-error>
-                </mat-form-field>
-              </div>
-            </div>
-
-            <div class="row">
-              <div class="col-12 col-md-4 mb-3">
-                <mat-form-field appearance="outline" class="w-100 custom-field">
-                  <mat-label>Vendor Commission (%)</mat-label>
-                  <input matInput type="number" formControlName="vendorCommissionPercentage" />
-                  <mat-icon matSuffix class="text-muted">percent</mat-icon>
-                  <mat-error *ngIf="f['vendorCommissionPercentage'].invalid">Required (0-100)</mat-error>
-                </mat-form-field>
-              </div>
-              <div class="col-12 col-md-4 mb-3">
-                <mat-form-field appearance="outline" class="w-100 custom-field">
-                  <mat-label>MRP Commission (%)</mat-label>
-                  <input matInput type="number" formControlName="MRPCommissionPercentage" />
-                  <mat-icon matSuffix class="text-muted">percent</mat-icon>
-                  <mat-error *ngIf="f['MRPCommissionPercentage'].invalid">Required (0-100)</mat-error>
-                </mat-form-field>
-              </div>
-              <div class="col-12 col-md-4 mb-3">
-                <div class="d-flex align-items-center gap-2">
-                  <mat-form-field appearance="outline" class="w-100 custom-field">
-                    <mat-label>Subsidy (%)</mat-label>
-                    <input matInput type="number" formControlName="subsidy" />
-                    <mat-icon matSuffix class="text-muted">savings</mat-icon>
-                  </mat-form-field>
-                  <button *ngIf="showUpdate" mat-icon-button color="primary" matTooltip="Update Subsidy"
-                    (click)="updateOutletLevelSubsidy()" [disabled]="!selectedOutlet" type="button">
-                    <mat-icon>save</mat-icon>
-                  </button>
+                <div class="days-selector-grid mt-4" formGroupName="availableDays" *ngIf="form.get('preOrderConfig.type')?.value !== 'holiday'">
+                    <mat-checkbox formControlName="monday">Monday</mat-checkbox>
+                    <mat-checkbox formControlName="tuesday">Tuesday</mat-checkbox>
+                    <mat-checkbox formControlName="wednesday">Wednesday</mat-checkbox>
+                    <mat-checkbox formControlName="thursday">Thursday</mat-checkbox>
+                    <mat-checkbox formControlName="friday">Friday</mat-checkbox>
+                    <mat-checkbox formControlName="saturday">Saturday</mat-checkbox>
+                    <mat-checkbox formControlName="sunday">Sunday</mat-checkbox>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- LOCATION -->
-        <div class="modern-card mb-4">
-          <div class="card-header with-actions">
-            <div class="d-flex align-items-center gap-3">
-              <div class="icon-box success">
-                <mat-icon>location_on</mat-icon>
-              </div>
-              <h3>Organization & Cafeteria</h3>
-            </div>
-            <button mat-stroked-button color="primary" type="button" (click)="openOrgList()" class="action-btn">
-              <mat-icon>{{ showUpdate ? 'swap_horiz' : 'add' }}</mat-icon>
-              {{ showUpdate ? 'Change' : 'Select' }}
-            </button>
-          </div>
-          <div class="card-body">
-            <div class="empty-placeholder" *ngIf="!seletedCafetria">
-              <mat-icon>business</mat-icon>
-              <p>No organization selected yet.</p>
-            </div>
-
-            <div class="selected-cafe-info" *ngIf="seletedCafetria">
-              <div class="info-grid">
-                <div class="info-item">
-                  <span class="label">Organization</span>
-                  <span class="value">{{ seletedCafetria.organizationDetails.organization_name }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="label">City</span>
-                  <span class="value">{{ seletedCafetria.organizationDetails.city }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="label">Cafeteria</span>
-                  <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_name }}</span>
-                </div>
-                <div class="info-item">
-                  <span class="label">Location</span>
-                  <span class="value">{{ seletedCafetria.cafeteriaDetails.cafeteria_city }}</span>
-                </div>
-              </div>
-            </div>
-            <mat-error *ngIf="!seletedCafetria && showError" class="mt-2 d-block text-center">
-              *Please select an organization and cafeteria
-            </mat-error>
-          </div>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- MEAL TIMINGS (FULL WIDTH) -->
-    <div class="row g-4 mt-1">
-      <div class="col-12">
-        <div class="modern-card mb-4">
-          <div class="card-header with-actions">
-            <div class="d-flex align-items-center gap-3">
-              <div class="icon-box purple">
-                <mat-icon>schedule</mat-icon>
-              </div>
-              <h3>Meal Timings</h3>
-            </div>
-            <div class="d-flex gap-2">
-              <button mat-stroked-button color="primary" type="button" (click)="setStandardEndTime()"
-                class="action-btn">
-                Set Standards
-              </button>
-              <button mat-flat-button color="primary" type="button" (click)="addMealTiming()" class="action-btn">
-                <mat-icon>add</mat-icon> Add
-              </button>
-            </div>
-          </div>
-          <div class="card-body">
-            <div formArrayName="mealTimings">
-              <div class="container-fluid p-0">
-                <div class="row g-3">
-                  <div class="col-12 col-xl-6" *ngFor="let group of mealTimings.controls; let i = index"
-                    [formGroupName]="i">
-                    <div class="meal-timing-card h-100 mb-0">
-                      <div class="timing-header">
-                        <h4>Meal {{ i + 1 }}</h4>
-                        <button mat-icon-button color="warn" (click)="removeMealTiming(i)"
-                          *ngIf="mealTimings.length > 1" type="button">
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </div>
-
-                      <div class="row align-items-center">
-                        <div class="col-12 col-md-4 mb-2 mb-md-0">
-                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
-                            <mat-label>Meal Type</mat-label>
-                            <input matInput formControlName="mealType" placeholder="Breakfast" />
-                          </mat-form-field>
+                <!-- HOLIDAY MANAGEMENT AREA (Only show for Holiday type) -->
+                <div class="holiday-management mt-4 pt-3 border-top" 
+                     *ngIf="form.get('isPreOrder')?.value && form.get('preOrderConfig.type')?.value === 'holiday'">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <p class="section-label m-0"><mat-icon>calendar_today</mat-icon> Holiday Calendar</p>
+                        <div class="action-group d-flex gap-2">
+                            <button mat-stroked-button type="button" class="btn-xs" (click)="downloadHolidayTemplate()">
+                                <mat-icon>download</mat-icon> Template
+                            </button>
+                            <button mat-flat-button color="primary" type="button" class="btn-xs" (click)="holidayInput.click()">
+                                <mat-icon>upload</mat-icon> Upload
+                            </button>
+                            <input #holidayInput type="file" class="d-none" accept=".xlsx,.csv" (change)="handleHolidayUpload($event)" />
                         </div>
-                        <div class="col-6 col-md-4">
-                          <div class="time-input-styled">
-                            <label class="small text-secondary mb-1 d-block">From</label>
-                            <input type="time" formControlName="acceptOrderFrom" />
-                          </div>
-                        </div>
-                        <div class="col-6 col-md-4">
-                          <div class="time-input-styled">
-                            <label class="small text-secondary mb-1 d-block">To</label>
-                            <input type="time" formControlName="acceptOrderTill" />
-                          </div>
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                </div>
-              </div>
 
-            </div>
-            <mat-error *ngIf="mealTimingError" class="mt-2 d-block">
-              {{ mealTimingError }}
-            </mat-error>
+                    <div class="holiday-list-container" *ngIf="holidays.length > 0">
+                        <div class="holiday-chip" *ngFor="let h of holidays">
+                            <div class="h-text">
+                                <span class="h-date">{{ h.date | date:'dd MMM' }}</span>
+                                <span class="h-name">{{ h.name }}</span>
+                            </div>
+                            <button type="button" class="h-remove" (click)="removeHoliday(h.date)">×</button>
+                        </div>
+                    </div>
+
+                    <div class="empty-holidays p-4 text-center" *ngIf="holidays.length === 0">
+                        <mat-icon class="text-muted opacity-50" style="font-size: 32px; width: 32px; height: 32px;">event_busy</mat-icon>
+                        <p class="m-0 text-muted small mt-2">No holidays added yet. Upload an Excel file to get started.</p>
+                    </div>
+
+                    <div class="alert alert-danger mt-2 py-2 small" *ngIf="holidayUploadError">
+                        {{ holidayUploadError }}
+                    </div>
+                </div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- SECTION CONFIG (FULL WIDTH) -->
-    <div class="row g-4 mt-1" *ngIf="form.get('isSectionWiseMenu')?.value">
-      <div class="col-12">
-        <div class="modern-card mb-4">
-          <div class="card-header with-actions">
-            <div class="d-flex align-items-center gap-3">
-              <div class="icon-box info">
-                <mat-icon>category</mat-icon>
-              </div>
-              <h3>Section Configuration</h3>
+        <!-- SECTION CONFIGURATION -->
+        <div *ngIf="form.get('isSectionWiseMenu')?.value">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="section-label"><mat-icon>layers</mat-icon> Section Management</p>
+                <button mat-button color="primary" type="button" (click)="addSectionConfig()">+ Add Section</button>
             </div>
-            <button mat-flat-button color="primary" type="button" (click)="addSectionConfig()" class="action-btn">
-              <mat-icon>add</mat-icon> Add
-            </button>
-          </div>
-          <div class="card-body">
-            <div formArrayName="sectionConfig">
-              <div class="container-fluid p-0">
-                <div class="row g-3">
-                  <div class="col-12 col-xl-6" *ngFor="let group of sectionConfig.controls; let i = index"
-                    [formGroupName]="i">
-                    <div class="meal-timing-card h-100 mb-0">
-                      <div class="timing-header">
-                        <h4>Section {{ i + 1 }}</h4>
-                        <button mat-icon-button color="warn" (click)="removeSectionConfig(i)" type="button">
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </div>
-
-                      <div class="row align-items-center">
-                        <div class="col-12 col-md-6 mb-2 mb-md-0">
-                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
-                            <mat-label>Section Name</mat-label>
-                            <input matInput formControlName="sectionName" placeholder="e.g. Main Desk" />
-                            <mat-error *ngIf="group.get('sectionName')?.invalid">*Required</mat-error>
-                          </mat-form-field>
+            <div class="row g-3" formArrayName="sectionConfig">
+                <div class="col-md-6" *ngFor="let group of sectionConfig.controls; let i = index" [formGroupName]="i">
+                    <div class="meal-item-row h-100">
+                        <div class="remove-btn" (click)="removeSectionConfig(i)">×</div>
+                        <div class="row g-2 w-100">
+                            <div class="col-md-7">
+                                <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Section Name</mat-label>
+                                <input matInput formControlName="sectionName" placeholder="e.g. South Indian" />
+                                </mat-form-field>
+                            </div>
+                            <div class="col-md-5">
+                                <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Type</mat-label>
+                                <mat-select formControlName="sectionType">
+                                    <mat-option *ngFor="let type of sectionTypes" [value]="type">{{ type | titlecase }}</mat-option>
+                                </mat-select>
+                                </mat-form-field>
+                            </div>
                         </div>
-                        <div class="col-12 col-md-6">
-                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
-                            <mat-label>Section Type</mat-label>
-                            <mat-select formControlName="sectionType">
-                              <mat-option *ngFor="let type of sectionTypes" [value]="type">
-                                {{ type | titlecase }}
-                              </mat-option>
-                            </mat-select>
-                            <mat-error *ngIf="group.get('sectionType')?.invalid">*Required</mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
                     </div>
-                  </div>
-                  <div class="col-12" *ngIf="sectionConfig.controls.length === 0">
-                    <div class="empty-placeholder">
-                      <mat-icon>view_module</mat-icon>
-                      <p>No sections added. Click "Add" to configure sections.</p>
-                    </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
+        </div>
+
+        <!-- CABIN CONFIGURATION -->
+        <div *ngIf="form.get('isCabinOrder')?.value">
+            <div class="d-flex justify-content-between align-items-center">
+                <p class="section-label"><mat-icon>meeting_room</mat-icon> Cabin Management</p>
+                <button mat-button color="primary" type="button" (click)="addCabinConfig()">+ Add Cabin</button>
+            </div>
+            <div class="row g-3" formArrayName="cabinConfig">
+                <div class="col-md-4" *ngFor="let group of cabinConfig.controls; let i = index" [formGroupName]="i">
+                    <div class="meal-item-row h-100">
+                        <div class="remove-btn" (click)="removeCabinConfig(i)">×</div>
+                        <div class="w-100">
+                            <mat-form-field appearance="outline" class="full-width">
+                                <mat-label>Cabin/Table Name</mat-label>
+                                <input matInput formControlName="cabinName" placeholder="e.g. C-101" />
+                            </mat-form-field>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
       </div>
-    </div>
-
-    <!-- CABIN CONFIG (FULL WIDTH) -->
-    <div class="row g-4 mt-1" *ngIf="form.get('isCabinOrder')?.value">
-      <div class="col-12">
-        <div class="modern-card mb-4">
-          <div class="card-header with-actions">
-            <div class="d-flex align-items-center gap-3">
-              <div class="icon-box warning">
-                <mat-icon>meeting_room</mat-icon>
-              </div>
-              <h3>Cabin Configuration</h3>
-            </div>
-            <button mat-flat-button color="primary" type="button" (click)="addCabinConfig()" class="action-btn">
-              <mat-icon>add</mat-icon> Add
-            </button>
-          </div>
-          <div class="card-body">
-            <div formArrayName="cabinConfig">
-              <div class="container-fluid p-0">
-                <div class="row g-3">
-                  <div class="col-12 col-xl-6" *ngFor="let group of cabinConfig.controls; let i = index"
-                    [formGroupName]="i">
-                    <div class="meal-timing-card h-100 mb-0">
-                      <div class="timing-header">
-                        <h4>Cabin {{ i + 1 }}</h4>
-                        <button mat-icon-button color="warn" (click)="removeCabinConfig(i)" type="button">
-                          <mat-icon>close</mat-icon>
-                        </button>
-                      </div>
-
-                      <div class="row align-items-center">
-                        <div class="col-12 col-md-6 mb-2 mb-md-0">
-                          <mat-form-field appearance="outline" class="w-100 dense-field custom-field">
-                            <mat-label>Cabin Name</mat-label>
-                            <input matInput formControlName="cabinName" placeholder="e.g. CEO Cabin" />
-                            <mat-error *ngIf="group.get('cabinName')?.invalid">*Required</mat-error>
-                          </mat-form-field>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="col-12" *ngIf="cabinConfig.controls.length === 0">
-                    <div class="empty-placeholder">
-                      <mat-icon>door_front</mat-icon>
-                      <p>No cabins added. Click "Add" to configure cabins.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- STICKY ACTION BAR -->
-    <div class="action-bar-container">
-      <div class="action-bar">
-        <button class="btn-cancel" mat-button (click)="back()" type="button">Cancel</button>
-
-        <button class="btn-submit" mat-flat-button color="primary" type="button" (click)="onSubmit('update')"
-          [disabled]="form.invalid || !seletedCafetria || !!mealTimingError"
-          *ngIf="showUpdate && (btnPolicy?.editOutlet ?? true)">
-          <mat-icon>save</mat-icon> Save Changes
-        </button>
-
-        <button class="btn-submit" mat-flat-button color="primary" type="submit"
-          [disabled]="form.invalid || !seletedCafetria || !!mealTimingError"
-          *ngIf="!showUpdate && (btnPolicy?.addOutlet ?? true)">
-          <mat-icon>check</mat-icon> Create Outlet
-        </button>
-      </div>
-    </div>
-  </form>
-</div>
-
-<!-- ORG + CAFETERIA MAT DIALOG TEMPLATE -->
-<ng-template #contentOrg let-dialogRef="dialogRef">
-  <h2 mat-dialog-title>Select Organization & Cafeteria</h2>
-
-  <mat-dialog-content>
-    <div class="org-list">
-      <div class="org-item" *ngFor="let org of formattedOrgList" (click)="selectedOrgCafeteria = org.key"
-        [ngClass]="{ selected: selectedOrgCafeteria === org.key }">
-        <mat-radio-button [checked]="selectedOrgCafeteria === org.key"
-          (click)="$event.stopPropagation(); selectedOrgCafeteria = org.key">
-          {{ org.key }}
-        </mat-radio-button>
-      </div>
-    </div>
+    </form>
   </mat-dialog-content>
 
-  <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="dialogRef.close()">Cancel</button>
-    <button mat-raised-button color="primary" type="button" (click)="dialogRef.close('add')"
-      [disabled]="!selectedOrgCafeteria">
-      Add
+  <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+    <button mat-button class="btn-cancel me-2" (click)="back()" [disabled]="isSubmitting">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" form="addOutletForm"
+      [disabled]="form.invalid || !selectedCafeteria || isSubmitting" class="btn-primary-action px-4">
+      <ng-container *ngIf="!isSubmitting">
+        <mat-icon>{{ showUpdate ? 'save' : 'storefront' }}</mat-icon>
+        <span>{{ showUpdate ? 'Update Outlet' : 'Create Outlet' }}</span>
+      </ng-container>
+      <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+        <mat-spinner diameter="20" color="accent"></mat-spinner>
+        <span>Processing...</span>
+      </div>
     </button>
   </mat-dialog-actions>
-</ng-template>
+</div>

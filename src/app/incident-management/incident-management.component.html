@@ -1,0 +1,168 @@
+<div class="incident-page-container">
+  <!-- Header Card -->
+  <div class="incident-header-card">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Incident Management</h1>
+        <p class="page-subtitle">Track and resolve operational issues across all outlets</p>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper" *ngIf="incidentList.length > 0">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search by type or subject..." 
+            [(ngModel)]="searchText" (input)="applyLocalFilters()" />
+        </div>
+        <div class="header-actions">
+          <button mat-icon-button class="btn-refresh" (click)="getIncidentListByFilter()" matTooltip="Refresh List"
+            [disabled]="isLoading">
+            <mat-icon [class.spin]="isLoading">refresh</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-wrapper">
+    <!-- Filter Section -->
+    <div class="filter-wrapper mb-4">
+      <app-common-outlet-cafe-select [config]="headerConfig"
+        (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+    </div>
+
+    <!-- Totals Strip -->
+    <div class="totals-strip mb-4" *ngIf="incidentList.length > 0">
+      <div class="total-chip" *ngFor="let c of incidentCounts" [class.highlight]="c.status === ''">
+        <span class="chip-label">{{ c.label }}</span>
+        <span class="chip-value">{{ c.count }}</span>
+      </div>
+    </div>
+
+    <!-- Status Grid (Clickable Filters) -->
+    <div class="stats-grid mb-4" *ngIf="incidentList.length > 0">
+      <div class="stat-card" *ngFor="let c of incidentCounts" [class.active]="filterStatus === c.status"
+        (click)="onFilterStatus(c.status)">
+        <div class="stat-icon" [ngClass]="c.class">
+          <mat-icon>{{ c.icon }}</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-value">{{ c.count }}</div>
+          <div class="stat-label">{{ c.label }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Active Filter Chips -->
+    <div class="active-filter-chips mb-4" *ngIf="filterStatus || searchText">
+      <div class="chip-strip">
+        <span class="label">Active Filters:</span>
+        <div class="filter-chip active" *ngIf="filterStatus">
+          {{ filterStatus | titlecase }}
+          <mat-icon (click)="onFilterStatus(filterStatus); $event.stopPropagation()">close</mat-icon>
+        </div>
+        <div class="filter-chip active" *ngIf="searchText">
+          Search: {{ searchText }}
+          <mat-icon (click)="clearSearch(); $event.stopPropagation()">close</mat-icon>
+        </div>
+        <button mat-stroked-button class="btn-clear-all" (click)="clearSearch(); filterStatus='';">
+          <mat-icon>filter_alt_off</mat-icon> Clear All
+        </button>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div class="loading-state" *ngIf="isLoading">
+      <mat-spinner diameter="44"></mat-spinner>
+      <p class="mt-3">Fetching incidents...</p>
+    </div>
+
+    <!-- INCIDENT LIST -->
+    <div class="incident-list-view" *ngIf="!isLoading && pagedIncidentList.length > 0; else noRecords">
+      <div class="incident-cards-container">
+        <mat-card class="incident-modern-card mb-3 shadow-sm border-0" *ngFor="let incident of pagedIncidentList">
+          <div class="card-indicator" [ngClass]="incident.status"></div>
+          <mat-card-content class="p-0">
+            <div class="d-flex flex-column flex-md-row">
+              <!-- Left Info -->
+              <div class="p-4 flex-grow-1 border-end-md">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                  <span class="incident-type-tag">{{ incident.incidentType }}</span>
+                  <span class="incident-time">{{ incident.createdAt | date:'MMM d, y, h:mm a' }}</span>
+                </div>
+                <h3 class="incident-title mb-2">{{ incident.incidentSubject }}</h3>
+                <p class="incident-desc text-muted mb-3">{{ incident.incidentDescription }}</p>
+                
+                <div class="d-flex align-items-center gap-3 mt-auto">
+                  <div class="meta-item">
+                    <mat-icon>business</mat-icon>
+                    <span>{{ incident.orgDetails?.orgName || 'N/A' }}</span>
+                  </div>
+                  <div class="meta-item">
+                    <mat-icon>person_outline</mat-icon>
+                    <span>{{ incident.submittedByInfo?.name || 'Anonymous' }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Actions -->
+              <div class="p-4 bg-light d-flex flex-column justify-content-between min-w-200">
+                <div>
+                  <label class="section-label mb-2">Current Status</label>
+                  <div class="status-badge-modern mb-4" [ngClass]="incident.status">
+                    {{ incident.status | titlecase }}
+                  </div>
+                </div>
+
+                <div class="action-buttons-group">
+                  <button mat-flat-button class="btn-action primary w-100 mb-2" 
+                    [disabled]="adminProfile?.role === 'ORGADMIN'"
+                    *ngIf="incident.status !== 'resolved' && incident.status !== 'blocked'"
+                    (click)="openChangeStatus(incident, 
+                      incident.status === 'created' ? 'acknowledged' : 
+                      incident.status === 'acknowledged' ? 'inReview' : 'resolved')">
+                    <mat-icon>play_arrow</mat-icon>
+                    {{ (incident.status === 'created' ? 'Acknowledge' : 
+                        incident.status === 'acknowledged' ? 'Start Review' : 'Resolve') }}
+                  </button>
+                  
+                  <div class="d-flex gap-2">
+                    <button mat-stroked-button class="btn-action error flex-grow-1"
+                      [disabled]="adminProfile?.role === 'ORGADMIN'"
+                      *ngIf="incident.status === 'inReview'"
+                      (click)="openChangeStatus(incident, 'blocked')">
+                      <mat-icon>block</mat-icon> Block
+                    </button>
+                    <button mat-icon-button class="btn-delete" color="warn" (click)="deleteIncident(incident)">
+                      <mat-icon>delete_outline</mat-icon>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- PAGINATOR -->
+      <div class="paginator-wrapper mt-4">
+        <mat-paginator [length]="filteredIncidentList.length" [pageIndex]="pageIndex" [pageSize]="pageSize"
+          [pageSizeOptions]="[10, 25, 50]" (page)="onPageChange($event)" showFirstLastButtons>
+        </mat-paginator>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <ng-template #noRecords>
+      <div class="empty-state-modern" *ngIf="!isLoading">
+        <div class="empty-icon-wrapper">
+          <mat-icon>assignment_turned_in</mat-icon>
+        </div>
+        <h3>All Clear!</h3>
+        <p>No incidents found matching your current selection.</p>
+        <button mat-flat-button color="primary" class="mt-3" (click)="clearSearch(); filterStatus=''">
+          Reset Filters
+        </button>
+      </div>
+    </ng-template>
+  </div>
+</div>
+

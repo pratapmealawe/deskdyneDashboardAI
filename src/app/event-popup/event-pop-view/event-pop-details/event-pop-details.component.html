@@ -1,0 +1,173 @@
+<div class="outlet-details-container">
+
+  <!-- Hero Profile Section -->
+  <div class="profile-hero">
+    <div class="hero-content">
+      <div class="avatar-section">
+        <img *ngIf="eventObj?.image" [src]="imageUrl + eventObj.image" class="avatar-img" alt="Event Image">
+        <div *ngIf="!eventObj?.image" class="avatar-circle">
+          {{ getInitials(eventObj?.eventPopupName) }}
+        </div>
+        <div class="avatar-status" [class.active]="eventObj?.eventPopupOpened"></div>
+      </div>
+      <div class="hero-info">
+        <h1 class="outlet-name">{{ eventObj?.eventPopupName }}</h1>
+        <div class="quick-badges">
+          <span class="quick-badge" [class.success]="eventObj?.eventPopupOpened" [class.danger]="!eventObj?.eventPopupOpened">
+            <mat-icon>{{ eventObj?.eventPopupOpened ?'check_circle' :'pause_circle' }}</mat-icon>
+            {{ eventObj?.eventPopupOpened ?'Active' :'Paused' }}
+          </span>
+          <span class="quick-badge info">
+            <mat-icon>calendar_today</mat-icon>
+            {{ eventObj?.eventPopupStartDate | date:'dd MMM' }} - {{ eventObj?.eventPopupEndDate | date:'dd MMM, yyyy' }}
+          </span>
+          <span class="quick-badge">
+            <mat-icon>campaign</mat-icon>
+            Event Popup
+          </span>
+        </div>
+      </div>
+    </div>
+    <button mat-raised-button class="edit-btn" (click)="editOrg()">
+      <mat-icon>edit</mat-icon>
+      Edit Event
+    </button>
+  </div>
+
+  <!-- Main Content Grid -->
+  <div class="content-grid">
+
+    <!-- Overview Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon overview">
+          <mat-icon>info</mat-icon>
+        </div>
+        <h3>Overview</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>label</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Event Name</span>
+              <span class="info-value">{{ eventObj?.eventPopupName }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>sort</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Display Priority</span>
+              <span class="info-value">{{ eventObj?.precedence || 0 }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>payments</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Subsidy</span>
+              <span class="info-value">{{ eventObj?.subsidy || 0 }}%</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>description</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Description</span>
+              <span class="info-value">{{ eventObj?.eventPopupDescription ||'No description provided' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Organization Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon org">
+          <mat-icon>business</mat-icon>
+        </div>
+        <h3>Organization</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>corporate_fare</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ eventObj?.organizationDetails?.organization_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ eventObj?.organizationDetails?.city }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>place</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Location</span>
+              <span class="info-value">{{ eventObj?.organizationDetails?.location }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cafeteria Card -->
+    <div class="info-card">
+      <div class="card-header">
+        <div class="header-icon cafe">
+          <mat-icon>restaurant</mat-icon>
+        </div>
+        <h3>Cafeteria</h3>
+      </div>
+      <div class="card-body">
+        <div class="info-grid">
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>storefront</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Name</span>
+              <span class="info-value">{{ eventObj?.cafeteriaDetails?.cafeteria_name }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon"><mat-icon>location_city</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">City</span>
+              <span class="info-value">{{ eventObj?.cafeteriaDetails?.cafeteria_city }}</span>
+            </div>
+          </div>
+          <div class="info-item full-width">
+            <div class="info-icon"><mat-icon>home</mat-icon></div>
+            <div class="info-content">
+              <span class="info-label">Address</span>
+              <span class="info-value">{{ eventObj?.cafeteriaDetails?.address1 }} {{
+                eventObj?.cafeteriaDetails?.address2 }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Promotion Banners Section -->
+  <div class="timing-section" *ngIf="eventObj?.bannerImages?.length > 0">
+    <div class="section-header">
+      <div class="header-icon timing">
+        <mat-icon>collections</mat-icon>
+      </div>
+      <h2>Promotion Banners</h2>
+      <span class="count-badge">{{ eventObj?.bannerImages?.length }}</span>
+    </div>
+    <div class="banner-gallery-grid">
+      <div class="banner-wrapper animate-popIn" *ngFor="let banner of eventObj?.bannerImages; let idx = index"
+        [style.animation-delay]="0.2 + (idx * 0.1) +'s'">
+        <img [src]="imageUrl + banner" class="banner-img" alt="Banner Image">
+      </div>
+    </div>
+  </div>
+
+</div>
+

@@ -1,7 +1,0 @@
-@use '/src/styles/theme/mixins' as mixin;
-@use '/src/styles.scss' as color;
-
-.header {
-    @include mixin.responsive-header;
-    background-color: transparent;
-}

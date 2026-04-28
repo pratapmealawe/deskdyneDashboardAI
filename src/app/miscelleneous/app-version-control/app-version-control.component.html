@@ -3,7 +3,7 @@
     <h4 class="m-0 fw-semibold">App Version Control</h4>
   </div>
   <div class="header-actions">
-    <button mat-raised-button color="primary" *ngIf="true || btnPolicy?.addAppVersion" (click)="addVariable()">
+    <button mat-raised-button color="primary" *appHasPermission="'APP_VERSION:ADD'" (click)="addVariable()">
       <mat-icon>add</mat-icon> Add App Version
     </button>
   </div>
@@ -11,43 +11,8 @@
 
 <div class="container-fluid pb-4">
 
-  <!-- Edit Mode Section -->
-  <div *ngIf="editMode" class="bgpadding3 mb-4">
-    <div class="labelText mb-3" *ngIf="addnewVariable">Add New App Version</div>
-    <div class="labelText mb-3" *ngIf="!addnewVariable">Update App Version</div>
-
-    <div class="row g-3">
-      <div class="col-sm-12 col-md-6">
-        <label class="labelData mb-2" for="variableName">Application Name</label>
-        <input type="text" class="form-control" id="variableName" [(ngModel)]="variableObj.appName"
-          placeholder="Enter application name" />
-      </div>
-      <div class="col-sm-12 col-md-6">
-        <label class="labelData mb-2" for="variableValue">Version</label>
-        <input class="form-control" type="text" id="variableValue" [(ngModel)]="variableObj.appVersion"
-          placeholder="Enter version" name="addonType" />
-      </div>
-    </div>
-
-    <div class="mt-4 d-flex gap-2">
-      <button *ngIf="addnewVariable && (true || btnPolicy?.addAppVersion)" mat-raised-button color="primary"
-        (click)="submitnewVariable(variableObj)">
-        Submit
-      </button>
-
-      <button *ngIf="!addnewVariable && (true || btnPolicy?.editAppVersion)" mat-raised-button color="primary"
-        (click)="updateVariable(variableObj)">
-        Update
-      </button>
-
-      <button mat-stroked-button color="warn" (click)="cancel()">
-        Cancel
-      </button>
-    </div>
-  </div>
-
   <!-- List Section -->
-  <div *ngIf="!editMode">
+  <div>
     <div *ngIf="allAppVersions && allAppVersions.length === 0" class="center">
       No App Versions Found
     </div>
@@ -63,17 +28,33 @@
           </div>
 
           <!-- Version -->
-          <div class="col-md-5 mb-2 mb-md-0">
+          <div class="col-md-3 mb-2 mb-md-0">
             <div class="labelText">Version</div>
             <div class="labelData">{{ variable.appVersion }}</div>
           </div>
 
+          <!-- Update Type -->
+          <div class="col-md-2 mb-2 mb-md-0">
+            <div class="labelText">Type</div>
+            <div class="labelData">
+              <span class="badge" [ngClass]="variable.isForceUpdate ?'bg-danger text-white' :'bg-info text-white'">
+                {{ variable.isForceUpdate ?'Forceful' :'Negligible' }}
+              </span>
+            </div>
+          </div>
+
           <!-- Actions -->
           <div class="col-md-2 d-flex align-items-center justify-content-end p-0">
-            <button mat-icon-button color="primary" class="edit" *ngIf="true || btnPolicy?.editAppVersion"
+            <button mat-icon-button color="primary" class="edit" *appHasPermission="'APP_VERSION:EDIT'"
               (click)="editVariable(variable)" matTooltip="Edit">
               <mat-icon>edit</mat-icon>
             </button>
+          </div>
+
+          <!-- Release Notes -->
+          <div class="col-md-12 mt-2" *ngIf="variable.releaseNotes">
+            <div class="labelText">Release Notes</div>
+            <div class="labelData text-muted small" style="white-space: pre-line;">{{ variable.releaseNotes }}</div>
           </div>
 
         </div>

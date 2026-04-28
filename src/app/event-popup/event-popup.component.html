@@ -1,0 +1,43 @@
+<div class="event-page-container">
+  <!-- Header Section -->
+  <div class="event-header-card" *ngIf="showSearchSection">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Event Popup Management</h1>
+        <p class="page-subtitle">Manage event popups across your organizations</p>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search events by Org..." [formControl]="searchControl" />
+        </div>
+        <button mat-flat-button class="btn-add-event" (click)="addEvent()">
+          <mat-icon>add_circle</mat-icon>
+          <span>Add Event</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Body -->
+  <div class="content-body" *ngIf="showSearchSection">
+    <div *ngIf="eventList && eventList.length === 0; else eventListTmp" class="empty-state">
+      <mat-icon class="empty-icon">notification_important</mat-icon>
+      <h3>No Events Found</h3>
+      <p>Get started by adding your first event popup.</p>
+      <button mat-stroked-button color="primary" (click)="addEvent()">Add Event</button>
+    </div>
+
+    <ng-template #eventListTmp>
+      <div class="event-list-wrapper">
+        <app-event-pop-card [event]="pagedEvent" (view)="viewEvent($event)" (refresh)="getEvents()"></app-event-pop-card>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Event View Section -->
+  <div class="event-view-section" *ngIf="!showSearchSection && eventList.length > 0">
+    <app-event-pop-view [event]="selectedEvent" (back)="toggleShowOrder($event)"></app-event-pop-view>
+  </div>
+</div>
+

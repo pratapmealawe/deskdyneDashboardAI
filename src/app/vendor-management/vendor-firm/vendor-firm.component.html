@@ -1,0 +1,120 @@
+<div class="vendor-page-container">
+  <!-- Page Header -->
+  <div class="vendor-header-card mb-4" *ngIf="isListingView">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Vendor Firms</h1>
+        <p class="page-subtitle">Manage vendor firms and their associated outlets</p>
+      </div>
+
+      <div class="actions-section">
+        <div class="search-wrapper">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text" placeholder="Search Vendor Firms..." [formControl]="searchControl">
+        </div>
+
+        <button mat-icon-button class="btn-filter-icon" matTooltip="Filter by Organization"
+          (click)="openFilterDialog()">
+          <mat-icon [matBadge]="selectedOrgs.length" [matBadgeHidden]="selectedOrgs.length === 0" matBadgeSize="small"
+            matBadgeColor="accent">filter_list</mat-icon>
+        </button>
+
+        <button mat-flat-button color="primary" class="btn-add-vendor" (click)="addVendor()"
+          *appHasPermission="'VENDOR_FIRM:ADD'">
+          <mat-icon>add_business</mat-icon> Add Vendor Firm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Body -->
+  <div class="content-body" *ngIf="isListingView">
+    <!-- Active Filter Chips -->
+    <div class="active-filter-chips mb-4" *ngIf="selectedOrgs.length > 0">
+      <div class="chip-strip">
+        <div class="filter-chip" *ngFor="let org of selectedOrgs">
+          {{ org }}
+          <mat-icon (click)="removeOrg(org)">close</mat-icon>
+        </div>
+        <button mat-stroked-button class="btn-clear-all" (click)="clearOrgFilter()">
+          <mat-icon>filter_alt_off</mat-icon> Clear All
+        </button>
+      </div>
+    </div>
+
+    <!-- Filter Dialog Template -->
+    <ng-template #filterDialog>
+      <div class="filter-dialog">
+        <!-- Header -->
+        <div class="dialog-header">
+          <div class="header-left">
+            <mat-icon class="header-icon">filter_list</mat-icon>
+            <div>
+              <h2 class="dialog-title">Filter by Organization</h2>
+              <span class="active-badge" *ngIf="tempSelectedOrgs.length > 0">{{ tempSelectedOrgs.length }} selected</span>
+            </div>
+          </div>
+          <button mat-icon-button class="close-btn" (click)="dialog.closeAll()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="dialog-body">
+          <div class="filter-group" *ngIf="organizationList.length > 0">
+            <label class="filter-label">
+              <mat-icon>business</mat-icon> Organizations
+            </label>
+            <div class="chip-selector">
+              <div class="chip-option" *ngFor="let org of organizationList" [class.active]="isOrgSelected(org)"
+                (click)="toggleOrgSelection(org)">
+                <mat-icon *ngIf="isOrgSelected(org)">check_circle</mat-icon>
+                {{ org }}
+              </div>
+            </div>
+          </div>
+          <div class="no-orgs" *ngIf="organizationList.length === 0">
+            <mat-icon>info_outline</mat-icon>
+            <span>No organizations found.</span>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="dialog-footer">
+          <button mat-stroked-button class="btn-clear" (click)="tempSelectedOrgs = []"
+            *ngIf="tempSelectedOrgs.length > 0">
+            <mat-icon>filter_alt_off</mat-icon> Clear All
+          </button>
+          <div class="footer-right">
+            <button mat-stroked-button class="btn-cancel" (click)="dialog.closeAll()">Cancel</button>
+            <button mat-flat-button class="btn-apply" (click)="applyFilterFromDialog()">
+              <mat-icon>check</mat-icon> Apply
+              <span class="apply-count" *ngIf="tempSelectedOrgs.length > 0">({{ tempSelectedOrgs.length }})</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+
+    <!-- Content Grid -->
+    <div *ngIf="filteredList && filteredList.length > 0; else noVendorsTmp">
+      <div class="vendor-list-wrapper">
+        <app-vendor-firm-card [vendors]="filteredList" (view)="editVendor($event)" (delete)="showPopup($event)">
+        </app-vendor-firm-card>
+      </div>
+    </div>
+
+    <ng-template #noVendorsTmp>
+      <div class="empty-state">
+        <mat-icon>domain_disabled</mat-icon>
+        <h3>No Vendor Firms Found</h3>
+        <p>Get started by adding a new vendor firm to the system.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- Vendor View Section -->
+  <div class="vendor-view-section" [hidden]="isListingView">
+    <router-outlet></router-outlet>
+  </div>
+</div>

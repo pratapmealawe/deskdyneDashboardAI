@@ -8,7 +8,7 @@ import { VcBillingComponent } from './vc-billing/vc-billing.component';
 import { DailyBillingComponent } from './daily-billing/daily-billing.component';
 import { BulkBillingComponent } from './bulk-billing/bulk-billing.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { CommonOutletCafeSelectModule } from "src/app/common-outlet-cafe-select/common-outlet-cafe-select.module";
+import { CommonOutletCafeSelectComponent } from "src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component";
 import { DatewiseOrdersDialogComponent } from './datewise-orders-dialog/datewise-orders-dialog.component';
 import { MaterialModule } from '../material.module';
 import { WalletBillingComponent } from './wallet-billing/wallet-billing.component';
@@ -21,7 +21,6 @@ import { CompanyWalletBillingComponent } from './company-wallet-billing/company-
     VcBillingComponent,
     DailyBillingComponent,
     BulkBillingComponent,
-    DatewiseOrdersDialogComponent,
     WalletBillingComponent,
     CompanyWalletBillingComponent
   ],
@@ -31,8 +30,9 @@ import { CompanyWalletBillingComponent } from './company-wallet-billing/company-
     FormsModule,
     ReactiveFormsModule,
     MaterialModule,
-    CommonOutletCafeSelectModule
+    CommonOutletCafeSelectComponent,
+    DatewiseOrdersDialogComponent
   ],
-  exports: [BillingComponent],
+  exports: [BillingComponent, DatewiseOrdersDialogComponent],
 })
 export class BillingModule { }

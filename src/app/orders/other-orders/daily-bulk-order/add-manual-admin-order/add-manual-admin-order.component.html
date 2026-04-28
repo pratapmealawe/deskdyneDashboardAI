@@ -1,0 +1,219 @@
+<div class="add-order-dialog premium-modal">
+
+    <!-- Header -->
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box primary">
+                <mat-icon>receipt_long</mat-icon>
+            </div>
+            <div class="text">
+                <h3>Create Manual Order</h3>
+                <p>Place a bulk daily order on behalf of a customer</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="close()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <!-- Body -->
+    <div class="dialog-content">
+        <form [formGroup]="orderForm" id="addOrderForm" (ngSubmit)="onSubmit()">
+
+            <!-- Section 1: Organization & Cafeteria -->
+            <div class="section-label">
+                <mat-icon>business</mat-icon> Organization & Cafeteria
+            </div>
+            <div class="row g-3 mt-1">
+                <div class="col-md-6">
+                    <mat-form-field class="w-100" appearance="outline">
+                        <mat-label>Organization</mat-label>
+                        <mat-select formControlName="orgId" (selectionChange)="onOrganizationChange($event)">
+                            <mat-option *ngFor="let org of organizationList" [value]="org._id">
+                                {{ org.organization_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="orderForm.get('orgId')?.hasError('required')">
+                            Organization is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field class="w-100" appearance="outline">
+                        <mat-label>Cafeteria</mat-label>
+                        <mat-select formControlName="cafeteriaId" (selectionChange)="onCafeteriaChange($event)">
+                            <mat-option *ngIf="!cafeteriaList.length" disabled>
+                                Select an organization first
+                            </mat-option>
+                            <mat-option *ngFor="let cafe of cafeteriaList" [value]="cafe.cafeteria_id">
+                                {{ cafe.cafeteria_name }}
+                            </mat-option>
+                        </mat-select>
+                        <mat-error *ngIf="orderForm.get('cafeteriaId')?.hasError('required')">
+                            Cafeteria is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Section 2: Order Date & POC -->
+            <div class="section-label mt-3">
+                <mat-icon>event_note</mat-icon> Order Details
+            </div>
+            <div class="row g-3 mt-1">
+                <div class="col-md-6">
+                    <mat-form-field class="w-100" appearance="outline">
+                        <mat-label>Order Date</mat-label>
+                        <mat-icon matPrefix>calendar_today</mat-icon>
+                        <input matInput [matDatepicker]="picker" formControlName="orderDate" placeholder="Select date">
+                        <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                        <mat-datepicker #picker></mat-datepicker>
+                        <mat-error *ngIf="orderForm.get('orderDate')?.hasError('required')">
+                            Date is required
+                        </mat-error>
+                    </mat-form-field>
+                </div>
+                <div class="col-md-6">
+                    <mat-form-field class="w-100" appearance="outline">
+                        <mat-label>Point of Contact (POC)</mat-label>
+                        <mat-select formControlName="pocId" (selectionChange)="onPocChange($event)">
+                            <mat-option value="">-- None --</mat-option>
+                            <mat-option *ngFor="let poc of pocList" [value]="poc.poc_id">
+                                {{ poc.poc_name }} <span class="poc-role">({{ poc.poc_role }})</span>
+                            </mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+            </div>
+
+            <!-- Section 4: Menu Items -->
+            <div class="section-label mt-3">
+                <mat-icon>restaurant_menu</mat-icon> Select Items
+            </div>
+
+            <!-- Placeholder before cafeteria selection -->
+            <div class="empty-menu mt-2" *ngIf="!cafeteriaSelected && !isMenuLoading">
+                <mat-icon>info_outline</mat-icon>
+                <span>Select a cafeteria to load today's menu</span>
+            </div>
+
+            <!-- Loading -->
+            <div class="menu-loading mt-2" *ngIf="isMenuLoading">
+                <mat-spinner diameter="24"></mat-spinner>
+                <span>Loading menu...</span>
+            </div>
+
+            <!-- Item list grouped by meal type -->
+            <div class="item-list mt-2" *ngIf="cafeteriaSelected && !isMenuLoading && menuItems.length > 0">
+
+                <!-- Column header row -->
+                <div class="item-table-header">
+                    <span class="col-item-name">Item</span>
+                    <span class="col-item-price">Price</span>
+                    <span class="col-item-qty">Qty</span>
+                    <span class="col-item-subtotal">Subtotal</span>
+                </div>
+
+                <ng-container *ngFor="let group of groupedMenuItems; trackBy: trackByMealType; let last = last">
+
+                    <!-- Meal type section header -->
+                    <div class="meal-type-header">
+                        <div class="meal-type-badge">
+                            <mat-icon>set_meal</mat-icon>
+                            <span class="meal-type-name">{{ group.mealTypeName }}</span>
+                        </div>
+                        <span class="meal-type-time" *ngIf="group.deliveryTimeFrom">
+                            <mat-icon>schedule</mat-icon>
+                            {{ group.deliveryTimeFrom }} – {{ group.deliveryTimeTo }}
+                        </span>
+                    </div>
+
+                    <!-- Items table rows -->
+                    <div class="item-row" *ngFor="let item of group.items; trackBy: trackByItem"
+                        [class.item-row--active]="item.count > 0">
+
+                        <!-- Item Name + badge -->
+                        <div class="col-item-name">
+                            <span class="item-name">{{ item.itemName }}</span>
+                            <span class="same-day-badge" *ngIf="item.isSameDay">Same Day</span>
+                        </div>
+
+                        <!-- Price -->
+                        <div class="col-item-price">
+                            <span class="item-price">₹{{ item.price }}</span>
+                        </div>
+
+                        <!-- Qty: decrement | manual input | increment -->
+                        <div class="col-item-qty">
+                            <div class="item-counter">
+                                <button type="button" class="counter-btn" (click)="decrementItem(item)"
+                                    [disabled]="item.count === 0">
+                                    <mat-icon>remove</mat-icon>
+                                </button>
+                                <input class="counter-input" type="number" min="0" max="999" [value]="item.count"
+                                    (input)="onManualQtyInput(item, $event)" (blur)="onManualQtyBlur(item, $event)"
+                                    [class.has-count]="item.count > 0" />
+                                <button type="button" class="counter-btn add" (click)="incrementItem(item)">
+                                    <mat-icon>add</mat-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Subtotal -->
+                        <div class="col-item-subtotal">
+                            <span class="item-subtotal" [class.subtotal--active]="item.count > 0">
+                                ₹{{ item.price * (item.count || 0) }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="group-divider" *ngIf="!last"></div>
+
+                </ng-container>
+            </div>
+
+            <!-- Empty menu -->
+            <div class="empty-menu mt-2" *ngIf="cafeteriaSelected && !isMenuLoading && menuItems.length === 0">
+                <mat-icon>no_meals</mat-icon>
+                <span>No menu available for this cafeteria today</span>
+            </div>
+
+            <!-- Order summary -->
+            <div class="order-summary mt-3" *ngIf="totalItemCount > 0">
+                <div class="summary-row">
+                    <span class="summary-label">
+                        <mat-icon>shopping_cart</mat-icon> Items Selected
+                    </span>
+                    <span class="summary-value">{{ totalItemCount }}</span>
+                </div>
+                <div class="summary-row total">
+                    <span class="summary-label">
+                        <mat-icon>currency_rupee</mat-icon> Total Amount
+                    </span>
+                    <span class="summary-value">₹{{ totalAmount }}</span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer-bar px-4 py-3 bg-light-soft border-top d-flex justify-content-end gap-2">
+        <button mat-button class="btn-cancel me-2" (click)="close()" [disabled]="isSubmitting">
+            Cancel
+        </button>
+        <button mat-flat-button color="primary" type="submit" form="addOrderForm"
+            [disabled]="orderForm.invalid || isSubmitting || totalItemCount === 0" class="btn-primary-action px-4">
+            <ng-container *ngIf="!isSubmitting">
+                <mat-icon>add_shopping_cart</mat-icon>
+                <span>Place Order</span>
+            </ng-container>
+            <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+                <span>Placing...</span>
+            </div>
+        </button>
+    </div>
+
+</div>

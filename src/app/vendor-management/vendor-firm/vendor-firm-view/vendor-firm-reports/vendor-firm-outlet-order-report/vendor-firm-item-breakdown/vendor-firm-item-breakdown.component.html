@@ -1,0 +1,248 @@
+<!-- Dialog Header (acts as mat-dialog-title equivalent) -->
+<div class="header-section">
+  <div class="header-left">
+    <div class="title-icon">
+      <mat-icon>analytics</mat-icon>
+    </div>
+    <div class="title-text">
+      <h2 class="page-title">Detailed Item Breakdown</h2>
+      <div class="subtitle">{{ data.rangeLabel ||'Selected Dates (IST)' }}</div>
+    </div>
+  </div>
+  <button mat-icon-button (click)="ref.close()" class="close-btn" aria-label="Close">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<mat-dialog-content class="dialog-content-area custom-scrollbar">
+
+  <!-- Summary Highlights -->
+  <div class="summary-stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon icon-blue">
+        <mat-icon>shopping_cart</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Unique Items</span>
+        <span class="stat-value">{{ summaryStats().totalItems }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon icon-green">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Quantity Sold</span>
+        <span class="stat-value">{{ summaryStats().totalQty | number }}</span>
+      </div>
+    </div>
+
+    <div class="stat-card stat-highlight">
+      <div class="stat-icon icon-gold">
+        <mat-icon>payments</mat-icon>
+      </div>
+      <div class="stat-content">
+        <span class="stat-label">Total Gross Sales</span>
+        <span class="stat-value amount">₹{{ summaryStats().totalSales | number:'1.2-2' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab Group -->
+  <mat-tab-group class="breakdown-tabs">
+
+    <!-- By Item -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">fastfood</mat-icon> By Item
+      </ng-template>
+      <div class="tab-body">
+        <div class="action-strip">
+          <button mat-stroked-button class="export-btn" (click)="export('item')">
+            <mat-icon>file_download</mat-icon> Excel
+          </button>
+          <button mat-stroked-button class="export-btn" (click)="exportPdf('item')">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
+          </button>
+        </div>
+        <div class="table-card">
+          <div class="table-scroll-wrap">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Item Name</th>
+                  <th class="col-num">Quantity</th>
+                  <th class="col-num">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of byItemPaged()">
+                  <td class="col-name">{{ r.key }}</td>
+                  <td class="col-num">{{ r.count | number }}</td>
+                  <td class="col-num col-price">₹{{ r.totalPrice | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="byItemPaged().length === 0">
+                  <td colspan="3" class="empty-row">No data available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <mat-paginator 
+            [length]="byItem().length"
+            [pageIndex]="itemPageIndex()"
+            [pageSize]="itemPageSize()"
+            [pageSizeOptions]="pageSizeOptions"
+            (page)="onItemPage($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- By Item Type -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">sell</mat-icon> By Type
+      </ng-template>
+      <div class="tab-body">
+        <div class="action-strip">
+          <button mat-stroked-button class="export-btn" (click)="export('type')">
+            <mat-icon>file_download</mat-icon> Excel
+          </button>
+          <button mat-stroked-button class="export-btn" (click)="exportPdf('type')">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
+          </button>
+        </div>
+        <div class="table-card">
+          <div class="table-scroll-wrap">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Item Type</th>
+                  <th class="col-num">Quantity</th>
+                  <th class="col-num">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of byTypePaged()">
+                  <td class="col-name">{{ r.key ||'—' }}</td>
+                  <td class="col-num">{{ r.count | number }}</td>
+                  <td class="col-num col-price">₹{{ r.totalPrice | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="byTypePaged().length === 0">
+                  <td colspan="3" class="empty-row">No data available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <mat-paginator
+            [length]="byType().length"
+            [pageIndex]="typePageIndex()"
+            [pageSize]="typePageSize()"
+            [pageSizeOptions]="pageSizeOptions"
+            (page)="onTypePage($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- By Category -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">category</mat-icon> By Category
+      </ng-template>
+      <div class="tab-body">
+        <div class="action-strip">
+          <button mat-stroked-button class="export-btn" (click)="export('category')">
+            <mat-icon>file_download</mat-icon> Excel
+          </button>
+          <button mat-stroked-button class="export-btn" (click)="exportPdf('category')">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
+          </button>
+        </div>
+        <div class="table-card">
+          <div class="table-scroll-wrap">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th class="col-num">Quantity</th>
+                  <th class="col-num">Total Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of byCategoryPaged()">
+                  <td class="col-name">{{ r.key ||'—' }}</td>
+                  <td class="col-num">{{ r.count | number }}</td>
+                  <td class="col-num col-price">₹{{ r.totalPrice | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="byCategoryPaged().length === 0">
+                  <td colspan="3" class="empty-row">No data available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <mat-paginator
+            [length]="byCategory().length"
+            [pageIndex]="catPageIndex()"
+            [pageSize]="catPageSize()"
+            [pageSizeOptions]="pageSizeOptions"
+            (page)="onCatPage($event)"
+            showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- MRP vs Non-MRP -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">pie_chart</mat-icon> MRP Split
+      </ng-template>
+      <div class="tab-body">
+        <div class="action-strip">
+          <button mat-stroked-button class="export-btn" (click)="export('mrpSplit')">
+            <mat-icon>file_download</mat-icon> Excel
+          </button>
+          <button mat-stroked-button class="export-btn" (click)="exportPdf('mrpSplit')">
+            <mat-icon>picture_as_pdf</mat-icon> PDF
+          </button>
+        </div>
+        <div class="table-card">
+          <div class="table-scroll-wrap">
+            <table class="premium-table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th class="col-num">Gross Amount</th>
+                  <th class="col-num">Base Amount</th>
+                  <th class="col-num">Commission</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let r of mrpSplit()">
+                  <td class="col-name col-muted">{{ r.label }}</td>
+                  <td class="col-num col-price">₹{{ r.gross | number:'1.2-2' }}</td>
+                  <td class="col-num">₹{{ r.base | number:'1.2-2' }}</td>
+                  <td class="col-num col-success">₹{{ r.commissionAmt | number:'1.2-2' }}</td>
+                </tr>
+                <tr *ngIf="mrpSplit().length === 0">
+                  <td colspan="4" class="empty-row">No commission data available</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+  </mat-tab-group>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="dialog-actions">
+  <button mat-flat-button color="primary" (click)="ref.close()">
+    <mat-icon>close</mat-icon> Close Report
+  </button>
+</mat-dialog-actions>

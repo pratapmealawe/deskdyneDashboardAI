@@ -1,0 +1,48 @@
+<div class="org-page-container">
+  <div class="content-body">
+    <!-- Organization List View -->
+    <ng-container *ngIf="isListingView">
+      <div class="org-header-card">
+        <div class="header-content">
+          <div class="title-section">
+            <h1 class="page-title">Organization Management</h1>
+          </div>
+          <div class="actions-section">
+            <div class="search-wrapper">
+              <mat-icon class="search-icon">search</mat-icon>
+              <input type="text" placeholder="Search organization..." [formControl]="searchControl" />
+            </div>
+            <button mat-flat-button color="primary" class="btn-add-org" (click)="addOrg()"
+              *appHasPermission="'ORGANIZATION:ADD'">
+              <mat-icon>add_business</mat-icon>
+              <span>Add Organization</span>
+            </button>
+            <button mat-icon-button class="btn-deleted" (click)="openDeletedOrganizationListing()"
+              matTooltip="View Deleted Organizations" *appHasPermission="'ORGANIZATION:VIEW_DELETED'">
+              <mat-icon>delete_sweep</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="orgList?.length > 0; else noRecords">
+        <app-organization-card [organization]="orgList" [showDeletedMode]="false" (view)="viewOrg($event)"
+          (paginationConfig)="paginationConfig($event)" (softDelete)="onSoftDelete($event)">
+        </app-organization-card>
+      </div>
+
+      <ng-template #noRecords>
+        <div class="empty-state">
+          <mat-icon class="empty-icon">business</mat-icon>
+          <h3>No Organizations Found</h3>
+          <p>Get started by adding your first organization.</p>
+          <button mat-stroked-button color="primary" (click)="addOrg()" *appHasPermission="'ORGANIZATION:ADD'">Add
+            Organization</button>
+        </div>
+      </ng-template>
+    </ng-container>
+    <div [hidden]="isListingView">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

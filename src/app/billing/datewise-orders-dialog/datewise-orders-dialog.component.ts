@@ -33,10 +33,16 @@ export interface DatewiseDialogResult {
   records: any[];
 }
 
+import { CommonModule } from '@angular/common';
+import { MaterialModule } from 'src/app/material.module';
+import { FormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-datewise-orders-dialog',
   templateUrl: './datewise-orders-dialog.component.html',
-  styleUrls: ['./datewise-orders-dialog.component.scss']
+  styleUrls: ['./datewise-orders-dialog.component.scss'],
+  standalone: true,
+  imports: [CommonModule, MaterialModule, FormsModule]
 })
 export class DatewiseOrdersDialogComponent implements OnInit {
   selectedDate: Date | null = null;

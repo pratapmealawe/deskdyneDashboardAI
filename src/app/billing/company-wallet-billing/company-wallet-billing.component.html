@@ -82,12 +82,9 @@
                             <tbody>
                                 <tr *ngFor="let o of grp.orders">
                                     <td class="text-muted small">{{ o.createdAt | date:'shortTime' }}</td>
-                                    <td class="fw-medium text-primary">{{ o.employeeId || '-' }}</td>
+                                    <td class="fw-medium text-primary">{{ o.employeeId ||'-' }}</td>
                                     <td>
-                                        <span class="badge rounded-pill border" [ngClass]="{
-                                                'bg-success-subtle text-success border-success': o.transactionType === 'CREDIT',
-                                                'bg-danger-subtle text-danger border-danger': o.transactionType === 'DEBIT',
-                                                'bg-light text-dark': o.transactionType !== 'CREDIT' && o.transactionType !== 'DEBIT'
+                                        <span class="badge rounded-pill border" [ngClass]="{'bg-success-subtle text-success border-success': o.transactionType ==='CREDIT','bg-danger-subtle text-danger border-danger': o.transactionType ==='DEBIT','bg-light text-dark': o.transactionType !=='CREDIT' && o.transactionType !=='DEBIT'
                                             }">
                                             {{ o.transactionType }}
                                         </span>
@@ -97,8 +94,8 @@
                                             }}</span>
                                     </td>
                                     <td class="text-end fw-bold"
-                                        [ngClass]="{'text-success': o.transactionType === 'CREDIT', 'text-danger': o.transactionType !== 'CREDIT'}">
-                                        {{ (o.transactionType === 'CREDIT' ? '+' : '-') }} ₹{{ getTxnAmount(o) |
+                                        [ngClass]="{'text-success': o.transactionType ==='CREDIT','text-danger': o.transactionType !=='CREDIT'}">
+                                        {{ (o.transactionType ==='CREDIT' ?'+' :'-') }} ₹{{ getTxnAmount(o) |
                                         number:'1.2-2' }}
                                     </td>
                                     <td class="text-center">

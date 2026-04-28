@@ -1,0 +1,140 @@
+<div class="copy-outlet-menu-modal premium-modal">
+  <!-- HEADER -->
+  <div class="modal-header">
+    <div class="title-wrap">
+      <div class="icon-box primary">
+        <mat-icon>content_copy</mat-icon>
+      </div>
+      <div class="text">
+        <h3>Copy Menu from Outlet</h3>
+        <p>Select a source outlet to copy its menu items to {{ outletObj?.outletName }}</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <div class="selection-badge me-2" *ngIf="selectedMenuItems.length > 0">
+        <mat-icon>check_circle</mat-icon>
+        {{ selectedMenuItems.length }} Selected
+      </div>
+      <button mat-icon-button (click)="close()" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <mat-dialog-content class="dialog-content custom-scrollbar">
+    <!-- FILTERS SECTION -->
+    <div class="sticky-filters">
+      <div class="filter-card">
+        <mat-form-field appearance="outline" class="outlet-select">
+          <mat-label>Source Outlet</mat-label>
+          <mat-select [(ngModel)]="selectedOutlet" (selectionChange)="onOutletChange()">
+            <mat-option [value]="null">Select Outlet</mat-option>
+            <mat-option *ngFor="let outlet of outletList" [value]="outlet">
+              {{ outlet.outletName }}
+            </mat-option>
+          </mat-select>
+          <mat-icon matPrefix class="field-icon">storefront</mat-icon>
+        </mat-form-field>
+
+        <div class="search-box-wrapper" *ngIf="selectedOutlet">
+          <mat-icon>search</mat-icon>
+          <input type="text" placeholder="Search menu items..." [(ngModel)]="searchTerm" (input)="applyFilter()" />
+        </div>
+      </div>
+    </div>
+
+    <div class="content-padding">
+      <!-- SELECTION LIST GRID -->
+      <div class="selection-grid" *ngIf="selectedOutlet && filteredOutletMenuList.length > 0">
+        <div class="menu-item-card selection-mode" *ngFor="let item of filteredOutletMenuList"
+          [ngClass]="{'is-selected': isSelected(item) }" (click)="onItemToggle(item)">
+          
+          <div class="selection-check" *ngIf="isSelected(item)">
+            <mat-icon>check</mat-icon>
+          </div>
+
+          <div class="card-content-wrapper">
+            <div class="menu-image-wrapper">
+              <img [src]="displayImgUrl + item.imageUrl" class="menu-avatar" alt="{{ item.itemName }}"
+                onerror="this.src='assets/Imageunavailable.webp'" />
+              <div [ngClass]="item.itemType === 'Veg' ? 'vegIcon' : 'nonvegIcon'" class="type-indicator"></div>
+            </div>
+
+            <div class="menu-details">
+              <h4 class="menu-name">{{ item.itemName || 'Unnamed item' }}</h4>
+              <p class="description-text" *ngIf="item.description">
+                {{ item.description }}
+              </p>
+
+              <!-- Chips Row -->
+              <div class="chips-row-modern" *ngIf="(item.mealTimingInfo?.length || selectedOutlet?.mealTiming?.length)">
+                <span class="meal-chip-modern"
+                  *ngFor="let meal of (item.mealTimingInfo?.length ? item.mealTimingInfo : (selectedOutlet?.mealTiming || []))"
+                  [ngClass]="meal.mealSubsidyType || 'default'">
+                  {{ meal.mealType || meal }}
+                </span>
+              </div>
+
+              <!-- Discount/Subsidy Section -->
+              <div class="subsidy-section-modern" *ngIf="item.subsidy || item.discountEnabled">
+                <div class="subsidy-pill" *ngIf="item.subsidy">
+                  <mat-icon>sell</mat-icon>
+                  <span>₹{{ item.subsidy }}</span>
+                </div>
+
+                <ng-container *ngIf="item.discountEnabled">
+                  <div class="discount-pill" [ngClass]="item.discountType">
+                    <mat-icon>discount</mat-icon>
+                    <span>{{ item.discountType === 'percentage' ? item.discountValue + '%' : '₹' + item.discountValue }}</span>
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+          </div>
+
+          <!-- Precedence Badge -->
+          <div class="precedence-badge-top" *ngIf="item.precedence !== undefined && item.precedence !== null">
+            <mat-icon>sort</mat-icon>
+            <span>{{ item.precedence }}</span>
+          </div>
+
+          <div class="menu-footer">
+            <div class="price-tag">
+              <span class="currency">₹</span>
+              <span class="value">{{ item.price }}</span>
+            </div>
+            <div class="category-badge-simple">{{ item.category || 'General' }}</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Empty State for Selected Outlet -->
+      <div class="empty-state-modern" *ngIf="selectedOutlet && filteredOutletMenuList.length === 0">
+        <div class="icon-box">
+          <mat-icon>search_off</mat-icon>
+        </div>
+        <h4>No results found</h4>
+        <p>No items match your search criteria in this outlet.</p>
+      </div>
+
+      <!-- Empty State for No Outlet Selected -->
+      <div class="empty-state-modern" *ngIf="!selectedOutlet">
+        <div class="icon-box">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <h4>Choose a Source</h4>
+        <p>Please select an outlet from the dropdown above to browse its menu.</p>
+      </div>
+    </div>
+  </mat-dialog-content>
+
+  <!-- FOOTER -->
+  <mat-dialog-actions align="end" class="modal-footer">
+    <button mat-button class="btn-cancel" (click)="close()">Cancel</button>
+    <button mat-flat-button color="primary" class="btn-primary-action" (click)="submit()"
+      [disabled]="selectedMenuItems.length === 0">
+      <mat-icon>content_copy</mat-icon>
+      <span>Copy Items</span>
+    </button>
+  </mat-dialog-actions>
+</div>

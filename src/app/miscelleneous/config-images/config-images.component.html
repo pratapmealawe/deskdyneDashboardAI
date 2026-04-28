@@ -1,0 +1,159 @@
+<div class="config-images-container">
+
+    <!-- PAGE HEADER -->
+    <div class="page-header-card mb-4">
+        <div class="header-content">
+            <div class="d-flex align-items-center gap-3">
+                <div class="icon-box info">
+                    <mat-icon>image</mat-icon>
+                </div>
+                <div>
+                    <h1 class="page-title">Config Images</h1>
+                    <p class="page-subtitle">Upload and manage configuration images for outlets and menus.</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="count-pill" *ngIf="!isLoading && !hasError && !editMode">
+                    <mat-icon>photo_library</mat-icon>
+                    <span>{{ allImages.length }} Image{{ allImages.length !== 1 ?'s' :'' }}</span>
+                </div>
+                <button mat-flat-button color="primary" *ngIf="!editMode" (click)="addImage()" class="add-btn">
+                    <mat-icon>add_photo_alternate</mat-icon> Add Image
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT / ADD FORM -->
+    <div *ngIf="editMode" class="modern-card mb-4">
+        <div class="card-header">
+            <div class="icon-box" [ngClass]="addnewImage ?'success' :'warning'">
+                <mat-icon>{{ addnewImage ?'add_photo_alternate' :'edit' }}</mat-icon>
+            </div>
+            <h3>{{ addnewImage ?'Add New Image' :'Update Image' }}</h3>
+        </div>
+        <div class="card-body">
+            <div class="row g-4">
+                <!-- Image Name -->
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100 custom-field">
+                        <mat-label>Image Name</mat-label>
+                        <input matInput type="text" [(ngModel)]="imageObj.imageName"
+                            placeholder="e.g. Main Banner Logo" />
+                        <mat-icon matSuffix class="text-muted">label</mat-icon>
+                        <button *ngIf="imageObj.imageName" matSuffix mat-icon-button (click)="imageObj.imageName =''">
+                            <mat-icon>close</mat-icon>
+                        </button>
+                    </mat-form-field>
+                </div>
+
+                <!-- Image Upload -->
+                <div class="col-md-6">
+                    <div class="upload-wrapper">
+                        <input #fileInput type="file" class="uploadInput" accept="image/*"
+                            (change)="handleFileInput($event)" style="display: none;" />
+                        <div class="image-upload-box" [class.has-image]="imageUrl" (click)="fileInput.click()">
+                            <img *ngIf="imageUrl" [src]="imageUrl" class="preview-image" />
+                            <div *ngIf="!imageUrl" class="placeholder-content">
+                                <mat-icon>cloud_upload</mat-icon>
+                                <span>Click to Upload</span>
+                            </div>
+                            <div class="upload-overlay">
+                                <mat-icon>photo_camera</mat-icon>
+                                <span>Change Image</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button *ngIf="addnewImage" mat-flat-button color="primary" (click)="submitnewVariable(imageObj)"
+                    [disabled]="saving" class="action-btn-form">
+                    <mat-spinner *ngIf="saving" diameter="18" class="spinner-inline"></mat-spinner>
+                    <mat-icon *ngIf="!saving">check</mat-icon>
+                    {{ saving ?'Saving...' :'Submit' }}
+                </button>
+                <button *ngIf="!addnewImage" mat-flat-button color="primary" (click)="updateConfigImage(imageObj)"
+                    [disabled]="saving" class="action-btn-form">
+                    <mat-spinner *ngIf="saving" diameter="18" class="spinner-inline"></mat-spinner>
+                    <mat-icon *ngIf="!saving">save</mat-icon>
+                    {{ saving ?'Saving...' :'Update' }}
+                </button>
+                <button mat-stroked-button (click)="cancel()" class="cancel-btn-form">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIST VIEW -->
+    <div *ngIf="!editMode">
+
+        <!-- SEARCH BAR -->
+        <div *ngIf="!isLoading && !hasError && allImages.length > 0" class="search-bar mb-4">
+            <mat-icon class="search-icon">search</mat-icon>
+            <input type="text" [(ngModel)]="searchTerm" placeholder="Search by image name..." class="search-input" />
+            <button *ngIf="searchTerm" mat-icon-button class="clear-btn" (click)="clearSearch()">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        <!-- LOADING STATE -->
+        <div *ngIf="isLoading" class="state-container">
+            <mat-spinner diameter="44"></mat-spinner>
+            <p class="state-text">Loading images...</p>
+        </div>
+
+        <!-- ERROR STATE -->
+        <div *ngIf="!isLoading && hasError" class="state-container error">
+            <mat-icon class="state-icon error">cloud_off</mat-icon>
+            <h4>Failed to Load</h4>
+            <p class="state-text">Something went wrong while fetching images.</p>
+            <button mat-stroked-button color="primary" (click)="retryLoad()">
+                <mat-icon>refresh</mat-icon> Retry
+            </button>
+        </div>
+
+        <!-- EMPTY STATE -->
+        <div *ngIf="!isLoading && !hasError && allImages.length === 0" class="state-container empty">
+            <mat-icon class="state-icon">add_photo_alternate</mat-icon>
+            <h4>No Images</h4>
+            <p class="state-text">Upload your first config image to get started.</p>
+            <button mat-stroked-button color="primary" (click)="addImage()">
+                <mat-icon>add</mat-icon> Add Image
+            </button>
+        </div>
+
+        <!-- NO SEARCH RESULTS -->
+        <div *ngIf="!isLoading && !hasError && allImages.length > 0 && filteredImages.length === 0"
+            class="state-container empty">
+            <mat-icon class="state-icon">search_off</mat-icon>
+            <h4>No Results</h4>
+            <p class="state-text">No images match"{{ searchTerm }}".</p>
+            <button mat-stroked-button color="primary" (click)="clearSearch()">
+                <mat-icon>clear</mat-icon> Clear Search
+            </button>
+        </div>
+
+        <!-- IMAGE GRID -->
+        <div *ngIf="!isLoading && !hasError && filteredImages.length > 0" class="image-grid-container">
+            <div *ngFor="let image of filteredImages" class="image-card">
+                <div class="image-preview">
+                    <img *ngIf="image.imageUrl" [src]="serverUrl + image.imageUrl" [alt]="image.imageName"
+                        (error)="image._loadError = true" />
+                    <div *ngIf="!image.imageUrl || image._loadError" class="no-image">
+                        <mat-icon>broken_image</mat-icon>
+                    </div>
+                    <button mat-icon-button class="edit-overlay-btn" (click)="editConfigImage(image)" matTooltip="Edit">
+                        <mat-icon>edit</mat-icon>
+                    </button>
+                </div>
+                <div class="image-info">
+                    <span class="image-name" [matTooltip]="image.imageName">{{ image.imageName }}</span>
+                    <span class="image-path" [matTooltip]="image.imageUrl">{{ image.imageUrl }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

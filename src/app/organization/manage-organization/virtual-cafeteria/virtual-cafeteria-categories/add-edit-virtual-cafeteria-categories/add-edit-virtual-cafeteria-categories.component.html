@@ -1,0 +1,107 @@
+<div class="add-category-dialog premium-modal">
+    <div class="modal-header">
+        <div class="title-wrap">
+            <div class="icon-box" [class.primary]="!isEditMode" [class.warning]="isEditMode">
+                <mat-icon>{{ isEditMode ? 'edit' : 'category' }}</mat-icon>
+            </div>
+            <div class="text">
+                <h3>{{ isEditMode ? 'Edit Package Category' : 'Add New Package Category' }}</h3>
+                <p>{{ isEditMode ? 'Update category details and visual assets' : 'Create a new category for the virtual cafeteria' }}</p>
+            </div>
+        </div>
+        <button mat-icon-button (click)="closeDialog()" class="close-btn">
+            <mat-icon>close</mat-icon>
+        </button>
+    </div>
+
+    <mat-dialog-content class="dialog-content">
+        <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()" id="categoryForm" class="p-2">
+            <div class="form-grid-modern">
+                <!-- Name Row -->
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Category Name</mat-label>
+                            <mat-icon matPrefix>label</mat-icon>
+                            <mat-select formControlName="categoryName">
+                                <mat-option *ngFor="let cat of packageCategoryList" [value]="cat">
+                                    {{ cat }}
+                                </mat-option>
+                            </mat-select>
+                            <mat-error *ngIf="categoryForm.get('categoryName')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Display Name</mat-label>
+                            <mat-icon matPrefix>font_download</mat-icon>
+                            <input matInput formControlName="categoryDisplayName" placeholder="e.g. Premium Breakfast" />
+                            <mat-error *ngIf="categoryForm.get('categoryDisplayName')?.hasError('required')">Required</mat-error>
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Config Row -->
+                <div class="row g-3 mt-1">
+                    <div class="col-12">
+                        <mat-form-field appearance="outline" class="full-width">
+                            <mat-label>Image Config Name (MealAwe)</mat-label>
+                            <mat-icon matPrefix>settings_input_component</mat-icon>
+                            <input matInput formControlName="imageConfigNameMealawe" placeholder="Enter configuration identifier" />
+                        </mat-form-field>
+                    </div>
+                </div>
+
+                <!-- Image Upload Section -->
+                <div class="selection-container mt-4">
+                    <p class="section-label mb-3"><mat-icon>image</mat-icon> Category Image</p>
+                    
+                    <div class="upload-area" (click)="categoryInput.click()">
+                        <mat-icon class="upload-icon">cloud_upload</mat-icon>
+                        <p>{{ categoryForm.value.categoryImg ? 'Change Category Image' : 'Click to upload category image' }}</p>
+                        <input #categoryInput type="file" (change)="onCategoryImgSelect($event)" accept="image/*" class="d-none">
+                    </div>
+
+                    <div *ngIf="categoryForm.value.categoryImg" class="preview-img-box mt-3">
+                        <img [src]="categoryForm.value.categoryImg" width="160" />
+                    </div>
+                </div>
+
+                <!-- Banners Section -->
+                <div class="selection-container mt-4">
+                    <p class="section-label mb-3"><mat-icon>view_carousel</mat-icon> Category Banners <span class="ms-2 badge bg-light text-dark fw-normal" style="font-size: 0.7rem;">Drag to reorder</span></p>
+                    
+                    <div class="upload-area mb-3" (click)="bannerInput.click()">
+                        <mat-icon class="upload-icon">add_photo_alternate</mat-icon>
+                        <p>Click to add one or more banners</p>
+                        <input #bannerInput type="file" multiple (change)="onBannerSelect($event)" accept="image/*" class="d-none">
+                    </div>
+
+                    <div cdkDropList (cdkDropListDropped)="dropBanner($event)" class="banner-preview">
+                        <div *ngFor="let b of banners; let i = index" cdkDrag class="banner-item">
+                            <img [src]="b.preview" width="120" height="80" />
+                            <button mat-icon-button color="warn" class="remove-btn" (click)="removeBanner(i)" type="button">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </mat-dialog-content>
+
+    <mat-dialog-actions align="end" class="modal-footer px-4 py-3 bg-light-soft border-top">
+        <button mat-button class="btn-cancel me-2" (click)="closeDialog()" [disabled]="isSubmitting">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" form="categoryForm" 
+                [disabled]="categoryForm.invalid || isSubmitting" class="btn-primary-action px-4">
+            <ng-container *ngIf="!isSubmitting">
+                <mat-icon>{{ isEditMode ? 'save' : 'add_circle' }}</mat-icon>
+                <span>{{ isEditMode ? 'Update Category' : 'Create Category' }}</span>
+            </ng-container>
+            <div class="d-flex align-items-center gap-2" *ngIf="isSubmitting">
+                <mat-spinner diameter="20" color="accent"></mat-spinner>
+                <span>Saving...</span>
+            </div>
+        </button>
+    </mat-dialog-actions>
+</div>

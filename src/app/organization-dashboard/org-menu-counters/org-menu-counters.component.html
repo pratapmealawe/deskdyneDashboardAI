@@ -1,0 +1,119 @@
+<div class="page-wrapper">
+
+  <!-- Page Header -->
+  <div class="page-header-card mb-4">
+    <div class="header-content">
+      <div class="header-left">
+        <button *ngIf="selectedOutlet" mat-icon-button (click)="backToMainPage()" class="back-btn" matTooltip="Back to Outlets">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="title-section">
+          <h1 class="page-title">{{ selectedOutlet ? selectedOutlet?.outletName :'Menu Counters' }}</h1>
+          <p class="page-subtitle">
+            {{ selectedOutlet
+              ? (selectedOutlet?.cafeteriaDetails?.cafeteria_name ||'Outlet Details')
+              :'Browse and explore menu counters by outlet' }}
+          </p>
+        </div>
+      </div>
+      <div class="actions-section">
+        <div class="search-wrapper" *ngIf="!selectedOutlet">
+          <mat-icon class="search-icon">search</mat-icon>
+          <input type="text"
+            placeholder="Search outlets..."
+            (input)="searchFilter($event)" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Bar (only on list view) -->
+  <div *ngIf="!selectedOutlet" class="filter-bar mb-4">
+    <app-common-outlet-cafe-select [config]="headerConfig"
+      (submitted)="filterSubmitted($event)"></app-common-outlet-cafe-select>
+  </div>
+
+  <!-- ───────────── OUTLET CARDS GRID ───────────── -->
+  <div *ngIf="!selectedOutlet">
+
+    <ng-container *ngIf="filteredOutletList.length > 0; else emptyOutlets">
+
+      <!-- Section Label -->
+      <div class="section-label mb-3">
+        <mat-icon>store</mat-icon>
+        <span>{{ filteredOutletList.length }} Outlet{{ filteredOutletList.length !== 1 ?'s' :'' }} Found</span>
+      </div>
+
+      <div class="outlets-grid">
+        <div class="outlet-card" *ngFor="let outlet of filteredOutletList; let i = index">
+
+          <!-- Card Image with gradient overlay -->
+          <div class="outlet-image-wrap">
+            <img class="outlet-image"
+              [src]="outlet.imageUrl ? imageUrl + outlet.imageUrl :'assets/images/dummyUpload.png'"
+              alt="{{ outlet?.outletName }}" />
+            <div class="image-overlay"></div>
+
+            <!-- Floating Badges -->
+            <div class="outlet-overlay-content">
+              <span class="outlet-type-badge">
+                <mat-icon>storefront</mat-icon> Outlet
+              </span>
+              <span class="menu-count-chip" *ngIf="outlet?.menuList?.length">
+                <mat-icon>restaurant_menu</mat-icon> {{ outlet.menuList.length }} items
+              </span>
+            </div>
+          </div>
+
+          <!-- Card Body -->
+          <div class="outlet-body">
+            <h5 class="outlet-name">{{ outlet?.outletName }}</h5>
+            <div class="outlet-meta" *ngIf="outlet?.cafeteriaDetails?.cafeteria_name">
+              <mat-icon>local_cafe</mat-icon>
+              <span>{{ outlet.cafeteriaDetails.cafeteria_name }}</span>
+            </div>
+            <p class="outlet-desc" *ngIf="outlet?.outletDescription">
+              {{ outlet?.showFullDescription ? outlet?.outletDescription : (outlet?.outletDescription | slice:0:90) }}<span *ngIf="!outlet.showFullDescription && outlet?.outletDescription?.length > 90">...</span>
+            </p>
+            <span *ngIf="outlet?.outletDescription?.length > 90" class="read-more-link" (click)="toggleReadMore(i)">
+              {{ outlet?.showFullDescription ?'Read Less' :'Read More' }}
+            </span>
+          </div>
+
+          <!-- Card Footer -->
+          <div class="outlet-footer">
+            <div class="outlet-stats">
+              <span class="stat-chip">
+                <mat-icon>restaurant_menu</mat-icon>
+                {{ outlet?.menuList?.length || 0 }} Menu Items
+              </span>
+            </div>
+            <button mat-flat-button class="btn-view-menu" (click)="showOutletDetails(outlet)">
+              View Details <mat-icon>arrow_forward</mat-icon>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyOutlets>
+      <div class="empty-state">
+        <div class="empty-icon-wrap">
+          <mat-icon>storefront</mat-icon>
+        </div>
+        <h3>No Outlets Found</h3>
+        <p>Select a cafeteria above to browse its menu counters and items.</p>
+      </div>
+    </ng-template>
+  </div>
+
+  <!-- ───────────── OUTLET DETAIL VIEW (Delegated to Child Component) ───────────── -->
+  <app-outlet-detail
+    *ngIf="selectedOutlet"
+    [outlet]="selectedOutlet"
+    [imageUrl]="imageUrl"
+    (back)="backToMainPage()">
+  </app-outlet-detail>
+
+</div>

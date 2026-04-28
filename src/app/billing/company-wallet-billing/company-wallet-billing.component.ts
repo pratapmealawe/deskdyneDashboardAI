@@ -2,8 +2,8 @@ import { KeyValue } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { CommonSelectConfig } from 'src/app/common-outlet-cafe-select/common-outlet-cafe-select.component';
-import { ApiMainService } from 'src/service/apiService/apiMain.service';
+import { CommonSelectConfig } from 'src/app/common-components/common-outlet-cafe-select/common-outlet-cafe-select.component';
+import { ApiMainService } from '@service/apiService/apiMain.service';
 import { PageEvent } from '@angular/material/paginator';
 import * as ExcelJS from 'exceljs';
 import { saveAs } from 'file-saver';
@@ -124,13 +124,10 @@ export class CompanyWalletBillingComponent implements OnInit {
   async getCompanyOrganizationTransactionHistory(body: any) {
     try {
       const res: any = await this.apiMainService.getCompanyOrganizationTransactionHistory(body);
-      console.log('getCompanyOrganizationTransactionHistory', res);
       this.orders = Array.isArray(res) ? res : [];
-      console.log(this.orders);
       this.buildDatewiseGroups();
       this.resetAllPagers();
     } catch (err) {
-      console.log('err', err);
       this.orders = [];
       this.dateGroups = [];
       this.resetAllPagers();

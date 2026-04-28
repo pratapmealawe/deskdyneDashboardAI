@@ -1,6 +1,6 @@
 <div class="outlet-page-container">
   <!-- Header Section -->
-  <div class="outlet-header-card" *ngIf="showSearchSection">
+  <div class="outlet-header-card" *ngIf="isListingView">
     <div class="header-content">
       <div class="title-section">
         <h1 class="page-title">Outlet Management</h1>
@@ -11,11 +11,11 @@
           <mat-icon class="search-icon">search</mat-icon>
           <input type="text" placeholder="Search outlets..." [formControl]="searchControl" />
         </div>
-        <button mat-flat-button class="btn-add-outlet" (click)="addOutlet()">
+        <button mat-flat-button class="btn-add-outlet" (click)="addOutlet()" *appHasPermission="'OUTLET:ADD'">
           <mat-icon>add_business</mat-icon>
           <span>Add Outlet</span>
         </button>
-        <button mat-icon-button class="btn-deleted" (click)="openDeletedOutletsDialog()"
+        <button mat-icon-button class="btn-deleted" (click)="openDeletedOutletsDialog()" *appHasPermission="'OUTLET:DELETE'"
           matTooltip="View Deleted Outlets">
           <mat-icon>delete_sweep</mat-icon>
         </button>
@@ -24,12 +24,12 @@
   </div>
 
   <!-- Content Body -->
-  <div class="content-body" *ngIf="showSearchSection">
+  <div class="content-body" *ngIf="isListingView">
     <div *ngIf="outletList && outletList.length === 0; else outletListTmp" class="empty-state">
       <mat-icon class="empty-icon">storefront</mat-icon>
       <h3>No Outlets Found</h3>
       <p>Get started by adding your first outlet.</p>
-      <button mat-stroked-button color="primary" (click)="addOutlet()">Add Outlet</button>
+      <button mat-stroked-button color="primary" (click)="addOutlet()" *appHasPermission="'OUTLET:ADD'">Add Outlet</button>
     </div>
 
     <ng-template #outletListTmp>
@@ -41,7 +41,7 @@
   </div>
 
   <!-- Outlet View Section -->
-  <div class="outlet-view-section" *ngIf="!showSearchSection && outletList.length > 0">
-    <app-outlet-view [outlet]="selectedOutlet" (back)="toggleShowOrder($event)"></app-outlet-view>
+  <div class="outlet-view-section" [hidden]="isListingView">
+    <router-outlet></router-outlet>
   </div>
 </div>

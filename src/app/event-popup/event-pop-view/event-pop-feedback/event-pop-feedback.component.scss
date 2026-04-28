@@ -1,0 +1,304 @@
+// Modern Event Pop Feedback Styles
+$primary-dark: #1e3a8a;
+$primary-light: #3b82f6;
+$accent-color: #6366f1;
+$glass-bg: rgba(255, 255, 255, 0.7);
+$glass-border: rgba(226, 232, 240, 0.8);
+$text-main: #1e293b;
+$text-muted: #64748b;
+
+.event-pop-feedback-container {
+  padding: 1rem;
+  min-height: 100%;
+
+  .glass-card {
+    background: $glass-bg;
+    backdrop-filter: blur(12px);
+    border: 1px solid $glass-border;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  }
+
+  // STATS DASHBOARD
+  .stats-card {
+    padding: 2rem;
+    
+    .stats-flex {
+      display: flex;
+      align-items: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .rating-summary {
+      text-align: center;
+      
+      .avg-rating {
+        font-size: 3.5rem;
+        font-weight: 800;
+        color: $primary-dark;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+      }
+
+      .stars-display {
+        display: flex;
+        justify-content: center;
+        gap: 0.25rem;
+        margin-bottom: 0.75rem;
+
+        mat-icon {
+          font-size: 1.5rem;
+          width: 1.5rem;
+          height: 1.5rem;
+          color: #e2e8f0;
+          &.active { color: #fbbf24; }
+        }
+      }
+
+      .total-count {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: $text-muted;
+      }
+    }
+
+    .stats-divider {
+      width: 1px;
+      height: 80px;
+      background: $glass-border;
+      @media (max-width: 600px) { display: none; }
+    }
+
+    .stats-info {
+      display: flex;
+      gap: 2.5rem;
+      flex: 1;
+
+      .info-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        mat-icon {
+          font-size: 2.5rem;
+          width: 2.5rem;
+          height: 2.5rem;
+          opacity: 0.8;
+        }
+
+        .info-text {
+          display: flex;
+          flex-direction: column;
+          
+          .label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: $text-muted;
+            text-transform: uppercase;
+          }
+
+          .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: $text-main;
+          }
+        }
+      }
+    }
+  }
+
+  // CONTROL BAR
+  .control-bar {
+    padding: 1rem 1.5rem;
+    
+    .filters-form {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    .modern-field {
+      min-width: 300px;
+      ::ng-deep .mat-mdc-text-field-wrapper {
+        background: white !important;
+        border-radius: 1rem !important;
+      }
+    }
+
+    .search-btn {
+      border-radius: 1rem;
+      height: 3.5rem;
+      padding: 0 2rem;
+      font-weight: 700;
+      box-shadow: 0 4px 12px rgba($primary-light, 0.2);
+    }
+  }
+
+  // FEEDBACK GRID
+  .feedback-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .feedback-card {
+    padding: 1.5rem !important;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+
+      .user-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+
+        .user-avatar {
+          width: 3rem;
+          height: 3rem;
+          border-radius: 1rem;
+          background: linear-gradient(135deg, $primary-light, $accent-color);
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: 800;
+          font-size: 1.25rem;
+        }
+
+        .user-name {
+          font-weight: 700;
+          color: $text-main;
+          margin: 0;
+          font-size: 1.1rem;
+        }
+
+        .review-date {
+          font-size: 0.8rem;
+          color: $text-muted;
+          font-weight: 500;
+        }
+      }
+
+      .rating-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        background: #fffbeb;
+        color: #d97706;
+        padding: 0.35rem 0.75rem;
+        border-radius: 2rem;
+        font-weight: 800;
+        mat-icon { font-size: 1rem; width: 1rem; height: 1rem; }
+      }
+    }
+
+    .card-body {
+      flex: 1;
+
+      .feedback-text {
+        color: $text-main;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        font-style: italic;
+      }
+
+      .food-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: $primary-dark;
+        font-size: 0.85rem;
+        font-weight: 700;
+        background: rgba($primary-dark, 0.05);
+        padding: 0.5rem 1rem;
+        border-radius: 0.75rem;
+        
+        mat-icon { font-size: 1.1rem; width: 1.1rem; height: 1.1rem; }
+      }
+    }
+
+    .card-footer {
+      margin-top: 1.5rem;
+      padding-top: 1rem;
+      border-top: 1px solid rgba($glass-border, 0.5);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .order-ref {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: $text-muted;
+      }
+
+      .reply-btn {
+        color: $primary-light;
+        font-weight: 700;
+        text-transform: none;
+        letter-spacing: 0.01em;
+      }
+    }
+  }
+
+  // PAGINATION
+  .pagination-container {
+    padding: 0.5rem 1.5rem !important;
+    ::ng-deep .mat-mdc-paginator { background: transparent; }
+  }
+
+  // EMPTY STATE
+  .empty-state {
+    .huge-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      color: $text-muted;
+      opacity: 0.3;
+      margin-bottom: 1.5rem;
+    }
+    h3 { font-size: 1.5rem; font-weight: 800; color: $primary-dark; }
+    p { color: $text-muted; }
+  }
+}
+
+// ANIMATIONS
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-in forwards;
+}
+
+// RESPONSIVE
+@media (max-width: 600px) {
+  .event-pop-feedback-container {
+    .stats-card .stats-info { flex-direction: column; gap: 1.5rem; }
+    .control-bar .modern-field { min-width: 100%; }
+    .feedback-grid { grid-template-columns: 1fr; }
+  }
+}

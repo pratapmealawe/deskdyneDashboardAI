@@ -1,0 +1,92 @@
+<div class="review-card premium-card" *ngIf="order">
+    <!-- Card Top (Header) -->
+    <div class="card-top">
+        <div class="card-top-left">
+            <div class="review-avatar" [style.background]="'linear-gradient(135deg, #6366f1 0%, #4338ca 100%)'">
+                {{ order?.feedbackFrom_name ? order?.feedbackFrom_name[0].toUpperCase() : 'C' }}
+            </div>
+            <div class="review-identity">
+                <div class="name-row">
+                    <h3 class="review-title">{{ order?.feedbackFrom_name || 'Customer Feedback' }}</h3>
+                    <div class="order-id-badge">#{{ order.feedbackOrderNo }}</div>
+                </div>
+                <div class="review-sub-info">
+                    <span class="date-text">
+                        <mat-icon>schedule</mat-icon>
+                        {{ order.SubmitedDate | date:'MMM d, y, h:mm a' }}
+                    </span>
+                    <span class="location-text" *ngIf="order.outletName">
+                        <mat-icon>place</mat-icon>
+                        {{ order.outletName }}
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="card-top-right">
+            <div class="rating-badge-premium" [ngClass]="ratingClass[order.rating] || 'skipped'">
+                <div class="stars-row">
+                    <mat-icon *ngFor="let filled of getStarsArray(order.rating || 0)" 
+                        [class.filled]="filled">{{ filled ? 'star' : 'star_outline' }}</mat-icon>
+                </div>
+                <span class="rating-text">{{ order.rating || 0 }}/5 • {{ ratingLabel[order.rating || 0] || 'Unrated' }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Body (Grid) -->
+    <div class="card-body-grid">
+        <!-- Left: Feedback Text -->
+        <div class="body-section feedback-section">
+            <div class="section-header">
+                <mat-icon>chat_bubble_outline</mat-icon>
+                <span>Customer Comments</span>
+            </div>
+            <div class="feedback-bubble" [class.empty]="!order?.feedback">
+                <p *ngIf="order?.feedback; else noFeedback">{{ order.feedback }}</p>
+                <ng-template #noFeedback>
+                    <div class="empty-msg">
+                        <mat-icon>speaker_notes_off</mat-icon>
+                        <span>No written comments provided</span>
+                    </div>
+                </ng-template>
+            </div>
+        </div>
+
+        <!-- Right: Ordered Items -->
+        <div class="body-section items-section">
+            <div class="section-header">
+                <mat-icon>restaurant_menu</mat-icon>
+                <span>Ordered Items ({{ order.itemlist?.length || 0 }})</span>
+            </div>
+            <div class="items-list-container">
+                <div class="order-item-row" *ngFor="let i of order.itemlist">
+                    <div class="item-main">
+                        <div class="item-dot" [ngClass]="i.itemType === 'Veg' ? 'veg' : 'nonveg'"></div>
+                        <span class="item-qty">{{ i.count }}x</span>
+                        <span class="item-name">{{ i.itemName }}</span>
+                    </div>
+                    <div class="item-price" *ngIf="i.price">₹{{ i.price * (i.count || 1) | number:'1.2-2' }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Card Footer (Kitchen Item Ratings) -->
+    <div class="card-footer-ratings" *ngIf="hasKitchenRatings()">
+        <div class="footer-header">
+            <mat-icon>kitchen</mat-icon>
+            <span>Kitchen Item Performance</span>
+        </div>
+        <div class="kitchen-chips-scroll">
+            <div class="kitchen-rating-chip" *ngFor="let i of order.itemlist">
+                <ng-container *ngIf="i.starRatingKitchen != null">
+                    <span class="item-name">{{ i.itemName }}</span>
+                    <div class="mini-stars">
+                        <mat-icon *ngFor="let s of getStarsArray(i.starRatingKitchen)" 
+                            [class.active]="s">{{ s ? 'star' : 'star_outline' }}</mat-icon>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

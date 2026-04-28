@@ -1,0 +1,157 @@
+@use "styles/theme/variable" as var;
+
+.other-orders-container {
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    min-height: 100vh;
+}
+
+// ──────────────────────────────────────────────────────────────
+// Header Card
+// ──────────────────────────────────────────────────────────────
+.orders-header-card {
+    background: white;
+    border-radius: var.$border-radius-xl;
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var.$box-shadow-card;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+
+    .title-section {
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var.$primary-color2;
+            margin: 0 0 0.25rem 0;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            color: #6c757d;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Tabs Container
+// ──────────────────────────────────────────────────────────────
+.tabs-container {
+    background: white;
+    border-radius: var.$border-radius-xl;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var.$box-shadow-card;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.main-tabs {
+    display: flex;
+    gap: 0.5rem;
+    padding-bottom: 0.5rem;
+    overflow-x: auto;
+    scrollbar-width: none; // Firefox
+
+    &::-webkit-scrollbar {
+        display: none; // Chrome, Safari, Edge
+    }
+}
+
+.tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    border: none;
+    background: #f1f3f5;
+    border-radius: var.$border-radius-pill;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #6c757d;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.25s ease;
+
+    .tab-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+
+    &:hover {
+        background: #e9ecef;
+        color: var.$primary-color2;
+    }
+
+    &.active {
+        background: var.$primary-color1;
+        color: white;
+        box-shadow: 0 4px 12px rgba(var.$primary-color1, 0.3);
+
+        .tab-icon {
+            color: white;
+        }
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Tab Content Area
+// ──────────────────────────────────────────────────────────────
+.tab-content-area {
+    animation: slideUp 0.3s ease;
+}
+
+.content-card {
+    background: white;
+    border-radius: var.$border-radius-xl;
+    padding: 1.5rem;
+    min-height: 500px;
+    box-shadow: var.$box-shadow-card;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+// ──────────────────────────────────────────────────────────────
+// Animations
+// ──────────────────────────────────────────────────────────────
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ──────────────────────────────────────────────────────────────
+// Responsive
+// ──────────────────────────────────────────────────────────────
+@media (max-width: 768px) {
+    .orders-header-card {
+        padding: 1.25rem 1rem;
+
+        .title-section {
+            .page-title { font-size: 1.25rem; }
+            .page-subtitle { font-size: 0.8rem; }
+        }
+    }
+
+    .tabs-container { padding: 0.75rem; }
+
+    .tab-btn {
+        padding: 0.6rem 1rem;
+        font-size: 0.85rem;
+        .tab-icon { font-size: 18px; width: 18px; height: 18px; }
+    }
+}

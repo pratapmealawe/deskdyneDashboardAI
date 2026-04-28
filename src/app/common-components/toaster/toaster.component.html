@@ -1,0 +1,19 @@
+<div class="toasterPosition">
+    <div *ngFor="let toast of toasts" class="toasterCard animated-toast" [ngClass]="toast.type">
+        <div class="toast-content">
+            <div class="icon-container">
+                <i class="bi" [ngClass]="toast.icon"></i>
+            </div>
+            <div class="message-container">
+                <span class="message-text">{{toast.msg}}</span>
+            </div>
+            <div class="close-container" (click)="removeToast(toast)">
+                <i class="bi bi-x"></i>
+            </div>
+        </div>
+        <div class="progress-bar">
+            <!-- Dynamic animation duration based on type -->
+            <div class="progress-fill" [style.animation-duration]="(toast.type ==='alarm' ?'30s' :'5s')"></div>
+        </div>
+    </div>
+</div>
