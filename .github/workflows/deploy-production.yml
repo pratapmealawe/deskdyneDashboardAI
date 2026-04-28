@@ -1,0 +1,66 @@
+name: Deploy Production
+
+on:
+  # Uncomment when ready to enable auto-deploy on push/merge to main
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual deploy'
+        required: false
+        default: 'Manual trigger'
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy to Production (AWS)
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '16.16.0'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (production)
+        run: npm run buildprod
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Package build artifact
+        run: |
+          zip -r deploy-prod-${{ github.run_number }}.zip \
+            dist/ \
+            appspec.yml \
+            scripts/ \
+            server.js \
+            package.json \
+            package-lock.json \
+            config/
+
+      - name: Upload artifact to S3
+        run: |
+          aws s3 cp deploy-prod-${{ github.run_number }}.zip \
+            s3://${{ secrets.AWS_S3_BUCKET_PROD }}/production/deploy-prod-${{ github.run_number }}.zip
+
+      - name: Trigger CodeDeploy deployment (production)
+        run: |
+          aws deploy create-deployment \
+            --application-name ${{ secrets.AWS_CODEDEPLOY_APP_NAME_PROD }} \
+            --deployment-group-name ${{ secrets.AWS_CODEDEPLOY_GROUP_NAME_PROD }} \
+            --s3-location bucket=${{ secrets.AWS_S3_BUCKET_PROD }},key=production/deploy-prod-${{ github.run_number }}.zip,bundleType=zip \
+            --description "Production deploy from GitHub Actions run #${{ github.run_number }}"
