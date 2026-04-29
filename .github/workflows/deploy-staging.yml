@@ -31,7 +31,9 @@ jobs:
         run: npm ci
 
       - name: Write environment file (staging)
-        run: echo "${{ secrets.ENV_STAGING_TS }}" > src/environments/environment.staging.ts
+        env:
+          ENV_STAGING_TS: ${{ secrets.ENV_STAGING_TS }}
+        run: printf '%s' "$ENV_STAGING_TS" > src/environments/environment.staging.ts
 
       - name: Build (staging)
         run: npm run build

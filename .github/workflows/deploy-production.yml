@@ -31,7 +31,9 @@ jobs:
         run: npm ci
 
       - name: Write environment file (production)
-        run: echo "${{ secrets.ENV_PROD_TS }}" > src/environments/environment.prod.ts
+        env:
+          ENV_PROD_TS: ${{ secrets.ENV_PROD_TS }}
+        run: printf '%s' "$ENV_PROD_TS" > src/environments/environment.prod.ts
 
       - name: Build (production)
         run: npm run buildprod
