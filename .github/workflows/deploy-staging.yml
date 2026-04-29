@@ -1,7 +1,6 @@
 name: Deploy Staging
 
 on:
-  # Uncomment when ready to enable auto-deploy on push to staging
   # push:
   #   branches:
   #     - staging
@@ -30,6 +29,9 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
+
+      - name: Write environment file (staging)
+        run: echo "${{ secrets.ENV_STAGING_TS }}" > src/environments/environment.staging.ts
 
       - name: Build (staging)
         run: npm run build

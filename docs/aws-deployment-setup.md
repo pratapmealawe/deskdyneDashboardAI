@@ -114,6 +114,16 @@ Note down:
 Go to the **`aiorigin` repository on GitHub**:
 `github.com/pratapmealawe/deskdyneDashboardAI → Settings → Secrets and variables → Actions`
 
+### Environment file secrets (used by all workflows — keeps env files out of the repo)
+
+| Secret name | Value |
+|---|---|
+| `ENV_STAGING_TS` | Full contents of `src/environments/environment.staging.ts` |
+| `ENV_PROD_TS` | Full contents of `src/environments/environment.prod.ts` |
+
+These are written to disk by the workflow before the Angular build runs, so the actual
+files never need to be committed to the repository.
+
 ### Staging secrets (used by `deploy-staging.yml`)
 
 | Secret name | Value |

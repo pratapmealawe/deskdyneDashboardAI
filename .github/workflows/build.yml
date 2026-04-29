@@ -28,6 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Write environment file (production)
+        if: github.ref_name == 'main'
+        run: echo "${{ secrets.ENV_PROD_TS }}" > src/environments/environment.prod.ts
+
+      - name: Write environment file (staging)
+        if: github.ref_name == 'staging'
+        run: echo "${{ secrets.ENV_STAGING_TS }}" > src/environments/environment.staging.ts
+
       - name: Build (production)
         if: github.ref_name == 'main'
         run: npm run buildprod
